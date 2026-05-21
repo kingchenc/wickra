@@ -232,14 +232,27 @@ jobs:
         working-directory: bindings/node
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        shell: bash
         run: |
+          # GitHub Actions defaults to `bash -e`. `npm view` on a not-yet-
+          # published package returns 1, which would kill the step before
+          # we got to publish. Force a graceful empty result instead.
+          set +e
           version=$(node -p "require('./package.json').version")
           existing=$(npm view "wickra@$version" version 2>/dev/null)
           if [ "$existing" = "$version" ]; then
             echo "::notice::skip wickra@$version (already on npm)"
-          else
-            npm publish --access public
+            exit 0
           fi
+          npm publish --access public
+          rc=$?
+          if [ "$rc" -ne 0 ]; then
+            echo "::warning::first attempt failed (rc=$rc); retrying after 30s"
+            sleep 30
+            npm publish --access public
+            rc=$?
+          fi
+          exit $rc
 
   # --------------------------------------------------------------------------
   # WASM: wasm-pack build + npm publish (as `wickra-wasm`)
