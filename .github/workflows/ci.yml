@@ -146,7 +146,11 @@ jobs:
 
       - name: Build native module
         working-directory: bindings/node
-        run: npx napi build --release
+        # --platform puts the target triple into the filename so the loader's
+        # `wickra.<target>.node` lookup finds the freshly built binary instead
+        # of falling back to the per-platform npm subpackage (which doesn't
+        # exist yet for win32-x64-msvc).
+        run: npx napi build --platform --release
 
       - name: Run Node tests
         working-directory: bindings/node
