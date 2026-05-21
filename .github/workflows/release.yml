@@ -20,24 +20,35 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
 
-      - name: Publish wickra-core
-        run: cargo publish -p wickra-core --token "$CARGO_REGISTRY_TOKEN"
+      # Idempotent publishing: if the version is already on crates.io we
+      # treat that as success so re-runs of the workflow don't fail.
+      - name: Publish wickra-core (idempotent)
+        run: |
+          out=$(cargo publish -p wickra-core --token "$CARGO_REGISTRY_TOKEN" 2>&1) && echo "$out" \
+            || (echo "$out" | grep -q "already uploaded\|already exists" && echo "skip: already published" \
+                || (echo "$out"; exit 1))
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
       - name: Wait for crates.io index to refresh
         run: sleep 45
 
-      - name: Publish wickra-data
-        run: cargo publish -p wickra-data --token "$CARGO_REGISTRY_TOKEN"
+      - name: Publish wickra-data (idempotent)
+        run: |
+          out=$(cargo publish -p wickra-data --token "$CARGO_REGISTRY_TOKEN" 2>&1) && echo "$out" \
+            || (echo "$out" | grep -q "already uploaded\|already exists" && echo "skip: already published" \
+                || (echo "$out"; exit 1))
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
       - name: Wait for crates.io index to refresh
         run: sleep 45
 
-      - name: Publish wickra
-        run: cargo publish -p wickra --token "$CARGO_REGISTRY_TOKEN"
+      - name: Publish wickra (idempotent)
+        run: |
+          out=$(cargo publish -p wickra --token "$CARGO_REGISTRY_TOKEN" 2>&1) && echo "$out" \
+            || (echo "$out" | grep -q "already uploaded\|already exists" && echo "skip: already published" \
+                || (echo "$out"; exit 1))
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
@@ -170,9 +181,12 @@ jobs:
           path: bindings/node/artifacts
           pattern: bindings-*
 
-      - name: Create npm/<platform>/ scaffolding
+      - name: Create npm/<platform>/ scaffolding (one per target)
         working-directory: bindings/node
-        run: npx napi create-npm-dirs
+        run: |
+          for t in x86_64-unknown-linux-gnu x86_64-apple-darwin aarch64-apple-darwin x86_64-pc-windows-msvc; do
+            npx napi create-npm-dir -t "$t" .
+          done
 
       - name: Move binaries into platform package layout
         working-directory: bindings/node
@@ -228,8 +242,11 @@ jobs:
             fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
           "
 
-      - name: Publish wickra-wasm to npm
+      - name: Publish wickra-wasm to npm (idempotent)
         working-directory: bindings/wasm/pkg
-        run: npm publish --access public
+        run: |
+          out=$(npm publish --access public 2>&1) && echo "$out" \
+            || (echo "$out" | grep -q "You cannot publish over" && echo "skip: version already on npm" \
+                || (echo "$out"; exit 1))
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
