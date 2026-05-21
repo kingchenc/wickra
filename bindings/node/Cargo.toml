@@ -1,0 +1,30 @@
+[package]
+name = "wickra-node"
+description = "Node.js bindings for the Wickra streaming-first technical indicators library."
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+# napi-build emits `cargo::` directives that require Rust >= 1.77; the rest of
+# the workspace stays at 1.75 because the core crate has no such dependency.
+rust-version = "1.77"
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme.workspace = true
+keywords.workspace = true
+categories.workspace = true
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[lints]
+workspace = true
+
+[dependencies]
+wickra-core = { workspace = true }
+napi = { version = "2.16", features = ["napi8"] }
+napi-derive = "2.16"
+
+[build-dependencies]
+napi-build = "2"

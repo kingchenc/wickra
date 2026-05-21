@@ -1,0 +1,56 @@
+# Rust
+/target/
+**/target/
+Cargo.lock.bak
+*.pdb
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+.python-version
+dist/
+build/
+wheels/
+*.whl
+
+# Editor / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Maturin
+target/wheels/
+
+# Benchmarks
+criterion/
+
+# Coverage
+*.profraw
+lcov.info
+tarpaulin-report.html
+
+# Local config that should not be committed
+*.local.toml
+
+# Node binding artifacts
+bindings/node/node_modules/
+bindings/node/*.node
+bindings/node/index.d.ts
+bindings/node/npm-debug.log*
+package-lock.json
+
+# WASM build output
+bindings/wasm/pkg/
+
+# Python venv
+.venv/
+venv/

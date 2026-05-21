@@ -1,0 +1,56 @@
+{
+  "name": "@wickra/wickra",
+  "version": "0.1.0",
+  "description": "Streaming-first technical indicators: incremental, fast, install-free. Node bindings powered by Rust.",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "license": "Apache-2.0",
+  "keywords": [
+    "trading",
+    "indicators",
+    "technical-analysis",
+    "ta-lib",
+    "finance",
+    "streaming",
+    "rust"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wickra/wickra"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "npm",
+    "*.node"
+  ],
+  "napi": {
+    "name": "wickra",
+    "triples": {
+      "defaults": true,
+      "additional": [
+        "x86_64-unknown-linux-musl",
+        "aarch64-unknown-linux-gnu",
+        "i686-pc-windows-msvc",
+        "armv7-unknown-linux-gnueabihf",
+        "aarch64-apple-darwin",
+        "aarch64-linux-android",
+        "x86_64-unknown-freebsd",
+        "aarch64-unknown-linux-musl",
+        "aarch64-pc-windows-msvc"
+      ]
+    }
+  },
+  "engines": {
+    "node": ">= 16"
+  },
+  "scripts": {
+    "build": "napi build --platform --release",
+    "build:debug": "napi build --platform",
+    "prepublishOnly": "napi prepublish -t npm",
+    "test": "node --test __tests__/"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^2.18.0"
+  }
+}

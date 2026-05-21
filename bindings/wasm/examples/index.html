@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Wickra WASM demo</title>
+  <style>
+    body { font-family: ui-sans-serif, system-ui, sans-serif; max-width: 880px; margin: 2rem auto; padding: 0 1rem; color: #1d1d1d; }
+    h1 { margin-bottom: .25rem; }
+    .meta { color: #666; margin-top: 0; }
+    canvas { width: 100%; height: 380px; border: 1px solid #ddd; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin-top: 1rem; }
+    .card { border: 1px solid #ddd; padding: .75rem; border-radius: .5rem; background: #fafafa; }
+    .card h3 { margin: 0 0 .25rem 0; font-size: 1rem; }
+    .card span { font-variant-numeric: tabular-nums; font-weight: 600; }
+    button { padding: .5rem 1rem; margin-right: .5rem; }
+  </style>
+</head>
+<body>
+  <h1>Wickra in the browser</h1>
+  <p class="meta">Indicators running entirely client-side via WebAssembly. No network round-trips.</p>
+
+  <canvas id="chart"></canvas>
+
+  <div class="grid">
+    <div class="card"><h3>SMA(20)</h3><span id="sma">—</span></div>
+    <div class="card"><h3>EMA(20)</h3><span id="ema">—</span></div>
+    <div class="card"><h3>RSI(14)</h3><span id="rsi">—</span></div>
+    <div class="card"><h3>MACD</h3><span id="macd">—</span></div>
+    <div class="card"><h3>Bollinger</h3><span id="bb">—</span></div>
+    <div class="card"><h3>ATR(14)</h3><span id="atr">—</span></div>
+  </div>
+
+  <p style="margin-top:1rem;">
+    <button id="step">Step one tick</button>
+    <button id="play">Auto-play</button>
+    <button id="reset">Reset</button>
+  </p>
+
+  <p class="meta" id="status">Loading WASM module…</p>
+
+  <script type="module">
+    import init, {
+      version, installPanicHook,
+      SMA, EMA, RSI, MACD, BollingerBands, ATR,
+    } from "../pkg/wickra_wasm.js";
+
+    const canvas = document.getElementById("chart");
+    const ctx = canvas.getContext("2d");
+    function resize() {
+      canvas.width = canvas.clientWidth * devicePixelRatio;
+      canvas.height = canvas.clientHeight * devicePixelRatio;
+      ctx.scale(devicePixelRatio, devicePixelRatio);
+    }
+
+    const fmt = (v) => Number.isFinite(v) ? v.toFixed(3) : "—";
+
+    const state = {
+      i: 0,
+      prices: [],
+      highs: [],
+      lows: [],
+      sma: null, ema: null, rsi: null, macd: null, bb: null, atr: null,
+    };
+
+    function rebuild() {
+      state.i = 0;
+      state.prices = [];
+      state.highs = [];
+      state.lows = [];
+      state.sma = new SMA(20);
+      state.ema = new EMA(20);
+      state.rsi = new RSI(14);
+      state.macd = new MACD(12, 26, 9);
+      state.bb = new BollingerBands(20, 2);
+      state.atr = new ATR(14);
+      document.getElementById("status").textContent = `Ready — wickra ${version()}`;
+      render();
+    }
+
+    function step() {
+      const t = state.i;
+      const price = 100 + Math.sin(t * 0.07) * 10 + Math.cos(t * 0.19) * 4 + (Math.random() - 0.5) * 0.5;
+      const high = price + 0.5;
+      const low = price - 0.5;
+      state.prices.push(price);
+      state.highs.push(high);
+      state.lows.push(low);
+      const sma = state.sma.update(price);
+      const ema = state.ema.update(price);
+      const rsi = state.rsi.update(price);
+      const macd = state.macd.update(price);
+      const bb = state.bb.update(price);
+      const atr = state.atr.update(high, low, price);
+      document.getElementById("sma").textContent = fmt(sma);
+      document.getElementById("ema").textContent = fmt(ema);
+      document.getElementById("rsi").textContent = fmt(rsi);
+      document.getElementById("macd").textContent = macd ? `${fmt(macd.macd)} / ${fmt(macd.signal)}` : "—";
+      document.getElementById("bb").textContent = bb ? `${fmt(bb.upper)} | ${fmt(bb.middle)} | ${fmt(bb.lower)}` : "—";
+      document.getElementById("atr").textContent = fmt(atr);
+      state.i += 1;
+      render();
+    }
+
+    function render() {
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      ctx.clearRect(0, 0, w, h);
+      if (state.prices.length < 2) return;
+      const xs = state.prices.map((_, i) => (i / (state.prices.length - 1)) * w);
+      const min = Math.min(...state.prices);
+      const max = Math.max(...state.prices);
+      const span = max - min || 1;
+      const ys = state.prices.map((p) => h - ((p - min) / span) * (h - 20) - 10);
+      ctx.strokeStyle = "#2a78c5"; ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(xs[0], ys[0]);
+      for (let i = 1; i < xs.length; i++) ctx.lineTo(xs[i], ys[i]);
+      ctx.stroke();
+    }
+
+    let playing = null;
+    document.getElementById("step").onclick = step;
+    document.getElementById("play").onclick = () => {
+      if (playing) { clearInterval(playing); playing = null; return; }
+      playing = setInterval(step, 100);
+    };
+    document.getElementById("reset").onclick = rebuild;
+
+    window.addEventListener("resize", () => { resize(); render(); });
+
+    init().then(() => {
+      installPanicHook();
+      resize();
+      rebuild();
+    });
+  </script>
+</body>
+</html>

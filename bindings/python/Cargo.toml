@@ -1,0 +1,26 @@
+[package]
+name = "wickra-python"
+description = "Python bindings for the Wickra streaming-first technical indicators library."
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme.workspace = true
+keywords.workspace = true
+categories.workspace = true
+publish = false
+
+[lib]
+name = "_wickra"
+crate-type = ["cdylib"]
+
+[lints]
+workspace = true
+
+[dependencies]
+wickra-core = { workspace = true }
+pyo3 = { workspace = true }
+numpy = { workspace = true }

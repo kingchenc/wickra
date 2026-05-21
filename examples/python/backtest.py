@@ -1,0 +1,114 @@
+"""Offline backtest example: compute a basket of indicators over a CSV history.
+
+Run with::
+
+    python -m examples.python.backtest path/to/ohlcv.csv
+
+The CSV must have a header row with at least the columns
+``timestamp, open, high, low, close, volume``. The script computes a panel of
+indicators with the standard parameters used across Wickra's tests and
+prints a small summary of the resulting series — enough to verify that the
+indicators are wired correctly without pulling in pandas or a charting stack.
+"""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import sys
+from dataclasses import dataclass
+from typing import List
+
+import numpy as np
+
+import wickra as ta
+
+
+@dataclass
+class History:
+    timestamp: np.ndarray
+    open: np.ndarray
+    high: np.ndarray
+    low: np.ndarray
+    close: np.ndarray
+    volume: np.ndarray
+
+
+def read_history(path: str) -> History:
+    """Load an OHLCV CSV into typed NumPy columns."""
+    rows: List[List[str]] = []
+    with open(path, newline="") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            rows.append(
+                [
+                    row["timestamp"],
+                    row["open"],
+                    row["high"],
+                    row["low"],
+                    row["close"],
+                    row["volume"],
+                ]
+            )
+    if not rows:
+        raise ValueError("CSV is empty")
+    arr = np.array(rows, dtype=np.float64)
+    return History(
+        timestamp=arr[:, 0].astype(np.int64),
+        open=arr[:, 1],
+        high=arr[:, 2],
+        low=arr[:, 3],
+        close=arr[:, 4],
+        volume=arr[:, 5],
+    )
+
+
+def parse_args() -> argparse.Namespace:
+    p = argparse.ArgumentParser(description=__doc__.splitlines()[0] if __doc__ else None)
+    p.add_argument("path", help="Path to an OHLCV CSV file")
+    p.add_argument("--rsi", type=int, default=14)
+    p.add_argument("--ema", type=int, default=20)
+    p.add_argument("--bb-period", type=int, default=20)
+    p.add_argument("--bb-mult", type=float, default=2.0)
+    return p.parse_args()
+
+
+def summarize(name: str, values: np.ndarray) -> None:
+    valid = values[~np.isnan(values)]
+    if valid.size == 0:
+        print(f"  {name:<12} (no valid samples — series too short)")
+        return
+    print(
+        f"  {name:<12} mean={valid.mean():>10.4f}  min={valid.min():>10.4f}  "
+        f"max={valid.max():>10.4f}  last={valid[-1]:>10.4f}"
+    )
+
+
+def main() -> int:
+    args = parse_args()
+    history = read_history(args.path)
+
+    rsi = ta.RSI(args.rsi).batch(history.close)
+    ema = ta.EMA(args.ema).batch(history.close)
+    macd = ta.MACD().batch(history.close)  # shape (n, 3)
+    bb = ta.BollingerBands(args.bb_period, args.bb_mult).batch(history.close)  # (n, 4)
+    atr = ta.ATR(14).batch(history.high, history.low, history.close)
+    adx = ta.ADX(14).batch(history.high, history.low, history.close)  # (n, 3)
+    obv = ta.OBV().batch(history.close, history.volume)
+
+    print(f"Backtest summary for {args.path} ({history.close.size} bars)")
+    summarize(f"RSI({args.rsi})", rsi)
+    summarize(f"EMA({args.ema})", ema)
+    summarize("MACD line", macd[:, 0])
+    summarize("MACD hist", macd[:, 2])
+    summarize(f"BB upper", bb[:, 0])
+    summarize(f"BB lower", bb[:, 2])
+    summarize("ATR(14)", atr)
+    summarize("ADX(14)", adx[:, 2])
+    summarize("OBV", obv)
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

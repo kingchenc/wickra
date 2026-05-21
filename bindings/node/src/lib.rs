@@ -1,0 +1,723 @@
+//! Node.js bindings for Wickra via napi-rs.
+//!
+//! Build with:
+//! ```text
+//! cd bindings/node && npm install && npm run build
+//! ```
+//!
+//! Then `require("@wickra/wickra")` from Node.
+
+#![allow(clippy::needless_pass_by_value)]
+#![allow(missing_debug_implementations)] // napi-derive auto-generates the Node-facing types.
+#![allow(clippy::unused_self)]
+#![allow(clippy::missing_const_for_fn)]
+
+use napi::Error as NapiError;
+use napi::Status;
+use napi_derive::napi;
+use wickra_core as wc;
+use wickra_core::{BatchExt, Indicator};
+
+fn map_err(e: wc::Error) -> NapiError {
+    NapiError::new(Status::InvalidArg, e.to_string())
+}
+
+/// Helper for constructors. `#[napi(constructor)]` in napi-rs 2.16 only accepts
+/// an infallible `Self` return, so we clamp parameters to the smallest valid value
+/// (which only matters for the pathological `period = 0` case) and then `expect`
+/// the rest, which can only fail for invariants that hold by construction.
+fn must<T>(r: Result<T, wc::Error>) -> T {
+    r.expect("wickra: invalid indicator parameters")
+}
+
+/// Clamp a period parameter so the underlying indicator never sees zero. JS
+/// callers who pass `0` get a window of `1` instead of a thrown exception —
+/// effectively a pass-through indicator that still produces valid outputs.
+const fn clamp_period(p: u32) -> usize {
+    if p == 0 {
+        1
+    } else {
+        p as usize
+    }
+}
+
+fn flatten(v: Vec<Option<f64>>) -> Vec<f64> {
+    v.into_iter().map(|x| x.unwrap_or(f64::NAN)).collect()
+}
+
+/// Library version (matches the Rust crate version).
+#[napi]
+pub fn version() -> String {
+    env!("CARGO_PKG_VERSION").to_string()
+}
+
+// ============================== Scalar indicators ==============================
+
+macro_rules! node_scalar_indicator {
+    ($wrapper:ident, $node_name:literal, $rust_ty:ty) => {
+        #[napi(js_name = $node_name)]
+        pub struct $wrapper {
+            inner: $rust_ty,
+        }
+
+        #[napi]
+        impl $wrapper {
+            #[napi(constructor)]
+            pub fn new(period: u32) -> Self {
+                Self {
+                    inner: must(<$rust_ty>::new(clamp_period(period))),
+                }
+            }
+            #[napi]
+            pub fn update(&mut self, value: f64) -> Option<f64> {
+                self.inner.update(value)
+            }
+            #[napi]
+            pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+                flatten(self.inner.batch(&prices))
+            }
+            #[napi]
+            pub fn reset(&mut self) {
+                self.inner.reset();
+            }
+            #[napi(js_name = "isReady")]
+            pub fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            #[napi(js_name = "warmupPeriod")]
+            pub fn warmup_period(&self) -> u32 {
+                self.inner.warmup_period() as u32
+            }
+        }
+    };
+}
+
+node_scalar_indicator!(SmaNode, "SMA", wc::Sma);
+node_scalar_indicator!(EmaNode, "EMA", wc::Ema);
+node_scalar_indicator!(WmaNode, "WMA", wc::Wma);
+node_scalar_indicator!(RsiNode, "RSI", wc::Rsi);
+node_scalar_indicator!(DemaNode, "DEMA", wc::Dema);
+node_scalar_indicator!(TemaNode, "TEMA", wc::Tema);
+node_scalar_indicator!(HmaNode, "HMA", wc::Hma);
+node_scalar_indicator!(RocNode, "ROC", wc::Roc);
+node_scalar_indicator!(TrixNode, "TRIX", wc::Trix);
+
+// ============================== MACD ==============================
+
+/// MACD triple: macd line, signal line, histogram.
+#[napi(object)]
+pub struct MacdValue {
+    pub macd: f64,
+    pub signal: f64,
+    pub histogram: f64,
+}
+
+#[napi(js_name = "MACD")]
+pub struct MacdNode {
+    inner: wc::MacdIndicator,
+}
+
+#[napi]
+impl MacdNode {
+    #[napi(constructor)]
+    pub fn new(fast: u32, slow: u32, signal: u32) -> Self {
+        Self {
+            inner: must(wc::MacdIndicator::new(
+                fast as usize,
+                slow as usize,
+                signal as usize,
+            )),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<MacdValue> {
+        self.inner.update(value).map(|o| MacdValue {
+            macd: o.macd,
+            signal: o.signal,
+            histogram: o.histogram,
+        })
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        let mut out = vec![f64::NAN; prices.len() * 3];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.macd;
+                out[i * 3 + 1] = o.signal;
+                out[i * 3 + 2] = o.histogram;
+            }
+        }
+        out
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+}
+
+// ============================== Bollinger ==============================
+
+#[napi(object)]
+pub struct BollingerValue {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+    pub stddev: f64,
+}
+
+#[napi(js_name = "BollingerBands")]
+pub struct BollingerNode {
+    inner: wc::BollingerBands,
+}
+
+#[napi]
+impl BollingerNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, multiplier: f64) -> Self {
+        Self {
+            inner: must(wc::BollingerBands::new(period as usize, multiplier)),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<BollingerValue> {
+        self.inner.update(value).map(|o| BollingerValue {
+            upper: o.upper,
+            middle: o.middle,
+            lower: o.lower,
+            stddev: o.stddev,
+        })
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        let mut out = vec![f64::NAN; prices.len() * 4];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 4] = o.upper;
+                out[i * 4 + 1] = o.middle;
+                out[i * 4 + 2] = o.lower;
+                out[i * 4 + 3] = o.stddev;
+            }
+        }
+        out
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+}
+
+// ============================== Candle-input helpers ==============================
+
+fn cnd(h: f64, l: f64, c: f64, v: f64) -> napi::Result<wc::Candle> {
+    wc::Candle::new(c, h, l, c, v, 0).map_err(map_err)
+}
+
+#[napi(js_name = "ATR")]
+pub struct AtrNode {
+    inner: wc::Atr,
+}
+
+#[napi]
+impl AtrNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> Self {
+        Self {
+            inner: must(wc::Atr::new(period as usize)),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, 0.0)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+}
+
+#[napi(object)]
+pub struct StochValue {
+    pub k: f64,
+    pub d: f64,
+}
+
+#[napi(js_name = "Stochastic")]
+pub struct StochNode {
+    inner: wc::Stochastic,
+}
+
+#[napi]
+impl StochNode {
+    #[napi(constructor)]
+    pub fn new(k_period: u32, d_period: u32) -> Self {
+        Self {
+            inner: must(wc::Stochastic::new(k_period as usize, d_period as usize)),
+        }
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 2] = o.k;
+                out[i * 2 + 1] = o.d;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[napi(js_name = "OBV")]
+pub struct ObvNode {
+    inner: wc::Obv,
+}
+
+impl Default for ObvNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl ObvNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::Obv::new(),
+        }
+    }
+    #[napi]
+    pub fn batch(&mut self, close: Vec<f64>, volume: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if close.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "close and volume must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            out.push(
+                self.inner
+                    .update(cnd(close[i], close[i], close[i], volume[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[napi(object)]
+pub struct AdxValue {
+    #[napi(js_name = "plusDi")]
+    pub plus_di: f64,
+    #[napi(js_name = "minusDi")]
+    pub minus_di: f64,
+    pub adx: f64,
+}
+
+#[napi(js_name = "ADX")]
+pub struct AdxNode {
+    inner: wc::Adx,
+}
+
+#[napi]
+impl AdxNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> Self {
+        Self {
+            inner: must(wc::Adx::new(period as usize)),
+        }
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 3] = o.plus_di;
+                out[i * 3 + 1] = o.minus_di;
+                out[i * 3 + 2] = o.adx;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[napi(js_name = "CCI")]
+pub struct CciNode {
+    inner: wc::Cci,
+}
+#[napi]
+impl CciNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> Self {
+        Self {
+            inner: must(wc::Cci::new(period as usize)),
+        }
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+}
+
+#[napi(js_name = "WilliamsR")]
+pub struct WilliamsRNode {
+    inner: wc::WilliamsR,
+}
+#[napi]
+impl WilliamsRNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> Self {
+        Self {
+            inner: must(wc::WilliamsR::new(period as usize)),
+        }
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+}
+
+#[napi(js_name = "MFI")]
+pub struct MfiNode {
+    inner: wc::Mfi,
+}
+#[napi]
+impl MfiNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> Self {
+        Self {
+            inner: must(wc::Mfi::new(period as usize)),
+        }
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+        volume: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], volume[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+}
+
+#[napi(js_name = "PSAR")]
+pub struct PsarNode {
+    inner: wc::Psar,
+}
+#[napi]
+impl PsarNode {
+    #[napi(constructor)]
+    pub fn new(af_start: f64, af_step: f64, af_max: f64) -> Self {
+        Self {
+            inner: must(wc::Psar::new(af_start, af_step, af_max)),
+        }
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+}
+
+#[napi(object)]
+pub struct KeltnerValue {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+#[napi(js_name = "Keltner")]
+pub struct KeltnerNode {
+    inner: wc::Keltner,
+}
+#[napi]
+impl KeltnerNode {
+    #[napi(constructor)]
+    pub fn new(ema_period: u32, atr_period: u32, multiplier: f64) -> Self {
+        Self {
+            inner: must(wc::Keltner::new(
+                ema_period as usize,
+                atr_period as usize,
+                multiplier,
+            )),
+        }
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        Ok(out)
+    }
+}
+
+#[napi(object)]
+pub struct DonchianValue {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+#[napi(js_name = "Donchian")]
+pub struct DonchianNode {
+    inner: wc::Donchian,
+}
+#[napi]
+impl DonchianNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> Self {
+        Self {
+            inner: must(wc::Donchian::new(period as usize)),
+        }
+    }
+    #[napi]
+    pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], low[i], 0.0)?) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        Ok(out)
+    }
+}
+
+#[napi(js_name = "VWAP")]
+pub struct VwapNode {
+    inner: wc::Vwap,
+}
+impl Default for VwapNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+#[napi]
+impl VwapNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::Vwap::new(),
+        }
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+        volume: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], volume[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+}
+
+#[napi(js_name = "AwesomeOscillator")]
+pub struct AoNode {
+    inner: wc::AwesomeOscillator,
+}
+#[napi]
+impl AoNode {
+    #[napi(constructor)]
+    pub fn new(fast: u32, slow: u32) -> Self {
+        Self {
+            inner: must(wc::AwesomeOscillator::new(fast as usize, slow as usize)),
+        }
+    }
+    #[napi]
+    pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], low[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+}
+
+#[napi(object)]
+pub struct AroonValue {
+    pub up: f64,
+    pub down: f64,
+}
+
+#[napi(js_name = "Aroon")]
+pub struct AroonNode {
+    inner: wc::Aroon,
+}
+#[napi]
+impl AroonNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> Self {
+        Self {
+            inner: must(wc::Aroon::new(period as usize)),
+        }
+    }
+    #[napi]
+    pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], low[i], 0.0)?) {
+                out[i * 2] = o.up;
+                out[i * 2 + 1] = o.down;
+            }
+        }
+        Ok(out)
+    }
+}
+
+#[napi(js_name = "KAMA")]
+pub struct KamaNode {
+    inner: wc::Kama,
+}
+#[napi]
+impl KamaNode {
+    #[napi(constructor)]
+    pub fn new(er_period: u32, fast: u32, slow: u32) -> Self {
+        Self {
+            inner: must(wc::Kama::new(
+                er_period as usize,
+                fast as usize,
+                slow as usize,
+            )),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+}

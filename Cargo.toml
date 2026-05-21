@@ -1,0 +1,75 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/wickra-core",
+    "crates/wickra",
+    "crates/wickra-data",
+    "bindings/python",
+    "bindings/wasm",
+    "bindings/node",
+]
+exclude = []
+
+[workspace.package]
+version = "0.1.0"
+authors = ["Wickra Contributors"]
+edition = "2021"
+rust-version = "1.75"
+license = "Apache-2.0"
+repository = "https://github.com/wickra/wickra"
+homepage = "https://github.com/wickra/wickra"
+readme = "README.md"
+keywords = ["finance", "trading", "indicators", "technical-analysis", "ta"]
+categories = ["finance", "mathematics", "science"]
+
+[workspace.dependencies]
+wickra-core = { path = "crates/wickra-core", version = "0.1.0" }
+
+thiserror = "2"
+rayon = "1.10"
+
+# Testing
+proptest = "1.5"
+approx = "0.5"
+criterion = { version = "0.5", features = ["html_reports"] }
+
+# Python binding
+pyo3 = { version = "0.22", features = ["extension-module", "abi3-py39"] }
+numpy = "0.22"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_debug_implementations = "warn"
+unreachable_pub = "warn"
+unused_must_use = "deny"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+# Pedantic exceptions for an indicator library that uses floats and small functions everywhere.
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+cast_precision_loss = "allow"
+cast_possible_truncation = "allow"
+cast_sign_loss = "allow"
+similar_names = "allow"
+float_cmp = "allow"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[profile.bench]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+debug = false
+
+[profile.dev]
+opt-level = 0
+debug = true

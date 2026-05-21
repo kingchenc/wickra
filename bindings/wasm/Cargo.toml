@@ -1,0 +1,38 @@
+[package]
+name = "wickra-wasm"
+description = "WASM bindings for the Wickra streaming-first technical indicators library."
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme.workspace = true
+keywords.workspace = true
+categories.workspace = true
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[lints]
+workspace = true
+
+[dependencies]
+# WASM target cannot use rayon (no threads in the browser by default), so we
+# depend on the local path directly with default features disabled. This also
+# strips the parallel batch helpers we don't ship to JavaScript.
+wickra-core = { path = "../../crates/wickra-core", default-features = false }
+wasm-bindgen = "0.2"
+js-sys = "0.3"
+serde = { version = "1", features = ["derive"] }
+serde-wasm-bindgen = "0.6"
+console_error_panic_hook = { version = "0.1", optional = true }
+
+[features]
+default = []
+panic-hook = ["dep:console_error_panic_hook"]
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ['-O3', '--enable-bulk-memory']

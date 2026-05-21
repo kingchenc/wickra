@@ -1,0 +1,120 @@
+//! Rate of Change (ROC).
+
+use std::collections::VecDeque;
+
+use crate::error::{Error, Result};
+use crate::traits::Indicator;
+
+/// Rate of Change as a percentage: `(close - close[period]) / close[period] * 100`.
+#[derive(Debug, Clone)]
+pub struct Roc {
+    period: usize,
+    window: VecDeque<f64>,
+}
+
+impl Roc {
+    /// # Errors
+    /// Returns [`Error::PeriodZero`] if `period == 0`.
+    pub fn new(period: usize) -> Result<Self> {
+        if period == 0 {
+            return Err(Error::PeriodZero);
+        }
+        Ok(Self {
+            period,
+            window: VecDeque::with_capacity(period + 1),
+        })
+    }
+
+    /// Configured period.
+    pub const fn period(&self) -> usize {
+        self.period
+    }
+}
+
+impl Indicator for Roc {
+    type Input = f64;
+    type Output = f64;
+
+    fn update(&mut self, input: f64) -> Option<f64> {
+        if !input.is_finite() {
+            return None;
+        }
+        if self.window.len() == self.period + 1 {
+            self.window.pop_front();
+        }
+        self.window.push_back(input);
+        if self.window.len() < self.period + 1 {
+            return None;
+        }
+        let prev = *self.window.front().expect("non-empty");
+        if prev == 0.0 {
+            return Some(0.0);
+        }
+        Some((input - prev) / prev * 100.0)
+    }
+
+    fn reset(&mut self) {
+        self.window.clear();
+    }
+
+    fn warmup_period(&self) -> usize {
+        self.period + 1
+    }
+
+    fn is_ready(&self) -> bool {
+        self.window.len() == self.period + 1
+    }
+
+    fn name(&self) -> &'static str {
+        "ROC"
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::traits::BatchExt;
+    use approx::assert_relative_eq;
+
+    #[test]
+    fn constant_series_yields_zero() {
+        let mut roc = Roc::new(5).unwrap();
+        let out = roc.batch(&[10.0_f64; 20]);
+        for v in out.iter().skip(5).flatten() {
+            assert_relative_eq!(*v, 0.0, epsilon = 1e-12);
+        }
+    }
+
+    #[test]
+    fn known_value() {
+        // ROC(3) where prev = 100, now = 110 -> 10%
+        let mut roc = Roc::new(3).unwrap();
+        let out = roc.batch(&[100.0, 105.0, 108.0, 110.0]);
+        assert_relative_eq!(out[3].unwrap(), 10.0, epsilon = 1e-12);
+    }
+
+    #[test]
+    fn batch_equals_streaming() {
+        let prices: Vec<f64> = (1..=30).map(|i| f64::from(i) * 2.0).collect();
+        let mut a = Roc::new(5).unwrap();
+        let mut b = Roc::new(5).unwrap();
+        assert_eq!(
+            a.batch(&prices),
+            prices.iter().map(|p| b.update(*p)).collect::<Vec<_>>()
+        );
+    }
+
+    #[test]
+    fn reset_clears_state() {
+        let mut roc = Roc::new(5).unwrap();
+        roc.batch(&[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]);
+        assert!(roc.is_ready());
+        roc.reset();
+        assert!(!roc.is_ready());
+    }
+
+    #[test]
+    fn rejects_zero_period() {
+        assert!(Roc::new(0).is_err());
+    }
+}

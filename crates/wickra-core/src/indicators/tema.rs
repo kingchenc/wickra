@@ -1,0 +1,107 @@
+//! Triple Exponential Moving Average (TEMA).
+
+use crate::error::Result;
+use crate::indicators::ema::Ema;
+use crate::traits::Indicator;
+
+/// Triple Exponential Moving Average: `3 * EMA1 - 3 * EMA2 + EMA3`,
+/// where `EMA2 = EMA(EMA1)` and `EMA3 = EMA(EMA2)`.
+///
+/// Reduces lag further than DEMA at the cost of more responsiveness to noise.
+#[derive(Debug, Clone)]
+pub struct Tema {
+    ema1: Ema,
+    ema2: Ema,
+    ema3: Ema,
+    period: usize,
+}
+
+impl Tema {
+    /// # Errors
+    /// Returns [`crate::Error::PeriodZero`] if `period == 0`.
+    pub fn new(period: usize) -> Result<Self> {
+        Ok(Self {
+            ema1: Ema::new(period)?,
+            ema2: Ema::new(period)?,
+            ema3: Ema::new(period)?,
+            period,
+        })
+    }
+
+    /// Configured period.
+    pub const fn period(&self) -> usize {
+        self.period
+    }
+}
+
+impl Indicator for Tema {
+    type Input = f64;
+    type Output = f64;
+
+    fn update(&mut self, input: f64) -> Option<f64> {
+        let e1 = self.ema1.update(input)?;
+        let e2 = self.ema2.update(e1)?;
+        let e3 = self.ema3.update(e2)?;
+        Some(3.0 * e1 - 3.0 * e2 + e3)
+    }
+
+    fn reset(&mut self) {
+        self.ema1.reset();
+        self.ema2.reset();
+        self.ema3.reset();
+    }
+
+    fn warmup_period(&self) -> usize {
+        3 * self.period - 2
+    }
+
+    fn is_ready(&self) -> bool {
+        self.ema3.is_ready()
+    }
+
+    fn name(&self) -> &'static str {
+        "TEMA"
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::traits::BatchExt;
+    use approx::assert_relative_eq;
+
+    #[test]
+    fn constant_series_yields_constant_tema() {
+        let mut tema = Tema::new(5).unwrap();
+        let out = tema.batch(&[42.0_f64; 80]);
+        let last = out.iter().rev().flatten().next().unwrap();
+        assert_relative_eq!(*last, 42.0, epsilon = 1e-9);
+    }
+
+    #[test]
+    fn batch_equals_streaming() {
+        let prices: Vec<f64> = (1..=80)
+            .map(|i| (f64::from(i) * 0.3).sin() * 10.0)
+            .collect();
+        let mut a = Tema::new(5).unwrap();
+        let mut b = Tema::new(5).unwrap();
+        assert_eq!(
+            a.batch(&prices),
+            prices.iter().map(|p| b.update(*p)).collect::<Vec<_>>()
+        );
+    }
+
+    #[test]
+    fn reset_clears_state() {
+        let mut tema = Tema::new(5).unwrap();
+        tema.batch(&(1..=80).map(f64::from).collect::<Vec<_>>());
+        assert!(tema.is_ready());
+        tema.reset();
+        assert!(!tema.is_ready());
+    }
+
+    #[test]
+    fn rejects_zero_period() {
+        assert!(Tema::new(0).is_err());
+    }
+}
