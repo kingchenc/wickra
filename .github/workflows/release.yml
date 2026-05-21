@@ -170,6 +170,10 @@ jobs:
           path: bindings/node/artifacts
           pattern: bindings-*
 
+      - name: Create npm/<platform>/ scaffolding
+        working-directory: bindings/node
+        run: npx napi create-npm-dirs
+
       - name: Move binaries into platform package layout
         working-directory: bindings/node
         run: npx napi artifacts --dir artifacts
