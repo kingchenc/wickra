@@ -244,12 +244,15 @@ jobs:
             echo "::notice::skip wickra@$version (already on npm)"
             exit 0
           fi
-          npm publish --access public
+          # --ignore-scripts so any leftover prepublish hooks (which would
+          # otherwise try to republish the already-published platform
+          # subpackages) can't sabotage the main publish.
+          npm publish --access public --ignore-scripts
           rc=$?
           if [ "$rc" -ne 0 ]; then
             echo "::warning::first attempt failed (rc=$rc); retrying after 30s"
             sleep 30
-            npm publish --access public
+            npm publish --access public --ignore-scripts
             rc=$?
           fi
           exit $rc

@@ -54,7 +54,6 @@
     "build": "napi build --platform --release",
     "build:debug": "napi build --platform",
     "artifacts": "napi artifacts",
-    "prepublishOnly": "napi prepublish -t npm",
     "universal": "napi universal",
     "version": "napi version",
     "test": "node --test __tests__/"
