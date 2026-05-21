@@ -45,9 +45,9 @@ bench = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/wickra/wickra"
-Repository = "https://github.com/wickra/wickra"
-Issues = "https://github.com/wickra/wickra/issues"
+Homepage = "https://github.com/kingchenc/wickra"
+Repository = "https://github.com/kingchenc/wickra"
+Issues = "https://github.com/kingchenc/wickra/issues"
 
 [tool.maturin]
 manifest-path = "Cargo.toml"

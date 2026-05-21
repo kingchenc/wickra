@@ -107,8 +107,8 @@ inherit it automatically.
 | Binding           | Install                                       | Example |
 |-------------------|-----------------------------------------------|---------|
 | Python (PyO3)     | `pip install wickra`                          | `examples/python/backtest.py` |
-| Node.js (napi-rs) | `npm install @wickra/wickra`                  | `bindings/node/__tests__/smoke.test.js` |
-| Browser / WASM    | `wasm-pack build bindings/wasm --target web`  | `bindings/wasm/examples/index.html` |
+| Node.js (napi-rs) | `npm install wickra`                          | `bindings/node/__tests__/smoke.test.js` |
+| Browser / WASM    | `npm install wickra-wasm`                     | `bindings/wasm/examples/index.html` |
 | Rust              | `cargo add wickra`                            | `examples/rust/backtest.rs` |
 
 The wickra-core crate is `unsafe`-forbidden, so every binding inherits a

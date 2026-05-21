@@ -34,6 +34,11 @@ console_error_panic_hook = { version = "0.1", optional = true }
 default = []
 panic-hook = ["dep:console_error_panic_hook"]
 
+[package.metadata.wasm-pack.profile.release.wasm-bindgen]
+debug-js-glue = false
+demangle-name-section = true
+dwarf-debug-info = false
+
 [package.metadata.wasm-pack.profile.release]
 # The wasm-opt that ships with wasm-pack is older than the WebAssembly
 # features rustc enables by default (reference-types, multivalue,

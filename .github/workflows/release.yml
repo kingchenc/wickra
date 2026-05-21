@@ -2,83 +2,230 @@ name: Release
 
 on:
   push:
-    tags:
-      - "v*"
+    tags: ["v*"]
   workflow_dispatch:
 
+env:
+  CARGO_TERM_COLOR: always
+
 jobs:
-  build-wheels:
-    name: Wheels ${{ matrix.os }} ${{ matrix.target }}
-    runs-on: ${{ matrix.os }}
+  # --------------------------------------------------------------------------
+  # crates.io: three crates in dependency order
+  # --------------------------------------------------------------------------
+  cargo-publish:
+    name: Publish to crates.io
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Publish wickra-core
+        run: cargo publish -p wickra-core --token "$CARGO_REGISTRY_TOKEN"
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+      - name: Wait for crates.io index to refresh
+        run: sleep 45
+
+      - name: Publish wickra-data
+        run: cargo publish -p wickra-data --token "$CARGO_REGISTRY_TOKEN"
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+      - name: Wait for crates.io index to refresh
+        run: sleep 45
+
+      - name: Publish wickra
+        run: cargo publish -p wickra --token "$CARGO_REGISTRY_TOKEN"
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+  # --------------------------------------------------------------------------
+  # PyPI: cross-platform wheels + sdist
+  # --------------------------------------------------------------------------
+  python-wheels:
+    name: Build wheels (${{ matrix.target }} on ${{ matrix.os }})
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-latest
-            target: x86_64
-          - os: ubuntu-latest
-            target: aarch64
-          - os: macos-latest
-            target: x86_64
-          - os: macos-latest
-            target: aarch64
-          - os: windows-latest
-            target: x64
+          - { os: ubuntu-latest, target: x86_64, manylinux: auto }
+          - { os: ubuntu-latest, target: aarch64, manylinux: auto }
+          - { os: macos-latest, target: x86_64, manylinux: auto }
+          - { os: macos-latest, target: aarch64, manylinux: auto }
+          - { os: windows-latest, target: x64, manylinux: auto }
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
-      - name: Build wheels
-        uses: PyO3/maturin-action@v1
+      - uses: PyO3/maturin-action@v1
         with:
           working-directory: bindings/python
           target: ${{ matrix.target }}
           args: --release --strip --out dist
-          sccache: "true"
-          manylinux: auto
-
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
+          manylinux: ${{ matrix.manylinux }}
+      - uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.os }}-${{ matrix.target }}
-          path: bindings/python/dist/
+          path: bindings/python/dist/*
 
-  sdist:
-    name: Source distribution
+  python-sdist:
+    name: Build Python sdist
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Build sdist
-        uses: PyO3/maturin-action@v1
+      - uses: PyO3/maturin-action@v1
         with:
           working-directory: bindings/python
           command: sdist
           args: --out dist
-
       - uses: actions/upload-artifact@v4
         with:
-          name: sdist
-          path: bindings/python/dist/
+          name: wheels-sdist
+          path: bindings/python/dist/*
 
-  publish:
+  python-publish:
     name: Publish to PyPI
-    needs: [build-wheels, sdist]
+    needs: [python-wheels, python-sdist]
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
-    permissions:
-      id-token: write
     steps:
       - uses: actions/download-artifact@v4
         with:
           path: dist
+          pattern: wheels-*
           merge-multiple: true
 
-      - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Upload to PyPI
+        uses: PyO3/maturin-action@v1
         with:
-          packages-dir: dist/
+          command: upload
+          args: --skip-existing dist/*
+        env:
+          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+
+  # --------------------------------------------------------------------------
+  # npm: per-platform native binaries + main meta-package
+  # --------------------------------------------------------------------------
+  node-build:
+    name: Node build (${{ matrix.target }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { host: ubuntu-latest, target: x86_64-unknown-linux-gnu }
+          - { host: macos-latest, target: x86_64-apple-darwin }
+          - { host: macos-latest, target: aarch64-apple-darwin }
+          - { host: windows-latest, target: x86_64-pc-windows-msvc }
+    runs-on: ${{ matrix.host }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install Node deps
+        working-directory: bindings/node
+        run: npm install
+
+      - name: Build native module
+        working-directory: bindings/node
+        run: npx napi build --platform --release --target ${{ matrix.target }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bindings-${{ matrix.target }}
+          path: bindings/node/wickra.*.node
+          if-no-files-found: error
+
+  node-publish:
+    name: Publish to npm
+    needs: node-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install Node deps
+        working-directory: bindings/node
+        run: npm install
+
+      - name: Download all platform binaries
+        uses: actions/download-artifact@v4
+        with:
+          path: bindings/node/artifacts
+          pattern: bindings-*
+
+      - name: Move binaries into platform package layout
+        working-directory: bindings/node
+        run: npx napi artifacts --dir artifacts
+
+      - name: Prepublish platform packages to npm
+        working-directory: bindings/node
+        run: npx napi prepublish -t npm --skip-gh-release
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish main package to npm
+        working-directory: bindings/node
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  # --------------------------------------------------------------------------
+  # WASM: wasm-pack build + npm publish (as `wickra-wasm`)
+  # --------------------------------------------------------------------------
+  wasm-publish:
+    name: Publish wickra-wasm to npm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - uses: jetli/wasm-pack-action@v0.4.0
+
+      - name: Build WASM package (bundler target)
+        run: wasm-pack build bindings/wasm --target bundler --release --features panic-hook
+
+      - name: Enrich generated package.json with author + repo metadata
+        working-directory: bindings/wasm/pkg
+        run: |
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json'));
+            pkg.author = 'kingchenc <kingchencp@gmail.com>';
+            pkg.repository = { type: 'git', url: 'https://github.com/kingchenc/wickra' };
+            pkg.homepage = 'https://github.com/kingchenc/wickra';
+            pkg.bugs = { url: 'https://github.com/kingchenc/wickra/issues' };
+            pkg.license = 'SEE LICENSE IN LICENSE';
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
+          "
+
+      - name: Publish wickra-wasm to npm
+        working-directory: bindings/wasm/pkg
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
