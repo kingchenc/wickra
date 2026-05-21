@@ -35,4 +35,16 @@ default = []
 panic-hook = ["dep:console_error_panic_hook"]
 
 [package.metadata.wasm-pack.profile.release]
-wasm-opt = ['-O3', '--enable-bulk-memory']
+# The wasm-opt that ships with wasm-pack is older than the WebAssembly
+# features rustc enables by default (reference-types, multivalue,
+# bulk-memory, sign-extension, mutable-globals, …). Listing them all keeps
+# wasm-opt happy without requiring a binaryen upgrade in CI.
+wasm-opt = [
+    '-O3',
+    '--enable-bulk-memory',
+    '--enable-mutable-globals',
+    '--enable-nontrapping-float-to-int',
+    '--enable-sign-ext',
+    '--enable-reference-types',
+    '--enable-multivalue',
+]
