@@ -1,0 +1,24 @@
+{
+  "name": "wickra-win32-x64-msvc",
+  "version": "0.1.2",
+  "description": "Native binding for wickra (Windows x64 MSVC). Installed automatically as an optional dependency of wickra on matching platforms.",
+  "main": "wickra.win32-x64-msvc.node",
+  "files": [
+    "wickra.win32-x64-msvc.node"
+  ],
+  "license": "SEE LICENSE IN LICENSE",
+  "engines": {
+    "node": ">= 16"
+  },
+  "os": [
+    "win32"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kingchenc/wickra"
+  },
+  "homepage": "https://github.com/kingchenc/wickra"
+}

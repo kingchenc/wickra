@@ -181,13 +181,9 @@ jobs:
           path: bindings/node/artifacts
           pattern: bindings-*
 
-      - name: Create npm/<platform>/ scaffolding (one per target)
-        working-directory: bindings/node
-        run: |
-          for t in x86_64-unknown-linux-gnu x86_64-apple-darwin aarch64-apple-darwin x86_64-pc-windows-msvc; do
-            npx napi create-npm-dir -t "$t" .
-          done
-
+      # The npm/<platform>/package.json templates are committed to the
+      # repo (see bindings/node/npm/), so `napi artifacts` only needs to
+      # drop the freshly built .node binary into the matching directory.
       - name: Move binaries into platform package layout
         working-directory: bindings/node
         run: npx napi artifacts --dir artifacts

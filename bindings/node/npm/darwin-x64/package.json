@@ -1,0 +1,24 @@
+{
+  "name": "wickra-darwin-x64",
+  "version": "0.1.2",
+  "description": "Native binding for wickra (macOS Intel). Installed automatically as an optional dependency of wickra on matching platforms.",
+  "main": "wickra.darwin-x64.node",
+  "files": [
+    "wickra.darwin-x64.node"
+  ],
+  "license": "SEE LICENSE IN LICENSE",
+  "engines": {
+    "node": ">= 16"
+  },
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kingchenc/wickra"
+  },
+  "homepage": "https://github.com/kingchenc/wickra"
+}
