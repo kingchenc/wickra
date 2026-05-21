@@ -213,4 +213,10 @@ cd bindings/node && npm install && npm run build && npm test
 
 ## License
 
-Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE).
+Licensed under the **PolyForm Noncommercial License 1.0.0**. See [LICENSE](LICENSE).
+
+In plain English: use it, fork it, modify it, redistribute it, file issues, send
+pull requests — all welcome. Personal projects, research, education, non-profits,
+government, hobby trading bots: all fine. The one thing that's not allowed is
+commercial sale of the software or of services built around it. If you want to
+use Wickra commercially, get in touch about a license.
