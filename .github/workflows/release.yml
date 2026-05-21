@@ -52,6 +52,20 @@ jobs:
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
+      # Produce .crate files for the GitHub Release attachments. `cargo package`
+      # writes them to target/package/<name>-<version>.crate.
+      - name: Build .crate files for release attachment
+        run: |
+          cargo package -p wickra-core --allow-dirty --no-verify
+          cargo package -p wickra-data --allow-dirty --no-verify
+          cargo package -p wickra      --allow-dirty --no-verify
+
+      - name: Upload .crate files
+        uses: actions/upload-artifact@v4
+        with:
+          name: crate-files
+          path: target/package/*.crate
+
   # --------------------------------------------------------------------------
   # PyPI: cross-platform wheels + sdist
   # --------------------------------------------------------------------------
@@ -257,6 +271,24 @@ jobs:
           fi
           exit $rc
 
+      - name: Pack node tarballs for release attachment
+        working-directory: bindings/node
+        run: |
+          # Main package
+          npm pack --ignore-scripts
+          # Each per-platform package (the binaries were already moved in by napi artifacts)
+          for d in npm/*/; do
+            (cd "$d" && npm pack)
+          done
+
+      - name: Upload Node tarballs
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-tarballs
+          path: |
+            bindings/node/*.tgz
+            bindings/node/npm/*/*.tgz
+
   # --------------------------------------------------------------------------
   # WASM: wasm-pack build + npm publish (as `wickra-wasm`)
   # --------------------------------------------------------------------------
@@ -294,6 +326,16 @@ jobs:
             fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
           "
 
+      - name: Pack wickra-wasm for release attachment
+        working-directory: bindings/wasm/pkg
+        run: npm pack
+
+      - name: Upload WASM tarball
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasm-tarball
+          path: bindings/wasm/pkg/wickra-wasm-*.tgz
+
       - name: Publish wickra-wasm to npm (idempotent)
         working-directory: bindings/wasm/pkg
         run: |
@@ -302,3 +344,89 @@ jobs:
                 || (echo "$out"; exit 1))
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  # --------------------------------------------------------------------------
+  # GitHub Release: attach every built artefact to the tag's release page.
+  # --------------------------------------------------------------------------
+  github-release:
+    name: Attach assets to the GitHub Release
+    needs: [cargo-publish, python-publish, node-publish, wasm-publish]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve target tag
+        id: tag
+        run: |
+          if [ "${{ github.event_name }}" = "push" ] && [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            tag="${{ github.ref_name }}"
+          else
+            # workflow_dispatch / non-tag push: attach to the latest v* tag.
+            tag=$(git tag --list 'v*' --sort=-v:refname | head -n1)
+          fi
+          if [ -z "$tag" ]; then
+            echo "::error::no v* tag found to attach assets to"
+            exit 1
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "::notice::attaching assets to release $tag"
+
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Stage release assets
+        run: |
+          set -e
+          mkdir -p release-assets
+          # Python wheels + sdist (5 wheel artifacts + 1 sdist artifact).
+          find artifacts -type f -name "*.whl" -exec cp {} release-assets/ \;
+          find artifacts -type f -name "*.tar.gz" -exec cp {} release-assets/ \;
+          # Native Node binaries (one per platform).
+          find artifacts -type f -name "*.node" -exec cp {} release-assets/ \;
+          # Node npm-pack tarballs (main + per-platform).
+          find artifacts -type f -name "wickra-*.tgz" -exec cp {} release-assets/ \;
+          # Cargo .crate files (one per workspace member).
+          find artifacts -type f -name "*.crate" -exec cp {} release-assets/ \;
+          ls -lh release-assets/
+          echo "asset-count=$(ls release-assets/ | wc -l)"
+
+      - name: Create / update GitHub Release with assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: Wickra ${{ steps.tag.outputs.tag }}
+          files: release-assets/*
+          generate_release_notes: true
+          fail_on_unmatched_files: false
+          body: |
+            Wickra ${{ github.ref_name }} — streaming-first technical indicators across 4 language registries.
+
+            ### Install
+
+            ```bash
+            cargo add wickra
+            pip install wickra
+            npm install wickra
+            npm install wickra-wasm
+            ```
+
+            ### Attached assets
+
+            Pre-built artefacts for every supported platform — the same files that
+            were uploaded to crates.io, PyPI, and npm by this workflow run.
+
+            - `*.whl` / `wickra-*.tar.gz` — Python wheels + sdist (5 platforms, ABI3 ≥ 3.9)
+            - `wickra.*.node` — native Node bindings (linux-x64-gnu, darwin-x64,
+              darwin-arm64, win32-x64-msvc)
+            - `wickra-*.tgz` — npm-pack tarballs (main package + per-platform subpackages + WASM)
+            - `*.crate` — cargo source crates (wickra-core, wickra-data, wickra)
+
+            ### Auto-generated changelog
+
+            See below; GitHub computes it from the commits since the previous tag.
