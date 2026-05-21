@@ -1,5 +1,11 @@
 # Wickra
 
+[![CI](https://github.com/kingchenc/wickra/actions/workflows/ci.yml/badge.svg)](https://github.com/kingchenc/wickra/actions/workflows/ci.yml)
+[![crates.io](https://img.shields.io/crates/v/wickra.svg?logo=rust&color=orange)](https://crates.io/crates/wickra)
+[![PyPI](https://img.shields.io/pypi/v/wickra.svg?logo=pypi&color=blue)](https://pypi.org/project/wickra/)
+[![npm](https://img.shields.io/npm/v/wickra.svg?logo=npm&color=red)](https://www.npmjs.com/package/wickra)
+[![License: PolyForm-NC](https://img.shields.io/badge/license-PolyForm--NC--1.0.0-purple)](LICENSE)
+
 **Streaming-first technical indicators. Install with `pip install wickra` — no system dependencies.**
 
 Wickra is a multi-language technical-analysis library with a Rust core and
@@ -211,6 +217,30 @@ cd bindings/node && npm install && npm run build && npm test
   equivalence, reference values, lifecycle, and dict/tuple candle inputs.
 - `bindings/node`: 7 Node test-runner cases via `node --test`.
 
+## Contributing
+
+Contributions are very welcome — issues, bug reports, ideas, and pull requests
+all land in the same place: <https://github.com/kingchenc/wickra>.
+
+A short orientation for first-time contributors:
+
+- **Adding an indicator.** Implement the `Indicator` trait in
+  `crates/wickra-core/src/indicators/<name>.rs`, wire it into
+  `indicators/mod.rs` and the crate root, and add reference-value tests,
+  a `batch == streaming` equivalence test, and (where it makes sense) a
+  proptest. The four bindings inherit your indicator automatically once
+  you expose it in the language wrappers.
+- **Fixing a numeric bug.** Add a failing test that pins the textbook value
+  first, then fix the math. Property tests in `crates/wickra-core` catch
+  most regressions; please don't disable them.
+- **Improving a binding.** Each binding lives under `bindings/<lang>` with
+  its own tests; please keep the `batch == streaming` invariant.
+- **Style.** `cargo fmt --all` + `cargo clippy --workspace --all-targets -- -D warnings`
+  are CI gates; running them locally before pushing keeps reviews short.
+
+For larger architectural changes, open an issue first so we can sketch the
+shape together before you invest the time.
+
 ## License
 
 Licensed under the **PolyForm Noncommercial License 1.0.0**. See [LICENSE](LICENSE).
@@ -220,3 +250,21 @@ pull requests — all welcome. Personal projects, research, education, non-profi
 government, hobby trading bots: all fine. The one thing that's not allowed is
 commercial sale of the software or of services built around it. If you want to
 use Wickra commercially, get in touch about a license.
+
+---
+
+<p align="center">
+  <a href="https://github.com/kingchenc/wickra/stargazers">
+    <img alt="GitHub stars" src="https://img.shields.io/github/stars/kingchenc/wickra?style=for-the-badge&logo=github&logoColor=white&color=ffd866">
+  </a>
+  <a href="https://github.com/kingchenc/wickra/network/members">
+    <img alt="GitHub forks" src="https://img.shields.io/github/forks/kingchenc/wickra?style=for-the-badge&logo=github&logoColor=white&color=78dce8">
+  </a>
+  <a href="https://github.com/kingchenc/wickra/issues">
+    <img alt="GitHub issues" src="https://img.shields.io/github/issues/kingchenc/wickra?style=for-the-badge&logo=github&logoColor=white&color=ff6188">
+  </a>
+</p>
+
+<p align="center">
+  If Wickra saved you time, the cheapest way to say thanks is to ⭐ the repo.
+</p>
