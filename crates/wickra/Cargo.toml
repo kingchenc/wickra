@@ -31,8 +31,3 @@ wickra-data = { path = "../wickra-data" }
 [[bench]]
 name = "indicators"
 harness = false
-
-[[example]]
-name = "backtest"
-path = "../../examples/rust/backtest.rs"
-required-features = []

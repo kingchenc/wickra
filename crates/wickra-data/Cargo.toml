@@ -41,5 +41,4 @@ tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 
 [[example]]
 name = "live_binance"
-path = "../../examples/rust/live_binance.rs"
 required-features = ["live-binance"]

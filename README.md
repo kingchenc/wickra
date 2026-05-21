@@ -109,7 +109,7 @@ inherit it automatically.
 | Python (PyO3)     | `pip install wickra`                          | `examples/python/backtest.py` |
 | Node.js (napi-rs) | `npm install wickra`                          | `bindings/node/__tests__/smoke.test.js` |
 | Browser / WASM    | `npm install wickra-wasm`                     | `bindings/wasm/examples/index.html` |
-| Rust              | `cargo add wickra`                            | `examples/rust/backtest.rs` |
+| Rust              | `cargo add wickra`                            | `crates/wickra/examples/backtest.rs` |
 
 The wickra-core crate is `unsafe`-forbidden, so every binding inherits a
 memory-safe implementation.
@@ -175,8 +175,8 @@ wickra/
 │   ├── node/                napi-rs (publishes on npm)
 │   └── wasm/                wasm-bindgen (browsers, bundlers, Node)
 ├── examples/
-│   ├── python/              backtest, live trading, parallel assets, multi-tf
-│   └── rust/                backtest, live Binance
+│   └── python/              backtest, live trading, parallel assets, multi-tf
+│   (Rust examples live inside their crate at crates/<name>/examples/)
 ├── benches/                 cargo bench targets
 └── .github/workflows/       CI and release pipelines
 ```
