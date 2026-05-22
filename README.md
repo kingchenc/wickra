@@ -57,28 +57,28 @@ Lower µs/op = faster. Wickra wins every batch category outright, and the
 streaming gap widens linearly with how much history a batch-only library has
 to recompute on every tick.
 
-### Batch — single full pass over a 5 000-bar series
+### Batch — single full pass over a 20 000-bar series
 
 Reading the table: each cell shows that library's runtime, plus how many times
 slower it is than Wickra in parentheses. **★** marks the winner per row.
 
-| Indicator           | Wickra              | finta                  | talipp                       |
-|---------------------|---------------------|------------------------|------------------------------|
-| SMA(20)             | **26.0 µs ★**       | 295.3 µs (11.4× slower) | 1 812.8 µs (69.7× slower)   |
-| EMA(20)             | **16.8 µs ★**       | 205.5 µs (12.2× slower) | 2 534.4 µs (150.9× slower)  |
-| RSI(14)             | **31.2 µs ★**       | 714.1 µs (22.9× slower) | 3 751.7 µs (120.2× slower)  |
-| MACD(12, 26, 9)     | **30.8 µs ★**       | 359.5 µs (11.7× slower) | 11 642.2 µs (378.0× slower) |
-| Bollinger(20, 2.0)  | **26.7 µs ★**       | 690.6 µs (25.9× slower) | 27 482.4 µs (1 030.1× slower) |
-| ATR(14)             | **40.6 µs ★**       | 1 120.3 µs (27.6× slower) | 3 760.2 µs (92.7× slower) |
+| Indicator           | Wickra              | finta                       | talipp                        |
+|---------------------|---------------------|-----------------------------|-------------------------------|
+| SMA(20)             | **95.6 µs ★**       | 343.5 µs (3.6× slower)      | 7 640.6 µs (79.9× slower)     |
+| EMA(20)             | **64.6 µs ★**       | 223.1 µs (3.5× slower)      | 12 160.9 µs (188.2× slower)   |
+| RSI(14)             | **126.2 µs ★**      | 1 107.1 µs (8.8× slower)    | 15 792.2 µs (125.1× slower)   |
+| MACD(12, 26, 9)     | **119.0 µs ★**      | 531.8 µs (4.5× slower)      | 49 788.1 µs (418.2× slower)   |
+| Bollinger(20, 2.0)  | **105.3 µs ★**      | 812.0 µs (7.7× slower)      | 130 938.3 µs (1 243.7× slower)|
+| ATR(14)             | **123.5 µs ★**      | 5 144.8 µs (41.7× slower)   | 28 816.0 µs (233.4× slower)   |
 
-### Streaming — per-tick latency after seeding with 2 000 historical bars
+### Streaming — per-tick latency after seeding with 5 000 historical bars
 
 A batch-only library has to re-run its full indicator over the entire history on
 every new tick; Wickra updates state in O(1).
 
 | Indicator | Wickra (per tick)   | talipp (per tick)         |
 |-----------|---------------------|---------------------------|
-| RSI(14)   | **0.07 µs ★**       | 1.16 µs (17.5× slower)    |
+| RSI(14)   | **0.119 µs ★**      | 1.644 µs (13.8× slower)   |
 
 > TA-Lib and pandas-ta are not included here because both fail to install
 > cleanly on Windows without C build tooling — which is precisely the install
