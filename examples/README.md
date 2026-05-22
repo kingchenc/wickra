@@ -13,6 +13,7 @@ The Rust examples live in the `wickra-examples` workspace member crate.
 | --- | --- | --- |
 | `streaming.rs` | Feed a synthetic price series through SMA / EMA / RSI / MACD tick by tick. | `cargo run -p wickra-examples --bin streaming` |
 | `backtest.rs` | Compute a basket of indicators over an OHLCV CSV and print a summary. | `cargo run -p wickra-examples --bin backtest -- <ohlcv.csv>` |
+| `multi_timeframe.rs` | Resample a 1-minute CSV via wickra-data and print indicators per timeframe. | `cargo run -p wickra-examples --bin multi_timeframe` |
 | `fetch_btcusdt.rs` | Download real BTCUSDT klines from the Binance REST API into `examples/data/`. | `cargo run -p wickra-examples --bin fetch_btcusdt` |
 | `live_binance.rs` | Stream live Binance klines through an indicator over a resilient WebSocket. | `cargo run -p wickra-examples --bin live_binance` |
 
@@ -41,6 +42,7 @@ cd ../../examples/node && npm install        # links wickra + installs `ws`
 | --- | --- | --- |
 | `streaming.js` | Feed a synthetic price series through several indicators tick by tick. | `node streaming.js` |
 | `backtest.js` | Basket of indicators over an OHLCV CSV; defaults to the bundled BTCUSDT daily dataset. | `node backtest.js [ohlcv.csv]` |
+| `multi_timeframe.js` | Roll a 1-minute CSV up to 5m / 15m / 1h / 4h / 1d and print indicators per timeframe. | `node multi_timeframe.js [path/to/1m.csv]` |
 | `live_trading.js` | Live Binance feed → RSI / MACD / Bollinger → signals. | `node live_trading.js --symbol BTCUSDT --interval 1m` |
 
 ## WebAssembly — `examples/wasm/`
