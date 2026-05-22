@@ -2,7 +2,7 @@
 //!
 //! Build with:
 //! ```text
-//! cargo run --release --example backtest -- path/to/ohlcv.csv
+//! cargo run --release -p wickra-examples --bin backtest -- path/to/ohlcv.csv
 //! ```
 
 use std::env;

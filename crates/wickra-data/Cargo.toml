@@ -42,9 +42,3 @@ live-binance = ["dep:tokio", "dep:tokio-tungstenite", "dep:futures-util", "dep:u
 [dev-dependencies]
 approx = { workspace = true }
 tempfile = "3"
-wickra = { path = "../wickra" }
-tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
-
-[[example]]
-name = "live_binance"
-required-features = ["live-binance"]

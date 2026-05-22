@@ -119,17 +119,17 @@ exact contract.
 
 ## A deeper example
 
-`crates/wickra/examples/backtest.rs` shipped with the workspace computes a
-panel of indicators (RSI, EMA, Bollinger, MACD, ATR, ADX, OBV) over an OHLCV
-CSV by way of `wickra-data`:
+`examples/rust/src/bin/backtest.rs` (in the `wickra-examples` workspace
+crate) computes a panel of indicators (RSI, EMA, Bollinger, MACD, ATR, ADX,
+OBV) over an OHLCV CSV by way of `wickra-data`:
 
 ```bash
-cargo run --release --example backtest -- path/to/ohlcv.csv
+cargo run --release -p wickra-examples --bin backtest -- path/to/ohlcv.csv
 ```
 
 For live-data work, `wickra-data` ships a streaming CSV reader, a
 tick-to-candle aggregator, a candle resampler, and a Binance kline WebSocket
-adapter under the `live-binance` feature. `crates/wickra-data/examples/live_binance.rs`
+adapter under the `live-binance` feature. `examples/rust/src/bin/live_binance.rs`
 is the canonical example for the latter.
 
 ## See also

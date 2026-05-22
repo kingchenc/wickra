@@ -1,13 +1,13 @@
 //! Rust example: download real BTCUSDT spot candles from the Binance REST API
 //! and write them as CSV datasets under `examples/data/`.
 //!
-//! These are the datasets the indicator benchmarks (`benches/indicators.rs`)
-//! and the `example_data` integration test run against. They live at the
-//! workspace `examples/data/` directory. Re-run this example to refresh
-//! them with the latest market history:
+//! These are the datasets the indicator benchmarks (`crates/wickra/benches/
+//! indicators.rs`) and the `example_data` integration test run against. They
+//! live at the workspace `examples/data/` directory. Re-run this example to
+//! refresh them with the latest market history:
 //!
 //! ```text
-//! cargo run -p wickra --example fetch_btcusdt
+//! cargo run -p wickra-examples --bin fetch_btcusdt
 //! ```
 //!
 //! HTTPS is handled by shelling out to the system `curl` — shipped with
@@ -98,8 +98,6 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let data_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("..")
-        .join("..")
-        .join("examples")
         .join("data");
     std::fs::create_dir_all(&data_dir)?;
 

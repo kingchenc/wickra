@@ -1974,7 +1974,6 @@ dependencies = [
  "approx",
  "criterion",
  "proptest",
- "serde_json",
  "wickra-core",
  "wickra-data",
 ]
@@ -2003,8 +2002,17 @@ dependencies = [
  "tokio",
  "tokio-tungstenite",
  "url",
- "wickra",
  "wickra-core",
+]
+
+[[package]]
+name = "wickra-examples"
+version = "0.0.0"
+dependencies = [
+ "serde_json",
+ "tokio",
+ "wickra",
+ "wickra-data",
 ]
 
 [[package]]

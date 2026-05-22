@@ -2,7 +2,7 @@
 //!
 //! Build with:
 //! ```text
-//! cargo run --release --example live_binance --features wickra-data/live-binance -- BTCUSDT
+//! cargo run --release -p wickra-examples --bin live_binance -- BTCUSDT
 //! ```
 //!
 //! The example prints a line per bar close. Hit Ctrl+C to stop.

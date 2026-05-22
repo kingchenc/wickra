@@ -150,10 +150,10 @@ dropped connection, skips non-kline frames (subscription acks, heartbeats),
 applies a read timeout and message-size limits, and tracks a closed flag so a
 deliberately closed stream is not reused.
 
-A runnable example lives at `crates/wickra-data/examples/live_binance.rs`:
+A runnable example lives at `examples/rust/src/bin/live_binance.rs`:
 
 ```bash
-cargo run -p wickra-data --example live_binance --features live-binance
+cargo run -p wickra-examples --bin live_binance
 ```
 
 ## Example datasets
@@ -183,7 +183,7 @@ Binance REST API and needs the system `curl` (shipped with Windows 10+, macOS
 and Linux):
 
 ```bash
-cargo run -p wickra --example fetch_btcusdt
+cargo run -p wickra-examples --bin fetch_btcusdt
 ```
 
 ## See also

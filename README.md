@@ -120,7 +120,7 @@ inherit it automatically.
 | Python (PyO3)     | `pip install wickra`                          | `examples/python/backtest.py` |
 | Node.js (napi-rs) | `npm install wickra`                          | `bindings/node/examples/backtest.js` |
 | Browser / WASM    | `npm install wickra-wasm`                     | `bindings/wasm/examples/index.html` |
-| Rust              | `cargo add wickra`                            | `crates/wickra/examples/backtest.rs` |
+| Rust              | `cargo add wickra`                            | `examples/rust/src/bin/backtest.rs` |
 
 Each binding ships several runnable examples (streaming, backtest, live feed);
 [`examples/README.md`](examples/README.md) is the full cross-language index.
@@ -182,23 +182,22 @@ A Python live-trading example using the public `websockets` package lives at
 wickra/
 ├── crates/
 │   ├── wickra-core/         core engine + all 71 indicators
-│   ├── wickra/              top-level facade crate (publishes on crates.io)
-│   │                        + benches/, examples/ (backtest, fetch_btcusdt)
-│   │                        and examples/data/ real BTCUSDT datasets
+│   ├── wickra/              top-level facade crate (publishes on crates.io) + benches/
 │   └── wickra-data/         CSV reader, tick aggregator, live exchange feeds
-│                            + examples/live_binance.rs
 ├── bindings/
 │   ├── python/              PyO3 + maturin (publishes on PyPI)
 │   ├── node/                napi-rs (publishes on npm) + examples/
 │   └── wasm/                wasm-bindgen (browsers, bundlers, Node) + examples/
 ├── examples/                examples/README.md indexes every language
+│   ├── data/                real BTCUSDT OHLCV datasets, one per timeframe
+│   ├── rust/                Rust workspace member (`wickra-examples`)
 │   └── python/              backtest, live trading, parallel assets, multi-tf
 └── .github/workflows/       CI and release pipelines
 ```
 
-Rust benchmarks and examples live inside their crate
-(`crates/wickra/benches/`, `crates/<name>/examples/`); there is no
-top-level `benches/` directory.
+Rust benchmarks live in `crates/wickra/benches/`; runnable Rust examples live
+in the workspace member crate at `examples/rust/`. There is no top-level
+`benches/` directory.
 
 ## Building everything from source
 

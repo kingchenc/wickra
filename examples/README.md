@@ -5,13 +5,15 @@ to the code they exercise so the language tooling (`cargo run --example`,
 `node`) can find them; the Python examples have no crate of their own and
 live here under [`python/`](python/).
 
-## Rust — `crates/*/examples/`
+## Rust — `examples/rust/`
+
+The Rust examples live in the `wickra-examples` workspace member crate.
 
 | Example | What it does | Run |
 | --- | --- | --- |
-| `backtest.rs` | Compute a basket of indicators over an OHLCV CSV and print a summary. | `cargo run -p wickra --example backtest -- <ohlcv.csv>` |
-| `fetch_btcusdt.rs` | Download real BTCUSDT klines from the Binance REST API into `examples/data/`. | `cargo run -p wickra --example fetch_btcusdt` |
-| `live_binance.rs` | Stream live Binance klines through an indicator over a resilient WebSocket. | `cargo run -p wickra-data --example live_binance --features live-binance` |
+| `backtest.rs` | Compute a basket of indicators over an OHLCV CSV and print a summary. | `cargo run -p wickra-examples --bin backtest -- <ohlcv.csv>` |
+| `fetch_btcusdt.rs` | Download real BTCUSDT klines from the Binance REST API into `examples/data/`. | `cargo run -p wickra-examples --bin fetch_btcusdt` |
+| `live_binance.rs` | Stream live Binance klines through an indicator over a resilient WebSocket. | `cargo run -p wickra-examples --bin live_binance` |
 
 ## Python — `examples/python/`
 
@@ -46,4 +48,4 @@ Build the native module first: `cd bindings/node && npm install && npx napi buil
 per timeframe (1m, 5m, 15m, 1h, 12h, 1d, 1month), in the standard
 `timestamp,open,high,low,close,volume` layout. The Rust and Node backtest
 examples and the indicator benchmarks run against them. Regenerate them with
-the latest market history via `cargo run -p wickra --example fetch_btcusdt`.
+the latest market history via `cargo run -p wickra-examples --bin fetch_btcusdt`.

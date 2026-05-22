@@ -1,0 +1,28 @@
+[package]
+name = "wickra-examples"
+version = "0.0.0"
+publish = false
+description = "Runnable Rust examples for the Wickra technical-analysis library."
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme = "README.md"
+
+[lints]
+workspace = true
+
+[dependencies]
+# All examples sit on top of the indicator engine.
+wickra = { path = "../../crates/wickra" }
+# The data layer is needed by every example except streaming/parallel: CSV
+# reading, the Binance live feed and the resampler all live here. The
+# `live-binance` feature is always on for this crate so the live_binance
+# binary just compiles.
+wickra-data = { path = "../../crates/wickra-data", features = ["live-binance"] }
+# fetch_btcusdt parses the Binance REST kline response.
+serde_json = "1"
+# live_binance uses #[tokio::main]; the current-thread runtime is enough.
+tokio = { version = "1", features = ["rt", "macros"] }
