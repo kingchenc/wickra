@@ -96,6 +96,12 @@ async def run(symbol: str, interval: str) -> None:
             envelope = json.loads(raw)
             payload = envelope.get("data", {})
             k = payload.get("k", {})
+            if not k or "c" not in k:
+                # Subscription acks, heartbeats and error frames carry no
+                # kline payload — skip them instead of crashing on
+                # float(None) the moment the stream opens.
+                log.debug("skipping non-kline frame: %s", raw)
+                continue
             close = float(k.get("c"))
             is_closed = bool(k.get("x"))
             snap = state.update(close)
