@@ -102,6 +102,8 @@ node_scalar_indicator!(TemaNode, "TEMA", wc::Tema);
 node_scalar_indicator!(HmaNode, "HMA", wc::Hma);
 node_scalar_indicator!(RocNode, "ROC", wc::Roc);
 node_scalar_indicator!(TrixNode, "TRIX", wc::Trix);
+node_scalar_indicator!(SmmaNode, "SMMA", wc::Smma);
+node_scalar_indicator!(TrimaNode, "TRIMA", wc::Trima);
 
 // ============================== MACD ==============================
 

@@ -1,6 +1,6 @@
 # Indicators Overview
 
-Wickra ships 25 indicators, organised in source under the four classical
+Wickra ships 27 indicators, organised in source under the four classical
 families — trend, momentum, volatility, volume — that map directly to the
 directory structure of `crates/wickra-core/src/indicators/`. The same family
 labels are used here, plus a second-level grouping that reflects how the
@@ -35,6 +35,7 @@ benchmarks against fancier averages.
 |-----------|-----------|-------|--------|-------|----------|--------|-----------|
 | `Sma`     | Equal-weighted rolling mean over `period` closes. | `f64` | `f64` | unbounded (price scale) | `period` (no default in core; Python defaults vary by binding) | `period` | [Indicator-Sma.md](indicators/trend/Indicator-Sma.md) |
 | `Wma`     | Linear weights `1, 2, …, period` so the newest bar matters most. | `f64` | `f64` | unbounded (price scale) | `period` | `period` | [Indicator-Wma.md](indicators/trend/Indicator-Wma.md) |
+| `Trima`   | A `period`-window SMA applied twice; triangular weights centred on the middle bar. | `f64` | `f64` | unbounded (price scale) | `period` | `period` | [Indicator-Trima.md](indicators/trend/Indicator-Trima.md) |
 
 ### Exponential family
 
@@ -46,6 +47,7 @@ you stack more EMAs, but so does responsiveness to noise.
 | `Ema`  | EMA with `α = 2 / (period + 1)`, seeded from the SMA of the first `period` inputs. | `f64` | `f64` | unbounded (price scale) | `period` | `period` | [Indicator-Ema.md](indicators/trend/Indicator-Ema.md) |
 | `Dema` | Mulloy's `2·EMA − EMA(EMA)`; removes first-order EMA lag. | `f64` | `f64` | unbounded (price scale) | `period` | `2·period − 1` | [Indicator-Dema.md](indicators/trend/Indicator-Dema.md) |
 | `Tema` | Mulloy's `3·EMA − 3·EMA(EMA) + EMA(EMA(EMA))`; removes more lag than DEMA. | `f64` | `f64` | unbounded (price scale) | `period` | `3·period − 2` | [Indicator-Tema.md](indicators/trend/Indicator-Tema.md) |
+| `Smma` | Wilder's RMA: an SMA-seeded exponential average with the slow `1/period` factor. | `f64` | `f64` | unbounded (price scale) | `period` | `period` | [Indicator-Smma.md](indicators/trend/Indicator-Smma.md) |
 
 `Trix` is also built from a triple-smoothed EMA, but it is a *momentum
 oscillator* — it emits the rate of change of that EMA, not a price-scale

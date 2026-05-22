@@ -1519,6 +1519,108 @@ impl PyAroon {
     }
 }
 
+// ============================== SMMA ==============================
+
+#[pyclass(name = "SMMA", module = "wickra._wickra")]
+#[derive(Clone)]
+struct PySmma {
+    inner: wc::Smma,
+}
+
+#[pymethods]
+impl PySmma {
+    #[new]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Smma::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("SMMA(period={})", self.inner.period())
+    }
+}
+
+// ============================== TRIMA ==============================
+
+#[pyclass(name = "TRIMA", module = "wickra._wickra")]
+#[derive(Clone)]
+struct PyTrima {
+    inner: wc::Trima,
+}
+
+#[pymethods]
+impl PyTrima {
+    #[new]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Trima::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("TRIMA(period={})", self.inner.period())
+    }
+}
+
 // ============================== Module ==============================
 
 #[pymodule]
@@ -1549,5 +1651,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyVwap>()?;
     m.add_class::<PyAo>()?;
     m.add_class::<PyAroon>()?;
+    m.add_class::<PySmma>()?;
+    m.add_class::<PyTrima>()?;
     Ok(())
 }

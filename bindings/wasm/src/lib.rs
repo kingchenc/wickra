@@ -75,6 +75,8 @@ wasm_scalar_indicator!(WasmTema, "TEMA", wc::Tema, period: usize);
 wasm_scalar_indicator!(WasmHma, "HMA", wc::Hma, period: usize);
 wasm_scalar_indicator!(WasmRoc, "ROC", wc::Roc, period: usize);
 wasm_scalar_indicator!(WasmTrix, "TRIX", wc::Trix, period: usize);
+wasm_scalar_indicator!(WasmSmma, "SMMA", wc::Smma, period: usize);
+wasm_scalar_indicator!(WasmTrima, "TRIMA", wc::Trima, period: usize);
 
 // ---------- KAMA (three params) ----------
 
