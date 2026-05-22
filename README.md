@@ -118,7 +118,7 @@ inherit it automatically.
 | Binding           | Install                                       | Example |
 |-------------------|-----------------------------------------------|---------|
 | Python (PyO3)     | `pip install wickra`                          | `examples/python/backtest.py` |
-| Node.js (napi-rs) | `npm install wickra`                          | `bindings/node/examples/backtest.js` |
+| Node.js (napi-rs) | `npm install wickra`                          | `examples/node/backtest.js` |
 | Browser / WASM    | `npm install wickra-wasm`                     | `bindings/wasm/examples/index.html` |
 | Rust              | `cargo add wickra`                            | `examples/rust/src/bin/backtest.rs` |
 
@@ -186,12 +186,13 @@ wickra/
 │   └── wickra-data/         CSV reader, tick aggregator, live exchange feeds
 ├── bindings/
 │   ├── python/              PyO3 + maturin (publishes on PyPI)
-│   ├── node/                napi-rs (publishes on npm) + examples/
+│   ├── node/                napi-rs (publishes on npm)
 │   └── wasm/                wasm-bindgen (browsers, bundlers, Node) + examples/
 ├── examples/                examples/README.md indexes every language
 │   ├── data/                real BTCUSDT OHLCV datasets, one per timeframe
 │   ├── rust/                Rust workspace member (`wickra-examples`)
-│   └── python/              backtest, live trading, parallel assets, multi-tf
+│   ├── python/              backtest, live trading, parallel assets, multi-tf
+│   └── node/                streaming, backtest, live trading (load `wickra`)
 └── .github/workflows/       CI and release pipelines
 ```
 

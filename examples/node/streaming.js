@@ -4,17 +4,13 @@
 // the same O(1)-per-update model a live trading bot would use — and prints a
 // status line whenever every indicator has warmed up.
 //
-// Run it from the repository after building the native module:
+// Run it from the repository after building the native binding:
 //
-//   cd bindings/node
-//   npm install
-//   npx napi build --platform --release
-//   node examples/streaming.js
-//
-// In your own project, install the package and use `require('wickra')`
-// instead of the relative `require('..')` below.
+//   cd bindings/node && npm install && npx napi build --platform --release
+//   cd ../../examples/node && npm install
+//   node streaming.js
 
-const wickra = require('..');
+const wickra = require('wickra');
 
 // A deterministic synthetic series: a slow trend with two oscillations and a
 // little noise from a seeded generator (so every run prints the same thing).

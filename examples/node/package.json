@@ -1,0 +1,13 @@
+{
+  "name": "wickra-examples-node",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Runnable Node.js examples for the Wickra technical-analysis library.",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "dependencies": {
+    "wickra": "file:../../bindings/node"
+  },
+  "devDependencies": {
+    "ws": "^8.18.0"
+  }
+}

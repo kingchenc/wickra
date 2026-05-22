@@ -7,22 +7,21 @@
 // signal line is printed. No orders are placed. It is the Node counterpart of
 // examples/python/live_trading.py.
 //
-// Run it from the repository after building the native module:
+// Run it from the repository after building the native binding:
 //
-//   cd bindings/node
-//   npm install                          # also installs the `ws` dev-dependency
-//   npx napi build --platform --release
-//   node examples/live_trading.js --symbol BTCUSDT --interval 1m
+//   cd bindings/node && npm install && npx napi build --platform --release
+//   cd ../../examples/node && npm install     # pulls `ws` for this example
+//   node live_trading.js --symbol BTCUSDT --interval 1m
 //
 // Stop it with Ctrl+C.
 
-const wickra = require('..');
+const wickra = require('wickra');
 
 let WebSocket;
 try {
   WebSocket = require('ws');
 } catch (err) {
-  console.error('This example needs the `ws` package — run `npm install` in bindings/node.');
+  console.error('This example needs the `ws` package — run `npm install` in examples/node.');
   process.exit(1);
 }
 

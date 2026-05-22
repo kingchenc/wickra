@@ -42,7 +42,7 @@ tarpaulin-report.html
 *.local.toml
 
 # Node binding artifacts
-bindings/node/node_modules/
+**/node_modules/
 bindings/node/*.node
 bindings/node/index.d.ts
 bindings/node/npm-debug.log*

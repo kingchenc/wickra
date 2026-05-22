@@ -4,23 +4,19 @@
 // (SMA, EMA, RSI, MACD, Bollinger Bands, ATR, ADX, OBV) with the O(1)
 // `update` call, and prints a summary of each resulting series. It is the
 // Node counterpart of `examples/python/backtest.py` and the Rust
-// `crates/wickra/examples/backtest.rs`.
+// `examples/rust/src/bin/backtest.rs`.
 //
-// Run it from the repository after building the native module:
+// Run it from the repository after building the native binding:
 //
-//   cd bindings/node
-//   npm install
-//   npx napi build --platform --release
-//   node examples/backtest.js                  # uses the bundled BTCUSDT 1d data
-//   node examples/backtest.js path/to/ohlcv.csv # or any OHLCV CSV
-//
-// In your own project, install the package and use `require('wickra')`
-// instead of the relative `require('..')` below.
+//   cd bindings/node && npm install && npx napi build --platform --release
+//   cd ../../examples/node && npm install
+//   node backtest.js                  # uses the bundled BTCUSDT 1d data
+//   node backtest.js path/to/ohlcv.csv # or any OHLCV CSV
 
 const fs = require('node:fs');
 const path = require('node:path');
 
-const wickra = require('..');
+const wickra = require('wickra');
 
 // The OHLCV columns the default layout requires; the CSV header must name
 // every one of them (any extra columns are ignored).
@@ -28,15 +24,7 @@ const REQUIRED_COLUMNS = ['timestamp', 'open', 'high', 'low', 'close', 'volume']
 
 // Default dataset: the checked-in BTCUSDT daily candles under the workspace
 // `examples/data/` directory, resolved relative to this file.
-const DEFAULT_CSV = path.join(
-  __dirname,
-  '..',
-  '..',
-  '..',
-  'examples',
-  'data',
-  'btcusdt-1d.csv',
-);
+const DEFAULT_CSV = path.join(__dirname, '..', 'data', 'btcusdt-1d.csv');
 
 // Parse an OHLCV CSV into column arrays of numbers.
 //

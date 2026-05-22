@@ -26,15 +26,20 @@ The Rust examples live in the `wickra-examples` workspace member crate.
 
 `live_trading.py` additionally needs `pip install websockets`.
 
-## Node.js — `bindings/node/examples/`
+## Node.js — `examples/node/`
 
-Build the native module first: `cd bindings/node && npm install && npx napi build --platform --release`.
+Build the native binding once, then link it into the examples directory:
+
+```bash
+cd bindings/node && npm install && npx napi build --platform --release
+cd ../../examples/node && npm install        # links wickra + installs `ws`
+```
 
 | Example | What it does | Run |
 | --- | --- | --- |
-| `streaming.js` | Feed a synthetic price series through several indicators tick by tick. | `node examples/streaming.js` |
-| `backtest.js` | Basket of indicators over an OHLCV CSV; defaults to the bundled BTCUSDT daily dataset. | `node examples/backtest.js [ohlcv.csv]` |
-| `live_trading.js` | Live Binance feed → RSI / MACD / Bollinger → signals. | `node examples/live_trading.js --symbol BTCUSDT --interval 1m` |
+| `streaming.js` | Feed a synthetic price series through several indicators tick by tick. | `node streaming.js` |
+| `backtest.js` | Basket of indicators over an OHLCV CSV; defaults to the bundled BTCUSDT daily dataset. | `node backtest.js [ohlcv.csv]` |
+| `live_trading.js` | Live Binance feed → RSI / MACD / Bollinger → signals. | `node live_trading.js --symbol BTCUSDT --interval 1m` |
 
 ## WebAssembly — `bindings/wasm/examples/`
 
