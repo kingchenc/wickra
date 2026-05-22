@@ -173,12 +173,17 @@ impl BinanceKlineStream {
             };
             match msg {
                 Message::Text(text) => {
-                    let envelope: RawWsEnvelope = serde_json::from_str(&text)?;
-                    return Ok(Some(envelope.into_event(self.interval)?));
+                    if let Some(event) = Self::parse_frame(&text, self.interval)? {
+                        return Ok(Some(event));
+                    }
+                    // Non-kline frame (subscription ack / heartbeat / error):
+                    // skip it and keep reading.
                 }
                 Message::Binary(bytes) => {
-                    let envelope: RawWsEnvelope = serde_json::from_slice(&bytes)?;
-                    return Ok(Some(envelope.into_event(self.interval)?));
+                    let text = String::from_utf8_lossy(&bytes);
+                    if let Some(event) = Self::parse_frame(&text, self.interval)? {
+                        return Ok(Some(event));
+                    }
                 }
                 Message::Ping(payload) => {
                     self.socket.send(Message::Pong(payload)).await?;
@@ -187,6 +192,27 @@ impl BinanceKlineStream {
                 Message::Close(_) => return Ok(None),
             }
         }
+    }
+
+    /// Parse one raw WebSocket text frame.
+    ///
+    /// Returns `Ok(Some(event))` for a kline frame, `Ok(None)` for any other
+    /// frame (subscription acknowledgements, error objects, heartbeats), and
+    /// `Err` only when a frame that *is* a kline fails to decode.
+    fn parse_frame(text: &str, interval: Interval) -> Result<Option<KlineEvent>> {
+        let value: serde_json::Value = serde_json::from_str(text)?;
+        // Combined-stream kline frames carry `data.e == "kline"`. Everything
+        // else on the socket is control traffic that must not abort the feed.
+        let is_kline = value
+            .get("data")
+            .and_then(|d| d.get("e"))
+            .and_then(serde_json::Value::as_str)
+            == Some("kline");
+        if !is_kline {
+            return Ok(None);
+        }
+        let envelope: RawWsEnvelope = serde_json::from_value(value)?;
+        Ok(Some(envelope.into_event(interval)?))
     }
 
     /// Close the underlying socket cleanly.
@@ -289,5 +315,40 @@ mod tests {
         let env: RawWsEnvelope = serde_json::from_str(json).unwrap();
         let err = env.into_event(Interval::OneMinute).unwrap_err();
         assert!(matches!(err, Error::Malformed(_)));
+    }
+
+    #[test]
+    fn skips_non_kline_frames() {
+        // Subscription acknowledgement: skipped, never an error.
+        let ack = r#"{"result":null,"id":1}"#;
+        assert!(BinanceKlineStream::parse_frame(ack, Interval::OneMinute)
+            .unwrap()
+            .is_none());
+        // Error object: also skipped.
+        let err = r#"{"error":{"code":2,"msg":"Invalid request"}}"#;
+        assert!(BinanceKlineStream::parse_frame(err, Interval::OneMinute)
+            .unwrap()
+            .is_none());
+    }
+
+    #[test]
+    fn parse_frame_decodes_a_kline() {
+        let json = r#"{
+            "stream": "btcusdt@kline_1m",
+            "data": {
+              "e": "kline", "E": 1700000000000, "s": "BTCUSDT",
+              "k": {
+                "t": 1700000000000, "T": 1700000059999, "s": "BTCUSDT", "i": "1m",
+                "f": 1, "L": 100, "o": "30000.0", "c": "30050.0", "h": "30100.0",
+                "l": "29950.0", "v": "12.5", "n": 50, "x": true,
+                "q": "375000.0", "V": "6.25", "Q": "187500.0", "B": "0"
+              }
+            }
+        }"#;
+        let event = BinanceKlineStream::parse_frame(json, Interval::OneMinute)
+            .unwrap()
+            .expect("a kline frame yields an event");
+        assert_eq!(event.symbol, "btcusdt");
+        assert!(event.is_closed);
     }
 }
