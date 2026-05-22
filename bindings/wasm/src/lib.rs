@@ -342,6 +342,9 @@ impl WasmAdx {
         low: &[f64],
         close: &[f64],
     ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
         let n = high.len();
         let mut out = vec![f64::NAN; n * 3];
         for i in 0..n {
@@ -375,6 +378,9 @@ impl WasmWilliamsR {
         low: &[f64],
         close: &[f64],
     ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
         let mut out = Vec::with_capacity(high.len());
         for i in 0..high.len() {
             let c = make_candle(high[i], low[i], close[i], 0.0)?;
@@ -403,6 +409,9 @@ impl WasmCci {
         low: &[f64],
         close: &[f64],
     ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
         let mut out = Vec::with_capacity(high.len());
         for i in 0..high.len() {
             let c = make_candle(high[i], low[i], close[i], 0.0)?;
@@ -432,6 +441,9 @@ impl WasmMfi {
         close: &[f64],
         volume: &[f64],
     ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() || close.len() != volume.len() {
+            return Err(JsError::new("high, low, close, volume must be equal length"));
+        }
         let mut out = Vec::with_capacity(high.len());
         for i in 0..high.len() {
             let c = make_candle(high[i], low[i], close[i], volume[i])?;
@@ -460,6 +472,9 @@ impl WasmPsar {
         low: &[f64],
         close: &[f64],
     ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
         let mut out = Vec::with_capacity(high.len());
         for i in 0..high.len() {
             let c = make_candle(high[i], low[i], close[i], 0.0)?;
@@ -492,6 +507,9 @@ impl WasmKeltner {
         low: &[f64],
         close: &[f64],
     ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
         let n = high.len();
         let mut out = vec![f64::NAN; n * 3];
         for i in 0..n {
@@ -520,6 +538,9 @@ impl WasmDonchian {
         })
     }
     pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
         let n = high.len();
         let mut out = vec![f64::NAN; n * 3];
         for i in 0..n {
@@ -560,6 +581,9 @@ impl WasmVwap {
         close: &[f64],
         volume: &[f64],
     ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() || close.len() != volume.len() {
+            return Err(JsError::new("high, low, close, volume must be equal length"));
+        }
         let mut out = Vec::with_capacity(high.len());
         for i in 0..high.len() {
             let c = make_candle(high[i], low[i], close[i], volume[i])?;
@@ -583,6 +607,9 @@ impl WasmAo {
         })
     }
     pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
         let mut out = Vec::with_capacity(high.len());
         for i in 0..high.len() {
             let c = make_candle(high[i], low[i], low[i], 0.0)?;
@@ -607,6 +634,9 @@ impl WasmAroon {
     }
     /// Returns `[up0, down0, up1, down1, ...]`, length `2n`.
     pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
         let n = high.len();
         let mut out = vec![f64::NAN; n * 2];
         for i in 0..n {

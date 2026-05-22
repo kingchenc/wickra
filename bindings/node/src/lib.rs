@@ -305,6 +305,11 @@ impl StochNode {
         low: Vec<f64>,
         close: Vec<f64>,
     ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
         let n = high.len();
         let mut out = vec![f64::NAN; n * 2];
         for i in 0..n {
@@ -411,6 +416,11 @@ impl AdxNode {
         low: Vec<f64>,
         close: Vec<f64>,
     ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
         let n = high.len();
         let mut out = vec![f64::NAN; n * 3];
         for i in 0..n {
@@ -451,6 +461,11 @@ impl CciNode {
         low: Vec<f64>,
         close: Vec<f64>,
     ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
         let mut out = Vec::with_capacity(high.len());
         for i in 0..high.len() {
             out.push(
@@ -486,6 +501,11 @@ impl WilliamsRNode {
         low: Vec<f64>,
         close: Vec<f64>,
     ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
         let mut out = Vec::with_capacity(high.len());
         for i in 0..high.len() {
             out.push(
@@ -528,6 +548,11 @@ impl MfiNode {
         close: Vec<f64>,
         volume: Vec<f64>,
     ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() || close.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close, volume must be equal length".to_string(),
+            ));
+        }
         let mut out = Vec::with_capacity(high.len());
         for i in 0..high.len() {
             out.push(
@@ -563,6 +588,11 @@ impl PsarNode {
         low: Vec<f64>,
         close: Vec<f64>,
     ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
         let mut out = Vec::with_capacity(high.len());
         for i in 0..high.len() {
             out.push(
@@ -617,6 +647,11 @@ impl KeltnerNode {
         low: Vec<f64>,
         close: Vec<f64>,
     ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
         let n = high.len();
         let mut out = vec![f64::NAN; n * 3];
         for i in 0..n {
@@ -661,6 +696,11 @@ impl DonchianNode {
     }
     #[napi]
     pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() {
+            return Err(NapiError::from_reason(
+                "high and low must be equal length".to_string(),
+            ));
+        }
         let n = high.len();
         let mut out = vec![f64::NAN; n * 3];
         for i in 0..n {
@@ -709,6 +749,11 @@ impl VwapNode {
         close: Vec<f64>,
         volume: Vec<f64>,
     ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() || close.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close, volume must be equal length".to_string(),
+            ));
+        }
         let mut out = Vec::with_capacity(high.len());
         for i in 0..high.len() {
             out.push(
@@ -739,6 +784,11 @@ impl AoNode {
     }
     #[napi]
     pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() {
+            return Err(NapiError::from_reason(
+                "high and low must be equal length".to_string(),
+            ));
+        }
         let mut out = Vec::with_capacity(high.len());
         for i in 0..high.len() {
             out.push(
@@ -778,6 +828,11 @@ impl AroonNode {
     }
     #[napi]
     pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() {
+            return Err(NapiError::from_reason(
+                "high and low must be equal length".to_string(),
+            ));
+        }
         let n = high.len();
         let mut out = vec![f64::NAN; n * 2];
         for i in 0..n {

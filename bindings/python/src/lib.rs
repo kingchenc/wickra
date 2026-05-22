@@ -901,6 +901,11 @@ impl PyWilliamsR {
         let h = high.as_slice().expect("contiguous");
         let l = low.as_slice().expect("contiguous");
         let c = close.as_slice().expect("contiguous");
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
         let mut out = Vec::with_capacity(h.len());
         for i in 0..h.len() {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
@@ -952,6 +957,11 @@ impl PyAdx {
         let h = high.as_slice().expect("contiguous");
         let l = low.as_slice().expect("contiguous");
         let c = close.as_slice().expect("contiguous");
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
         let n = h.len();
         let mut out = vec![f64::NAN; n * 3];
         for i in 0..n {
@@ -1010,6 +1020,11 @@ impl PyMfi {
         let l = low.as_slice().expect("contiguous");
         let c = close.as_slice().expect("contiguous");
         let v = volume.as_slice().expect("contiguous");
+        if h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close, volume must be equal length",
+            ));
+        }
         let mut out = Vec::with_capacity(h.len());
         for i in 0..h.len() {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
@@ -1097,6 +1112,11 @@ impl PyPsar {
         let h = high.as_slice().expect("contiguous");
         let l = low.as_slice().expect("contiguous");
         let c = close.as_slice().expect("contiguous");
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
         let mut out = Vec::with_capacity(h.len());
         for i in 0..h.len() {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
@@ -1148,6 +1168,11 @@ impl PyKeltner {
         let h = high.as_slice().expect("contiguous");
         let l = low.as_slice().expect("contiguous");
         let c = close.as_slice().expect("contiguous");
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
         let n = h.len();
         let mut out = vec![f64::NAN; n * 3];
         for i in 0..n {
@@ -1262,6 +1287,11 @@ impl PyVwap {
         let l = low.as_slice().expect("contiguous");
         let c = close.as_slice().expect("contiguous");
         let v = volume.as_slice().expect("contiguous");
+        if h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close, volume must be equal length",
+            ));
+        }
         let mut out = Vec::with_capacity(h.len());
         for i in 0..h.len() {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
@@ -1309,6 +1339,9 @@ impl PyAo {
     ) -> PyResult<Bound<'py, PyArray1<f64>>> {
         let h = high.as_slice().expect("contiguous");
         let l = low.as_slice().expect("contiguous");
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
         let mut out = Vec::with_capacity(h.len());
         for i in 0..h.len() {
             let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
@@ -1356,6 +1389,9 @@ impl PyAroon {
     ) -> PyResult<Bound<'py, PyArray2<f64>>> {
         let h = high.as_slice().expect("contiguous");
         let l = low.as_slice().expect("contiguous");
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
         let n = h.len();
         let mut out = vec![f64::NAN; n * 2];
         for i in 0..n {
