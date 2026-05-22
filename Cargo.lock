@@ -1974,6 +1974,7 @@ dependencies = [
  "approx",
  "criterion",
  "proptest",
+ "serde_json",
  "wickra-core",
  "wickra-data",
 ]

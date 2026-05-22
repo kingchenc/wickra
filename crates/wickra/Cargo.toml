@@ -32,6 +32,9 @@ approx = { workspace = true }
 criterion = { workspace = true }
 proptest = { workspace = true }
 wickra-data = { path = "../wickra-data" }
+# Only the `fetch_btcusdt` example parses Binance REST JSON; a dev-dependency
+# never reaches a downstream consumer's dependency tree.
+serde_json = "1"
 
 [[bench]]
 name = "indicators"

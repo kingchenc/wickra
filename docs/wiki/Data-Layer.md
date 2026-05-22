@@ -152,6 +152,37 @@ A runnable example lives at `crates/wickra-data/examples/live_binance.rs`:
 cargo run -p wickra-data --example live_binance --features live-binance
 ```
 
+## Example datasets
+
+The repository ships seven ready-to-use OHLCV datasets under
+`crates/wickra/examples/data/`, one per timeframe, holding real Binance
+**BTCUSDT** spot candles in the standard `timestamp,open,high,low,close,volume`
+layout the `CandleReader` reads. The timestamp is each candle's open time in
+milliseconds.
+
+| File | Timeframe | Rows |
+| --- | --- | --- |
+| `btcusdt-1m.csv` | 1 minute | 50 000 |
+| `btcusdt-5m.csv` | 5 minutes | 10 000 |
+| `btcusdt-15m.csv` | 15 minutes | 10 000 |
+| `btcusdt-1h.csv` | 1 hour | 10 000 |
+| `btcusdt-12h.csv` | 12 hours | 5 000 |
+| `btcusdt-1d.csv` | 1 day | full history |
+| `btcusdt-1month.csv` | 1 month | full history |
+
+The monthly file is named `btcusdt-1month.csv` rather than `btcusdt-1M.csv` so
+it does not collide with `btcusdt-1m.csv` on case-insensitive filesystems. The
+indicator benchmarks and the `example_data` integration test both run against
+these files.
+
+Regenerate them with the latest market history — this downloads from the
+Binance REST API and needs the system `curl` (shipped with Windows 10+, macOS
+and Linux):
+
+```bash
+cargo run -p wickra --example fetch_btcusdt
+```
+
 ## See also
 
 - [Quickstart: Rust](Quickstart-Rust.md) — the core indicator API.

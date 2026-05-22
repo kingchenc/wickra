@@ -5,54 +5,52 @@
 //! cargo bench -p wickra
 //! ```
 //!
-//! Each benchmark feeds a deterministic synthetic price series through both the
-//! streaming (`update` loop) and batch APIs of an indicator. Sizes cover small
-//! (1 000), medium (10 000), and large (100 000) workloads.
+//! Each benchmark feeds real BTCUSDT 1-minute candles — read from the
+//! checked-in dataset `examples/data/btcusdt-1m.csv` — through both the
+//! streaming (`update` loop) and batch APIs of an indicator. Sizes cover
+//! small (1 000), medium (10 000), and large (50 000) workloads, taken as
+//! prefixes of that dataset.
+//!
+//! Regenerate the dataset with:
+//! ```text
+//! cargo run -p wickra --example fetch_btcusdt
+//! ```
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use wickra::{
     Atr, BatchExt, BollingerBands, Candle, Ema, Indicator, MacdIndicator, Obv, Rsi, Sma,
     Stochastic, Wma,
 };
+use wickra_data::csv::CandleReader;
 
-/// Deterministic synthetic price series of length `n`.
-fn price_series(n: usize) -> Vec<f64> {
-    (0..n)
-        .map(|i| {
-            let t = i as f64;
-            100.0 + (t * 0.013).sin() * 12.0 + (t * 0.071).cos() * 4.0 + (t * 0.003).sin() * 30.0
-        })
-        .collect()
+/// Workload sizes, in candles. Each is taken as a prefix of the dataset.
+const SIZES: &[usize] = &[1_000, 10_000, 50_000];
+
+/// Load the checked-in BTCUSDT 1-minute candle dataset.
+fn load_candles() -> Vec<Candle> {
+    let path = concat!(env!("CARGO_MANIFEST_DIR"), "/examples/data/btcusdt-1m.csv");
+    let mut reader = CandleReader::open(path).unwrap_or_else(|e| {
+        panic!(
+            "could not open the benchmark dataset {path}: {e}\n\
+             generate it with `cargo run -p wickra --example fetch_btcusdt`"
+        )
+    });
+    reader
+        .read_all()
+        .expect("the benchmark dataset is valid OHLCV")
 }
 
-/// Synthetic OHLC candle series.
-fn candle_series(n: usize) -> Vec<Candle> {
-    let closes = price_series(n);
-    closes
-        .iter()
-        .enumerate()
-        .map(|(i, c)| {
-            let t = i as f64;
-            let spread = 0.5 + (t * 0.05).sin().abs();
-            // Benchmark synthetic data: i originates from a usize counter capped at 100_000,
-            // well within i64::MAX. The wrap-around lint does not apply here.
-            #[allow(clippy::cast_possible_wrap)]
-            let ts = i as i64;
-            Candle::new_unchecked(*c, c + spread, c - spread, *c, 1_000.0, ts)
-        })
-        .collect()
-}
-
-fn bench_scalar<I, F>(c: &mut Criterion, name: &str, sizes: &[usize], make: F)
+fn bench_scalar<I, F>(c: &mut Criterion, name: &str, prices: &[f64], make: F)
 where
     F: Fn() -> I,
     I: Indicator<Input = f64, Output = f64> + BatchExt,
 {
     let mut group = c.benchmark_group(name);
-    for &n in sizes {
-        let series = price_series(n);
+    for &n in SIZES {
+        let n = n.min(prices.len());
+        let series = &prices[..n];
         group.throughput(Throughput::Elements(n as u64));
-        group.bench_with_input(BenchmarkId::new("streaming", n), &series, |b, prices| {
+        group.bench_with_input(BenchmarkId::new("streaming", n), series, |b, prices| {
             b.iter(|| {
                 let mut ind = make();
                 for p in prices {
@@ -60,7 +58,7 @@ where
                 }
             });
         });
-        group.bench_with_input(BenchmarkId::new("batch", n), &series, |b, prices| {
+        group.bench_with_input(BenchmarkId::new("batch", n), series, |b, prices| {
             b.iter(|| {
                 let mut ind = make();
                 black_box(ind.batch(prices));
@@ -70,12 +68,13 @@ where
     group.finish();
 }
 
-fn bench_macd(c: &mut Criterion, sizes: &[usize]) {
+fn bench_macd(c: &mut Criterion, prices: &[f64]) {
     let mut group = c.benchmark_group("macd");
-    for &n in sizes {
-        let series = price_series(n);
+    for &n in SIZES {
+        let n = n.min(prices.len());
+        let series = &prices[..n];
         group.throughput(Throughput::Elements(n as u64));
-        group.bench_with_input(BenchmarkId::new("streaming", n), &series, |b, prices| {
+        group.bench_with_input(BenchmarkId::new("streaming", n), series, |b, prices| {
             b.iter(|| {
                 let mut ind = MacdIndicator::classic();
                 for p in prices {
@@ -87,12 +86,13 @@ fn bench_macd(c: &mut Criterion, sizes: &[usize]) {
     group.finish();
 }
 
-fn bench_bollinger(c: &mut Criterion, sizes: &[usize]) {
+fn bench_bollinger(c: &mut Criterion, prices: &[f64]) {
     let mut group = c.benchmark_group("bollinger");
-    for &n in sizes {
-        let series = price_series(n);
+    for &n in SIZES {
+        let n = n.min(prices.len());
+        let series = &prices[..n];
         group.throughput(Throughput::Elements(n as u64));
-        group.bench_with_input(BenchmarkId::new("streaming", n), &series, |b, prices| {
+        group.bench_with_input(BenchmarkId::new("streaming", n), series, |b, prices| {
             b.iter(|| {
                 let mut ind = BollingerBands::classic();
                 for p in prices {
@@ -104,16 +104,17 @@ fn bench_bollinger(c: &mut Criterion, sizes: &[usize]) {
     group.finish();
 }
 
-fn bench_candle_input<I, F, O>(c: &mut Criterion, name: &str, sizes: &[usize], make: F)
+fn bench_candle_input<I, F, O>(c: &mut Criterion, name: &str, candles: &[Candle], make: F)
 where
     F: Fn() -> I,
     I: Indicator<Input = Candle, Output = O>,
 {
     let mut group = c.benchmark_group(name);
-    for &n in sizes {
-        let candles = candle_series(n);
+    for &n in SIZES {
+        let n = n.min(candles.len());
+        let series = &candles[..n];
         group.throughput(Throughput::Elements(n as u64));
-        group.bench_with_input(BenchmarkId::new("streaming", n), &candles, |b, candles| {
+        group.bench_with_input(BenchmarkId::new("streaming", n), series, |b, candles| {
             b.iter(|| {
                 let mut ind = make();
                 for c in candles {
@@ -126,16 +127,18 @@ where
 }
 
 fn benches(c: &mut Criterion) {
-    let sizes = [1_000_usize, 10_000, 100_000];
-    bench_scalar(c, "sma", &sizes, || Sma::new(14).unwrap());
-    bench_scalar(c, "ema", &sizes, || Ema::new(14).unwrap());
-    bench_scalar(c, "wma", &sizes, || Wma::new(14).unwrap());
-    bench_scalar(c, "rsi", &sizes, || Rsi::new(14).unwrap());
-    bench_macd(c, &sizes);
-    bench_bollinger(c, &sizes);
-    bench_candle_input(c, "atr", &sizes, || Atr::new(14).unwrap());
-    bench_candle_input(c, "stochastic", &sizes, Stochastic::classic);
-    bench_candle_input(c, "obv", &sizes, Obv::new);
+    let candles = load_candles();
+    let closes: Vec<f64> = candles.iter().map(|c| c.close).collect();
+
+    bench_scalar(c, "sma", &closes, || Sma::new(14).unwrap());
+    bench_scalar(c, "ema", &closes, || Ema::new(14).unwrap());
+    bench_scalar(c, "wma", &closes, || Wma::new(14).unwrap());
+    bench_scalar(c, "rsi", &closes, || Rsi::new(14).unwrap());
+    bench_macd(c, &closes);
+    bench_bollinger(c, &closes);
+    bench_candle_input(c, "atr", &candles, || Atr::new(14).unwrap());
+    bench_candle_input(c, "stochastic", &candles, Stochastic::classic);
+    bench_candle_input(c, "obv", &candles, Obv::new);
 }
 
 criterion_group!(name = wickra_benches; config = Criterion::default(); targets = benches);

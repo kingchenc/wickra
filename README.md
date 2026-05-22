@@ -180,7 +180,8 @@ wickra/
 ├── crates/
 │   ├── wickra-core/         core engine + all 71 indicators
 │   ├── wickra/              top-level facade crate (publishes on crates.io)
-│   │                        + benches/ and examples/backtest.rs
+│   │                        + benches/, examples/ (backtest, fetch_btcusdt)
+│   │                        and examples/data/ real BTCUSDT datasets
 │   └── wickra-data/         CSV reader, tick aggregator, live exchange feeds
 │                            + examples/live_binance.rs
 ├── bindings/
