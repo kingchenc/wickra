@@ -1,6 +1,7 @@
 # Wickra
 
 [![CI](https://github.com/kingchenc/wickra/actions/workflows/ci.yml/badge.svg)](https://github.com/kingchenc/wickra/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/kingchenc/wickra/branch/main/graph/badge.svg)](https://codecov.io/gh/kingchenc/wickra)
 [![crates.io](https://img.shields.io/crates/v/wickra.svg?logo=rust&color=orange)](https://crates.io/crates/wickra)
 [![PyPI](https://img.shields.io/pypi/v/wickra.svg?logo=pypi&color=blue)](https://pypi.org/project/wickra/)
 [![npm](https://img.shields.io/npm/v/wickra.svg?logo=npm&color=red)](https://www.npmjs.com/package/wickra)
