@@ -4,6 +4,7 @@
 //! volume) but every public name is also re-exported flat from this module and
 //! from the crate root for convenience.
 
+mod adl;
 mod adx;
 mod aroon;
 mod aroon_oscillator;
@@ -47,12 +48,14 @@ mod tsi;
 mod ulcer_index;
 mod ultimate_oscillator;
 mod vortex;
+mod vpt;
 mod vwap;
 mod vwma;
 mod williams_r;
 mod wma;
 mod zlema;
 
+pub use adl::Adl;
 pub use adx::{Adx, AdxOutput};
 pub use aroon::{Aroon, AroonOutput};
 pub use aroon_oscillator::AroonOscillator;
@@ -96,6 +99,7 @@ pub use tsi::Tsi;
 pub use ulcer_index::UlcerIndex;
 pub use ultimate_oscillator::UltimateOscillator;
 pub use vortex::{Vortex, VortexOutput};
+pub use vpt::VolumePriceTrend;
 pub use vwap::{RollingVwap, Vwap};
 pub use vwma::Vwma;
 pub use williams_r::WilliamsR;

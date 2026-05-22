@@ -1519,6 +1519,140 @@ impl PyAroon {
     }
 }
 
+// ============================== ADL ==============================
+
+#[pyclass(name = "ADL", module = "wickra._wickra")]
+#[derive(Clone)]
+struct PyAdl {
+    inner: wc::Adl,
+}
+
+#[pymethods]
+impl PyAdl {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::Adl::new(),
+        }
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over numpy columns: high, low, close, volume (all equal length).
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close, volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray_bound(py))
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "ADL()".to_string()
+    }
+}
+
+// ============================== Volume-Price Trend ==============================
+
+#[pyclass(name = "VolumePriceTrend", module = "wickra._wickra")]
+#[derive(Clone)]
+struct PyVolumePriceTrend {
+    inner: wc::VolumePriceTrend,
+}
+
+#[pymethods]
+impl PyVolumePriceTrend {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::VolumePriceTrend::new(),
+        }
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over numpy close + volume arrays (both 1-D, equal length).
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if c.len() != v.len() {
+            return Err(PyValueError::new_err(
+                "close and volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(c.len());
+        for i in 0..c.len() {
+            let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray_bound(py))
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "VolumePriceTrend()".to_string()
+    }
+}
+
 // ============================== Bollinger Bandwidth ==============================
 
 #[pyclass(name = "BollingerBandwidth", module = "wickra._wickra")]
@@ -2911,5 +3045,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyHistoricalVolatility>()?;
     m.add_class::<PyBollingerBandwidth>()?;
     m.add_class::<PyPercentB>()?;
+    m.add_class::<PyAdl>()?;
+    m.add_class::<PyVolumePriceTrend>()?;
     Ok(())
 }

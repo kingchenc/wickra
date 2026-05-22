@@ -1,6 +1,6 @@
 # Indicators Overview
 
-Wickra ships 48 indicators, organised in source under the four classical
+Wickra ships 50 indicators, organised in source under the four classical
 families — trend, momentum, volatility, volume — that map directly to the
 directory structure of `crates/wickra-core/src/indicators/`. The same family
 labels are used here, plus a second-level grouping that reflects how the
@@ -160,6 +160,8 @@ Volume indicators all take `Candle` input because they need `close` and
 |---------------|-----------|-------|--------|-------|----------|--------|-----------|
 | `Obv`         | On-Balance Volume: cumulative signed volume driven by close-vs-prior-close sign. | `Candle` | `f64` | unbounded (drifts with cumulative volume) | (no parameters) | `1` | [Indicator-Obv.md](indicators/volume/Indicator-Obv.md) |
 | `Vwap`        | Cumulative volume-weighted average price from the start of the stream (intraday reset is your responsibility). | `Candle` | `f64` | unbounded (price scale) | (no parameters) | `1` | [Indicator-Vwap.md](indicators/volume/Indicator-Vwap.md) |
+| `Adl`         | Accumulation/Distribution Line; cumulative range-weighted volume. | `Candle` | `f64` | unbounded (drifts with volume) | (no parameters) | `1` | [Indicator-Adl.md](indicators/volume/Indicator-Adl.md) |
+| `VolumePriceTrend` | Cumulative `volume · ROC`; volume flow weighted by percentage move. | `Candle` | `f64` | unbounded (drifts with volume) | (no parameters) | `1` | [Indicator-VolumePriceTrend.md](indicators/volume/Indicator-VolumePriceTrend.md) |
 
 ### Rolling
 

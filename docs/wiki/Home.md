@@ -129,6 +129,8 @@ Rust / Python / Node examples. They are grouped by family, mirroring the
 
 - [Indicator-Obv.md](indicators/volume/Indicator-Obv.md)
 - [Indicator-Vwap.md](indicators/volume/Indicator-Vwap.md)
+- [Indicator-Adl.md](indicators/volume/Indicator-Adl.md)
+- [Indicator-VolumePriceTrend.md](indicators/volume/Indicator-VolumePriceTrend.md)
 
 ## See also
 
