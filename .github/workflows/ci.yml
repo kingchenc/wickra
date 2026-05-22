@@ -52,6 +52,40 @@ jobs:
           cargo build -p wickra --example backtest
           cargo build -p wickra-data --example live_binance --features live-binance
 
+  # Verify the crates still build and test on their declared minimum supported
+  # Rust version. The workspace pins rust-version = "1.75"; bindings/node needs
+  # 1.77 because napi-build emits `cargo::` directives. Without this job an
+  # accidental use of a newer API would only surface for downstream users.
+  msrv:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: MSRV workspace (Rust 1.75)
+            toolchain: "1.75"
+            packages: "-p wickra-core -p wickra -p wickra-data"
+          - name: MSRV node binding (Rust 1.77)
+            toolchain: "1.77"
+            packages: "-p wickra-node"
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Install Rust ${{ matrix.toolchain }}
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable branch, 2026-03-27
+        with:
+          toolchain: ${{ matrix.toolchain }}
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+
+      - name: Build on MSRV
+        run: cargo build ${{ matrix.packages }} --verbose
+
+      - name: Test on MSRV
+        run: cargo test ${{ matrix.packages }} --verbose
+
   python:
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
