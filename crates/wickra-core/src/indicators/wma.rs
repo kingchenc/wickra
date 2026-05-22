@@ -203,6 +203,23 @@ mod tests {
         );
     }
 
+    #[test]
+    fn ignores_non_finite_input_but_keeps_state() {
+        let mut wma = Wma::new(3).unwrap();
+        wma.update(1.0);
+        wma.update(2.0);
+        let ready = wma.update(3.0).expect("WMA(3) ready after three inputs");
+        // Non-finite inputs return the last value without mutating the window.
+        assert_eq!(wma.update(f64::NAN), Some(ready));
+        assert_eq!(wma.update(f64::INFINITY), Some(ready));
+        // The window still holds 1, 2, 3 -> next real input slides it to 2, 3, 4.
+        assert_relative_eq!(
+            wma.update(4.0).unwrap(),
+            (2.0 * 1.0 + 3.0 * 2.0 + 4.0 * 3.0) / 6.0,
+            epsilon = 1e-12
+        );
+    }
+
     proptest::proptest! {
         #![proptest_config(proptest::test_runner::Config::with_cases(48))]
         #[test]

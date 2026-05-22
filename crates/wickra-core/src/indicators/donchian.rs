@@ -138,4 +138,17 @@ mod tests {
     fn rejects_zero_period() {
         assert!(Donchian::new(0).is_err());
     }
+
+    #[test]
+    fn reset_clears_state() {
+        let candles: Vec<Candle> = (0..20)
+            .map(|i| c(f64::from(i) + 1.0, f64::from(i) - 1.0, f64::from(i)))
+            .collect();
+        let mut d = Donchian::new(5).unwrap();
+        d.batch(&candles);
+        assert!(d.is_ready());
+        d.reset();
+        assert!(!d.is_ready());
+        assert_eq!(d.update(candles[0]), None);
+    }
 }

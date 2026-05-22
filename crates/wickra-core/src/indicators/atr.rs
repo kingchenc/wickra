@@ -100,6 +100,36 @@ mod tests {
         Candle::new(cl, h, l, cl, 1.0, 0).unwrap()
     }
 
+    /// Independent reference: Wilder ATR computed straight from the definition.
+    fn atr_naive(hlc: &[(f64, f64, f64)], period: usize) -> Vec<Option<f64>> {
+        let n = period as f64;
+        let mut out = Vec::with_capacity(hlc.len());
+        let mut trs: Vec<f64> = Vec::new();
+        let mut avg: Option<f64> = None;
+        let mut prev_close: Option<f64> = None;
+        for &(h, l, cl) in hlc {
+            let tr = match prev_close {
+                None => h - l,
+                Some(pc) => (h - l).max((h - pc).abs()).max((l - pc).abs()),
+            };
+            prev_close = Some(cl);
+            if let Some(a) = avg {
+                let na = (a * (n - 1.0) + tr) / n;
+                avg = Some(na);
+                out.push(Some(na));
+            } else {
+                trs.push(tr);
+                if trs.len() == period {
+                    avg = Some(trs.iter().sum::<f64>() / n);
+                    out.push(avg);
+                } else {
+                    out.push(None);
+                }
+            }
+        }
+        out
+    }
+
     #[test]
     fn rejects_zero_period() {
         assert!(matches!(Atr::new(0), Err(Error::PeriodZero)));
@@ -185,6 +215,39 @@ mod tests {
         let mut atr = Atr::new(14).unwrap();
         for v in atr.batch(&candles).into_iter().flatten() {
             assert!(v >= 0.0, "ATR must be non-negative: {v}");
+        }
+    }
+
+    proptest::proptest! {
+        #![proptest_config(proptest::test_runner::Config::with_cases(48))]
+        #[test]
+        fn atr_matches_naive(
+            period in 1usize..15,
+            bars in proptest::collection::vec(
+                (10.0_f64..1000.0, 0.0_f64..50.0, 0.0_f64..1.0),
+                0..120,
+            ),
+        ) {
+            // bars: (low, range, close_fraction) -> a valid OHLC candle.
+            let hlc: Vec<(f64, f64, f64)> = bars
+                .iter()
+                .map(|&(low, range, frac)| (low + range, low, low + range * frac))
+                .collect();
+            let candles: Vec<Candle> = hlc.iter().map(|&(h, l, cl)| c(h, l, cl)).collect();
+            let mut atr = Atr::new(period).unwrap();
+            let got = atr.batch(&candles);
+            let want = atr_naive(&hlc, period);
+            proptest::prop_assert_eq!(got.len(), want.len());
+            for (g, w) in got.iter().zip(want.iter()) {
+                match (g, w) {
+                    (None, None) => {}
+                    (Some(a), Some(b)) => proptest::prop_assert!(
+                        (a - b).abs() <= 1e-9 * a.abs().max(1.0),
+                        "got={a} want={b}"
+                    ),
+                    _ => proptest::prop_assert!(false, "warmup mismatch"),
+                }
+            }
         }
     }
 }

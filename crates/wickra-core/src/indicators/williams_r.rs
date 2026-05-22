@@ -138,4 +138,17 @@ mod tests {
     fn rejects_zero_period() {
         assert!(WilliamsR::new(0).is_err());
     }
+
+    #[test]
+    fn reset_clears_state() {
+        let candles: Vec<Candle> = (0..20)
+            .map(|i| c(f64::from(i) + 2.0, f64::from(i), f64::from(i) + 1.0))
+            .collect();
+        let mut w = WilliamsR::new(5).unwrap();
+        w.batch(&candles);
+        assert!(w.is_ready());
+        w.reset();
+        assert!(!w.is_ready());
+        assert_eq!(w.update(candles[0]), None);
+    }
 }

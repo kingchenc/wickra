@@ -140,6 +140,50 @@ mod tests {
     use crate::traits::BatchExt;
     use approx::assert_relative_eq;
 
+    /// Independent reference: Wilder RSI computed straight from the definition.
+    fn rsi_naive(prices: &[f64], period: usize) -> Vec<Option<f64>> {
+        let n = period as f64;
+        let mut out = vec![None; prices.len()];
+        let mut gains: Vec<f64> = Vec::new();
+        let mut losses: Vec<f64> = Vec::new();
+        let mut avg_gain: Option<f64> = None;
+        let mut avg_loss: Option<f64> = None;
+        let rsi_val = |ag: f64, al: f64| -> f64 {
+            if al == 0.0 {
+                if ag == 0.0 {
+                    50.0
+                } else {
+                    100.0
+                }
+            } else {
+                100.0 - 100.0 / (1.0 + ag / al)
+            }
+        };
+        for i in 1..prices.len() {
+            let diff = prices[i] - prices[i - 1];
+            let gain = if diff > 0.0 { diff } else { 0.0 };
+            let loss = if diff < 0.0 { -diff } else { 0.0 };
+            if let (Some(ag), Some(al)) = (avg_gain, avg_loss) {
+                let nag = (ag * (n - 1.0) + gain) / n;
+                let nal = (al * (n - 1.0) + loss) / n;
+                avg_gain = Some(nag);
+                avg_loss = Some(nal);
+                out[i] = Some(rsi_val(nag, nal));
+            } else {
+                gains.push(gain);
+                losses.push(loss);
+                if gains.len() == period {
+                    let ag = gains.iter().sum::<f64>() / n;
+                    let al = losses.iter().sum::<f64>() / n;
+                    avg_gain = Some(ag);
+                    avg_loss = Some(al);
+                    out[i] = Some(rsi_val(ag, al));
+                }
+            }
+        }
+        out
+    }
+
     #[test]
     fn new_rejects_zero_period() {
         assert!(matches!(Rsi::new(0), Err(Error::PeriodZero)));
@@ -243,5 +287,40 @@ mod tests {
             a.batch(&prices),
             prices.iter().map(|p| b.update(*p)).collect::<Vec<_>>()
         );
+    }
+
+    #[test]
+    fn ignores_non_finite_input() {
+        let mut rsi = Rsi::new(3).unwrap();
+        rsi.batch(&[1.0, 2.0, 3.0, 4.0]);
+        let before = rsi.value();
+        assert!(before.is_some());
+        assert_eq!(rsi.update(f64::NAN), before);
+        assert_eq!(rsi.update(f64::INFINITY), before);
+        assert_eq!(rsi.value(), before);
+    }
+
+    proptest::proptest! {
+        #![proptest_config(proptest::test_runner::Config::with_cases(48))]
+        #[test]
+        fn rsi_matches_naive(
+            period in 1usize..20,
+            prices in proptest::collection::vec(1.0_f64..1000.0, 0..150),
+        ) {
+            let mut rsi = Rsi::new(period).unwrap();
+            let got = rsi.batch(&prices);
+            let want = rsi_naive(&prices, period);
+            proptest::prop_assert_eq!(got.len(), want.len());
+            for (g, w) in got.iter().zip(want.iter()) {
+                match (g, w) {
+                    (None, None) => {}
+                    (Some(a), Some(b)) => proptest::prop_assert!(
+                        (a - b).abs() < 1e-7,
+                        "got={a} want={b}"
+                    ),
+                    _ => proptest::prop_assert!(false, "warmup mismatch"),
+                }
+            }
+        }
     }
 }

@@ -240,4 +240,17 @@ mod tests {
         bb.reset();
         assert!(!bb.is_ready());
     }
+
+    #[test]
+    fn ignores_non_finite_input() {
+        let mut bb = BollingerBands::new(5, 2.0).unwrap();
+        let ready = bb.batch(&[1.0, 2.0, 3.0, 4.0, 5.0]);
+        let last = ready.last().unwrap().unwrap();
+        // Non-finite inputs return the current bands without mutating the window.
+        assert_eq!(bb.update(f64::NAN).unwrap(), last);
+        assert_eq!(bb.update(f64::INFINITY).unwrap(), last);
+        // The window still holds 1..=5, so a real input slides it to 2..=6.
+        let after = bb.update(6.0).unwrap();
+        assert_relative_eq!(after.middle, (2.0 + 3.0 + 4.0 + 5.0 + 6.0) / 5.0, epsilon = 1e-12);
+    }
 }

@@ -139,4 +139,17 @@ mod tests {
         assert!(Keltner::new(20, 10, 0.0).is_err());
         assert!(Keltner::new(20, 10, -1.0).is_err());
     }
+
+    #[test]
+    fn reset_clears_state() {
+        let candles: Vec<Candle> = (0..50)
+            .map(|i| c(f64::from(i) + 1.0, f64::from(i) - 1.0, f64::from(i)))
+            .collect();
+        let mut k = Keltner::classic();
+        k.batch(&candles);
+        assert!(k.is_ready());
+        k.reset();
+        assert!(!k.is_ready());
+        assert_eq!(k.update(candles[0]), None);
+    }
 }

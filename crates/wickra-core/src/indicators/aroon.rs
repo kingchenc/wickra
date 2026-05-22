@@ -153,4 +153,17 @@ mod tests {
             assert!((0.0..=100.0).contains(&o.down));
         }
     }
+
+    #[test]
+    fn reset_clears_state() {
+        let candles: Vec<Candle> = (1..=20)
+            .map(|i| c(f64::from(i) + 1.0, f64::from(i) - 1.0, f64::from(i)))
+            .collect();
+        let mut a = Aroon::new(14).unwrap();
+        a.batch(&candles);
+        assert!(a.is_ready());
+        a.reset();
+        assert!(!a.is_ready());
+        assert_eq!(a.update(candles[0]), None);
+    }
 }

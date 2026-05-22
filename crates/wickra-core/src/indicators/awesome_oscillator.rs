@@ -114,4 +114,17 @@ mod tests {
             candles.iter().map(|x| b.update(*x)).collect::<Vec<_>>()
         );
     }
+
+    #[test]
+    fn reset_clears_state() {
+        let candles: Vec<Candle> = (0..50)
+            .map(|i| c(f64::from(i) + 1.0, f64::from(i) - 1.0, f64::from(i)))
+            .collect();
+        let mut ao = AwesomeOscillator::classic();
+        ao.batch(&candles);
+        assert!(ao.is_ready());
+        ao.reset();
+        assert!(!ao.is_ready());
+        assert_eq!(ao.update(candles[0]), None);
+    }
 }

@@ -154,4 +154,15 @@ mod tests {
         k.reset();
         assert!(!k.is_ready());
     }
+
+    #[test]
+    fn ignores_non_finite_input() {
+        let mut k = Kama::classic();
+        k.batch(&(1..=40).map(f64::from).collect::<Vec<_>>());
+        let before = k.update(41.0);
+        assert!(before.is_some());
+        // Non-finite inputs return the last state without sliding the window.
+        assert_eq!(k.update(f64::NAN), before);
+        assert_eq!(k.update(f64::INFINITY), before);
+    }
 }

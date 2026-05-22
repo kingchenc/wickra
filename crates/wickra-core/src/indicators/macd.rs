@@ -227,4 +227,16 @@ mod tests {
         assert!(!macd.is_ready());
         assert_eq!(macd.update(1.0), None);
     }
+
+    #[test]
+    fn ignores_non_finite_input() {
+        let mut macd = MacdIndicator::classic();
+        macd.batch(&(1..=80).map(f64::from).collect::<Vec<_>>());
+        let before = macd.value();
+        assert!(before.is_some());
+        // Non-finite inputs return the last value without advancing any EMA.
+        assert_eq!(macd.update(f64::NAN), before);
+        assert_eq!(macd.update(f64::INFINITY), before);
+        assert_eq!(macd.value(), before);
+    }
 }

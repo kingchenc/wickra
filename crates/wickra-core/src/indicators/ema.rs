@@ -126,6 +126,27 @@ mod tests {
     use crate::traits::BatchExt;
     use approx::assert_relative_eq;
 
+    /// Independent reference: SMA-seeded EMA computed straight from the definition.
+    fn ema_naive(prices: &[f64], period: usize) -> Vec<Option<f64>> {
+        let alpha = 2.0 / (period as f64 + 1.0);
+        let mut out = Vec::with_capacity(prices.len());
+        let mut state: Option<f64> = None;
+        for (i, &p) in prices.iter().enumerate() {
+            if let Some(prev) = state {
+                let v = alpha * p + (1.0 - alpha) * prev;
+                state = Some(v);
+                out.push(Some(v));
+            } else if i + 1 == period {
+                let seed = prices[..period].iter().sum::<f64>() / period as f64;
+                state = Some(seed);
+                out.push(Some(seed));
+            } else {
+                out.push(None);
+            }
+        }
+        out
+    }
+
     #[test]
     fn new_rejects_zero_period() {
         assert!(matches!(Ema::new(0), Err(Error::PeriodZero)));
@@ -220,5 +241,29 @@ mod tests {
         let before = ema.value();
         assert_eq!(ema.update(f64::NAN), before);
         assert_eq!(ema.update(f64::INFINITY), before);
+    }
+
+    proptest::proptest! {
+        #![proptest_config(proptest::test_runner::Config::with_cases(48))]
+        #[test]
+        fn ema_matches_naive(
+            period in 1usize..20,
+            prices in proptest::collection::vec(-1000.0_f64..1000.0, 0..150),
+        ) {
+            let mut ema = Ema::new(period).unwrap();
+            let got = ema.batch(&prices);
+            let want = ema_naive(&prices, period);
+            proptest::prop_assert_eq!(got.len(), want.len());
+            for (g, w) in got.iter().zip(want.iter()) {
+                match (g, w) {
+                    (None, None) => {}
+                    (Some(a), Some(b)) => proptest::prop_assert!(
+                        (a - b).abs() <= 1e-9 * a.abs().max(1.0),
+                        "got={a} want={b}"
+                    ),
+                    _ => proptest::prop_assert!(false, "warmup mismatch"),
+                }
+            }
+        }
     }
 }

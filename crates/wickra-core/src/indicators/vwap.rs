@@ -210,4 +210,26 @@ mod tests {
     fn rolling_rejects_zero_period() {
         assert!(RollingVwap::new(0).is_err());
     }
+
+    #[test]
+    fn cumulative_reset_clears_state() {
+        let candles = vec![c(10.0, 1.0), c(20.0, 1.0), c(30.0, 1.0)];
+        let mut v = Vwap::new();
+        v.batch(&candles);
+        assert!(v.is_ready());
+        v.reset();
+        assert!(!v.is_ready());
+        assert_eq!(v.value(), None);
+    }
+
+    #[test]
+    fn rolling_reset_clears_state() {
+        let candles: Vec<Candle> = (1..=10).map(|i| c(f64::from(i), 1.0)).collect();
+        let mut v = RollingVwap::new(5).unwrap();
+        v.batch(&candles);
+        assert!(v.is_ready());
+        v.reset();
+        assert!(!v.is_ready());
+        assert_eq!(v.update(candles[0]), None);
+    }
 }
