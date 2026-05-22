@@ -45,8 +45,13 @@ impl Indicator for Hma {
     type Output = f64;
 
     fn update(&mut self, input: f64) -> Option<f64> {
-        let h = self.half_wma.update(input)?;
-        let f = self.full_wma.update(input)?;
+        // Feed both windowed WMAs on every input so they warm up in parallel.
+        // Gating `full_wma.update` behind `half_wma.update(...)?` would starve
+        // the longer WMA during the shorter one's warmup, delaying the first
+        // emission past `warmup_period()`.
+        let h = self.half_wma.update(input);
+        let f = self.full_wma.update(input);
+        let (h, f) = (h?, f?);
         let diff = 2.0 * h - f;
         self.smooth_wma.update(diff)
     }
@@ -108,5 +113,46 @@ mod tests {
     #[test]
     fn rejects_zero_period() {
         assert!(Hma::new(0).is_err());
+    }
+
+    #[test]
+    fn first_emission_matches_warmup_period() {
+        let prices: Vec<f64> = (1..=40).map(f64::from).collect();
+        let mut hma = Hma::new(9).unwrap();
+        let out = hma.batch(&prices);
+        let warmup = hma.warmup_period();
+        assert_eq!(warmup, 11);
+        for (i, v) in out.iter().enumerate().take(warmup - 1) {
+            assert!(v.is_none(), "index {i} must be None during warmup");
+        }
+        assert!(
+            out[warmup - 1].is_some(),
+            "first HMA value must land at warmup_period - 1"
+        );
+    }
+
+    #[test]
+    fn matches_independent_wmas() {
+        // The two inner WMAs run as independent siblings on the price stream;
+        // HMA must equal feeding three standalone WMAs and combining them.
+        let prices: Vec<f64> = (1..=50)
+            .map(|i| (f64::from(i) * 0.3).sin() * 10.0 + 50.0)
+            .collect();
+        let mut hma = Hma::new(9).unwrap();
+        let mut half = Wma::new(4).unwrap(); // (9 / 2).max(1)
+        let mut full = Wma::new(9).unwrap();
+        let mut smooth = Wma::new(3).unwrap(); // round(sqrt(9))
+        for &p in &prices {
+            let got = hma.update(p);
+            let want = match (half.update(p), full.update(p)) {
+                (Some(h), Some(f)) => smooth.update(2.0 * h - f),
+                _ => None,
+            };
+            match (got, want) {
+                (None, None) => {}
+                (Some(a), Some(b)) => assert_relative_eq!(a, b, epsilon = 1e-9),
+                _ => panic!("HMA and the independent-WMA reference disagree on readiness"),
+            }
+        }
     }
 }

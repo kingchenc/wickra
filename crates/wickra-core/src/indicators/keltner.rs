@@ -59,8 +59,14 @@ impl Indicator for Keltner {
     type Output = KeltnerOutput;
 
     fn update(&mut self, candle: Candle) -> Option<KeltnerOutput> {
-        let mid = self.ema.update(candle.typical_price())?;
-        let atr = self.atr.update(candle)?;
+        // Feed both sub-indicators on every candle so they warm up in parallel.
+        // Gating `atr.update` behind `ema.update(...)?` would starve the ATR of
+        // every candle consumed during the EMA's warmup, delaying the first
+        // emission past `warmup_period()` and seeding the ATR over the wrong
+        // window.
+        let mid = self.ema.update(candle.typical_price());
+        let atr = self.atr.update(candle);
+        let (mid, atr) = (mid?, atr?);
         Some(KeltnerOutput {
             upper: mid + self.multiplier * atr,
             middle: mid,
@@ -151,5 +157,56 @@ mod tests {
         k.reset();
         assert!(!k.is_ready());
         assert_eq!(k.update(candles[0]), None);
+    }
+
+    #[test]
+    fn first_emission_matches_warmup_period() {
+        let candles: Vec<Candle> = (0..60)
+            .map(|i| {
+                let base = 100.0 + f64::from(i);
+                c(base + 1.0, base - 1.0, base)
+            })
+            .collect();
+        let mut k = Keltner::classic();
+        let out = k.batch(&candles);
+        let warmup = k.warmup_period();
+        assert_eq!(warmup, 20);
+        for (i, v) in out.iter().enumerate().take(warmup - 1) {
+            assert!(v.is_none(), "index {i} must be None during warmup");
+        }
+        assert!(
+            out[warmup - 1].is_some(),
+            "first KeltnerOutput must land at warmup_period - 1"
+        );
+    }
+
+    #[test]
+    fn matches_independent_ema_and_atr() {
+        // The EMA (on typical price) and the ATR (on the candle) run as
+        // independent siblings; Keltner must equal feeding two standalone
+        // instances and combining them once both are ready.
+        let candles: Vec<Candle> = (0..60)
+            .map(|i| {
+                let m = 100.0 + (f64::from(i) * 0.2).sin() * 5.0;
+                c(m + 1.5, m - 1.5, m)
+            })
+            .collect();
+        let mut k = Keltner::classic();
+        let mut ema = Ema::new(20).unwrap();
+        let mut atr = Atr::new(10).unwrap();
+        for (i, candle) in candles.iter().enumerate() {
+            let got = k.update(*candle);
+            let mid = ema.update(candle.typical_price());
+            let a = atr.update(*candle);
+            match (mid, a) {
+                (Some(m), Some(av)) => {
+                    let o = got.expect("Keltner emits once EMA and ATR are both ready");
+                    assert_relative_eq!(o.middle, m, epsilon = 1e-9);
+                    assert_relative_eq!(o.upper, m + 2.0 * av, epsilon = 1e-9);
+                    assert_relative_eq!(o.lower, m - 2.0 * av, epsilon = 1e-9);
+                }
+                _ => assert!(got.is_none(), "Keltner must be None until both ready (i={i})"),
+            }
+        }
     }
 }
