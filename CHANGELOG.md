@@ -66,6 +66,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The indicator benchmarks (`crates/wickra/benches/indicators.rs`) now run
   against the checked-in real BTCUSDT 1-minute dataset instead of a synthetic
   price series.
+- Every language's examples now live under a uniform `examples/<lang>/`
+  tree: Rust moved into a new `examples/rust/` workspace member crate
+  (`wickra-examples`, run via `cargo run -p wickra-examples --bin <name>`),
+  Node into `examples/node/` with its own `package.json` linking `wickra` via
+  `file:../../bindings/node`, and the WASM browser demo into
+  `examples/wasm/`. The bundled BTCUSDT datasets move alongside them at
+  `examples/data/`. Six new examples close the cross-language parity matrix:
+  streaming demos for Python and Rust; multi-timeframe and parallel-assets
+  demos for both Rust and Node.
 
 ### Fixed
 - `Timeframe::floor` no longer overflows for timestamps near `i64::MIN`.

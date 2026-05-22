@@ -62,6 +62,14 @@ Release notes and tagged builds:
 - [Indicator Chaining](Indicator-Chaining.md) — `Chain::new(first, second)`
   and `.then(third)`, with a worked EMA(14) → RSI(7) example and the rule
   for stacked warmups.
+- [Cookbook](Cookbook.md) — copy-paste strategy recipes built on streaming
+  indicators (RSI mean reversion, MACD crossover, Bollinger breakout,
+  ADX-gated trend, multi-timeframe, SuperTrend trailing stop).
+- [TA-Lib Migration](TA-Lib-Migration.md) — function-by-function mapping
+  table from TA-Lib's `talib.X(...)` calls to the equivalent Wickra
+  expressions.
+- [FAQ](FAQ.md) — quick answers to the most common questions about
+  warmup, NaN handling, thread safety, and the streaming-vs-batch contract.
 
 ### Indicator reference
 
