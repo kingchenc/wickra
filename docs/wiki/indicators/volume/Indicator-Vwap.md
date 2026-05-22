@@ -12,8 +12,7 @@ This page documents two distinct public types — jump straight to
 
 | Item                | Value                                                          |
 |---------------------|----------------------------------------------------------------|
-| Family              | Volume                                                         |
-| Sub-category        | cumulative (`Vwap`) / rolling (`RollingVwap`)                  |
+| Family | Volume |
 | Input type          | `Candle` (uses `high`, `low`, `close`, `volume`)               |
 | Output type         | `f64`                                                          |
 | Output range        | unbounded (price-units)                                        |
@@ -286,9 +285,9 @@ At `t = 4` with window `[20@3, 30@1, 40@2]`:
 
 ## See also
 
-- [OBV](Indicator-Obv.md) — cumulative signed-volume measure that pairs
+- [OBV](../volume/Indicator-Obv.md) — cumulative signed-volume measure that pairs
   well with VWAP as a divergence flag.
-- [MFI](../momentum/Indicator-Mfi.md) — money-flow oscillator that also blends
+- [MFI](../momentum-oscillators/Indicator-Mfi.md) — money-flow oscillator that also blends
   typical price with volume.
-- [Bollinger Bands](../volatility/Indicator-BollingerBands.md) — non-volume volatility
+- [Bollinger Bands](../volatility-bands/Indicator-BollingerBands.md) — non-volume volatility
   envelope, often layered alongside VWAP on intraday charts.

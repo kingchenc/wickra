@@ -1,5 +1,5 @@
 // Comprehensive tests for the Wickra Node bindings: streaming-vs-batch
-// equivalence, reference values, and lifecycle methods across all 63
+// equivalence, reference values, and lifecycle methods across all 71
 // indicators. Ported from the Python test_streaming_vs_batch / test_known_values
 // suites.
 
@@ -13,6 +13,7 @@ const close = Array.from({ length: N }, (_, i) => 100 + Math.sin(i * 0.2) * 10 +
 const high = close.map((c) => c + 1.5);
 const low = close.map((c) => c - 1.5);
 const volume = Array.from({ length: N }, (_, i) => 1000 + (i % 7) * 50);
+const open = close.map((c) => c - 0.5);
 
 function eq(a, b) {
   if (Number.isNaN(a)) return Number.isNaN(b);
@@ -55,6 +56,9 @@ const scalarFactories = {
   PercentB: () => new wickra.PercentB(20, 2),
   LinearRegression: () => new wickra.LinearRegression(14),
   LinRegSlope: () => new wickra.LinRegSlope(14),
+  VerticalHorizontalFilter: () => new wickra.VerticalHorizontalFilter(28),
+  ZScore: () => new wickra.ZScore(20),
+  LinRegAngle: () => new wickra.LinRegAngle(14),
 };
 
 for (const [name, make] of Object.entries(scalarFactories)) {
@@ -95,6 +99,11 @@ const candleScalar = {
   TypicalPrice: { make: () => new wickra.TypicalPrice(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   MedianPrice: { make: () => new wickra.MedianPrice(), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   WeightedClose: { make: () => new wickra.WeightedClose(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  AcceleratorOscillator: { make: () => new wickra.AcceleratorOscillator(5, 34, 5), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  BalanceOfPower: { make: () => new wickra.BalanceOfPower(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  ChoppinessIndex: { make: () => new wickra.ChoppinessIndex(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  TrueRange: { make: () => new wickra.TrueRange(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  ChaikinVolatility: { make: () => new wickra.ChaikinVolatility(10, 10), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {
@@ -231,4 +240,20 @@ test('SuperTrend flat market holds the lower band and an uptrend', () => {
   );
   assert.ok(Math.abs(out[2 * n - 2] - 4) < 1e-9); // value
   assert.equal(out[2 * n - 1], 1); // direction
+});
+
+test('BalanceOfPower reference value', () => {
+  // (close - open) / (high - low) = (12 - 10) / (14 - 10) = 0.5.
+  assert.ok(Math.abs(new wickra.BalanceOfPower().update(10, 14, 10, 12) - 0.5) < 1e-9);
+});
+
+test('TrueRange reference values', () => {
+  const tr = new wickra.TrueRange();
+  assert.equal(tr.update(12, 8, 11), 4); // no prev close -> high - low
+  assert.equal(tr.update(10, 9, 9.5), 2); // prev close 11 -> max(1, 1, 2)
+});
+
+test('LinRegAngle of a unit-slope series is 45 degrees', () => {
+  const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
+  assert.ok(Math.abs(out[4] - 45) < 1e-9);
 });

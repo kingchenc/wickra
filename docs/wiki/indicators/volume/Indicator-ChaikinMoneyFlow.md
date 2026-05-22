@@ -8,7 +8,6 @@
 | Field | Value |
 |-------|-------|
 | Family | Volume |
-| Sub-category | Oscillators |
 | Input type | `Candle` (uses `high`, `low`, `close`, `volume`) |
 | Output type | `f64` |
 | Output range | `[−1, +1]` |
@@ -24,7 +23,7 @@ MFV_t = MFM_t · volume_t                                  (money-flow volume)
 CMF_t = Σ(MFV, period) / Σ(volume, period)
 ```
 
-CMF is the [`Adl`](Indicator-Adl.md) increment averaged the way RSI averages
+CMF is the [`Adl`](../volume/Indicator-Adl.md) increment averaged the way RSI averages
 gains: rather than a running total, it divides the *summed* money-flow volume
 of the last `period` bars by the *summed* volume of those bars. The result is
 volume-normalised, so it lives in `[−1, +1]` regardless of how heavily the
@@ -137,7 +136,7 @@ near bar highs on real volume (accumulation), sustained negative values mean
 the opposite (distribution). Crosses of the zero line are the textbook signal;
 the `±0.05` band is often treated as a neutral zone. Because CMF is
 volume-normalised it is comparable across instruments — unlike the raw
-[`Adl`](Indicator-Adl.md), whose level is arbitrary.
+[`Adl`](../volume/Indicator-Adl.md), whose level is arbitrary.
 
 ## Common pitfalls
 
@@ -153,7 +152,7 @@ matches the standard definition (StockCharts).
 
 ## See also
 
-- [Indicator-Adl.md](Indicator-Adl.md) — the cumulative line CMF is built on.
-- [Indicator-ChaikinOscillator.md](Indicator-ChaikinOscillator.md) — the
+- [Indicator-Adl.md](../volume/Indicator-Adl.md) — the cumulative line CMF is built on.
+- [Indicator-ChaikinOscillator.md](../volume/Indicator-ChaikinOscillator.md) — the
   EMA-difference oscillator on the ADL.
 - [Indicators-Overview.md](../../Indicators-Overview.md) — the full taxonomy.

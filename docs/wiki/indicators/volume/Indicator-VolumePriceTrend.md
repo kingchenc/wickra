@@ -8,7 +8,6 @@
 | Field | Value |
 |-------|-------|
 | Family | Volume |
-| Sub-category | Cumulative |
 | Input type | `Candle` (uses `close`, `volume`) |
 | Output type | `f64` |
 | Output range | unbounded (drifts with cumulative volume) |
@@ -22,7 +21,7 @@
 VPT_t = VPT_{t−1} + volume_t · (close_t − close_{t−1}) / close_{t−1}
 ```
 
-VPT is a close relative of [`Obv`](Indicator-Obv.md). Where OBV adds the
+VPT is a close relative of [`Obv`](../volume/Indicator-Obv.md). Where OBV adds the
 *entire* bar volume on any up-close, VPT adds volume scaled by the **size**
 of the move: a 2 % gain on a given volume moves the line twice as far as a
 1 % gain on the same volume. That makes VPT more sensitive to the
@@ -155,7 +154,7 @@ common definition.
 
 ## See also
 
-- [Indicator-Obv.md](Indicator-Obv.md) — cumulative signed volume, the
+- [Indicator-Obv.md](../volume/Indicator-Obv.md) — cumulative signed volume, the
   closest relative.
-- [Indicator-Adl.md](Indicator-Adl.md) — cumulative range-weighted volume.
+- [Indicator-Adl.md](../volume/Indicator-Adl.md) — cumulative range-weighted volume.
 - [Indicators-Overview.md](../../Indicators-Overview.md) — the full taxonomy.

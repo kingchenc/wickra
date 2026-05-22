@@ -8,7 +8,6 @@
 | Field | Value |
 |-------|-------|
 | Family | Volume |
-| Sub-category | Oscillators |
 | Input type | `Candle` (uses `high`, `low`, `volume`) |
 | Output type | `f64` |
 | Output range | unbounded around zero (scaled by `divisor`) |
@@ -154,8 +153,8 @@ the standard definition.
 
 ## See also
 
-- [Indicator-ForceIndex.md](Indicator-ForceIndex.md) — a different
+- [Indicator-ForceIndex.md](../volume/Indicator-ForceIndex.md) — a different
   price-change-vs-volume gauge.
-- [Indicator-ChaikinMoneyFlow.md](Indicator-ChaikinMoneyFlow.md) — bounded
+- [Indicator-ChaikinMoneyFlow.md](../volume/Indicator-ChaikinMoneyFlow.md) — bounded
   money-flow balance.
 - [Indicators-Overview.md](../../Indicators-Overview.md) — the full taxonomy.

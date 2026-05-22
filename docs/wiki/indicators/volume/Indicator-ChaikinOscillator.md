@@ -8,7 +8,6 @@
 | Field | Value |
 |-------|-------|
 | Family | Volume |
-| Sub-category | Oscillators |
 | Input type | `Candle` (uses `high`, `low`, `close`, `volume`) |
 | Output type | `f64` |
 | Output range | unbounded around zero |
@@ -22,7 +21,7 @@
 ChaikinOsc_t = EMA(ADL, fast)_t − EMA(ADL, slow)_t
 ```
 
-The [`Adl`](Indicator-Adl.md) is an unbounded line that drifts with cumulative
+The [`Adl`](../volume/Indicator-Adl.md) is an unbounded line that drifts with cumulative
 volume — useful for its slope but awkward to trade directly. The Chaikin
 Oscillator applies the MACD construction to it: difference a fast and a slow
 EMA of the ADL to get a zero-centred momentum reading. Positive values mean
@@ -153,9 +152,9 @@ Accumulation/Distribution Line (StockCharts).
 
 ## See also
 
-- [Indicator-Adl.md](Indicator-Adl.md) — the cumulative line this oscillates.
-- [Indicator-ChaikinMoneyFlow.md](Indicator-ChaikinMoneyFlow.md) — a bounded
+- [Indicator-Adl.md](../volume/Indicator-Adl.md) — the cumulative line this oscillates.
+- [Indicator-ChaikinMoneyFlow.md](../volume/Indicator-ChaikinMoneyFlow.md) — a bounded
   ratio built from the same money-flow volume.
-- [Indicator-MacdIndicator.md](../momentum/Indicator-MacdIndicator.md) — the
+- [Indicator-MacdIndicator.md](../trend-directional/Indicator-MacdIndicator.md) — the
   same fast/slow EMA-difference construction on price.
 - [Indicators-Overview.md](../../Indicators-Overview.md) — the full taxonomy.

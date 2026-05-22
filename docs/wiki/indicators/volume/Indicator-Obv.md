@@ -9,8 +9,7 @@
 
 | Item                | Value                                                        |
 |---------------------|--------------------------------------------------------------|
-| Family              | Volume                                                       |
-| Sub-category        | cumulative                                                   |
+| Family | Volume |
 | Input type          | `Candle` (uses `close` and `volume`)                         |
 | Output type         | `f64`                                                        |
 | Output range        | unbounded (signed, integer-of-volume in spirit)              |
@@ -182,9 +181,9 @@ Output:
 
 ## See also
 
-- [VWAP](Indicator-Vwap.md) — volume-weighted price benchmark; OBV and
+- [VWAP](../volume/Indicator-Vwap.md) — volume-weighted price benchmark; OBV and
   VWAP are the two canonical volume-aware indicators in the panel.
-- [MFI](../momentum/Indicator-Mfi.md) — money-flow index, an oscillator blending
+- [MFI](../momentum-oscillators/Indicator-Mfi.md) — money-flow index, an oscillator blending
   typical price with volume.
-- [SMA](../trend/Indicator-Sma.md) / [EMA](../trend/Indicator-Ema.md) — the smoothers
+- [SMA](../moving-averages/Indicator-Sma.md) / [EMA](../moving-averages/Indicator-Ema.md) — the smoothers
   most commonly layered on top of OBV to define trade triggers.

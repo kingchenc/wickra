@@ -76,6 +76,14 @@ index" in 0-indexed terms is `warmup_period − 1`.
 | `WeightedClose` | `WeightedClose::new()`                       | constant `1`                     | 1                                | 1st                      |
 | `LinearRegression` | `LinearRegression::new(14)`               | `period`                         | 14                               | 14th                     |
 | `LinRegSlope`   | `LinRegSlope::new(14)`                       | `period`                         | 14                               | 14th                     |
+| `AcceleratorOscillator` | `AcceleratorOscillator::classic()`   | `ao_slow + signal_period - 1`    | 38                               | 38th                     |
+| `BalanceOfPower` | `BalanceOfPower::new()`                     | constant `1`                     | 1                                | 1st                      |
+| `ChoppinessIndex` | `ChoppinessIndex::new(14)`                 | `period`                         | 14                               | 14th                     |
+| `VerticalHorizontalFilter` | `VerticalHorizontalFilter::new(28)` | `period + 1`                  | 29                               | 29th                     |
+| `TrueRange`     | `TrueRange::new()`                           | constant `1`                     | 1                                | 1st                      |
+| `ChaikinVolatility` | `ChaikinVolatility::new(10, 10)`         | `ema_period + roc_period`        | 20                               | 20th                     |
+| `ZScore`        | `ZScore::new(20)`                            | `period`                         | 20                               | 20th                     |
+| `LinRegAngle`   | `LinRegAngle::new(14)`                       | `period`                         | 14                               | 14th                     |
 
 ## Multi-output indicators
 

@@ -95,17 +95,20 @@ python -m benchmarks.compare_libraries
 
 ## Indicators
 
-63 streaming-first indicators across four families plus a statistics group.
-Every one passes the `batch == streaming` equivalence test, reference-value
-tests, and reset semantics tests.
+71 streaming-first indicators across eight families. Every one passes the
+`batch == streaming` equivalence test, reference-value tests, and reset
+semantics tests.
 
-| Family      | Indicators |
-|-------------|-----------|
-| Trend       | SMA, EMA, WMA, DEMA, TEMA, HMA, KAMA, SMMA, TRIMA, ZLEMA, T3, VWMA |
-| Momentum    | RSI (Wilder), MACD, Stochastic, CCI, ROC, Williams %R, ADX (+DI/-DI), MFI, TRIX, Awesome Oscillator, Aroon, MOM, CMO, TSI, PMO, StochRSI, Ultimate Oscillator, PPO, DPO, Coppock, Aroon Oscillator, Vortex, Mass Index |
-| Volatility  | Bollinger Bands, ATR, Keltner Channels, Donchian Channels, Parabolic SAR, NATR, StdDev, Ulcer Index, Historical Volatility, Bollinger Bandwidth, %B, SuperTrend, Chandelier Exit, Chande Kroll Stop, ATR Trailing Stop |
-| Volume      | OBV, VWAP (cumulative + rolling), ADL, Volume-Price Trend, Chaikin Money Flow, Chaikin Oscillator, Force Index, Ease of Movement |
-| Statistics  | Typical Price, Median Price, Weighted Close, Linear Regression, Linear Regression Slope |
+| Family | Indicators |
+|--------|-----------|
+| Moving Averages      | SMA, EMA, WMA, DEMA, TEMA, HMA, KAMA, SMMA, TRIMA, ZLEMA, T3, VWMA |
+| Momentum Oscillators | RSI (Wilder), Stochastic, CCI, ROC, Williams %R, MFI, Awesome Oscillator, MOM, CMO, TSI, PMO, StochRSI, Ultimate Oscillator |
+| Trend & Directional  | MACD, ADX (+DI/-DI), Aroon, TRIX, Aroon Oscillator, Vortex, Mass Index, Choppiness Index, Vertical Horizontal Filter |
+| Price Oscillators    | PPO, DPO, Coppock, Accelerator Oscillator, Balance of Power |
+| Volatility & Bands   | ATR, Bollinger Bands, Keltner Channels, Donchian Channels, NATR, StdDev, Ulcer Index, Historical Volatility, Bollinger Bandwidth, %B, True Range, Chaikin Volatility |
+| Trailing Stops       | Parabolic SAR, SuperTrend, Chandelier Exit, Chande Kroll Stop, ATR Trailing Stop |
+| Volume               | OBV, VWAP (cumulative + rolling), ADL, Volume-Price Trend, Chaikin Money Flow, Chaikin Oscillator, Force Index, Ease of Movement |
+| Price Statistics     | Typical Price, Median Price, Weighted Close, Linear Regression, Linear Regression Slope, Z-Score, Linear Regression Angle |
 
 Adding a new indicator means implementing one trait in Rust; all four bindings
 inherit it automatically.
@@ -175,7 +178,7 @@ A Python live-trading example using the public `websockets` package lives at
 ```
 wickra/
 ├── crates/
-│   ├── wickra-core/         core engine + all 63 indicators
+│   ├── wickra-core/         core engine + all 71 indicators
 │   ├── wickra/              top-level facade crate (publishes on crates.io)
 │   │                        + benches/ and examples/backtest.rs
 │   └── wickra-data/         CSV reader, tick aggregator, live exchange feeds

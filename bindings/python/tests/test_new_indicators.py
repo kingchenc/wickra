@@ -60,6 +60,9 @@ SCALAR = [
     (ta.PercentB, (20, 2.0)),
     (ta.LinearRegression, (14,)),
     (ta.LinRegSlope, (14,)),
+    (ta.VerticalHorizontalFilter, (28,)),
+    (ta.ZScore, (20,)),
+    (ta.LinRegAngle, (14,)),
 ]
 
 
@@ -130,6 +133,28 @@ CANDLE_SCALAR = {
     "WeightedClose": (
         lambda: ta.WeightedClose(),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
+    "AcceleratorOscillator": (
+        lambda: ta.AcceleratorOscillator(5, 34, 5),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+    ),
+    "BalanceOfPower": (
+        # The streaming 6-tuple feeds open == close, so batch matches with
+        # the close column standing in for open.
+        lambda: ta.BalanceOfPower(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "ChoppinessIndex": (
+        lambda: ta.ChoppinessIndex(14),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
+    "TrueRange": (
+        lambda: ta.TrueRange(),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
+    "ChaikinVolatility": (
+        lambda: ta.ChaikinVolatility(10, 10),
+        lambda ind, h, l, c, v: ind.batch(h, l),
     ),
 }
 
@@ -237,6 +262,31 @@ def test_linreg_slope_reference():
     out = ta.LinRegSlope(3).batch(np.array([1.0, 2.0, 9.0]))
     assert math.isnan(out[0]) and math.isnan(out[1])
     assert out[2] == pytest.approx(4.0)
+
+
+def test_balance_of_power_reference():
+    # (close - open) / (high - low) = (12 - 10) / (14 - 10) = 0.5.
+    bop = ta.BalanceOfPower()
+    assert bop.update((10.0, 14.0, 10.0, 12.0, 1.0, 0)) == pytest.approx(0.5)
+
+
+def test_true_range_reference():
+    tr = ta.TrueRange()
+    assert tr.update((11.0, 12.0, 8.0, 11.0, 1.0, 0)) == pytest.approx(4.0)
+    assert tr.update((9.5, 10.0, 9.0, 9.5, 1.0, 1)) == pytest.approx(2.0)
+
+
+def test_linreg_angle_reference():
+    # A series rising by 1 per step has slope 1, and atan(1) = 45 degrees.
+    out = ta.LinRegAngle(5).batch(np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0]))
+    assert out[4] == pytest.approx(45.0)
+
+
+def test_z_score_reference():
+    # Window [1, 3]: mean 2, population stddev 1; latest 3 -> z = 1.
+    out = ta.ZScore(2).batch(np.array([1.0, 3.0]))
+    assert math.isnan(out[0])
+    assert out[1] == pytest.approx(1.0)
 
 
 # --- Lifecycle ------------------------------------------------------------

@@ -7,8 +7,9 @@ Node.js, WebAssembly, and Rust itself. The same `update` call you write inside
 a live trading loop also drives the historical backtest of that same
 strategy — there is no second code path that drifts behind the streaming one.
 
-The project ships 63 indicators across the four classical families (trend,
-momentum, volatility, volume) plus a statistics group, and a small set of
+The project ships 71 indicators across eight families — moving averages,
+momentum oscillators, trend & directional, price oscillators, volatility &
+bands, trailing stops, volume, and price statistics — plus a small set of
 supporting types (`Candle`, `Tick`, `Chain`). The Rust core forbids `unsafe`,
 so every binding inherits a
 memory-safe implementation. Install is one command on every supported
@@ -64,71 +65,85 @@ Release notes and tagged builds:
 
 ### Indicator reference
 
-Start with [Indicators-Overview.md](Indicators-Overview.md) for the
-cross-cutting taxonomy (trend / momentum / volatility / volume) and the
-shared `Indicator` trait surface. The per-indicator pages below cover
-formulas, parameters, warmup behaviour, edge cases, and verified
-Rust / Python / Node examples. They are grouped by family, mirroring the
-`indicators/<family>/` directory layout.
+Start with [Indicators-Overview.md](Indicators-Overview.md) for the full
+eight-family taxonomy and the shared `Indicator` trait surface. The
+per-indicator pages below cover formulas, parameters, warmup behaviour, edge
+cases, and verified Rust / Python / Node examples. They are grouped by family,
+mirroring the `indicators/<family>/` directory layout.
 
-**Trend** — smooth the price series to surface direction.
+**Moving Averages** — smooth the price series to surface direction.
 
-- [Indicator-Sma.md](indicators/trend/Indicator-Sma.md)
-- [Indicator-Ema.md](indicators/trend/Indicator-Ema.md)
-- [Indicator-Wma.md](indicators/trend/Indicator-Wma.md)
-- [Indicator-Dema.md](indicators/trend/Indicator-Dema.md)
-- [Indicator-Tema.md](indicators/trend/Indicator-Tema.md)
-- [Indicator-Hma.md](indicators/trend/Indicator-Hma.md)
-- [Indicator-Kama.md](indicators/trend/Indicator-Kama.md)
-- [Indicator-Smma.md](indicators/trend/Indicator-Smma.md)
-- [Indicator-Trima.md](indicators/trend/Indicator-Trima.md)
-- [Indicator-Zlema.md](indicators/trend/Indicator-Zlema.md)
-- [Indicator-T3.md](indicators/trend/Indicator-T3.md)
-- [Indicator-Vwma.md](indicators/trend/Indicator-Vwma.md)
+- [Indicator-Sma.md](indicators/moving-averages/Indicator-Sma.md)
+- [Indicator-Ema.md](indicators/moving-averages/Indicator-Ema.md)
+- [Indicator-Wma.md](indicators/moving-averages/Indicator-Wma.md)
+- [Indicator-Dema.md](indicators/moving-averages/Indicator-Dema.md)
+- [Indicator-Tema.md](indicators/moving-averages/Indicator-Tema.md)
+- [Indicator-Hma.md](indicators/moving-averages/Indicator-Hma.md)
+- [Indicator-Kama.md](indicators/moving-averages/Indicator-Kama.md)
+- [Indicator-Smma.md](indicators/moving-averages/Indicator-Smma.md)
+- [Indicator-Trima.md](indicators/moving-averages/Indicator-Trima.md)
+- [Indicator-Zlema.md](indicators/moving-averages/Indicator-Zlema.md)
+- [Indicator-T3.md](indicators/moving-averages/Indicator-T3.md)
+- [Indicator-Vwma.md](indicators/moving-averages/Indicator-Vwma.md)
 
-**Momentum** — measure the rate of price change rather than the level.
+**Momentum Oscillators** — measure the rate of price change.
 
-- [Indicator-Rsi.md](indicators/momentum/Indicator-Rsi.md)
-- [Indicator-MacdIndicator.md](indicators/momentum/Indicator-MacdIndicator.md)
-- [Indicator-Stochastic.md](indicators/momentum/Indicator-Stochastic.md)
-- [Indicator-Cci.md](indicators/momentum/Indicator-Cci.md)
-- [Indicator-Roc.md](indicators/momentum/Indicator-Roc.md)
-- [Indicator-WilliamsR.md](indicators/momentum/Indicator-WilliamsR.md)
-- [Indicator-Adx.md](indicators/momentum/Indicator-Adx.md)
-- [Indicator-Mfi.md](indicators/momentum/Indicator-Mfi.md)
-- [Indicator-Trix.md](indicators/momentum/Indicator-Trix.md)
-- [Indicator-AwesomeOscillator.md](indicators/momentum/Indicator-AwesomeOscillator.md)
-- [Indicator-Aroon.md](indicators/momentum/Indicator-Aroon.md)
-- [Indicator-Mom.md](indicators/momentum/Indicator-Mom.md)
-- [Indicator-Cmo.md](indicators/momentum/Indicator-Cmo.md)
-- [Indicator-Tsi.md](indicators/momentum/Indicator-Tsi.md)
-- [Indicator-Pmo.md](indicators/momentum/Indicator-Pmo.md)
-- [Indicator-StochRsi.md](indicators/momentum/Indicator-StochRsi.md)
-- [Indicator-UltimateOscillator.md](indicators/momentum/Indicator-UltimateOscillator.md)
-- [Indicator-Ppo.md](indicators/momentum/Indicator-Ppo.md)
-- [Indicator-Dpo.md](indicators/momentum/Indicator-Dpo.md)
-- [Indicator-Coppock.md](indicators/momentum/Indicator-Coppock.md)
-- [Indicator-AroonOscillator.md](indicators/momentum/Indicator-AroonOscillator.md)
-- [Indicator-Vortex.md](indicators/momentum/Indicator-Vortex.md)
-- [Indicator-MassIndex.md](indicators/momentum/Indicator-MassIndex.md)
+- [Indicator-Rsi.md](indicators/momentum-oscillators/Indicator-Rsi.md)
+- [Indicator-Stochastic.md](indicators/momentum-oscillators/Indicator-Stochastic.md)
+- [Indicator-Cci.md](indicators/momentum-oscillators/Indicator-Cci.md)
+- [Indicator-Roc.md](indicators/momentum-oscillators/Indicator-Roc.md)
+- [Indicator-WilliamsR.md](indicators/momentum-oscillators/Indicator-WilliamsR.md)
+- [Indicator-Mfi.md](indicators/momentum-oscillators/Indicator-Mfi.md)
+- [Indicator-AwesomeOscillator.md](indicators/momentum-oscillators/Indicator-AwesomeOscillator.md)
+- [Indicator-Mom.md](indicators/momentum-oscillators/Indicator-Mom.md)
+- [Indicator-Cmo.md](indicators/momentum-oscillators/Indicator-Cmo.md)
+- [Indicator-Tsi.md](indicators/momentum-oscillators/Indicator-Tsi.md)
+- [Indicator-Pmo.md](indicators/momentum-oscillators/Indicator-Pmo.md)
+- [Indicator-StochRsi.md](indicators/momentum-oscillators/Indicator-StochRsi.md)
+- [Indicator-UltimateOscillator.md](indicators/momentum-oscillators/Indicator-UltimateOscillator.md)
 
-**Volatility** — envelope width and per-bar dispersion measures.
+**Trend & Directional** — is there a trend, and which way?
 
-- [Indicator-BollingerBands.md](indicators/volatility/Indicator-BollingerBands.md)
-- [Indicator-Atr.md](indicators/volatility/Indicator-Atr.md)
-- [Indicator-Keltner.md](indicators/volatility/Indicator-Keltner.md)
-- [Indicator-Donchian.md](indicators/volatility/Indicator-Donchian.md)
-- [Indicator-Psar.md](indicators/volatility/Indicator-Psar.md)
-- [Indicator-Natr.md](indicators/volatility/Indicator-Natr.md)
-- [Indicator-StdDev.md](indicators/volatility/Indicator-StdDev.md)
-- [Indicator-UlcerIndex.md](indicators/volatility/Indicator-UlcerIndex.md)
-- [Indicator-HistoricalVolatility.md](indicators/volatility/Indicator-HistoricalVolatility.md)
-- [Indicator-BollingerBandwidth.md](indicators/volatility/Indicator-BollingerBandwidth.md)
-- [Indicator-PercentB.md](indicators/volatility/Indicator-PercentB.md)
-- [Indicator-SuperTrend.md](indicators/volatility/Indicator-SuperTrend.md)
-- [Indicator-ChandelierExit.md](indicators/volatility/Indicator-ChandelierExit.md)
-- [Indicator-ChandeKrollStop.md](indicators/volatility/Indicator-ChandeKrollStop.md)
-- [Indicator-AtrTrailingStop.md](indicators/volatility/Indicator-AtrTrailingStop.md)
+- [Indicator-MacdIndicator.md](indicators/trend-directional/Indicator-MacdIndicator.md)
+- [Indicator-Adx.md](indicators/trend-directional/Indicator-Adx.md)
+- [Indicator-Aroon.md](indicators/trend-directional/Indicator-Aroon.md)
+- [Indicator-Trix.md](indicators/trend-directional/Indicator-Trix.md)
+- [Indicator-AroonOscillator.md](indicators/trend-directional/Indicator-AroonOscillator.md)
+- [Indicator-Vortex.md](indicators/trend-directional/Indicator-Vortex.md)
+- [Indicator-MassIndex.md](indicators/trend-directional/Indicator-MassIndex.md)
+- [Indicator-ChoppinessIndex.md](indicators/trend-directional/Indicator-ChoppinessIndex.md)
+- [Indicator-VerticalHorizontalFilter.md](indicators/trend-directional/Indicator-VerticalHorizontalFilter.md)
+
+**Price Oscillators** — difference-of-averages momentum around zero.
+
+- [Indicator-Ppo.md](indicators/price-oscillators/Indicator-Ppo.md)
+- [Indicator-Dpo.md](indicators/price-oscillators/Indicator-Dpo.md)
+- [Indicator-Coppock.md](indicators/price-oscillators/Indicator-Coppock.md)
+- [Indicator-AcceleratorOscillator.md](indicators/price-oscillators/Indicator-AcceleratorOscillator.md)
+- [Indicator-BalanceOfPower.md](indicators/price-oscillators/Indicator-BalanceOfPower.md)
+
+**Volatility & Bands** — dispersion measures and price envelopes.
+
+- [Indicator-Atr.md](indicators/volatility-bands/Indicator-Atr.md)
+- [Indicator-BollingerBands.md](indicators/volatility-bands/Indicator-BollingerBands.md)
+- [Indicator-Keltner.md](indicators/volatility-bands/Indicator-Keltner.md)
+- [Indicator-Donchian.md](indicators/volatility-bands/Indicator-Donchian.md)
+- [Indicator-Natr.md](indicators/volatility-bands/Indicator-Natr.md)
+- [Indicator-StdDev.md](indicators/volatility-bands/Indicator-StdDev.md)
+- [Indicator-UlcerIndex.md](indicators/volatility-bands/Indicator-UlcerIndex.md)
+- [Indicator-HistoricalVolatility.md](indicators/volatility-bands/Indicator-HistoricalVolatility.md)
+- [Indicator-BollingerBandwidth.md](indicators/volatility-bands/Indicator-BollingerBandwidth.md)
+- [Indicator-PercentB.md](indicators/volatility-bands/Indicator-PercentB.md)
+- [Indicator-TrueRange.md](indicators/volatility-bands/Indicator-TrueRange.md)
+- [Indicator-ChaikinVolatility.md](indicators/volatility-bands/Indicator-ChaikinVolatility.md)
+
+**Trailing Stops** — ATR-driven stop-loss trackers.
+
+- [Indicator-Psar.md](indicators/trailing-stops/Indicator-Psar.md)
+- [Indicator-SuperTrend.md](indicators/trailing-stops/Indicator-SuperTrend.md)
+- [Indicator-ChandelierExit.md](indicators/trailing-stops/Indicator-ChandelierExit.md)
+- [Indicator-ChandeKrollStop.md](indicators/trailing-stops/Indicator-ChandeKrollStop.md)
+- [Indicator-AtrTrailingStop.md](indicators/trailing-stops/Indicator-AtrTrailingStop.md)
 
 **Volume** — price moves weighted or confirmed by traded volume.
 
@@ -141,13 +156,15 @@ Rust / Python / Node examples. They are grouped by family, mirroring the
 - [Indicator-ForceIndex.md](indicators/volume/Indicator-ForceIndex.md)
 - [Indicator-EaseOfMovement.md](indicators/volume/Indicator-EaseOfMovement.md)
 
-**Statistics** — price transforms and rolling regressions.
+**Price Statistics** — per-bar transforms and rolling regressions.
 
-- [Indicator-TypicalPrice.md](indicators/statistics/Indicator-TypicalPrice.md)
-- [Indicator-MedianPrice.md](indicators/statistics/Indicator-MedianPrice.md)
-- [Indicator-WeightedClose.md](indicators/statistics/Indicator-WeightedClose.md)
-- [Indicator-LinearRegression.md](indicators/statistics/Indicator-LinearRegression.md)
-- [Indicator-LinRegSlope.md](indicators/statistics/Indicator-LinRegSlope.md)
+- [Indicator-TypicalPrice.md](indicators/price-statistics/Indicator-TypicalPrice.md)
+- [Indicator-MedianPrice.md](indicators/price-statistics/Indicator-MedianPrice.md)
+- [Indicator-WeightedClose.md](indicators/price-statistics/Indicator-WeightedClose.md)
+- [Indicator-LinearRegression.md](indicators/price-statistics/Indicator-LinearRegression.md)
+- [Indicator-LinRegSlope.md](indicators/price-statistics/Indicator-LinRegSlope.md)
+- [Indicator-ZScore.md](indicators/price-statistics/Indicator-ZScore.md)
+- [Indicator-LinRegAngle.md](indicators/price-statistics/Indicator-LinRegAngle.md)
 
 ## See also
 

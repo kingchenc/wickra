@@ -8,7 +8,6 @@
 | Field | Value |
 |-------|-------|
 | Family | Volume |
-| Sub-category | Cumulative |
 | Input type | `Candle` (uses `high`, `low`, `close`, `volume`) |
 | Output type | `f64` |
 | Output range | unbounded (drifts with cumulative volume) |
@@ -138,7 +137,7 @@ Output:
 total drifts arbitrarily with cumulative volume). A rising ADL confirms
 that an up-move is backed by accumulation; a *falling* ADL while price
 rises is a bearish divergence — the rally is not being bought into.
-[`ChaikinOscillator`](Indicator-ChaikinOscillator.md) is the standard way
+[`ChaikinOscillator`](../volume/Indicator-ChaikinOscillator.md) is the standard way
 to turn the ADL into a bounded, tradeable oscillator.
 
 ## Common pitfalls
@@ -155,7 +154,7 @@ formulation here matches the standard definition (StockCharts, TA-Lib's
 
 ## See also
 
-- [Indicator-Obv.md](Indicator-Obv.md) — cumulative *signed* volume.
-- [Indicator-ChaikinOscillator.md](Indicator-ChaikinOscillator.md) — an
+- [Indicator-Obv.md](../volume/Indicator-Obv.md) — cumulative *signed* volume.
+- [Indicator-ChaikinOscillator.md](../volume/Indicator-ChaikinOscillator.md) — an
   oscillator built on the ADL.
 - [Indicators-Overview.md](../../Indicators-Overview.md) — the full taxonomy.

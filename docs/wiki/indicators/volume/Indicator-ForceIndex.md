@@ -8,7 +8,6 @@
 | Field | Value |
 |-------|-------|
 | Family | Volume |
-| Sub-category | Oscillators |
 | Input type | `Candle` (uses `close`, `volume`) |
 | Output type | `f64` |
 | Output range | unbounded around zero |
@@ -148,8 +147,8 @@ Alexander Elder's Force Index, introduced in *Trading for a Living* (1993).
 
 ## See also
 
-- [Indicator-Obv.md](Indicator-Obv.md) — cumulative signed volume, a coarser
+- [Indicator-Obv.md](../volume/Indicator-Obv.md) — cumulative signed volume, a coarser
   volume-conviction gauge.
-- [Indicator-VolumePriceTrend.md](Indicator-VolumePriceTrend.md) — cumulative
+- [Indicator-VolumePriceTrend.md](../volume/Indicator-VolumePriceTrend.md) — cumulative
   volume scaled by percentage move.
 - [Indicators-Overview.md](../../Indicators-Overview.md) — the full taxonomy.
