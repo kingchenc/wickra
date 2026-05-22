@@ -2,11 +2,11 @@
 //! hold enough rows, and carry strictly increasing — and, for the fixed
 //! timeframes, evenly spaced — timestamps.
 //!
-//! The datasets live in `examples/data/` and are produced by the
-//! `fetch_btcusdt` example. Regenerate them with:
+//! The datasets live in the workspace `examples/data/` directory and are
+//! produced by the `fetch_btcusdt` example. Regenerate them with:
 //!
 //! ```text
-//! cargo run -p wickra --example fetch_btcusdt
+//! cargo run -p wickra-examples --bin fetch_btcusdt
 //! ```
 
 use wickra_data::csv::CandleReader;
@@ -26,7 +26,7 @@ const DATASETS: &[(&str, usize, Option<i64>)] = &[
 ];
 
 fn dataset_path(file: &str) -> String {
-    format!("{}/examples/data/{file}", env!("CARGO_MANIFEST_DIR"))
+    format!("{}/../../examples/data/{file}", env!("CARGO_MANIFEST_DIR"))
 }
 
 #[test]

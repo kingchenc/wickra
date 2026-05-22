@@ -6,14 +6,14 @@
 //! ```
 //!
 //! Each benchmark feeds real BTCUSDT 1-minute candles — read from the
-//! checked-in dataset `examples/data/btcusdt-1m.csv` — through both the
-//! streaming (`update` loop) and batch APIs of an indicator. Sizes cover
-//! small (1 000), medium (10 000), and large (50 000) workloads, taken as
-//! prefixes of that dataset.
+//! checked-in dataset at the workspace `examples/data/btcusdt-1m.csv` —
+//! through both the streaming (`update` loop) and batch APIs of an
+//! indicator. Sizes cover small (1 000), medium (10 000), and large
+//! (50 000) workloads, taken as prefixes of that dataset.
 //!
 //! Regenerate the dataset with:
 //! ```text
-//! cargo run -p wickra --example fetch_btcusdt
+//! cargo run -p wickra-examples --bin fetch_btcusdt
 //! ```
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
@@ -26,13 +26,17 @@ use wickra_data::csv::CandleReader;
 /// Workload sizes, in candles. Each is taken as a prefix of the dataset.
 const SIZES: &[usize] = &[1_000, 10_000, 50_000];
 
-/// Load the checked-in BTCUSDT 1-minute candle dataset.
+/// Load the checked-in BTCUSDT 1-minute candle dataset from the workspace
+/// `examples/data/` directory.
 fn load_candles() -> Vec<Candle> {
-    let path = concat!(env!("CARGO_MANIFEST_DIR"), "/examples/data/btcusdt-1m.csv");
+    let path = concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../examples/data/btcusdt-1m.csv"
+    );
     let mut reader = CandleReader::open(path).unwrap_or_else(|e| {
         panic!(
             "could not open the benchmark dataset {path}: {e}\n\
-             generate it with `cargo run -p wickra --example fetch_btcusdt`"
+             generate it with `cargo run -p wickra-examples --bin fetch_btcusdt`"
         )
     });
     reader

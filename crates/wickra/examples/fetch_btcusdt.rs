@@ -2,8 +2,9 @@
 //! and write them as CSV datasets under `examples/data/`.
 //!
 //! These are the datasets the indicator benchmarks (`benches/indicators.rs`)
-//! and the `example_data` integration test run against. Re-run this example
-//! to refresh them with the latest market history:
+//! and the `example_data` integration test run against. They live at the
+//! workspace `examples/data/` directory. Re-run this example to refresh
+//! them with the latest market history:
 //!
 //! ```text
 //! cargo run -p wickra --example fetch_btcusdt
@@ -96,6 +97,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         .map_err(|_| "system clock is beyond the i64 millisecond range")?;
 
     let data_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("..")
+        .join("..")
         .join("examples")
         .join("data");
     std::fs::create_dir_all(&data_dir)?;

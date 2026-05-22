@@ -159,10 +159,9 @@ cargo run -p wickra-data --example live_binance --features live-binance
 ## Example datasets
 
 The repository ships seven ready-to-use OHLCV datasets under
-`crates/wickra/examples/data/`, one per timeframe, holding real Binance
-**BTCUSDT** spot candles in the standard `timestamp,open,high,low,close,volume`
-layout the `CandleReader` reads. The timestamp is each candle's open time in
-milliseconds.
+`examples/data/`, one per timeframe, holding real Binance **BTCUSDT** spot
+candles in the standard `timestamp,open,high,low,close,volume` layout the
+`CandleReader` reads. The timestamp is each candle's open time in milliseconds.
 
 | File | Timeframe | Rows |
 | --- | --- | --- |

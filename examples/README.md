@@ -10,7 +10,7 @@ live here under [`python/`](python/).
 | Example | What it does | Run |
 | --- | --- | --- |
 | `backtest.rs` | Compute a basket of indicators over an OHLCV CSV and print a summary. | `cargo run -p wickra --example backtest -- <ohlcv.csv>` |
-| `fetch_btcusdt.rs` | Download real BTCUSDT klines from the Binance REST API into `crates/wickra/examples/data/`. | `cargo run -p wickra --example fetch_btcusdt` |
+| `fetch_btcusdt.rs` | Download real BTCUSDT klines from the Binance REST API into `examples/data/`. | `cargo run -p wickra --example fetch_btcusdt` |
 | `live_binance.rs` | Stream live Binance klines through an indicator over a resilient WebSocket. | `cargo run -p wickra-data --example live_binance --features live-binance` |
 
 ## Python — `examples/python/`
@@ -42,7 +42,7 @@ Build the native module first: `cd bindings/node && npm install && npx napi buil
 
 ## Example datasets
 
-`crates/wickra/examples/data/` holds seven real BTCUSDT OHLCV datasets, one
+`examples/data/` holds seven real BTCUSDT OHLCV datasets, one
 per timeframe (1m, 5m, 15m, 1h, 12h, 1d, 1month), in the standard
 `timestamp,open,high,low,close,volume` layout. The Rust and Node backtest
 examples and the indicator benchmarks run against them. Regenerate them with

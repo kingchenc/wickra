@@ -39,10 +39,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Community health files: `CONTRIBUTING.md`, `SECURITY.md`,
   `CODE_OF_CONDUCT.md`, issue / pull-request templates, `CODEOWNERS`, and a
   Dependabot configuration.
-- Seven example OHLCV datasets under `crates/wickra/examples/data/`, one per
-  timeframe (1m / 5m / 15m / 1h / 12h / 1d / 1month), holding real BTCUSDT
-  spot klines, alongside the `fetch_btcusdt` example that regenerates them
-  from the Binance REST API.
+- Seven example OHLCV datasets under `examples/data/`, one per timeframe
+  (1m / 5m / 15m / 1h / 12h / 1d / 1month), holding real BTCUSDT spot klines,
+  alongside the `fetch_btcusdt` example that regenerates them from the
+  Binance REST API.
 - `Timeframe::minutes`, `Timeframe::hours` and `Timeframe::days` convenience
   constructors, each building on seconds with a checked-multiplication
   overflow guard.

@@ -26,15 +26,13 @@ const wickra = require('..');
 // every one of them (any extra columns are ignored).
 const REQUIRED_COLUMNS = ['timestamp', 'open', 'high', 'low', 'close', 'volume'];
 
-// Default dataset: the checked-in BTCUSDT daily candles under
-// crates/wickra/examples/data/, resolved relative to this file.
+// Default dataset: the checked-in BTCUSDT daily candles under the workspace
+// `examples/data/` directory, resolved relative to this file.
 const DEFAULT_CSV = path.join(
   __dirname,
   '..',
   '..',
   '..',
-  'crates',
-  'wickra',
   'examples',
   'data',
   'btcusdt-1d.csv',
