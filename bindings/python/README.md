@@ -26,14 +26,22 @@ for price in live_prices:
 
 ## What's included
 
-25 streaming-first indicators across four families. Every one passes a
-`batch == streaming` equivalence test and reference-value tests:
+63 streaming-first indicators across four families plus a statistics group.
+Every one passes a `batch == streaming` equivalence test and reference-value
+tests:
 
-- **Trend** — SMA, EMA, WMA, DEMA, TEMA, HMA, KAMA
+- **Trend** — SMA, EMA, WMA, DEMA, TEMA, HMA, KAMA, SMMA, TRIMA, ZLEMA, T3,
+  VWMA
 - **Momentum** — RSI (Wilder), MACD, Stochastic, CCI, ROC, WilliamsR, ADX,
-  MFI, TRIX, AwesomeOscillator, Aroon
-- **Volatility** — BollingerBands, ATR, Keltner, Donchian, PSAR
-- **Volume** — OBV, VWAP
+  MFI, TRIX, AwesomeOscillator, Aroon, MOM, CMO, TSI, PMO, StochRSI,
+  UltimateOscillator, PPO, DPO, Coppock, AroonOscillator, Vortex, MassIndex
+- **Volatility** — BollingerBands, ATR, Keltner, Donchian, PSAR, NATR, StdDev,
+  UlcerIndex, HistoricalVolatility, BollingerBandwidth, PercentB, SuperTrend,
+  ChandelierExit, ChandeKrollStop, AtrTrailingStop
+- **Volume** — OBV, VWAP, ADL, VolumePriceTrend, ChaikinMoneyFlow,
+  ChaikinOscillator, ForceIndex, EaseOfMovement
+- **Statistics** — TypicalPrice, MedianPrice, WeightedClose, LinearRegression,
+  LinRegSlope
 
 ## Why streaming-first matters
 
