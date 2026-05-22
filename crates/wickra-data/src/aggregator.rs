@@ -55,14 +55,23 @@ impl Timeframe {
 
 /// Incrementally builds candles out of arriving ticks.
 ///
-/// Each call to [`TickAggregator::push`] returns `Some(Candle)` if a previously
-/// open bar just closed (i.e. the new tick belongs to a new bucket). Use
+/// Each call to [`TickAggregator::push`] returns the candles that closed as a
+/// result of the new tick — normally at most one. Use
 /// [`TickAggregator::flush`] at the end of a stream to capture the final open
 /// bar.
+///
+/// # Gaps
+///
+/// By default a tick that jumps across one or more empty buckets simply opens
+/// the next non-empty bar — the skipped buckets produce no candle, so the
+/// output series can have time holes. Enable [`TickAggregator::with_gap_fill`]
+/// to instead emit a flat placeholder candle for every skipped bucket, giving
+/// downstream indicators an unbroken, evenly spaced series.
 #[derive(Debug, Clone)]
 pub struct TickAggregator {
     timeframe: Timeframe,
     open_bar: Option<OpenBar>,
+    fill_gaps: bool,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -116,16 +125,37 @@ impl TickAggregator {
         Self {
             timeframe,
             open_bar: None,
+            fill_gaps: false,
         }
     }
 
-    /// Push a tick. Returns `Some(Candle)` if a bar boundary was crossed and a
-    /// previously open bar just closed.
+    /// Enable or disable gap filling, returning the (re)configured aggregator.
+    ///
+    /// When enabled, [`push`](Self::push) emits a flat candle
+    /// (`open == high == low == close`, `volume == 0`) for every bucket that is
+    /// skipped between two consecutive ticks. The flat candle's price is the
+    /// close of the bar that preceded the gap, so the series stays continuous.
+    #[must_use]
+    pub fn with_gap_fill(mut self, fill: bool) -> Self {
+        self.fill_gaps = fill;
+        self
+    }
+
+    /// Whether gap filling is enabled.
+    pub const fn fills_gaps(&self) -> bool {
+        self.fill_gaps
+    }
+
+    /// Push a tick. Returns every candle that closed as a result — an empty
+    /// vector while the open bar keeps growing, one candle when a bar boundary
+    /// is crossed, and (with gap filling enabled) additionally one flat candle
+    /// per skipped bucket.
     ///
     /// # Errors
-    /// Returns an error if `tick.timestamp` is strictly less than the start of
-    /// the currently open bar (out-of-order ticks are not supported).
-    pub fn push(&mut self, tick: Tick) -> Result<Option<Candle>> {
+    /// Returns [`Error::Malformed`] if `tick.timestamp` is strictly less than
+    /// the start of the currently open bar (out-of-order ticks are not
+    /// supported), or if gap filling overflows the timestamp range.
+    pub fn push(&mut self, tick: Tick) -> Result<Vec<Candle>> {
         let bucket = self.timeframe.floor(tick.timestamp);
         if let Some(mut bar) = self.open_bar {
             if bucket < bar.bucket_start {
@@ -136,15 +166,42 @@ impl TickAggregator {
             }
             if bucket > bar.bucket_start {
                 // Close the previous bar and start a new one with this tick.
+                let closed = bar.into_candle();
+                let mut out = Vec::with_capacity(1);
+                out.push(closed);
+                if self.fill_gaps {
+                    self.fill_between(closed, bucket, &mut out)?;
+                }
                 self.open_bar = Some(OpenBar::from_tick(tick, bucket));
-                return Ok(Some(bar.into_candle()));
+                return Ok(out);
             }
             bar.absorb(tick);
             self.open_bar = Some(bar);
-            return Ok(None);
+            return Ok(Vec::new());
         }
         self.open_bar = Some(OpenBar::from_tick(tick, bucket));
-        Ok(None)
+        Ok(Vec::new())
+    }
+
+    /// Append a flat placeholder candle for every empty bucket strictly between
+    /// the just-closed bar and the next bucket that received a tick.
+    fn fill_between(&self, prev: Candle, next_bucket: i64, out: &mut Vec<Candle>) -> Result<()> {
+        let step = self.timeframe.bucket();
+        let mut start = prev
+            .timestamp
+            .checked_add(step)
+            .ok_or_else(|| Error::Malformed("timestamp overflow while gap-filling".to_string()))?;
+        while start < next_bucket {
+            // `prev.close` is finite (it came from a validated bar), so this
+            // flat candle always passes `Candle::new`'s checks.
+            out.push(Candle::new(
+                prev.close, prev.close, prev.close, prev.close, 0.0, start,
+            )?);
+            start = start.checked_add(step).ok_or_else(|| {
+                Error::Malformed("timestamp overflow while gap-filling".to_string())
+            })?;
+        }
+        Ok(())
     }
 
     /// Drain the currently open bar (if any) and return it. Useful at the end of
@@ -186,10 +243,10 @@ mod tests {
     #[test]
     fn aggregates_ticks_into_one_candle_within_bucket() {
         let mut agg = TickAggregator::new(Timeframe::new(60).unwrap());
-        assert_eq!(agg.push(t(10.0, 0)).unwrap(), None);
-        assert_eq!(agg.push(t(12.0, 15)).unwrap(), None);
-        assert_eq!(agg.push(t(8.0, 30)).unwrap(), None);
-        assert_eq!(agg.push(t(11.0, 50)).unwrap(), None);
+        assert!(agg.push(t(10.0, 0)).unwrap().is_empty());
+        assert!(agg.push(t(12.0, 15)).unwrap().is_empty());
+        assert!(agg.push(t(8.0, 30)).unwrap().is_empty());
+        assert!(agg.push(t(11.0, 50)).unwrap().is_empty());
         let bar = agg.flush().expect("open bar");
         assert_eq!(bar.open, 10.0);
         assert_eq!(bar.high, 12.0);
@@ -204,7 +261,9 @@ mod tests {
         let mut agg = TickAggregator::new(Timeframe::new(60).unwrap());
         agg.push(t(10.0, 0)).unwrap();
         agg.push(t(12.0, 30)).unwrap();
-        let closed = agg.push(t(15.0, 60)).unwrap().expect("emits");
+        let closed = agg.push(t(15.0, 60)).unwrap();
+        assert_eq!(closed.len(), 1);
+        let closed = closed[0];
         assert_eq!(closed.open, 10.0);
         assert_eq!(closed.high, 12.0);
         assert_eq!(closed.low, 10.0);
@@ -222,5 +281,53 @@ mod tests {
         agg.push(t(10.0, 100)).unwrap();
         let err = agg.push(t(11.0, 30)).unwrap_err();
         assert!(matches!(err, Error::Malformed(_)));
+    }
+
+    #[test]
+    fn skips_empty_buckets_without_gap_fill() {
+        let mut agg = TickAggregator::new(Timeframe::new(60).unwrap());
+        assert!(!agg.fills_gaps());
+        agg.push(t(10.0, 0)).unwrap();
+        // Jump from bucket 0 straight to bucket 180 — buckets 60 and 120 empty.
+        let closed = agg.push(t(20.0, 200)).unwrap();
+        assert_eq!(closed.len(), 1, "only the real bar closes");
+        assert_eq!(closed[0].timestamp, 0);
+    }
+
+    #[test]
+    fn gap_fill_emits_flat_candles_for_skipped_buckets() {
+        let mut agg = TickAggregator::new(Timeframe::new(60).unwrap()).with_gap_fill(true);
+        assert!(agg.fills_gaps());
+        agg.push(t(10.0, 0)).unwrap();
+        agg.push(t(13.0, 30)).unwrap(); // still bucket 0, close = 13.0
+                                        // Next tick lands in bucket 180 — buckets 60 and 120 are skipped.
+        let out = agg.push(t(20.0, 200)).unwrap();
+        assert_eq!(out.len(), 3, "real bar + two flat fillers");
+
+        let real = out[0];
+        assert_eq!(real.timestamp, 0);
+        assert_eq!(real.close, 13.0);
+
+        for (filler, ts) in out[1..].iter().zip([60, 120]) {
+            assert_eq!(filler.timestamp, ts);
+            assert_eq!(filler.open, 13.0);
+            assert_eq!(filler.high, 13.0);
+            assert_eq!(filler.low, 13.0);
+            assert_eq!(filler.close, 13.0);
+            assert_eq!(filler.volume, 0.0);
+        }
+
+        // The tick at ts=200 opens bucket 180.
+        assert_eq!(agg.flush().unwrap().timestamp, 180);
+    }
+
+    #[test]
+    fn gap_fill_emits_nothing_extra_for_adjacent_buckets() {
+        let mut agg = TickAggregator::new(Timeframe::new(60).unwrap()).with_gap_fill(true);
+        agg.push(t(10.0, 0)).unwrap();
+        // Bucket 60 directly follows bucket 0 — no gap to fill.
+        let out = agg.push(t(11.0, 70)).unwrap();
+        assert_eq!(out.len(), 1);
+        assert_eq!(out[0].timestamp, 0);
     }
 }
