@@ -43,5 +43,7 @@ for (const price of livePrices) {
 const sma = new SMA(20).batch(new Float64Array(historicalPrices));
 ```
 
-An interactive demo lives in `bindings/wasm/examples/index.html`. After building
-the package serve the `bindings/wasm/` directory and open `examples/index.html`.
+An interactive demo lives in [`examples/wasm/index.html`](../../examples/wasm/index.html)
+(top-level alongside the other language examples). After building the package
+with `wasm-pack build`, serve the repository root and open
+`examples/wasm/index.html` in a browser.

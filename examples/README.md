@@ -41,11 +41,11 @@ cd ../../examples/node && npm install        # links wickra + installs `ws`
 | `backtest.js` | Basket of indicators over an OHLCV CSV; defaults to the bundled BTCUSDT daily dataset. | `node backtest.js [ohlcv.csv]` |
 | `live_trading.js` | Live Binance feed → RSI / MACD / Bollinger → signals. | `node live_trading.js --symbol BTCUSDT --interval 1m` |
 
-## WebAssembly — `bindings/wasm/examples/`
+## WebAssembly — `examples/wasm/`
 
 | Example | What it does | Run |
 | --- | --- | --- |
-| `index.html` | Browser demo: streams a price series through six indicators and draws a live `<canvas>` chart. | `wasm-pack build bindings/wasm --target web --release --features panic-hook`, then serve `bindings/wasm/` and open `examples/index.html` |
+| `index.html` | Browser demo: streams a price series through six indicators and draws a live `<canvas>` chart. | `wasm-pack build bindings/wasm --target web --release --features panic-hook`, then serve the repository root and open `examples/wasm/index.html` |
 
 ## Example datasets
 

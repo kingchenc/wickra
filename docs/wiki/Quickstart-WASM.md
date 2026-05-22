@@ -114,13 +114,13 @@ try {
 
 ## A complete example
 
-`bindings/wasm/examples/index.html` is a self-contained browser demo: it
-streams a synthetic price series through six indicators and draws a live
-chart on a `<canvas>`. Open it after a `--target web` build:
+`examples/wasm/index.html` is a self-contained browser demo: it streams a
+synthetic price series through six indicators and draws a live chart on a
+`<canvas>`. Open it after a `--target web` build:
 
 ```bash
 wasm-pack build bindings/wasm --target web --release --features panic-hook
-# then serve the bindings/wasm directory and open examples/index.html
+# then serve the repository root and open examples/wasm/index.html
 ```
 
 ## See also
