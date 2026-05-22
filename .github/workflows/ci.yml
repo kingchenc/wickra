@@ -86,6 +86,19 @@ jobs:
       - name: Test on MSRV
         run: cargo test ${{ matrix.packages }} --verbose
 
+  # Supply-chain audit: security advisories, license policy, banned crates,
+  # and source restrictions. Configured by deny.toml at the repo root.
+  supply-chain:
+    name: Supply-chain (cargo-deny)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: cargo-deny
+        uses: EmbarkStudios/cargo-deny-action@a531616d8ce3b9177443e48a1159bc945a099823 # v2.0.19
+        with:
+          command: check
+
   python:
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}

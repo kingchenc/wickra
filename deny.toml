@@ -1,0 +1,57 @@
+# cargo-deny configuration — supply-chain checks for the Wickra workspace.
+# Run locally with `cargo deny check`; CI runs the same in the `supply-chain`
+# job (see .github/workflows/ci.yml).
+
+[graph]
+all-features = true
+
+[advisories]
+# Fail on any security advisory or unmaintained/unsound crate in the tree.
+version = 2
+yanked = "deny"
+ignore = [
+    # RUSTSEC-2025-0020 — PyString::from_object buffer overflow in pyo3 0.22.
+    # Reached only through the python binding (numpy 0.22 -> pyo3 0.22). The
+    # fix requires upgrading pyo3 to >=0.24.1, which also forces a numpy
+    # upgrade and a Bound-API migration of bindings/python — a separate,
+    # tracked piece of work. The published Rust crates and the Node/WASM
+    # bindings do not depend on pyo3.
+    { id = "RUSTSEC-2025-0020", reason = "pyo3 0.22 upgrade tracked separately; affects only bindings/python" },
+]
+
+[bans]
+# Catch accidental duplicate versions and wildcard ("*") version requirements.
+multiple-versions = "warn"
+wildcards = "deny"
+# Internal workspace crates are referenced by `path` without a version, which
+# is a legitimate wildcard — only flag wildcards on external registry crates.
+allow-wildcard-paths = true
+
+[licenses]
+version = 2
+# Licenses permitted for every crate in the dependency graph. Wickra itself is
+# PolyForm-Noncommercial-1.0.0; the rest are the permissive licenses its
+# dependency tree actually uses.
+allow = [
+    "PolyForm-Noncommercial-1.0.0",
+    "MIT",
+    "Apache-2.0",
+    "BSD-2-Clause",
+    "ISC",
+    "Unicode-3.0",
+    "BSL-1.0",
+    "Zlib",
+    "Unlicense",
+]
+# Crates whose SPDX expression carries a license exception (e.g. the LLVM
+# exception on Apache-2.0). The exception is only granted to the named crate.
+exceptions = [
+    { allow = ["Apache-2.0 WITH LLVM-exception"], crate = "target-lexicon" },
+]
+
+[sources]
+# Only the canonical crates.io registry is allowed; no git or alternative
+# registries.
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
