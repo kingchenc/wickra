@@ -91,6 +91,9 @@ pub struct BinanceKlineStream {
     socket: WebSocketStream<MaybeTlsStream<TcpStream>>,
     /// Interval requested at connect time. Used to tag every event.
     interval: Interval,
+    /// `true` once the server has closed the stream. A closed stream is never
+    /// polled again — `next_event` short-circuits to `Ok(None)`.
+    closed: bool,
 }
 
 /// Wire-format representation of an incoming Binance kline tick. Public so callers
@@ -159,17 +162,33 @@ impl BinanceKlineStream {
         );
         let url = url::Url::parse(&url).map_err(|e| Error::Malformed(e.to_string()))?;
         let (socket, _) = tokio_tungstenite::connect_async(url.as_str()).await?;
-        Ok(Self { socket, interval })
+        Ok(Self {
+            socket,
+            interval,
+            closed: false,
+        })
+    }
+
+    /// Whether the server has closed the stream. Once closed, every further
+    /// [`next_event`](Self::next_event) call yields `Ok(None)` immediately.
+    pub fn is_closed(&self) -> bool {
+        self.closed
     }
 
     /// Receive the next kline event. Yields `Ok(None)` when the server closes
     /// the connection cleanly.
     pub async fn next_event(&mut self) -> Result<Option<KlineEvent>> {
+        if self.closed {
+            return Ok(None);
+        }
         loop {
             let msg = match self.socket.next().await {
                 Some(Ok(m)) => m,
                 Some(Err(e)) => return Err(Error::from(e)),
-                None => return Ok(None),
+                None => {
+                    self.closed = true;
+                    return Ok(None);
+                }
             };
             match msg {
                 Message::Text(text) => {
@@ -189,7 +208,10 @@ impl BinanceKlineStream {
                     self.socket.send(Message::Pong(payload)).await?;
                 }
                 Message::Pong(_) | Message::Frame(_) => {}
-                Message::Close(_) => return Ok(None),
+                Message::Close(_) => {
+                    self.closed = true;
+                    return Ok(None);
+                }
             }
         }
     }
