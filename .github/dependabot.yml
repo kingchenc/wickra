@@ -1,0 +1,38 @@
+version: 2
+updates:
+  # Rust workspace (root Cargo.toml + all member crates).
+  - package-ecosystem: cargo
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "deps(cargo)"
+
+  # Node binding npm dependencies.
+  - package-ecosystem: npm
+    directory: "/bindings/node"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "deps(npm)"
+
+  # Python binding pip dependencies.
+  - package-ecosystem: pip
+    directory: "/bindings/python"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "deps(pip)"
+
+  # GitHub Actions — keeps the SHA-pinned actions current (Dependabot reads
+  # the version comment after each pinned SHA and bumps both together).
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "deps(actions)"

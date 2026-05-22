@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/kingchenc/wickra/security/advisories/new
+    about: Report security issues privately — do not open a public issue.
+  - name: Question or discussion
+    url: https://github.com/kingchenc/wickra/discussions
+    about: Ask usage questions and discuss ideas here.
