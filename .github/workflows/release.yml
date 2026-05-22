@@ -232,13 +232,17 @@ jobs:
               return 0
             fi
             echo "::group::publish $pkgname@$version"
-            (cd "$dir" && npm publish --access public)
+            # --ignore-scripts: a per-platform package must never run lifecycle
+            # scripts during publish (npm runs prepublishOnly/prepare/etc. from
+            # the package being published — a malicious or stray script would
+            # execute with the npm token in the environment).
+            (cd "$dir" && npm publish --access public --ignore-scripts)
             local rc=$?
             echo "::endgroup::"
             if [ "$rc" -ne 0 ]; then
               echo "::warning::first attempt of $pkgname failed (rc=$rc); retrying after 30s"
               sleep 30
-              (cd "$dir" && npm publish --access public)
+              (cd "$dir" && npm publish --access public --ignore-scripts)
               rc=$?
             fi
             if [ "$rc" -ne 0 ]; then
@@ -284,9 +288,11 @@ jobs:
         run: |
           # Main package
           npm pack --ignore-scripts
-          # Each per-platform package (the binaries were already moved in by napi artifacts)
+          # Each per-platform package (the binaries were already moved in by
+          # napi artifacts). --ignore-scripts for the same reason as publish:
+          # packing must not execute lifecycle scripts from the packed dir.
           for d in npm/*/; do
-            (cd "$d" && npm pack)
+            (cd "$d" && npm pack --ignore-scripts)
           done
 
       - name: Upload Node tarballs
