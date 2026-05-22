@@ -39,6 +39,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Community health files: `CONTRIBUTING.md`, `SECURITY.md`,
   `CODE_OF_CONDUCT.md`, issue / pull-request templates, `CODEOWNERS`, and a
   Dependabot configuration.
+- Seven example OHLCV datasets under `crates/wickra/examples/data/`, one per
+  timeframe (1m / 5m / 15m / 1h / 12h / 1d / 1month), holding real BTCUSDT
+  spot klines, alongside the `fetch_btcusdt` example that regenerates them
+  from the Binance REST API.
+- `Timeframe::minutes`, `Timeframe::hours` and `Timeframe::days` convenience
+  constructors, each building on seconds with a checked-multiplication
+  overflow guard.
 
 ### Changed
 - The indicator wiki is reorganised into eight family folders under
@@ -56,6 +63,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   of producing a poisoned candle.
 - All GitHub Actions are pinned to commit SHAs; the four publish jobs run in a
   protected `release` environment.
+- The indicator benchmarks (`crates/wickra/benches/indicators.rs`) now run
+  against the checked-in real BTCUSDT 1-minute dataset instead of a synthetic
+  price series.
 
 ### Fixed
 - `Timeframe::floor` no longer overflows for timestamps near `i64::MIN`.
