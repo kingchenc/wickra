@@ -11,6 +11,7 @@ The Rust examples live in the `wickra-examples` workspace member crate.
 
 | Example | What it does | Run |
 | --- | --- | --- |
+| `streaming.rs` | Feed a synthetic price series through SMA / EMA / RSI / MACD tick by tick. | `cargo run -p wickra-examples --bin streaming` |
 | `backtest.rs` | Compute a basket of indicators over an OHLCV CSV and print a summary. | `cargo run -p wickra-examples --bin backtest -- <ohlcv.csv>` |
 | `fetch_btcusdt.rs` | Download real BTCUSDT klines from the Binance REST API into `examples/data/`. | `cargo run -p wickra-examples --bin fetch_btcusdt` |
 | `live_binance.rs` | Stream live Binance klines through an indicator over a resilient WebSocket. | `cargo run -p wickra-examples --bin live_binance` |
@@ -19,6 +20,7 @@ The Rust examples live in the `wickra-examples` workspace member crate.
 
 | Example | What it does | Run |
 | --- | --- | --- |
+| `streaming.py` | Feed a synthetic price series through SMA / EMA / RSI / MACD tick by tick. | `python -m examples.python.streaming` |
 | `backtest.py` | Basket of indicators over an OHLCV CSV. | `python -m examples.python.backtest <ohlcv.csv>` |
 | `live_trading.py` | Live Binance feed → RSI / MACD / Bollinger → signals. | `python -m examples.python.live_trading --symbol BTCUSDT --interval 1m` |
 | `multi_timeframe.py` | Resample a 1-minute CSV to coarser timeframes and compare. | `python -m examples.python.multi_timeframe <1m.csv>` |
