@@ -142,7 +142,7 @@ Volume indicators all take `Candle` input because they need `close` and
 
 | Indicator     | One-liner | Input | Output | Range | Defaults | Warmup | Deep dive |
 |---------------|-----------|-------|--------|-------|----------|--------|-----------|
-| `RollingVwap` | VWAP over a sliding window instead of since-start; useful for session-independent VWAP. | `Candle` | `f64` | unbounded (price scale) | `period` | `period` | [Indicator-Vwap.md](indicators/volume/Indicator-Vwap.md#rollingvwap) |
+| `RollingVwap` | VWAP over a sliding window instead of since-start; useful for session-independent VWAP. | `Candle` | `f64` | unbounded (price scale) | `period` | `period` | [Indicator-Vwap.md → RollingVwap](indicators/volume/Indicator-Vwap.md#rollingvwap-finite-window) |
 
 ## Pick the right indicator for…
 

@@ -4,6 +4,10 @@
 > "fair" intraday execution. Wickra ships both the unbounded cumulative
 > session VWAP and a finite-window `RollingVwap`.
 
+This page documents two distinct public types — jump straight to
+[`Vwap` (cumulative)](#vwap-cumulative) or
+[`RollingVwap` (finite window)](#rollingvwap-finite-window).
+
 ## Quick reference
 
 | Item                | Value                                                          |
