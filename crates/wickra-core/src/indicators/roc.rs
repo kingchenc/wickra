@@ -6,10 +6,14 @@ use crate::error::{Error, Result};
 use crate::traits::Indicator;
 
 /// Rate of Change as a percentage: `(close - close[period]) / close[period] * 100`.
+///
+/// Non-finite inputs are ignored and leave the window untouched; the last
+/// computed value is returned instead, matching the SMA / EMA convention.
 #[derive(Debug, Clone)]
 pub struct Roc {
     period: usize,
     window: VecDeque<f64>,
+    last: Option<f64>,
 }
 
 impl Roc {
@@ -22,6 +26,7 @@ impl Roc {
         Ok(Self {
             period,
             window: VecDeque::with_capacity(period + 1),
+            last: None,
         })
     }
 
@@ -36,8 +41,9 @@ impl Indicator for Roc {
     type Output = f64;
 
     fn update(&mut self, input: f64) -> Option<f64> {
+        // Non-finite inputs are ignored: return the last value, leave state as is.
         if !input.is_finite() {
-            return None;
+            return self.last;
         }
         if self.window.len() == self.period + 1 {
             self.window.pop_front();
@@ -47,14 +53,18 @@ impl Indicator for Roc {
             return None;
         }
         let prev = *self.window.front().expect("non-empty");
-        if prev == 0.0 {
-            return Some(0.0);
-        }
-        Some((input - prev) / prev * 100.0)
+        let roc = if prev == 0.0 {
+            0.0
+        } else {
+            (input - prev) / prev * 100.0
+        };
+        self.last = Some(roc);
+        Some(roc)
     }
 
     fn reset(&mut self) {
         self.window.clear();
+        self.last = None;
     }
 
     fn warmup_period(&self) -> usize {
@@ -116,5 +126,21 @@ mod tests {
     #[test]
     fn rejects_zero_period() {
         assert!(Roc::new(0).is_err());
+    }
+
+    #[test]
+    fn ignores_non_finite_input() {
+        let mut roc = Roc::new(3).unwrap();
+        let out = roc.batch(&[100.0, 105.0, 108.0, 110.0]);
+        let ready = out[3].expect("ROC(3) ready after four inputs");
+        // Non-finite inputs return the last value without sliding the window.
+        assert_eq!(roc.update(f64::NAN), Some(ready));
+        assert_eq!(roc.update(f64::INFINITY), Some(ready));
+        // Window untouched: the next finite input still references prev = 105.
+        assert_relative_eq!(
+            roc.update(115.0).unwrap(),
+            (115.0 - 105.0) / 105.0 * 100.0,
+            epsilon = 1e-12
+        );
     }
 }
