@@ -836,6 +836,7 @@ struct PyRoc {
 #[pymethods]
 impl PyRoc {
     #[new]
+    #[pyo3(signature = (period=10))]
     fn new(period: usize) -> PyResult<Self> {
         Ok(Self {
             inner: wc::Roc::new(period).map_err(map_err)?,
@@ -1054,6 +1055,7 @@ struct PyTrix {
 #[pymethods]
 impl PyTrix {
     #[new]
+    #[pyo3(signature = (period=30))]
     fn new(period: usize) -> PyResult<Self> {
         Ok(Self {
             inner: wc::Trix::new(period).map_err(map_err)?,
