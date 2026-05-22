@@ -15,6 +15,13 @@ jobs:
   cargo-publish:
     name: Publish to crates.io
     runs-on: ubuntu-latest
+    # The publish jobs run with long-lived registry tokens. Binding them to a
+    # protected GitHub environment lets the org require a reviewer to approve
+    # each release and restrict which tags/branches may deploy, so the secrets
+    # are not reachable from an arbitrary workflow run. The `release`
+    # environment and its protection rules are configured under repo
+    # Settings -> Environments.
+    environment: release
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -122,6 +129,7 @@ jobs:
     name: Publish to PyPI
     needs: [python-wheels, python-sdist]
     runs-on: ubuntu-latest
+    environment: release
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -185,6 +193,7 @@ jobs:
     name: Publish to npm
     needs: node-build
     runs-on: ubuntu-latest
+    environment: release
     steps:
       - uses: actions/checkout@v4
 
@@ -309,6 +318,7 @@ jobs:
   wasm-publish:
     name: Publish wickra-wasm to npm
     runs-on: ubuntu-latest
+    environment: release
     steps:
       - uses: actions/checkout@v4
 
