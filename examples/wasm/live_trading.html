@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Wickra WASM — live trading</title>
+  <style>
+    body { font-family: ui-sans-serif, system-ui, sans-serif; max-width: 980px; margin: 2rem auto; padding: 0 1rem; color: #1d1d1d; }
+    h1 { margin-bottom: .25rem; }
+    .meta { color: #666; margin-top: 0; }
+    code { background: #f4f4f4; padding: .1rem .25rem; border-radius: .2rem; font-size: .9em; }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .75rem; margin-top: 1rem; }
+    .card { border: 1px solid #ddd; padding: .75rem; border-radius: .5rem; background: #fafafa; }
+    .card h3 { margin: 0 0 .25rem 0; font-size: .9rem; color: #666; font-weight: 500; }
+    .card span { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 1.1rem; }
+    label { display: inline-block; margin-right: .75rem; }
+    input { padding: .35rem; }
+    button { padding: .5rem 1rem; margin-right: .5rem; }
+    #status { margin-top: 1rem; color: #666; }
+    #log { margin-top: 1rem; max-height: 360px; overflow-y: auto; border: 1px solid #ddd; padding: .5rem; font-family: ui-monospace, monospace; font-size: .85rem; background: #fafafa; }
+    .log-line { white-space: pre; }
+    .signal { background: #fff3cd; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <h1>Wickra WASM — live trading</h1>
+  <p class="meta">
+    Connects to Binance's public kline WebSocket from the browser, streams
+    every tick through RSI(14), MACD(12,26,9) and Bollinger(20, 2.0) via
+    the WebAssembly bindings, and flags BUY/SELL candidates when all
+    three indicators agree. No orders are placed. Mirrors
+    <code>examples/python/live_trading.py</code> and
+    <code>examples/node/live_trading.js</code>.
+  </p>
+
+  <p>
+    <label>Symbol: <input id="symbol" value="BTCUSDT" size="10" /></label>
+    <label>Interval:
+      <select id="interval">
+        <option>1s</option><option selected>1m</option><option>3m</option>
+        <option>5m</option><option>15m</option><option>30m</option>
+        <option>1h</option><option>4h</option><option>1d</option>
+      </select>
+    </label>
+    <button id="connect" disabled>Connect</button>
+    <button id="disconnect" disabled>Disconnect</button>
+  </p>
+
+  <div class="grid">
+    <div class="card"><h3>Close</h3><span id="price">—</span></div>
+    <div class="card"><h3>RSI(14)</h3><span id="rsi">—</span></div>
+    <div class="card"><h3>MACD hist</h3><span id="hist">—</span></div>
+    <div class="card"><h3>BB upper / lower</h3><span id="bb">—</span></div>
+  </div>
+
+  <p id="status">Loading WASM module…</p>
+  <div id="log"></div>
+
+  <script type="module">
+    import init, {
+      version, installPanicHook,
+      RSI, MACD, BollingerBands,
+    } from "../../bindings/wasm/pkg/wickra_wasm.js";
+
+    const SYMBOL_RE = /^[A-Za-z0-9]+$/;
+    const BINANCE_WS = "wss://stream.binance.com:9443/stream";
+    const MAX_LOG_LINES = 200;
+
+    /** @type {WebSocket | null} */
+    let socket = null;
+    let rsi = null, macd = null, bb = null;
+
+    const $ = (id) => document.getElementById(id);
+
+    const fmt = (v) =>
+      v === null || v === undefined || Number.isNaN(v) ? "—" : v.toFixed(2);
+
+    function appendLog(text, isSignal = false) {
+      const log = $("log");
+      const div = document.createElement("div");
+      div.className = "log-line" + (isSignal ? " signal" : "");
+      div.textContent = text;
+      log.appendChild(div);
+      // Trim to MAX_LOG_LINES.
+      while (log.childElementCount > MAX_LOG_LINES) {
+        log.removeChild(log.firstChild);
+      }
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function resetIndicators() {
+      rsi = new RSI(14);
+      macd = new MACD(12, 26, 9);
+      bb = new BollingerBands(20, 2);
+      $("price").textContent = "—";
+      $("rsi").textContent = "—";
+      $("hist").textContent = "—";
+      $("bb").textContent = "—";
+      $("log").innerHTML = "";
+    }
+
+    function onMessage(raw) {
+      let envelope;
+      try {
+        envelope = JSON.parse(raw);
+      } catch (_) {
+        return;
+      }
+      const k = envelope?.data?.k;
+      if (!k || k.c === undefined) {
+        // Subscription acks and other non-kline frames carry no `k.c`.
+        return;
+      }
+      const close = Number(k.c);
+      const isClosed = Boolean(k.x);
+
+      const rsiV = rsi.update(close);
+      const macdV = macd.update(close);
+      const bbV = bb.update(close);
+      const hist = macdV ? macdV.histogram : null;
+
+      $("price").textContent = fmt(close);
+      $("rsi").textContent = fmt(rsiV);
+      $("hist").textContent = fmt(hist);
+      $("bb").textContent = bbV
+        ? `${fmt(bbV.upper)} / ${fmt(bbV.lower)}`
+        : "—";
+
+      const line =
+        `${isClosed ? "BAR " : "tick"}  close=${fmt(close)}  rsi=${fmt(rsiV)}  ` +
+        `hist=${fmt(hist)}  ` +
+        `bb=${bbV ? `${fmt(bbV.lower)}/${fmt(bbV.middle)}/${fmt(bbV.upper)}` : "—"}`;
+      appendLog(line);
+
+      if (rsiV !== null && macdV !== null && bbV !== null) {
+        if (rsiV > 70 && hist < 0 && close >= bbV.upper) {
+          appendLog(
+            `  SELL candidate: rsi=${fmt(rsiV)} hist=${fmt(hist)} close >= bb_upper=${fmt(bbV.upper)}`,
+            true,
+          );
+        } else if (rsiV < 30 && hist > 0 && close <= bbV.lower) {
+          appendLog(
+            `  BUY candidate: rsi=${fmt(rsiV)} hist=${fmt(hist)} close <= bb_lower=${fmt(bbV.lower)}`,
+            true,
+          );
+        }
+      }
+    }
+
+    function connect() {
+      const symbol = $("symbol").value.trim();
+      const interval = $("interval").value;
+      if (!SYMBOL_RE.test(symbol)) {
+        $("status").textContent = `error: invalid symbol ${JSON.stringify(symbol)}`;
+        return;
+      }
+
+      resetIndicators();
+      const stream = `${symbol.toLowerCase()}@kline_${interval}`;
+      const url = `${BINANCE_WS}?streams=${stream}`;
+      $("status").textContent = `Connecting to ${url}…`;
+      $("connect").disabled = true;
+
+      socket = new WebSocket(url);
+      socket.addEventListener("open", () => {
+        $("status").textContent = `Connected — listening for ${stream}`;
+        $("disconnect").disabled = false;
+      });
+      socket.addEventListener("message", (e) => onMessage(e.data));
+      socket.addEventListener("error", (e) => {
+        $("status").textContent = `websocket error: ${e.message || "see console"}`;
+      });
+      socket.addEventListener("close", () => {
+        $("status").textContent = "Disconnected.";
+        $("connect").disabled = false;
+        $("disconnect").disabled = true;
+        socket = null;
+      });
+    }
+
+    function disconnect() {
+      if (socket) socket.close();
+    }
+
+    $("connect").onclick = connect;
+    $("disconnect").onclick = disconnect;
+
+    init().then(() => {
+      installPanicHook();
+      $("connect").disabled = false;
+      $("status").textContent = `Ready — wickra ${version()}. Click "Connect".`;
+    });
+  </script>
+</body>
+</html>
