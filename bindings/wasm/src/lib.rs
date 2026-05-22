@@ -92,6 +92,8 @@ wasm_scalar_indicator!(WasmUlcerIndex, "UlcerIndex", wc::UlcerIndex, period: usi
 wasm_scalar_indicator!(WasmHistoricalVolatility, "HistoricalVolatility", wc::HistoricalVolatility, period: usize, trading_periods: usize);
 wasm_scalar_indicator!(WasmBollingerBandwidth, "BollingerBandwidth", wc::BollingerBandwidth, period: usize, multiplier: f64);
 wasm_scalar_indicator!(WasmPercentB, "PercentB", wc::PercentB, period: usize, multiplier: f64);
+wasm_scalar_indicator!(WasmLinearRegression, "LinearRegression", wc::LinearRegression, period: usize);
+wasm_scalar_indicator!(WasmLinRegSlope, "LinRegSlope", wc::LinRegSlope, period: usize);
 
 // ---------- KAMA (three params) ----------
 
@@ -812,6 +814,135 @@ impl WasmAtrTrailingStop {
         Ok(Self {
             inner: wc::AtrTrailingStop::new(atr_period, multiplier).map_err(map_err)?,
         })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = TypicalPrice)]
+pub struct WasmTypicalPrice {
+    inner: wc::TypicalPrice,
+}
+
+impl Default for WasmTypicalPrice {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = TypicalPrice)]
+impl WasmTypicalPrice {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmTypicalPrice {
+        Self {
+            inner: wc::TypicalPrice::new(),
+        }
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = MedianPrice)]
+pub struct WasmMedianPrice {
+    inner: wc::MedianPrice,
+}
+
+impl Default for WasmMedianPrice {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = MedianPrice)]
+impl WasmMedianPrice {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmMedianPrice {
+        Self {
+            inner: wc::MedianPrice::new(),
+        }
+    }
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let c = make_candle(high[i], low[i], low[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = WeightedClose)]
+pub struct WasmWeightedClose {
+    inner: wc::WeightedClose,
+}
+
+impl Default for WasmWeightedClose {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = WeightedClose)]
+impl WasmWeightedClose {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmWeightedClose {
+        Self {
+            inner: wc::WeightedClose::new(),
+        }
     }
     pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;

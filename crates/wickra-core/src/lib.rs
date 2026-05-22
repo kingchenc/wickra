@@ -48,11 +48,12 @@ pub use indicators::{
     AwesomeOscillator, BollingerBands, BollingerBandwidth, BollingerOutput, Cci, ChaikinMoneyFlow,
     ChaikinOscillator, ChandeKrollStop, ChandeKrollStopOutput, ChandelierExit,
     ChandelierExitOutput, Cmo, Coppock, Dema, Donchian, DonchianOutput, Dpo, EaseOfMovement, Ema,
-    ForceIndex, HistoricalVolatility, Hma, Kama, Keltner, KeltnerOutput, MacdIndicator, MacdOutput,
-    MassIndex, Mfi, Mom, Natr, Obv, PercentB, Pmo, Ppo, Psar, Roc, RollingVwap, Rsi, Sma, Smma,
-    StdDev, StochRsi, Stochastic, StochasticOutput, SuperTrend, SuperTrendOutput, Tema, Trima,
-    Trix, Tsi, UlcerIndex, UltimateOscillator, VolumePriceTrend, Vortex, VortexOutput, Vwap, Vwma,
-    WilliamsR, Wma, Zlema, T3,
+    ForceIndex, HistoricalVolatility, Hma, Kama, Keltner, KeltnerOutput, LinRegSlope,
+    LinearRegression, MacdIndicator, MacdOutput, MassIndex, MedianPrice, Mfi, Mom, Natr, Obv,
+    PercentB, Pmo, Ppo, Psar, Roc, RollingVwap, Rsi, Sma, Smma, StdDev, StochRsi, Stochastic,
+    StochasticOutput, SuperTrend, SuperTrendOutput, Tema, Trima, Trix, Tsi, TypicalPrice,
+    UlcerIndex, UltimateOscillator, VolumePriceTrend, Vortex, VortexOutput, Vwap, Vwma,
+    WeightedClose, WilliamsR, Wma, Zlema, T3,
 };
 pub use ohlcv::{Candle, Tick};
 pub use traits::{BatchExt, Chain, Indicator};

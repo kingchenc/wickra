@@ -140,6 +140,14 @@ Rust / Python / Node examples. They are grouped by family, mirroring the
 - [Indicator-ForceIndex.md](indicators/volume/Indicator-ForceIndex.md)
 - [Indicator-EaseOfMovement.md](indicators/volume/Indicator-EaseOfMovement.md)
 
+**Statistics** — price transforms and rolling regressions.
+
+- [Indicator-TypicalPrice.md](indicators/statistics/Indicator-TypicalPrice.md)
+- [Indicator-MedianPrice.md](indicators/statistics/Indicator-MedianPrice.md)
+- [Indicator-WeightedClose.md](indicators/statistics/Indicator-WeightedClose.md)
+- [Indicator-LinearRegression.md](indicators/statistics/Indicator-LinearRegression.md)
+- [Indicator-LinRegSlope.md](indicators/statistics/Indicator-LinRegSlope.md)
+
 ## See also
 
 - Source code: <https://github.com/kingchenc/wickra>

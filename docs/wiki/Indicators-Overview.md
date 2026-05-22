@@ -1,11 +1,11 @@
 # Indicators Overview
 
-Wickra ships 58 indicators, organised in source under the four classical
-families — trend, momentum, volatility, volume — that map directly to the
-directory structure of `crates/wickra-core/src/indicators/`. The same family
-labels are used here, plus a second-level grouping that reflects how the
-indicators actually behave (which output range they live in, what data they
-need, what question they answer).
+Wickra ships 63 indicators, organised under the four classical families —
+trend, momentum, volatility, volume — plus a fifth **statistics** group for
+price transforms and rolling regressions. The same family labels are used
+here, with a second-level grouping that reflects how the indicators actually
+behave (which output range they live in, what data they need, what question
+they answer).
 
 Every indicator is an O(1) state machine that consumes one input at a time
 and produces either `Option<f64>` (Rust), `float | None` (Python), or
@@ -184,6 +184,32 @@ price closes within each bar and how much volume backed the move.
 | `ChaikinOscillator` | `EMA(ADL, fast) − EMA(ADL, slow)`; the MACD of the ADL. | `Candle` | `f64` | unbounded around zero | `(fast=3, slow=10)` (Python) | `slow` | [Indicator-ChaikinOscillator.md](indicators/volume/Indicator-ChaikinOscillator.md) |
 | `ForceIndex`        | `EMA((close − prev_close) · volume, period)`; the conviction behind a move. | `Candle` | `f64` | unbounded around zero | `period = 13` (Python) | `period + 1` | [Indicator-ForceIndex.md](indicators/volume/Indicator-ForceIndex.md) |
 | `EaseOfMovement`    | `SMA` of distance travelled per unit of volume. | `Candle` | `f64` | unbounded around zero | `(period=14, divisor=1e8)` (Python) | `period + 1` | [Indicator-EaseOfMovement.md](indicators/volume/Indicator-EaseOfMovement.md) |
+
+## Statistics
+
+Price transforms and rolling regressions. The transforms collapse a full
+OHLC bar to a single representative price; the regressions fit a
+least-squares line to a sliding window of prices.
+
+### Price transforms
+
+Stateless per-bar reductions of an OHLC candle to one price. Each emits from
+the very first candle (`warmup = 1`).
+
+| Indicator | One-liner | Input | Output | Range | Defaults | Warmup | Deep dive |
+|-----------|-----------|-------|--------|-------|----------|--------|-----------|
+| `TypicalPrice`  | `(high + low + close) / 3`. | `Candle` | `f64` | unbounded (price scale) | (no parameters) | `1` | [Indicator-TypicalPrice.md](indicators/statistics/Indicator-TypicalPrice.md) |
+| `MedianPrice`   | `(high + low) / 2`. | `Candle` | `f64` | unbounded (price scale) | (no parameters) | `1` | [Indicator-MedianPrice.md](indicators/statistics/Indicator-MedianPrice.md) |
+| `WeightedClose` | `(high + low + 2·close) / 4`. | `Candle` | `f64` | unbounded (price scale) | (no parameters) | `1` | [Indicator-WeightedClose.md](indicators/statistics/Indicator-WeightedClose.md) |
+
+### Regression
+
+Rolling ordinary-least-squares fits over the last `period` prices.
+
+| Indicator | One-liner | Input | Output | Range | Defaults | Warmup | Deep dive |
+|-----------|-----------|-------|--------|-------|----------|--------|-----------|
+| `LinearRegression` | Endpoint of the rolling least-squares line — a low-lag smoothed price. | `f64` | `f64` | unbounded (price scale) | `period = 14` (Python) | `period` | [Indicator-LinearRegression.md](indicators/statistics/Indicator-LinearRegression.md) |
+| `LinRegSlope`      | Slope of the rolling least-squares line — trend steepness per bar. | `f64` | `f64` | unbounded around zero | `period = 14` (Python) | `period` | [Indicator-LinRegSlope.md](indicators/statistics/Indicator-LinRegSlope.md) |
 
 ## Pick the right indicator for…
 
