@@ -1,0 +1,27 @@
+{
+  "name": "wickra-linux-arm64-gnu",
+  "version": "0.1.4",
+  "description": "Native binding for wickra (linux arm64 GNU). Installed automatically as an optional dependency of wickra on matching platforms.",
+  "main": "wickra.linux-arm64-gnu.node",
+  "files": [
+    "wickra.linux-arm64-gnu.node"
+  ],
+  "license": "SEE LICENSE IN LICENSE",
+  "engines": {
+    "node": ">= 16"
+  },
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "libc": [
+    "glibc"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kingchenc/wickra"
+  },
+  "homepage": "https://github.com/kingchenc/wickra"
+}

@@ -141,9 +141,11 @@ jobs:
       matrix:
         include:
           - { host: ubuntu-latest, target: x86_64-unknown-linux-gnu }
+          - { host: ubuntu-24.04-arm, target: aarch64-unknown-linux-gnu }
           - { host: macos-latest, target: x86_64-apple-darwin }
           - { host: macos-latest, target: aarch64-apple-darwin }
           - { host: windows-latest, target: x86_64-pc-windows-msvc }
+          - { host: windows-11-arm, target: aarch64-pc-windows-msvc }
     runs-on: ${{ matrix.host }}
     steps:
       - uses: actions/checkout@v4
