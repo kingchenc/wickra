@@ -77,6 +77,8 @@ wasm_scalar_indicator!(WasmRoc, "ROC", wc::Roc, period: usize);
 wasm_scalar_indicator!(WasmTrix, "TRIX", wc::Trix, period: usize);
 wasm_scalar_indicator!(WasmSmma, "SMMA", wc::Smma, period: usize);
 wasm_scalar_indicator!(WasmTrima, "TRIMA", wc::Trima, period: usize);
+wasm_scalar_indicator!(WasmZlema, "ZLEMA", wc::Zlema, period: usize);
+wasm_scalar_indicator!(WasmT3, "T3", wc::T3, period: usize, v: f64);
 
 // ---------- KAMA (three params) ----------
 
@@ -307,6 +309,39 @@ impl WasmObv {
         Self {
             inner: wc::Obv::new(),
         }
+    }
+    pub fn batch(&mut self, close: &[f64], volume: &[f64]) -> Result<Float64Array, JsError> {
+        if close.len() != volume.len() {
+            return Err(JsError::new("close and volume must be equal length"));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            let c = make_candle(close[i], close[i], close[i], volume[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = VWMA)]
+pub struct WasmVwma {
+    inner: wc::Vwma,
+}
+
+#[wasm_bindgen(js_class = VWMA)]
+impl WasmVwma {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmVwma, JsError> {
+        Ok(Self {
+            inner: wc::Vwma::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, close: f64, volume: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(close, close, close, volume)?;
+        Ok(self.inner.update(c))
     }
     pub fn batch(&mut self, close: &[f64], volume: &[f64]) -> Result<Float64Array, JsError> {
         if close.len() != volume.len() {

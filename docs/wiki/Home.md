@@ -81,6 +81,9 @@ Rust / Python / Node examples. They are grouped by family, mirroring the
 - [Indicator-Kama.md](indicators/trend/Indicator-Kama.md)
 - [Indicator-Smma.md](indicators/trend/Indicator-Smma.md)
 - [Indicator-Trima.md](indicators/trend/Indicator-Trima.md)
+- [Indicator-Zlema.md](indicators/trend/Indicator-Zlema.md)
+- [Indicator-T3.md](indicators/trend/Indicator-T3.md)
+- [Indicator-Vwma.md](indicators/trend/Indicator-Vwma.md)
 
 **Momentum** — measure the rate of price change rather than the level.
 
