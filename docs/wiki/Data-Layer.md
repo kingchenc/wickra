@@ -51,6 +51,10 @@ The reader is defensive about real-world files:
 `TickAggregator` rolls a stream of trade `Tick`s up into `Candle`s of an
 arbitrary timeframe. The timeframe's bucket size is in the same unit as the
 tick timestamps (milliseconds for Binance, seconds for daily bars, …).
+Build a `Timeframe` with `Timeframe::new` (a raw bucket size), the
+`millis` / `seconds` / `one_minute_ms` shortcuts, or the `minutes` / `hours` /
+`days` constructors — each of the last three builds on **seconds**, so
+`Timeframe::minutes(5)` is a 300-second bucket.
 
 ```rust
 use wickra_data::aggregator::{TickAggregator, Timeframe};

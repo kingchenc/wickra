@@ -42,6 +42,67 @@ impl Timeframe {
         Self::new(60_000).expect("60_000 > 0")
     }
 
+    /// Convenience: build a timeframe of `n` whole minutes, measured in
+    /// seconds — consistent with [`Timeframe::seconds`].
+    ///
+    /// `minutes(5)` yields a bucket of `300`, for use with second-resolution
+    /// timestamps. For millisecond timestamps (Binance) multiply yourself or
+    /// use [`Timeframe::millis`].
+    ///
+    /// # Errors
+    /// Returns [`Error::InvalidTimeframe`] if `n` is not positive or if
+    /// `n * 60` overflows `i64`.
+    ///
+    /// ```
+    /// use wickra_data::aggregator::Timeframe;
+    /// assert_eq!(Timeframe::minutes(5)?.bucket(), 300);
+    /// # Ok::<(), wickra_data::Error>(())
+    /// ```
+    pub fn minutes(n: i64) -> Result<Self> {
+        let bucket = n
+            .checked_mul(60)
+            .ok_or_else(|| Error::InvalidTimeframe(format!("{n} minutes overflows i64 seconds")))?;
+        Self::new(bucket)
+    }
+
+    /// Convenience: build a timeframe of `n` whole hours, measured in seconds
+    /// (`hours(2)` → a bucket of `7_200`).
+    ///
+    /// # Errors
+    /// Returns [`Error::InvalidTimeframe`] if `n` is not positive or if
+    /// `n * 3_600` overflows `i64`.
+    ///
+    /// ```
+    /// use wickra_data::aggregator::Timeframe;
+    /// assert_eq!(Timeframe::hours(2)?.bucket(), 7_200);
+    /// # Ok::<(), wickra_data::Error>(())
+    /// ```
+    pub fn hours(n: i64) -> Result<Self> {
+        let bucket = n
+            .checked_mul(3_600)
+            .ok_or_else(|| Error::InvalidTimeframe(format!("{n} hours overflows i64 seconds")))?;
+        Self::new(bucket)
+    }
+
+    /// Convenience: build a timeframe of `n` whole days, measured in seconds
+    /// (`days(1)` → a bucket of `86_400`).
+    ///
+    /// # Errors
+    /// Returns [`Error::InvalidTimeframe`] if `n` is not positive or if
+    /// `n * 86_400` overflows `i64`.
+    ///
+    /// ```
+    /// use wickra_data::aggregator::Timeframe;
+    /// assert_eq!(Timeframe::days(1)?.bucket(), 86_400);
+    /// # Ok::<(), wickra_data::Error>(())
+    /// ```
+    pub fn days(n: i64) -> Result<Self> {
+        let bucket = n
+            .checked_mul(86_400)
+            .ok_or_else(|| Error::InvalidTimeframe(format!("{n} days overflows i64 seconds")))?;
+        Self::new(bucket)
+    }
+
     /// Bucket size.
     pub const fn bucket(self) -> i64 {
         self.bucket
@@ -265,6 +326,42 @@ mod tests {
     fn timeframe_rejects_non_positive() {
         assert!(Timeframe::new(0).is_err());
         assert!(Timeframe::new(-1).is_err());
+    }
+
+    #[test]
+    fn minute_hour_day_constructors_compute_seconds() {
+        assert_eq!(Timeframe::minutes(1).unwrap().bucket(), 60);
+        assert_eq!(Timeframe::minutes(5).unwrap().bucket(), 300);
+        assert_eq!(Timeframe::hours(1).unwrap().bucket(), 3_600);
+        assert_eq!(Timeframe::hours(4).unwrap().bucket(), 14_400);
+        assert_eq!(Timeframe::days(1).unwrap().bucket(), 86_400);
+        assert_eq!(Timeframe::days(7).unwrap().bucket(), 604_800);
+    }
+
+    #[test]
+    fn minute_hour_day_constructors_reject_non_positive() {
+        for n in [0, -1, -60] {
+            assert!(Timeframe::minutes(n).is_err());
+            assert!(Timeframe::hours(n).is_err());
+            assert!(Timeframe::days(n).is_err());
+        }
+    }
+
+    #[test]
+    fn minute_hour_day_constructors_reject_overflow() {
+        // `n * unit` overflows i64 long before `new`'s sign check runs.
+        assert!(matches!(
+            Timeframe::minutes(i64::MAX),
+            Err(Error::InvalidTimeframe(_))
+        ));
+        assert!(matches!(
+            Timeframe::hours(i64::MAX),
+            Err(Error::InvalidTimeframe(_))
+        ));
+        assert!(matches!(
+            Timeframe::days(i64::MAX),
+            Err(Error::InvalidTimeframe(_))
+        ));
     }
 
     #[test]
