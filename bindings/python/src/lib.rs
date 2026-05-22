@@ -1519,6 +1519,216 @@ impl PyAroon {
     }
 }
 
+// ============================== MOM ==============================
+
+#[pyclass(name = "MOM", module = "wickra._wickra")]
+#[derive(Clone)]
+struct PyMom {
+    inner: wc::Mom,
+}
+
+#[pymethods]
+impl PyMom {
+    #[new]
+    #[pyo3(signature = (period=10))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Mom::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("MOM(period={})", self.inner.period())
+    }
+}
+
+// ============================== CMO ==============================
+
+#[pyclass(name = "CMO", module = "wickra._wickra")]
+#[derive(Clone)]
+struct PyCmo {
+    inner: wc::Cmo,
+}
+
+#[pymethods]
+impl PyCmo {
+    #[new]
+    #[pyo3(signature = (period=14))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Cmo::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("CMO(period={})", self.inner.period())
+    }
+}
+
+// ============================== TSI ==============================
+
+#[pyclass(name = "TSI", module = "wickra._wickra")]
+#[derive(Clone)]
+struct PyTsi {
+    inner: wc::Tsi,
+}
+
+#[pymethods]
+impl PyTsi {
+    #[new]
+    #[pyo3(signature = (long=25, short=13))]
+    fn new(long: usize, short: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Tsi::new(long, short).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+    }
+    #[getter]
+    fn periods(&self) -> (usize, usize) {
+        self.inner.periods()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (l, s) = self.inner.periods();
+        format!("TSI(long={l}, short={s})")
+    }
+}
+
+// ============================== PMO ==============================
+
+#[pyclass(name = "PMO", module = "wickra._wickra")]
+#[derive(Clone)]
+struct PyPmo {
+    inner: wc::Pmo,
+}
+
+#[pymethods]
+impl PyPmo {
+    #[new]
+    #[pyo3(signature = (smoothing1=35, smoothing2=20))]
+    fn new(smoothing1: usize, smoothing2: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Pmo::new(smoothing1, smoothing2).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+    }
+    #[getter]
+    fn periods(&self) -> (usize, usize) {
+        self.inner.periods()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (s1, s2) = self.inner.periods();
+        format!("PMO(smoothing1={s1}, smoothing2={s2})")
+    }
+}
+
 // ============================== ZLEMA ==============================
 
 #[pyclass(name = "ZLEMA", module = "wickra._wickra")]
@@ -1838,5 +2048,9 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyZlema>()?;
     m.add_class::<PyT3>()?;
     m.add_class::<PyVwma>()?;
+    m.add_class::<PyMom>()?;
+    m.add_class::<PyCmo>()?;
+    m.add_class::<PyTsi>()?;
+    m.add_class::<PyPmo>()?;
     Ok(())
 }

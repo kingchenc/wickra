@@ -1,6 +1,6 @@
 # Indicators Overview
 
-Wickra ships 30 indicators, organised in source under the four classical
+Wickra ships 34 indicators, organised in source under the four classical
 families — trend, momentum, volatility, volume — that map directly to the
 directory structure of `crates/wickra-core/src/indicators/`. The same family
 labels are used here, plus a second-level grouping that reflects how the
@@ -97,6 +97,10 @@ Centered on zero or driven by raw price differences; no fixed cap.
 | `AwesomeOscillator` | `SMA(median, fast) − SMA(median, slow)`; Bill Williams' zero-line crossover oscillator. | `Candle` | `f64` | unbounded around zero | `(fast=5, slow=34)` (Python) | `slow_period` | [Indicator-AwesomeOscillator.md](indicators/momentum/Indicator-AwesomeOscillator.md) |
 | `WilliamsR`         | `−100 × (high_n − close) / (high_n − low_n)`; same family as Stochastic but inverted to `[−100, 0]`. | `Candle` | `f64` | `[−100, 0]` | `period = 14` (Python) | `period` | [Indicator-WilliamsR.md](indicators/momentum/Indicator-WilliamsR.md) |
 | `Trix`              | `(EMA(EMA(EMA(price))).pct_change × 10000)`; oscillator built from a triple-smoothed EMA. | `f64` | `f64` | unbounded around zero | `period = 15` (Python) | `3·period − 1` | [Indicator-Trix.md](indicators/momentum/Indicator-Trix.md) |
+| `Mom`               | `price − price[period]`; raw price-difference momentum. | `f64` | `f64` | unbounded around zero | `period = 10` (Python) | `period + 1` | [Indicator-Mom.md](indicators/momentum/Indicator-Mom.md) |
+| `Cmo`               | Chande Momentum Oscillator; `100·(Σgain − Σloss)/(Σgain + Σloss)` over `period` changes. | `f64` | `f64` | `[−100, 100]` | `period = 14` (Python) | `period + 1` | [Indicator-Cmo.md](indicators/momentum/Indicator-Cmo.md) |
+| `Tsi`               | True Strength Index; ratio of double-EMA-smoothed momentum to its absolute value. | `f64` | `f64` | ≈ `[−100, 100]` around zero | `(long=25, short=13)` (Python) | `long + short` | [Indicator-Tsi.md](indicators/momentum/Indicator-Tsi.md) |
+| `Pmo`               | DecisionPoint Price Momentum Oscillator; doubly-smoothed rate of change. | `f64` | `f64` | unbounded around zero | `(smoothing1=35, smoothing2=20)` (Python) | `2` | [Indicator-Pmo.md](indicators/momentum/Indicator-Pmo.md) |
 
 ### Directional
 

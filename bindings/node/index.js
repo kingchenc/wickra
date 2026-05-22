@@ -310,7 +310,7 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, T3, VWMA, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, AwesomeOscillator, Aroon, KAMA } = nativeBinding
+const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, T3, VWMA, MOM, CMO, TSI, PMO, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, AwesomeOscillator, Aroon, KAMA } = nativeBinding
 
 module.exports.version = version
 module.exports.SMA = SMA
@@ -327,6 +327,10 @@ module.exports.TRIMA = TRIMA
 module.exports.ZLEMA = ZLEMA
 module.exports.T3 = T3
 module.exports.VWMA = VWMA
+module.exports.MOM = MOM
+module.exports.CMO = CMO
+module.exports.TSI = TSI
+module.exports.PMO = PMO
 module.exports.MACD = MACD
 module.exports.BollingerBands = BollingerBands
 module.exports.ATR = ATR

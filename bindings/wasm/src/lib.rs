@@ -79,6 +79,10 @@ wasm_scalar_indicator!(WasmSmma, "SMMA", wc::Smma, period: usize);
 wasm_scalar_indicator!(WasmTrima, "TRIMA", wc::Trima, period: usize);
 wasm_scalar_indicator!(WasmZlema, "ZLEMA", wc::Zlema, period: usize);
 wasm_scalar_indicator!(WasmT3, "T3", wc::T3, period: usize, v: f64);
+wasm_scalar_indicator!(WasmMom, "MOM", wc::Mom, period: usize);
+wasm_scalar_indicator!(WasmCmo, "CMO", wc::Cmo, period: usize);
+wasm_scalar_indicator!(WasmTsi, "TSI", wc::Tsi, long: usize, short: usize);
+wasm_scalar_indicator!(WasmPmo, "PMO", wc::Pmo, smoothing1: usize, smoothing2: usize);
 
 // ---------- KAMA (three params) ----------
 

@@ -98,6 +98,10 @@ Rust / Python / Node examples. They are grouped by family, mirroring the
 - [Indicator-Trix.md](indicators/momentum/Indicator-Trix.md)
 - [Indicator-AwesomeOscillator.md](indicators/momentum/Indicator-AwesomeOscillator.md)
 - [Indicator-Aroon.md](indicators/momentum/Indicator-Aroon.md)
+- [Indicator-Mom.md](indicators/momentum/Indicator-Mom.md)
+- [Indicator-Cmo.md](indicators/momentum/Indicator-Cmo.md)
+- [Indicator-Tsi.md](indicators/momentum/Indicator-Tsi.md)
+- [Indicator-Pmo.md](indicators/momentum/Indicator-Pmo.md)
 
 **Volatility** — envelope width and per-bar dispersion measures.
 

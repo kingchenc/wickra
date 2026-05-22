@@ -105,6 +105,8 @@ node_scalar_indicator!(TrixNode, "TRIX", wc::Trix);
 node_scalar_indicator!(SmmaNode, "SMMA", wc::Smma);
 node_scalar_indicator!(TrimaNode, "TRIMA", wc::Trima);
 node_scalar_indicator!(ZlemaNode, "ZLEMA", wc::Zlema);
+node_scalar_indicator!(MomNode, "MOM", wc::Mom);
+node_scalar_indicator!(CmoNode, "CMO", wc::Cmo);
 
 // ============================== MACD ==============================
 
@@ -1042,6 +1044,80 @@ impl T3Node {
     pub fn new(period: u32, v: f64) -> napi::Result<Self> {
         Ok(Self {
             inner: wc::T3::new(period as usize, v).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== TSI ==============================
+
+#[napi(js_name = "TSI")]
+pub struct TsiNode {
+    inner: wc::Tsi,
+}
+
+#[napi]
+impl TsiNode {
+    #[napi(constructor)]
+    pub fn new(long: u32, short: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Tsi::new(long as usize, short as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== PMO ==============================
+
+#[napi(js_name = "PMO")]
+pub struct PmoNode {
+    inner: wc::Pmo,
+}
+
+#[napi]
+impl PmoNode {
+    #[napi(constructor)]
+    pub fn new(smoothing1: u32, smoothing2: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Pmo::new(smoothing1 as usize, smoothing2 as usize).map_err(map_err)?,
         })
     }
     #[napi]
