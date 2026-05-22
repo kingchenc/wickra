@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Wickra WASM — parallel assets</title>
+  <style>
+    body { font-family: ui-sans-serif, system-ui, sans-serif; max-width: 980px; margin: 2rem auto; padding: 0 1rem; color: #1d1d1d; }
+    h1 { margin-bottom: .25rem; }
+    .meta { color: #666; margin-top: 0; }
+    code { background: #f4f4f4; padding: .1rem .25rem; border-radius: .2rem; font-size: .9em; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin-top: 1rem; }
+    .card { border: 1px solid #ddd; padding: .75rem; border-radius: .5rem; background: #fafafa; }
+    .card h3 { margin: 0 0 .25rem 0; font-size: .9rem; color: #666; font-weight: 500; }
+    .card span { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 1.1rem; }
+    label { display: inline-block; margin-right: .5rem; }
+    input, select { padding: .35rem; }
+    button { padding: .5rem 1rem; }
+    #status { margin-top: 1rem; color: #666; }
+    #log { margin-top: 1rem; font-family: ui-monospace, monospace; font-size: .85rem; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>Wickra WASM — parallel assets</h1>
+  <p class="meta">
+    Builds a synthetic <code>(assets, bars)</code> panel, runs a serial
+    baseline on the main thread, then dispatches the same workload to a
+    pool of <code>Worker</code>s — each loading its own copy of the
+    WebAssembly module — and reports the speedup. The browser counterpart
+    of <code>examples/node/parallel_assets.js</code> and
+    <code>examples/rust/src/bin/parallel_assets.rs</code>.
+  </p>
+
+  <p>
+    <label>Assets: <input id="assets" type="number" value="200" min="1" max="5000" /></label>
+    <label>Bars:   <input id="bars"   type="number" value="5000" min="100" max="200000" /></label>
+    <label>Indicator:
+      <select id="indicator"><option>sma</option><option>rsi</option></select>
+    </label>
+    <label>Workers: <input id="workers" type="number" value="4" min="1" max="32" /></label>
+    <button id="go" disabled>Run</button>
+  </p>
+
+  <div class="grid">
+    <div class="card"><h3>Serial</h3><span id="t-serial">—</span></div>
+    <div class="card"><h3>Parallel</h3><span id="t-parallel">—</span></div>
+    <div class="card"><h3>Speedup</h3><span id="speedup">—</span></div>
+  </div>
+
+  <p id="status">Loading WASM module…</p>
+  <div id="log"></div>
+
+  <script type="module">
+    import init, { version, installPanicHook, SMA, RSI } from "../../bindings/wasm/pkg/wickra_wasm.js";
+
+    const $ = (id) => document.getElementById(id);
+
+    // Deterministic LCG matching the Node and Rust siblings, so a
+    // side-by-side run on three runtimes produces comparable timings.
+    function makeRng(seed) {
+      let state = seed >>> 0;
+      return () => {
+        state = (Math.imul(state, 1103515245) + 12345) & 0x7fffffff;
+        return state / 0x7fffffff;
+      };
+    }
+
+    function synthesizePanel(nAssets, nBars) {
+      const panel = new Array(nAssets);
+      for (let a = 0; a < nAssets; a++) {
+        const rng = makeRng((1234567 + Math.imul(a, 2654435761)) >>> 0);
+        const series = new Float64Array(nBars);
+        let price = 100;
+        for (let i = 0; i < nBars; i++) {
+          price += (rng() - 0.5) * 0.4;
+          series[i] = price;
+        }
+        panel[a] = series;
+      }
+      return panel;
+    }
+
+    function lastValue(prices, indicator) {
+      const ind = indicator === "sma" ? new SMA(14) : new RSI(14);
+      let last = null;
+      for (let i = 0; i < prices.length; i++) {
+        const v = ind.update(prices[i]);
+        if (v !== null) last = v;
+      }
+      return last;
+    }
+
+    async function runWorker(panelSlice, indicator) {
+      return new Promise((resolve, reject) => {
+        const worker = new Worker(
+          new URL("./parallel_worker.js", import.meta.url),
+          { type: "module" },
+        );
+        worker.addEventListener("message", (e) => {
+          worker.terminate();
+          resolve(e.data);
+        });
+        worker.addEventListener("error", (e) => {
+          worker.terminate();
+          reject(new Error(e.message || "worker error"));
+        });
+        worker.postMessage({ panelSlice, indicator });
+      });
+    }
+
+    async function run() {
+      const assets = Number($("assets").value);
+      const bars = Number($("bars").value);
+      const indicator = $("indicator").value;
+      const workerCount = Math.max(1, Math.min(Number($("workers").value), assets));
+
+      if (!Number.isInteger(assets) || assets <= 0 ||
+          !Number.isInteger(bars) || bars <= 0) {
+        $("status").textContent = "error: assets and bars must be positive integers";
+        return;
+      }
+
+      $("go").disabled = true;
+      $("status").textContent = `Generating ${assets}×${bars} synthetic panel…`;
+      await new Promise((r) => setTimeout(r, 0));
+      const panel = synthesizePanel(assets, bars);
+
+      // Serial baseline (main thread).
+      $("status").textContent = `Running serial baseline…`;
+      await new Promise((r) => setTimeout(r, 0));
+      let t0 = performance.now();
+      const serial = new Array(assets);
+      for (let a = 0; a < assets; a++) {
+        serial[a] = lastValue(panel[a], indicator);
+      }
+      const tSerial = (performance.now() - t0) / 1000;
+      $("t-serial").textContent = `${tSerial.toFixed(3)} s`;
+
+      // Parallel via Worker pool.
+      $("status").textContent = `Dispatching to ${workerCount} workers…`;
+      await new Promise((r) => setTimeout(r, 0));
+      const sliceSize = Math.ceil(assets / workerCount);
+      t0 = performance.now();
+      const promises = [];
+      for (let w = 0; w < workerCount; w++) {
+        const start = w * sliceSize;
+        const end = Math.min(start + sliceSize, assets);
+        if (start >= end) continue;
+        const panelSlice = panel.slice(start, end);
+        promises.push(
+          runWorker(panelSlice, indicator).then((results) => ({ start, results })),
+        );
+      }
+      try {
+        const chunks = await Promise.all(promises);
+        const tParallel = (performance.now() - t0) / 1000;
+        const parallel = new Array(assets);
+        for (const { start, results } of chunks) {
+          for (let j = 0; j < results.length; j++) parallel[start + j] = results[j];
+        }
+        $("t-parallel").textContent = `${tParallel.toFixed(3)} s`;
+        $("speedup").textContent = `${(tSerial / Math.max(tParallel, 1e-9)).toFixed(2)}×`;
+
+        // Sanity check: serial and parallel must agree per asset.
+        let mismatches = 0;
+        for (let i = 0; i < assets; i++) {
+          if (serial[i] !== parallel[i] && !(serial[i] === null && parallel[i] === null)) {
+            mismatches += 1;
+          }
+        }
+        $("log").textContent = mismatches === 0
+          ? `Parallel results match serial results — OK (assets=${assets}, bars=${bars}).`
+          : `WARNING: ${mismatches} asset(s) disagree between serial and parallel.`;
+        $("status").textContent = `Done.`;
+      } catch (err) {
+        $("status").textContent = `error: ${err.message || err}`;
+      } finally {
+        $("go").disabled = false;
+      }
+    }
+
+    $("go").onclick = run;
+
+    init().then(() => {
+      installPanicHook();
+      $("go").disabled = false;
+      $("status").textContent = `Ready — wickra ${version()}. Click "Run".`;
+    });
+  </script>
+</body>
+</html>
