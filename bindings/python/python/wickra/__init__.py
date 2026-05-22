@@ -62,6 +62,10 @@ from ._wickra import (
     AroonOscillator,
     Vortex,
     MassIndex,
+    AcceleratorOscillator,
+    BalanceOfPower,
+    ChoppinessIndex,
+    VerticalHorizontalFilter,
     # Volatility
     BollingerBands,
     ATR,
@@ -134,6 +138,10 @@ __all__ = [
     "AroonOscillator",
     "Vortex",
     "MassIndex",
+    "AcceleratorOscillator",
+    "BalanceOfPower",
+    "ChoppinessIndex",
+    "VerticalHorizontalFilter",
     # Volatility
     "BollingerBands",
     "ATR",

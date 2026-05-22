@@ -94,6 +94,7 @@ wasm_scalar_indicator!(WasmBollingerBandwidth, "BollingerBandwidth", wc::Bolling
 wasm_scalar_indicator!(WasmPercentB, "PercentB", wc::PercentB, period: usize, multiplier: f64);
 wasm_scalar_indicator!(WasmLinearRegression, "LinearRegression", wc::LinearRegression, period: usize);
 wasm_scalar_indicator!(WasmLinRegSlope, "LinRegSlope", wc::LinRegSlope, period: usize);
+wasm_scalar_indicator!(WasmVerticalHorizontalFilter, "VerticalHorizontalFilter", wc::VerticalHorizontalFilter, period: usize);
 
 // ---------- KAMA (three params) ----------
 
@@ -943,6 +944,135 @@ impl WasmWeightedClose {
         Self {
             inner: wc::WeightedClose::new(),
         }
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = AcceleratorOscillator)]
+pub struct WasmAcceleratorOscillator {
+    inner: wc::AcceleratorOscillator,
+}
+
+#[wasm_bindgen(js_class = AcceleratorOscillator)]
+impl WasmAcceleratorOscillator {
+    #[wasm_bindgen(constructor)]
+    pub fn new(
+        ao_fast: usize,
+        ao_slow: usize,
+        signal_period: usize,
+    ) -> Result<WasmAcceleratorOscillator, JsError> {
+        Ok(Self {
+            inner: wc::AcceleratorOscillator::new(ao_fast, ao_slow, signal_period)
+                .map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let c = make_candle(high[i], low[i], low[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = BalanceOfPower)]
+pub struct WasmBalanceOfPower {
+    inner: wc::BalanceOfPower,
+}
+
+impl Default for WasmBalanceOfPower {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = BalanceOfPower)]
+impl WasmBalanceOfPower {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmBalanceOfPower {
+        Self {
+            inner: wc::BalanceOfPower::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = open.len();
+        if high.len() != n || low.len() != n || close.len() != n {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let c = wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = ChoppinessIndex)]
+pub struct WasmChoppinessIndex {
+    inner: wc::ChoppinessIndex,
+}
+
+#[wasm_bindgen(js_class = ChoppinessIndex)]
+impl WasmChoppinessIndex {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmChoppinessIndex, JsError> {
+        Ok(Self {
+            inner: wc::ChoppinessIndex::new(period).map_err(map_err)?,
+        })
     }
     pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
         let c = make_candle(high, low, close, 0.0)?;

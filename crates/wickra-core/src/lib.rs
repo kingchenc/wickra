@@ -44,16 +44,16 @@ pub mod indicators;
 
 pub use error::{Error, Result};
 pub use indicators::{
-    Adl, Adx, AdxOutput, Aroon, AroonOscillator, AroonOutput, Atr, AtrTrailingStop,
-    AwesomeOscillator, BollingerBands, BollingerBandwidth, BollingerOutput, Cci, ChaikinMoneyFlow,
-    ChaikinOscillator, ChandeKrollStop, ChandeKrollStopOutput, ChandelierExit,
-    ChandelierExitOutput, Cmo, Coppock, Dema, Donchian, DonchianOutput, Dpo, EaseOfMovement, Ema,
-    ForceIndex, HistoricalVolatility, Hma, Kama, Keltner, KeltnerOutput, LinRegSlope,
-    LinearRegression, MacdIndicator, MacdOutput, MassIndex, MedianPrice, Mfi, Mom, Natr, Obv,
-    PercentB, Pmo, Ppo, Psar, Roc, RollingVwap, Rsi, Sma, Smma, StdDev, StochRsi, Stochastic,
-    StochasticOutput, SuperTrend, SuperTrendOutput, Tema, Trima, Trix, Tsi, TypicalPrice,
-    UlcerIndex, UltimateOscillator, VolumePriceTrend, Vortex, VortexOutput, Vwap, Vwma,
-    WeightedClose, WilliamsR, Wma, Zlema, T3,
+    AcceleratorOscillator, Adl, Adx, AdxOutput, Aroon, AroonOscillator, AroonOutput, Atr,
+    AtrTrailingStop, AwesomeOscillator, BalanceOfPower, BollingerBands, BollingerBandwidth,
+    BollingerOutput, Cci, ChaikinMoneyFlow, ChaikinOscillator, ChandeKrollStop,
+    ChandeKrollStopOutput, ChandelierExit, ChandelierExitOutput, ChoppinessIndex, Cmo, Coppock,
+    Dema, Donchian, DonchianOutput, Dpo, EaseOfMovement, Ema, ForceIndex, HistoricalVolatility,
+    Hma, Kama, Keltner, KeltnerOutput, LinRegSlope, LinearRegression, MacdIndicator, MacdOutput,
+    MassIndex, MedianPrice, Mfi, Mom, Natr, Obv, PercentB, Pmo, Ppo, Psar, Roc, RollingVwap, Rsi,
+    Sma, Smma, StdDev, StochRsi, Stochastic, StochasticOutput, SuperTrend, SuperTrendOutput, Tema,
+    Trima, Trix, Tsi, TypicalPrice, UlcerIndex, UltimateOscillator, VerticalHorizontalFilter,
+    VolumePriceTrend, Vortex, VortexOutput, Vwap, Vwma, WeightedClose, WilliamsR, Wma, Zlema, T3,
 };
 pub use ohlcv::{Candle, Tick};
 pub use traits::{BatchExt, Chain, Indicator};
