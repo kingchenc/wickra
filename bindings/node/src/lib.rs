@@ -22,12 +22,13 @@ fn map_err(e: wc::Error) -> NapiError {
     NapiError::new(Status::InvalidArg, e.to_string())
 }
 
-/// Helper for constructors. `#[napi(constructor)]` in napi-rs 2.16 only accepts
-/// an infallible `Self` return, so we clamp parameters to the smallest valid value
-/// (which only matters for the pathological `period = 0` case) and then `expect`
-/// the rest, which can only fail for invariants that hold by construction.
+/// Helper for the scalar-indicator macro only. Scalar `new` functions can fail
+/// solely on `period == 0`, which `clamp_period` already rules out, so the
+/// `Result` is provably `Ok` here. Candle indicators and the multi-parameter
+/// indicators have genuinely fallible parameters and instead use fallible
+/// `#[napi(constructor)]`s that return `napi::Result<Self>` and throw a JS error.
 fn must<T>(r: Result<T, wc::Error>) -> T {
-    r.expect("wickra: invalid indicator parameters")
+    r.expect("wickra: scalar indicator parameter clamped to a valid range")
 }
 
 /// Clamp a period parameter so the underlying indicator never sees zero. JS
@@ -120,14 +121,11 @@ pub struct MacdNode {
 #[napi]
 impl MacdNode {
     #[napi(constructor)]
-    pub fn new(fast: u32, slow: u32, signal: u32) -> Self {
-        Self {
-            inner: must(wc::MacdIndicator::new(
-                fast as usize,
-                slow as usize,
-                signal as usize,
-            )),
-        }
+    pub fn new(fast: u32, slow: u32, signal: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::MacdIndicator::new(fast as usize, slow as usize, signal as usize)
+                .map_err(map_err)?,
+        })
     }
     #[napi]
     pub fn update(&mut self, value: f64) -> Option<MacdValue> {
@@ -177,10 +175,10 @@ pub struct BollingerNode {
 #[napi]
 impl BollingerNode {
     #[napi(constructor)]
-    pub fn new(period: u32, multiplier: f64) -> Self {
-        Self {
-            inner: must(wc::BollingerBands::new(period as usize, multiplier)),
-        }
+    pub fn new(period: u32, multiplier: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::BollingerBands::new(period as usize, multiplier).map_err(map_err)?,
+        })
     }
     #[napi]
     pub fn update(&mut self, value: f64) -> Option<BollingerValue> {
@@ -228,10 +226,10 @@ pub struct AtrNode {
 #[napi]
 impl AtrNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> Self {
-        Self {
-            inner: must(wc::Atr::new(period as usize)),
-        }
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Atr::new(period as usize).map_err(map_err)?,
+        })
     }
     #[napi]
     pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
@@ -283,10 +281,10 @@ pub struct StochNode {
 #[napi]
 impl StochNode {
     #[napi(constructor)]
-    pub fn new(k_period: u32, d_period: u32) -> Self {
-        Self {
-            inner: must(wc::Stochastic::new(k_period as usize, d_period as usize)),
-        }
+    pub fn new(k_period: u32, d_period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Stochastic::new(k_period as usize, d_period as usize).map_err(map_err)?,
+        })
     }
     #[napi]
     pub fn update(
@@ -386,10 +384,10 @@ pub struct AdxNode {
 #[napi]
 impl AdxNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> Self {
-        Self {
-            inner: must(wc::Adx::new(period as usize)),
-        }
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Adx::new(period as usize).map_err(map_err)?,
+        })
     }
     #[napi]
     pub fn update(
@@ -437,10 +435,10 @@ pub struct CciNode {
 #[napi]
 impl CciNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> Self {
-        Self {
-            inner: must(wc::Cci::new(period as usize)),
-        }
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Cci::new(period as usize).map_err(map_err)?,
+        })
     }
     #[napi]
     pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
@@ -472,10 +470,10 @@ pub struct WilliamsRNode {
 #[napi]
 impl WilliamsRNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> Self {
-        Self {
-            inner: must(wc::WilliamsR::new(period as usize)),
-        }
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::WilliamsR::new(period as usize).map_err(map_err)?,
+        })
     }
     #[napi]
     pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
@@ -507,10 +505,10 @@ pub struct MfiNode {
 #[napi]
 impl MfiNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> Self {
-        Self {
-            inner: must(wc::Mfi::new(period as usize)),
-        }
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Mfi::new(period as usize).map_err(map_err)?,
+        })
     }
     #[napi]
     pub fn update(
@@ -549,10 +547,10 @@ pub struct PsarNode {
 #[napi]
 impl PsarNode {
     #[napi(constructor)]
-    pub fn new(af_start: f64, af_step: f64, af_max: f64) -> Self {
-        Self {
-            inner: must(wc::Psar::new(af_start, af_step, af_max)),
-        }
+    pub fn new(af_start: f64, af_step: f64, af_max: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Psar::new(af_start, af_step, af_max).map_err(map_err)?,
+        })
     }
     #[napi]
     pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
@@ -591,14 +589,11 @@ pub struct KeltnerNode {
 #[napi]
 impl KeltnerNode {
     #[napi(constructor)]
-    pub fn new(ema_period: u32, atr_period: u32, multiplier: f64) -> Self {
-        Self {
-            inner: must(wc::Keltner::new(
-                ema_period as usize,
-                atr_period as usize,
-                multiplier,
-            )),
-        }
+    pub fn new(ema_period: u32, atr_period: u32, multiplier: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Keltner::new(ema_period as usize, atr_period as usize, multiplier)
+                .map_err(map_err)?,
+        })
     }
     #[napi]
     pub fn update(
@@ -649,10 +644,10 @@ pub struct DonchianNode {
 #[napi]
 impl DonchianNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> Self {
-        Self {
-            inner: must(wc::Donchian::new(period as usize)),
-        }
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Donchian::new(period as usize).map_err(map_err)?,
+        })
     }
     #[napi]
     pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<DonchianValue>> {
@@ -733,10 +728,10 @@ pub struct AoNode {
 #[napi]
 impl AoNode {
     #[napi(constructor)]
-    pub fn new(fast: u32, slow: u32) -> Self {
-        Self {
-            inner: must(wc::AwesomeOscillator::new(fast as usize, slow as usize)),
-        }
+    pub fn new(fast: u32, slow: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::AwesomeOscillator::new(fast as usize, slow as usize).map_err(map_err)?,
+        })
     }
     #[napi]
     pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<f64>> {
@@ -769,10 +764,10 @@ pub struct AroonNode {
 #[napi]
 impl AroonNode {
     #[napi(constructor)]
-    pub fn new(period: u32) -> Self {
-        Self {
-            inner: must(wc::Aroon::new(period as usize)),
-        }
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Aroon::new(period as usize).map_err(map_err)?,
+        })
     }
     #[napi]
     pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<AroonValue>> {
@@ -802,14 +797,11 @@ pub struct KamaNode {
 #[napi]
 impl KamaNode {
     #[napi(constructor)]
-    pub fn new(er_period: u32, fast: u32, slow: u32) -> Self {
-        Self {
-            inner: must(wc::Kama::new(
-                er_period as usize,
-                fast as usize,
-                slow as usize,
-            )),
-        }
+    pub fn new(er_period: u32, fast: u32, slow: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Kama::new(er_period as usize, fast as usize, slow as usize)
+                .map_err(map_err)?,
+        })
     }
     #[napi]
     pub fn update(&mut self, value: f64) -> Option<f64> {
