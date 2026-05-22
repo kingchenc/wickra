@@ -289,6 +289,18 @@ impl StochNode {
         }
     }
     #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<StochValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| StochValue { k: o.k, d: o.d }))
+    }
+    #[napi]
     pub fn batch(
         &mut self,
         high: Vec<f64>,
@@ -329,6 +341,10 @@ impl ObvNode {
         Self {
             inner: wc::Obv::new(),
         }
+    }
+    #[napi]
+    pub fn update(&mut self, close: f64, volume: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(close, close, close, volume)?))
     }
     #[napi]
     pub fn batch(&mut self, close: Vec<f64>, volume: Vec<f64>) -> napi::Result<Vec<f64>> {
@@ -376,6 +392,21 @@ impl AdxNode {
         }
     }
     #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<AdxValue>> {
+        Ok(self.inner.update(cnd(high, low, close, 0.0)?).map(|o| {
+            AdxValue {
+                plus_di: o.plus_di,
+                minus_di: o.minus_di,
+                adx: o.adx,
+            }
+        }))
+    }
+    #[napi]
     pub fn batch(
         &mut self,
         high: Vec<f64>,
@@ -412,6 +443,10 @@ impl CciNode {
         }
     }
     #[napi]
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, 0.0)?))
+    }
+    #[napi]
     pub fn batch(
         &mut self,
         high: Vec<f64>,
@@ -441,6 +476,10 @@ impl WilliamsRNode {
         Self {
             inner: must(wc::WilliamsR::new(period as usize)),
         }
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, 0.0)?))
     }
     #[napi]
     pub fn batch(
@@ -474,6 +513,16 @@ impl MfiNode {
         }
     }
     #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, volume)?))
+    }
+    #[napi]
     pub fn batch(
         &mut self,
         high: Vec<f64>,
@@ -504,6 +553,10 @@ impl PsarNode {
         Self {
             inner: must(wc::Psar::new(af_start, af_step, af_max)),
         }
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, 0.0)?))
     }
     #[napi]
     pub fn batch(
@@ -548,6 +601,21 @@ impl KeltnerNode {
         }
     }
     #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<KeltnerValue>> {
+        Ok(self.inner.update(cnd(high, low, close, 0.0)?).map(|o| {
+            KeltnerValue {
+                upper: o.upper,
+                middle: o.middle,
+                lower: o.lower,
+            }
+        }))
+    }
+    #[napi]
     pub fn batch(
         &mut self,
         high: Vec<f64>,
@@ -587,6 +655,16 @@ impl DonchianNode {
         }
     }
     #[napi]
+    pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<DonchianValue>> {
+        Ok(self.inner.update(cnd(high, low, low, 0.0)?).map(|o| {
+            DonchianValue {
+                upper: o.upper,
+                middle: o.middle,
+                lower: o.lower,
+            }
+        }))
+    }
+    #[napi]
     pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
         let n = high.len();
         let mut out = vec![f64::NAN; n * 3];
@@ -617,6 +695,16 @@ impl VwapNode {
         Self {
             inner: wc::Vwap::new(),
         }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, volume)?))
     }
     #[napi]
     pub fn batch(
@@ -651,6 +739,10 @@ impl AoNode {
         }
     }
     #[napi]
+    pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, low, 0.0)?))
+    }
+    #[napi]
     pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
         let mut out = Vec::with_capacity(high.len());
         for i in 0..high.len() {
@@ -681,6 +773,13 @@ impl AroonNode {
         Self {
             inner: must(wc::Aroon::new(period as usize)),
         }
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<AroonValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, low, 0.0)?)
+            .map(|o| AroonValue { up: o.up, down: o.down }))
     }
     #[napi]
     pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
