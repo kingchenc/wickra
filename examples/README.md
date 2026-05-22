@@ -51,9 +51,22 @@ cd ../../examples/node && npm install        # links wickra + installs `ws`
 
 ## WebAssembly — `examples/wasm/`
 
-| Example | What it does | Run |
-| --- | --- | --- |
-| `index.html` | Browser demo: streams a price series through six indicators and draws a live `<canvas>` chart. | `wasm-pack build bindings/wasm --target web --release --features panic-hook`, then serve the repository root and open `examples/wasm/index.html` |
+Build the WASM module first (one-time):
+
+```bash
+wasm-pack build bindings/wasm --target web --release --features panic-hook
+```
+
+Then serve the repository root (`python -m http.server`, `npx http-server`,
+…) and open the demo you want in a browser.
+
+| Example | What it does |
+| --- | --- |
+| `index.html` | Streams a synthetic price series through six indicators and draws a live `<canvas>` chart. |
+| `backtest.html` | Streams a fetched OHLCV CSV through a basket of indicators (SMA, EMA, RSI, MACD, Bollinger, ATR, ADX, OBV) and prints a per-series summary table. |
+| `live_trading.html` | Opens a browser-native `WebSocket` to Binance, runs RSI / MACD / Bollinger and flags BUY/SELL candidates. |
+| `multi_timeframe.html` | Fetches a 1-minute CSV, rolls it up to 5m / 15m / 1h / 4h / 1d in-page, prints RSI / MACD hist / ADX per timeframe. |
+| `parallel_assets.html` | Spawns a pool of module Workers (each loading its own copy of the WASM module) and reports the speedup over a serial baseline. |
 
 ## Example datasets
 
