@@ -73,31 +73,31 @@ unbounded; one (`Adx`) is directional and bundles three values.
 These all share the "overbought above 70/80, oversold below 30/20"
 mental model, though the exact thresholds differ in the literature.
 
-| Indicator    | One-liner | Input | Output | Range | Defaults | Warmup |
-|--------------|-----------|-------|--------|-------|----------|--------|
-| `Rsi`        | Wilder's RSI; smoothed `gain / (gain + loss) × 100`. | `f64` | `f64` | `[0, 100]` | `period = 14` (Python) | `period + 1` |
-| `Stochastic` | `%K = (close − low_n)/(high_n − low_n) × 100`, smoothed into `%D`. | `Candle` | `(k, d)` | each in `[0, 100]` | `(k_period=14, d_period=3)` (Python) | `k_period + d_period − 1` |
-| `Mfi`        | "Volume-weighted RSI": Wilder smoothing of money-flow ratios. | `Candle` | `f64` | `[0, 100]` | `period = 14` (Python) | `period` |
-| `Aroon`      | Bars-since-high and bars-since-low scaled to `[0, 100]`. | `Candle` | `(up, down)` | each in `[0, 100]` | `period = 14` (Python) | `period + 1` |
+| Indicator    | One-liner | Input | Output | Range | Defaults | Warmup | Deep dive |
+|--------------|-----------|-------|--------|-------|----------|--------|-----------|
+| `Rsi`        | Wilder's RSI; smoothed `gain / (gain + loss) × 100`. | `f64` | `f64` | `[0, 100]` | `period = 14` (Python) | `period + 1` | [Indicator-Rsi.md](indicators/momentum/Indicator-Rsi.md) |
+| `Stochastic` | `%K = (close − low_n)/(high_n − low_n) × 100`, smoothed into `%D`. | `Candle` | `(k, d)` | each in `[0, 100]` | `(k_period=14, d_period=3)` (Python) | `k_period + d_period − 1` | [Indicator-Stochastic.md](indicators/momentum/Indicator-Stochastic.md) |
+| `Mfi`        | "Volume-weighted RSI": Wilder smoothing of money-flow ratios. | `Candle` | `f64` | `[0, 100]` | `period = 14` (Python) | `period` | [Indicator-Mfi.md](indicators/momentum/Indicator-Mfi.md) |
+| `Aroon`      | Bars-since-high and bars-since-low scaled to `[0, 100]`. | `Candle` | `(up, down)` | each in `[0, 100]` | `period = 14` (Python) | `period + 1` | [Indicator-Aroon.md](indicators/momentum/Indicator-Aroon.md) |
 
 ### Unbounded oscillators
 
 Centered on zero or driven by raw price differences; no fixed cap.
 
-| Indicator           | One-liner | Input | Output | Range | Defaults | Warmup |
-|---------------------|-----------|-------|--------|-------|----------|--------|
-| `MacdIndicator`     | `EMA(fast) − EMA(slow)` plus a signal-line EMA and the difference histogram. | `f64` | `(macd, signal, histogram)` | unbounded around zero | `(fast=12, slow=26, signal=9)` (Python) | `slow + signal − 1` |
-| `Cci`               | `(typical − SMA(typical)) / (0.015 · mean_dev)`; unbounded but typically `±100`. | `Candle` | `f64` | unbounded (typically `±100` to `±200`) | `period = 20` (Python) | `period` |
-| `Roc`               | `(price − price_n) / price_n × 100`; raw percentage change over `period` bars. | `f64` | `f64` | unbounded around zero | `period` | `period + 1` |
-| `AwesomeOscillator` | `SMA(median, fast) − SMA(median, slow)`; Bill Williams' zero-line crossover oscillator. | `Candle` | `f64` | unbounded around zero | `(fast=5, slow=34)` (Python) | `slow_period` |
-| `WilliamsR`         | `−100 × (high_n − close) / (high_n − low_n)`; same family as Stochastic but inverted to `[−100, 0]`. | `Candle` | `f64` | `[−100, 0]` | `period = 14` (Python) | `period` |
-| `Trix`              | `(EMA(EMA(EMA(price))).pct_change × 10000)`; oscillator built from a triple-smoothed EMA. | `f64` | `f64` | unbounded around zero | `period = 15` (Python) | `3·period − 1` |
+| Indicator           | One-liner | Input | Output | Range | Defaults | Warmup | Deep dive |
+|---------------------|-----------|-------|--------|-------|----------|--------|-----------|
+| `MacdIndicator`     | `EMA(fast) − EMA(slow)` plus a signal-line EMA and the difference histogram. | `f64` | `(macd, signal, histogram)` | unbounded around zero | `(fast=12, slow=26, signal=9)` (Python) | `slow + signal − 1` | [Indicator-MacdIndicator.md](indicators/momentum/Indicator-MacdIndicator.md) |
+| `Cci`               | `(typical − SMA(typical)) / (0.015 · mean_dev)`; unbounded but typically `±100`. | `Candle` | `f64` | unbounded (typically `±100` to `±200`) | `period = 20` (Python) | `period` | [Indicator-Cci.md](indicators/momentum/Indicator-Cci.md) |
+| `Roc`               | `(price − price_n) / price_n × 100`; raw percentage change over `period` bars. | `f64` | `f64` | unbounded around zero | `period` | `period + 1` | [Indicator-Roc.md](indicators/momentum/Indicator-Roc.md) |
+| `AwesomeOscillator` | `SMA(median, fast) − SMA(median, slow)`; Bill Williams' zero-line crossover oscillator. | `Candle` | `f64` | unbounded around zero | `(fast=5, slow=34)` (Python) | `slow_period` | [Indicator-AwesomeOscillator.md](indicators/momentum/Indicator-AwesomeOscillator.md) |
+| `WilliamsR`         | `−100 × (high_n − close) / (high_n − low_n)`; same family as Stochastic but inverted to `[−100, 0]`. | `Candle` | `f64` | `[−100, 0]` | `period = 14` (Python) | `period` | [Indicator-WilliamsR.md](indicators/momentum/Indicator-WilliamsR.md) |
+| `Trix`              | `(EMA(EMA(EMA(price))).pct_change × 10000)`; oscillator built from a triple-smoothed EMA. | `f64` | `f64` | unbounded around zero | `period = 15` (Python) | `3·period − 1` | [Indicator-Trix.md](indicators/momentum/Indicator-Trix.md) |
 
 ### Directional
 
-| Indicator | One-liner | Input | Output | Range | Defaults | Warmup |
-|-----------|-----------|-------|--------|-------|----------|--------|
-| `Adx`     | Wilder's directional system: `+DI`, `−DI` (each `[0, 100]`) and `ADX` trend-strength index. | `Candle` | `(plus_di, minus_di, adx)` | each in `[0, 100]` | `period = 14` (Python) | `2·period` |
+| Indicator | One-liner | Input | Output | Range | Defaults | Warmup | Deep dive |
+|-----------|-----------|-------|--------|-------|----------|--------|-----------|
+| `Adx`     | Wilder's directional system: `+DI`, `−DI` (each `[0, 100]`) and `ADX` trend-strength index. | `Candle` | `(plus_di, minus_di, adx)` | each in `[0, 100]` | `period = 14` (Python) | `2·period` | [Indicator-Adx.md](indicators/momentum/Indicator-Adx.md) |
 
 ## Volatility
 
@@ -108,23 +108,23 @@ measure — that lives in the volatility module by source convention.
 
 ### Envelopes
 
-| Indicator         | One-liner | Input | Output | Range | Defaults | Warmup |
-|-------------------|-----------|-------|--------|-------|----------|--------|
-| `BollingerBands`  | SMA middle band with `±multiplier × population_stddev` upper/lower bands. | `f64` | `(upper, middle, lower, stddev)` | unbounded (price scale) | `(period=20, multiplier=2.0)` (Python) | `period` |
-| `Keltner`         | EMA middle band with `±multiplier × ATR` upper/lower bands. | `Candle` | `(upper, middle, lower)` | unbounded (price scale) | `(ema_period=20, atr_period=10, multiplier=2.0)` (Python) | `max(ema_period, atr_period)` |
-| `Donchian`        | Highest high and lowest low over `period` bars; middle = mean of the two. | `Candle` | `(upper, middle, lower)` | unbounded (price scale) | `period = 20` (Python) | `period` |
+| Indicator         | One-liner | Input | Output | Range | Defaults | Warmup | Deep dive |
+|-------------------|-----------|-------|--------|-------|----------|--------|-----------|
+| `BollingerBands`  | SMA middle band with `±multiplier × population_stddev` upper/lower bands. | `f64` | `(upper, middle, lower, stddev)` | unbounded (price scale) | `(period=20, multiplier=2.0)` (Python) | `period` | [Indicator-BollingerBands.md](indicators/volatility/Indicator-BollingerBands.md) |
+| `Keltner`         | EMA middle band with `±multiplier × ATR` upper/lower bands. | `Candle` | `(upper, middle, lower)` | unbounded (price scale) | `(ema_period=20, atr_period=10, multiplier=2.0)` (Python) | `max(ema_period, atr_period)` | [Indicator-Keltner.md](indicators/volatility/Indicator-Keltner.md) |
+| `Donchian`        | Highest high and lowest low over `period` bars; middle = mean of the two. | `Candle` | `(upper, middle, lower)` | unbounded (price scale) | `period = 20` (Python) | `period` | [Indicator-Donchian.md](indicators/volatility/Indicator-Donchian.md) |
 
 ### Range-average
 
-| Indicator | One-liner | Input | Output | Range | Defaults | Warmup |
-|-----------|-----------|-------|--------|-------|----------|--------|
-| `Atr`     | Wilder-smoothed True Range; per-bar absolute volatility. | `Candle` | `f64` | `[0, ∞)` (price scale) | `period = 14` (Python) | `period` |
+| Indicator | One-liner | Input | Output | Range | Defaults | Warmup | Deep dive |
+|-----------|-----------|-------|--------|-------|----------|--------|-----------|
+| `Atr`     | Wilder-smoothed True Range; per-bar absolute volatility. | `Candle` | `f64` | `[0, ∞)` (price scale) | `period = 14` (Python) | `period` | [Indicator-Atr.md](indicators/volatility/Indicator-Atr.md) |
 
 ### Trailing stop
 
-| Indicator | One-liner | Input | Output | Range | Defaults | Warmup |
-|-----------|-----------|-------|--------|-------|----------|--------|
-| `Psar`    | Wilder's Parabolic Stop-and-Reverse; per-bar stop level that flips sides on price crossing. | `Candle` | `f64` | unbounded (price scale) | `(af_start=0.02, af_step=0.02, af_max=0.20)` (Python) | `2` |
+| Indicator | One-liner | Input | Output | Range | Defaults | Warmup | Deep dive |
+|-----------|-----------|-------|--------|-------|----------|--------|-----------|
+| `Psar`    | Wilder's Parabolic Stop-and-Reverse; per-bar stop level that flips sides on price crossing. | `Candle` | `f64` | unbounded (price scale) | `(af_start=0.02, af_step=0.02, af_max=0.20)` (Python) | `2` | [Indicator-Psar.md](indicators/volatility/Indicator-Psar.md) |
 
 ## Volume
 
@@ -133,16 +133,16 @@ Volume indicators all take `Candle` input because they need `close` and
 
 ### Cumulative
 
-| Indicator     | One-liner | Input | Output | Range | Defaults | Warmup |
-|---------------|-----------|-------|--------|-------|----------|--------|
-| `Obv`         | On-Balance Volume: cumulative signed volume driven by close-vs-prior-close sign. | `Candle` | `f64` | unbounded (drifts with cumulative volume) | (no parameters) | `1` |
-| `Vwap`        | Cumulative volume-weighted average price from the start of the stream (intraday reset is your responsibility). | `Candle` | `f64` | unbounded (price scale) | (no parameters) | `1` |
+| Indicator     | One-liner | Input | Output | Range | Defaults | Warmup | Deep dive |
+|---------------|-----------|-------|--------|-------|----------|--------|-----------|
+| `Obv`         | On-Balance Volume: cumulative signed volume driven by close-vs-prior-close sign. | `Candle` | `f64` | unbounded (drifts with cumulative volume) | (no parameters) | `1` | [Indicator-Obv.md](indicators/volume/Indicator-Obv.md) |
+| `Vwap`        | Cumulative volume-weighted average price from the start of the stream (intraday reset is your responsibility). | `Candle` | `f64` | unbounded (price scale) | (no parameters) | `1` | [Indicator-Vwap.md](indicators/volume/Indicator-Vwap.md) |
 
 ### Rolling
 
-| Indicator     | One-liner | Input | Output | Range | Defaults | Warmup |
-|---------------|-----------|-------|--------|-------|----------|--------|
-| `RollingVwap` | VWAP over a sliding window instead of since-start; useful for session-independent VWAP. | `Candle` | `f64` | unbounded (price scale) | `period` | `period` |
+| Indicator     | One-liner | Input | Output | Range | Defaults | Warmup | Deep dive |
+|---------------|-----------|-------|--------|-------|----------|--------|-----------|
+| `RollingVwap` | VWAP over a sliding window instead of since-start; useful for session-independent VWAP. | `Candle` | `f64` | unbounded (price scale) | `period` | `period` | [Indicator-Vwap.md](indicators/volume/Indicator-Vwap.md#rollingvwap) |
 
 ## Pick the right indicator for…
 
