@@ -47,6 +47,7 @@ cd ../../examples/node && npm install        # links wickra + installs `ws`
 | `multi_timeframe.js` | Roll a 1-minute CSV up to 5m / 15m / 1h / 4h / 1d and print indicators per timeframe. | `node multi_timeframe.js [path/to/1m.csv]` |
 | `parallel_assets.js` | Serial vs `worker_threads` pool over a synthetic panel, with speedup. | `node parallel_assets.js --assets 200 --bars 5000` |
 | `live_trading.js` | Live Binance feed → RSI / MACD / Bollinger → signals. | `node live_trading.js --symbol BTCUSDT --interval 1m` |
+| `fetch_btcusdt.js` | Download real BTCUSDT klines from the Binance REST API into `examples/data/` (built-in `fetch`, Node 18+). | `node fetch_btcusdt.js` |
 
 ## WebAssembly — `examples/wasm/`
 
