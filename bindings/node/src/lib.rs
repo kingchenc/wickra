@@ -155,6 +155,10 @@ impl MacdNode {
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
 }
 
 // ============================== Bollinger ==============================
@@ -210,6 +214,10 @@ impl BollingerNode {
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
 }
 
 // ============================== Candle-input helpers ==============================
@@ -264,6 +272,10 @@ impl AtrNode {
     #[napi(js_name = "isReady")]
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
     }
 }
 
@@ -324,6 +336,14 @@ impl StochNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
 }
 
 #[napi(js_name = "OBV")]
@@ -369,6 +389,14 @@ impl ObvNode {
     #[napi]
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
     }
 }
 
@@ -436,6 +464,14 @@ impl AdxNode {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
 }
 
 #[napi(js_name = "CCI")]
@@ -449,6 +485,18 @@ impl CciNode {
         Ok(Self {
             inner: wc::Cci::new(period as usize).map_err(map_err)?,
         })
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
     }
     #[napi]
     pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
@@ -491,6 +539,18 @@ impl WilliamsRNode {
         })
     }
     #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+    #[napi]
     pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
         Ok(self.inner.update(cnd(high, low, close, 0.0)?))
     }
@@ -529,6 +589,18 @@ impl MfiNode {
         Ok(Self {
             inner: wc::Mfi::new(period as usize).map_err(map_err)?,
         })
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
     }
     #[napi]
     pub fn update(
@@ -578,6 +650,18 @@ impl PsarNode {
         })
     }
     #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+    #[napi]
     pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
         Ok(self.inner.update(cnd(high, low, close, 0.0)?))
     }
@@ -624,6 +708,18 @@ impl KeltnerNode {
             inner: wc::Keltner::new(ema_period as usize, atr_period as usize, multiplier)
                 .map_err(map_err)?,
         })
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
     }
     #[napi]
     pub fn update(
@@ -685,6 +781,18 @@ impl DonchianNode {
         })
     }
     #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+    #[napi]
     pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<DonchianValue>> {
         Ok(self.inner.update(cnd(high, low, low, 0.0)?).map(|o| {
             DonchianValue {
@@ -730,6 +838,18 @@ impl VwapNode {
         Self {
             inner: wc::Vwap::new(),
         }
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
     }
     #[napi]
     pub fn update(
@@ -779,6 +899,18 @@ impl AoNode {
         })
     }
     #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+    #[napi]
     pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<f64>> {
         Ok(self.inner.update(cnd(high, low, low, 0.0)?))
     }
@@ -820,6 +952,18 @@ impl AroonNode {
         })
     }
     #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+    #[napi]
     pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<AroonValue>> {
         Ok(self
             .inner
@@ -857,6 +1001,18 @@ impl KamaNode {
             inner: wc::Kama::new(er_period as usize, fast as usize, slow as usize)
                 .map_err(map_err)?,
         })
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
     }
     #[napi]
     pub fn update(&mut self, value: f64) -> Option<f64> {
