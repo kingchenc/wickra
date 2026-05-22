@@ -180,7 +180,10 @@ mod tests {
         for (i, v) in out.iter().enumerate().take(5) {
             assert!(v.is_none(), "candle index {i} must be None during warmup");
         }
-        assert!(out[5].is_some(), "first MFI value lands at index period (5)");
+        assert!(
+            out[5].is_some(),
+            "first MFI value lands at index period (5)"
+        );
         assert_eq!(mfi.warmup_period(), 6);
     }
 

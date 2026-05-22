@@ -205,7 +205,10 @@ mod tests {
                     assert_relative_eq!(o.upper, m + 2.0 * av, epsilon = 1e-9);
                     assert_relative_eq!(o.lower, m - 2.0 * av, epsilon = 1e-9);
                 }
-                _ => assert!(got.is_none(), "Keltner must be None until both ready (i={i})"),
+                _ => assert!(
+                    got.is_none(),
+                    "Keltner must be None until both ready (i={i})"
+                ),
             }
         }
     }

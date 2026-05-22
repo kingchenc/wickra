@@ -299,12 +299,7 @@ impl StochNode {
         })
     }
     #[napi]
-    pub fn update(
-        &mut self,
-        high: f64,
-        low: f64,
-        close: f64,
-    ) -> napi::Result<Option<StochValue>> {
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<StochValue>> {
         Ok(self
             .inner
             .update(cnd(high, low, close, 0.0)?)
@@ -423,19 +418,15 @@ impl AdxNode {
         })
     }
     #[napi]
-    pub fn update(
-        &mut self,
-        high: f64,
-        low: f64,
-        close: f64,
-    ) -> napi::Result<Option<AdxValue>> {
-        Ok(self.inner.update(cnd(high, low, close, 0.0)?).map(|o| {
-            AdxValue {
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<AdxValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| AdxValue {
                 plus_di: o.plus_di,
                 minus_di: o.minus_di,
                 adx: o.adx,
-            }
-        }))
+            }))
     }
     #[napi]
     pub fn batch(
@@ -728,13 +719,14 @@ impl KeltnerNode {
         low: f64,
         close: f64,
     ) -> napi::Result<Option<KeltnerValue>> {
-        Ok(self.inner.update(cnd(high, low, close, 0.0)?).map(|o| {
-            KeltnerValue {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| KeltnerValue {
                 upper: o.upper,
                 middle: o.middle,
                 lower: o.lower,
-            }
-        }))
+            }))
     }
     #[napi]
     pub fn batch(
@@ -794,13 +786,14 @@ impl DonchianNode {
     }
     #[napi]
     pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<DonchianValue>> {
-        Ok(self.inner.update(cnd(high, low, low, 0.0)?).map(|o| {
-            DonchianValue {
+        Ok(self
+            .inner
+            .update(cnd(high, low, low, 0.0)?)
+            .map(|o| DonchianValue {
                 upper: o.upper,
                 middle: o.middle,
                 lower: o.lower,
-            }
-        }))
+            }))
     }
     #[napi]
     pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
@@ -968,7 +961,10 @@ impl AroonNode {
         Ok(self
             .inner
             .update(cnd(high, low, low, 0.0)?)
-            .map(|o| AroonValue { up: o.up, down: o.down }))
+            .map(|o| AroonValue {
+                up: o.up,
+                down: o.down,
+            }))
     }
     #[napi]
     pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {

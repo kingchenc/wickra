@@ -442,7 +442,9 @@ impl WasmMfi {
         volume: &[f64],
     ) -> Result<Float64Array, JsError> {
         if high.len() != low.len() || low.len() != close.len() || close.len() != volume.len() {
-            return Err(JsError::new("high, low, close, volume must be equal length"));
+            return Err(JsError::new(
+                "high, low, close, volume must be equal length",
+            ));
         }
         let mut out = Vec::with_capacity(high.len());
         for i in 0..high.len() {
@@ -582,7 +584,9 @@ impl WasmVwap {
         volume: &[f64],
     ) -> Result<Float64Array, JsError> {
         if high.len() != low.len() || low.len() != close.len() || close.len() != volume.len() {
-            return Err(JsError::new("high, low, close, volume must be equal length"));
+            return Err(JsError::new(
+                "high, low, close, volume must be equal length",
+            ));
         }
         let mut out = Vec::with_capacity(high.len());
         for i in 0..high.len() {

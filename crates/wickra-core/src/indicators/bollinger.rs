@@ -251,6 +251,10 @@ mod tests {
         assert_eq!(bb.update(f64::INFINITY).unwrap(), last);
         // The window still holds 1..=5, so a real input slides it to 2..=6.
         let after = bb.update(6.0).unwrap();
-        assert_relative_eq!(after.middle, (2.0 + 3.0 + 4.0 + 5.0 + 6.0) / 5.0, epsilon = 1e-12);
+        assert_relative_eq!(
+            after.middle,
+            (2.0 + 3.0 + 4.0 + 5.0 + 6.0) / 5.0,
+            epsilon = 1e-12
+        );
     }
 }
