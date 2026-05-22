@@ -92,7 +92,7 @@ pip install -e bindings/python[bench]
 python -m benchmarks.compare_libraries
 ```
 
-## Indicators in 0.1.0
+## Indicators
 
 25 streaming-first indicators across four families. Every one passes the
 `batch == streaming` equivalence test, reference-value tests, and reset
@@ -113,7 +113,7 @@ inherit it automatically.
 | Binding           | Install                                       | Example |
 |-------------------|-----------------------------------------------|---------|
 | Python (PyO3)     | `pip install wickra`                          | `examples/python/backtest.py` |
-| Node.js (napi-rs) | `npm install wickra`                          | `bindings/node/__tests__/smoke.test.js` |
+| Node.js (napi-rs) | `npm install wickra`                          | `bindings/node/examples/streaming.js` |
 | Browser / WASM    | `npm install wickra-wasm`                     | `bindings/wasm/examples/index.html` |
 | Rust              | `cargo add wickra`                            | `crates/wickra/examples/backtest.rs` |
 
@@ -175,17 +175,21 @@ wickra/
 ├── crates/
 │   ├── wickra-core/         core engine + all 25 indicators
 │   ├── wickra/              top-level facade crate (publishes on crates.io)
+│   │                        + benches/ and examples/backtest.rs
 │   └── wickra-data/         CSV reader, tick aggregator, live exchange feeds
+│                            + examples/live_binance.rs
 ├── bindings/
 │   ├── python/              PyO3 + maturin (publishes on PyPI)
-│   ├── node/                napi-rs (publishes on npm)
-│   └── wasm/                wasm-bindgen (browsers, bundlers, Node)
+│   ├── node/                napi-rs (publishes on npm) + examples/
+│   └── wasm/                wasm-bindgen (browsers, bundlers, Node) + examples/
 ├── examples/
 │   └── python/              backtest, live trading, parallel assets, multi-tf
-│   (Rust examples live inside their crate at crates/<name>/examples/)
-├── benches/                 cargo bench targets
 └── .github/workflows/       CI and release pipelines
 ```
+
+Rust benchmarks and examples live inside their crate
+(`crates/wickra/benches/`, `crates/<name>/examples/`); there is no
+top-level `benches/` directory.
 
 ## Building everything from source
 
@@ -207,15 +211,23 @@ wasm-pack build bindings/wasm --target web --release --features panic-hook
 cd bindings/node && npm install && npm run build && npm test
 ```
 
-## Test counts
+## Testing
 
-- `wickra-core`: 171 unit tests + 2 doctests, including textbook-value tests
-  for Wilder RSI, Bollinger Bands, MACD, ATR, and Stochastic.
-- `wickra-data`: 11 unit tests + 1 doctest, covers CSV decoding, the tick
-  aggregator, the resampler, and the Binance payload parser.
-- `bindings/python`: 56 pytest tests covering smoke checks, streaming==batch
-  equivalence, reference values, lifecycle, and dict/tuple candle inputs.
-- `bindings/node`: 7 Node test-runner cases via `node --test`.
+Every layer is covered; run the suites with the commands in
+[Building everything from source](#building-everything-from-source).
+
+- `wickra-core`: unit tests per indicator — textbook reference values
+  (Wilder RSI, Bollinger Bands, MACD, ATR, Stochastic), `batch == streaming`
+  equivalence, `reset` semantics, NaN/Inf handling, and property tests.
+- `wickra-data`: unit tests for CSV decoding, the tick aggregator, the
+  resampler, and the Binance payload parser.
+- `bindings/python`: pytest covering smoke checks, streaming/batch
+  equivalence, reference values, lifecycle, input validation, and
+  dict/tuple candle inputs.
+- `bindings/node`: `node --test` cases for batch, streaming, and reference
+  values across all indicators.
+- `bindings/wasm`: `wasm-bindgen-test` cases for constructors, equivalence,
+  and reference values.
 
 ## Contributing
 
