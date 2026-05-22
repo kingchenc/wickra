@@ -7,9 +7,10 @@ Node.js, WebAssembly, and Rust itself. The same `update` call you write inside
 a live trading loop also drives the historical backtest of that same
 strategy — there is no second code path that drifts behind the streaming one.
 
-The project ships 25 indicators across the four classical families (trend,
-momentum, volatility, volume) and a small set of supporting types (`Candle`,
-`Tick`, `Chain`). The Rust core forbids `unsafe`, so every binding inherits a
+The project ships 63 indicators across the four classical families (trend,
+momentum, volatility, volume) plus a statistics group, and a small set of
+supporting types (`Candle`, `Tick`, `Chain`). The Rust core forbids `unsafe`,
+so every binding inherits a
 memory-safe implementation. Install is one command on every supported
 platform: `pip install wickra`, `cargo add wickra`, `npm install wickra` — no
 system compilers, no C dependencies, no headers.

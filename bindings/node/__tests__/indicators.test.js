@@ -1,5 +1,5 @@
 // Comprehensive tests for the Wickra Node bindings: streaming-vs-batch
-// equivalence, reference values, and lifecycle methods across all 25
+// equivalence, reference values, and lifecycle methods across all 63
 // indicators. Ported from the Python test_streaming_vs_batch / test_known_values
 // suites.
 
@@ -36,6 +36,25 @@ const scalarFactories = {
   ROC: () => new wickra.ROC(12),
   TRIX: () => new wickra.TRIX(9),
   KAMA: () => new wickra.KAMA(10, 2, 30),
+  SMMA: () => new wickra.SMMA(14),
+  TRIMA: () => new wickra.TRIMA(20),
+  ZLEMA: () => new wickra.ZLEMA(14),
+  T3: () => new wickra.T3(5, 0.7),
+  MOM: () => new wickra.MOM(10),
+  CMO: () => new wickra.CMO(14),
+  TSI: () => new wickra.TSI(25, 13),
+  PMO: () => new wickra.PMO(35, 20),
+  StochRSI: () => new wickra.StochRSI(14, 14),
+  PPO: () => new wickra.PPO(12, 26),
+  DPO: () => new wickra.DPO(20),
+  Coppock: () => new wickra.Coppock(14, 11, 10),
+  StdDev: () => new wickra.StdDev(20),
+  UlcerIndex: () => new wickra.UlcerIndex(14),
+  HistoricalVolatility: () => new wickra.HistoricalVolatility(20, 252),
+  BollingerBandwidth: () => new wickra.BollingerBandwidth(20, 2),
+  PercentB: () => new wickra.PercentB(20, 2),
+  LinearRegression: () => new wickra.LinearRegression(14),
+  LinRegSlope: () => new wickra.LinRegSlope(14),
 };
 
 for (const [name, make] of Object.entries(scalarFactories)) {
@@ -61,6 +80,21 @@ const candleScalar = {
   VWAP: { make: () => new wickra.VWAP(), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
   AwesomeOscillator: { make: () => new wickra.AwesomeOscillator(5, 34), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   OBV: { make: () => new wickra.OBV(), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
+  VWMA: { make: () => new wickra.VWMA(20), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
+  UltimateOscillator: { make: () => new wickra.UltimateOscillator(7, 14, 28), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  AroonOscillator: { make: () => new wickra.AroonOscillator(14), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  NATR: { make: () => new wickra.NATR(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  MassIndex: { make: () => new wickra.MassIndex(9, 25), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  ADL: { make: () => new wickra.ADL(), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
+  VolumePriceTrend: { make: () => new wickra.VolumePriceTrend(), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
+  ChaikinMoneyFlow: { make: () => new wickra.ChaikinMoneyFlow(20), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
+  ChaikinOscillator: { make: () => new wickra.ChaikinOscillator(3, 10), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
+  ForceIndex: { make: () => new wickra.ForceIndex(13), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
+  EaseOfMovement: { make: () => new wickra.EaseOfMovement(14, 1e8), step: (ind, i) => ind.update(high[i], low[i], volume[i]), batch: (ind) => ind.batch(high, low, volume) },
+  AtrTrailingStop: { make: () => new wickra.AtrTrailingStop(14, 3), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  TypicalPrice: { make: () => new wickra.TypicalPrice(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  MedianPrice: { make: () => new wickra.MedianPrice(), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  WeightedClose: { make: () => new wickra.WeightedClose(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {
@@ -85,6 +119,10 @@ const multi = {
   Keltner: { make: () => new wickra.Keltner(20, 10, 2), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   Donchian: { make: () => new wickra.Donchian(20), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   Aroon: { make: () => new wickra.Aroon(14), fields: ['up', 'down'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  Vortex: { make: () => new wickra.Vortex(14), fields: ['plus', 'minus'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  SuperTrend: { make: () => new wickra.SuperTrend(10, 3), fields: ['value', 'direction'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  ChandelierExit: { make: () => new wickra.ChandelierExit(22, 3), fields: ['longStop', 'shortStop'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  ChandeKrollStop: { make: () => new wickra.ChandeKrollStop(10, 1, 9), fields: ['stopLong', 'stopShort'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
 };
 
 for (const [name, d] of Object.entries(multi)) {
@@ -162,4 +200,35 @@ test('MACD histogram equals macd minus signal', () => {
   for (let i = 1; i <= 60; i++) v = macd.update(i);
   assert.ok(v);
   assert.ok(Math.abs(v.histogram - (v.macd - v.signal)) < 1e-9);
+});
+
+test('TypicalPrice reference value', () => {
+  // (high + low + close) / 3 = (12 + 6 + 9) / 3 = 9.
+  assert.equal(new wickra.TypicalPrice().update(12, 6, 9), 9);
+});
+
+test('ChaikinMoneyFlow(2) reference value equals 0.5', () => {
+  // Bar 1 closes at the high (MFV +100); bar 2 closes mid-range (MFV 0).
+  const cmf = new wickra.ChaikinMoneyFlow(2);
+  assert.equal(cmf.update(10, 8, 10, 100), null);
+  assert.ok(Math.abs(cmf.update(12, 8, 10, 100) - 0.5) < 1e-9);
+});
+
+test('LinearRegression(3) reference values', () => {
+  // Least-squares line through [1, 2, 9] is y = 4x; endpoint 4·2 = 8.
+  const out = new wickra.LinearRegression(3).batch([1, 2, 9]);
+  assert.ok(Number.isNaN(out[0]) && Number.isNaN(out[1]));
+  assert.ok(Math.abs(out[2] - 8) < 1e-9);
+});
+
+test('SuperTrend flat market holds the lower band and an uptrend', () => {
+  // Flat candles: ATR 2, hl2 10, lower band 10 - 3·2 = 4.
+  const n = 20;
+  const out = new wickra.SuperTrend(5, 3).batch(
+    Array(n).fill(11),
+    Array(n).fill(9),
+    Array(n).fill(10),
+  );
+  assert.ok(Math.abs(out[2 * n - 2] - 4) < 1e-9); // value
+  assert.equal(out[2 * n - 1], 1); // direction
 });

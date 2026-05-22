@@ -95,16 +95,17 @@ python -m benchmarks.compare_libraries
 
 ## Indicators
 
-25 streaming-first indicators across four families. Every one passes the
-`batch == streaming` equivalence test, reference-value tests, and reset
-semantics tests.
+63 streaming-first indicators across four families plus a statistics group.
+Every one passes the `batch == streaming` equivalence test, reference-value
+tests, and reset semantics tests.
 
 | Family      | Indicators |
 |-------------|-----------|
-| Trend       | SMA, EMA, WMA, DEMA, TEMA, HMA, KAMA |
-| Momentum    | RSI (Wilder), MACD, Stochastic, CCI, ROC, Williams %R, ADX (+DI/-DI), MFI, TRIX, Awesome Oscillator, Aroon |
-| Volatility  | Bollinger Bands, ATR, Keltner Channels, Donchian Channels, Parabolic SAR |
-| Volume      | OBV, VWAP (cumulative + rolling) |
+| Trend       | SMA, EMA, WMA, DEMA, TEMA, HMA, KAMA, SMMA, TRIMA, ZLEMA, T3, VWMA |
+| Momentum    | RSI (Wilder), MACD, Stochastic, CCI, ROC, Williams %R, ADX (+DI/-DI), MFI, TRIX, Awesome Oscillator, Aroon, MOM, CMO, TSI, PMO, StochRSI, Ultimate Oscillator, PPO, DPO, Coppock, Aroon Oscillator, Vortex, Mass Index |
+| Volatility  | Bollinger Bands, ATR, Keltner Channels, Donchian Channels, Parabolic SAR, NATR, StdDev, Ulcer Index, Historical Volatility, Bollinger Bandwidth, %B, SuperTrend, Chandelier Exit, Chande Kroll Stop, ATR Trailing Stop |
+| Volume      | OBV, VWAP (cumulative + rolling), ADL, Volume-Price Trend, Chaikin Money Flow, Chaikin Oscillator, Force Index, Ease of Movement |
+| Statistics  | Typical Price, Median Price, Weighted Close, Linear Regression, Linear Regression Slope |
 
 Adding a new indicator means implementing one trait in Rust; all four bindings
 inherit it automatically.
@@ -174,7 +175,7 @@ A Python live-trading example using the public `websockets` package lives at
 ```
 wickra/
 ├── crates/
-│   ├── wickra-core/         core engine + all 25 indicators
+│   ├── wickra-core/         core engine + all 63 indicators
 │   ├── wickra/              top-level facade crate (publishes on crates.io)
 │   │                        + benches/ and examples/backtest.rs
 │   └── wickra-data/         CSV reader, tick aggregator, live exchange feeds
