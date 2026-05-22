@@ -1,6 +1,6 @@
 # Indicators Overview
 
-Wickra ships 50 indicators, organised in source under the four classical
+Wickra ships 54 indicators, organised in source under the four classical
 families — trend, momentum, volatility, volume — that map directly to the
 directory structure of `crates/wickra-core/src/indicators/`. The same family
 labels are used here, plus a second-level grouping that reflects how the
@@ -168,6 +168,18 @@ Volume indicators all take `Candle` input because they need `close` and
 | Indicator     | One-liner | Input | Output | Range | Defaults | Warmup | Deep dive |
 |---------------|-----------|-------|--------|-------|----------|--------|-----------|
 | `RollingVwap` | VWAP over a sliding window instead of since-start; useful for session-independent VWAP. | `Candle` | `f64` | unbounded (price scale) | `period` | `period` | [Indicator-Vwap.md → RollingVwap](indicators/volume/Indicator-Vwap.md#rollingvwap-finite-window) |
+
+### Oscillators
+
+Volume-flow oscillators: bounded or zero-centred readings derived from where
+price closes within each bar and how much volume backed the move.
+
+| Indicator | One-liner | Input | Output | Range | Defaults | Warmup | Deep dive |
+|-----------|-----------|-------|--------|-------|----------|--------|-----------|
+| `ChaikinMoneyFlow`  | Summed money-flow volume divided by summed volume over `period` bars. | `Candle` | `f64` | `[−1, +1]` | `period = 20` (Python) | `period` | [Indicator-ChaikinMoneyFlow.md](indicators/volume/Indicator-ChaikinMoneyFlow.md) |
+| `ChaikinOscillator` | `EMA(ADL, fast) − EMA(ADL, slow)`; the MACD of the ADL. | `Candle` | `f64` | unbounded around zero | `(fast=3, slow=10)` (Python) | `slow` | [Indicator-ChaikinOscillator.md](indicators/volume/Indicator-ChaikinOscillator.md) |
+| `ForceIndex`        | `EMA((close − prev_close) · volume, period)`; the conviction behind a move. | `Candle` | `f64` | unbounded around zero | `period = 13` (Python) | `period + 1` | [Indicator-ForceIndex.md](indicators/volume/Indicator-ForceIndex.md) |
+| `EaseOfMovement`    | `SMA` of distance travelled per unit of volume. | `Candle` | `f64` | unbounded around zero | `(period=14, divisor=1e8)` (Python) | `period + 1` | [Indicator-EaseOfMovement.md](indicators/volume/Indicator-EaseOfMovement.md) |
 
 ## Pick the right indicator for…
 
