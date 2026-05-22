@@ -135,6 +135,9 @@ impl MacdNode {
             histogram: o.histogram,
         })
     }
+    /// Batch over a price array. Returns a flat array of length `3 * n`,
+    /// interleaved per row as `[macd0, signal0, histogram0, macd1, ...]`.
+    /// Read column `j` of row `i` as `result[i * 3 + j]`. Warmup rows are `NaN`.
     #[napi]
     pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
         let mut out = vec![f64::NAN; prices.len() * 3];
@@ -193,6 +196,9 @@ impl BollingerNode {
             stddev: o.stddev,
         })
     }
+    /// Batch over a price array. Returns a flat array of length `4 * n`,
+    /// interleaved per row as `[upper0, middle0, lower0, stddev0, upper1, ...]`.
+    /// Read column `j` of row `i` as `result[i * 4 + j]`. Warmup rows are `NaN`.
     #[napi]
     pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
         let mut out = vec![f64::NAN; prices.len() * 4];
