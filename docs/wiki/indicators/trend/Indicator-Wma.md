@@ -132,7 +132,7 @@ warmup_period = 4
 ### Node
 
 ```javascript
-const ta = require('D:/Coding/Wickra/bindings/node');
+const ta = require('wickra');
 const wma = new ta.WMA(4);
 console.log(wma.batch([1, 2, 3, 4]));
 console.log('warmupPeriod:', wma.warmupPeriod());

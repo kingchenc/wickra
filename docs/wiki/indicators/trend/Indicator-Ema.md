@@ -140,7 +140,7 @@ warmup_period: 3
 ### Node
 
 ```javascript
-const ta = require('D:/Coding/Wickra/bindings/node');
+const ta = require('wickra');
 const ema = new ta.EMA(3);
 for (const x of [1, 2, 3, 10]) {
   console.log(x, '->', ema.update(x));

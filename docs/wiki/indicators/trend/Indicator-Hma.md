@@ -177,7 +177,7 @@ warmup_period (reported) = 11
 ### Node
 
 ```javascript
-const ta = require('D:/Coding/Wickra/bindings/node');
+const ta = require('wickra');
 const hma = new ta.HMA(9);
 const prices = Array.from({ length: 20 }, (_, i) => i + 1);
 console.log(hma.batch(prices));

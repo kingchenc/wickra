@@ -127,7 +127,7 @@ array.
 ### Node
 
 ```javascript
-const ta = require('D:/Coding/Wickra/bindings/node');
+const ta = require('wickra');
 const sma = new ta.SMA(3);
 console.log(sma.batch([2, 4, 6, 8, 10]));
 console.log('warmupPeriod:', sma.warmupPeriod());

@@ -169,7 +169,7 @@ warmup_period = 11
 ### Node
 
 ```javascript
-const ta = require('D:/Coding/Wickra/bindings/node');
+const ta = require('wickra');
 const kama = new ta.KAMA(10, 2, 30);    // no default constructor; pass the triple
 const prices = Array.from({ length: 20 }, (_, i) => i + 1);
 console.log(kama.batch(prices));

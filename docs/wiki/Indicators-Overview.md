@@ -179,12 +179,13 @@ what each indicator actually computes.
 ## Source-of-truth files
 
 Every claim above can be checked against the source in
-`D:\Coding\Wickra\crates\wickra-core\src\indicators\` — one file per
-indicator. The Rust unit tests inside each module are the ground truth
-for sample values. Python defaults (the `period = 14` etc. in tables
-above) come from the `#[pyo3(signature = …)]` attributes in
-`D:\Coding\Wickra\bindings\python\src\lib.rs`; indicators not listed
-with a Python default require an explicit `period` argument.
+[`crates/wickra-core/src/indicators/`](https://github.com/kingchenc/wickra/tree/main/crates/wickra-core/src/indicators)
+— one file per indicator. The Rust unit tests inside each module are the
+ground truth for sample values. Python defaults (the `period = 14` etc. in
+tables above) come from the `#[pyo3(signature = …)]` attributes in
+[`bindings/python/src/lib.rs`](https://github.com/kingchenc/wickra/blob/main/bindings/python/src/lib.rs);
+indicators not listed with a Python default require an explicit `period`
+argument.
 
 ## See also
 

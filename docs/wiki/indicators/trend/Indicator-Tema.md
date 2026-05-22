@@ -138,7 +138,7 @@ warmup_period = 13
 ### Node
 
 ```javascript
-const ta = require('D:/Coding/Wickra/bindings/node');
+const ta = require('wickra');
 const tema = new ta.TEMA(5);
 const prices = Array.from({ length: 20 }, (_, i) => i + 1);
 console.log(tema.batch(prices));
