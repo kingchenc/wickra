@@ -8,7 +8,7 @@ members = [
     "bindings/wasm",
     "bindings/node",
 ]
-exclude = []
+exclude = ["fuzz"]
 
 [workspace.package]
 version = "0.1.4"
