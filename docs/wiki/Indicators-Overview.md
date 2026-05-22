@@ -16,10 +16,10 @@ trait surface and warmup-period semantics are covered in
 
 The "Output range" column below is the value bounds an indicator emits once
 warm. "unbounded" means it tracks the price scale of the input. The
-"Warmup" column quotes `warmup_period()` as the indicator reports it; for
-two indicators (`Hma`, `Kama`) the practical first-emission index can lag
-the reported number because of stacked sub-indicator warmups — those
-discrepancies are noted on the deep-dive pages.
+"Warmup" column quotes `warmup_period()` as the indicator reports it; this
+is the **exact** first-emission index for every indicator — the first
+non-`None` output lands on input `warmup_period()` (index
+`warmup_period() - 1`).
 
 ## Trend
 

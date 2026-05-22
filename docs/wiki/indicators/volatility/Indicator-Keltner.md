@@ -14,7 +14,7 @@
 | Output type         | `KeltnerOutput { upper: f64, middle: f64, lower: f64 }`                            |
 | Output range        | unbounded; `lower ≤ middle ≤ upper`                                                |
 | Default parameters  | `ema_period = 20`, `atr_period = 10`, `multiplier = 2.0`                           |
-| Warmup period       | `max(ema_period, atr_period)` (`20` for defaults) — see Warmup notes               |
+| Warmup period       | `max(ema_period, atr_period)` (`20` for defaults) — exact first-emission index     |
 | Interpretation      | trend-following envelope; tags signal momentum, not exhaustion                     |
 
 ## Formula
@@ -67,16 +67,17 @@ pub struct KeltnerOutput { pub upper: f64, pub middle: f64, pub lower: f64 }
 ## Warmup
 
 `warmup_period()` reports `max(ema_period, atr_period)` — for the
-default `(20, 10, 2.0)` that is `20`.
+default `(20, 10, 2.0)` that is `20` — and that figure is **exact**: the
+first non-`None` output lands on candle `warmup_period()` (index
+`warmup_period() - 1`).
 
-**Important caveat verified empirically.** Because `Keltner::update`
-calls `self.ema.update(...)?` *before* `self.atr.update(...)?`, the ATR
-sub-indicator only receives an input on candles where the EMA already
-has a value. The actual first emission therefore occurs after roughly
-`ema_period + atr_period - 1` candles, not `max(ema_period, atr_period)`.
-With the classic `(20, 10, 2.0)` configuration the first non-`None`
-output is the 29th candle (index `28`), not the 20th. Code reference:
-`keltner.rs:61-69`. Plan your data prefix accordingly.
+`Keltner::update` feeds the EMA and ATR sub-indicators *unconditionally*
+on every candle, then emits once both are ready. The two sub-indicators
+warm up in parallel over the same candle window, so the slower of the
+two (`max(ema_period, atr_period)`) governs the first emission. With the
+classic `(20, 10, 2.0)` configuration the first valid `KeltnerOutput` is
+the 20th candle (index `19`). This is pinned by the
+`first_emission_matches_warmup_period` test in `keltner.rs`.
 
 ## Edge cases
 
@@ -120,14 +121,15 @@ Output:
 ```
 i=0 -> None
 i=1 -> None
-i=2 -> None
-i=3 -> None
+i=2 -> Some(KeltnerOutput { upper: 15.166666666666666, middle: 11.166666666666666, lower: 7.166666666666666 })
+i=3 -> Some(KeltnerOutput { upper: 16.166666666666664, middle: 12.166666666666666, lower: 8.166666666666666 })
 i=4 -> Some(KeltnerOutput { upper: 17.166666666666664, middle: 13.166666666666666, lower: 9.166666666666666 })
 ```
 
-Notice the first emission is at `i = 4` (the 5th candle), not `i = 2`,
-even though `max(ema=3, atr=3) = 3`. This is the EMA-gates-ATR effect
-documented under **Warmup**.
+The first emission is at `i = 2` (the 3rd candle), exactly
+`max(ema=3, atr=3) = 3` — the value `warmup_period()` reports. The EMA
+and ATR sub-indicators are fed in parallel, so neither delays the
+other.
 
 ### Python
 
@@ -189,13 +191,6 @@ row 4 [upper, middle, lower]: [ 17.166666666666664, 13.166666666666666, 9.166666
 
 ## Common pitfalls
 
-- **Reported warmup understates the true warmup.** `warmup_period()`
-  reports `max(ema_period, atr_period)`, but because the EMA is
-  evaluated first and short-circuits the ATR update via `?`, the
-  indicator only emits after roughly `ema_period + atr_period - 1`
-  candles. For the classic `(20, 10, 2.0)` you need 29 candles, not
-  20, before the first valid `KeltnerOutput`. Inspecting
-  `is_ready()` is the safest gate.
 - **Typical price ≠ close.** The middle EMA runs on
   `(H + L + C) / 3`, not on close. A pre-computed "EMA of close"
   panel will not equal the Keltner middle line and trying to align

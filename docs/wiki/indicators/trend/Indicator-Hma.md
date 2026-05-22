@@ -14,7 +14,7 @@
 | Output type | `f64` |
 | Output range | unbounded; tracks the input price scale |
 | Default parameters | `period` is required (no default in either binding) |
-| Warmup period (`warmup_period()`) | `period + round(√period).max(1) − 1` — see below; the practical first-emission index can lag this number |
+| Warmup period (`warmup_period()`) | `period + round(√period).max(1) − 1` — exact first-emission index |
 | Interpretation | Near-zero-lag trend line with an inherent smoothing step. |
 
 ## Formula
@@ -61,56 +61,46 @@ Python returns `float | None` (streaming) / `numpy.ndarray` (batch,
 
 ## Warmup
 
-This is the one case in the trend family where the reported
-`warmup_period()` is a **lower bound**, not the exact first-emission
-index.
-
-The `warmup_period()` method returns:
+`warmup_period()` returns:
 
 ```
 period + round(sqrt(period)).max(1) - 1
 ```
 
 which gives `11` for `Hma::new(9)`, `17` for `Hma::new(14)`,
-`19` for `Hma::new(16)`. This number assumes the three inner WMAs
-warm up *in parallel*: the slow `WMA(period)` would emit at input
-`period`, and the smoothing `WMA(√period)` would then need `√period − 1`
-more inputs.
+`19` for `Hma::new(16)`. This figure is **exact**: the first non-`None`
+output lands on input `warmup_period()` (index `warmup_period() - 1`).
 
-In practice the implementation uses the `?` short-circuit:
+The number reflects how the three inner WMAs warm up *in parallel*: the
+slow `WMA(period)` emits at input `period`, then the smoothing
+`WMA(√period)` needs `√period − 1` more inputs on top.
 
 ```rust
 fn update(&mut self, input: f64) -> Option<f64> {
-    let h = self.half_wma.update(input)?;   // returns early if None
-    let f = self.full_wma.update(input)?;   // ONLY called when half emits
-    let diff = 2.0 * h - f;
-    self.smooth_wma.update(diff)
+    // Both raw WMAs are fed unconditionally so neither delays the other.
+    let h = self.half_wma.update(input);
+    let f = self.full_wma.update(input);
+    match (h, f) {
+        (Some(h), Some(f)) => self.smooth_wma.update(2.0 * h - f),
+        _ => None,
+    }
 }
 ```
 
-`self.full_wma.update(input)` is only reached after `self.half_wma`
-starts emitting (i.e. from input `half = period/2` onward). So
-`full_wma` does not see input until iteration `half`, and then needs
-`period` of its own inputs — it emits first at iteration
-`half + period − 1`. The diff then flows into `smooth_wma`, which needs
-`smooth` of those — first emission at iteration
-`half + period - 1 + smooth - 1` = `half + period + smooth − 2`.
+`half_wma` and `full_wma` receive every input, so `full_wma` emits at
+input `period` (not later). The `2·half − full` diff then flows into
+`smooth_wma`, which needs `round(√period)` of those — giving a first
+emission at exactly `period + round(√period) − 1`.
 
-For the three example periods this gives:
+| `period` | `round(√period)` | `warmup_period()` | First emission (input #) |
+|----------|------------------|-------------------|--------------------------|
+| 9        | 3                | 11                | 11                       |
+| 14       | 4                | 17                | 17                       |
+| 16       | 4                | 19                | 19                       |
 
-| `period` | `half` | `smooth` | `warmup_period()` (reported) | Actual first emission |
-|----------|--------|----------|------------------------------|------------------------|
-| 9        | 4      | 3        | 11                           | 14                     |
-| 14       | 7      | 4        | 17                           | 23                     |
-| 16       | 8      | 4        | 19                           | 26                     |
-
-The numbers in the "Actual first emission" column are verified by
-streaming `Hma::new(period).update(...)` over a linear ramp and noting
-the first call that returns `Some`. The discrepancy is a known
-implementation quirk: the reported value is the theoretical floor; the
-streaming order pushes the practical emission later. If you need the
-exact first-non-`None` index for chaining or array alignment, prefer
-checking `is_ready()` or filtering on `~np.isnan(...)` after the fact.
+This is pinned by the `first_emission_matches_warmup_period` test in
+`hma.rs`: the first call that returns `Some` is exactly at
+`warmup_period() - 1` (0-indexed).
 
 ## Edge cases
 
@@ -136,7 +126,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut hma = Hma::new(9)?;
     let prices: Vec<f64> = (1..=20).map(f64::from).collect();
     let out: Vec<Option<f64>> = hma.batch(&prices);
-    println!("warmup_period (reported) = {}", hma.warmup_period());
+    println!("warmup_period = {}", hma.warmup_period());
     println!("{:?}", out);
     Ok(())
 }
@@ -145,14 +135,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 Output:
 
 ```
-warmup_period (reported) = 11
-[None, None, None, None, None, None, None, None, None, None, None, None, None, Some(14.0), Some(15.0), Some(16.0), Some(17.0), Some(18.0), Some(19.0), Some(20.0)]
+warmup_period = 11
+[None, None, None, None, None, None, None, None, None, None, Some(11.0), Some(12.0), Some(13.0), Some(14.0), Some(15.0), Some(16.0), Some(17.0), Some(18.0), Some(19.0), Some(20.0)]
 ```
 
-The reported warmup says `11`, but the first `Some` lands at index 13
-(the 14th input) for the reason given in the [Warmup](#warmup) section.
-On the linear ramp `1, 2, …, 20`, HMA tracks price exactly with no
-visible lag.
+The first `Some` lands at index 10 (the 11th input) — exactly
+`warmup_period() - 1`, as the [Warmup](#warmup) section explains. On the
+linear ramp `1, 2, …, 20`, HMA tracks price exactly with no visible lag.
 
 ### Python
 
@@ -162,15 +151,15 @@ import wickra as ta
 
 hma = ta.HMA(9)
 out = hma.batch(np.arange(1.0, 21.0))
-print("warmup_period (reported) =", hma.warmup_period())
+print("warmup_period =", hma.warmup_period())
 print(out)
 ```
 
 Output:
 
 ```
-warmup_period (reported) = 11
-[nan nan nan nan nan nan nan nan nan nan nan nan nan 14. 15. 16. 17. 18.
+warmup_period = 11
+[nan nan nan nan nan nan nan nan nan nan 11. 12. 13. 14. 15. 16. 17. 18.
  19. 20.]
 ```
 
@@ -181,7 +170,7 @@ const ta = require('wickra');
 const hma = new ta.HMA(9);
 const prices = Array.from({ length: 20 }, (_, i) => i + 1);
 console.log(hma.batch(prices));
-console.log('warmupPeriod (reported):', hma.warmupPeriod());
+console.log('warmupPeriod:', hma.warmupPeriod());
 ```
 
 Output:
@@ -189,11 +178,11 @@ Output:
 ```
 [
   NaN, NaN, NaN, NaN, NaN, NaN,
-  NaN, NaN, NaN, NaN, NaN, NaN,
-  NaN,  14,  15,  16,  17,  18,
+  NaN, NaN, NaN, NaN,  11,  12,
+   13,  14,  15,  16,  17,  18,
    19,  20
 ]
-warmupPeriod (reported): 11
+warmupPeriod: 11
 ```
 
 ## Interpretation
@@ -215,13 +204,11 @@ the lag-reduction in those would manifest as whipsaws. Prefer `Tema` /
 
 ## Common pitfalls
 
-- **Trusting `warmup_period()` for chaining or array alignment.** As
-  the table above shows, `Hma::new(9).warmup_period() == 11` but the
-  first actual emission is at the 14th input. If you use HMA as the
-  first stage of a `Chain`, the chain's overall warmup will lag what
-  `Chain::warmup_period()` reports. Filter on `is_some()` /
-  `~np.isnan(...)` after the fact, or precompute the actual index by
-  streaming a small ramp once.
+- **Mis-reading the warmup as a lag.** `warmup_period()` is the exact
+  first-emission index (`Hma::new(9).warmup_period() == 11`, first
+  `Some` at the 11th input), so it can be used directly for `Chain`
+  alignment. The leading `None`/`NaN` values are warmup, not lag — once
+  HMA emits it tracks price with near-zero lag.
 - **Picking `period = 2` or `3`.** The inner `half = period / 2` is an
   integer division floored at 1. For `period = 2`, `half = 1`,
   `smooth = 1`, and you essentially end up with `Wma(2·price − WMA(2))`
