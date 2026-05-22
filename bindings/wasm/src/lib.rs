@@ -87,6 +87,9 @@ wasm_scalar_indicator!(WasmStochRsi, "StochRSI", wc::StochRsi, rsi_period: usize
 wasm_scalar_indicator!(WasmDpo, "DPO", wc::Dpo, period: usize);
 wasm_scalar_indicator!(WasmPpo, "PPO", wc::Ppo, fast: usize, slow: usize);
 wasm_scalar_indicator!(WasmCoppock, "Coppock", wc::Coppock, roc_long: usize, roc_short: usize, wma_period: usize);
+wasm_scalar_indicator!(WasmStdDev, "StdDev", wc::StdDev, period: usize);
+wasm_scalar_indicator!(WasmUlcerIndex, "UlcerIndex", wc::UlcerIndex, period: usize);
+wasm_scalar_indicator!(WasmHistoricalVolatility, "HistoricalVolatility", wc::HistoricalVolatility, period: usize, trading_periods: usize);
 
 // ---------- KAMA (three params) ----------
 
@@ -345,6 +348,44 @@ impl WasmUltimateOscillator {
     pub fn new(short: usize, mid: usize, long: usize) -> Result<WasmUltimateOscillator, JsError> {
         Ok(Self {
             inner: wc::UltimateOscillator::new(short, mid, long).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = NATR)]
+pub struct WasmNatr {
+    inner: wc::Natr,
+}
+
+#[wasm_bindgen(js_class = NATR)]
+impl WasmNatr {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmNatr, JsError> {
+        Ok(Self {
+            inner: wc::Natr::new(period).map_err(map_err)?,
         })
     }
     pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {

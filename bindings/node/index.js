@@ -310,7 +310,7 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, T3, VWMA, MOM, CMO, TSI, PMO, StochRSI, UltimateOscillator, PPO, DPO, Coppock, AroonOscillator, Vortex, MassIndex, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, AwesomeOscillator, Aroon, KAMA } = nativeBinding
+const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, T3, VWMA, MOM, CMO, TSI, PMO, StochRSI, UltimateOscillator, PPO, DPO, Coppock, AroonOscillator, Vortex, MassIndex, NATR, StdDev, UlcerIndex, HistoricalVolatility, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, AwesomeOscillator, Aroon, KAMA } = nativeBinding
 
 module.exports.version = version
 module.exports.SMA = SMA
@@ -339,6 +339,10 @@ module.exports.Coppock = Coppock
 module.exports.AroonOscillator = AroonOscillator
 module.exports.Vortex = Vortex
 module.exports.MassIndex = MassIndex
+module.exports.NATR = NATR
+module.exports.StdDev = StdDev
+module.exports.UlcerIndex = UlcerIndex
+module.exports.HistoricalVolatility = HistoricalVolatility
 module.exports.MACD = MACD
 module.exports.BollingerBands = BollingerBands
 module.exports.ATR = ATR

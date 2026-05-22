@@ -1,6 +1,6 @@
 # Indicators Overview
 
-Wickra ships 42 indicators, organised in source under the four classical
+Wickra ships 46 indicators, organised in source under the four classical
 families — trend, momentum, volatility, volume — that map directly to the
 directory structure of `crates/wickra-core/src/indicators/`. The same family
 labels are used here, plus a second-level grouping that reflects how the
@@ -136,6 +136,10 @@ measure — that lives in the volatility module by source convention.
 | Indicator | One-liner | Input | Output | Range | Defaults | Warmup | Deep dive |
 |-----------|-----------|-------|--------|-------|----------|--------|-----------|
 | `Atr`     | Wilder-smoothed True Range; per-bar absolute volatility. | `Candle` | `f64` | `[0, ∞)` (price scale) | `period = 14` (Python) | `period` | [Indicator-Atr.md](indicators/volatility/Indicator-Atr.md) |
+| `Natr`    | `100·ATR/close`; ATR as a percentage, comparable across instruments. | `Candle` | `f64` | `[0, ∞)` (percent) | `period = 14` (Python) | `period` | [Indicator-Natr.md](indicators/volatility/Indicator-Natr.md) |
+| `StdDev`  | Rolling population standard deviation of price. | `f64` | `f64` | `[0, ∞)` (price scale) | `period = 20` (Python) | `period` | [Indicator-StdDev.md](indicators/volatility/Indicator-StdDev.md) |
+| `UlcerIndex` | RMS of trailing-high drawdowns; downside-only risk. | `f64` | `f64` | `[0, ∞)` (percent) | `period = 14` (Python) | `2·period − 1` | [Indicator-UlcerIndex.md](indicators/volatility/Indicator-UlcerIndex.md) |
+| `HistoricalVolatility` | Annualised sample stddev of log returns. | `f64` | `f64` | `[0, ∞)` (annualised percent) | `(period=20, trading_periods=252)` (Python) | `period + 1` | [Indicator-HistoricalVolatility.md](indicators/volatility/Indicator-HistoricalVolatility.md) |
 
 ### Trailing stop
 
