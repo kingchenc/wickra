@@ -1,0 +1,197 @@
+# Indicators Overview
+
+Wickra ships 25 indicators, organised in source under the four classical
+families — trend, momentum, volatility, volume — that map directly to the
+directory structure of `crates/wickra-core/src/indicators/`. The same family
+labels are used here, plus a second-level grouping that reflects how the
+indicators actually behave (which output range they live in, what data they
+need, what question they answer).
+
+Every indicator is an O(1) state machine that consumes one input at a time
+and produces either `Option<f64>` (Rust), `float | None` (Python), or
+`number | null` (Node). Inputs are either a `f64` close price or an OHLCV
+`Candle` (Rust) / dict-or-tuple (Python) / column arrays (Node). The full
+trait surface and warmup-period semantics are covered in
+[Quickstart: Rust](Quickstart-Rust.md) and [Warmup Periods](Warmup-Periods.md).
+
+The "Output range" column below is the value bounds an indicator emits once
+warm. "unbounded" means it tracks the price scale of the input. The
+"Warmup" column quotes `warmup_period()` as the indicator reports it; for
+two indicators (`Hma`, `Kama`) the practical first-emission index can lag
+the reported number because of stacked sub-indicator warmups — those
+discrepancies are noted on the deep-dive pages.
+
+## Trend
+
+Trend indicators smooth the price series to surface direction. They are
+all single-input, single-output (`f64 → f64`).
+
+### Simple averages
+
+Pure linear weighting. Mostly used as fast baselines or as comparison
+benchmarks against fancier averages.
+
+| Indicator | One-liner | Input | Output | Range | Defaults | Warmup | Deep dive |
+|-----------|-----------|-------|--------|-------|----------|--------|-----------|
+| `Sma`     | Equal-weighted rolling mean over `period` closes. | `f64` | `f64` | unbounded (price scale) | `period` (no default in core; Python defaults vary by binding) | `period` | [Indicator-Sma.md](indicators/trend/Indicator-Sma.md) |
+| `Wma`     | Linear weights `1, 2, …, period` so the newest bar matters most. | `f64` | `f64` | unbounded (price scale) | `period` | `period` | [Indicator-Wma.md](indicators/trend/Indicator-Wma.md) |
+
+### Exponential family
+
+Recursive smoothing with one or more chained EMAs. Lag reduction grows as
+you stack more EMAs, but so does responsiveness to noise.
+
+| Indicator | One-liner | Input | Output | Range | Defaults | Warmup | Deep dive |
+|-----------|-----------|-------|--------|-------|----------|--------|-----------|
+| `Ema`  | EMA with `α = 2 / (period + 1)`, seeded from the SMA of the first `period` inputs. | `f64` | `f64` | unbounded (price scale) | `period` | `period` | [Indicator-Ema.md](indicators/trend/Indicator-Ema.md) |
+| `Dema` | Mulloy's `2·EMA − EMA(EMA)`; removes first-order EMA lag. | `f64` | `f64` | unbounded (price scale) | `period` | `2·period − 1` | [Indicator-Dema.md](indicators/trend/Indicator-Dema.md) |
+| `Tema` | Mulloy's `3·EMA − 3·EMA(EMA) + EMA(EMA(EMA))`; removes more lag than DEMA. | `f64` | `f64` | unbounded (price scale) | `period` | `3·period − 2` | [Indicator-Tema.md](indicators/trend/Indicator-Tema.md) |
+| `Trix` | `(EMA(EMA(EMA(price))).pct_change × 10000)`; oscillator built from a triple-smoothed EMA. | `f64` | `f64` | unbounded around zero | `period = 15` (Python) | `3·period − 1` | (see source `crates/wickra-core/src/indicators/trix.rs`) |
+
+### Adaptive & hybrid
+
+These two adjust their effective smoothing on the fly. They are the
+"smart" trend filters; both also live in Trend by directory placement.
+
+| Indicator | One-liner | Input | Output | Range | Defaults | Warmup | Deep dive |
+|-----------|-----------|-------|--------|-------|----------|--------|-----------|
+| `Hma`  | Hull's `WMA(2·WMA(n/2) − WMA(n), √n)`; near-zero lag with a built-in noise filter. | `f64` | `f64` | unbounded (price scale) | `period` | `period + round(√period) − 1` (see notes) | [Indicator-Hma.md](indicators/trend/Indicator-Hma.md) |
+| `Kama` | Kaufman's adaptive average: efficiency ratio picks an α between a fast and slow EMA per bar. | `f64` | `f64` | unbounded (price scale) | `(er_period=10, fast=2, slow=30)` | `er_period + 1` (see notes) | [Indicator-Kama.md](indicators/trend/Indicator-Kama.md) |
+
+## Momentum
+
+Momentum indicators measure the *rate* of price change, not the level.
+Several are bounded by construction (0–100 oscillators); others are
+unbounded; one (`Adx`) is directional and bundles three values.
+
+### Bounded oscillators (0 – 100)
+
+These all share the "overbought above 70/80, oversold below 30/20"
+mental model, though the exact thresholds differ in the literature.
+
+| Indicator    | One-liner | Input | Output | Range | Defaults | Warmup |
+|--------------|-----------|-------|--------|-------|----------|--------|
+| `Rsi`        | Wilder's RSI; smoothed `gain / (gain + loss) × 100`. | `f64` | `f64` | `[0, 100]` | `period = 14` (Python) | `period + 1` |
+| `Stochastic` | `%K = (close − low_n)/(high_n − low_n) × 100`, smoothed into `%D`. | `Candle` | `(k, d)` | each in `[0, 100]` | `(k_period=14, d_period=3)` (Python) | `k_period + d_period − 1` |
+| `Mfi`        | "Volume-weighted RSI": Wilder smoothing of money-flow ratios. | `Candle` | `f64` | `[0, 100]` | `period = 14` (Python) | `period` |
+| `Aroon`      | Bars-since-high and bars-since-low scaled to `[0, 100]`. | `Candle` | `(up, down)` | each in `[0, 100]` | `period = 14` (Python) | `period + 1` |
+
+### Unbounded oscillators
+
+Centered on zero or driven by raw price differences; no fixed cap.
+
+| Indicator           | One-liner | Input | Output | Range | Defaults | Warmup |
+|---------------------|-----------|-------|--------|-------|----------|--------|
+| `MacdIndicator`     | `EMA(fast) − EMA(slow)` plus a signal-line EMA and the difference histogram. | `f64` | `(macd, signal, histogram)` | unbounded around zero | `(fast=12, slow=26, signal=9)` (Python) | `slow + signal − 1` |
+| `Cci`               | `(typical − SMA(typical)) / (0.015 · mean_dev)`; unbounded but typically `±100`. | `Candle` | `f64` | unbounded (typically `±100` to `±200`) | `period = 20` (Python) | `period` |
+| `Roc`               | `(price − price_n) / price_n × 100`; raw percentage change over `period` bars. | `f64` | `f64` | unbounded around zero | `period` | `period + 1` |
+| `AwesomeOscillator` | `SMA(median, fast) − SMA(median, slow)`; Bill Williams' zero-line crossover oscillator. | `Candle` | `f64` | unbounded around zero | `(fast=5, slow=34)` (Python) | `slow_period` |
+| `WilliamsR`         | `−100 × (high_n − close) / (high_n − low_n)`; same family as Stochastic but inverted to `[−100, 0]`. | `Candle` | `f64` | `[−100, 0]` | `period = 14` (Python) | `period` |
+
+### Directional
+
+| Indicator | One-liner | Input | Output | Range | Defaults | Warmup |
+|-----------|-----------|-------|--------|-------|----------|--------|
+| `Adx`     | Wilder's directional system: `+DI`, `−DI` (each `[0, 100]`) and `ADX` trend-strength index. | `Candle` | `(plus_di, minus_di, adx)` | each in `[0, 100]` | `period = 14` (Python) | `2·period` |
+
+## Volatility
+
+Volatility indicators sit in two functional groups: those that draw an
+envelope around price, and those that report a scalar dispersion/range.
+PSAR is a special case — a trailing-stop tracker rather than a width
+measure — that lives in the volatility module by source convention.
+
+### Envelopes
+
+| Indicator         | One-liner | Input | Output | Range | Defaults | Warmup |
+|-------------------|-----------|-------|--------|-------|----------|--------|
+| `BollingerBands`  | SMA middle band with `±multiplier × population_stddev` upper/lower bands. | `f64` | `(upper, middle, lower, stddev)` | unbounded (price scale) | `(period=20, multiplier=2.0)` (Python) | `period` |
+| `Keltner`         | EMA middle band with `±multiplier × ATR` upper/lower bands. | `Candle` | `(upper, middle, lower)` | unbounded (price scale) | `(ema_period=20, atr_period=10, multiplier=2.0)` (Python) | `max(ema_period, atr_period)` |
+| `Donchian`        | Highest high and lowest low over `period` bars; middle = mean of the two. | `Candle` | `(upper, middle, lower)` | unbounded (price scale) | `period = 20` (Python) | `period` |
+
+### Range-average
+
+| Indicator | One-liner | Input | Output | Range | Defaults | Warmup |
+|-----------|-----------|-------|--------|-------|----------|--------|
+| `Atr`     | Wilder-smoothed True Range; per-bar absolute volatility. | `Candle` | `f64` | `[0, ∞)` (price scale) | `period = 14` (Python) | `period` |
+
+### Trailing stop
+
+| Indicator | One-liner | Input | Output | Range | Defaults | Warmup |
+|-----------|-----------|-------|--------|-------|----------|--------|
+| `Psar`    | Wilder's Parabolic Stop-and-Reverse; per-bar stop level that flips sides on price crossing. | `Candle` | `f64` | unbounded (price scale) | `(af_start=0.02, af_step=0.02, af_max=0.20)` (Python) | `2` |
+
+## Volume
+
+Volume indicators all take `Candle` input because they need `close` and
+`volume` together (some also need `high`/`low`).
+
+### Cumulative
+
+| Indicator     | One-liner | Input | Output | Range | Defaults | Warmup |
+|---------------|-----------|-------|--------|-------|----------|--------|
+| `Obv`         | On-Balance Volume: cumulative signed volume driven by close-vs-prior-close sign. | `Candle` | `f64` | unbounded (drifts with cumulative volume) | (no parameters) | `1` |
+| `Vwap`        | Cumulative volume-weighted average price from the start of the stream (intraday reset is your responsibility). | `Candle` | `f64` | unbounded (price scale) | (no parameters) | `1` |
+
+### Rolling
+
+| Indicator     | One-liner | Input | Output | Range | Defaults | Warmup |
+|---------------|-----------|-------|--------|-------|----------|--------|
+| `RollingVwap` | VWAP over a sliding window instead of since-start; useful for session-independent VWAP. | `Candle` | `f64` | unbounded (price scale) | `period` | `period` |
+
+## Pick the right indicator for…
+
+A short cheat-sheet of "I want X, which indicator?" answers, grounded in
+what each indicator actually computes.
+
+- **Fast trend filter, minimal lag, single line.** `Hma` for smoothness +
+  responsiveness, `Tema` for further lag reduction at the cost of more
+  noise. If you want adaptiveness instead of fixed lag, `Kama`.
+- **Slow trend filter, smooth as glass.** `Sma` is the simplest; `Ema`
+  responds slightly faster with the same smoothness budget. For long
+  trend filters either is appropriate; the difference is mostly aesthetic.
+- **Trend-following crossovers.** Two-line crossovers (`Ema(fast)` vs
+  `Ema(slow)`, or any of the trend pairs) are the textbook entry signal;
+  `MacdIndicator` packages the same idea with a signal line and histogram.
+- **Trend strength (is there a trend at all?).** `Adx` is the canonical
+  answer: `adx > 25` is "trending", `adx < 20` is "ranging". `Aroon` is
+  a softer alternative when you want directional confirmation.
+- **Overbought / oversold reversal candidate.** `Rsi` is the default;
+  `Stochastic` for faster signals; `WilliamsR` for the same logic with an
+  inverted scale; `Mfi` if you have volume and want a volume-aware RSI.
+- **Volatility expansion / contraction.** `BollingerBands` width
+  (`upper − lower`) for relative volatility; `Atr` for absolute per-bar
+  volatility in price units; `Keltner` to compare price against an
+  ATR-scaled envelope.
+- **Breakout level.** `Donchian` upper/lower bands are the textbook
+  Turtle-style breakout trigger.
+- **Trailing stop.** `Psar` gives you a per-bar stop level that flips
+  sides as the trend reverses. `Atr · k` (compute `Atr` yourself, multiply
+  by your preferred `k`) is the common alternative.
+- **Volume confirmation.** `Obv` is the simplest; `Mfi` adds price into
+  the equation; `Vwap` / `RollingVwap` give you the volume-weighted
+  reference price.
+- **Bill Williams setups.** `AwesomeOscillator` for the zero-line cross /
+  twin-peaks pattern from his suite.
+- **Rate-of-change scalar.** `Roc` is the unsmoothed percentage change;
+  `Trix` is the same idea but on a triple-smoothed EMA.
+
+## Source-of-truth files
+
+Every claim above can be checked against the source in
+`D:\Coding\Wickra\crates\wickra-core\src\indicators\` — one file per
+indicator. The Rust unit tests inside each module are the ground truth
+for sample values. Python defaults (the `period = 14` etc. in tables
+above) come from the `#[pyo3(signature = …)]` attributes in
+`D:\Coding\Wickra\bindings\python\src\lib.rs`; indicators not listed
+with a Python default require an explicit `period` argument.
+
+## See also
+
+- [Warmup Periods](Warmup-Periods.md) — full verified table of every
+  indicator's `warmup_period()`.
+- [Indicator Chaining](Indicator-Chaining.md) — combining indicators with
+  `Chain` and the stacked-warmup rule.
+- [Quickstart: Rust](Quickstart-Rust.md), [Quickstart: Python](Quickstart-Python.md),
+  [Quickstart: Node](Quickstart-Node.md) — language-specific API surfaces.
+- Source: <https://github.com/kingchenc/wickra>
