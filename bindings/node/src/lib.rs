@@ -1147,6 +1147,80 @@ impl PmoNode {
 
 // ============================== VWMA ==============================
 
+// ============================== Bollinger Bandwidth ==============================
+
+#[napi(js_name = "BollingerBandwidth")]
+pub struct BollingerBandwidthNode {
+    inner: wc::BollingerBandwidth,
+}
+
+#[napi]
+impl BollingerBandwidthNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, multiplier: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::BollingerBandwidth::new(period as usize, multiplier).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Percent B ==============================
+
+#[napi(js_name = "PercentB")]
+pub struct PercentBNode {
+    inner: wc::PercentB,
+}
+
+#[napi]
+impl PercentBNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, multiplier: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::PercentB::new(period as usize, multiplier).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== NATR ==============================
 
 #[napi(js_name = "NATR")]

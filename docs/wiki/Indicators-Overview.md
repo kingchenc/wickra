@@ -1,6 +1,6 @@
 # Indicators Overview
 
-Wickra ships 46 indicators, organised in source under the four classical
+Wickra ships 48 indicators, organised in source under the four classical
 families — trend, momentum, volatility, volume — that map directly to the
 directory structure of `crates/wickra-core/src/indicators/`. The same family
 labels are used here, plus a second-level grouping that reflects how the
@@ -130,6 +130,8 @@ measure — that lives in the volatility module by source convention.
 | `BollingerBands`  | SMA middle band with `±multiplier × population_stddev` upper/lower bands. | `f64` | `(upper, middle, lower, stddev)` | unbounded (price scale) | `(period=20, multiplier=2.0)` (Python) | `period` | [Indicator-BollingerBands.md](indicators/volatility/Indicator-BollingerBands.md) |
 | `Keltner`         | EMA middle band with `±multiplier × ATR` upper/lower bands. | `Candle` | `(upper, middle, lower)` | unbounded (price scale) | `(ema_period=20, atr_period=10, multiplier=2.0)` (Python) | `max(ema_period, atr_period)` | [Indicator-Keltner.md](indicators/volatility/Indicator-Keltner.md) |
 | `Donchian`        | Highest high and lowest low over `period` bars; middle = mean of the two. | `Candle` | `(upper, middle, lower)` | unbounded (price scale) | `period = 20` (Python) | `period` | [Indicator-Donchian.md](indicators/volatility/Indicator-Donchian.md) |
+| `BollingerBandwidth` | `(upper − lower) / middle` of the Bollinger Bands; the "squeeze" gauge. | `f64` | `f64` | `[0, ∞)` | `(period=20, multiplier=2.0)` (Python) | `period` | [Indicator-BollingerBandwidth.md](indicators/volatility/Indicator-BollingerBandwidth.md) |
+| `PercentB`        | `(price − lower) / (upper − lower)`; price position within the bands. | `f64` | `f64` | unbounded (`0`–`1` inside the bands) | `(period=20, multiplier=2.0)` (Python) | `period` | [Indicator-PercentB.md](indicators/volatility/Indicator-PercentB.md) |
 
 ### Range-average
 

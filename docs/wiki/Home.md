@@ -122,6 +122,8 @@ Rust / Python / Node examples. They are grouped by family, mirroring the
 - [Indicator-StdDev.md](indicators/volatility/Indicator-StdDev.md)
 - [Indicator-UlcerIndex.md](indicators/volatility/Indicator-UlcerIndex.md)
 - [Indicator-HistoricalVolatility.md](indicators/volatility/Indicator-HistoricalVolatility.md)
+- [Indicator-BollingerBandwidth.md](indicators/volatility/Indicator-BollingerBandwidth.md)
+- [Indicator-PercentB.md](indicators/volatility/Indicator-PercentB.md)
 
 **Volume** — price moves weighted or confirmed by traded volume.
 

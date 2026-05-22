@@ -1519,6 +1519,126 @@ impl PyAroon {
     }
 }
 
+// ============================== Bollinger Bandwidth ==============================
+
+#[pyclass(name = "BollingerBandwidth", module = "wickra._wickra")]
+#[derive(Clone)]
+struct PyBollingerBandwidth {
+    inner: wc::BollingerBandwidth,
+}
+
+#[pymethods]
+impl PyBollingerBandwidth {
+    #[new]
+    #[pyo3(signature = (period=20, multiplier=2.0))]
+    fn new(period: usize, multiplier: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::BollingerBandwidth::new(period, multiplier).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn multiplier(&self) -> f64 {
+        self.inner.multiplier()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "BollingerBandwidth(period={}, multiplier={})",
+            self.inner.period(),
+            self.inner.multiplier()
+        )
+    }
+}
+
+// ============================== Percent B ==============================
+
+#[pyclass(name = "PercentB", module = "wickra._wickra")]
+#[derive(Clone)]
+struct PyPercentB {
+    inner: wc::PercentB,
+}
+
+#[pymethods]
+impl PyPercentB {
+    #[new]
+    #[pyo3(signature = (period=20, multiplier=2.0))]
+    fn new(period: usize, multiplier: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::PercentB::new(period, multiplier).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn multiplier(&self) -> f64 {
+        self.inner.multiplier()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "PercentB(period={}, multiplier={})",
+            self.inner.period(),
+            self.inner.multiplier()
+        )
+    }
+}
+
 // ============================== NATR ==============================
 
 #[pyclass(name = "NATR", module = "wickra._wickra")]
@@ -2789,5 +2909,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyStdDev>()?;
     m.add_class::<PyUlcerIndex>()?;
     m.add_class::<PyHistoricalVolatility>()?;
+    m.add_class::<PyBollingerBandwidth>()?;
+    m.add_class::<PyPercentB>()?;
     Ok(())
 }

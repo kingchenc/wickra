@@ -90,6 +90,8 @@ wasm_scalar_indicator!(WasmCoppock, "Coppock", wc::Coppock, roc_long: usize, roc
 wasm_scalar_indicator!(WasmStdDev, "StdDev", wc::StdDev, period: usize);
 wasm_scalar_indicator!(WasmUlcerIndex, "UlcerIndex", wc::UlcerIndex, period: usize);
 wasm_scalar_indicator!(WasmHistoricalVolatility, "HistoricalVolatility", wc::HistoricalVolatility, period: usize, trading_periods: usize);
+wasm_scalar_indicator!(WasmBollingerBandwidth, "BollingerBandwidth", wc::BollingerBandwidth, period: usize, multiplier: f64);
+wasm_scalar_indicator!(WasmPercentB, "PercentB", wc::PercentB, period: usize, multiplier: f64);
 
 // ---------- KAMA (three params) ----------
 
