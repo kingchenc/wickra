@@ -44,6 +44,12 @@ const MAX_MESSAGE_SIZE: usize = 8 << 20;
 /// Upper bound on a single inbound WebSocket frame.
 const MAX_FRAME_SIZE: usize = 2 << 20;
 
+/// How many times `next_event` retries a dropped connection before giving up.
+const MAX_RECONNECT_ATTEMPTS: u32 = 6;
+
+/// Upper bound on the exponential reconnect backoff.
+const RECONNECT_BACKOFF_CAP: Duration = Duration::from_secs(30);
+
 /// Supported Binance kline intervals. The `as_str` value matches Binance's
 /// wire-format strings (`"1m"`, `"5m"`, `"1h"`, etc.).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -104,10 +110,13 @@ pub struct KlineEvent {
 #[derive(Debug)]
 pub struct BinanceKlineStream {
     socket: WebSocketStream<MaybeTlsStream<TcpStream>>,
+    /// Lowercased symbols the stream is subscribed to. Retained so the
+    /// connection can be rebuilt on a reconnect.
+    symbols: Vec<String>,
     /// Interval requested at connect time. Used to tag every event.
     interval: Interval,
-    /// `true` once the server has closed the stream. A closed stream is never
-    /// polled again — `next_event` short-circuits to `Ok(None)`.
+    /// `true` once the caller invoked [`close`](Self::close). A closed stream
+    /// is never polled or reconnected again.
     closed: bool,
 }
 
@@ -157,19 +166,15 @@ pub struct RawKline {
 }
 
 impl BinanceKlineStream {
-    /// Connect to Binance's combined-stream endpoint for one or more symbols.
-    ///
-    /// Symbols may be passed in either case; they are lowercased to match
-    /// Binance's stream-name conventions.
-    pub async fn connect(symbols: &[String], interval: Interval) -> Result<Self> {
-        if symbols.is_empty() {
-            return Err(Error::Malformed(
-                "BinanceKlineStream requires at least one symbol".into(),
-            ));
-        }
+    /// Open a raw combined-stream WebSocket for the given (already-lowercased)
+    /// symbols.
+    async fn open(
+        symbols: &[String],
+        interval: Interval,
+    ) -> Result<WebSocketStream<MaybeTlsStream<TcpStream>>> {
         let streams: Vec<String> = symbols
             .iter()
-            .map(|s| format!("{}@kline_{}", s.to_lowercase(), interval.as_str()))
+            .map(|s| format!("{}@kline_{}", s, interval.as_str()))
             .collect();
         let url = format!(
             "wss://stream.binance.com:9443/stream?streams={}",
@@ -184,34 +189,73 @@ impl BinanceKlineStream {
         let (socket, _) =
             tokio_tungstenite::connect_async_with_config(url.as_str(), Some(ws_config), false)
                 .await?;
+        Ok(socket)
+    }
+
+    /// Connect to Binance's combined-stream endpoint for one or more symbols.
+    ///
+    /// Symbols may be passed in either case; they are lowercased to match
+    /// Binance's stream-name conventions. A dropped or stalled connection is
+    /// re-established transparently by [`next_event`](Self::next_event).
+    pub async fn connect(symbols: &[String], interval: Interval) -> Result<Self> {
+        if symbols.is_empty() {
+            return Err(Error::Malformed(
+                "BinanceKlineStream requires at least one symbol".into(),
+            ));
+        }
+        let symbols: Vec<String> = symbols.iter().map(|s| s.to_lowercase()).collect();
+        let socket = Self::open(&symbols, interval).await?;
         Ok(Self {
             socket,
+            symbols,
             interval,
             closed: false,
         })
     }
 
-    /// Whether the server has closed the stream. Once closed, every further
+    /// Whether the caller has closed the stream. Once closed, every further
     /// [`next_event`](Self::next_event) call yields `Ok(None)` immediately.
     pub fn is_closed(&self) -> bool {
         self.closed
     }
 
-    /// Receive the next kline event. Yields `Ok(None)` when the server closes
-    /// the connection cleanly.
+    /// Re-establish a dropped connection with exponential backoff. Returns the
+    /// last error if every [`MAX_RECONNECT_ATTEMPTS`] attempt fails.
+    async fn reconnect(&mut self) -> Result<()> {
+        let mut delay = Duration::from_secs(1);
+        let mut last_err = None;
+        for _ in 0..MAX_RECONNECT_ATTEMPTS {
+            tokio::time::sleep(delay).await;
+            match Self::open(&self.symbols, self.interval).await {
+                Ok(socket) => {
+                    self.socket = socket;
+                    return Ok(());
+                }
+                Err(e) => {
+                    last_err = Some(e);
+                    delay = delay.saturating_mul(2).min(RECONNECT_BACKOFF_CAP);
+                }
+            }
+        }
+        Err(last_err.expect("MAX_RECONNECT_ATTEMPTS is non-zero"))
+    }
+
+    /// Receive the next kline event. A dropped, errored or stalled connection
+    /// is re-established transparently (exponential backoff, up to
+    /// [`MAX_RECONNECT_ATTEMPTS`]); an exhausted reconnect surfaces as `Err`.
+    /// `Ok(None)` is returned only after the caller has [`close`](Self::close)d
+    /// the stream.
     pub async fn next_event(&mut self) -> Result<Option<KlineEvent>> {
         if self.closed {
             return Ok(None);
         }
         loop {
-            let msg = match tokio::time::timeout(READ_TIMEOUT, self.socket.next()).await {
-                Ok(Some(Ok(m))) => m,
-                Ok(Some(Err(e))) => return Err(Error::from(e)),
-                Ok(None) => {
-                    self.closed = true;
-                    return Ok(None);
-                }
-                Err(_elapsed) => return Err(Error::Timeout),
+            // A protocol error, a clean server close, or a read stall are all
+            // transient: reconnect with backoff and resume reading.
+            let Ok(Some(Ok(msg))) = tokio::time::timeout(READ_TIMEOUT, self.socket.next()).await
+            else {
+                self.reconnect().await?;
+                continue;
             };
             match msg {
                 Message::Text(text) => {
@@ -228,12 +272,13 @@ impl BinanceKlineStream {
                     }
                 }
                 Message::Ping(payload) => {
-                    self.socket.send(Message::Pong(payload)).await?;
+                    if self.socket.send(Message::Pong(payload)).await.is_err() {
+                        self.reconnect().await?;
+                    }
                 }
                 Message::Pong(_) | Message::Frame(_) => {}
                 Message::Close(_) => {
-                    self.closed = true;
-                    return Ok(None);
+                    self.reconnect().await?;
                 }
             }
         }
@@ -260,8 +305,11 @@ impl BinanceKlineStream {
         Ok(Some(envelope.into_event(interval)?))
     }
 
-    /// Close the underlying socket cleanly.
-    pub async fn close(mut self) -> Result<()> {
+    /// Close the underlying socket cleanly and mark the stream closed. After
+    /// this, [`next_event`](Self::next_event) yields `Ok(None)` and never
+    /// reconnects.
+    pub async fn close(&mut self) -> Result<()> {
+        self.closed = true;
         self.socket.close(None).await?;
         Ok(())
     }
