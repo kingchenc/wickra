@@ -24,6 +24,10 @@ import numpy as np
 import wickra as ta
 
 
+# Columns the OHLCV layout requires; the CSV header must name every one.
+REQUIRED_COLUMNS = ("timestamp", "open", "high", "low", "close", "volume")
+
+
 @dataclass
 class History:
     timestamp: np.ndarray
@@ -35,24 +39,44 @@ class History:
 
 
 def read_history(path: str) -> History:
-    """Load an OHLCV CSV into typed NumPy columns."""
+    """Load an OHLCV CSV into typed NumPy columns.
+
+    Raises:
+        ValueError: if the file has no header, is missing a required column,
+            holds no data rows, or contains a non-numeric value (the message
+            pinpoints the offending row and column instead of surfacing an
+            opaque ``KeyError`` or NumPy ``ValueError``).
+    """
     rows: List[List[str]] = []
     with open(path, newline="") as f:
         reader = csv.DictReader(f)
-        for row in reader:
-            rows.append(
-                [
-                    row["timestamp"],
-                    row["open"],
-                    row["high"],
-                    row["low"],
-                    row["close"],
-                    row["volume"],
-                ]
+        if reader.fieldnames is None:
+            raise ValueError(f"{path}: CSV has no header row")
+        missing = [c for c in REQUIRED_COLUMNS if c not in reader.fieldnames]
+        if missing:
+            raise ValueError(
+                f"{path}: CSV is missing required column(s): "
+                f"{', '.join(missing)}; found: {', '.join(reader.fieldnames)}"
             )
+        for row in reader:
+            rows.append([row[c] for c in REQUIRED_COLUMNS])
     if not rows:
-        raise ValueError("CSV is empty")
-    arr = np.array(rows, dtype=np.float64)
+        raise ValueError(f"{path}: CSV has a header but no data rows")
+    try:
+        arr = np.array(rows, dtype=np.float64)
+    except (TypeError, ValueError) as exc:
+        # NumPy's own message names neither the row nor the column — locate
+        # the first non-numeric cell and report it precisely.
+        for line_no, row in enumerate(rows, start=2):
+            for col, value in zip(REQUIRED_COLUMNS, row):
+                try:
+                    float(value)
+                except (TypeError, ValueError):
+                    raise ValueError(
+                        f"{path}: row {line_no} column '{col}' is not "
+                        f"numeric: {value!r}"
+                    ) from exc
+        raise  # could not localise — surface the original error
     return History(
         timestamp=arr[:, 0].astype(np.int64),
         open=arr[:, 1],

@@ -21,17 +21,43 @@ import numpy as np
 import wickra as ta
 
 
+# Columns the OHLCV layout requires; the CSV header must name every one.
+REQUIRED_COLUMNS = ("timestamp", "open", "high", "low", "close", "volume")
+
+
 def read_csv(path: str) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    """Read an OHLCV CSV into typed columns."""
+    """Read an OHLCV CSV into typed columns.
+
+    Raises:
+        ValueError: if the file has no header, is missing a required column,
+            holds no data rows, or contains a non-numeric value (the message
+            names the offending row).
+    """
     ts, o, h, l, c, v = [], [], [], [], [], []
     with open(path, newline="") as f:
-        for row in csv.DictReader(f):
-            ts.append(int(row["timestamp"]))
-            o.append(float(row["open"]))
-            h.append(float(row["high"]))
-            l.append(float(row["low"]))
-            c.append(float(row["close"]))
-            v.append(float(row["volume"]))
+        reader = csv.DictReader(f)
+        if reader.fieldnames is None:
+            raise ValueError(f"{path}: CSV has no header row")
+        missing = [col for col in REQUIRED_COLUMNS if col not in reader.fieldnames]
+        if missing:
+            raise ValueError(
+                f"{path}: CSV is missing required column(s): "
+                f"{', '.join(missing)}; found: {', '.join(reader.fieldnames)}"
+            )
+        for line_no, row in enumerate(reader, start=2):
+            try:
+                ts.append(int(row["timestamp"]))
+                o.append(float(row["open"]))
+                h.append(float(row["high"]))
+                l.append(float(row["low"]))
+                c.append(float(row["close"]))
+                v.append(float(row["volume"]))
+            except (TypeError, ValueError) as exc:
+                raise ValueError(
+                    f"{path}: row {line_no} has a non-numeric value: {exc}"
+                ) from exc
+    if not ts:
+        raise ValueError(f"{path}: CSV has a header but no data rows")
     return (
         np.asarray(ts, dtype=np.int64),
         np.asarray(o, dtype=np.float64),
@@ -51,7 +77,13 @@ def resample(
     v: np.ndarray,
     bucket: int,
 ) -> Tuple[np.ndarray, ...]:
-    """Aggregate bar-level columns into coarser buckets of size `bucket`."""
+    """Aggregate bar-level columns into coarser buckets of size `bucket`.
+
+    Raises:
+        ValueError: if the input series is empty.
+    """
+    if ts.size == 0:
+        raise ValueError("resample received an empty series")
     bucket_index = (ts // bucket).astype(np.int64)
     boundaries = np.diff(bucket_index, prepend=bucket_index[0] - 1) != 0
     group_ids = np.cumsum(boundaries) - 1
@@ -76,14 +108,19 @@ def resample(
 
 
 def summarize(label: str, close: np.ndarray, high: np.ndarray, low: np.ndarray) -> None:
+    if close.size == 0:
+        print(f"  {label:<10} (empty series — nothing to summarize)")
+        return
     rsi = ta.RSI(14).batch(close)
     macd = ta.MACD().batch(close)
     adx = ta.ADX(14).batch(high, low, close)
     last_macd_hist = macd[~np.isnan(macd[:, 2])][-1, 2] if np.any(~np.isnan(macd[:, 2])) else float("nan")
     last_adx = adx[~np.isnan(adx[:, 2])][-1, 2] if np.any(~np.isnan(adx[:, 2])) else float("nan")
+    valid_rsi = rsi[~np.isnan(rsi)]
+    last_rsi = valid_rsi[-1] if valid_rsi.size else float("nan")
     print(
         f"  {label:<10} bars={close.size:>5}  "
-        f"last_close={close[-1]:>10.4f}  rsi={rsi[~np.isnan(rsi)][-1]:>6.2f}  "
+        f"last_close={close[-1]:>10.4f}  rsi={last_rsi:>6.2f}  "
         f"macd_hist={last_macd_hist:+.4f}  adx={last_adx:>6.2f}"
     )
 
