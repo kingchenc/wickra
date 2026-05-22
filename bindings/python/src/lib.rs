@@ -1519,6 +1519,132 @@ impl PyAroon {
     }
 }
 
+// ============================== StochRSI ==============================
+
+#[pyclass(name = "StochRSI", module = "wickra._wickra")]
+#[derive(Clone)]
+struct PyStochRsi {
+    inner: wc::StochRsi,
+}
+
+#[pymethods]
+impl PyStochRsi {
+    #[new]
+    #[pyo3(signature = (rsi_period=14, stoch_period=14))]
+    fn new(rsi_period: usize, stoch_period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::StochRsi::new(rsi_period, stoch_period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+    }
+    #[getter]
+    fn periods(&self) -> (usize, usize) {
+        self.inner.periods()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (r, s) = self.inner.periods();
+        format!("StochRSI(rsi_period={r}, stoch_period={s})")
+    }
+}
+
+// ============================== Ultimate Oscillator ==============================
+
+#[pyclass(name = "UltimateOscillator", module = "wickra._wickra")]
+#[derive(Clone)]
+struct PyUltimateOscillator {
+    inner: wc::UltimateOscillator,
+}
+
+#[pymethods]
+impl PyUltimateOscillator {
+    #[new]
+    #[pyo3(signature = (short=7, mid=14, long=28))]
+    fn new(short: usize, mid: usize, long: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::UltimateOscillator::new(short, mid, long).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray_bound(py))
+    }
+    #[getter]
+    fn periods(&self) -> (usize, usize, usize) {
+        self.inner.periods()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (s, m, l) = self.inner.periods();
+        format!("UltimateOscillator(short={s}, mid={m}, long={l})")
+    }
+}
+
 // ============================== MOM ==============================
 
 #[pyclass(name = "MOM", module = "wickra._wickra")]
@@ -2052,5 +2178,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyCmo>()?;
     m.add_class::<PyTsi>()?;
     m.add_class::<PyPmo>()?;
+    m.add_class::<PyStochRsi>()?;
+    m.add_class::<PyUltimateOscillator>()?;
     Ok(())
 }

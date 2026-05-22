@@ -83,6 +83,7 @@ wasm_scalar_indicator!(WasmMom, "MOM", wc::Mom, period: usize);
 wasm_scalar_indicator!(WasmCmo, "CMO", wc::Cmo, period: usize);
 wasm_scalar_indicator!(WasmTsi, "TSI", wc::Tsi, long: usize, short: usize);
 wasm_scalar_indicator!(WasmPmo, "PMO", wc::Pmo, smoothing1: usize, smoothing2: usize);
+wasm_scalar_indicator!(WasmStochRsi, "StochRSI", wc::StochRsi, rsi_period: usize, stoch_period: usize);
 
 // ---------- KAMA (three params) ----------
 
@@ -321,6 +322,44 @@ impl WasmObv {
         let mut out = Vec::with_capacity(close.len());
         for i in 0..close.len() {
             let c = make_candle(close[i], close[i], close[i], volume[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = UltimateOscillator)]
+pub struct WasmUltimateOscillator {
+    inner: wc::UltimateOscillator,
+}
+
+#[wasm_bindgen(js_class = UltimateOscillator)]
+impl WasmUltimateOscillator {
+    #[wasm_bindgen(constructor)]
+    pub fn new(short: usize, mid: usize, long: usize) -> Result<WasmUltimateOscillator, JsError> {
+        Ok(Self {
+            inner: wc::UltimateOscillator::new(short, mid, long).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
             out.push(self.inner.update(c).unwrap_or(f64::NAN));
         }
         Ok(Float64Array::from(out.as_slice()))

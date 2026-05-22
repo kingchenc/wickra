@@ -1,6 +1,6 @@
 # Indicators Overview
 
-Wickra ships 34 indicators, organised in source under the four classical
+Wickra ships 36 indicators, organised in source under the four classical
 families — trend, momentum, volatility, volume — that map directly to the
 directory structure of `crates/wickra-core/src/indicators/`. The same family
 labels are used here, plus a second-level grouping that reflects how the
@@ -84,6 +84,8 @@ mental model, though the exact thresholds differ in the literature.
 | `Stochastic` | `%K = (close − low_n)/(high_n − low_n) × 100`, smoothed into `%D`. | `Candle` | `(k, d)` | each in `[0, 100]` | `(k_period=14, d_period=3)` (Python) | `k_period + d_period − 1` | [Indicator-Stochastic.md](indicators/momentum/Indicator-Stochastic.md) |
 | `Mfi`        | "Volume-weighted RSI": Wilder smoothing of money-flow ratios. | `Candle` | `f64` | `[0, 100]` | `period = 14` (Python) | `period` | [Indicator-Mfi.md](indicators/momentum/Indicator-Mfi.md) |
 | `Aroon`      | Bars-since-high and bars-since-low scaled to `[0, 100]`. | `Candle` | `(up, down)` | each in `[0, 100]` | `period = 14` (Python) | `period + 1` | [Indicator-Aroon.md](indicators/momentum/Indicator-Aroon.md) |
+| `StochRsi`   | Stochastic Oscillator applied to the RSI series; sharpens RSI extremes. | `f64` | `f64` | `[0, 100]` | `(rsi_period=14, stoch_period=14)` (Python) | `rsi_period + stoch_period` | [Indicator-StochRsi.md](indicators/momentum/Indicator-StochRsi.md) |
+| `UltimateOscillator` | Larry Williams' weighted three-timeframe buying-pressure oscillator. | `Candle` | `f64` | `[0, 100]` | `(short=7, mid=14, long=28)` (Python) | `max(short,mid,long) + 1` | [Indicator-UltimateOscillator.md](indicators/momentum/Indicator-UltimateOscillator.md) |
 
 ### Unbounded oscillators
 
