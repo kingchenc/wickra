@@ -46,7 +46,11 @@ you stack more EMAs, but so does responsiveness to noise.
 | `Ema`  | EMA with `α = 2 / (period + 1)`, seeded from the SMA of the first `period` inputs. | `f64` | `f64` | unbounded (price scale) | `period` | `period` | [Indicator-Ema.md](indicators/trend/Indicator-Ema.md) |
 | `Dema` | Mulloy's `2·EMA − EMA(EMA)`; removes first-order EMA lag. | `f64` | `f64` | unbounded (price scale) | `period` | `2·period − 1` | [Indicator-Dema.md](indicators/trend/Indicator-Dema.md) |
 | `Tema` | Mulloy's `3·EMA − 3·EMA(EMA) + EMA(EMA(EMA))`; removes more lag than DEMA. | `f64` | `f64` | unbounded (price scale) | `period` | `3·period − 2` | [Indicator-Tema.md](indicators/trend/Indicator-Tema.md) |
-| `Trix` | `(EMA(EMA(EMA(price))).pct_change × 10000)`; oscillator built from a triple-smoothed EMA. | `f64` | `f64` | unbounded around zero | `period = 15` (Python) | `3·period − 1` | (see source `crates/wickra-core/src/indicators/trix.rs`) |
+
+`Trix` is also built from a triple-smoothed EMA, but it is a *momentum
+oscillator* — it emits the rate of change of that EMA, not a price-scale
+trend line — so it is listed under [Momentum](#momentum), matching the
+`indicators/momentum/` source layout.
 
 ### Adaptive & hybrid
 
@@ -87,6 +91,7 @@ Centered on zero or driven by raw price differences; no fixed cap.
 | `Roc`               | `(price − price_n) / price_n × 100`; raw percentage change over `period` bars. | `f64` | `f64` | unbounded around zero | `period` | `period + 1` |
 | `AwesomeOscillator` | `SMA(median, fast) − SMA(median, slow)`; Bill Williams' zero-line crossover oscillator. | `Candle` | `f64` | unbounded around zero | `(fast=5, slow=34)` (Python) | `slow_period` |
 | `WilliamsR`         | `−100 × (high_n − close) / (high_n − low_n)`; same family as Stochastic but inverted to `[−100, 0]`. | `Candle` | `f64` | `[−100, 0]` | `period = 14` (Python) | `period` |
+| `Trix`              | `(EMA(EMA(EMA(price))).pct_change × 10000)`; oscillator built from a triple-smoothed EMA. | `f64` | `f64` | unbounded around zero | `period = 15` (Python) | `3·period − 1` |
 
 ### Directional
 
