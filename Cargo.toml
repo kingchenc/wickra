@@ -12,7 +12,7 @@ exclude = []
 
 [workspace.package]
 version = "0.1.4"
-authors = ["Wickra Contributors"]
+authors = ["kingchenc <kingchencp@gmail.com>"]
 edition = "2021"
 rust-version = "1.75"
 license = "PolyForm-Noncommercial-1.0.0"
