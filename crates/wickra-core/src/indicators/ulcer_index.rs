@@ -22,6 +22,11 @@ use crate::traits::Indicator;
 /// the volatility measure of choice for risk-adjusted return ratios (the
 /// "Martin ratio" / UPI).
 ///
+/// Each `update` is amortised O(1): the trailing maximum is tracked with a
+/// monotonically-decreasing deque of `(index, price)` pairs, so the indicator
+/// honours the `Indicator` trait's O(1)-per-tick contract even for long
+/// windows.
+///
 /// # Example
 ///
 /// ```
@@ -37,8 +42,12 @@ use crate::traits::Indicator;
 #[derive(Debug, Clone)]
 pub struct UlcerIndex {
     period: usize,
-    /// Rolling window of the last `period` prices (for the trailing maximum).
-    prices: VecDeque<f64>,
+    /// 1-based count of finite inputs seen so far; used as the monotonic index
+    /// that expires entries from `max_dq`.
+    count: u64,
+    /// Monotonically-decreasing deque of `(index, price)` over the trailing
+    /// `period` inputs. The front holds the current trailing maximum in O(1).
+    max_dq: VecDeque<(u64, f64)>,
     /// Rolling window of the last `period` squared percentage drawdowns.
     drawdowns_sq: VecDeque<f64>,
     sum_sq: f64,
@@ -57,7 +66,8 @@ impl UlcerIndex {
         }
         Ok(Self {
             period,
-            prices: VecDeque::with_capacity(period),
+            count: 0,
+            max_dq: VecDeque::with_capacity(period),
             drawdowns_sq: VecDeque::with_capacity(period),
             sum_sq: 0.0,
             last: None,
@@ -84,18 +94,31 @@ impl Indicator for UlcerIndex {
             // Non-finite input is ignored; state is left untouched.
             return self.last;
         }
-        if self.prices.len() == self.period {
-            self.prices.pop_front();
+        self.count += 1;
+        // Drop tail entries that can never be the trailing max again — every
+        // entry `≤ input` is dominated by `input` and at least as old.
+        while let Some(&(_, back)) = self.max_dq.back() {
+            if back <= input {
+                self.max_dq.pop_back();
+            } else {
+                break;
+            }
         }
-        self.prices.push_back(input);
-        if self.prices.len() < self.period {
+        self.max_dq.push_back((self.count, input));
+        // Expire the head once it falls out of the trailing `period`-window.
+        let window_lo = self.count.saturating_sub(self.period as u64 - 1);
+        while let Some(&(idx, _)) = self.max_dq.front() {
+            if idx < window_lo {
+                self.max_dq.pop_front();
+            } else {
+                break;
+            }
+        }
+        if self.count < self.period as u64 {
             return None;
         }
-        let max_price = self
-            .prices
-            .iter()
-            .copied()
-            .fold(f64::NEG_INFINITY, f64::max);
+        // Front is the trailing max in O(1).
+        let max_price = self.max_dq.front().expect("non-empty").1;
         let drawdown = if max_price == 0.0 {
             0.0
         } else {
@@ -117,15 +140,18 @@ impl Indicator for UlcerIndex {
     }
 
     fn reset(&mut self) {
-        self.prices.clear();
+        self.count = 0;
+        self.max_dq.clear();
         self.drawdowns_sq.clear();
         self.sum_sq = 0.0;
         self.last = None;
     }
 
     fn warmup_period(&self) -> usize {
-        // `period` prices fill the trailing-max window, then `period` squared
-        // drawdowns fill the RMS window.
+        // `period` inputs fill the trailing-max window; the first drawdown is
+        // computable on bar `period` (the window is full for the first time);
+        // another `period - 1` drawdowns then fill the RMS window. The two
+        // windows overlap by one bar, so `warmup_period() == 2 * period - 1`.
         2 * self.period - 1
     }
 
@@ -225,5 +251,62 @@ mod tests {
         let mut b = UlcerIndex::new(14).unwrap();
         let streamed: Vec<_> = prices.iter().map(|p| b.update(*p)).collect();
         assert_eq!(batch, streamed);
+    }
+
+    /// Monotone-deque equivalence: the O(1) implementation must produce exactly
+    /// the same per-tick values as a naive O(n) trailing-max scan, on inputs
+    /// chosen to exercise every deque-maintenance path:
+    /// strictly increasing (everything is dominated and gets popped),
+    /// strictly decreasing (nothing is popped, head expires when the window
+    /// slides),
+    /// and constants (ties — the `<= input` pop rule keeps a single newest
+    /// entry).
+    #[test]
+    fn monotone_deque_matches_naive_max_on_adversarial_inputs() {
+        fn naive_max(prices: &[f64], period: usize, t: usize) -> f64 {
+            let lo = t + 1 - period;
+            prices[lo..=t]
+                .iter()
+                .copied()
+                .fold(f64::NEG_INFINITY, f64::max)
+        }
+
+        fn check(prices: &[f64], period: usize) {
+            let mut ui = UlcerIndex::new(period).unwrap();
+            for (i, p) in prices.iter().enumerate() {
+                let _ = ui.update(*p);
+                if i + 1 >= period {
+                    let trailing_max = ui.max_dq.front().expect("non-empty").1;
+                    let naive = naive_max(prices, period, i);
+                    assert!(
+                        (trailing_max - naive).abs() < 1e-12,
+                        "trailing max diverges at t={i}: deque={trailing_max}, naive={naive}",
+                    );
+                }
+            }
+        }
+
+        // Strictly increasing — every push pops the entire deque tail.
+        let increasing: Vec<f64> = (1..=50).map(f64::from).collect();
+        check(&increasing, 5);
+        check(&increasing, 14);
+
+        // Strictly decreasing — pushes never pop the tail; the head expires.
+        let decreasing: Vec<f64> = (1..=50).rev().map(f64::from).collect();
+        check(&decreasing, 5);
+        check(&decreasing, 14);
+
+        // All-equal — `back <= input` pops on equality, leaving a length-1
+        // deque containing only the most recent index.
+        let constant = vec![42.0; 50];
+        check(&constant, 5);
+        check(&constant, 14);
+
+        // Mixed sawtooth — exercises every code path.
+        let mixed: Vec<f64> = (0..120)
+            .map(|i| 100.0 + (f64::from(i) * 0.7).sin() * 20.0)
+            .collect();
+        check(&mixed, 7);
+        check(&mixed, 30);
     }
 }

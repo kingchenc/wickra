@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- `UlcerIndex::update` now tracks the trailing maximum with a monotonically-
+  decreasing deque of `(index, price)` pairs instead of scanning the whole
+  trailing window on every tick. The indicator now honours the `Indicator`
+  trait's O(1)-per-tick contract; values and warmup semantics are unchanged
+  (verified by a new adversarial-input test that compares the deque output
+  bar-by-bar against a naive O(n) trailing-max scan on strictly increasing,
+  strictly decreasing, constant, and sawtooth inputs). The doc comment on
+  `warmup_period()` is also corrected: the two windows overlap by one bar, so
+  the formula is `2 * period - 1`.
+
 ### Added
 - `RollingVWAP` is now exposed in Python, Node and WASM under that name
   (previously the rolling-window VWAP existed only in the Rust core, even
