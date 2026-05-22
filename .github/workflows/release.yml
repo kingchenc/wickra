@@ -83,16 +83,23 @@ jobs:
   # PyPI: cross-platform wheels + sdist
   # --------------------------------------------------------------------------
   python-wheels:
-    name: Build wheels (${{ matrix.target }} on ${{ matrix.os }})
+    name: Build wheels (${{ matrix.target }}/${{ matrix.manylinux }} on ${{ matrix.os }})
     strategy:
       fail-fast: false
       matrix:
         include:
+          # glibc Linux (manylinux)
           - { os: ubuntu-latest, target: x86_64, manylinux: auto }
           - { os: ubuntu-latest, target: aarch64, manylinux: auto }
+          # musl Linux (Alpine and other musl distros)
+          - { os: ubuntu-latest, target: x86_64, manylinux: musllinux_1_2 }
+          - { os: ubuntu-latest, target: aarch64, manylinux: musllinux_1_2 }
+          # macOS
           - { os: macos-latest, target: x86_64, manylinux: auto }
           - { os: macos-latest, target: aarch64, manylinux: auto }
+          # Windows
           - { os: windows-latest, target: x64, manylinux: auto }
+          - { os: windows-11-arm, target: aarch64, manylinux: auto }
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -107,7 +114,9 @@ jobs:
           manylinux: ${{ matrix.manylinux }}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: wheels-${{ matrix.os }}-${{ matrix.target }}
+          # Include manylinux in the name so the glibc and musl x86_64/aarch64
+          # builds do not collide on the same artifact name.
+          name: wheels-${{ matrix.os }}-${{ matrix.target }}-${{ matrix.manylinux }}
           path: bindings/python/dist/*
 
   python-sdist:
