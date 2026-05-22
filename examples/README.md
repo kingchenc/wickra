@@ -27,6 +27,7 @@ The Rust examples live in the `wickra-examples` workspace member crate.
 | `live_trading.py` | Live Binance feed → RSI / MACD / Bollinger → signals. | `python -m examples.python.live_trading --symbol BTCUSDT --interval 1m` |
 | `multi_timeframe.py` | Resample a 1-minute CSV to coarser timeframes and compare. | `python -m examples.python.multi_timeframe <1m.csv>` |
 | `parallel_assets.py` | Process many symbols in parallel — the Rust extension releases the GIL during batch computation. | `python -m examples.python.parallel_assets --assets 200 --bars 5000` |
+| `fetch_btcusdt.py` | Download real BTCUSDT klines from the Binance REST API into `examples/data/` (urllib + stdlib only). | `python -m examples.python.fetch_btcusdt` |
 
 `live_trading.py` additionally needs `pip install websockets`.
 
