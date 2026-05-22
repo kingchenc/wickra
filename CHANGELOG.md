@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- WASM binding now exposes the streaming `update()` method on every candle-input
+  indicator: `Adx`, `WilliamsR`, `Cci`, `Mfi`, `Psar`, `Keltner`, `Donchian`,
+  `Vwap`, `AwesomeOscillator`, `Aroon`, `Stochastic`, and `Obv`. Multi-output
+  indicators (`Adx`, `Keltner`, `Donchian`, `Aroon`, `Stochastic`) return a
+  named JS object (`{ plusDi, minusDi, adx }`, `{ upper, middle, lower }`,
+  `{ up, down }`, `{ k, d }`) once warm, or `null` during warmup — matching the
+  existing `SuperTrend` convention. Each class also gains `reset()`, `isReady()`
+  and `warmupPeriod()`, bringing the WASM surface to full parity with Python
+  and Node so browser-side streaming code no longer has to replay `batch()`
+  on every tick. `WasmKama` gains the previously missing `warmupPeriod()`.
+- New `wasm-bindgen` integration test exercises `update == batch` plus the full
+  lifecycle (`reset` / `isReady` / `warmupPeriod`) for all twelve newly wired
+  classes against a deterministic 40-bar synthetic OHLCV stream.
+
 ### Security
 - Upgrade `pyo3` (0.22 → 0.28) and `numpy` (0.22 → 0.28) in the Python binding.
   Fixes [RUSTSEC-2025-0020](https://rustsec.org/advisories/RUSTSEC-2025-0020) —

@@ -127,6 +127,10 @@ impl WasmKama {
     pub fn is_ready(&self) -> bool {
         self.inner.is_ready()
     }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 // ---------- MACD ----------
@@ -307,6 +311,27 @@ impl WasmStoch {
     pub fn reset(&mut self) {
         self.inner.reset();
     }
+    /// Streaming update. Returns `{ k, d }` once warm, else `null`.
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"k".into(), &o.k.into()).ok();
+                Reflect::set(&obj, &"d".into(), &o.d.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = OBV)]
@@ -341,6 +366,18 @@ impl WasmObv {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+    pub fn update(&mut self, close: f64, volume: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(close, close, close, volume)?;
+        Ok(self.inner.update(c))
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -1403,6 +1440,31 @@ impl WasmAdx {
         }
         Ok(Float64Array::from(out.as_slice()))
     }
+    /// Streaming update. Returns `{ plusDi, minusDi, adx }` once warm, else `null`.
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"plusDi".into(), &o.plus_di.into()).ok();
+                Reflect::set(&obj, &"minusDi".into(), &o.minus_di.into()).ok();
+                Reflect::set(&obj, &"adx".into(), &o.adx.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = WilliamsR)]
@@ -1434,6 +1496,21 @@ impl WasmWilliamsR {
         }
         Ok(Float64Array::from(out.as_slice()))
     }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = CCI)]
@@ -1464,6 +1541,21 @@ impl WasmCci {
             out.push(self.inner.update(c).unwrap_or(f64::NAN));
         }
         Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -1499,6 +1591,27 @@ impl WasmMfi {
         }
         Ok(Float64Array::from(out.as_slice()))
     }
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, volume)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = PSAR)]
@@ -1529,6 +1642,21 @@ impl WasmPsar {
             out.push(self.inner.update(c).unwrap_or(f64::NAN));
         }
         Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -1570,6 +1698,31 @@ impl WasmKeltner {
         }
         Ok(Float64Array::from(out.as_slice()))
     }
+    /// Streaming update. Returns `{ upper, middle, lower }` once warm, else `null`.
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
+                Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
+                Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = Donchian)]
@@ -1600,6 +1753,31 @@ impl WasmDonchian {
             }
         }
         Ok(Float64Array::from(out.as_slice()))
+    }
+    /// Streaming update. Returns `{ upper, middle, lower }` once warm, else `null`.
+    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
+                Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
+                Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -1641,6 +1819,27 @@ impl WasmVwap {
         }
         Ok(Float64Array::from(out.as_slice()))
     }
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, volume)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = AwesomeOscillator)]
@@ -1666,6 +1865,21 @@ impl WasmAo {
             out.push(self.inner.update(c).unwrap_or(f64::NAN));
         }
         Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -1697,6 +1911,30 @@ impl WasmAroon {
             }
         }
         Ok(Float64Array::from(out.as_slice()))
+    }
+    /// Streaming update. Returns `{ up, down }` once warm, else `null`.
+    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"up".into(), &o.up.into()).ok();
+                Reflect::set(&obj, &"down".into(), &o.down.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -1763,5 +2001,305 @@ mod tests {
         assert!(mfi
             .batch(&[1.0, 2.0], &[1.0, 2.0], &[1.0, 2.0], &[1.0])
             .is_err());
+    }
+
+    // ---------- Streaming-API coverage for the candle-input indicators
+    // (Adx, WilliamsR, Cci, Mfi, Psar, Keltner, Donchian, Vwap, AwesomeOscillator,
+    //  Aroon, Stochastic, Obv). Verifies that the per-tick `update` produces
+    // exactly the same per-row values as `batch` and that the lifecycle methods
+    // (`reset`, `isReady`, `warmupPeriod`) honour the same contract as Python /
+    // Node and as the other already-wired WASM classes.
+
+    /// Deterministic OHLCV stream long enough to clear every indicator's warmup
+    /// (the longest in this group is `Adx(14)` at `2*period = 28` bars).
+    fn synthetic_ohlcv(n: usize) -> (Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>) {
+        let mut high = Vec::with_capacity(n);
+        let mut low = Vec::with_capacity(n);
+        let mut close = Vec::with_capacity(n);
+        let mut volume = Vec::with_capacity(n);
+        for i in 0..n {
+            let t = i as f64;
+            let mid = 100.0 + (t * 0.17).sin() * 5.0 + t * 0.05;
+            let spread = 1.0 + (t * 0.31).cos().abs();
+            high.push(mid + spread);
+            low.push(mid - spread);
+            close.push(mid + (t * 0.07).sin() * 0.5);
+            volume.push(1_000.0 + (t * 0.21).sin().abs() * 500.0);
+        }
+        (high, low, close, volume)
+    }
+
+    fn close_enough(a: f64, b: f64) -> bool {
+        if a.is_nan() {
+            b.is_nan()
+        } else {
+            (a - b).abs() < 1e-9
+        }
+    }
+
+    // Single test deliberately exercises every newly wired class so the lifecycle
+    // contract (`update == batch` + `is_ready` + `warmup_period` + `reset`) lives
+    // in one auditable place. `h`/`l`/`c`/`v` mirror the OHLCV column names used
+    // by the production API and the rest of the test suite.
+    #[allow(clippy::too_many_lines, clippy::many_single_char_names)]
+    #[wasm_bindgen_test]
+    fn candle_input_streaming_matches_batch_and_lifecycle_is_consistent() {
+        let (h, l, c, v) = synthetic_ohlcv(40);
+
+        // --- ADX (multi: { plusDi, minusDi, adx }) ---
+        let batch = WasmAdx::new(7)
+            .expect("valid")
+            .batch(&h, &l, &c)
+            .expect("valid");
+        let mut adx = WasmAdx::new(7).expect("valid");
+        assert!(!adx.is_ready());
+        assert_eq!(
+            adx.warmup_period(),
+            wc::Adx::new(7).expect("valid").warmup_period()
+        );
+        for i in 0..h.len() {
+            let stream = adx.update(h[i], l[i], c[i]).expect("valid");
+            let bp = batch.get_index((i * 3) as u32);
+            let bm = batch.get_index((i * 3 + 1) as u32);
+            let ba = batch.get_index((i * 3 + 2) as u32);
+            if stream.is_null() {
+                assert!(bp.is_nan() && bm.is_nan() && ba.is_nan(), "row {i}");
+            } else {
+                let obj: &Object = stream.unchecked_ref();
+                let p = Reflect::get(obj, &"plusDi".into())
+                    .unwrap()
+                    .as_f64()
+                    .unwrap();
+                let m = Reflect::get(obj, &"minusDi".into())
+                    .unwrap()
+                    .as_f64()
+                    .unwrap();
+                let a = Reflect::get(obj, &"adx".into()).unwrap().as_f64().unwrap();
+                assert!(close_enough(p, bp), "ADX plusDi diverges at {i}");
+                assert!(close_enough(m, bm), "ADX minusDi diverges at {i}");
+                assert!(close_enough(a, ba), "ADX value diverges at {i}");
+            }
+        }
+        assert!(adx.is_ready());
+        adx.reset();
+        assert!(!adx.is_ready());
+
+        // --- WilliamsR (single) ---
+        let batch = WasmWilliamsR::new(14)
+            .expect("valid")
+            .batch(&h, &l, &c)
+            .expect("valid");
+        let mut wr = WasmWilliamsR::new(14).expect("valid");
+        for i in 0..h.len() {
+            let s = wr
+                .update(h[i], l[i], c[i])
+                .expect("valid")
+                .unwrap_or(f64::NAN);
+            assert!(
+                close_enough(s, batch.get_index(i as u32)),
+                "WilliamsR at {i}"
+            );
+        }
+        assert!(wr.is_ready());
+        assert_eq!(
+            wr.warmup_period(),
+            wc::WilliamsR::new(14).expect("valid").warmup_period()
+        );
+        wr.reset();
+        assert!(!wr.is_ready());
+
+        // --- CCI (single) ---
+        let batch = WasmCci::new(14)
+            .expect("valid")
+            .batch(&h, &l, &c)
+            .expect("valid");
+        let mut cci = WasmCci::new(14).expect("valid");
+        for i in 0..h.len() {
+            let s = cci
+                .update(h[i], l[i], c[i])
+                .expect("valid")
+                .unwrap_or(f64::NAN);
+            assert!(close_enough(s, batch.get_index(i as u32)), "CCI at {i}");
+        }
+
+        // --- MFI (single, with volume) ---
+        let batch = WasmMfi::new(14)
+            .expect("valid")
+            .batch(&h, &l, &c, &v)
+            .expect("valid");
+        let mut mfi = WasmMfi::new(14).expect("valid");
+        for i in 0..h.len() {
+            let s = mfi
+                .update(h[i], l[i], c[i], v[i])
+                .expect("valid")
+                .unwrap_or(f64::NAN);
+            assert!(close_enough(s, batch.get_index(i as u32)), "MFI at {i}");
+        }
+
+        // --- PSAR (single) ---
+        let batch = WasmPsar::new(0.02, 0.02, 0.2)
+            .expect("valid")
+            .batch(&h, &l, &c)
+            .expect("valid");
+        let mut psar = WasmPsar::new(0.02, 0.02, 0.2).expect("valid");
+        for i in 0..h.len() {
+            let s = psar
+                .update(h[i], l[i], c[i])
+                .expect("valid")
+                .unwrap_or(f64::NAN);
+            assert!(close_enough(s, batch.get_index(i as u32)), "PSAR at {i}");
+        }
+
+        // --- Keltner (multi: { upper, middle, lower }) ---
+        let batch = WasmKeltner::new(10, 10, 2.0)
+            .expect("valid")
+            .batch(&h, &l, &c)
+            .expect("valid");
+        let mut kc = WasmKeltner::new(10, 10, 2.0).expect("valid");
+        for i in 0..h.len() {
+            let stream = kc.update(h[i], l[i], c[i]).expect("valid");
+            let bu = batch.get_index((i * 3) as u32);
+            let bm = batch.get_index((i * 3 + 1) as u32);
+            let bl = batch.get_index((i * 3 + 2) as u32);
+            if stream.is_null() {
+                assert!(bu.is_nan() && bm.is_nan() && bl.is_nan(), "Keltner row {i}");
+            } else {
+                let obj: &Object = stream.unchecked_ref();
+                let u = Reflect::get(obj, &"upper".into())
+                    .unwrap()
+                    .as_f64()
+                    .unwrap();
+                let m = Reflect::get(obj, &"middle".into())
+                    .unwrap()
+                    .as_f64()
+                    .unwrap();
+                let lo = Reflect::get(obj, &"lower".into())
+                    .unwrap()
+                    .as_f64()
+                    .unwrap();
+                assert!(close_enough(u, bu), "Keltner upper at {i}");
+                assert!(close_enough(m, bm), "Keltner middle at {i}");
+                assert!(close_enough(lo, bl), "Keltner lower at {i}");
+            }
+        }
+
+        // --- Donchian (multi: { upper, middle, lower }) ---
+        let batch = WasmDonchian::new(10)
+            .expect("valid")
+            .batch(&h, &l)
+            .expect("valid");
+        let mut dc = WasmDonchian::new(10).expect("valid");
+        for i in 0..h.len() {
+            let stream = dc.update(h[i], l[i]).expect("valid");
+            let bu = batch.get_index((i * 3) as u32);
+            let bm = batch.get_index((i * 3 + 1) as u32);
+            let bl = batch.get_index((i * 3 + 2) as u32);
+            if stream.is_null() {
+                assert!(
+                    bu.is_nan() && bm.is_nan() && bl.is_nan(),
+                    "Donchian row {i}"
+                );
+            } else {
+                let obj: &Object = stream.unchecked_ref();
+                let u = Reflect::get(obj, &"upper".into())
+                    .unwrap()
+                    .as_f64()
+                    .unwrap();
+                let m = Reflect::get(obj, &"middle".into())
+                    .unwrap()
+                    .as_f64()
+                    .unwrap();
+                let lo = Reflect::get(obj, &"lower".into())
+                    .unwrap()
+                    .as_f64()
+                    .unwrap();
+                assert!(close_enough(u, bu), "Donchian upper at {i}");
+                assert!(close_enough(m, bm), "Donchian middle at {i}");
+                assert!(close_enough(lo, bl), "Donchian lower at {i}");
+            }
+        }
+
+        // --- VWAP (single, cumulative, with volume) ---
+        let batch = WasmVwap::new().batch(&h, &l, &c, &v).expect("valid");
+        let mut vwap = WasmVwap::new();
+        for i in 0..h.len() {
+            let s = vwap
+                .update(h[i], l[i], c[i], v[i])
+                .expect("valid")
+                .unwrap_or(f64::NAN);
+            assert!(close_enough(s, batch.get_index(i as u32)), "VWAP at {i}");
+        }
+
+        // --- AwesomeOscillator (single) ---
+        let batch = WasmAo::new(5, 34)
+            .expect("valid")
+            .batch(&h, &l)
+            .expect("valid");
+        let mut ao = WasmAo::new(5, 34).expect("valid");
+        for i in 0..h.len() {
+            let s = ao.update(h[i], l[i]).expect("valid").unwrap_or(f64::NAN);
+            assert!(close_enough(s, batch.get_index(i as u32)), "AO at {i}");
+        }
+
+        // --- Aroon (multi: { up, down }) ---
+        let batch = WasmAroon::new(14)
+            .expect("valid")
+            .batch(&h, &l)
+            .expect("valid");
+        let mut aroon = WasmAroon::new(14).expect("valid");
+        for i in 0..h.len() {
+            let stream = aroon.update(h[i], l[i]).expect("valid");
+            let bu = batch.get_index((i * 2) as u32);
+            let bd = batch.get_index((i * 2 + 1) as u32);
+            if stream.is_null() {
+                assert!(bu.is_nan() && bd.is_nan(), "Aroon row {i}");
+            } else {
+                let obj: &Object = stream.unchecked_ref();
+                let u = Reflect::get(obj, &"up".into()).unwrap().as_f64().unwrap();
+                let d = Reflect::get(obj, &"down".into()).unwrap().as_f64().unwrap();
+                assert!(close_enough(u, bu), "Aroon up at {i}");
+                assert!(close_enough(d, bd), "Aroon down at {i}");
+            }
+        }
+
+        // --- Stochastic (multi: { k, d }) ---
+        let batch = WasmStoch::new(14, 3)
+            .expect("valid")
+            .batch(&h, &l, &c)
+            .expect("valid");
+        let mut st = WasmStoch::new(14, 3).expect("valid");
+        for i in 0..h.len() {
+            let stream = st.update(h[i], l[i], c[i]).expect("valid");
+            let bk = batch.get_index((i * 2) as u32);
+            let bd = batch.get_index((i * 2 + 1) as u32);
+            if stream.is_null() {
+                assert!(bk.is_nan() && bd.is_nan(), "Stoch row {i}");
+            } else {
+                let obj: &Object = stream.unchecked_ref();
+                let k = Reflect::get(obj, &"k".into()).unwrap().as_f64().unwrap();
+                let d = Reflect::get(obj, &"d".into()).unwrap().as_f64().unwrap();
+                assert!(close_enough(k, bk), "Stoch k at {i}");
+                assert!(close_enough(d, bd), "Stoch d at {i}");
+            }
+        }
+
+        // --- OBV (single, with volume; no warmup) ---
+        let batch = WasmObv::new().batch(&c, &v).expect("valid");
+        let mut obv = WasmObv::new();
+        for i in 0..c.len() {
+            let s = obv.update(c[i], v[i]).expect("valid").unwrap_or(f64::NAN);
+            assert!(close_enough(s, batch.get_index(i as u32)), "OBV at {i}");
+        }
+    }
+
+    #[wasm_bindgen_test]
+    fn kama_exposes_warmup_period() {
+        // R8: the KAMA wrapper was missing `warmupPeriod`; it now matches the
+        // core indicator's value (which is `er_period + 1`).
+        let kama = WasmKama::new(10, 2, 30).expect("valid");
+        assert_eq!(
+            kama.warmup_period(),
+            wc::Kama::new(10, 2, 30).expect("valid").warmup_period()
+        );
     }
 }
