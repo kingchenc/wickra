@@ -662,7 +662,7 @@ mod tests {
     #[wasm_bindgen_test]
     fn sma_batch_reference_values() {
         // SMA(3) of [2, 4, 6, 8, 10] -> [NaN, NaN, 4, 6, 8].
-        let mut sma = WasmSma::new(3).ok().expect("valid period");
+        let mut sma = WasmSma::new(3).expect("valid period");
         let out = sma.batch(&[2.0, 4.0, 6.0, 8.0, 10.0]);
         assert!(out.get_index(0).is_nan());
         assert!(out.get_index(1).is_nan());
@@ -676,8 +676,8 @@ mod tests {
         let prices: Vec<f64> = (1..=60)
             .map(|i| 100.0 + (f64::from(i) * 0.3).sin() * 5.0)
             .collect();
-        let batch = WasmEma::new(14).ok().expect("valid").batch(&prices);
-        let mut ema = WasmEma::new(14).ok().expect("valid");
+        let batch = WasmEma::new(14).expect("valid").batch(&prices);
+        let mut ema = WasmEma::new(14).expect("valid");
         for (i, &p) in prices.iter().enumerate() {
             let b = batch.get_index(i as u32);
             match ema.update(p) {
@@ -690,7 +690,7 @@ mod tests {
     #[wasm_bindgen_test]
     fn rsi_pure_uptrend_yields_100() {
         let prices: Vec<f64> = (1..=20).map(f64::from).collect();
-        let out = WasmRsi::new(14).ok().expect("valid").batch(&prices);
+        let out = WasmRsi::new(14).expect("valid").batch(&prices);
         for i in 14..prices.len() {
             assert_eq!(out.get_index(i as u32), 100.0);
         }
@@ -707,13 +707,13 @@ mod tests {
 
     #[wasm_bindgen_test]
     fn batch_rejects_unequal_lengths() {
-        let mut atr = WasmAtr::new(14).ok().expect("valid");
+        let mut atr = WasmAtr::new(14).expect("valid");
         assert!(atr.batch(&[1.0, 2.0], &[1.0], &[1.0, 2.0]).is_err());
-        let mut stoch = WasmStoch::new(14, 3).ok().expect("valid");
+        let mut stoch = WasmStoch::new(14, 3).expect("valid");
         assert!(stoch
             .batch(&[1.0, 2.0, 3.0], &[1.0], &[1.0, 2.0, 3.0])
             .is_err());
-        let mut mfi = WasmMfi::new(14).ok().expect("valid");
+        let mut mfi = WasmMfi::new(14).expect("valid");
         assert!(mfi
             .batch(&[1.0, 2.0], &[1.0, 2.0], &[1.0, 2.0], &[1.0])
             .is_err());
