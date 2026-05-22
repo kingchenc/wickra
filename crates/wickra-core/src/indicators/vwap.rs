@@ -12,6 +12,22 @@ use crate::traits::Indicator;
 
 /// Cumulative session VWAP. Call [`Indicator::reset`] at the start of each
 /// session (e.g. trading-day boundary) to restart the accumulation.
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Candle, Indicator, Vwap};
+///
+/// let mut indicator = Vwap::new();
+/// let mut last = None;
+/// for i in 0..80 {
+///     let base = 100.0 + f64::from(i);
+///     let candle =
+///         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+///     last = indicator.update(candle);
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone, Default)]
 pub struct Vwap {
     sum_pv: f64,
@@ -75,6 +91,22 @@ impl Indicator for Vwap {
 
 /// Rolling-window VWAP: a finite-memory variant for bots that don't want
 /// unbounded accumulation.
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Candle, Indicator, RollingVwap};
+///
+/// let mut indicator = RollingVwap::new(5).unwrap();
+/// let mut last = None;
+/// for i in 0..80 {
+///     let base = 100.0 + f64::from(i);
+///     let candle =
+///         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+///     last = indicator.update(candle);
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone)]
 pub struct RollingVwap {
     period: usize,

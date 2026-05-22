@@ -8,6 +8,19 @@ use crate::traits::Indicator;
 ///
 /// Designed by Patrick Mulloy to reduce the lag of a single EMA while keeping
 /// the smoothing benefit.
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Indicator, Dema};
+///
+/// let mut indicator = Dema::new(3).unwrap();
+/// let mut last = None;
+/// for i in 0..80 {
+///     last = indicator.update(100.0 + f64::from(i));
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone)]
 pub struct Dema {
     ema1: Ema,

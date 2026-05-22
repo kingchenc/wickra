@@ -9,6 +9,19 @@ use crate::traits::Indicator;
 ///
 /// Non-finite inputs are ignored and leave the window untouched; the last
 /// computed value is returned instead, matching the SMA / EMA convention.
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Indicator, Roc};
+///
+/// let mut indicator = Roc::new(3).unwrap();
+/// let mut last = None;
+/// for i in 0..80 {
+///     last = indicator.update(100.0 + f64::from(i));
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone)]
 pub struct Roc {
     period: usize,

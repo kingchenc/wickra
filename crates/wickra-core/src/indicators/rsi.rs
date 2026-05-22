@@ -9,6 +9,19 @@ use crate::traits::Indicator;
 /// is produced after `period + 1` inputs: the seed averages the first `period`
 /// gains and losses, and the first emitted RSI corresponds to the input at
 /// index `period`.
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Indicator, Rsi};
+///
+/// let mut indicator = Rsi::new(3).unwrap();
+/// let mut last = None;
+/// for i in 0..80 {
+///     last = indicator.update(100.0 + f64::from(i));
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone)]
 pub struct Rsi {
     period: usize,

@@ -11,6 +11,22 @@ use crate::traits::Indicator;
 /// `MFI = 100 - 100 / (1 + positive_money_flow / negative_money_flow)` where
 /// money flow is `typical_price * volume`, classified positive when TP increases
 /// and negative when it decreases.
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Candle, Indicator, Mfi};
+///
+/// let mut indicator = Mfi::new(5).unwrap();
+/// let mut last = None;
+/// for i in 0..80 {
+///     let base = 100.0 + f64::from(i);
+///     let candle =
+///         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+///     last = indicator.update(candle);
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone)]
 pub struct Mfi {
     period: usize,

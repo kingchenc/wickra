@@ -9,6 +9,22 @@ use crate::traits::Indicator;
 /// The first emitted value, by convention, appears after `period` candles: the
 /// first `period − 1` true-range values seed the Wilder average alongside the
 /// `period`-th, then the smoothed update begins.
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Candle, Indicator, Atr};
+///
+/// let mut indicator = Atr::new(5).unwrap();
+/// let mut last = None;
+/// for i in 0..80 {
+///     let base = 100.0 + f64::from(i);
+///     let candle =
+///         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+///     last = indicator.update(candle);
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone)]
 pub struct Atr {
     period: usize,

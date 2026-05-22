@@ -9,6 +9,19 @@ use crate::traits::Indicator;
 ///
 /// Maintains a rolling sum so each update is O(1). Output equals
 /// `sum(last `period` prices) / period` once the window is full; `None` before.
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Indicator, Sma};
+///
+/// let mut indicator = Sma::new(3).unwrap();
+/// let mut last = None;
+/// for i in 0..80 {
+///     last = indicator.update(100.0 + f64::from(i));
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone)]
 pub struct Sma {
     period: usize,

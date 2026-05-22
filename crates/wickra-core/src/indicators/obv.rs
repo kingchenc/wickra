@@ -8,6 +8,22 @@ use crate::traits::Indicator;
 /// Each candle adds `+volume`, `-volume`, or `0` depending on whether its close
 /// is above, below, or equal to the previous close. The first value (after the
 /// first candle) is conventionally `0`.
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Candle, Indicator, Obv};
+///
+/// let mut indicator = Obv::new();
+/// let mut last = None;
+/// for i in 0..80 {
+///     let base = 100.0 + f64::from(i);
+///     let candle =
+///         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+///     last = indicator.update(candle);
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone, Default)]
 pub struct Obv {
     prev_close: Option<f64>,

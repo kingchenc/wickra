@@ -24,6 +24,19 @@ pub struct BollingerOutput {
 /// Standard parameters are `period = 20`, `multiplier = 2.0`. Bollinger's original
 /// publication uses population (not sample) standard deviation, which matches every
 /// reference implementation (TA-Lib, pandas-ta, etc.).
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Indicator, BollingerBands};
+///
+/// let mut indicator = BollingerBands::new(5, 2.0).unwrap();
+/// let mut last = None;
+/// for i in 0..80 {
+///     last = indicator.update(100.0 + f64::from(i));
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone)]
 pub struct BollingerBands {
     period: usize,

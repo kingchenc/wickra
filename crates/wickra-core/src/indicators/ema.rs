@@ -8,6 +8,19 @@ use crate::traits::Indicator;
 /// The first value is seeded with the simple mean of the first `period` inputs
 /// (the classical TA-Lib convention). From then on each new input contributes
 /// `alpha * input + (1 - alpha) * previous`.
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Indicator, Ema};
+///
+/// let mut indicator = Ema::new(3).unwrap();
+/// let mut last = None;
+/// for i in 0..80 {
+///     last = indicator.update(100.0 + f64::from(i));
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone)]
 pub struct Ema {
     period: usize,

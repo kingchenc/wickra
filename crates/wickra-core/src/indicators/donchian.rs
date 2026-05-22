@@ -18,6 +18,22 @@ pub struct DonchianOutput {
 }
 
 /// Donchian Channels: rolling highest high / lowest low envelopes.
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Candle, Indicator, Donchian};
+///
+/// let mut indicator = Donchian::new(5).unwrap();
+/// let mut last = None;
+/// for i in 0..80 {
+///     let base = 100.0 + f64::from(i);
+///     let candle =
+///         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+///     last = indicator.update(candle);
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone)]
 pub struct Donchian {
     period: usize,

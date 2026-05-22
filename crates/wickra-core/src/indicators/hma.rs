@@ -8,6 +8,19 @@ use crate::traits::Indicator;
 ///
 /// Designed by Alan Hull as a lag-free moving average that is also responsive.
 /// The square root of the period is rounded to the nearest integer (minimum 1).
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Indicator, Hma};
+///
+/// let mut indicator = Hma::new(9).unwrap();
+/// let mut last = None;
+/// for i in 0..80 {
+///     last = indicator.update(100.0 + f64::from(i));
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone)]
 pub struct Hma {
     period: usize,

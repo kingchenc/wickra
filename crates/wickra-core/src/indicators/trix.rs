@@ -8,6 +8,19 @@ use crate::traits::Indicator;
 ///
 /// `TRIX = 100 * (TR_t - TR_{t-1}) / TR_{t-1}` where
 /// `TR_t = EMA(EMA(EMA(price)))`.
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Indicator, Trix};
+///
+/// let mut indicator = Trix::new(3).unwrap();
+/// let mut last = None;
+/// for i in 0..80 {
+///     last = indicator.update(100.0 + f64::from(i));
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone)]
 pub struct Trix {
     ema1: Ema,

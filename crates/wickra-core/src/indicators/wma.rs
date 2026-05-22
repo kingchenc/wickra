@@ -9,6 +9,19 @@ use crate::traits::Indicator;
 ///
 /// Output is `sum(weight_i * price_i) / sum(weights)`. Maintained incrementally in
 /// O(1) by keeping the rolling sum of values and the rolling weighted sum.
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Indicator, Wma};
+///
+/// let mut indicator = Wma::new(3).unwrap();
+/// let mut last = None;
+/// for i in 0..80 {
+///     last = indicator.update(100.0 + f64::from(i));
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone)]
 pub struct Wma {
     period: usize,

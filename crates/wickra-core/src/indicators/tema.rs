@@ -8,6 +8,19 @@ use crate::traits::Indicator;
 /// where `EMA2 = EMA(EMA1)` and `EMA3 = EMA(EMA2)`.
 ///
 /// Reduces lag further than DEMA at the cost of more responsiveness to noise.
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Indicator, Tema};
+///
+/// let mut indicator = Tema::new(3).unwrap();
+/// let mut last = None;
+/// for i in 0..80 {
+///     last = indicator.update(100.0 + f64::from(i));
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone)]
 pub struct Tema {
     ema1: Ema,

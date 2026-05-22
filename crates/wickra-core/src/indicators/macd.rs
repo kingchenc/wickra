@@ -21,6 +21,19 @@ pub struct MacdOutput {
 /// is seeded from the first `signal` raw MACD values, so the first full
 /// [`MacdOutput`] is emitted after `slow + signal − 1` inputs (assuming the
 /// slow EMA seeded by then).
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Indicator, MacdIndicator};
+///
+/// let mut indicator = MacdIndicator::new(3, 6, 3).unwrap();
+/// let mut last = None;
+/// for i in 0..80 {
+///     last = indicator.update(100.0 + f64::from(i));
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone)]
 pub struct MacdIndicator {
     fast: Ema,

@@ -20,6 +20,22 @@ pub struct StochasticOutput {
 ///
 /// Maintains rolling highest-high and lowest-low over the lookback period via a
 /// monotonic deque, giving O(1) amortized updates. %D is an SMA of the %K series.
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Candle, Indicator, Stochastic};
+///
+/// let mut indicator = Stochastic::new(5, 3).unwrap();
+/// let mut last = None;
+/// for i in 0..80 {
+///     let base = 100.0 + f64::from(i);
+///     let candle =
+///         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+///     last = indicator.update(candle);
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone)]
 pub struct Stochastic {
     k_period: usize,

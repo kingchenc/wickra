@@ -11,6 +11,19 @@ use crate::traits::Indicator;
 /// get a fast smoothing constant, choppy markets get a slow one. Parameters are
 /// the efficiency-ratio lookback (`er_period`, default 10), the fast EMA period
 /// (`fast`, default 2) and the slow EMA period (`slow`, default 30).
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Indicator, Kama};
+///
+/// let mut indicator = Kama::new(10, 2, 30).unwrap();
+/// let mut last = None;
+/// for i in 0..80 {
+///     last = indicator.update(100.0 + f64::from(i));
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone)]
 pub struct Kama {
     er_period: usize,

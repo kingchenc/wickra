@@ -21,6 +21,22 @@ pub struct AdxOutput {
 /// movement / true range sums; the next `period` candles produce DX values that
 /// seed the ADX. The first complete `AdxOutput` is emitted after `2 * period`
 /// candles.
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Candle, Indicator, Adx};
+///
+/// let mut indicator = Adx::new(5).unwrap();
+/// let mut last = None;
+/// for i in 0..80 {
+///     let base = 100.0 + f64::from(i);
+///     let candle =
+///         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+///     last = indicator.update(candle);
+/// }
+/// assert!(last.is_some());
+/// ```
 #[allow(clippy::struct_field_names)] // adx_value pairs with adx (the output line) — renaming hurts clarity
 #[derive(Debug, Clone)]
 pub struct Adx {

@@ -10,6 +10,22 @@ use crate::traits::Indicator;
 ///
 /// `CCI = (TP - SMA(TP)) / (0.015 * mean absolute deviation of TP)`, where
 /// `TP = (high + low + close) / 3`.
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Candle, Indicator, Cci};
+///
+/// let mut indicator = Cci::new(5).unwrap();
+/// let mut last = None;
+/// for i in 0..80 {
+///     let base = 100.0 + f64::from(i);
+///     let candle =
+///         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+///     last = indicator.update(candle);
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone)]
 pub struct Cci {
     period: usize,

@@ -16,6 +16,22 @@ enum Trend {
 /// Implementation follows Wilder's original recursion: each step computes a new
 /// SAR from the previous SAR, extreme point (EP) and acceleration factor (AF);
 /// the trend flips when price crosses the SAR.
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Candle, Indicator, Psar};
+///
+/// let mut indicator = Psar::new(0.02, 0.02, 0.2).unwrap();
+/// let mut last = None;
+/// for i in 0..80 {
+///     let base = 100.0 + f64::from(i);
+///     let candle =
+///         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+///     last = indicator.update(candle);
+/// }
+/// assert!(last.is_some());
+/// ```
 #[derive(Debug, Clone)]
 pub struct Psar {
     af_start: f64,
