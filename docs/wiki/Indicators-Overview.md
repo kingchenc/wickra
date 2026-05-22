@@ -1,6 +1,6 @@
 # Indicators Overview
 
-Wickra ships 39 indicators, organised in source under the four classical
+Wickra ships 42 indicators, organised in source under the four classical
 families — trend, momentum, volatility, volume — that map directly to the
 directory structure of `crates/wickra-core/src/indicators/`. The same family
 labels are used here, plus a second-level grouping that reflects how the
@@ -112,6 +112,9 @@ Centered on zero or driven by raw price differences; no fixed cap.
 | Indicator | One-liner | Input | Output | Range | Defaults | Warmup | Deep dive |
 |-----------|-----------|-------|--------|-------|----------|--------|-----------|
 | `Adx`     | Wilder's directional system: `+DI`, `−DI` (each `[0, 100]`) and `ADX` trend-strength index. | `Candle` | `(plus_di, minus_di, adx)` | each in `[0, 100]` | `period = 14` (Python) | `2·period` | [Indicator-Adx.md](indicators/momentum/Indicator-Adx.md) |
+| `AroonOscillator` | `AroonUp − AroonDown`; the two Aroon lines as one trend gauge. | `Candle` | `f64` | `[−100, 100]` | `period = 14` (Python) | `period + 1` | [Indicator-AroonOscillator.md](indicators/momentum/Indicator-AroonOscillator.md) |
+| `Vortex`  | Vortex Indicator `VI+` / `VI−`; crossings mark trend onset. | `Candle` | `(plus, minus)` | each `>= 0` | `period = 14` (Python) | `period + 1` | [Indicator-Vortex.md](indicators/momentum/Indicator-Vortex.md) |
+| `MassIndex` | Dorsey's range-expansion sum of the EMA-of-range ratio. | `Candle` | `f64` | `> 0` (around `sum_period`) | `(ema_period=9, sum_period=25)` (Python) | `2·ema_period + sum_period − 2` | [Indicator-MassIndex.md](indicators/momentum/Indicator-MassIndex.md) |
 
 ## Volatility
 

@@ -372,6 +372,123 @@ impl WasmUltimateOscillator {
     }
 }
 
+#[wasm_bindgen(js_name = AroonOscillator)]
+pub struct WasmAroonOscillator {
+    inner: wc::AroonOscillator,
+}
+
+#[wasm_bindgen(js_class = AroonOscillator)]
+impl WasmAroonOscillator {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmAroonOscillator, JsError> {
+        Ok(Self {
+            inner: wc::AroonOscillator::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let c = make_candle(high[i], low[i], low[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = Vortex)]
+pub struct WasmVortex {
+    inner: wc::Vortex,
+}
+
+#[wasm_bindgen(js_class = Vortex)]
+impl WasmVortex {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmVortex, JsError> {
+        Ok(Self {
+            inner: wc::Vortex::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"plus".into(), &o.plus.into()).ok();
+                Reflect::set(&obj, &"minus".into(), &o.minus.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    /// Returns `[plus0, minus0, plus1, minus1, ...]`, length `2 * n`. Warmup is NaN.
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.plus;
+                out[i * 2 + 1] = o.minus;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = MassIndex)]
+pub struct WasmMassIndex {
+    inner: wc::MassIndex,
+}
+
+#[wasm_bindgen(js_class = MassIndex)]
+impl WasmMassIndex {
+    #[wasm_bindgen(constructor)]
+    pub fn new(ema_period: usize, sum_period: usize) -> Result<WasmMassIndex, JsError> {
+        Ok(Self {
+            inner: wc::MassIndex::new(ema_period, sum_period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let c = make_candle(high[i], low[i], low[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
 #[wasm_bindgen(js_name = VWMA)]
 pub struct WasmVwma {
     inner: wc::Vwma,

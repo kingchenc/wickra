@@ -44,11 +44,11 @@ pub mod indicators;
 
 pub use error::{Error, Result};
 pub use indicators::{
-    Adx, AdxOutput, Aroon, AroonOutput, Atr, AwesomeOscillator, BollingerBands, BollingerOutput,
-    Cci, Cmo, Coppock, Dema, Donchian, DonchianOutput, Dpo, Ema, Hma, Kama, Keltner, KeltnerOutput,
-    MacdIndicator, MacdOutput, Mfi, Mom, Obv, Pmo, Ppo, Psar, Roc, RollingVwap, Rsi, Sma, Smma,
-    StochRsi, Stochastic, StochasticOutput, Tema, Trima, Trix, Tsi, UltimateOscillator, Vwap, Vwma,
-    WilliamsR, Wma, Zlema, T3,
+    Adx, AdxOutput, Aroon, AroonOscillator, AroonOutput, Atr, AwesomeOscillator, BollingerBands,
+    BollingerOutput, Cci, Cmo, Coppock, Dema, Donchian, DonchianOutput, Dpo, Ema, Hma, Kama,
+    Keltner, KeltnerOutput, MacdIndicator, MacdOutput, MassIndex, Mfi, Mom, Obv, Pmo, Ppo, Psar,
+    Roc, RollingVwap, Rsi, Sma, Smma, StochRsi, Stochastic, StochasticOutput, Tema, Trima, Trix,
+    Tsi, UltimateOscillator, Vortex, VortexOutput, Vwap, Vwma, WilliamsR, Wma, Zlema, T3,
 };
 pub use ohlcv::{Candle, Tick};
 pub use traits::{BatchExt, Chain, Indicator};

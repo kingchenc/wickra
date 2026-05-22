@@ -107,6 +107,9 @@ Rust / Python / Node examples. They are grouped by family, mirroring the
 - [Indicator-Ppo.md](indicators/momentum/Indicator-Ppo.md)
 - [Indicator-Dpo.md](indicators/momentum/Indicator-Dpo.md)
 - [Indicator-Coppock.md](indicators/momentum/Indicator-Coppock.md)
+- [Indicator-AroonOscillator.md](indicators/momentum/Indicator-AroonOscillator.md)
+- [Indicator-Vortex.md](indicators/momentum/Indicator-Vortex.md)
+- [Indicator-MassIndex.md](indicators/momentum/Indicator-MassIndex.md)
 
 **Volatility** — envelope width and per-bar dispersion measures.
 
