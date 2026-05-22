@@ -1,7 +1,7 @@
 //! Resample an existing candle stream from a finer timeframe to a coarser one.
 
 use crate::aggregator::Timeframe;
-use crate::error::Result;
+use crate::error::{Error, Result};
 use wickra_core::Candle;
 
 /// Roll a stream of candles up to a coarser timeframe.
@@ -72,22 +72,31 @@ impl Resampler {
 
     /// Push a finer-grained candle. Returns the coarser candle that just closed,
     /// if any.
-    pub fn push(&mut self, candle: Candle) -> Option<Candle> {
+    ///
+    /// # Errors
+    /// Returns [`Error::Malformed`] if `candle.timestamp` falls into a bucket
+    /// strictly before the currently open bar — out-of-order candles are not
+    /// supported, matching [`crate::aggregator::TickAggregator::push`].
+    pub fn push(&mut self, candle: Candle) -> Result<Option<Candle>> {
         let bucket = self.timeframe.floor(candle.timestamp);
         match self.open {
             Some(mut bar) if bucket == bar.bucket_start => {
                 bar.absorb(candle);
                 self.open = Some(bar);
-                None
+                Ok(None)
             }
-            Some(bar) => {
+            Some(bar) if bucket > bar.bucket_start => {
                 let closed = bar.into_candle();
                 self.open = Some(RolledBar::from_candle(candle, bucket));
-                Some(closed)
+                Ok(Some(closed))
             }
+            Some(bar) => Err(Error::Malformed(format!(
+                "candle timestamp {} is older than the open bar start {}",
+                candle.timestamp, bar.bucket_start
+            ))),
             None => {
                 self.open = Some(RolledBar::from_candle(candle, bucket));
-                None
+                Ok(None)
             }
         }
     }
@@ -108,7 +117,7 @@ where
     let mut out = Vec::new();
     for c in iter {
         let c = c?;
-        if let Some(closed) = r.push(c) {
+        if let Some(closed) = r.push(c)? {
             out.push(closed);
         }
     }
@@ -149,5 +158,24 @@ mod tests {
         let b = rolled[1];
         assert_eq!(b.open, 11.5);
         assert_eq!(b.timestamp, 5);
+    }
+
+    #[test]
+    fn rejects_out_of_order_candle() {
+        let mut r = Resampler::new(Timeframe::new(5).unwrap());
+        assert!(r.push(c(10, 10.0, 11.0, 9.0, 10.5, 1.0)).unwrap().is_none());
+        // A candle in an earlier bucket than the open bar is rejected.
+        let err = r.push(c(2, 10.0, 11.0, 9.0, 10.5, 1.0)).unwrap_err();
+        assert!(matches!(err, Error::Malformed(_)));
+    }
+
+    #[test]
+    fn same_bucket_candles_aggregate() {
+        let mut r = Resampler::new(Timeframe::new(5).unwrap());
+        assert!(r.push(c(0, 10.0, 11.0, 9.0, 10.5, 1.0)).unwrap().is_none());
+        assert!(r.push(c(3, 10.5, 12.0, 10.0, 11.0, 1.0)).unwrap().is_none());
+        let bar = r.flush().unwrap();
+        assert_eq!(bar.high, 12.0);
+        assert_eq!(bar.low, 9.0);
     }
 }
