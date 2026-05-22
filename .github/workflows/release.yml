@@ -54,11 +54,17 @@ jobs:
 
       # Produce .crate files for the GitHub Release attachments. `cargo package`
       # writes them to target/package/<name>-<version>.crate.
+      #
+      # No --allow-dirty: `actions/checkout` gives a clean tree and nothing
+      # above mutates it. No --no-verify: every crate was just published to
+      # crates.io in the steps above, so the verification build resolves its
+      # workspace dependencies from the registry and confirms each .crate
+      # actually builds before it is attached to the release.
       - name: Build .crate files for release attachment
         run: |
-          cargo package -p wickra-core --allow-dirty --no-verify
-          cargo package -p wickra-data --allow-dirty --no-verify
-          cargo package -p wickra      --allow-dirty --no-verify
+          cargo package -p wickra-core
+          cargo package -p wickra-data
+          cargo package -p wickra
 
       - name: Upload .crate files
         uses: actions/upload-artifact@v4
