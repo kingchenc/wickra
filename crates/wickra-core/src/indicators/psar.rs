@@ -74,8 +74,9 @@ impl Indicator for Psar {
 
     fn update(&mut self, candle: Candle) -> Option<f64> {
         if !self.initialised {
-            // Seed: the first emitted SAR comes on the second candle. Initial trend
-            // is chosen by whether the second close is above or below the first.
+            // Seed on the first candle; the first SAR is emitted on the second.
+            // The initial trend is assumed Up — PSAR's reversal logic flips it
+            // within the first few bars if the market is actually falling.
             self.prev_high = candle.high;
             self.prev_low = candle.low;
             self.sar = candle.low;
@@ -142,10 +143,16 @@ impl Indicator for Psar {
     }
 
     fn reset(&mut self) {
+        // Restore every field to its constructor state. The re-seed on the next
+        // `update` would overwrite the trend/extremes anyway, but a complete
+        // reset keeps the struct consistent for inspection and future changes.
         self.initialised = false;
-        self.af = self.af_start;
+        self.prev_high = 0.0;
+        self.prev_low = 0.0;
+        self.trend = Trend::Up;
         self.sar = 0.0;
         self.ep = 0.0;
+        self.af = self.af_start;
     }
 
     fn warmup_period(&self) -> usize {
@@ -237,5 +244,23 @@ mod tests {
         assert!(Psar::new(0.02, 0.0, 0.20).is_err());
         assert!(Psar::new(0.30, 0.02, 0.20).is_err());
         assert!(Psar::new(f64::NAN, 0.02, 0.20).is_err());
+    }
+
+    #[test]
+    fn reset_allows_clean_reuse() {
+        let candles: Vec<Candle> = (0..40)
+            .map(|i| {
+                let base = 100.0 + f64::from(i);
+                c(base + 0.5, base - 0.5, base)
+            })
+            .collect();
+        let mut psar = Psar::classic();
+        let first = psar.batch(&candles);
+        assert!(psar.is_ready());
+        psar.reset();
+        assert!(!psar.is_ready());
+        // A reset instance must reproduce a pristine run bit for bit.
+        let second = psar.batch(&candles);
+        assert_eq!(first, second);
     }
 }
