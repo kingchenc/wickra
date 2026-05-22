@@ -49,8 +49,16 @@ impl RolledBar {
         self.volume += c.volume;
     }
 
-    fn into_candle(self) -> Candle {
-        Candle::new_unchecked(
+    /// Finalise the rolled bar into a validated [`Candle`].
+    ///
+    /// # Errors
+    /// Returns [`Error::Core`] if the accumulated `volume` is no longer finite.
+    /// `volume` is summed across every absorbed candle, so a long or large run
+    /// can drift it to `inf`; emitting such a candle would silently poison
+    /// every downstream indicator, so it is surfaced instead. The OHLC fields
+    /// are finite and correctly ordered by construction.
+    fn into_candle(self) -> Result<Candle> {
+        Candle::new(
             self.open,
             self.high,
             self.low,
@@ -58,6 +66,7 @@ impl RolledBar {
             self.volume,
             self.bucket_start,
         )
+        .map_err(Error::from)
     }
 }
 
@@ -86,7 +95,7 @@ impl Resampler {
                 Ok(None)
             }
             Some(bar) if bucket > bar.bucket_start => {
-                let closed = bar.into_candle();
+                let closed = bar.into_candle()?;
                 self.open = Some(RolledBar::from_candle(candle, bucket));
                 Ok(Some(closed))
             }
@@ -102,8 +111,12 @@ impl Resampler {
     }
 
     /// Flush the currently open coarser bar, if any.
-    pub fn flush(&mut self) -> Option<Candle> {
-        self.open.take().map(RolledBar::into_candle)
+    ///
+    /// # Errors
+    /// Returns an error if the open bar's accumulated volume is non-finite
+    /// (see [`RolledBar::into_candle`]).
+    pub fn flush(&mut self) -> Result<Option<Candle>> {
+        self.open.take().map(RolledBar::into_candle).transpose()
     }
 }
 
@@ -121,7 +134,7 @@ where
             out.push(closed);
         }
     }
-    if let Some(last) = r.flush() {
+    if let Some(last) = r.flush()? {
         out.push(last);
     }
     Ok(out)
@@ -174,8 +187,24 @@ mod tests {
         let mut r = Resampler::new(Timeframe::new(5).unwrap());
         assert!(r.push(c(0, 10.0, 11.0, 9.0, 10.5, 1.0)).unwrap().is_none());
         assert!(r.push(c(3, 10.5, 12.0, 10.0, 11.0, 1.0)).unwrap().is_none());
-        let bar = r.flush().unwrap();
+        let bar = r.flush().unwrap().unwrap();
         assert_eq!(bar.high, 12.0);
         assert_eq!(bar.low, 9.0);
+    }
+
+    #[test]
+    fn flushes_a_non_finite_volume_as_an_error() {
+        let mut r = Resampler::new(Timeframe::new(5).unwrap());
+        // Two near-max volumes in the same bucket sum to +inf.
+        assert!(r
+            .push(c(0, 10.0, 11.0, 9.0, 10.5, f64::MAX))
+            .unwrap()
+            .is_none());
+        assert!(r
+            .push(c(1, 10.0, 11.0, 9.0, 10.5, f64::MAX))
+            .unwrap()
+            .is_none());
+        let err = r.flush().unwrap_err();
+        assert!(matches!(err, Error::Core(_)));
     }
 }

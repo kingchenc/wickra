@@ -119,8 +119,17 @@ impl OpenBar {
         self.last_ts = t.timestamp;
     }
 
-    fn into_candle(self) -> Candle {
-        Candle::new_unchecked(
+    /// Finalise the bar into a validated [`Candle`].
+    ///
+    /// # Errors
+    /// Returns [`Error::Core`] if the accumulated `volume` is no longer finite.
+    /// `volume` is summed across every absorbed tick, so an astronomically
+    /// long or large run can drift it to `inf`; emitting such a candle would
+    /// silently poison every downstream indicator, so it is surfaced instead.
+    /// The OHLC fields are finite and correctly ordered by construction, so
+    /// `Candle::new` only ever rejects this bar for a non-finite volume.
+    fn into_candle(self) -> Result<Candle> {
+        Candle::new(
             self.open,
             self.high,
             self.low,
@@ -128,6 +137,7 @@ impl OpenBar {
             self.volume,
             self.bucket_start,
         )
+        .map_err(Error::from)
     }
 }
 
@@ -179,7 +189,7 @@ impl TickAggregator {
             }
             if bucket > bar.bucket_start {
                 // Close the previous bar and start a new one with this tick.
-                let closed = bar.into_candle();
+                let closed = bar.into_candle()?;
                 let mut out = Vec::with_capacity(1);
                 out.push(closed);
                 if self.fill_gaps {
@@ -229,8 +239,12 @@ impl TickAggregator {
 
     /// Drain the currently open bar (if any) and return it. Useful at the end of
     /// a backtest or when shutting down a live aggregator.
-    pub fn flush(&mut self) -> Option<Candle> {
-        self.open_bar.take().map(OpenBar::into_candle)
+    ///
+    /// # Errors
+    /// Returns an error if the open bar's accumulated volume is non-finite
+    /// (see [`OpenBar::into_candle`]).
+    pub fn flush(&mut self) -> Result<Option<Candle>> {
+        self.open_bar.take().map(OpenBar::into_candle).transpose()
     }
 
     /// Configured timeframe.
@@ -284,7 +298,7 @@ mod tests {
         assert!(agg.push(t(12.0, 15)).unwrap().is_empty());
         assert!(agg.push(t(8.0, 30)).unwrap().is_empty());
         assert!(agg.push(t(11.0, 50)).unwrap().is_empty());
-        let bar = agg.flush().expect("open bar");
+        let bar = agg.flush().unwrap().expect("open bar");
         assert_eq!(bar.open, 10.0);
         assert_eq!(bar.high, 12.0);
         assert_eq!(bar.low, 8.0);
@@ -307,7 +321,7 @@ mod tests {
         assert_eq!(closed.close, 12.0);
 
         // The new tick at ts=60 opens the next bar.
-        let still_open = agg.flush().unwrap();
+        let still_open = agg.flush().unwrap().unwrap();
         assert_eq!(still_open.open, 15.0);
         assert_eq!(still_open.timestamp, 60);
     }
@@ -329,7 +343,7 @@ mod tests {
         let err = agg.push(t(99.0, 10)).unwrap_err();
         assert!(matches!(err, Error::Malformed(_)));
         // The open bar is untouched: close is still the ts=50 price.
-        assert_eq!(agg.flush().unwrap().close, 10.0);
+        assert_eq!(agg.flush().unwrap().unwrap().close, 10.0);
     }
 
     #[test]
@@ -339,9 +353,20 @@ mod tests {
         // Two trades in the same millisecond are legitimate.
         agg.push(t(12.0, 20)).unwrap();
         agg.push(t(11.0, 20)).unwrap();
-        let bar = agg.flush().unwrap();
+        let bar = agg.flush().unwrap().unwrap();
         assert_eq!(bar.high, 12.0);
         assert_eq!(bar.close, 11.0);
+    }
+
+    #[test]
+    fn flushes_a_non_finite_volume_as_an_error() {
+        let mut agg = TickAggregator::new(Timeframe::new(60).unwrap());
+        // Two near-max volumes sum to +inf — the closed candle would carry a
+        // non-finite volume that poisons every downstream indicator.
+        agg.push(Tick::new(10.0, f64::MAX, 0).unwrap()).unwrap();
+        agg.push(Tick::new(10.0, f64::MAX, 1).unwrap()).unwrap();
+        let err = agg.flush().unwrap_err();
+        assert!(matches!(err, Error::Core(_)));
     }
 
     #[test]
@@ -379,7 +404,7 @@ mod tests {
         }
 
         // The tick at ts=200 opens bucket 180.
-        assert_eq!(agg.flush().unwrap().timestamp, 180);
+        assert_eq!(agg.flush().unwrap().unwrap().timestamp, 180);
     }
 
     #[test]
