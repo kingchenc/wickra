@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Wickra WASM — backtest</title>
+  <style>
+    body { font-family: ui-sans-serif, system-ui, sans-serif; max-width: 980px; margin: 2rem auto; padding: 0 1rem; color: #1d1d1d; }
+    h1 { margin-bottom: .25rem; }
+    .meta { color: #666; margin-top: 0; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1rem; font-variant-numeric: tabular-nums; }
+    th, td { border: 1px solid #ddd; padding: .5rem .75rem; text-align: right; }
+    th:first-child, td:first-child { text-align: left; }
+    th { background: #fafafa; }
+    code { background: #f4f4f4; padding: .1rem .25rem; border-radius: .2rem; font-size: .9em; }
+    label { display: inline-block; margin-right: .5rem; }
+    button { padding: .5rem 1rem; }
+    #status { margin-top: 1rem; color: #666; }
+  </style>
+</head>
+<body>
+  <h1>Wickra WASM — backtest</h1>
+  <p class="meta">
+    Streams every candle of an OHLCV CSV through a basket of indicators
+    (SMA, EMA, RSI, MACD, Bollinger, ATR, ADX, OBV) via the WebAssembly
+    bindings and prints a per-series summary. The browser counterpart of
+    <code>examples/python/backtest.py</code>,
+    <code>examples/node/backtest.js</code> and
+    <code>examples/rust/src/bin/backtest.rs</code>.
+  </p>
+
+  <p>
+    <label>Dataset: <input type="text" id="path" value="../data/btcusdt-1d.csv" size="40" /></label>
+    <button id="go" disabled>Run backtest</button>
+  </p>
+
+  <p id="status">Loading WASM module…</p>
+
+  <table id="results" hidden>
+    <thead>
+      <tr><th>Series</th><th>n</th><th>mean</th><th>min</th><th>max</th><th>last</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script type="module">
+    import init, {
+      version, installPanicHook,
+      SMA, EMA, RSI, MACD, BollingerBands, ATR, ADX, OBV,
+    } from "../../bindings/wasm/pkg/wickra_wasm.js";
+
+    const REQUIRED = ["timestamp", "open", "high", "low", "close", "volume"];
+
+    // Parse a plain OHLCV CSV — the Wickra layout never quotes values nor
+    // embeds commas in fields, so split-on-comma is a complete parse.
+    function parseCsv(text) {
+      const lines = text.split(/\r?\n/).filter((line) => line.length > 0);
+      if (lines.length === 0) throw new Error("file is empty");
+      const header = lines[0].split(",").map((s) => s.trim());
+      const missing = REQUIRED.filter((c) => !header.includes(c));
+      if (missing.length > 0) {
+        throw new Error(
+          `missing required column(s): ${missing.join(", ")}; found: ${header.join(", ")}`,
+        );
+      }
+      if (lines.length === 1) throw new Error("CSV has a header but no data rows");
+
+      const idx = {};
+      for (const c of REQUIRED) idx[c] = header.indexOf(c);
+      const cols = { timestamp: [], open: [], high: [], low: [], close: [], volume: [] };
+      for (let i = 1; i < lines.length; i++) {
+        const cells = lines[i].split(",");
+        for (const c of REQUIRED) {
+          const v = Number(cells[idx[c]]);
+          if (!Number.isFinite(v)) {
+            throw new Error(
+              `row ${i + 1} column '${c}' is not numeric: ${JSON.stringify(cells[idx[c]])}`,
+            );
+          }
+          cols[c].push(v);
+        }
+      }
+      return cols;
+    }
+
+    class Series {
+      constructor(name) {
+        this.name = name;
+        this.count = 0;
+        this.sum = 0;
+        this.min = Infinity;
+        this.max = -Infinity;
+        this.last = NaN;
+      }
+      add(v) {
+        if (v === null || v === undefined || !Number.isFinite(v)) return;
+        this.count += 1;
+        this.sum += v;
+        if (v < this.min) this.min = v;
+        if (v > this.max) this.max = v;
+        this.last = v;
+      }
+    }
+
+    function runBacktest(cols) {
+      const sma = new SMA(20);
+      const ema = new EMA(20);
+      const rsi = new RSI(14);
+      const macd = new MACD(12, 26, 9);
+      const bb = new BollingerBands(20, 2);
+      const atr = new ATR(14);
+      const adx = new ADX(14);
+      const obv = new OBV();
+
+      const s = {
+        sma: new Series("SMA(20)"),
+        ema: new Series("EMA(20)"),
+        rsi: new Series("RSI(14)"),
+        macdLine: new Series("MACD line"),
+        macdHist: new Series("MACD hist"),
+        bbUpper: new Series("BB upper"),
+        bbLower: new Series("BB lower"),
+        atr: new Series("ATR(14)"),
+        adx: new Series("ADX(14)"),
+        obv: new Series("OBV"),
+      };
+
+      const n = cols.close.length;
+      for (let i = 0; i < n; i++) {
+        const c = cols.close[i];
+        s.sma.add(sma.update(c));
+        s.ema.add(ema.update(c));
+        s.rsi.add(rsi.update(c));
+        const m = macd.update(c);
+        if (m) { s.macdLine.add(m.macd); s.macdHist.add(m.histogram); }
+        const b = bb.update(c);
+        if (b) { s.bbUpper.add(b.upper); s.bbLower.add(b.lower); }
+        s.atr.add(atr.update(cols.high[i], cols.low[i], c));
+        const a = adx.update(cols.high[i], cols.low[i], c);
+        if (a) s.adx.add(a.adx);
+        s.obv.add(obv.update(c, cols.volume[i]));
+      }
+      return s;
+    }
+
+    function render(series, bars) {
+      const tbody = document.querySelector("#results tbody");
+      tbody.innerHTML = "";
+      for (const s of Object.values(series)) {
+        const tr = document.createElement("tr");
+        if (s.count === 0) {
+          tr.innerHTML = `<td>${s.name}</td><td colspan="5">no valid samples — series too short</td>`;
+        } else {
+          const mean = s.sum / s.count;
+          tr.innerHTML =
+            `<td>${s.name}</td>` +
+            `<td>${s.count}</td>` +
+            `<td>${mean.toFixed(4)}</td>` +
+            `<td>${s.min.toFixed(4)}</td>` +
+            `<td>${s.max.toFixed(4)}</td>` +
+            `<td>${s.last.toFixed(4)}</td>`;
+        }
+        tbody.appendChild(tr);
+      }
+      document.getElementById("results").hidden = false;
+      document.getElementById("status").textContent =
+        `Backtest over ${bars} bars complete.`;
+    }
+
+    async function run() {
+      const path = document.getElementById("path").value;
+      const status = document.getElementById("status");
+      status.textContent = `Fetching ${path}…`;
+      try {
+        const resp = await fetch(path);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status} for ${path}`);
+        const text = await resp.text();
+        const cols = parseCsv(text);
+        status.textContent = `Running indicators over ${cols.close.length} bars…`;
+        // Yield so the status text actually paints before the synchronous
+        // indicator loop locks the main thread on a large dataset.
+        await new Promise((r) => setTimeout(r, 0));
+        const series = runBacktest(cols);
+        render(series, cols.close.length);
+      } catch (err) {
+        status.textContent = `error: ${err.message || err}`;
+      }
+    }
+
+    document.getElementById("go").onclick = run;
+
+    init().then(() => {
+      installPanicHook();
+      document.getElementById("go").disabled = false;
+      document.getElementById("status").textContent =
+        `Ready — wickra ${version()}. Click "Run backtest".`;
+    });
+  </script>
+</body>
+</html>
