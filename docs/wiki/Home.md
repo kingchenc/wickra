@@ -45,6 +45,12 @@ Release notes and tagged builds:
 - [Quickstart: Node](Quickstart-Node.md) — `npm install wickra`, basic
   `SMA` and `MACD` calls, and the current Windows install caveat
   (`wickra-win32-x64-msvc@0.1.4` is held by the npm spam filter).
+- [Quickstart: WASM](Quickstart-WASM.md) — `npm install wickra-wasm`,
+  building with `wasm-pack`, and running indicators client-side in a
+  browser or bundler.
+- [Data Layer](Data-Layer.md) — the `wickra-data` crate: the CSV reader,
+  the tick-to-candle aggregator, the multi-timeframe resampler, and the
+  Binance live feed.
 - [Streaming vs Batch](Streaming-vs-Batch.md) — the conceptual difference
   between Wickra's O(1) `update` and the recompute-everything loops in
   batch-only libraries, with the benchmark numbers from the project README.
