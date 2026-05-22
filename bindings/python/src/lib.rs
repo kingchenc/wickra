@@ -1519,6 +1519,168 @@ impl PyAroon {
     }
 }
 
+// ============================== PPO ==============================
+
+#[pyclass(name = "PPO", module = "wickra._wickra")]
+#[derive(Clone)]
+struct PyPpo {
+    inner: wc::Ppo,
+}
+
+#[pymethods]
+impl PyPpo {
+    #[new]
+    #[pyo3(signature = (fast=12, slow=26))]
+    fn new(fast: usize, slow: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Ppo::new(fast, slow).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+    }
+    #[getter]
+    fn periods(&self) -> (usize, usize) {
+        self.inner.periods()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (f, s) = self.inner.periods();
+        format!("PPO(fast={f}, slow={s})")
+    }
+}
+
+// ============================== DPO ==============================
+
+#[pyclass(name = "DPO", module = "wickra._wickra")]
+#[derive(Clone)]
+struct PyDpo {
+    inner: wc::Dpo,
+}
+
+#[pymethods]
+impl PyDpo {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Dpo::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn shift(&self) -> usize {
+        self.inner.shift()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("DPO(period={})", self.inner.period())
+    }
+}
+
+// ============================== Coppock ==============================
+
+#[pyclass(name = "Coppock", module = "wickra._wickra")]
+#[derive(Clone)]
+struct PyCoppock {
+    inner: wc::Coppock,
+}
+
+#[pymethods]
+impl PyCoppock {
+    #[new]
+    #[pyo3(signature = (roc_long=14, roc_short=11, wma_period=10))]
+    fn new(roc_long: usize, roc_short: usize, wma_period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Coppock::new(roc_long, roc_short, wma_period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+    }
+    #[getter]
+    fn periods(&self) -> (usize, usize, usize) {
+        self.inner.periods()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (l, s, w) = self.inner.periods();
+        format!("Coppock(roc_long={l}, roc_short={s}, wma_period={w})")
+    }
+}
+
 // ============================== StochRSI ==============================
 
 #[pyclass(name = "StochRSI", module = "wickra._wickra")]
@@ -2180,5 +2342,8 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyPmo>()?;
     m.add_class::<PyStochRsi>()?;
     m.add_class::<PyUltimateOscillator>()?;
+    m.add_class::<PyPpo>()?;
+    m.add_class::<PyDpo>()?;
+    m.add_class::<PyCoppock>()?;
     Ok(())
 }

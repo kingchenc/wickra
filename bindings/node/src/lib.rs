@@ -107,6 +107,7 @@ node_scalar_indicator!(TrimaNode, "TRIMA", wc::Trima);
 node_scalar_indicator!(ZlemaNode, "ZLEMA", wc::Zlema);
 node_scalar_indicator!(MomNode, "MOM", wc::Mom);
 node_scalar_indicator!(CmoNode, "CMO", wc::Cmo);
+node_scalar_indicator!(DpoNode, "DPO", wc::Dpo);
 
 // ============================== MACD ==============================
 
@@ -1223,6 +1224,81 @@ impl UltimateOscillatorNode {
             );
         }
         Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== PPO ==============================
+
+#[napi(js_name = "PPO")]
+pub struct PpoNode {
+    inner: wc::Ppo,
+}
+
+#[napi]
+impl PpoNode {
+    #[napi(constructor)]
+    pub fn new(fast: u32, slow: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Ppo::new(fast as usize, slow as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Coppock ==============================
+
+#[napi(js_name = "Coppock")]
+pub struct CoppockNode {
+    inner: wc::Coppock,
+}
+
+#[napi]
+impl CoppockNode {
+    #[napi(constructor)]
+    pub fn new(roc_long: u32, roc_short: u32, wma_period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Coppock::new(roc_long as usize, roc_short as usize, wma_period as usize)
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
     }
     #[napi]
     pub fn reset(&mut self) {

@@ -1,6 +1,6 @@
 # Indicators Overview
 
-Wickra ships 36 indicators, organised in source under the four classical
+Wickra ships 39 indicators, organised in source under the four classical
 families — trend, momentum, volatility, volume — that map directly to the
 directory structure of `crates/wickra-core/src/indicators/`. The same family
 labels are used here, plus a second-level grouping that reflects how the
@@ -103,6 +103,9 @@ Centered on zero or driven by raw price differences; no fixed cap.
 | `Cmo`               | Chande Momentum Oscillator; `100·(Σgain − Σloss)/(Σgain + Σloss)` over `period` changes. | `f64` | `f64` | `[−100, 100]` | `period = 14` (Python) | `period + 1` | [Indicator-Cmo.md](indicators/momentum/Indicator-Cmo.md) |
 | `Tsi`               | True Strength Index; ratio of double-EMA-smoothed momentum to its absolute value. | `f64` | `f64` | ≈ `[−100, 100]` around zero | `(long=25, short=13)` (Python) | `long + short` | [Indicator-Tsi.md](indicators/momentum/Indicator-Tsi.md) |
 | `Pmo`               | DecisionPoint Price Momentum Oscillator; doubly-smoothed rate of change. | `f64` | `f64` | unbounded around zero | `(smoothing1=35, smoothing2=20)` (Python) | `2` | [Indicator-Pmo.md](indicators/momentum/Indicator-Pmo.md) |
+| `Ppo`               | Percentage Price Oscillator; `100·(EMA_fast − EMA_slow)/EMA_slow`. | `f64` | `f64` | unbounded around zero (percent) | `(fast=12, slow=26)` (Python) | `slow` | [Indicator-Ppo.md](indicators/momentum/Indicator-Ppo.md) |
+| `Dpo`               | Detrended Price Oscillator; `price[t − period/2 − 1] − SMA(period)`. | `f64` | `f64` | unbounded around zero | `period = 20` (Python) | `max(period, period/2 + 2)` | [Indicator-Dpo.md](indicators/momentum/Indicator-Dpo.md) |
+| `Coppock`           | Coppock Curve; `WMA(ROC(long) + ROC(short), wma_period)`. | `f64` | `f64` | unbounded around zero | `(roc_long=14, roc_short=11, wma_period=10)` (Python) | `max(roc_long, roc_short) + wma_period` | [Indicator-Coppock.md](indicators/momentum/Indicator-Coppock.md) |
 
 ### Directional
 
