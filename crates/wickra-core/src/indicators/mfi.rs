@@ -50,18 +50,23 @@ impl Indicator for Mfi {
 
     fn update(&mut self, candle: Candle) -> Option<f64> {
         let tp = candle.typical_price();
+
+        // The very first candle only establishes the previous typical price.
+        // It carries no money-flow direction, so it is not pushed into the
+        // window. This matches TA-Lib / pandas-ta, which need `period + 1`
+        // candles before the first MFI value.
+        let Some(prev) = self.prev_tp else {
+            self.prev_tp = Some(tp);
+            return None;
+        };
+
         let mf = tp * candle.volume;
-        let (pos_flow, neg_flow) = match self.prev_tp {
-            None => (0.0, 0.0),
-            Some(prev) => {
-                if tp > prev {
-                    (mf, 0.0)
-                } else if tp < prev {
-                    (0.0, mf)
-                } else {
-                    (0.0, 0.0)
-                }
-            }
+        let (pos_flow, neg_flow) = if tp > prev {
+            (mf, 0.0)
+        } else if tp < prev {
+            (0.0, mf)
+        } else {
+            (0.0, 0.0)
         };
 
         if self.pos_window.len() == self.period {
@@ -75,12 +80,11 @@ impl Indicator for Mfi {
 
         self.prev_tp = Some(tp);
 
-        // Need period+1 candles total (the first one only gives prev_tp).
-        if self.prev_tp.is_none() || self.pos_window.len() < self.period {
+        if self.pos_window.len() < self.period {
             return None;
         }
-        // Need at least one comparison-based flow inside the window, otherwise we
-        // are still on the very first candle.
+        // A fully flat window (every typical price equal) has zero flow on
+        // both sides; by convention MFI is then 50.
         if self.pos_sum == 0.0 && self.neg_sum == 0.0 {
             return Some(50.0);
         }
@@ -100,7 +104,9 @@ impl Indicator for Mfi {
     }
 
     fn warmup_period(&self) -> usize {
-        self.period
+        // One seed candle establishes the first previous typical price, then
+        // `period` flow comparisons fill the window.
+        self.period + 1
     }
 
     fn is_ready(&self) -> bool {
@@ -162,5 +168,33 @@ mod tests {
     #[test]
     fn rejects_zero_period() {
         assert!(Mfi::new(0).is_err());
+    }
+
+    #[test]
+    fn first_value_emitted_on_period_plus_one_candle() {
+        // The seed candle plus `period` flow comparisons -> first MFI on the
+        // (period + 1)-th candle (index `period`).
+        let candles: Vec<Candle> = (1..=20).map(|i| c(f64::from(i), 100.0)).collect();
+        let mut mfi = Mfi::new(5).unwrap();
+        let out = mfi.batch(&candles);
+        for (i, v) in out.iter().enumerate().take(5) {
+            assert!(v.is_none(), "candle index {i} must be None during warmup");
+        }
+        assert!(out[5].is_some(), "first MFI value lands at index period (5)");
+        assert_eq!(mfi.warmup_period(), 6);
+    }
+
+    #[test]
+    fn known_value_period_2() {
+        // Three candles, MFI(2). Candle 1 (tp=10) only seeds the previous TP.
+        // Candle 2 (tp=12 > 10): positive money flow 12 * 100 = 1200.
+        // Candle 3 (tp=11 < 12): negative money flow 11 * 100 = 1100.
+        // money ratio = 1200 / 1100; MFI = 100 - 100 / (1 + 1200/1100) = 1200/23.
+        let candles = vec![c(10.0, 100.0), c(12.0, 100.0), c(11.0, 100.0)];
+        let mut mfi = Mfi::new(2).unwrap();
+        let out = mfi.batch(&candles);
+        assert!(out[0].is_none());
+        assert!(out[1].is_none());
+        assert_relative_eq!(out[2].unwrap(), 1200.0 / 23.0, epsilon = 1e-9);
     }
 }
