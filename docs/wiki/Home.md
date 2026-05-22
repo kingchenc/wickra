@@ -124,6 +124,10 @@ Rust / Python / Node examples. They are grouped by family, mirroring the
 - [Indicator-HistoricalVolatility.md](indicators/volatility/Indicator-HistoricalVolatility.md)
 - [Indicator-BollingerBandwidth.md](indicators/volatility/Indicator-BollingerBandwidth.md)
 - [Indicator-PercentB.md](indicators/volatility/Indicator-PercentB.md)
+- [Indicator-SuperTrend.md](indicators/volatility/Indicator-SuperTrend.md)
+- [Indicator-ChandelierExit.md](indicators/volatility/Indicator-ChandelierExit.md)
+- [Indicator-ChandeKrollStop.md](indicators/volatility/Indicator-ChandeKrollStop.md)
+- [Indicator-AtrTrailingStop.md](indicators/volatility/Indicator-AtrTrailingStop.md)
 
 **Volume** — price moves weighted or confirmed by traded volume.
 

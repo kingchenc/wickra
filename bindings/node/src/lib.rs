@@ -1500,6 +1500,288 @@ impl EaseOfMovementNode {
     }
 }
 
+// ============================== SuperTrend ==============================
+
+#[napi(object)]
+pub struct SuperTrendValue {
+    pub value: f64,
+    pub direction: f64,
+}
+
+#[napi(js_name = "SuperTrend")]
+pub struct SuperTrendNode {
+    inner: wc::SuperTrend,
+}
+
+#[napi]
+impl SuperTrendNode {
+    #[napi(constructor)]
+    pub fn new(atr_period: u32, multiplier: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::SuperTrend::new(atr_period as usize, multiplier).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<SuperTrendValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| SuperTrendValue {
+                value: o.value,
+                direction: o.direction,
+            }))
+    }
+    /// Returns `[value0, direction0, value1, direction1, ...]`, length `2 * n`.
+    /// Warmup positions are `NaN`.
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 2] = o.value;
+                out[i * 2 + 1] = o.direction;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Chandelier Exit ==============================
+
+#[napi(object)]
+pub struct ChandelierExitValue {
+    pub long_stop: f64,
+    pub short_stop: f64,
+}
+
+#[napi(js_name = "ChandelierExit")]
+pub struct ChandelierExitNode {
+    inner: wc::ChandelierExit,
+}
+
+#[napi]
+impl ChandelierExitNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, multiplier: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::ChandelierExit::new(period as usize, multiplier).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<ChandelierExitValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| ChandelierExitValue {
+                long_stop: o.long_stop,
+                short_stop: o.short_stop,
+            }))
+    }
+    /// Returns `[long0, short0, long1, short1, ...]`, length `2 * n`. Warmup
+    /// positions are `NaN`.
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 2] = o.long_stop;
+                out[i * 2 + 1] = o.short_stop;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Chande Kroll Stop ==============================
+
+#[napi(object)]
+pub struct ChandeKrollStopValue {
+    pub stop_long: f64,
+    pub stop_short: f64,
+}
+
+#[napi(js_name = "ChandeKrollStop")]
+pub struct ChandeKrollStopNode {
+    inner: wc::ChandeKrollStop,
+}
+
+#[napi]
+impl ChandeKrollStopNode {
+    #[napi(constructor)]
+    pub fn new(atr_period: u32, atr_multiplier: f64, stop_period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::ChandeKrollStop::new(
+                atr_period as usize,
+                atr_multiplier,
+                stop_period as usize,
+            )
+            .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<ChandeKrollStopValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| ChandeKrollStopValue {
+                stop_long: o.stop_long,
+                stop_short: o.stop_short,
+            }))
+    }
+    /// Returns `[long0, short0, long1, short1, ...]`, length `2 * n`. Warmup
+    /// positions are `NaN`.
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 2] = o.stop_long;
+                out[i * 2 + 1] = o.stop_short;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== ATR Trailing Stop ==============================
+
+#[napi(js_name = "AtrTrailingStop")]
+pub struct AtrTrailingStopNode {
+    inner: wc::AtrTrailingStop,
+}
+
+#[napi]
+impl AtrTrailingStopNode {
+    #[napi(constructor)]
+    pub fn new(atr_period: u32, multiplier: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::AtrTrailingStop::new(atr_period as usize, multiplier).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, 0.0)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== Bollinger Bandwidth ==============================
 
 #[napi(js_name = "BollingerBandwidth")]

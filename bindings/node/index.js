@@ -310,7 +310,7 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, T3, VWMA, MOM, CMO, TSI, PMO, StochRSI, UltimateOscillator, PPO, DPO, Coppock, AroonOscillator, Vortex, MassIndex, NATR, StdDev, UlcerIndex, HistoricalVolatility, BollingerBandwidth, PercentB, ADL, VolumePriceTrend, ChaikinMoneyFlow, ChaikinOscillator, ForceIndex, EaseOfMovement, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, AwesomeOscillator, Aroon, KAMA } = nativeBinding
+const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, T3, VWMA, MOM, CMO, TSI, PMO, StochRSI, UltimateOscillator, PPO, DPO, Coppock, AroonOscillator, Vortex, MassIndex, NATR, StdDev, UlcerIndex, HistoricalVolatility, BollingerBandwidth, PercentB, ADL, VolumePriceTrend, ChaikinMoneyFlow, ChaikinOscillator, ForceIndex, EaseOfMovement, SuperTrend, ChandelierExit, ChandeKrollStop, AtrTrailingStop, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, AwesomeOscillator, Aroon, KAMA } = nativeBinding
 
 module.exports.version = version
 module.exports.SMA = SMA
@@ -351,6 +351,10 @@ module.exports.ChaikinMoneyFlow = ChaikinMoneyFlow
 module.exports.ChaikinOscillator = ChaikinOscillator
 module.exports.ForceIndex = ForceIndex
 module.exports.EaseOfMovement = EaseOfMovement
+module.exports.SuperTrend = SuperTrend
+module.exports.ChandelierExit = ChandelierExit
+module.exports.ChandeKrollStop = ChandeKrollStop
+module.exports.AtrTrailingStop = AtrTrailingStop
 module.exports.MACD = MACD
 module.exports.BollingerBands = BollingerBands
 module.exports.ATR = ATR

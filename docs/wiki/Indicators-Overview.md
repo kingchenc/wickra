@@ -1,6 +1,6 @@
 # Indicators Overview
 
-Wickra ships 54 indicators, organised in source under the four classical
+Wickra ships 58 indicators, organised in source under the four classical
 families — trend, momentum, volatility, volume — that map directly to the
 directory structure of `crates/wickra-core/src/indicators/`. The same family
 labels are used here, plus a second-level grouping that reflects how the
@@ -118,10 +118,10 @@ Centered on zero or driven by raw price differences; no fixed cap.
 
 ## Volatility
 
-Volatility indicators sit in two functional groups: those that draw an
-envelope around price, and those that report a scalar dispersion/range.
-PSAR is a special case — a trailing-stop tracker rather than a width
-measure — that lives in the volatility module by source convention.
+Volatility indicators sit in three functional groups: those that draw an
+envelope around price, those that report a scalar dispersion/range, and a
+set of trailing stops — ATR-driven stop-loss trackers rather than width
+measures — that live in the volatility module by source convention.
 
 ### Envelopes
 
@@ -148,6 +148,10 @@ measure — that lives in the volatility module by source convention.
 | Indicator | One-liner | Input | Output | Range | Defaults | Warmup | Deep dive |
 |-----------|-----------|-------|--------|-------|----------|--------|-----------|
 | `Psar`    | Wilder's Parabolic Stop-and-Reverse; per-bar stop level that flips sides on price crossing. | `Candle` | `f64` | unbounded (price scale) | `(af_start=0.02, af_step=0.02, af_max=0.20)` (Python) | `2` | [Indicator-Psar.md](indicators/volatility/Indicator-Psar.md) |
+| `SuperTrend` | ATR-banded trailing stop that flips on a close through the band; reports the line and the trend direction. | `Candle` | `(value, direction)` | `value` price scale; `direction` `±1` | `(atr_period=10, multiplier=3.0)` (Python) | `atr_period` | [Indicator-SuperTrend.md](indicators/volatility/Indicator-SuperTrend.md) |
+| `ChandelierExit` | `highest_high − k·ATR` (long stop) and `lowest_low + k·ATR` (short stop). | `Candle` | `(long_stop, short_stop)` | unbounded (price scale) | `(period=22, multiplier=3.0)` (Python) | `period` | [Indicator-ChandelierExit.md](indicators/volatility/Indicator-ChandelierExit.md) |
+| `ChandeKrollStop` | Two-stage ATR stop: an extreme-based stop, then smoothed over a shorter window. | `Candle` | `(stop_long, stop_short)` | unbounded (price scale) | `(atr_period=10, atr_multiplier=1.0, stop_period=9)` (Python) | `atr_period + stop_period − 1` | [Indicator-ChandeKrollStop.md](indicators/volatility/Indicator-ChandeKrollStop.md) |
+| `AtrTrailingStop` | A single line trailing the close by `k·ATR`, ratcheting toward the trend and flipping on a cross. | `Candle` | `f64` | unbounded (price scale) | `(atr_period=14, multiplier=3.0)` (Python) | `atr_period` | [Indicator-AtrTrailingStop.md](indicators/volatility/Indicator-AtrTrailingStop.md) |
 
 ## Volume
 

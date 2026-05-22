@@ -3277,6 +3277,306 @@ impl PyEaseOfMovement {
     }
 }
 
+// ============================== SuperTrend ==============================
+
+#[pyclass(name = "SuperTrend", module = "wickra._wickra")]
+#[derive(Clone)]
+struct PySuperTrend {
+    inner: wc::SuperTrend,
+}
+
+#[pymethods]
+impl PySuperTrend {
+    #[new]
+    #[pyo3(signature = (atr_period=10, multiplier=3.0))]
+    fn new(atr_period: usize, multiplier: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::SuperTrend::new(atr_period, multiplier).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.value, o.direction)))
+    }
+    /// Batch over numpy columns high, low, close. Returns shape `(n, 2)` with
+    /// columns `[value, direction]`; warmup rows are `NaN`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 2] = o.value;
+                out[i * 2 + 1] = o.direction;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray_bound(py))
+    }
+    #[getter]
+    fn params(&self) -> (usize, f64) {
+        self.inner.params()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (atr_period, multiplier) = self.inner.params();
+        format!("SuperTrend(atr_period={atr_period}, multiplier={multiplier})")
+    }
+}
+
+// ============================== Chandelier Exit ==============================
+
+#[pyclass(name = "ChandelierExit", module = "wickra._wickra")]
+#[derive(Clone)]
+struct PyChandelierExit {
+    inner: wc::ChandelierExit,
+}
+
+#[pymethods]
+impl PyChandelierExit {
+    #[new]
+    #[pyo3(signature = (period=22, multiplier=3.0))]
+    fn new(period: usize, multiplier: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::ChandelierExit::new(period, multiplier).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.long_stop, o.short_stop)))
+    }
+    /// Batch over numpy columns high, low, close. Returns shape `(n, 2)` with
+    /// columns `[long_stop, short_stop]`; warmup rows are `NaN`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 2] = o.long_stop;
+                out[i * 2 + 1] = o.short_stop;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray_bound(py))
+    }
+    #[getter]
+    fn params(&self) -> (usize, f64) {
+        self.inner.params()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (period, multiplier) = self.inner.params();
+        format!("ChandelierExit(period={period}, multiplier={multiplier})")
+    }
+}
+
+// ============================== Chande Kroll Stop ==============================
+
+#[pyclass(name = "ChandeKrollStop", module = "wickra._wickra")]
+#[derive(Clone)]
+struct PyChandeKrollStop {
+    inner: wc::ChandeKrollStop,
+}
+
+#[pymethods]
+impl PyChandeKrollStop {
+    #[new]
+    #[pyo3(signature = (atr_period=10, atr_multiplier=1.0, stop_period=9))]
+    fn new(atr_period: usize, atr_multiplier: f64, stop_period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::ChandeKrollStop::new(atr_period, atr_multiplier, stop_period)
+                .map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.stop_long, o.stop_short)))
+    }
+    /// Batch over numpy columns high, low, close. Returns shape `(n, 2)` with
+    /// columns `[stop_long, stop_short]`; warmup rows are `NaN`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 2] = o.stop_long;
+                out[i * 2 + 1] = o.stop_short;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray_bound(py))
+    }
+    #[getter]
+    fn params(&self) -> (usize, f64, usize) {
+        self.inner.params()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (atr_period, atr_multiplier, stop_period) = self.inner.params();
+        format!(
+            "ChandeKrollStop(atr_period={atr_period}, atr_multiplier={atr_multiplier}, stop_period={stop_period})"
+        )
+    }
+}
+
+// ============================== ATR Trailing Stop ==============================
+
+#[pyclass(name = "AtrTrailingStop", module = "wickra._wickra")]
+#[derive(Clone)]
+struct PyAtrTrailingStop {
+    inner: wc::AtrTrailingStop,
+}
+
+#[pymethods]
+impl PyAtrTrailingStop {
+    #[new]
+    #[pyo3(signature = (atr_period=14, multiplier=3.0))]
+    fn new(atr_period: usize, multiplier: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::AtrTrailingStop::new(atr_period, multiplier).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over numpy columns high, low, close (all equal length).
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray_bound(py))
+    }
+    #[getter]
+    fn params(&self) -> (usize, f64) {
+        self.inner.params()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (atr_period, multiplier) = self.inner.params();
+        format!("AtrTrailingStop(atr_period={atr_period}, multiplier={multiplier})")
+    }
+}
+
 // ============================== Module ==============================
 
 #[pymodule]
@@ -3336,5 +3636,9 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyChaikinOscillator>()?;
     m.add_class::<PyForceIndex>()?;
     m.add_class::<PyEaseOfMovement>()?;
+    m.add_class::<PySuperTrend>()?;
+    m.add_class::<PyChandelierExit>()?;
+    m.add_class::<PyChandeKrollStop>()?;
+    m.add_class::<PyAtrTrailingStop>()?;
     Ok(())
 }
