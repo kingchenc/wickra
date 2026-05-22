@@ -87,6 +87,7 @@ from ._wickra import (
     # Volume
     OBV,
     VWAP,
+    RollingVWAP,
     ADL,
     VolumePriceTrend,
     ChaikinMoneyFlow,
@@ -167,6 +168,7 @@ __all__ = [
     # Volume
     "OBV",
     "VWAP",
+    "RollingVWAP",
     "ADL",
     "VolumePriceTrend",
     "ChaikinMoneyFlow",

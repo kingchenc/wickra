@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `RollingVWAP` is now exposed in Python, Node and WASM under that name
+  (previously the rolling-window VWAP existed only in the Rust core, even
+  though the README's volume-family table already advertised
+  `VWAP (cumulative + rolling)`). All four bindings now ship the same
+  cumulative `VWAP` plus the finite-window `RollingVWAP(period)`. The wiki page
+  `Indicator-Vwap.md` adds Python, Node and WASM examples and drops the
+  "Rust-only" caveat.
 - WASM binding now exposes the streaming `update()` method on every candle-input
   indicator: `Adx`, `WilliamsR`, `Cci`, `Mfi`, `Psar`, `Keltner`, `Donchian`,
   `Vwap`, `AwesomeOscillator`, `Aroon`, `Stochastic`, and `Obv`. Multi-output

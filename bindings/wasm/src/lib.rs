@@ -1842,6 +1842,65 @@ impl WasmVwap {
     }
 }
 
+#[wasm_bindgen(js_name = RollingVWAP)]
+pub struct WasmRollingVwap {
+    inner: wc::RollingVwap,
+}
+
+#[wasm_bindgen(js_class = RollingVWAP)]
+impl WasmRollingVwap {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmRollingVwap, JsError> {
+        Ok(Self {
+            inner: wc::RollingVwap::new(period).map_err(map_err)?,
+        })
+    }
+    #[wasm_bindgen(getter)]
+    pub fn period(&self) -> usize {
+        self.inner.period()
+    }
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, volume)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+        volume: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() || close.len() != volume.len() {
+            return Err(JsError::new(
+                "high, low, close, volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let c = make_candle(high[i], low[i], close[i], volume[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[wasm_bindgen(js_name = AwesomeOscillator)]
 pub struct WasmAo {
     inner: wc::AwesomeOscillator,
@@ -2290,6 +2349,36 @@ mod tests {
             let s = obv.update(c[i], v[i]).expect("valid").unwrap_or(f64::NAN);
             assert!(close_enough(s, batch.get_index(i as u32)), "OBV at {i}");
         }
+    }
+
+    #[allow(clippy::many_single_char_names)]
+    #[wasm_bindgen_test]
+    fn rolling_vwap_streaming_matches_batch_and_lifecycle() {
+        // R4: RollingVwap is now exposed in WASM (previously Rust-only despite
+        // the README listing it as a cross-language indicator).
+        let (h, l, c, v) = synthetic_ohlcv(50);
+        let batch = WasmRollingVwap::new(10)
+            .expect("valid")
+            .batch(&h, &l, &c, &v)
+            .expect("valid");
+        let mut rv = WasmRollingVwap::new(10).expect("valid");
+        assert_eq!(rv.warmup_period(), 10);
+        assert_eq!(rv.period(), 10);
+        assert!(!rv.is_ready());
+        for i in 0..h.len() {
+            let s = rv
+                .update(h[i], l[i], c[i], v[i])
+                .expect("valid")
+                .unwrap_or(f64::NAN);
+            assert!(
+                close_enough(s, batch.get_index(i as u32)),
+                "RollingVWAP at {i}"
+            );
+        }
+        assert!(rv.is_ready());
+        rv.reset();
+        assert!(!rv.is_ready());
+        assert!(WasmRollingVwap::new(0).is_err());
     }
 
     #[wasm_bindgen_test]

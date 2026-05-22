@@ -115,3 +115,23 @@ def test_obv_streaming_matches_batch(ohlc_series):
         rows.append(streamer.update((float(c), float(c), float(c), float(c), float(v), 0)))
     streamed = np.array([math.nan if x is None else x for x in rows], dtype=np.float64)
     assert _equal_with_nan(batch, streamed)
+
+
+def test_rolling_vwap_streaming_matches_batch(ohlc_series):
+    # RollingVWAP(20) on the shared OHLC series. Provides finite-memory VWAP
+    # parity coverage now that the indicator is exposed across all bindings.
+    high, low, close = ohlc_series
+    volume = np.linspace(100.0, 200.0, num=close.size, dtype=np.float64)
+    batch = ta.RollingVWAP(20).batch(high, low, close, volume)
+
+    streamer = ta.RollingVWAP(20)
+    rows = []
+    for h, l, c, v in zip(high, low, close, volume):
+        rows.append(streamer.update((float(c), float(h), float(l), float(c), float(v), 0)))
+    streamed = np.array([math.nan if x is None else x for x in rows], dtype=np.float64)
+    assert _equal_with_nan(batch, streamed)
+    assert streamer.period == 20
+    assert streamer.warmup_period() == 20
+    assert streamer.is_ready()
+    streamer.reset()
+    assert not streamer.is_ready()

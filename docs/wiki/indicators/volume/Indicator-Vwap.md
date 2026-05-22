@@ -178,8 +178,9 @@ fair-price benchmark instead of an unbounded session aggregate.
 | `period` | `usize` | (no default) | `> 0`      | `RollingVwap::new` (`vwap.rs:89`)            |
 
 `period == 0` returns `Error::PeriodZero`. `RollingVwap` is exposed in
-Rust only — Python's `VWAP` / Node's `VWAP` correspond to the cumulative
-form.
+**all four bindings**: as `RollingVwap` in Rust and `RollingVWAP` in
+Python, Node and WASM. The plain `VWAP` class in each binding remains the
+cumulative form; `RollingVWAP` is the finite-window variant.
 
 ### Inputs / Outputs
 
@@ -245,8 +246,54 @@ Hand check at `t = 3` with window `[10@1, 20@3, 30@1]`:
 At `t = 4` with window `[20@3, 30@1, 40@2]`:
 `(60 + 30 + 80) / (3+1+2) = 170/6 ≈ 28.333`.
 
-(`RollingVwap` is currently exposed only in the Rust API; the Python
-`VWAP` and Node `VWAP` classes correspond to the cumulative form.)
+#### Python
+
+```python
+import numpy as np
+import wickra as ta
+
+high   = np.array([10.0, 20.0, 30.0, 40.0])
+low    = np.array([10.0, 20.0, 30.0, 40.0])
+close  = np.array([10.0, 20.0, 30.0, 40.0])
+volume = np.array([ 1.0,  3.0,  1.0,  2.0])
+
+rv = ta.RollingVWAP(3)
+print(rv.batch(high, low, close, volume))
+# [nan, nan, 20.0, 28.333333333333332]
+```
+
+#### Node
+
+```js
+const { RollingVWAP } = require('wickra');
+
+const high   = [10, 20, 30, 40];
+const low    = [10, 20, 30, 40];
+const close  = [10, 20, 30, 40];
+const volume = [ 1,  3,  1,  2];
+
+const rv = new RollingVWAP(3);
+console.log(rv.batch(high, low, close, volume));
+// [ NaN, NaN, 20, 28.333333333333332 ]
+```
+
+#### WASM
+
+```html
+<script type="module">
+  import init, { RollingVWAP } from './pkg/wickra_wasm.js';
+  await init();
+  const rv = new RollingVWAP(3);
+  const out = rv.batch(
+    new Float64Array([10, 20, 30, 40]),
+    new Float64Array([10, 20, 30, 40]),
+    new Float64Array([10, 20, 30, 40]),
+    new Float64Array([ 1,  3,  1,  2]),
+  );
+  console.log(Array.from(out));
+  // [ NaN, NaN, 20, 28.333333333333332 ]
+</script>
+```
 
 ## Interpretation
 
