@@ -48,8 +48,14 @@ impl Timeframe {
     }
 
     /// Floor a raw timestamp to this timeframe's bucket boundary.
+    ///
+    /// For a timestamp within one bucket of [`i64::MIN`] the mathematically
+    /// exact boundary lies below `i64::MIN` and cannot be represented; in that
+    /// (practically unreachable) case the result saturates at `i64::MIN`
+    /// rather than overflowing and panicking in debug builds. `bucket` is
+    /// always positive, so `rem_euclid` itself cannot panic.
     pub fn floor(self, ts: i64) -> i64 {
-        ts - ts.rem_euclid(self.bucket)
+        ts.saturating_sub(ts.rem_euclid(self.bucket))
     }
 }
 
@@ -238,6 +244,20 @@ mod tests {
         assert_eq!(tf.floor(100), 100);
         assert_eq!(tf.floor(150), 100);
         assert_eq!(tf.floor(250), 200);
+        // Negative timestamps still floor toward negative infinity.
+        assert_eq!(tf.floor(-1), -100);
+        assert_eq!(tf.floor(-100), -100);
+        assert_eq!(tf.floor(-101), -200);
+    }
+
+    #[test]
+    fn floor_saturates_instead_of_overflowing_at_min() {
+        let tf = Timeframe::new(100).unwrap();
+        // The exact boundary lies below i64::MIN — must not panic.
+        assert_eq!(tf.floor(i64::MIN), i64::MIN);
+        // i64::MAX must not overflow either (subtracting a non-negative).
+        let hi = tf.floor(i64::MAX);
+        assert!(hi > i64::MAX - 100 && hi % 100 == 0);
     }
 
     #[test]
