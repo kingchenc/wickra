@@ -112,6 +112,9 @@ jobs:
       - name: Build WASM package
         run: wasm-pack build bindings/wasm --target web --release --features panic-hook
 
+      - name: Run WASM tests
+        run: wasm-pack test --node bindings/wasm
+
       - name: Verify generated artefacts
         run: |
           test -f bindings/wasm/pkg/wickra_wasm.js

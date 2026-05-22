@@ -649,3 +649,69 @@ impl WasmAroon {
         Ok(Float64Array::from(out.as_slice()))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use wasm_bindgen_test::wasm_bindgen_test;
+
+    #[wasm_bindgen_test]
+    fn sma_batch_reference_values() {
+        // SMA(3) of [2, 4, 6, 8, 10] -> [NaN, NaN, 4, 6, 8].
+        let mut sma = WasmSma::new(3).ok().expect("valid period");
+        let out = sma.batch(&[2.0, 4.0, 6.0, 8.0, 10.0]);
+        assert!(out.get_index(0).is_nan());
+        assert!(out.get_index(1).is_nan());
+        assert_eq!(out.get_index(2), 4.0);
+        assert_eq!(out.get_index(3), 6.0);
+        assert_eq!(out.get_index(4), 8.0);
+    }
+
+    #[wasm_bindgen_test]
+    fn ema_batch_equals_streaming() {
+        let prices: Vec<f64> = (1..=60)
+            .map(|i| 100.0 + (f64::from(i) * 0.3).sin() * 5.0)
+            .collect();
+        let batch = WasmEma::new(14).ok().expect("valid").batch(&prices);
+        let mut ema = WasmEma::new(14).ok().expect("valid");
+        for (i, &p) in prices.iter().enumerate() {
+            let b = batch.get_index(i as u32);
+            match ema.update(p) {
+                Some(v) => assert!((v - b).abs() < 1e-9, "streaming != batch at {i}"),
+                None => assert!(b.is_nan(), "expected NaN during warmup at {i}"),
+            }
+        }
+    }
+
+    #[wasm_bindgen_test]
+    fn rsi_pure_uptrend_yields_100() {
+        let prices: Vec<f64> = (1..=20).map(f64::from).collect();
+        let out = WasmRsi::new(14).ok().expect("valid").batch(&prices);
+        for i in 14..prices.len() {
+            assert_eq!(out.get_index(i as u32), 100.0);
+        }
+    }
+
+    #[wasm_bindgen_test]
+    fn invalid_constructors_return_err() {
+        assert!(WasmSma::new(0).is_err());
+        assert!(WasmMacd::new(0, 0, 0).is_err());
+        assert!(WasmMacd::new(26, 12, 9).is_err());
+        assert!(WasmBb::new(20, -1.0).is_err());
+        assert!(WasmPsar::new(0.30, 0.02, 0.20).is_err());
+    }
+
+    #[wasm_bindgen_test]
+    fn batch_rejects_unequal_lengths() {
+        let mut atr = WasmAtr::new(14).ok().expect("valid");
+        assert!(atr.batch(&[1.0, 2.0], &[1.0], &[1.0, 2.0]).is_err());
+        let mut stoch = WasmStoch::new(14, 3).ok().expect("valid");
+        assert!(stoch
+            .batch(&[1.0, 2.0, 3.0], &[1.0], &[1.0, 2.0, 3.0])
+            .is_err());
+        let mut mfi = WasmMfi::new(14).ok().expect("valid");
+        assert!(mfi
+            .batch(&[1.0, 2.0], &[1.0, 2.0], &[1.0, 2.0], &[1.0])
+            .is_err());
+    }
+}
