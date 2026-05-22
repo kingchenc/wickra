@@ -83,6 +83,10 @@ pub struct TickAggregator {
 #[derive(Debug, Clone, Copy)]
 struct OpenBar {
     bucket_start: i64,
+    /// Timestamp of the most recently absorbed tick. Used to reject ticks that
+    /// arrive out of order *within* the current bucket — without it an older
+    /// tick would silently overwrite `close` with a stale price.
+    last_ts: i64,
     open: f64,
     high: f64,
     low: f64,
@@ -94,6 +98,7 @@ impl OpenBar {
     fn from_tick(t: Tick, bucket_start: i64) -> Self {
         Self {
             bucket_start,
+            last_ts: t.timestamp,
             open: t.price,
             high: t.price,
             low: t.price,
@@ -111,6 +116,7 @@ impl OpenBar {
         }
         self.close = t.price;
         self.volume += t.volume;
+        self.last_ts = t.timestamp;
     }
 
     fn into_candle(self) -> Candle {
@@ -158,9 +164,10 @@ impl TickAggregator {
     /// per skipped bucket.
     ///
     /// # Errors
-    /// Returns [`Error::Malformed`] if `tick.timestamp` is strictly less than
-    /// the start of the currently open bar (out-of-order ticks are not
-    /// supported), or if gap filling overflows the timestamp range.
+    /// Returns [`Error::Malformed`] if `tick.timestamp` goes backwards — both
+    /// across buckets (older than the open bar's start) and within a bucket
+    /// (older than the last tick absorbed into it) — or if gap filling
+    /// overflows the timestamp range. Ticks sharing a timestamp are accepted.
     pub fn push(&mut self, tick: Tick) -> Result<Vec<Candle>> {
         let bucket = self.timeframe.floor(tick.timestamp);
         if let Some(mut bar) = self.open_bar {
@@ -180,6 +187,16 @@ impl TickAggregator {
                 }
                 self.open_bar = Some(OpenBar::from_tick(tick, bucket));
                 return Ok(out);
+            }
+            // Same bucket: reject a tick that predates the last one absorbed,
+            // which would otherwise overwrite `close` with a stale price.
+            // Equal timestamps are allowed — several trades can share a
+            // millisecond.
+            if tick.timestamp < bar.last_ts {
+                return Err(Error::Malformed(format!(
+                    "tick timestamp {} predates the last tick {} in the same bucket",
+                    tick.timestamp, bar.last_ts
+                )));
             }
             bar.absorb(tick);
             self.open_bar = Some(bar);
@@ -301,6 +318,30 @@ mod tests {
         agg.push(t(10.0, 100)).unwrap();
         let err = agg.push(t(11.0, 30)).unwrap_err();
         assert!(matches!(err, Error::Malformed(_)));
+    }
+
+    #[test]
+    fn rejects_same_bucket_out_of_order_tick() {
+        let mut agg = TickAggregator::new(Timeframe::new(60).unwrap());
+        agg.push(t(10.0, 50)).unwrap();
+        // ts=10 is still bucket 0 but predates the tick at ts=50 — rejecting
+        // it prevents a stale price silently overwriting `close`.
+        let err = agg.push(t(99.0, 10)).unwrap_err();
+        assert!(matches!(err, Error::Malformed(_)));
+        // The open bar is untouched: close is still the ts=50 price.
+        assert_eq!(agg.flush().unwrap().close, 10.0);
+    }
+
+    #[test]
+    fn accepts_same_bucket_ticks_sharing_a_timestamp() {
+        let mut agg = TickAggregator::new(Timeframe::new(60).unwrap());
+        agg.push(t(10.0, 20)).unwrap();
+        // Two trades in the same millisecond are legitimate.
+        agg.push(t(12.0, 20)).unwrap();
+        agg.push(t(11.0, 20)).unwrap();
+        let bar = agg.flush().unwrap();
+        assert_eq!(bar.high, 12.0);
+        assert_eq!(bar.close, 11.0);
     }
 
     #[test]
