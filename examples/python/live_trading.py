@@ -20,6 +20,7 @@ import argparse
 import asyncio
 import json
 import logging
+import re
 import signal
 import sys
 from dataclasses import dataclass
@@ -35,6 +36,41 @@ except ImportError:
 
 
 BINANCE_WS = "wss://stream.binance.com:9443/stream"
+
+# Kline intervals the public Binance WebSocket API recognises.
+VALID_INTERVALS = frozenset(
+    {
+        "1s", "1m", "3m", "5m", "15m", "30m",
+        "1h", "2h", "4h", "6h", "8h", "12h",
+        "1d", "3d", "1w", "1M",
+    }
+)
+
+# A Binance symbol is strictly alphanumeric (e.g. BTCUSDT).
+_SYMBOL_RE = re.compile(r"^[A-Za-z0-9]+$")
+
+
+def validate_args(symbol: str, interval: str) -> None:
+    """Reject a symbol or interval that is not safe to splice into the WS URL.
+
+    Both values are interpolated straight into the stream name and URL, so an
+    unexpected value would otherwise produce a confusing connection failure.
+    Validating up front keeps the URL well-formed without needing to escape it.
+
+    Raises:
+        ValueError: if ``symbol`` is not strictly alphanumeric, or ``interval``
+            is not one Binance recognises.
+    """
+    if not _SYMBOL_RE.match(symbol):
+        raise ValueError(
+            f"invalid --symbol {symbol!r}: expected only letters and digits, "
+            "e.g. BTCUSDT"
+        )
+    if interval not in VALID_INTERVALS:
+        raise ValueError(
+            f"invalid --interval {interval!r}: expected one of "
+            + ", ".join(sorted(VALID_INTERVALS))
+        )
 
 
 @dataclass
@@ -109,10 +145,10 @@ async def run(symbol: str, interval: str) -> None:
                 "%s close=%.4f rsi=%s hist=%s bb=%s",
                 "BAR" if is_closed else "tick",
                 close,
-                f"{snap.rsi:.1f}" if snap.rsi else "--",
-                f"{snap.macd_hist:+.4f}" if snap.macd_hist else "--",
+                f"{snap.rsi:.1f}" if snap.rsi is not None else "--",
+                f"{snap.macd_hist:+.4f}" if snap.macd_hist is not None else "--",
                 f"{snap.bb_lower:.2f}/{snap.bb_middle:.2f}/{snap.bb_upper:.2f}"
-                if snap.bb_upper
+                if snap.bb_upper is not None
                 else "--",
             )
             emit_signal(snap, log)
@@ -128,6 +164,11 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
+    try:
+        validate_args(args.symbol, args.interval)
+    except ValueError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
     logging.basicConfig(
         level=logging.DEBUG if args.verbose else logging.INFO,
         format="%(asctime)s %(levelname)s %(message)s",
