@@ -20,6 +20,10 @@ pub enum Error {
     #[error("malformed payload: {0}")]
     Malformed(String),
 
+    /// A live-feed read exceeded its deadline.
+    #[error("read timed out")]
+    Timeout,
+
     #[cfg(feature = "live-binance")]
     #[error("websocket error: {0}")]
     WebSocket(#[from] tokio_tungstenite::tungstenite::Error),

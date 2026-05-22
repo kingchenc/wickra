@@ -18,16 +18,31 @@
 //! # Ok(()) }
 //! ```
 
+use std::time::Duration;
+
 use futures_util::SinkExt;
 use futures_util::StreamExt;
 use serde::Deserialize;
 use tokio::net::TcpStream;
+use tokio_tungstenite::tungstenite::protocol::WebSocketConfig;
 use tokio_tungstenite::tungstenite::Message;
 use tokio_tungstenite::MaybeTlsStream;
 use tokio_tungstenite::WebSocketStream;
 
 use crate::error::{Error, Result};
 use wickra_core::Candle;
+
+/// Maximum time to wait for the next WebSocket frame before treating the
+/// connection as stalled. Binance pings roughly every 3 minutes, so a healthy
+/// but quiet stream stays comfortably inside this window.
+const READ_TIMEOUT: Duration = Duration::from_secs(300);
+
+/// Upper bound on an inbound WebSocket message. Kline frames are tiny; this
+/// only caps a pathological or hostile server from forcing an unbounded alloc.
+const MAX_MESSAGE_SIZE: usize = 8 << 20;
+
+/// Upper bound on a single inbound WebSocket frame.
+const MAX_FRAME_SIZE: usize = 2 << 20;
 
 /// Supported Binance kline intervals. The `as_str` value matches Binance's
 /// wire-format strings (`"1m"`, `"5m"`, `"1h"`, etc.).
@@ -161,7 +176,14 @@ impl BinanceKlineStream {
             streams.join("/")
         );
         let url = url::Url::parse(&url).map_err(|e| Error::Malformed(e.to_string()))?;
-        let (socket, _) = tokio_tungstenite::connect_async(url.as_str()).await?;
+        let ws_config = WebSocketConfig {
+            max_message_size: Some(MAX_MESSAGE_SIZE),
+            max_frame_size: Some(MAX_FRAME_SIZE),
+            ..WebSocketConfig::default()
+        };
+        let (socket, _) =
+            tokio_tungstenite::connect_async_with_config(url.as_str(), Some(ws_config), false)
+                .await?;
         Ok(Self {
             socket,
             interval,
@@ -182,13 +204,14 @@ impl BinanceKlineStream {
             return Ok(None);
         }
         loop {
-            let msg = match self.socket.next().await {
-                Some(Ok(m)) => m,
-                Some(Err(e)) => return Err(Error::from(e)),
-                None => {
+            let msg = match tokio::time::timeout(READ_TIMEOUT, self.socket.next()).await {
+                Ok(Some(Ok(m))) => m,
+                Ok(Some(Err(e))) => return Err(Error::from(e)),
+                Ok(None) => {
                     self.closed = true;
                     return Ok(None);
                 }
+                Err(_elapsed) => return Err(Error::Timeout),
             };
             match msg {
                 Message::Text(text) => {
