@@ -1,4 +1,4 @@
-# @wickra/wickra
+# wickra
 
 Node.js bindings for the Wickra streaming-first technical indicators library.
 
@@ -7,7 +7,7 @@ Node.js bindings for the Wickra streaming-first technical indicators library.
 Once published, install per platform via the precompiled native package:
 
 ```bash
-npm install @wickra/wickra
+npm install wickra
 ```
 
 ## Build from source
@@ -26,7 +26,7 @@ produces a `wickra.<platform>-<arch>.node` binary in the package root that
 ## Usage
 
 ```js
-import { SMA, RSI, MACD, version } from '@wickra/wickra';
+import { SMA, RSI, MACD, version } from 'wickra';
 
 console.log('wickra', version());
 
