@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Wickra WASM — multi-timeframe</title>
+  <style>
+    body { font-family: ui-sans-serif, system-ui, sans-serif; max-width: 980px; margin: 2rem auto; padding: 0 1rem; color: #1d1d1d; }
+    h1 { margin-bottom: .25rem; }
+    .meta { color: #666; margin-top: 0; }
+    code { background: #f4f4f4; padding: .1rem .25rem; border-radius: .2rem; font-size: .9em; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1rem; font-variant-numeric: tabular-nums; }
+    th, td { border: 1px solid #ddd; padding: .5rem .75rem; text-align: right; }
+    th:first-child, td:first-child { text-align: left; }
+    th { background: #fafafa; }
+    button { padding: .5rem 1rem; }
+    label { display: inline-block; margin-right: .5rem; }
+    #status { margin-top: 1rem; color: #666; }
+  </style>
+</head>
+<body>
+  <h1>Wickra WASM — multi-timeframe</h1>
+  <p class="meta">
+    Loads a 1-minute OHLCV CSV, rolls it up to 5m / 15m / 1h / 4h / 1d
+    buckets in JS, and prints RSI(14), MACD(12,26,9) histogram and
+    ADX(14) per timeframe via the WebAssembly bindings. The browser
+    counterpart of <code>examples/python/multi_timeframe.py</code>,
+    <code>examples/node/multi_timeframe.js</code> and
+    <code>examples/rust/src/bin/multi_timeframe.rs</code>.
+  </p>
+
+  <p>
+    <label>1-minute dataset:
+      <input type="text" id="path" value="../data/btcusdt-1m.csv" size="40" />
+    </label>
+    <button id="go" disabled>Run</button>
+  </p>
+
+  <p id="status">Loading WASM module…</p>
+
+  <table id="results" hidden>
+    <thead>
+      <tr><th>Timeframe</th><th>bars</th><th>last_close</th><th>RSI(14)</th><th>MACD hist</th><th>ADX(14)</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script type="module">
+    import init, {
+      version, installPanicHook,
+      RSI, MACD, ADX,
+    } from "../../bindings/wasm/pkg/wickra_wasm.js";
+
+    const REQUIRED = ["timestamp", "open", "high", "low", "close", "volume"];
+    const ONE_MINUTE_MS = 60_000;
+
+    function parseCsv(text) {
+      const lines = text.split(/\r?\n/).filter((l) => l.length > 0);
+      if (lines.length === 0) throw new Error("file is empty");
+      const header = lines[0].split(",").map((s) => s.trim());
+      const missing = REQUIRED.filter((c) => !header.includes(c));
+      if (missing.length > 0) {
+        throw new Error(
+          `missing required column(s): ${missing.join(", ")}; found: ${header.join(", ")}`,
+        );
+      }
+      if (lines.length === 1) throw new Error("CSV has a header but no data rows");
+      const idx = {};
+      for (const c of REQUIRED) idx[c] = header.indexOf(c);
+      const cols = { timestamp: [], open: [], high: [], low: [], close: [], volume: [] };
+      for (let i = 1; i < lines.length; i++) {
+        const cells = lines[i].split(",");
+        for (const c of REQUIRED) {
+          const v = Number(cells[idx[c]]);
+          if (!Number.isFinite(v)) {
+            throw new Error(
+              `row ${i + 1} column '${c}' is not numeric: ${JSON.stringify(cells[idx[c]])}`,
+            );
+          }
+          cols[c].push(v);
+        }
+      }
+      return cols;
+    }
+
+    // Roll an OHLCV series up to `bucketMs`-sized buckets keyed on each
+    // bar's `floor(timestamp / bucketMs)`. Input timestamps must be
+    // monotonic non-decreasing (the bundled BTCUSDT 1m dataset is, by
+    // construction).
+    function resample(cols, bucketMs) {
+      if (cols.timestamp.length === 0) throw new Error("resample: empty series");
+      const out = { timestamp: [], open: [], high: [], low: [], close: [], volume: [] };
+      let bucketStart = Math.floor(cols.timestamp[0] / bucketMs) * bucketMs;
+      let o = cols.open[0], h = cols.high[0], l = cols.low[0],
+          c = cols.close[0], v = cols.volume[0];
+      for (let i = 1; i < cols.timestamp.length; i++) {
+        const start = Math.floor(cols.timestamp[i] / bucketMs) * bucketMs;
+        if (start === bucketStart) {
+          if (cols.high[i] > h) h = cols.high[i];
+          if (cols.low[i] < l) l = cols.low[i];
+          c = cols.close[i];
+          v += cols.volume[i];
+        } else {
+          out.timestamp.push(bucketStart);
+          out.open.push(o); out.high.push(h); out.low.push(l);
+          out.close.push(c); out.volume.push(v);
+          bucketStart = start;
+          o = cols.open[i]; h = cols.high[i]; l = cols.low[i];
+          c = cols.close[i]; v = cols.volume[i];
+        }
+      }
+      out.timestamp.push(bucketStart);
+      out.open.push(o); out.high.push(h); out.low.push(l);
+      out.close.push(c); out.volume.push(v);
+      return out;
+    }
+
+    function summarize(label, cols) {
+      if (cols.close.length === 0) {
+        return { label, bars: 0, lastClose: null, rsi: null, hist: null, adx: null };
+      }
+      const rsi = new RSI(14);
+      const macd = new MACD(12, 26, 9);
+      const adx = new ADX(14);
+      let lastRsi = null, lastHist = null, lastAdx = null;
+      for (let i = 0; i < cols.close.length; i++) {
+        const r = rsi.update(cols.close[i]);
+        if (r !== null) lastRsi = r;
+        const m = macd.update(cols.close[i]);
+        if (m) lastHist = m.histogram;
+        const a = adx.update(cols.high[i], cols.low[i], cols.close[i]);
+        if (a) lastAdx = a.adx;
+      }
+      return {
+        label,
+        bars: cols.close.length,
+        lastClose: cols.close[cols.close.length - 1],
+        rsi: lastRsi,
+        hist: lastHist,
+        adx: lastAdx,
+      };
+    }
+
+    function render(rows) {
+      const tbody = document.querySelector("#results tbody");
+      tbody.innerHTML = "";
+      for (const r of rows) {
+        const tr = document.createElement("tr");
+        if (r.bars === 0) {
+          tr.innerHTML = `<td>${r.label}</td><td colspan="5">empty</td>`;
+        } else {
+          const f = (v, p = 2) => (v === null ? "—" : v.toFixed(p));
+          const hist = r.hist === null ? "—" : `${r.hist >= 0 ? "+" : ""}${r.hist.toFixed(2)}`;
+          tr.innerHTML =
+            `<td>${r.label}</td>` +
+            `<td>${r.bars}</td>` +
+            `<td>${f(r.lastClose)}</td>` +
+            `<td>${f(r.rsi)}</td>` +
+            `<td>${hist}</td>` +
+            `<td>${f(r.adx)}</td>`;
+        }
+        tbody.appendChild(tr);
+      }
+      document.getElementById("results").hidden = false;
+    }
+
+    async function run() {
+      const path = document.getElementById("path").value;
+      const status = document.getElementById("status");
+      status.textContent = `Fetching ${path}…`;
+      try {
+        const resp = await fetch(path);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status} for ${path}`);
+        const text = await resp.text();
+        const cols = parseCsv(text);
+        status.textContent = `Resampling ${cols.close.length} 1-minute candles…`;
+        await new Promise((r) => setTimeout(r, 0));
+
+        const rows = [summarize("1m", cols)];
+        for (const [label, mins] of [
+          ["5m", 5], ["15m", 15], ["1h", 60], ["4h", 240], ["1d", 1440],
+        ]) {
+          rows.push(summarize(label, resample(cols, mins * ONE_MINUTE_MS)));
+        }
+        render(rows);
+        status.textContent = `Multi-timeframe view of ${path} ready.`;
+      } catch (err) {
+        status.textContent = `error: ${err.message || err}`;
+      }
+    }
+
+    document.getElementById("go").onclick = run;
+
+    init().then(() => {
+      installPanicHook();
+      document.getElementById("go").disabled = false;
+      document.getElementById("status").textContent =
+        `Ready — wickra ${version()}. Click "Run".`;
+    });
+  </script>
+</body>
+</html>
