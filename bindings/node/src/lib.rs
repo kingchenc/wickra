@@ -115,6 +115,7 @@ node_scalar_indicator!(
     "VerticalHorizontalFilter",
     wc::VerticalHorizontalFilter
 );
+node_scalar_indicator!(ZScoreNode, "ZScore", wc::ZScore);
 
 // ============================== MACD ==============================
 
@@ -2201,6 +2202,155 @@ impl ChoppinessIndexNode {
             );
         }
         Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== True Range ==============================
+
+#[napi(js_name = "TrueRange")]
+pub struct TrueRangeNode {
+    inner: wc::TrueRange,
+}
+
+impl Default for TrueRangeNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl TrueRangeNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::TrueRange::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, 0.0)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Chaikin Volatility ==============================
+
+#[napi(js_name = "ChaikinVolatility")]
+pub struct ChaikinVolatilityNode {
+    inner: wc::ChaikinVolatility,
+}
+
+#[napi]
+impl ChaikinVolatilityNode {
+    #[napi(constructor)]
+    pub fn new(ema_period: u32, roc_period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::ChaikinVolatility::new(ema_period as usize, roc_period as usize)
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, low, 0.0)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() {
+            return Err(NapiError::from_reason(
+                "high and low must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], low[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Linear Regression Angle ==============================
+
+#[napi(js_name = "LinRegAngle")]
+pub struct LinRegAngleNode {
+    inner: wc::LinRegAngle,
+}
+
+#[napi]
+impl LinRegAngleNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::LinRegAngle::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
     }
     #[napi]
     pub fn reset(&mut self) {

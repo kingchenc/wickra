@@ -82,6 +82,8 @@ from ._wickra import (
     ChandelierExit,
     ChandeKrollStop,
     AtrTrailingStop,
+    TrueRange,
+    ChaikinVolatility,
     # Volume
     OBV,
     VWAP,
@@ -97,6 +99,8 @@ from ._wickra import (
     WeightedClose,
     LinearRegression,
     LinRegSlope,
+    ZScore,
+    LinRegAngle,
 )
 
 __all__ = [
@@ -158,6 +162,8 @@ __all__ = [
     "ChandelierExit",
     "ChandeKrollStop",
     "AtrTrailingStop",
+    "TrueRange",
+    "ChaikinVolatility",
     # Volume
     "OBV",
     "VWAP",
@@ -173,4 +179,6 @@ __all__ = [
     "WeightedClose",
     "LinearRegression",
     "LinRegSlope",
+    "ZScore",
+    "LinRegAngle",
 ]

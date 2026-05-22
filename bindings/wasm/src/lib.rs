@@ -95,6 +95,8 @@ wasm_scalar_indicator!(WasmPercentB, "PercentB", wc::PercentB, period: usize, mu
 wasm_scalar_indicator!(WasmLinearRegression, "LinearRegression", wc::LinearRegression, period: usize);
 wasm_scalar_indicator!(WasmLinRegSlope, "LinRegSlope", wc::LinRegSlope, period: usize);
 wasm_scalar_indicator!(WasmVerticalHorizontalFilter, "VerticalHorizontalFilter", wc::VerticalHorizontalFilter, period: usize);
+wasm_scalar_indicator!(WasmZScore, "ZScore", wc::ZScore, period: usize);
+wasm_scalar_indicator!(WasmLinRegAngle, "LinRegAngle", wc::LinRegAngle, period: usize);
 
 // ---------- KAMA (three params) ----------
 
@@ -1091,6 +1093,84 @@ impl WasmChoppinessIndex {
         let mut out = Vec::with_capacity(n);
         for i in 0..n {
             let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = TrueRange)]
+pub struct WasmTrueRange {
+    inner: wc::TrueRange,
+}
+
+impl Default for WasmTrueRange {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = TrueRange)]
+impl WasmTrueRange {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmTrueRange {
+        Self {
+            inner: wc::TrueRange::new(),
+        }
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = ChaikinVolatility)]
+pub struct WasmChaikinVolatility {
+    inner: wc::ChaikinVolatility,
+}
+
+#[wasm_bindgen(js_class = ChaikinVolatility)]
+impl WasmChaikinVolatility {
+    #[wasm_bindgen(constructor)]
+    pub fn new(ema_period: usize, roc_period: usize) -> Result<WasmChaikinVolatility, JsError> {
+        Ok(Self {
+            inner: wc::ChaikinVolatility::new(ema_period, roc_period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let c = make_candle(high[i], low[i], low[i], 0.0)?;
             out.push(self.inner.update(c).unwrap_or(f64::NAN));
         }
         Ok(Float64Array::from(out.as_slice()))

@@ -310,7 +310,7 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, MOM, CMO, DPO, StdDev, UlcerIndex, VerticalHorizontalFilter, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, AwesomeOscillator, Aroon, KAMA, T3, TSI, PMO, ADL, VolumePriceTrend, ChaikinMoneyFlow, ChaikinOscillator, ForceIndex, EaseOfMovement, SuperTrend, ChandelierExit, ChandeKrollStop, AtrTrailingStop, TypicalPrice, MedianPrice, WeightedClose, LinearRegression, LinRegSlope, AcceleratorOscillator, BalanceOfPower, ChoppinessIndex, BollingerBandwidth, PercentB, NATR, HistoricalVolatility, AroonOscillator, Vortex, MassIndex, StochRSI, UltimateOscillator, PPO, Coppock, VWMA } = nativeBinding
+const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, MOM, CMO, DPO, StdDev, UlcerIndex, VerticalHorizontalFilter, ZScore, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, AwesomeOscillator, Aroon, KAMA, T3, TSI, PMO, ADL, VolumePriceTrend, ChaikinMoneyFlow, ChaikinOscillator, ForceIndex, EaseOfMovement, SuperTrend, ChandelierExit, ChandeKrollStop, AtrTrailingStop, TypicalPrice, MedianPrice, WeightedClose, LinearRegression, LinRegSlope, AcceleratorOscillator, BalanceOfPower, ChoppinessIndex, TrueRange, ChaikinVolatility, LinRegAngle, BollingerBandwidth, PercentB, NATR, HistoricalVolatility, AroonOscillator, Vortex, MassIndex, StochRSI, UltimateOscillator, PPO, Coppock, VWMA } = nativeBinding
 
 module.exports.version = version
 module.exports.SMA = SMA
@@ -331,6 +331,7 @@ module.exports.DPO = DPO
 module.exports.StdDev = StdDev
 module.exports.UlcerIndex = UlcerIndex
 module.exports.VerticalHorizontalFilter = VerticalHorizontalFilter
+module.exports.ZScore = ZScore
 module.exports.MACD = MACD
 module.exports.BollingerBands = BollingerBands
 module.exports.ATR = ATR
@@ -368,6 +369,9 @@ module.exports.LinRegSlope = LinRegSlope
 module.exports.AcceleratorOscillator = AcceleratorOscillator
 module.exports.BalanceOfPower = BalanceOfPower
 module.exports.ChoppinessIndex = ChoppinessIndex
+module.exports.TrueRange = TrueRange
+module.exports.ChaikinVolatility = ChaikinVolatility
+module.exports.LinRegAngle = LinRegAngle
 module.exports.BollingerBandwidth = BollingerBandwidth
 module.exports.PercentB = PercentB
 module.exports.NATR = NATR
