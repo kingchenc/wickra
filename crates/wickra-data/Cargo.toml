@@ -11,6 +11,12 @@ homepage.workspace = true
 readme.workspace = true
 keywords.workspace = true
 categories.workspace = true
+documentation = "https://docs.rs/wickra-data"
+
+# Render the docs on docs.rs with every feature enabled so the optional
+# live-binance feed is documented (otherwise it is hidden behind its feature).
+[package.metadata.docs.rs]
+all-features = true
 
 [lints]
 workspace = true

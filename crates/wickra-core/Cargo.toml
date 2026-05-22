@@ -11,6 +11,12 @@ homepage.workspace = true
 readme.workspace = true
 keywords.workspace = true
 categories.workspace = true
+documentation = "https://docs.rs/wickra-core"
+
+# Render the docs on docs.rs with every feature enabled so the parallel
+# (rayon-backed) batch APIs are documented.
+[package.metadata.docs.rs]
+all-features = true
 
 [lints]
 workspace = true
