@@ -31,6 +31,9 @@ fn flatten(values: Vec<Option<f64>>) -> Vec<f64> {
     values.into_iter().map(opt_to_nan).collect()
 }
 
+/// Raised instead of panicking when a NumPy input is not C-contiguous.
+const NON_CONTIGUOUS: &str = "array must be C-contiguous; pass np.ascontiguousarray(arr)";
+
 // ============================== SMA ==============================
 
 #[pyclass(name = "SMA", module = "wickra._wickra")]
@@ -54,9 +57,11 @@ impl PySma {
         &mut self,
         py: Python<'py>,
         prices: PyReadonlyArray1<'py, f64>,
-    ) -> Bound<'py, PyArray1<f64>> {
-        let slice = prices.as_slice().expect("contiguous numpy array");
-        flatten(self.inner.batch(slice)).into_pyarray_bound(py)
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -103,9 +108,11 @@ impl PyEma {
         &mut self,
         py: Python<'py>,
         prices: PyReadonlyArray1<'py, f64>,
-    ) -> Bound<'py, PyArray1<f64>> {
-        let slice = prices.as_slice().expect("contiguous numpy array");
-        flatten(self.inner.batch(slice)).into_pyarray_bound(py)
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -156,9 +163,11 @@ impl PyWma {
         &mut self,
         py: Python<'py>,
         prices: PyReadonlyArray1<'py, f64>,
-    ) -> Bound<'py, PyArray1<f64>> {
-        let slice = prices.as_slice().expect("contiguous numpy array");
-        flatten(self.inner.batch(slice)).into_pyarray_bound(py)
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -206,9 +215,11 @@ impl PyRsi {
         &mut self,
         py: Python<'py>,
         prices: PyReadonlyArray1<'py, f64>,
-    ) -> Bound<'py, PyArray1<f64>> {
-        let slice = prices.as_slice().expect("contiguous numpy array");
-        flatten(self.inner.batch(slice)).into_pyarray_bound(py)
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -261,8 +272,10 @@ impl PyMacd {
         &mut self,
         py: Python<'py>,
         prices: PyReadonlyArray1<'py, f64>,
-    ) -> Bound<'py, PyArray2<f64>> {
-        let slice = prices.as_slice().expect("contiguous numpy array");
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
         let n = slice.len();
         let mut out = vec![f64::NAN; n * 3];
         for (i, p) in slice.iter().enumerate() {
@@ -272,9 +285,9 @@ impl PyMacd {
                 out[i * 3 + 2] = o.histogram;
             }
         }
-        numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
             .expect("shape consistent")
-            .into_pyarray_bound(py)
+            .into_pyarray_bound(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize, usize) {
@@ -323,8 +336,10 @@ impl PyBb {
         &mut self,
         py: Python<'py>,
         prices: PyReadonlyArray1<'py, f64>,
-    ) -> Bound<'py, PyArray2<f64>> {
-        let slice = prices.as_slice().expect("contiguous numpy array");
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
         let n = slice.len();
         let mut out = vec![f64::NAN; n * 4];
         for (i, p) in slice.iter().enumerate() {
@@ -335,9 +350,9 @@ impl PyBb {
                 out[i * 4 + 3] = o.stddev;
             }
         }
-        numpy::ndarray::Array2::from_shape_vec((n, 4), out)
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 4), out)
             .expect("shape consistent")
-            .into_pyarray_bound(py)
+            .into_pyarray_bound(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -426,9 +441,15 @@ impl PyAtr {
         low: PyReadonlyArray1<'py, f64>,
         close: PyReadonlyArray1<'py, f64>,
     ) -> PyResult<Bound<'py, PyArray1<f64>>> {
-        let h = high.as_slice().expect("contiguous");
-        let l = low.as_slice().expect("contiguous");
-        let c = close.as_slice().expect("contiguous");
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -488,9 +509,15 @@ impl PyStoch {
         low: PyReadonlyArray1<'py, f64>,
         close: PyReadonlyArray1<'py, f64>,
     ) -> PyResult<Bound<'py, PyArray2<f64>>> {
-        let h = high.as_slice().expect("contiguous");
-        let l = low.as_slice().expect("contiguous");
-        let c = close.as_slice().expect("contiguous");
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -555,8 +582,12 @@ impl PyObv {
         close: PyReadonlyArray1<'py, f64>,
         volume: PyReadonlyArray1<'py, f64>,
     ) -> PyResult<Bound<'py, PyArray1<f64>>> {
-        let c = close.as_slice().expect("contiguous");
-        let v = volume.as_slice().expect("contiguous");
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
         if c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "close and volume must be equal length",
@@ -610,9 +641,11 @@ impl PyDema {
         &mut self,
         py: Python<'py>,
         prices: PyReadonlyArray1<'py, f64>,
-    ) -> Bound<'py, PyArray1<f64>> {
-        let s = prices.as_slice().expect("contiguous");
-        flatten(self.inner.batch(s)).into_pyarray_bound(py)
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray_bound(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -655,9 +688,11 @@ impl PyTema {
         &mut self,
         py: Python<'py>,
         prices: PyReadonlyArray1<'py, f64>,
-    ) -> Bound<'py, PyArray1<f64>> {
-        let s = prices.as_slice().expect("contiguous");
-        flatten(self.inner.batch(s)).into_pyarray_bound(py)
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray_bound(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -700,9 +735,11 @@ impl PyHma {
         &mut self,
         py: Python<'py>,
         prices: PyReadonlyArray1<'py, f64>,
-    ) -> Bound<'py, PyArray1<f64>> {
-        let s = prices.as_slice().expect("contiguous");
-        flatten(self.inner.batch(s)).into_pyarray_bound(py)
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray_bound(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -746,9 +783,11 @@ impl PyKama {
         &mut self,
         py: Python<'py>,
         prices: PyReadonlyArray1<'py, f64>,
-    ) -> Bound<'py, PyArray1<f64>> {
-        let s = prices.as_slice().expect("contiguous");
-        flatten(self.inner.batch(s)).into_pyarray_bound(py)
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray_bound(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -792,9 +831,15 @@ impl PyCci {
         low: PyReadonlyArray1<'py, f64>,
         close: PyReadonlyArray1<'py, f64>,
     ) -> PyResult<Bound<'py, PyArray1<f64>>> {
-        let h = high.as_slice().expect("contiguous");
-        let l = low.as_slice().expect("contiguous");
-        let c = close.as_slice().expect("contiguous");
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -849,9 +894,11 @@ impl PyRoc {
         &mut self,
         py: Python<'py>,
         prices: PyReadonlyArray1<'py, f64>,
-    ) -> Bound<'py, PyArray1<f64>> {
-        let s = prices.as_slice().expect("contiguous");
-        flatten(self.inner.batch(s)).into_pyarray_bound(py)
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray_bound(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -899,9 +946,15 @@ impl PyWilliamsR {
         low: PyReadonlyArray1<'py, f64>,
         close: PyReadonlyArray1<'py, f64>,
     ) -> PyResult<Bound<'py, PyArray1<f64>>> {
-        let h = high.as_slice().expect("contiguous");
-        let l = low.as_slice().expect("contiguous");
-        let c = close.as_slice().expect("contiguous");
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -955,9 +1008,15 @@ impl PyAdx {
         low: PyReadonlyArray1<'py, f64>,
         close: PyReadonlyArray1<'py, f64>,
     ) -> PyResult<Bound<'py, PyArray2<f64>>> {
-        let h = high.as_slice().expect("contiguous");
-        let l = low.as_slice().expect("contiguous");
-        let c = close.as_slice().expect("contiguous");
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -1017,10 +1076,18 @@ impl PyMfi {
         close: PyReadonlyArray1<'py, f64>,
         volume: PyReadonlyArray1<'py, f64>,
     ) -> PyResult<Bound<'py, PyArray1<f64>>> {
-        let h = high.as_slice().expect("contiguous");
-        let l = low.as_slice().expect("contiguous");
-        let c = close.as_slice().expect("contiguous");
-        let v = volume.as_slice().expect("contiguous");
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
         if h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, close, volume must be equal length",
@@ -1068,9 +1135,11 @@ impl PyTrix {
         &mut self,
         py: Python<'py>,
         prices: PyReadonlyArray1<'py, f64>,
-    ) -> Bound<'py, PyArray1<f64>> {
-        let s = prices.as_slice().expect("contiguous");
-        flatten(self.inner.batch(s)).into_pyarray_bound(py)
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray_bound(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -1111,9 +1180,15 @@ impl PyPsar {
         low: PyReadonlyArray1<'py, f64>,
         close: PyReadonlyArray1<'py, f64>,
     ) -> PyResult<Bound<'py, PyArray1<f64>>> {
-        let h = high.as_slice().expect("contiguous");
-        let l = low.as_slice().expect("contiguous");
-        let c = close.as_slice().expect("contiguous");
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -1167,9 +1242,15 @@ impl PyKeltner {
         low: PyReadonlyArray1<'py, f64>,
         close: PyReadonlyArray1<'py, f64>,
     ) -> PyResult<Bound<'py, PyArray2<f64>>> {
-        let h = high.as_slice().expect("contiguous");
-        let l = low.as_slice().expect("contiguous");
-        let c = close.as_slice().expect("contiguous");
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
         if h.len() != l.len() || l.len() != c.len() {
             return Err(PyValueError::new_err(
                 "high, low, close must be equal length",
@@ -1227,8 +1308,12 @@ impl PyDonchian {
         high: PyReadonlyArray1<'py, f64>,
         low: PyReadonlyArray1<'py, f64>,
     ) -> PyResult<Bound<'py, PyArray2<f64>>> {
-        let h = high.as_slice().expect("contiguous");
-        let l = low.as_slice().expect("contiguous");
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -1285,10 +1370,18 @@ impl PyVwap {
         close: PyReadonlyArray1<'py, f64>,
         volume: PyReadonlyArray1<'py, f64>,
     ) -> PyResult<Bound<'py, PyArray1<f64>>> {
-        let h = high.as_slice().expect("contiguous");
-        let l = low.as_slice().expect("contiguous");
-        let c = close.as_slice().expect("contiguous");
-        let v = volume.as_slice().expect("contiguous");
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
         if h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
             return Err(PyValueError::new_err(
                 "high, low, close, volume must be equal length",
@@ -1339,8 +1432,12 @@ impl PyAo {
         high: PyReadonlyArray1<'py, f64>,
         low: PyReadonlyArray1<'py, f64>,
     ) -> PyResult<Bound<'py, PyArray1<f64>>> {
-        let h = high.as_slice().expect("contiguous");
-        let l = low.as_slice().expect("contiguous");
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
@@ -1389,8 +1486,12 @@ impl PyAroon {
         high: PyReadonlyArray1<'py, f64>,
         low: PyReadonlyArray1<'py, f64>,
     ) -> PyResult<Bound<'py, PyArray2<f64>>> {
-        let h = high.as_slice().expect("contiguous");
-        let l = low.as_slice().expect("contiguous");
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
         if h.len() != l.len() {
             return Err(PyValueError::new_err("high and low must be equal length"));
         }
