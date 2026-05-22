@@ -1,9 +1,13 @@
-//! Python bindings for Wickra. Built with PyO3 and exposed under the `wickra` package.
+//! Python bindings for Wickra. Built with `PyO3` and exposed under the `wickra` package.
 //!
 //! This module is the thin glue between `wickra-core` and Python. Every indicator
-//! has both a streaming class and a batch helper that takes a NumPy array.
+//! has both a streaming class and a batch helper that takes a `NumPy` array.
 
 #![allow(clippy::needless_pass_by_value)]
+// Python `__repr__` is an instance method by protocol, so the `&self` parameter is
+// mandatory even when its body does not read state (e.g. parameterless indicators
+// like `TypicalPrice`). Clippy's `unused_self` triggers on those signatures.
+#![allow(clippy::unused_self)]
 
 use numpy::{IntoPyArray, PyArray1, PyArray2, PyReadonlyArray1};
 use pyo3::exceptions::{PyTypeError, PyValueError};
@@ -17,8 +21,8 @@ fn map_err(e: wc::Error) -> PyErr {
         wc::Error::PeriodZero
         | wc::Error::InvalidPeriod { .. }
         | wc::Error::NonPositiveMultiplier
-        | wc::Error::NonFiniteInput => PyValueError::new_err(e.to_string()),
-        wc::Error::InvalidCandle { .. } => PyValueError::new_err(e.to_string()),
+        | wc::Error::NonFiniteInput
+        | wc::Error::InvalidCandle { .. } => PyValueError::new_err(e.to_string()),
     }
 }
 
@@ -31,12 +35,12 @@ fn flatten(values: Vec<Option<f64>>) -> Vec<f64> {
     values.into_iter().map(opt_to_nan).collect()
 }
 
-/// Raised instead of panicking when a NumPy input is not C-contiguous.
+/// Raised instead of panicking when a `NumPy` input is not C-contiguous.
 const NON_CONTIGUOUS: &str = "array must be C-contiguous; pass np.ascontiguousarray(arr)";
 
 // ============================== SMA ==============================
 
-#[pyclass(name = "SMA", module = "wickra._wickra")]
+#[pyclass(name = "SMA", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PySma {
     inner: wc::Sma,
@@ -61,7 +65,7 @@ impl PySma {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -87,7 +91,7 @@ impl PySma {
 
 // ============================== EMA ==============================
 
-#[pyclass(name = "EMA", module = "wickra._wickra")]
+#[pyclass(name = "EMA", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyEma {
     inner: wc::Ema,
@@ -112,7 +116,7 @@ impl PyEma {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -142,7 +146,7 @@ impl PyEma {
 
 // ============================== WMA ==============================
 
-#[pyclass(name = "WMA", module = "wickra._wickra")]
+#[pyclass(name = "WMA", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyWma {
     inner: wc::Wma,
@@ -167,7 +171,7 @@ impl PyWma {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -193,7 +197,7 @@ impl PyWma {
 
 // ============================== RSI ==============================
 
-#[pyclass(name = "RSI", module = "wickra._wickra")]
+#[pyclass(name = "RSI", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyRsi {
     inner: wc::Rsi,
@@ -219,7 +223,7 @@ impl PyRsi {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -245,7 +249,7 @@ impl PyRsi {
 
 // ============================== MACD ==============================
 
-#[pyclass(name = "MACD", module = "wickra._wickra")]
+#[pyclass(name = "MACD", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyMacd {
     inner: wc::MacdIndicator,
@@ -287,7 +291,7 @@ impl PyMacd {
         }
         Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
             .expect("shape consistent")
-            .into_pyarray_bound(py))
+            .into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize, usize) {
@@ -310,7 +314,11 @@ impl PyMacd {
 
 // ============================== Bollinger Bands ==============================
 
-#[pyclass(name = "BollingerBands", module = "wickra._wickra")]
+#[pyclass(
+    name = "BollingerBands",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
 #[derive(Clone)]
 struct PyBb {
     inner: wc::BollingerBands,
@@ -352,7 +360,7 @@ impl PyBb {
         }
         Ok(numpy::ndarray::Array2::from_shape_vec((n, 4), out)
             .expect("shape consistent")
-            .into_pyarray_bound(py))
+            .into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -388,7 +396,7 @@ fn extract_candle(d: &Bound<'_, PyAny>) -> PyResult<wc::Candle> {
     if let Ok(tup) = d.extract::<(f64, f64, f64, f64, f64, i64)>() {
         return wc::Candle::new(tup.0, tup.1, tup.2, tup.3, tup.4, tup.5).map_err(map_err);
     }
-    if let Ok(dict) = d.downcast::<PyDict>() {
+    if let Ok(dict) = d.cast::<PyDict>() {
         let g = |k: &str| -> PyResult<f64> {
             dict.get_item(k)?
                 .ok_or_else(|| PyValueError::new_err(format!("candle missing key '{k}'")))?
@@ -414,7 +422,7 @@ fn extract_candle(d: &Bound<'_, PyAny>) -> PyResult<wc::Candle> {
     ))
 }
 
-#[pyclass(name = "ATR", module = "wickra._wickra")]
+#[pyclass(name = "ATR", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyAtr {
     inner: wc::Atr,
@@ -460,7 +468,7 @@ impl PyAtr {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -482,7 +490,7 @@ impl PyAtr {
 
 // ============================== Stochastic ==============================
 
-#[pyclass(name = "Stochastic", module = "wickra._wickra")]
+#[pyclass(name = "Stochastic", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyStoch {
     inner: wc::Stochastic,
@@ -534,7 +542,7 @@ impl PyStoch {
         }
         Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
             .expect("shape consistent")
-            .into_pyarray_bound(py))
+            .into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -557,7 +565,7 @@ impl PyStoch {
 
 // ============================== OBV ==============================
 
-#[pyclass(name = "OBV", module = "wickra._wickra")]
+#[pyclass(name = "OBV", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyObv {
     inner: wc::Obv,
@@ -598,7 +606,7 @@ impl PyObv {
             let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     #[getter]
     fn value(&self) -> Option<f64> {
@@ -620,7 +628,7 @@ impl PyObv {
 
 // ============================== DEMA ==============================
 
-#[pyclass(name = "DEMA", module = "wickra._wickra")]
+#[pyclass(name = "DEMA", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyDema {
     inner: wc::Dema,
@@ -645,7 +653,7 @@ impl PyDema {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -667,7 +675,7 @@ impl PyDema {
 
 // ============================== TEMA ==============================
 
-#[pyclass(name = "TEMA", module = "wickra._wickra")]
+#[pyclass(name = "TEMA", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyTema {
     inner: wc::Tema,
@@ -692,7 +700,7 @@ impl PyTema {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -714,7 +722,7 @@ impl PyTema {
 
 // ============================== HMA ==============================
 
-#[pyclass(name = "HMA", module = "wickra._wickra")]
+#[pyclass(name = "HMA", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyHma {
     inner: wc::Hma,
@@ -739,7 +747,7 @@ impl PyHma {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -761,7 +769,7 @@ impl PyHma {
 
 // ============================== KAMA ==============================
 
-#[pyclass(name = "KAMA", module = "wickra._wickra")]
+#[pyclass(name = "KAMA", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyKama {
     inner: wc::Kama,
@@ -787,7 +795,7 @@ impl PyKama {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -805,7 +813,7 @@ impl PyKama {
 
 // ============================== CCI ==============================
 
-#[pyclass(name = "CCI", module = "wickra._wickra")]
+#[pyclass(name = "CCI", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyCci {
     inner: wc::Cci,
@@ -850,7 +858,7 @@ impl PyCci {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -872,7 +880,7 @@ impl PyCci {
 
 // ============================== ROC ==============================
 
-#[pyclass(name = "ROC", module = "wickra._wickra")]
+#[pyclass(name = "ROC", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyRoc {
     inner: wc::Roc,
@@ -898,7 +906,7 @@ impl PyRoc {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -920,7 +928,7 @@ impl PyRoc {
 
 // ============================== Williams %R ==============================
 
-#[pyclass(name = "WilliamsR", module = "wickra._wickra")]
+#[pyclass(name = "WilliamsR", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyWilliamsR {
     inner: wc::WilliamsR,
@@ -965,7 +973,7 @@ impl PyWilliamsR {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -980,7 +988,7 @@ impl PyWilliamsR {
 
 // ============================== ADX ==============================
 
-#[pyclass(name = "ADX", module = "wickra._wickra")]
+#[pyclass(name = "ADX", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyAdx {
     inner: wc::Adx,
@@ -1034,7 +1042,7 @@ impl PyAdx {
         }
         Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
             .expect("shape consistent")
-            .into_pyarray_bound(py))
+            .into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -1049,7 +1057,7 @@ impl PyAdx {
 
 // ============================== MFI ==============================
 
-#[pyclass(name = "MFI", module = "wickra._wickra")]
+#[pyclass(name = "MFI", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyMfi {
     inner: wc::Mfi,
@@ -1098,7 +1106,7 @@ impl PyMfi {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -1113,7 +1121,7 @@ impl PyMfi {
 
 // ============================== TRIX ==============================
 
-#[pyclass(name = "TRIX", module = "wickra._wickra")]
+#[pyclass(name = "TRIX", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyTrix {
     inner: wc::Trix,
@@ -1139,7 +1147,7 @@ impl PyTrix {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -1154,7 +1162,7 @@ impl PyTrix {
 
 // ============================== PSAR ==============================
 
-#[pyclass(name = "PSAR", module = "wickra._wickra")]
+#[pyclass(name = "PSAR", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyPsar {
     inner: wc::Psar,
@@ -1199,7 +1207,7 @@ impl PyPsar {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -1214,7 +1222,7 @@ impl PyPsar {
 
 // ============================== Keltner Channels ==============================
 
-#[pyclass(name = "Keltner", module = "wickra._wickra")]
+#[pyclass(name = "Keltner", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyKeltner {
     inner: wc::Keltner,
@@ -1268,7 +1276,7 @@ impl PyKeltner {
         }
         Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
             .expect("shape consistent")
-            .into_pyarray_bound(py))
+            .into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -1283,7 +1291,7 @@ impl PyKeltner {
 
 // ============================== Donchian Channels ==============================
 
-#[pyclass(name = "Donchian", module = "wickra._wickra")]
+#[pyclass(name = "Donchian", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyDonchian {
     inner: wc::Donchian,
@@ -1329,7 +1337,7 @@ impl PyDonchian {
         }
         Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
             .expect("shape consistent")
-            .into_pyarray_bound(py))
+            .into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -1344,7 +1352,7 @@ impl PyDonchian {
 
 // ============================== VWAP ==============================
 
-#[pyclass(name = "VWAP", module = "wickra._wickra")]
+#[pyclass(name = "VWAP", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyVwap {
     inner: wc::Vwap,
@@ -1392,7 +1400,7 @@ impl PyVwap {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -1407,7 +1415,11 @@ impl PyVwap {
 
 // ============================== Awesome Oscillator ==============================
 
-#[pyclass(name = "AwesomeOscillator", module = "wickra._wickra")]
+#[pyclass(
+    name = "AwesomeOscillator",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
 #[derive(Clone)]
 struct PyAo {
     inner: wc::AwesomeOscillator,
@@ -1446,7 +1458,7 @@ impl PyAo {
             let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -1461,7 +1473,7 @@ impl PyAo {
 
 // ============================== Aroon ==============================
 
-#[pyclass(name = "Aroon", module = "wickra._wickra")]
+#[pyclass(name = "Aroon", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyAroon {
     inner: wc::Aroon,
@@ -1506,7 +1518,7 @@ impl PyAroon {
         }
         Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
             .expect("shape consistent")
-            .into_pyarray_bound(py))
+            .into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -1521,7 +1533,7 @@ impl PyAroon {
 
 // ============================== ADL ==============================
 
-#[pyclass(name = "ADL", module = "wickra._wickra")]
+#[pyclass(name = "ADL", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyAdl {
     inner: wc::Adl,
@@ -1570,7 +1582,7 @@ impl PyAdl {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     #[getter]
     fn value(&self) -> Option<f64> {
@@ -1592,7 +1604,11 @@ impl PyAdl {
 
 // ============================== Volume-Price Trend ==============================
 
-#[pyclass(name = "VolumePriceTrend", module = "wickra._wickra")]
+#[pyclass(
+    name = "VolumePriceTrend",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
 #[derive(Clone)]
 struct PyVolumePriceTrend {
     inner: wc::VolumePriceTrend,
@@ -1633,7 +1649,7 @@ impl PyVolumePriceTrend {
             let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     #[getter]
     fn value(&self) -> Option<f64> {
@@ -1655,7 +1671,11 @@ impl PyVolumePriceTrend {
 
 // ============================== Bollinger Bandwidth ==============================
 
-#[pyclass(name = "BollingerBandwidth", module = "wickra._wickra")]
+#[pyclass(
+    name = "BollingerBandwidth",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
 #[derive(Clone)]
 struct PyBollingerBandwidth {
     inner: wc::BollingerBandwidth,
@@ -1681,7 +1701,7 @@ impl PyBollingerBandwidth {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1715,7 +1735,7 @@ impl PyBollingerBandwidth {
 
 // ============================== Percent B ==============================
 
-#[pyclass(name = "PercentB", module = "wickra._wickra")]
+#[pyclass(name = "PercentB", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyPercentB {
     inner: wc::PercentB,
@@ -1741,7 +1761,7 @@ impl PyPercentB {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1775,7 +1795,7 @@ impl PyPercentB {
 
 // ============================== NATR ==============================
 
-#[pyclass(name = "NATR", module = "wickra._wickra")]
+#[pyclass(name = "NATR", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyNatr {
     inner: wc::Natr,
@@ -1821,7 +1841,7 @@ impl PyNatr {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1847,7 +1867,7 @@ impl PyNatr {
 
 // ============================== StdDev ==============================
 
-#[pyclass(name = "StdDev", module = "wickra._wickra")]
+#[pyclass(name = "StdDev", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyStdDev {
     inner: wc::StdDev,
@@ -1873,7 +1893,7 @@ impl PyStdDev {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1899,7 +1919,7 @@ impl PyStdDev {
 
 // ============================== Ulcer Index ==============================
 
-#[pyclass(name = "UlcerIndex", module = "wickra._wickra")]
+#[pyclass(name = "UlcerIndex", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyUlcerIndex {
     inner: wc::UlcerIndex,
@@ -1925,7 +1945,7 @@ impl PyUlcerIndex {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1951,7 +1971,11 @@ impl PyUlcerIndex {
 
 // ============================== Historical Volatility ==============================
 
-#[pyclass(name = "HistoricalVolatility", module = "wickra._wickra")]
+#[pyclass(
+    name = "HistoricalVolatility",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
 #[derive(Clone)]
 struct PyHistoricalVolatility {
     inner: wc::HistoricalVolatility,
@@ -1977,7 +2001,7 @@ impl PyHistoricalVolatility {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -2004,7 +2028,11 @@ impl PyHistoricalVolatility {
 
 // ============================== Aroon Oscillator ==============================
 
-#[pyclass(name = "AroonOscillator", module = "wickra._wickra")]
+#[pyclass(
+    name = "AroonOscillator",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
 #[derive(Clone)]
 struct PyAroonOscillator {
     inner: wc::AroonOscillator,
@@ -2044,7 +2072,7 @@ impl PyAroonOscillator {
             let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2070,7 +2098,7 @@ impl PyAroonOscillator {
 
 // ============================== Vortex ==============================
 
-#[pyclass(name = "Vortex", module = "wickra._wickra")]
+#[pyclass(name = "Vortex", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyVortex {
     inner: wc::Vortex,
@@ -2123,7 +2151,7 @@ impl PyVortex {
         }
         Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
             .expect("shape consistent")
-            .into_pyarray_bound(py))
+            .into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2145,7 +2173,7 @@ impl PyVortex {
 
 // ============================== Mass Index ==============================
 
-#[pyclass(name = "MassIndex", module = "wickra._wickra")]
+#[pyclass(name = "MassIndex", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyMassIndex {
     inner: wc::MassIndex,
@@ -2185,7 +2213,7 @@ impl PyMassIndex {
             let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -2212,7 +2240,7 @@ impl PyMassIndex {
 
 // ============================== PPO ==============================
 
-#[pyclass(name = "PPO", module = "wickra._wickra")]
+#[pyclass(name = "PPO", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyPpo {
     inner: wc::Ppo,
@@ -2238,7 +2266,7 @@ impl PyPpo {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -2265,7 +2293,7 @@ impl PyPpo {
 
 // ============================== DPO ==============================
 
-#[pyclass(name = "DPO", module = "wickra._wickra")]
+#[pyclass(name = "DPO", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyDpo {
     inner: wc::Dpo,
@@ -2291,7 +2319,7 @@ impl PyDpo {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2321,7 +2349,7 @@ impl PyDpo {
 
 // ============================== Coppock ==============================
 
-#[pyclass(name = "Coppock", module = "wickra._wickra")]
+#[pyclass(name = "Coppock", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyCoppock {
     inner: wc::Coppock,
@@ -2347,7 +2375,7 @@ impl PyCoppock {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize, usize) {
@@ -2374,7 +2402,7 @@ impl PyCoppock {
 
 // ============================== StochRSI ==============================
 
-#[pyclass(name = "StochRSI", module = "wickra._wickra")]
+#[pyclass(name = "StochRSI", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyStochRsi {
     inner: wc::StochRsi,
@@ -2400,7 +2428,7 @@ impl PyStochRsi {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -2427,7 +2455,11 @@ impl PyStochRsi {
 
 // ============================== Ultimate Oscillator ==============================
 
-#[pyclass(name = "UltimateOscillator", module = "wickra._wickra")]
+#[pyclass(
+    name = "UltimateOscillator",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
 #[derive(Clone)]
 struct PyUltimateOscillator {
     inner: wc::UltimateOscillator,
@@ -2473,7 +2505,7 @@ impl PyUltimateOscillator {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize, usize) {
@@ -2500,7 +2532,7 @@ impl PyUltimateOscillator {
 
 // ============================== MOM ==============================
 
-#[pyclass(name = "MOM", module = "wickra._wickra")]
+#[pyclass(name = "MOM", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyMom {
     inner: wc::Mom,
@@ -2526,7 +2558,7 @@ impl PyMom {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2552,7 +2584,7 @@ impl PyMom {
 
 // ============================== CMO ==============================
 
-#[pyclass(name = "CMO", module = "wickra._wickra")]
+#[pyclass(name = "CMO", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyCmo {
     inner: wc::Cmo,
@@ -2578,7 +2610,7 @@ impl PyCmo {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2604,7 +2636,7 @@ impl PyCmo {
 
 // ============================== TSI ==============================
 
-#[pyclass(name = "TSI", module = "wickra._wickra")]
+#[pyclass(name = "TSI", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyTsi {
     inner: wc::Tsi,
@@ -2630,7 +2662,7 @@ impl PyTsi {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -2657,7 +2689,7 @@ impl PyTsi {
 
 // ============================== PMO ==============================
 
-#[pyclass(name = "PMO", module = "wickra._wickra")]
+#[pyclass(name = "PMO", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyPmo {
     inner: wc::Pmo,
@@ -2683,7 +2715,7 @@ impl PyPmo {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -2710,7 +2742,7 @@ impl PyPmo {
 
 // ============================== ZLEMA ==============================
 
-#[pyclass(name = "ZLEMA", module = "wickra._wickra")]
+#[pyclass(name = "ZLEMA", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyZlema {
     inner: wc::Zlema,
@@ -2735,7 +2767,7 @@ impl PyZlema {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2765,7 +2797,7 @@ impl PyZlema {
 
 // ============================== T3 ==============================
 
-#[pyclass(name = "T3", module = "wickra._wickra")]
+#[pyclass(name = "T3", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyT3 {
     inner: wc::T3,
@@ -2791,7 +2823,7 @@ impl PyT3 {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2825,7 +2857,7 @@ impl PyT3 {
 
 // ============================== VWMA ==============================
 
-#[pyclass(name = "VWMA", module = "wickra._wickra")]
+#[pyclass(name = "VWMA", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyVwma {
     inner: wc::Vwma,
@@ -2866,7 +2898,7 @@ impl PyVwma {
             let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2892,7 +2924,7 @@ impl PyVwma {
 
 // ============================== SMMA ==============================
 
-#[pyclass(name = "SMMA", module = "wickra._wickra")]
+#[pyclass(name = "SMMA", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PySmma {
     inner: wc::Smma,
@@ -2917,7 +2949,7 @@ impl PySmma {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2943,7 +2975,7 @@ impl PySmma {
 
 // ============================== TRIMA ==============================
 
-#[pyclass(name = "TRIMA", module = "wickra._wickra")]
+#[pyclass(name = "TRIMA", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyTrima {
     inner: wc::Trima,
@@ -2968,7 +3000,7 @@ impl PyTrima {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2994,7 +3026,11 @@ impl PyTrima {
 
 // ============================== Chaikin Money Flow ==============================
 
-#[pyclass(name = "ChaikinMoneyFlow", module = "wickra._wickra")]
+#[pyclass(
+    name = "ChaikinMoneyFlow",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
 #[derive(Clone)]
 struct PyChaikinMoneyFlow {
     inner: wc::ChaikinMoneyFlow,
@@ -3044,7 +3080,7 @@ impl PyChaikinMoneyFlow {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3066,7 +3102,11 @@ impl PyChaikinMoneyFlow {
 
 // ============================== Chaikin Oscillator ==============================
 
-#[pyclass(name = "ChaikinOscillator", module = "wickra._wickra")]
+#[pyclass(
+    name = "ChaikinOscillator",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
 #[derive(Clone)]
 struct PyChaikinOscillator {
     inner: wc::ChaikinOscillator,
@@ -3116,7 +3156,7 @@ impl PyChaikinOscillator {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -3139,7 +3179,7 @@ impl PyChaikinOscillator {
 
 // ============================== Force Index ==============================
 
-#[pyclass(name = "ForceIndex", module = "wickra._wickra")]
+#[pyclass(name = "ForceIndex", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyForceIndex {
     inner: wc::ForceIndex,
@@ -3181,7 +3221,7 @@ impl PyForceIndex {
             let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3203,7 +3243,11 @@ impl PyForceIndex {
 
 // ============================== Ease of Movement ==============================
 
-#[pyclass(name = "EaseOfMovement", module = "wickra._wickra")]
+#[pyclass(
+    name = "EaseOfMovement",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
 #[derive(Clone)]
 struct PyEaseOfMovement {
     inner: wc::EaseOfMovement,
@@ -3249,7 +3293,7 @@ impl PyEaseOfMovement {
             let candle = wc::Candle::new(l[i], h[i], l[i], l[i], v[i], 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3279,7 +3323,7 @@ impl PyEaseOfMovement {
 
 // ============================== SuperTrend ==============================
 
-#[pyclass(name = "SuperTrend", module = "wickra._wickra")]
+#[pyclass(name = "SuperTrend", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PySuperTrend {
     inner: wc::SuperTrend,
@@ -3332,7 +3376,7 @@ impl PySuperTrend {
         }
         Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
             .expect("shape consistent")
-            .into_pyarray_bound(py))
+            .into_pyarray(py))
     }
     #[getter]
     fn params(&self) -> (usize, f64) {
@@ -3355,7 +3399,11 @@ impl PySuperTrend {
 
 // ============================== Chandelier Exit ==============================
 
-#[pyclass(name = "ChandelierExit", module = "wickra._wickra")]
+#[pyclass(
+    name = "ChandelierExit",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
 #[derive(Clone)]
 struct PyChandelierExit {
     inner: wc::ChandelierExit,
@@ -3408,7 +3456,7 @@ impl PyChandelierExit {
         }
         Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
             .expect("shape consistent")
-            .into_pyarray_bound(py))
+            .into_pyarray(py))
     }
     #[getter]
     fn params(&self) -> (usize, f64) {
@@ -3431,7 +3479,11 @@ impl PyChandelierExit {
 
 // ============================== Chande Kroll Stop ==============================
 
-#[pyclass(name = "ChandeKrollStop", module = "wickra._wickra")]
+#[pyclass(
+    name = "ChandeKrollStop",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
 #[derive(Clone)]
 struct PyChandeKrollStop {
     inner: wc::ChandeKrollStop,
@@ -3485,7 +3537,7 @@ impl PyChandeKrollStop {
         }
         Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
             .expect("shape consistent")
-            .into_pyarray_bound(py))
+            .into_pyarray(py))
     }
     #[getter]
     fn params(&self) -> (usize, f64, usize) {
@@ -3510,7 +3562,11 @@ impl PyChandeKrollStop {
 
 // ============================== ATR Trailing Stop ==============================
 
-#[pyclass(name = "AtrTrailingStop", module = "wickra._wickra")]
+#[pyclass(
+    name = "AtrTrailingStop",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
 #[derive(Clone)]
 struct PyAtrTrailingStop {
     inner: wc::AtrTrailingStop,
@@ -3556,7 +3612,7 @@ impl PyAtrTrailingStop {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     #[getter]
     fn params(&self) -> (usize, f64) {
@@ -3579,7 +3635,7 @@ impl PyAtrTrailingStop {
 
 // ============================== Typical Price ==============================
 
-#[pyclass(name = "TypicalPrice", module = "wickra._wickra")]
+#[pyclass(name = "TypicalPrice", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyTypicalPrice {
     inner: wc::TypicalPrice,
@@ -3624,7 +3680,7 @@ impl PyTypicalPrice {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -3642,7 +3698,7 @@ impl PyTypicalPrice {
 
 // ============================== Median Price ==============================
 
-#[pyclass(name = "MedianPrice", module = "wickra._wickra")]
+#[pyclass(name = "MedianPrice", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyMedianPrice {
     inner: wc::MedianPrice,
@@ -3681,7 +3737,7 @@ impl PyMedianPrice {
             let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -3699,7 +3755,7 @@ impl PyMedianPrice {
 
 // ============================== Weighted Close ==============================
 
-#[pyclass(name = "WeightedClose", module = "wickra._wickra")]
+#[pyclass(name = "WeightedClose", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyWeightedClose {
     inner: wc::WeightedClose,
@@ -3744,7 +3800,7 @@ impl PyWeightedClose {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -3762,7 +3818,11 @@ impl PyWeightedClose {
 
 // ============================== Linear Regression ==============================
 
-#[pyclass(name = "LinearRegression", module = "wickra._wickra")]
+#[pyclass(
+    name = "LinearRegression",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
 #[derive(Clone)]
 struct PyLinearRegression {
     inner: wc::LinearRegression,
@@ -3788,7 +3848,7 @@ impl PyLinearRegression {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3810,7 +3870,7 @@ impl PyLinearRegression {
 
 // ============================== Linear Regression Slope ==============================
 
-#[pyclass(name = "LinRegSlope", module = "wickra._wickra")]
+#[pyclass(name = "LinRegSlope", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyLinRegSlope {
     inner: wc::LinRegSlope,
@@ -3836,7 +3896,7 @@ impl PyLinRegSlope {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3858,7 +3918,11 @@ impl PyLinRegSlope {
 
 // ============================== Accelerator Oscillator ==============================
 
-#[pyclass(name = "AcceleratorOscillator", module = "wickra._wickra")]
+#[pyclass(
+    name = "AcceleratorOscillator",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
 #[derive(Clone)]
 struct PyAcceleratorOscillator {
     inner: wc::AcceleratorOscillator,
@@ -3899,7 +3963,7 @@ impl PyAcceleratorOscillator {
             let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     #[getter]
     fn params(&self) -> (usize, usize, usize) {
@@ -3922,7 +3986,11 @@ impl PyAcceleratorOscillator {
 
 // ============================== Balance of Power ==============================
 
-#[pyclass(name = "BalanceOfPower", module = "wickra._wickra")]
+#[pyclass(
+    name = "BalanceOfPower",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
 #[derive(Clone)]
 struct PyBalanceOfPower {
     inner: wc::BalanceOfPower,
@@ -3971,7 +4039,7 @@ impl PyBalanceOfPower {
             let candle = wc::Candle::new(o[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -3989,7 +4057,11 @@ impl PyBalanceOfPower {
 
 // ============================== Choppiness Index ==============================
 
-#[pyclass(name = "ChoppinessIndex", module = "wickra._wickra")]
+#[pyclass(
+    name = "ChoppinessIndex",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
 #[derive(Clone)]
 struct PyChoppinessIndex {
     inner: wc::ChoppinessIndex,
@@ -4035,7 +4107,7 @@ impl PyChoppinessIndex {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4057,7 +4129,11 @@ impl PyChoppinessIndex {
 
 // ============================== Vertical Horizontal Filter ==============================
 
-#[pyclass(name = "VerticalHorizontalFilter", module = "wickra._wickra")]
+#[pyclass(
+    name = "VerticalHorizontalFilter",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
 #[derive(Clone)]
 struct PyVerticalHorizontalFilter {
     inner: wc::VerticalHorizontalFilter,
@@ -4083,7 +4159,7 @@ impl PyVerticalHorizontalFilter {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4105,7 +4181,7 @@ impl PyVerticalHorizontalFilter {
 
 // ============================== True Range ==============================
 
-#[pyclass(name = "TrueRange", module = "wickra._wickra")]
+#[pyclass(name = "TrueRange", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyTrueRange {
     inner: wc::TrueRange,
@@ -4150,7 +4226,7 @@ impl PyTrueRange {
             let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -4168,7 +4244,11 @@ impl PyTrueRange {
 
 // ============================== Chaikin Volatility ==============================
 
-#[pyclass(name = "ChaikinVolatility", module = "wickra._wickra")]
+#[pyclass(
+    name = "ChaikinVolatility",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
 #[derive(Clone)]
 struct PyChaikinVolatility {
     inner: wc::ChaikinVolatility,
@@ -4208,7 +4288,7 @@ impl PyChaikinVolatility {
             let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
             out.push(self.inner.update(candle).unwrap_or(f64::NAN));
         }
-        Ok(out.into_pyarray_bound(py))
+        Ok(out.into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -4231,7 +4311,7 @@ impl PyChaikinVolatility {
 
 // ============================== Z-Score ==============================
 
-#[pyclass(name = "ZScore", module = "wickra._wickra")]
+#[pyclass(name = "ZScore", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyZScore {
     inner: wc::ZScore,
@@ -4257,7 +4337,7 @@ impl PyZScore {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4279,7 +4359,7 @@ impl PyZScore {
 
 // ============================== Linear Regression Angle ==============================
 
-#[pyclass(name = "LinRegAngle", module = "wickra._wickra")]
+#[pyclass(name = "LinRegAngle", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyLinRegAngle {
     inner: wc::LinRegAngle,
@@ -4305,7 +4385,7 @@ impl PyLinRegAngle {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray_bound(py))
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {

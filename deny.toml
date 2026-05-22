@@ -9,15 +9,6 @@ all-features = true
 # Fail on any security advisory or unmaintained/unsound crate in the tree.
 version = 2
 yanked = "deny"
-ignore = [
-    # RUSTSEC-2025-0020 — PyString::from_object buffer overflow in pyo3 0.22.
-    # Reached only through the python binding (numpy 0.22 -> pyo3 0.22). The
-    # fix requires upgrading pyo3 to >=0.24.1, which also forces a numpy
-    # upgrade and a Bound-API migration of bindings/python — a separate,
-    # tracked piece of work. The published Rust crates and the Node/WASM
-    # bindings do not depend on pyo3.
-    { id = "RUSTSEC-2025-0020", reason = "pyo3 0.22 upgrade tracked separately; affects only bindings/python" },
-]
 
 [bans]
 # Catch accidental duplicate versions and wildcard ("*") version requirements.

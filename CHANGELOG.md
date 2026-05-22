@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+- Upgrade `pyo3` (0.22 → 0.28) and `numpy` (0.22 → 0.28) in the Python binding.
+  Fixes [RUSTSEC-2025-0020](https://rustsec.org/advisories/RUSTSEC-2025-0020) —
+  a buffer overflow in `PyString::from_object` that affected the published
+  Python wheels. The `cargo-deny` ignore entry that previously suppressed the
+  advisory has been removed; `cargo deny check` is now clean without
+  suppression. Migrated `into_pyarray_bound` to `into_pyarray`,
+  `downcast::<PyDict>` to `cast::<PyDict>`, and opted every `#[pyclass]` out of
+  the deprecated automatic `FromPyObject` derive via `skip_from_py_object`.
+
 ### Added
 - 46 new technical indicators, taking the library from 25 to 71 and
   reorganising the catalogue into **eight families**, each with at least five
