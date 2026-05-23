@@ -107,6 +107,21 @@ mod tests {
         assert!(AroonOscillator::new(0).is_err());
     }
 
+    /// Cover the const accessors `period` / `value` (57-64) and the
+    /// Indicator-impl `name` body (90-92). `warmup_period` is covered
+    /// already by `warmup_period_matches_aroon`.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut osc = AroonOscillator::new(7).unwrap();
+        assert_eq!(osc.period(), 7);
+        assert_eq!(osc.name(), "AroonOscillator");
+        assert_eq!(osc.value(), None);
+        for i in 0..8 {
+            osc.update(candle(100.0 + f64::from(i), 90.0, 95.0, i64::from(i)));
+        }
+        assert!(osc.value().is_some());
+    }
+
     #[test]
     fn pure_uptrend_yields_plus_100() {
         // Every bar a fresh high, no fresh low: AroonUp = 100, AroonDown = 0.
