@@ -153,6 +153,21 @@ mod tests {
         assert!(matches!(MassIndex::new(9, 0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessors `periods` / `value` (80-87) and the
+    /// Indicator-impl `name` body (134-136). `warmup_period` is already
+    /// covered by `warmup_period_formula`.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut mi = MassIndex::new(9, 25).unwrap();
+        assert_eq!(mi.periods(), (9, 25));
+        assert_eq!(mi.name(), "MassIndex");
+        assert_eq!(mi.value(), None);
+        for i in 0..mi.warmup_period() {
+            mi.update(candle(100.0, 2.0, i64::try_from(i).unwrap()));
+        }
+        assert!(mi.value().is_some());
+    }
+
     #[test]
     fn warmup_period_formula() {
         let mi = MassIndex::new(9, 25).unwrap();
