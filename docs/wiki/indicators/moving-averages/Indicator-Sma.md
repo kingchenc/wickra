@@ -23,7 +23,12 @@ SMA_t = (1 / n) * Σ_{i=0}^{n-1} price_{t-i}
 
 where `n = period`. Maintained incrementally as `sum -= window.pop_front();
 sum += new_price; out = sum / n`, so `update` is O(1) regardless of
-`period`.
+`period`. To keep f64 rounding error bounded on long-running streams (where
+catastrophic cancellation between add/subtract pairs could otherwise
+accumulate), the running `sum` is reseeded from the live window every
+`16 · period` updates — still amortised O(1) (`O(period)` work amortised
+over `O(period)` updates), zero observable change on inputs that did not
+drift to begin with.
 
 ## Parameters
 

@@ -57,6 +57,16 @@ step. Because `Input = f64` it can sit inside a [`Chain`](../../Indicator-Chaini
 `LinearRegression::new(14).warmup_period() == 14`. The first value lands once
 the window holds a full `period` prices — on input index `period − 1`.
 
+## Complexity
+
+Each `update` is **O(1)**: the `Σx` and `Σxx` terms depend only on `period`
+and are precomputed once at construction, and `Σy` / `Σxy` are maintained
+incrementally as the window slides via the closed-form identity
+`new_Σxy = old_Σxy − old_Σy + popped_y₀` (then `Σxy += (n − 1) · new_value`
+and `Σy += new_value`). The same applies to
+[`LinRegSlope`](Indicator-LinRegSlope.md) and
+[`LinRegAngle`](Indicator-LinRegAngle.md).
+
 ## Edge cases
 
 - **`period < 2`.** Rejected at construction — a regression line is undefined
@@ -65,7 +75,8 @@ the window holds a full `period` prices — on input index `period − 1`.
   the endpoint equals the current value (`perfect_line_returns_current_value`
   pins this).
 - **Constant series.** A flat input returns that constant.
-- **Reset.** `lr.reset()` clears the rolling window.
+- **Reset.** `lr.reset()` clears the rolling window and the running `Σy` /
+  `Σxy` accumulators.
 
 ## Examples
 

@@ -31,7 +31,11 @@ lower  = mean - multiplier * stddev
 
 Wickra computes `var` from the streaming sums `Σ x` and `Σ x²` as
 `Σx²/n - (Σx/n)²` and clamps to `0.0` to absorb catastrophic cancellation on
-near-constant inputs (`crates/wickra-core/src/indicators/bollinger.rs:82`).
+near-constant inputs (`crates/wickra-core/src/indicators/bollinger.rs`). On
+long-running streams the running `Σ x` and `Σ x²` are reseeded from the live
+window every `16 · period` updates — amortised O(1), bounds the cancellation
+drift to roughly `16 · period · ULP · max(|x|²)` (sub-picodollar on
+real-world price scales).
 
 ## Parameters
 
