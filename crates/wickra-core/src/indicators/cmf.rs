@@ -214,6 +214,34 @@ mod tests {
         assert!(matches!(ChaikinMoneyFlow::new(0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessor `period` (71-73) and the Indicator-impl
+    /// `name` body (124-126). `warmup_period` is covered elsewhere.
+    #[test]
+    fn accessors_and_metadata() {
+        let cmf = ChaikinMoneyFlow::new(20).unwrap();
+        assert_eq!(cmf.period(), 20);
+        assert_eq!(cmf.name(), "CMF");
+    }
+
+    /// Cover the `range == 0.0` defensive branch (line 84). All other
+    /// tests use H != L candles; feed all-flat candles (H == L) so the
+    /// MFV computation must take the zero-range fallback and emit MFV = 0.
+    #[test]
+    fn zero_range_candle_contributes_zero_mfv() {
+        let mut cmf = ChaikinMoneyFlow::new(3).unwrap();
+        let candles: Vec<Candle> = (0..5)
+            .map(|i| Candle::new(10.0, 10.0, 10.0, 10.0, 5.0, i).unwrap())
+            .collect();
+        let last = cmf
+            .batch(&candles)
+            .into_iter()
+            .flatten()
+            .last()
+            .expect("emits");
+        // Every bar contributed 0 to mfv_sum, so the ratio is 0.
+        assert_eq!(last, 0.0);
+    }
+
     #[test]
     fn reset_clears_state() {
         let candles: Vec<Candle> = (0..20)
