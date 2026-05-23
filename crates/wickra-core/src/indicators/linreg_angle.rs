@@ -138,6 +138,17 @@ mod tests {
         assert!(LinRegAngle::new(2).is_ok());
     }
 
+    /// Cover the const accessor `period` (50-52) and the Indicator-impl
+    /// `warmup_period` (67-69) + `name` (75-77). Existing tests inspect
+    /// angle output but never query the metadata.
+    #[test]
+    fn accessors_and_metadata() {
+        let a = LinRegAngle::new(14).unwrap();
+        assert_eq!(a.period(), 14);
+        assert_eq!(a.warmup_period(), 14);
+        assert_eq!(a.name(), "LinRegAngle");
+    }
+
     #[test]
     fn reset_clears_state() {
         let mut angle = LinRegAngle::new(5).unwrap();

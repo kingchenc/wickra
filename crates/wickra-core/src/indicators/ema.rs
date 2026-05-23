@@ -165,6 +165,18 @@ mod tests {
         assert!(matches!(Ema::new(0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessor `period` (74-77) and the Indicator-impl
+    /// `warmup_period` (123-125) + `name` (131-133). `alpha` and `value`
+    /// are exercised by other tests and downstream consumers; only the
+    /// three metadata methods were dead.
+    #[test]
+    fn accessors_and_metadata() {
+        let ema = Ema::new(14).unwrap();
+        assert_eq!(ema.period(), 14);
+        assert_eq!(ema.warmup_period(), 14);
+        assert_eq!(ema.name(), "EMA");
+    }
+
     #[test]
     fn warmup_returns_none_until_seed() {
         let mut ema = Ema::new(3).unwrap();

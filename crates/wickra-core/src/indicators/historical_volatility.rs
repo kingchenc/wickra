@@ -173,6 +173,21 @@ mod tests {
         ));
     }
 
+    /// Cover the const accessors `periods` / `value` (80-88) and the
+    /// Indicator-impl `name` body (153-155). Existing tests inspect HV
+    /// output but never query the metadata.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut hv = HistoricalVolatility::new(20, 252).unwrap();
+        assert_eq!(hv.periods(), (20, 252));
+        assert_eq!(hv.name(), "HistoricalVolatility");
+        assert_eq!(hv.value(), None);
+        for i in 1..=hv.warmup_period() {
+            hv.update(100.0 + f64::from(u32::try_from(i).unwrap()));
+        }
+        assert!(hv.value().is_some());
+    }
+
     #[test]
     fn new_rejects_period_one() {
         assert!(matches!(
