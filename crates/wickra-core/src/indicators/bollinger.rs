@@ -172,20 +172,23 @@ mod tests {
     use crate::traits::BatchExt;
     use approx::assert_relative_eq;
 
-    fn naive(prices: &[f64], period: usize, mult: f64) -> Option<BollingerOutput> {
-        if prices.len() < period {
-            return None;
-        }
+    fn naive(prices: &[f64], period: usize, mult: f64) -> BollingerOutput {
+        assert!(
+            prices.len() >= period,
+            "naive: need at least `period` prices (got {}, period {})",
+            prices.len(),
+            period,
+        );
         let w = &prices[prices.len() - period..];
         let mean = w.iter().sum::<f64>() / period as f64;
         let var = w.iter().map(|x| (x - mean).powi(2)).sum::<f64>() / period as f64;
         let s = var.sqrt();
-        Some(BollingerOutput {
+        BollingerOutput {
             upper: mean + mult * s,
             middle: mean,
             lower: mean - mult * s,
             stddev: s,
-        })
+        }
     }
 
     #[test]
@@ -210,6 +213,20 @@ mod tests {
             BollingerBands::new(20, f64::NAN),
             Err(Error::NonPositiveMultiplier)
         ));
+    }
+
+    /// Cover the convenience constructor `BollingerBands::classic()` plus the
+    /// const accessors `period` / `multiplier` and the Indicator-impl
+    /// metadata methods `warmup_period` / `name`. Existing tests never
+    /// invoked `classic()` (every test passed explicit parameters to
+    /// `new`) and never queried any of the four getters.
+    #[test]
+    fn classic_and_accessors_and_metadata() {
+        let bb = BollingerBands::classic();
+        assert_eq!(bb.period(), 20);
+        assert_relative_eq!(bb.multiplier(), 2.0, epsilon = 1e-12);
+        assert_eq!(bb.warmup_period(), 20);
+        assert_eq!(bb.name(), "BollingerBands");
     }
 
     #[test]
@@ -241,7 +258,7 @@ mod tests {
         let out = bb.batch(&prices);
         for i in 19..prices.len() {
             let got = out[i].unwrap();
-            let want = naive(&prices[..=i], 20, 2.0).unwrap();
+            let want = naive(&prices[..=i], 20, 2.0);
             assert_relative_eq!(got.middle, want.middle, epsilon = 1e-9);
             assert_relative_eq!(got.stddev, want.stddev, epsilon = 1e-9);
             assert_relative_eq!(got.upper, want.upper, epsilon = 1e-9);
@@ -301,8 +318,7 @@ mod tests {
             }
             window.push_back(v);
         }
-        let scratch =
-            naive(&window.iter().copied().collect::<Vec<_>>(), period, mult).expect("warmed up");
+        let scratch = naive(&window.iter().copied().collect::<Vec<_>>(), period, mult);
         let got = last.expect("warmed up");
         assert!(
             (got.middle - scratch.middle).abs() < 1e-3,
