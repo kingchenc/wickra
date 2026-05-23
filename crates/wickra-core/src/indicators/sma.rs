@@ -251,7 +251,7 @@ mod tests {
         // `RECOMPUTE_EVERY * period * 5` updates → recompute fires 5+ times.
         let n_updates = 16 * period * 5;
         for i in 0..n_updates {
-            let v = if i.is_multiple_of(2) { 1e9 } else { 1.0 };
+            let v = if i % 2 == 0 { 1e9 } else { 1.0 };
             sma.update(v);
             if window.len() == period {
                 window.pop_front();

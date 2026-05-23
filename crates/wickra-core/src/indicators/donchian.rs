@@ -83,7 +83,7 @@ impl Indicator for Donchian {
             .fold(f64::INFINITY, f64::min);
         Some(DonchianOutput {
             upper,
-            middle: (upper + lower) / 2.0,
+            middle: f64::midpoint(upper, lower),
             lower,
         })
     }

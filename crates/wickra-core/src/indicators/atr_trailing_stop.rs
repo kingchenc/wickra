@@ -139,7 +139,7 @@ mod tests {
     use approx::assert_relative_eq;
 
     fn c(high: f64, low: f64, close: f64, ts: i64) -> Candle {
-        Candle::new((high + low) / 2.0, high, low, close, 1.0, ts).unwrap()
+        Candle::new(f64::midpoint(high, low), high, low, close, 1.0, ts).unwrap()
     }
 
     #[test]
