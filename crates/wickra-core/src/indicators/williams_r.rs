@@ -155,6 +155,35 @@ mod tests {
         assert!(WilliamsR::new(0).is_err());
     }
 
+    /// Cover the const accessor `period` (49-51) and the Indicator-impl
+    /// `warmup_period` (87-89) + `name` (95-97). Existing tests never
+    /// inspect these metadata methods.
+    #[test]
+    fn accessors_and_metadata() {
+        let w = WilliamsR::new(14).unwrap();
+        assert_eq!(w.period(), 14);
+        assert_eq!(w.warmup_period(), 14);
+        assert_eq!(w.name(), "WilliamsR");
+    }
+
+    /// Cover the `range == 0.0` defensive branch (line 78). All other
+    /// tests use H != L candles so the lookback range is always positive.
+    /// Feed a stream of perfectly flat candles (H == L == close) — the
+    /// lookback hi/lo coincide and the divide-by-zero guard fires,
+    /// returning the neutral mid-range value -50.0.
+    #[test]
+    fn zero_range_yields_minus_fifty() {
+        let candles: Vec<Candle> = (0..5).map(|_| c(10.0, 10.0, 10.0)).collect();
+        let mut w = WilliamsR::new(3).unwrap();
+        let last = w
+            .batch(&candles)
+            .into_iter()
+            .flatten()
+            .last()
+            .expect("emits");
+        assert_eq!(last, -50.0);
+    }
+
     #[test]
     fn reset_clears_state() {
         let candles: Vec<Candle> = (0..20)

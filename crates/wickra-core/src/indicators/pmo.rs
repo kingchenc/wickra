@@ -150,6 +150,37 @@ mod tests {
         assert!(matches!(Pmo::new(35, 1), Err(Error::InvalidPeriod { .. })));
     }
 
+    /// Cover the const accessors `periods` / `value` (lines 76-83) and the
+    /// Indicator-impl `name` body (130-132). `warmup_period` is already
+    /// covered by `first_emission_at_second_update`.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut pmo = Pmo::new(35, 20).unwrap();
+        assert_eq!(pmo.periods(), (35, 20));
+        assert_eq!(pmo.name(), "PMO");
+        assert_eq!(pmo.value(), None);
+        pmo.update(100.0);
+        pmo.update(101.0);
+        assert!(pmo.value().is_some());
+    }
+
+    /// Cover the `prev == 0.0` defensive branch (line 103). The PMO ROC
+    /// divides by the previous price; existing tests use prices ≈ 100, so
+    /// the divide-by-zero guard never fired. Feed a single zero price
+    /// followed by a positive price and assert the first emitted PMO is
+    /// the flat-momentum value (the wrapping `customEMA` of `0.0` is 0.0
+    /// regardless of smoothing factor on its first input).
+    #[test]
+    fn zero_previous_price_treats_roc_as_flat() {
+        let mut pmo = Pmo::new(2, 2).unwrap();
+        // Seed prev_price = 0.
+        assert_eq!(pmo.update(0.0), None);
+        // Next bar: prev == 0 hits the fallback returning roc = 0.0; the
+        // doubly-smoothed PMO seeds at 0.0 (10 * 0 = 0 through both EMAs).
+        let out = pmo.update(50.0).expect("emits");
+        assert_eq!(out, 0.0);
+    }
+
     #[test]
     fn first_emission_at_second_update() {
         let mut pmo = Pmo::new(35, 20).unwrap();

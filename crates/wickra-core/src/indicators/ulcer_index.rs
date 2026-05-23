@@ -175,6 +175,35 @@ mod tests {
         assert!(matches!(UlcerIndex::new(0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessors `period` / `value` (lines 77-85) and the
+    /// Indicator-impl `name` body (162-164). `warmup_period` is covered
+    /// already by `reference_values`.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut ui = UlcerIndex::new(14).unwrap();
+        assert_eq!(ui.period(), 14);
+        assert_eq!(ui.name(), "UlcerIndex");
+        assert_eq!(ui.value(), None);
+        // Drive past warmup so value() flips to Some.
+        for i in 0..ui.warmup_period() {
+            ui.update(100.0 + (i as f64).sin() * 5.0);
+        }
+        assert!(ui.value().is_some());
+    }
+
+    /// Cover the `max_price == 0.0` defensive branch (line 123). All
+    /// other tests use prices > 0, so the trailing-max divisor is always
+    /// positive. Feed a stream of zeros — the trailing max is exactly
+    /// 0.0 and the drawdown computation would otherwise hit a 0/0 NaN.
+    /// The indicator must emit exactly 0.0 (drawdown is 0% by convention).
+    #[test]
+    fn zero_max_price_yields_zero_drawdown() {
+        let mut ui = UlcerIndex::new(3).unwrap();
+        let out = ui.batch(&[0.0_f64; 10]);
+        let last = out.into_iter().flatten().last().expect("emits");
+        assert_eq!(last, 0.0);
+    }
+
     #[test]
     fn reference_values() {
         // UlcerIndex(2): warmup = 3.

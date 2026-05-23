@@ -141,6 +141,30 @@ mod tests {
         assert!(Roc::new(0).is_err());
     }
 
+    /// Cover the const accessor `period` (47-49) and the Indicator-impl
+    /// `warmup_period` (83-85) + `name` (91-93). Existing tests never
+    /// inspect these metadata methods.
+    #[test]
+    fn accessors_and_metadata() {
+        let roc = Roc::new(5).unwrap();
+        assert_eq!(roc.period(), 5);
+        assert_eq!(roc.warmup_period(), 6);
+        assert_eq!(roc.name(), "ROC");
+    }
+
+    /// Cover the `prev == 0.0` defensive branch (line 70). All existing
+    /// tests use prices ≥ 1.0, so the divide-by-zero guard was never
+    /// triggered. Feed a leading zero followed by `period` more values
+    /// so the front of the window is exactly 0.0, then assert the next
+    /// emission is the flat-momentum fallback 0.0 (not NaN).
+    #[test]
+    fn zero_previous_price_yields_zero_roc() {
+        let mut roc = Roc::new(3).unwrap();
+        let out = roc.batch(&[0.0, 5.0, 7.0, 9.0]);
+        let v = out[3].expect("ready after period + 1 inputs");
+        assert_eq!(v, 0.0);
+    }
+
     #[test]
     fn ignores_non_finite_input() {
         let mut roc = Roc::new(3).unwrap();
