@@ -159,7 +159,16 @@ jobs:
           workspaces: fuzz
 
       - name: Install cargo-fuzz
-        run: cargo install cargo-fuzz --locked
+        # Use the prebuilt binary from taiki-e/install-action instead of
+        # `cargo install cargo-fuzz --locked`. The latter resolves the
+        # version graph from cargo-fuzz's own Cargo.lock, which pins to
+        # rustix 0.36.5 — a version that still uses internal `rustc_*`
+        # attributes the modern nightly compiler rejects, so the install
+        # never gets off the ground. The prebuilt binary avoids the entire
+        # transitive-dep compile.
+        uses: taiki-e/install-action@e0eafa9a0d485c37f97c0f7beb930a58a2facbac # v2.79.4
+        with:
+          tool: cargo-fuzz
 
       - name: Fuzz csv_reader (30 s)
         run: cargo +nightly fuzz run csv_reader -- -max_total_time=30
