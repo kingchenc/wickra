@@ -116,6 +116,24 @@ mod tests {
         assert!(matches!(Smma::new(0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessors `period` / `value` and the Indicator-impl
+    /// `warmup_period` / `name` methods. Existing tests only exercise the
+    /// numeric output of `update` / `batch` / `reset`, never query the
+    /// metadata surface.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut smma = Smma::new(7).unwrap();
+        assert_eq!(smma.period(), 7);
+        assert_eq!(smma.warmup_period(), 7);
+        assert_eq!(smma.name(), "SMMA");
+        // value() must report both the pre-warmup None and post-warmup Some branches.
+        assert_eq!(smma.value(), None);
+        for i in 1..=7 {
+            smma.update(f64::from(i));
+        }
+        assert!(smma.value().is_some());
+    }
+
     #[test]
     fn warmup_then_recurrence() {
         // SMMA(3): seed = SMA(1,2,3) = 2.0; then (prev*2 + x) / 3.
