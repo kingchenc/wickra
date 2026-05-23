@@ -3,6 +3,15 @@
 use crate::error::{Error, Result};
 use wickra_core::{Candle, Tick};
 
+/// Hard cap on the number of placeholder candles a single
+/// [`TickAggregator::push`] call may emit when gap-fill is enabled. One
+/// million minute-candles is roughly 1.9 years of contiguous one-minute bars
+/// — orders of magnitude beyond any realistic missing-data window in
+/// production while still keeping the resulting `Vec<Candle>` to well under
+/// 50 MB. Any larger gap is treated as malformed input rather than allowed
+/// to OOM the process.
+pub const MAX_GAP_FILL_CANDLES: i64 = 1_000_000;
+
 /// A candle bucket size measured in the same unit as the tick timestamps.
 ///
 /// Wickra is unit-agnostic about timestamps: choose whichever makes sense for
@@ -133,7 +142,11 @@ impl Timeframe {
 /// the next non-empty bar — the skipped buckets produce no candle, so the
 /// output series can have time holes. Enable [`TickAggregator::with_gap_fill`]
 /// to instead emit a flat placeholder candle for every skipped bucket, giving
-/// downstream indicators an unbroken, evenly spaced series.
+/// downstream indicators an unbroken, evenly spaced series. To bound memory
+/// against an adversarial timestamp jump, gap-filling refuses to emit more
+/// than [`MAX_GAP_FILL_CANDLES`] placeholders in a single step; a larger gap
+/// surfaces as an `Error::Malformed` so the caller can decide how to handle
+/// the discontinuity.
 #[derive(Debug, Clone)]
 pub struct TickAggregator {
     timeframe: Timeframe,
@@ -279,19 +292,47 @@ impl TickAggregator {
 
     /// Append a flat placeholder candle for every empty bucket strictly between
     /// the just-closed bar and the next bucket that received a tick.
+    ///
+    /// Returns `Error::Malformed` when the gap would exceed
+    /// [`MAX_GAP_FILL_CANDLES`] — an adversarial timestamp jump (a clock-glitch
+    /// tick years in the future) must surface as a defined error, not as an
+    /// out-of-memory panic from allocating millions of placeholder candles.
     fn fill_between(&self, prev: Candle, next_bucket: i64, out: &mut Vec<Candle>) -> Result<()> {
         let step = self.timeframe.bucket();
-        let mut start = prev
+        let start = prev
             .timestamp
             .checked_add(step)
             .ok_or_else(|| Error::Malformed("timestamp overflow while gap-filling".to_string()))?;
-        while start < next_bucket {
+        if start >= next_bucket {
+            return Ok(());
+        }
+
+        // Compute the gap size up-front so an adversarial timestamp delta
+        // is refused before we allocate. `step > 0` by `Timeframe::new`'s
+        // invariant, so the divisor is safe. Saturating the subtraction
+        // makes the arithmetic infallible; an overflowed-saturated span is
+        // still far above the cap so the limit check below catches it.
+        let span = next_bucket.saturating_sub(start);
+        let gap_count = span / step + i64::from(span % step != 0);
+
+        if gap_count > MAX_GAP_FILL_CANDLES {
+            return Err(Error::Malformed(format!(
+                "gap-fill between bucket {} and {next_bucket} would emit {gap_count} \
+                 flat candles at step {step}, exceeding the {MAX_GAP_FILL_CANDLES} \
+                 cap; reject the discontinuity instead of allocating",
+                prev.timestamp
+            )));
+        }
+
+        out.reserve(gap_count as usize);
+        let mut t = start;
+        while t < next_bucket {
             // `prev.close` is finite (it came from a validated bar), so this
             // flat candle always passes `Candle::new`'s checks.
             out.push(Candle::new(
-                prev.close, prev.close, prev.close, prev.close, 0.0, start,
+                prev.close, prev.close, prev.close, prev.close, 0.0, t,
             )?);
-            start = start.checked_add(step).ok_or_else(|| {
+            t = t.checked_add(step).ok_or_else(|| {
                 Error::Malformed("timestamp overflow while gap-filling".to_string())
             })?;
         }
@@ -475,6 +516,37 @@ mod tests {
         let closed = agg.push(t(20.0, 200)).unwrap();
         assert_eq!(closed.len(), 1, "only the real bar closes");
         assert_eq!(closed[0].timestamp, 0);
+    }
+
+    #[test]
+    fn gap_fill_rejects_runaway_timestamp_jump() {
+        // An adversarial clock-glitch tick years in the future must surface
+        // as an Error::Malformed rather than allocating millions of flat
+        // candles and OOMing. Found by the `tick_aggregator` fuzz target.
+        let mut agg = TickAggregator::new(Timeframe::new(60).unwrap()).with_gap_fill(true);
+        agg.push(t(10.0, 0)).unwrap();
+        // Two-billion-second jump = ~63 years of minute bars = ~33 million
+        // candles, well above the 1_000_000 cap.
+        let err = agg.push(t(20.0, 2_000_000_000)).unwrap_err();
+        let msg = err.to_string();
+        assert!(
+            msg.contains("gap-fill") && msg.contains("cap"),
+            "expected a malformed-gap error, got: {msg}"
+        );
+    }
+
+    #[test]
+    fn gap_fill_at_the_cap_succeeds() {
+        // Exactly one million minute-buckets between the two ticks (one real
+        // bar + one million flat fillers + the third tick's open bar) — the
+        // limit is inclusive, so this must succeed.
+        let mut agg = TickAggregator::new(Timeframe::new(60).unwrap()).with_gap_fill(true);
+        agg.push(t(10.0, 0)).unwrap();
+        // bucket 0 closes; jump straight to bucket 60_000_060 (1_000_001 buckets
+        // away). fill_between emits 1_000_000 flat candles between them, then
+        // the new tick opens its own bucket. Output: 1 real bar + 1_000_000 fillers.
+        let out = agg.push(t(20.0, 60_000_060)).unwrap();
+        assert_eq!(out.len(), 1 + MAX_GAP_FILL_CANDLES as usize);
     }
 
     #[test]
