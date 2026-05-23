@@ -85,6 +85,13 @@ mod tests {
         );
     }
 
+    /// Cover the Indicator-impl `name` body (62-64).
+    #[test]
+    fn name_metadata() {
+        let mp = MedianPrice::new();
+        assert_eq!(mp.name(), "MedianPrice");
+    }
+
     #[test]
     fn emits_from_first_candle() {
         let mut mp = MedianPrice::new();
