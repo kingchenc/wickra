@@ -24,6 +24,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   site makes the invariant explicit.
 
 ### Changed
+- `LinearRegression`, `LinRegSlope` and `LinRegAngle` (via composition over
+  `LinRegSlope`) now run their rolling ordinary-least-squares fit
+  **incrementally** in O(1) per update (audit finding R2). Previously every
+  tick refit the line from scratch in O(period). The OLS denominators (`Σx`
+  and `Σxx`) depend only on `period`, so they were already precomputed; this
+  release adds running `Σy` and `Σxy` accumulators and slides them in closed
+  form via the identity
+  `new_Σxy = old_Σxy − old_Σy + popped_y₀` (then `Σxy += (n − 1) · new_value`
+  and `Σy += new_value`). New per-bar equivalence tests compare the O(1)
+  output against a fresh O(n) refit on noisy ramps, step functions, and
+  constants — values agree to within 1e-9.
 - Fuzz suite expanded from 2 indicators to the full catalogue (audit finding
   R9). The existing `indicator_update` target now exercises every scalar-input
   indicator (~33 classes including MACD and Bollinger Bands); a new
