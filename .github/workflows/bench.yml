@@ -1,0 +1,70 @@
+name: Cross-library benchmark
+
+# Audit finding R10: previously the cross-library benchmark ran on every push
+# and every pull-request to `main`, adding 5–10 minutes of build + bench time
+# per CI run with no consumer of the resulting artefact. The benchmark is now
+# scheduled (nightly at 03:00 UTC) and on-demand via `workflow_dispatch`. The
+# CI pipeline proper (.github/workflows/ci.yml) still verifies build / tests /
+# lints on every push and pull-request.
+on:
+  schedule:
+    # Nightly at 03:00 UTC. Pick a slot well away from common European /
+    # American working-hours pushes to keep this off the critical path.
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+    inputs:
+      size:
+        description: "Number of bars per indicator (default 20000)"
+        required: false
+        default: "20000"
+      iterations:
+        description: "Batch iterations per indicator (default 10)"
+        required: false
+        default: "10"
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  cross-library-bench:
+    name: Cross-library benchmark report
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable branch, 2026-03-27
+
+      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.11"
+
+      - name: Install Python deps + peer libs
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install maturin numpy pandas talipp finta
+
+      - name: Build Wickra wheel
+        working-directory: bindings/python
+        run: maturin build --release --out dist
+
+      - name: Install Wickra wheel
+        working-directory: bindings/python
+        run: python -m pip install --find-links dist --force-reinstall wickra
+
+      - name: Run cross-library benchmark
+        working-directory: bindings/python
+        run: |
+          python -m benchmarks.compare_libraries \
+            --size ${{ github.event.inputs.size || '20000' }} \
+            --iterations ${{ github.event.inputs.iterations || '10' }} \
+            --streaming-window 5000 --streaming-iterations 2 \
+            | tee benchmark.txt
+
+      - name: Upload report
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: cross-library-bench
+          path: bindings/python/benchmark.txt
