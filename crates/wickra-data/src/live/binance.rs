@@ -181,11 +181,12 @@ impl BinanceKlineStream {
             streams.join("/")
         );
         let url = url::Url::parse(&url).map_err(|e| Error::Malformed(e.to_string()))?;
-        let ws_config = WebSocketConfig {
-            max_message_size: Some(MAX_MESSAGE_SIZE),
-            max_frame_size: Some(MAX_FRAME_SIZE),
-            ..WebSocketConfig::default()
-        };
+        // tokio-tungstenite 0.29's WebSocketConfig is #[non_exhaustive],
+        // so the only way to set fields is via the builder-style methods on
+        // a fresh `default()` value.
+        let ws_config = WebSocketConfig::default()
+            .max_message_size(Some(MAX_MESSAGE_SIZE))
+            .max_frame_size(Some(MAX_FRAME_SIZE));
         let (socket, _) =
             tokio_tungstenite::connect_async_with_config(url.as_str(), Some(ws_config), false)
                 .await?;
