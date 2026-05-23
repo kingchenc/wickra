@@ -151,6 +151,21 @@ mod tests {
         assert!(matches!(Tsi::new(25, 0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessors `periods` / `value` (70-77) and the
+    /// Indicator-impl `name` body (137-139). Existing tests inspect
+    /// TSI output but never query the metadata.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut tsi = Tsi::new(25, 13).unwrap();
+        assert_eq!(tsi.periods(), (25, 13));
+        assert_eq!(tsi.name(), "TSI");
+        assert_eq!(tsi.value(), None);
+        for i in 1..=tsi.warmup_period() {
+            tsi.update(100.0 + f64::from(u32::try_from(i).unwrap()));
+        }
+        assert!(tsi.value().is_some());
+    }
+
     #[test]
     fn first_emission_at_warmup_period() {
         let mut tsi = Tsi::new(5, 3).unwrap();
