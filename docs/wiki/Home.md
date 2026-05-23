@@ -26,12 +26,12 @@ open an issue on GitHub to discuss a separate license.
 
 | Registry  | Package        | Version |
 |-----------|----------------|---------|
-| crates.io | `wickra`       | 0.1.4   |
-| crates.io | `wickra-core`  | 0.1.4   |
-| crates.io | `wickra-data`  | 0.1.4   |
-| PyPI      | `wickra`       | 0.1.4   |
-| npm       | `wickra`       | 0.1.4   |
-| npm       | `wickra-wasm`  | 0.1.4   |
+| crates.io | `wickra`       | 0.1.5   |
+| crates.io | `wickra-core`  | 0.1.5   |
+| crates.io | `wickra-data`  | 0.1.5   |
+| PyPI      | `wickra`       | 0.1.5   |
+| npm       | `wickra`       | 0.1.5   |
+| npm       | `wickra-wasm`  | 0.1.5   |
 
 Release notes and tagged builds:
 <https://github.com/kingchenc/wickra/releases>.
@@ -45,8 +45,10 @@ Release notes and tagged builds:
   streaming via the `Indicator` and `BatchExt` traits, and the `Chain`
   combinator.
 - [Quickstart: Node](Quickstart-Node.md) — `npm install wickra`, basic
-  `SMA` and `MACD` calls, and the current Windows install caveat
-  (`wickra-win32-x64-msvc@0.1.4` is held by the npm spam filter).
+  `SMA` and `MACD` calls, and the install surface. Windows x64 was
+  previously blocked by an npm spam filter on `wickra-win32-x64-msvc`;
+  that was resolved with npm Support, and 0.1.5 is the first release in
+  which `npm install wickra` works end-to-end on Windows.
 - [Quickstart: WASM](Quickstart-WASM.md) — `npm install wickra-wasm`,
   building with `wasm-pack`, and running indicators client-side in a
   browser or bundler.

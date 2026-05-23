@@ -15,7 +15,7 @@ build. The `wickra` crate is a thin façade that re-exports everything from
 `wickra-core`; you can also depend on `wickra-core` directly if you want to
 skip the façade.
 
-The published crate is at version `0.1.4` on
+The published crate is at version `0.1.5` on
 [crates.io](https://crates.io/crates/wickra).
 
 ## The `Indicator` trait in 30 seconds

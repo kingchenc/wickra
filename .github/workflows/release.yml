@@ -228,10 +228,16 @@ jobs:
         working-directory: bindings/node
         run: npx napi artifacts --dir artifacts
 
-      # Publish each platform package individually so one failure doesn't kill
-      # the others. Skip versions that are already on npm. Tolerate spam-filter
-      # 403s with a one-time retry after a short delay (spam detection is
-      # often rate-limit-based and clears on the next request).
+      # Publish each platform package individually. Skip versions that are
+      # already on npm. A first-attempt 403 from npm's spam filter is
+      # tolerated for a single 30-second retry — that historically clears
+      # rate-limit-driven false positives. Anything that still fails after
+      # the retry is a *real* failure (the platform binary will be missing
+      # from `optionalDependencies` and Windows-style installs will break,
+      # exactly the regression that produced audit finding R20) — fail the
+      # job loudly so the release does not silently land in a half-published
+      # state. Previously this loop swallowed the second-attempt failure with
+      # a `::warning::` and `return 0`; that mask is removed.
       - name: Publish platform packages (idempotent)
         working-directory: bindings/node
         env:
@@ -239,6 +245,7 @@ jobs:
         run: |
           set +e
           version=$(node -p "require('./package.json').version")
+          fail=0
           publish_dir() {
             local dir=$1
             local pkg=$(basename "$dir")
@@ -264,13 +271,15 @@ jobs:
               rc=$?
             fi
             if [ "$rc" -ne 0 ]; then
-              echo "::warning::$pkgname could not be published; the main package will skip the missing optional dep"
+              echo "::error::$pkgname could not be published — the release would land with a missing platform binary; failing the job."
+              return 1
             fi
             return 0
           }
           for dir in npm/*/; do
-            publish_dir "$dir"
+            publish_dir "$dir" || fail=1
           done
+          exit $fail
 
       - name: Publish main package to npm (idempotent)
         working-directory: bindings/node

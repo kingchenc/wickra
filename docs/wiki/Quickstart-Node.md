@@ -10,15 +10,16 @@ slow JS reimplementation.
 npm install wickra
 ```
 
-> **Windows install caveat (current, 0.1.4).** The platform-specific
-> sub-package `wickra-win32-x64-msvc@0.1.4` is presently held back by npm's
-> automated spam filter. On a Windows x64 machine `npm install wickra`
-> succeeds, but `require('wickra')` then throws
-> `Error: Cannot find module 'wickra-win32-x64-msvc'` because the loader
-> falls through to `require('wickra-win32-x64-msvc')` when no local `.node`
-> binary is found. Linux x64 and macOS (x64 + arm64) wheels are unaffected.
-> If you are on Windows today, build the binding from source (see "Building
-> from source" below) until the npm side is resolved.
+> **Windows install (0.1.5+).** Earlier patch releases were blocked on
+> Windows x64 because the platform-specific sub-package
+> `wickra-win32-x64-msvc` was held back by npm's automated spam filter, so
+> `require('wickra')` threw `Error: Cannot find module
+> 'wickra-win32-x64-msvc'` after a successful `npm install`. npm Support
+> released the name on 2026-05-22; 0.1.5 is the first version in which
+> Windows x64 installs cleanly end-to-end (version numbers `0.1.1`–`0.1.4`
+> of that sub-package remain burned and cannot be republished — see the
+> npm registry page for `wickra-win32-x64-msvc`). Linux x64, Linux arm64
+> and macOS (x64 + arm64) were unaffected throughout.
 
 ## A first run
 
