@@ -147,6 +147,21 @@ mod tests {
         assert!(matches!(Cmo::new(0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessors `period` / `value` (66-73) and the
+    /// Indicator-impl `name` body (134-136). Existing tests inspect
+    /// CMO output but never query the metadata.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut cmo = Cmo::new(14).unwrap();
+        assert_eq!(cmo.period(), 14);
+        assert_eq!(cmo.name(), "CMO");
+        assert_eq!(cmo.value(), None);
+        for i in 1..=15 {
+            cmo.update(f64::from(i));
+        }
+        assert!(cmo.value().is_some());
+    }
+
     #[test]
     fn reference_value() {
         // CMO(3) over [10, 11, 10, 12]: changes +1, −1, +2.

@@ -127,4 +127,17 @@ mod tests {
     fn rejects_zero_period() {
         assert!(Dema::new(0).is_err());
     }
+
+    /// Cover the const accessor `period` (43-45) and the Indicator-impl
+    /// `warmup_period` (63-66) + `name` (72-74). Existing tests never
+    /// inspect these metadata methods.
+    #[test]
+    fn accessors_and_metadata() {
+        let dema = Dema::new(5).unwrap();
+        assert_eq!(dema.period(), 5);
+        // EMA1 seeds at period (5), EMA2 needs another (period - 1) = 4 ->
+        // total warmup = 2*period - 1 = 9.
+        assert_eq!(dema.warmup_period(), 9);
+        assert_eq!(dema.name(), "DEMA");
+    }
 }

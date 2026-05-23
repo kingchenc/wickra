@@ -236,6 +236,18 @@ mod tests {
         assert!(EaseOfMovement::with_divisor(14, f64::NAN).is_err());
     }
 
+    /// Cover the const accessors `period` / `divisor` (82-90) and the
+    /// Indicator-impl `name` body (141-143). Existing tests inspect EMV
+    /// output but never query the metadata methods.
+    #[test]
+    fn accessors_and_metadata() {
+        let emv = EaseOfMovement::new(14).unwrap();
+        assert_eq!(emv.period(), 14);
+        // The canonical divisor (per the new() default) — keep in sync with src.
+        assert_relative_eq!(emv.divisor(), 100_000_000.0, epsilon = 1e-6);
+        assert_eq!(emv.name(), "EaseOfMovement");
+    }
+
     #[test]
     fn reset_clears_state() {
         let candles: Vec<Candle> = (0..30)

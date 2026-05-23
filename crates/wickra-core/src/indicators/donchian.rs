@@ -155,6 +155,17 @@ mod tests {
         assert!(Donchian::new(0).is_err());
     }
 
+    /// Cover the const accessor `period` (57-59) and the Indicator-impl
+    /// `warmup_period` (95-97) + `name` (103-105). Existing tests never
+    /// inspect these metadata methods.
+    #[test]
+    fn accessors_and_metadata() {
+        let d = Donchian::new(20).unwrap();
+        assert_eq!(d.period(), 20);
+        assert_eq!(d.warmup_period(), 20);
+        assert_eq!(d.name(), "DonchianChannels");
+    }
+
     #[test]
     fn reset_clears_state() {
         let candles: Vec<Candle> = (0..20)

@@ -145,6 +145,22 @@ mod tests {
         assert!(matches!(Dpo::new(0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessors `period` / `value` (73-85) and the
+    /// Indicator-impl `name` body (132-134). `shift` is already covered
+    /// by `shift_is_half_period_plus_one`; `warmup_period` by
+    /// `reference_values`.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut dpo = Dpo::new(20).unwrap();
+        assert_eq!(dpo.period(), 20);
+        assert_eq!(dpo.name(), "DPO");
+        assert_eq!(dpo.value(), None);
+        for i in 1..=dpo.warmup_period() {
+            dpo.update(f64::from(u32::try_from(i).unwrap()));
+        }
+        assert!(dpo.value().is_some());
+    }
+
     #[test]
     fn shift_is_half_period_plus_one() {
         assert_eq!(Dpo::new(20).unwrap().shift(), 11);
