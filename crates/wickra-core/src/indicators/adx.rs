@@ -269,6 +269,37 @@ mod tests {
         assert!(Adx::new(0).is_err());
     }
 
+    /// Cover the const accessor `period` (lines 89-91) and the Indicator-impl
+    /// `warmup_period` (199-201) + `name` (207-209). None of the trend tests
+    /// inspect these metadata methods.
+    #[test]
+    fn accessors_and_metadata() {
+        let adx = Adx::new(14).unwrap();
+        assert_eq!(adx.period(), 14);
+        assert_eq!(adx.warmup_period(), 28);
+        assert_eq!(adx.name(), "ADX");
+    }
+
+    /// Cover the `tr_v == 0.0` defensive branches in `update` (lines 142,
+    /// 147) — feeding a stream of perfectly flat candles (H == L == close
+    /// every bar) gives true-range 0 each step, so the smoothed `tr_smooth`
+    /// stays at 0.0 and the `plus_di` / `minus_di` divisions would otherwise
+    /// blow up. The indicator must emit zeros (DX denominator is also 0).
+    #[test]
+    fn zero_true_range_yields_zero_di_and_zero_adx() {
+        let candles: Vec<Candle> = (0..30).map(|_| c(10.0, 10.0, 10.0)).collect();
+        let mut adx = Adx::new(5).unwrap();
+        let last = adx
+            .batch(&candles)
+            .into_iter()
+            .flatten()
+            .last()
+            .expect("ADX emits after 2 * period candles");
+        assert_eq!(last.plus_di, 0.0);
+        assert_eq!(last.minus_di, 0.0);
+        assert_eq!(last.adx, 0.0);
+    }
+
     #[test]
     fn batch_equals_streaming() {
         let candles: Vec<Candle> = (0..60)
