@@ -74,7 +74,7 @@ jobs:
           cargo package -p wickra
 
       - name: Upload .crate files
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: crate-files
           path: target/package/*.crate
@@ -112,7 +112,7 @@ jobs:
           target: ${{ matrix.target }}
           args: --release --strip --out dist
           manylinux: ${{ matrix.manylinux }}
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           # Include manylinux in the name so the glibc and musl x86_64/aarch64
           # builds do not collide on the same artifact name.
@@ -129,7 +129,7 @@ jobs:
           working-directory: bindings/python
           command: sdist
           args: --out dist
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: wheels-sdist
           path: bindings/python/dist/*
@@ -192,7 +192,7 @@ jobs:
         run: npx napi build --platform --release --target ${{ matrix.target }}
 
       - name: Upload artifact
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: bindings-${{ matrix.target }}
           path: bindings/node/wickra.*.node
@@ -323,7 +323,7 @@ jobs:
           done
 
       - name: Upload Node tarballs
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: node-tarballs
           path: |
@@ -373,7 +373,7 @@ jobs:
         run: npm pack
 
       - name: Upload WASM tarball
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: wasm-tarball
           path: bindings/wasm/pkg/wickra-wasm-*.tgz
