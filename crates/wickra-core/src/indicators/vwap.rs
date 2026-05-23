@@ -193,6 +193,42 @@ mod tests {
         assert_relative_eq!(out[2].unwrap(), 20.0, epsilon = 1e-12);
     }
 
+    /// Cover the `Some` branch of `Vwap::value()` (line 53). The only other
+    /// test that calls `value()` is `cumulative_reset_clears_state`, which
+    /// calls it after `reset()` so `sum_v == 0` and the `None` branch fires.
+    #[test]
+    fn cumulative_value_some_branch_after_update() {
+        let mut v = Vwap::new();
+        // typical_price of a flat OHLC bar equals the price itself.
+        v.update(c(42.0, 5.0));
+        assert_relative_eq!(v.value().expect("non-zero volume"), 42.0, epsilon = 1e-12);
+    }
+
+    /// Cover the `return None` early-out inside `Vwap::update` (line 67),
+    /// reached when the running `sum_v` is still 0 after adding the latest
+    /// candle's volume — i.e. the first candle has volume 0. Existing tests
+    /// only use strictly positive volumes, so the early-return never fired.
+    #[test]
+    fn cumulative_zero_volume_first_candle_returns_none() {
+        let mut v = Vwap::new();
+        let out = v.update(c(42.0, 0.0));
+        assert_eq!(out, None);
+        assert!(!v.is_ready());
+        // Adding a non-zero candle afterwards still works as expected.
+        let out2 = v.update(c(10.0, 4.0));
+        assert_relative_eq!(out2.expect("now warmed"), 10.0, epsilon = 1e-12);
+    }
+
+    /// Cover the cumulative `Vwap` Indicator-impl metadata: `warmup_period`
+    /// (lines 79-81) and `name` (lines 87-89). Existing tests inspected
+    /// only the numeric output, never the metadata surface.
+    #[test]
+    fn cumulative_metadata() {
+        let v = Vwap::new();
+        assert_eq!(v.warmup_period(), 1);
+        assert_eq!(v.name(), "VWAP");
+    }
+
     #[test]
     fn cumulative_vwap_weighted() {
         // Two candles: 10@1 and 20@3 -> (10*1 + 20*3) / (1+3) = 70/4 = 17.5
@@ -200,6 +236,18 @@ mod tests {
         let mut v = Vwap::new();
         let out = v.batch(&candles);
         assert_relative_eq!(out[1].unwrap(), 17.5, epsilon = 1e-12);
+    }
+
+    /// Cover the `RollingVwap` accessors and metadata: `period`
+    /// (lines 134-136), `warmup_period` (165-167), `name` (173-175).
+    /// Existing rolling tests called `update`/`batch`/`reset`/`is_ready`
+    /// only, never queried the configuration or metadata.
+    #[test]
+    fn rolling_accessors_and_metadata() {
+        let v = RollingVwap::new(7).unwrap();
+        assert_eq!(v.period(), 7);
+        assert_eq!(v.warmup_period(), 7);
+        assert_eq!(v.name(), "RollingVWAP");
     }
 
     #[test]
