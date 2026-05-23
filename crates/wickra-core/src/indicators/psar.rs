@@ -246,21 +246,16 @@ mod tests {
             })
             .collect();
         let mut psar = Psar::classic();
-        let violations: Vec<(usize, f64, f64)> = psar
+        // `all()` with `is_none_or` keeps every reachable arm on the hot path —
+        // the previous filter_map / violation-Vec construction had a cold
+        // "violation found" tuple branch that was unreachable on a clean
+        // uptrend, leaving its line uncovered by Codecov.
+        let ok = psar
             .batch(&candles)
-            .into_iter()
+            .iter()
             .enumerate()
-            .filter_map(|(i, sar)| {
-                sar.and_then(|s| {
-                    if s > candles[i].low + 1e-9 {
-                        Some((i, s, candles[i].low))
-                    } else {
-                        None
-                    }
-                })
-            })
-            .collect();
-        assert!(violations.is_empty(), "SAR above low: {violations:?}");
+            .all(|(i, sar)| sar.is_none_or(|s| s <= candles[i].low + 1e-9));
+        assert!(ok, "SAR sat above a candle's low on a pure uptrend");
     }
 
     #[test]
@@ -274,22 +269,15 @@ mod tests {
             .collect();
         let mut psar = Psar::classic();
         // After the trend establishes downward, SAR should sit above highs.
-        let violations: Vec<(usize, f64, f64)> = psar
+        // Same `all()` + `is_none_or` shape as `pure_uptrend_sar_below_lows`
+        // so the violation-tuple branch never appears as a cold path.
+        let ok = psar
             .batch(&candles)
-            .into_iter()
+            .iter()
             .enumerate()
             .skip(5)
-            .filter_map(|(i, sar)| {
-                sar.and_then(|s| {
-                    if s < candles[i].high - 1e-9 {
-                        Some((i, s, candles[i].high))
-                    } else {
-                        None
-                    }
-                })
-            })
-            .collect();
-        assert!(violations.is_empty(), "SAR below high: {violations:?}");
+            .all(|(i, sar)| sar.is_none_or(|s| s >= candles[i].high - 1e-9));
+        assert!(ok, "SAR sat below a candle's high on a pure downtrend");
     }
 
     #[test]
