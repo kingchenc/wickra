@@ -111,7 +111,7 @@ console.log(last);
 their fields per row (e.g. MACD: `[macd0, signal0, hist0, macd1, ...]`). The
 exact layout is documented in the generated `pkg/wickra_wasm.d.ts`.
 
-> Since `wickra-wasm@0.2.0`, every candle-input indicator (ATR, ADX,
+> Since `wickra-wasm@0.2.1`, every candle-input indicator (ATR, ADX,
 > WilliamsR, CCI, MFI, PSAR, Keltner, Donchian, VWAP, RollingVWAP,
 > AwesomeOscillator, Aroon, Stochastic, OBV, and the rest of the
 > volume / volatility / trailing-stop / price-statistics families) exposes

@@ -7,17 +7,85 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-05-23
+
 ### Changed
-- **MSRV bumped.** Workspace minimum supported Rust version is now **1.85**
+- **MSRV bumped.** Workspace minimum supported Rust version is now **1.86**
   (was 1.75) and the Node binding (`wickra-node`) is now **1.88** (was 1.77).
   The bumps are driven by transitive-dependency floors that were lifted in
-  recent updates: `clap_lex >= 1.1.0` (pulled in via the criterion dev-dep)
-  requires the stabilized `edition2024` feature (stable since Rust 1.85),
-  and `napi-build >= 2.3.2` requires Rust 1.88. Pinning the deps to the
+  recent updates: `criterion 0.8.2` (the bench dev-dep) requires Rust 1.86,
+  and `napi-build >= 2.3.2` requires Rust 1.88. Pinning those deps to the
   older versions would have frozen us out of future security fixes from
   those upstreams, so lifting the MSRV is the cleaner path for a young 0.x
   library. Downstream consumers on older Rust toolchains can stay on
   Wickra 0.2.0.
+- Bumped the bench dev-dep `criterion` from 0.5 to 0.8 and migrated
+  `bindings/wickra/benches/indicators.rs` from the deprecated
+  `criterion::black_box` re-export to the stable `std::hint::black_box`.
+- Bumped `tokio-tungstenite` from 0.24 to 0.29. `WebSocketConfig` became
+  `#[non_exhaustive]` upstream, so the struct-literal construction in
+  `crates/wickra-data/src/live/binance.rs` is rewritten to the
+  builder-style `WebSocketConfig::default().max_message_size(..).max_frame_size(..)`.
+  Same caps, same semantics, same default carry-over.
+- Bumped every committed CI/release GitHub Action to its latest pinned
+  SHA: `actions/checkout` 4 → 6, `actions/setup-node` 4 → 6,
+  `actions/setup-python` 5 → 6, `actions/upload-artifact` 4 → 7,
+  `actions/download-artifact` 4 → 8, `softprops/action-gh-release` 2 → 3,
+  `codecov/codecov-action` 5 → 6, `taiki-e/install-action` patch.
+
+### Fixed
+- `tick_aggregator` gap-fill no longer allocates an unbounded number of
+  placeholder candles. The new `MAX_GAP_FILL_CANDLES = 1_000_000` cap
+  surfaces an adversarial timestamp jump (e.g. a clock-glitch tick years
+  in the future) as `Error::Malformed` instead of an OOM panic. Found by
+  the new `tick_aggregator` fuzz target.
+- `HistoricalVolatility::geometric_series_yields_zero` now uses an `1e-6`
+  tolerance instead of `1e-9`. The mathematical result on a perfectly
+  geometric price series is exactly zero, but the underlying
+  `1.01_f64.powi(i)` + log-return + std-dev cascade accumulates
+  platform-sensitive FP drift on the order of 1e-7 on x86_64 Linux and
+  macOS. The widened tolerance stays four decimal places below any
+  realistic annualised volatility value while absorbing the drift across
+  every supported platform.
+- Replaced every `(high + low) / 2.0` test-helper and three real call
+  sites (`Ohlcv::median_price`, `Donchian.middle`, `EaseOfMovement.mid`,
+  `SuperTrend.hl2`) with `f64::midpoint(high, low)`. The change satisfies
+  clippy 1.95's new `manual_midpoint` lint without affecting values
+  (`f64::midpoint` matches the naive average to better than 1 ULP for the
+  inputs used here).
+- Replaced `i.is_multiple_of(2)` (unstable on Rust 1.85) with `i % 2 == 0`
+  in the SMA / Bollinger long-stream-drift tests so the workspace MSRV
+  job builds cleanly on Rust 1.86.
+- The `Compile examples` CI step now invokes
+  `cargo build -p wickra-examples --bins` instead of the now-deleted
+  `cargo build -p wickra --example backtest` / `-p wickra-data --example
+  live_binance` (the Z5 reorganisation moved every runnable example into
+  the dedicated `wickra-examples` crate, but the CI step had not been
+  updated).
+- The `Fuzz (smoke)` CI job installs `cargo-fuzz` from a prebuilt binary
+  via `taiki-e/install-action` instead of `cargo install cargo-fuzz`.
+  The source install resolved against `rustix 0.36.5`, which uses
+  internal `#[rustc_*]` attributes the current nightly compiler rejects.
+- The fuzz targets now build with an explicit
+  `--target x86_64-unknown-linux-gnu`; cargo-fuzz was defaulting to
+  `x86_64-unknown-linux-musl`, which is not installed on the standard
+  GitHub-hosted Ubuntu runner.
+
+### Removed
+- **`wickra-win32-arm64-msvc` is temporarily omitted from this release.**
+  The npm spam-detection filter blocks the first publish of this brand-new
+  package name (same situation that affected `wickra-win32-x64-msvc`
+  through 0.1.4 until npm Support unblocked it). A support ticket is open;
+  once the new name is unblocked the
+  `aarch64-pc-windows-msvc` triple will be restored in
+  `bindings/node/package.json` (`napi.triples.additional` +
+  `optionalDependencies`), in the `release.yml` `node-build` matrix, and
+  as a fresh `bindings/node/npm/win32-arm64-msvc/` template. Until then,
+  `npm install wickra@0.2.1` on Windows ARM64 will surface the loader's
+  standard `Cannot find module 'wickra-win32-arm64-msvc'` error; every
+  other platform (Linux x64 / Linux ARM64 / macOS x64 / macOS ARM64 /
+  Windows x64) ships normally. The PyPI wheel for Windows ARM64 is
+  unaffected and still published.
 
 ## [0.2.0] - 2026-05-23
 
@@ -261,7 +329,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/kingchenc/wickra/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/kingchenc/wickra/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/kingchenc/wickra/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/kingchenc/wickra/compare/v0.1.4...v0.2.0
 [0.1.4]: https://github.com/kingchenc/wickra/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/kingchenc/wickra/compare/v0.1.2...v0.1.3
