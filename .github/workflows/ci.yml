@@ -56,12 +56,12 @@ jobs:
         run: cargo build -p wickra-examples --bins
 
   # Verify the crates still build and test on their declared minimum supported
-  # Rust version. The workspace pins rust-version = "1.85" — that floor is
-  # set by clap_lex 1.1.0 (transitively pulled in by the criterion dev-dep)
-  # which needs the stabilized edition2024 feature (stable since Rust 1.85);
-  # rayon-core 1.13.0 only needed 1.80 and is subsumed by the 1.85 floor.
-  # bindings/node pins rust-version = "1.88" because napi-build 2.3.2
-  # requires it (and that subsumes the older 1.77 floor needed for
+  # Rust version. The workspace pins rust-version = "1.86" — that floor is
+  # set by criterion 0.8.2 (the bench dev-dep), which itself rolled past the
+  # clap_lex 1.1.0 / edition2024 / Rust 1.85 floor and now needs 1.86; the
+  # earlier rayon-core 1.13.0 (1.80) and clap_lex (1.85) requirements are
+  # subsumed. bindings/node pins rust-version = "1.88" because napi-build
+  # 2.3.2 requires it (and that subsumes the older 1.77 floor needed for
   # `cargo::` directives). Without this job an accidental use of a newer
   # API would only surface for downstream users.
   msrv:
@@ -71,8 +71,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: MSRV workspace (Rust 1.85)
-            toolchain: "1.85"
+          - name: MSRV workspace (Rust 1.86)
+            toolchain: "1.86"
             packages: "-p wickra-core -p wickra -p wickra-data"
           - name: MSRV node binding (Rust 1.88)
             toolchain: "1.88"
