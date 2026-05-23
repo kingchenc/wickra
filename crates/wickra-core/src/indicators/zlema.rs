@@ -124,6 +124,21 @@ mod tests {
         assert!(matches!(Zlema::new(0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessors `period` / `value` (62-64, 72-74) and
+    /// the Indicator-impl `name` body (111-113). `lag` is already covered
+    /// by `lag_is_half_of_period_minus_one`.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut z = Zlema::new(5).unwrap();
+        assert_eq!(z.period(), 5);
+        assert_eq!(z.name(), "ZLEMA");
+        assert_eq!(z.value(), None);
+        for i in 1..=z.warmup_period() {
+            z.update(f64::from(u32::try_from(i).unwrap()));
+        }
+        assert!(z.value().is_some());
+    }
+
     #[test]
     fn lag_is_half_of_period_minus_one() {
         assert_eq!(Zlema::new(3).unwrap().lag(), 1);
