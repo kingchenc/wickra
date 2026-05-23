@@ -69,7 +69,12 @@ non-`None` output lands on input `period + 1`.
   log return; its standard deviation — and so HV — is `0`
   (`geometric_series_yields_zero` pins this).
 - **Non-positive prices.** A log return is undefined when either price is
-  `<= 0`; that return is treated as `0`.
+  `<= 0`. Such ticks are **skipped**: the previous valid value is returned,
+  the indicator's state (previous price, window, sums) is left untouched, and
+  the next real positive tick re-anchors against the previous *valid* price.
+  Previous releases silently treated bad ticks as a `0.0` log-return, which
+  underreported realised volatility on broken data feeds — that behaviour has
+  changed.
 - **Non-negative.** Volatility is a standard deviation and is never
   negative (`output_is_non_negative` pins this).
 - **NaN / infinity inputs.** Non-finite inputs are silently dropped.

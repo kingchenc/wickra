@@ -72,13 +72,24 @@ impl Indicator for Psar {
 }
 ```
 
-- **Python streaming.** Returns `float | None`.
+- **Python streaming.** `psar.update(candle)` returns `float | None`.
 - **Python batch.** `PSAR.batch(high, low, close)` returns a 1-D
   `np.ndarray`; the first row is `NaN` (warmup) and every subsequent
   row holds the SAR level for that bar.
-- **Node streaming.** Not exposed in the Node binding.
+- **Node streaming.** `psar.update(high, low, close)` returns `number | null`.
 - **Node batch.** `psar.batch(high, low, close)` returns
   `Array<number>` with `NaN` for the first row.
+- **WASM streaming.** `psar.update(high, low, close)` returns
+  `number | null` once warm.
+- **WASM batch.** `psar.batch(high, low, close)` returns a
+  `Float64Array` with `NaN` for the first row.
+- **`isReady` convention.** `psar.is_ready()` flips to `true` only once the
+  first non-`None` SAR has been produced (i.e. from the second candle
+  onwards). The first (seed) candle returns `None` and `is_ready()` stays
+  `false`, matching every other indicator in the library. Previous releases
+  flipped the flag after the seed candle even though it produced no value —
+  consumers that wrote `if psar.is_ready() { use(psar.update(c)?) }` would
+  hit an unexpected `None` on the first post-seed update; that's now fixed.
 
 ## Warmup
 
