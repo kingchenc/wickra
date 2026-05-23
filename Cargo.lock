@@ -1941,7 +1941,7 @@ dependencies = [
 
 [[package]]
 name = "wickra"
-version = "0.1.5"
+version = "0.2.0"
 dependencies = [
  "approx",
  "criterion",
@@ -1952,7 +1952,7 @@ dependencies = [
 
 [[package]]
 name = "wickra-core"
-version = "0.1.5"
+version = "0.2.0"
 dependencies = [
  "approx",
  "proptest",
@@ -1962,7 +1962,7 @@ dependencies = [
 
 [[package]]
 name = "wickra-data"
-version = "0.1.5"
+version = "0.2.0"
 dependencies = [
  "approx",
  "csv",
@@ -1989,7 +1989,7 @@ dependencies = [
 
 [[package]]
 name = "wickra-node"
-version = "0.1.5"
+version = "0.2.0"
 dependencies = [
  "napi",
  "napi-build",
@@ -1999,7 +1999,7 @@ dependencies = [
 
 [[package]]
 name = "wickra-python"
-version = "0.1.5"
+version = "0.2.0"
 dependencies = [
  "numpy",
  "pyo3",
@@ -2008,7 +2008,7 @@ dependencies = [
 
 [[package]]
 name = "wickra-wasm"
-version = "0.1.5"
+version = "0.2.0"
 dependencies = [
  "console_error_panic_hook",
  "js-sys",

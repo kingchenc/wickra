@@ -160,7 +160,7 @@ const sma = new wickra.SMA(20);
 console.log(sma.warmupPeriod());   // -> 20
 ```
 
-(Since `wickra@0.1.5`, `warmupPeriod()` is exposed on every Node and
+(Since `wickra@0.2.0`, `warmupPeriod()` is exposed on every Node and
 WASM class — single- and multi-output — alongside `update()`, `reset()`
 and `isReady()`. Consult `bindings/node/index.d.ts` for the
 authoritative TypeScript surface.)

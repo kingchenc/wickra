@@ -10,12 +10,12 @@ slow JS reimplementation.
 npm install wickra
 ```
 
-> **Windows install (0.1.5+).** Earlier patch releases were blocked on
+> **Windows install (0.2.0+).** Earlier patch releases were blocked on
 > Windows x64 because the platform-specific sub-package
 > `wickra-win32-x64-msvc` was held back by npm's automated spam filter, so
 > `require('wickra')` threw `Error: Cannot find module
 > 'wickra-win32-x64-msvc'` after a successful `npm install`. npm Support
-> released the name on 2026-05-22; 0.1.5 is the first version in which
+> released the name on 2026-05-22; 0.2.0 is the first version in which
 > Windows x64 installs cleanly end-to-end (version numbers `0.1.1`–`0.1.4`
 > of that sub-package remain burned and cannot be republished — see the
 > npm registry page for `wickra-win32-x64-msvc`). Linux x64, Linux arm64
@@ -135,7 +135,7 @@ The complete TypeScript definitions live at
 | `batch(...)`              | Single-output: flat `Array<number>` with `NaN` warmup.<br>Multi-output: flat interleaved `Array<number>`. |
 | `reset()`                 | Returns to a freshly-constructed state.                                |
 | `isReady()`               | `true` once the first value has been emitted.                          |
-| `warmupPeriod()`          | Present on every indicator class (single- and multi-output, scalar- and candle-input) since `0.1.5`. |
+| `warmupPeriod()`          | Present on every indicator class (single- and multi-output, scalar- and candle-input) since `0.2.0`. |
 
 A complete reference run lives in `bindings/node/__tests__/smoke.test.js`:
 
