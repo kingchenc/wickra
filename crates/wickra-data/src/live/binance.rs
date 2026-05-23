@@ -32,23 +32,48 @@ use tokio_tungstenite::WebSocketStream;
 use crate::error::{Error, Result};
 use wickra_core::Candle;
 
-/// Maximum time to wait for the next WebSocket frame before treating the
-/// connection as stalled. Binance pings roughly every 3 minutes, so a healthy
-/// but quiet stream stays comfortably inside this window.
-const READ_TIMEOUT: Duration = Duration::from_secs(300);
+/// Tunable knobs for a [`BinanceKlineStream`]. The defaults match Binance's
+/// public production endpoint and are right for almost every caller; the
+/// fields exist so an integration test or a Binance Testnet user can point
+/// the stream at a different base URL and shrink the reconnect timing.
+#[derive(Debug, Clone)]
+pub struct BinanceConfig {
+    /// WebSocket endpoint **without** path (e.g. `"wss://stream.binance.com:9443"`).
+    /// The combined-stream path `/stream?streams=…` is appended internally.
+    pub base_url: String,
+    /// Maximum time to wait for the next inbound frame before treating the
+    /// connection as stalled. Binance pings roughly every 3 minutes, so a
+    /// healthy but quiet stream stays comfortably inside the 300 s default.
+    pub read_timeout: Duration,
+    /// Delay before the first reconnect attempt; doubles on each failure up
+    /// to [`Self::max_reconnect_backoff`].
+    pub initial_reconnect_delay: Duration,
+    /// Upper bound on the exponential reconnect backoff.
+    pub max_reconnect_backoff: Duration,
+    /// How many times [`BinanceKlineStream::next_event`] retries a dropped
+    /// connection before surfacing the last error. Must be `>= 1`.
+    pub max_reconnect_attempts: u32,
+    /// Upper bound on an inbound WebSocket message. Kline frames are tiny;
+    /// this only caps a pathological or hostile server from forcing an
+    /// unbounded allocation.
+    pub max_message_size: usize,
+    /// Upper bound on a single inbound WebSocket frame.
+    pub max_frame_size: usize,
+}
 
-/// Upper bound on an inbound WebSocket message. Kline frames are tiny; this
-/// only caps a pathological or hostile server from forcing an unbounded alloc.
-const MAX_MESSAGE_SIZE: usize = 8 << 20;
-
-/// Upper bound on a single inbound WebSocket frame.
-const MAX_FRAME_SIZE: usize = 2 << 20;
-
-/// How many times `next_event` retries a dropped connection before giving up.
-const MAX_RECONNECT_ATTEMPTS: u32 = 6;
-
-/// Upper bound on the exponential reconnect backoff.
-const RECONNECT_BACKOFF_CAP: Duration = Duration::from_secs(30);
+impl Default for BinanceConfig {
+    fn default() -> Self {
+        Self {
+            base_url: "wss://stream.binance.com:9443".to_string(),
+            read_timeout: Duration::from_secs(300),
+            initial_reconnect_delay: Duration::from_secs(1),
+            max_reconnect_backoff: Duration::from_secs(30),
+            max_reconnect_attempts: 6,
+            max_message_size: 8 << 20,
+            max_frame_size: 2 << 20,
+        }
+    }
+}
 
 /// Supported Binance kline intervals. The `as_str` value matches Binance's
 /// wire-format strings (`"1m"`, `"5m"`, `"1h"`, etc.).
@@ -118,6 +143,8 @@ pub struct BinanceKlineStream {
     /// `true` once the caller invoked [`close`](Self::close). A closed stream
     /// is never polled or reconnected again.
     closed: bool,
+    /// Timing / sizing knobs. Retained so reconnects honour the same config.
+    config: BinanceConfig,
 }
 
 /// Wire-format representation of an incoming Binance kline tick. Public so callers
@@ -171,22 +198,20 @@ impl BinanceKlineStream {
     async fn open(
         symbols: &[String],
         interval: Interval,
+        config: &BinanceConfig,
     ) -> Result<WebSocketStream<MaybeTlsStream<TcpStream>>> {
         let streams: Vec<String> = symbols
             .iter()
             .map(|s| format!("{}@kline_{}", s, interval.as_str()))
             .collect();
-        let url = format!(
-            "wss://stream.binance.com:9443/stream?streams={}",
-            streams.join("/")
-        );
+        let url = format!("{}/stream?streams={}", config.base_url, streams.join("/"));
         let url = url::Url::parse(&url).map_err(|e| Error::Malformed(e.to_string()))?;
         // tokio-tungstenite 0.29's WebSocketConfig is #[non_exhaustive],
         // so the only way to set fields is via the builder-style methods on
         // a fresh `default()` value.
         let ws_config = WebSocketConfig::default()
-            .max_message_size(Some(MAX_MESSAGE_SIZE))
-            .max_frame_size(Some(MAX_FRAME_SIZE));
+            .max_message_size(Some(config.max_message_size))
+            .max_frame_size(Some(config.max_frame_size));
         let (socket, _) =
             tokio_tungstenite::connect_async_with_config(url.as_str(), Some(ws_config), false)
                 .await?;
@@ -199,18 +224,30 @@ impl BinanceKlineStream {
     /// Binance's stream-name conventions. A dropped or stalled connection is
     /// re-established transparently by [`next_event`](Self::next_event).
     pub async fn connect(symbols: &[String], interval: Interval) -> Result<Self> {
+        Self::connect_with_config(symbols, interval, BinanceConfig::default()).await
+    }
+
+    /// Connect with a custom [`BinanceConfig`]. Useful for Binance Testnet
+    /// (`"wss://testnet.binance.vision"`) or for shrinking the reconnect
+    /// timing in integration tests.
+    pub async fn connect_with_config(
+        symbols: &[String],
+        interval: Interval,
+        config: BinanceConfig,
+    ) -> Result<Self> {
         if symbols.is_empty() {
             return Err(Error::Malformed(
                 "BinanceKlineStream requires at least one symbol".into(),
             ));
         }
         let symbols: Vec<String> = symbols.iter().map(|s| s.to_lowercase()).collect();
-        let socket = Self::open(&symbols, interval).await?;
+        let socket = Self::open(&symbols, interval, &config).await?;
         Ok(Self {
             socket,
             symbols,
             interval,
             closed: false,
+            config,
         })
     }
 
@@ -221,31 +258,33 @@ impl BinanceKlineStream {
     }
 
     /// Re-establish a dropped connection with exponential backoff. Returns the
-    /// last error if every [`MAX_RECONNECT_ATTEMPTS`] attempt fails.
+    /// last error if every attempt fails.
     async fn reconnect(&mut self) -> Result<()> {
-        let mut delay = Duration::from_secs(1);
+        let mut delay = self.config.initial_reconnect_delay;
         let mut last_err = None;
-        for _ in 0..MAX_RECONNECT_ATTEMPTS {
+        for _ in 0..self.config.max_reconnect_attempts {
             tokio::time::sleep(delay).await;
-            match Self::open(&self.symbols, self.interval).await {
+            match Self::open(&self.symbols, self.interval, &self.config).await {
                 Ok(socket) => {
                     self.socket = socket;
                     return Ok(());
                 }
                 Err(e) => {
                     last_err = Some(e);
-                    delay = delay.saturating_mul(2).min(RECONNECT_BACKOFF_CAP);
+                    delay = delay
+                        .saturating_mul(2)
+                        .min(self.config.max_reconnect_backoff);
                 }
             }
         }
-        Err(last_err.expect("MAX_RECONNECT_ATTEMPTS is non-zero"))
+        Err(last_err.expect("max_reconnect_attempts is non-zero"))
     }
 
     /// Receive the next kline event. A dropped, errored or stalled connection
     /// is re-established transparently (exponential backoff, up to
-    /// [`MAX_RECONNECT_ATTEMPTS`]); an exhausted reconnect surfaces as `Err`.
-    /// `Ok(None)` is returned only after the caller has [`close`](Self::close)d
-    /// the stream.
+    /// [`BinanceConfig::max_reconnect_attempts`]); an exhausted reconnect
+    /// surfaces as `Err`. `Ok(None)` is returned only after the caller has
+    /// [`close`](Self::close)d the stream.
     pub async fn next_event(&mut self) -> Result<Option<KlineEvent>> {
         if self.closed {
             return Ok(None);
@@ -253,7 +292,8 @@ impl BinanceKlineStream {
         loop {
             // A protocol error, a clean server close, or a read stall are all
             // transient: reconnect with backoff and resume reading.
-            let Ok(Some(Ok(msg))) = tokio::time::timeout(READ_TIMEOUT, self.socket.next()).await
+            let Ok(Some(Ok(msg))) =
+                tokio::time::timeout(self.config.read_timeout, self.socket.next()).await
             else {
                 self.reconnect().await?;
                 continue;
