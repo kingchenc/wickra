@@ -48,9 +48,12 @@ jobs:
         run: cargo build -p wickra --benches --verbose
 
       - name: Compile examples
-        run: |
-          cargo build -p wickra --example backtest
-          cargo build -p wickra-data --example live_binance --features live-binance
+        # All runnable examples now live in the dedicated wickra-examples crate
+        # (examples/rust/src/bin/*.rs) which enables the live-binance feature
+        # on its wickra-data dep, so a single --bins build covers backtest,
+        # live_binance, fetch_btcusdt, multi_timeframe, parallel_assets and
+        # streaming.
+        run: cargo build -p wickra-examples --bins
 
   # Verify the crates still build and test on their declared minimum supported
   # Rust version. The workspace pins rust-version = "1.75"; bindings/node needs
