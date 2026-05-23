@@ -250,7 +250,16 @@ jobs:
         uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
 
       - name: Install wasm-pack
-        uses: jetli/wasm-pack-action@0d096b08b4e5a7de8c28de67e11e945404e9eefa # v0.4.0
+        # jetli/wasm-pack-action@v0.4.0 with no `version:` input installs an
+        # old wasm-pack (~0.10.x) whose `build` subcommand does not yet accept
+        # `--features`, so `wasm-pack build … --features panic-hook` fails
+        # with "Found argument '--features' which wasn't expected". Use the
+        # same taiki-e prebuilt-binary installer we already use for
+        # cargo-llvm-cov and cargo-fuzz; it tracks the latest wasm-pack
+        # release, which has `--features` as a top-level flag (since 0.12).
+        uses: taiki-e/install-action@6c1f7cf125e42770ff087ea443901b487cc5471a # v2.79.5
+        with:
+          tool: wasm-pack
 
       - name: Build WASM package
         run: wasm-pack build bindings/wasm --target web --release --features panic-hook

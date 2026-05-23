@@ -370,7 +370,12 @@ jobs:
         with:
           targets: wasm32-unknown-unknown
 
-      - uses: jetli/wasm-pack-action@0d096b08b4e5a7de8c28de67e11e945404e9eefa # v0.4.0
+      - name: Install wasm-pack (latest, via prebuilt binary)
+        # See the matching note in ci.yml: jetli's default installs an old
+        # 0.10.x wasm-pack whose build subcommand rejects --features.
+        uses: taiki-e/install-action@6c1f7cf125e42770ff087ea443901b487cc5471a # v2.79.5
+        with:
+          tool: wasm-pack
 
       - name: Sync root README into bindings/wasm so wasm-pack ships it in pkg/
         # wasm-pack copies the crate's README.md into the generated pkg/
