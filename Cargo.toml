@@ -15,7 +15,7 @@ exclude = ["fuzz"]
 version = "0.2.0"
 authors = ["kingchenc <kingchencp@gmail.com>"]
 edition = "2021"
-rust-version = "1.85"
+rust-version = "1.86"
 license = "PolyForm-Noncommercial-1.0.0"
 repository = "https://github.com/kingchenc/wickra"
 homepage = "https://github.com/kingchenc/wickra"
@@ -32,7 +32,7 @@ rayon = "1.10"
 # Testing
 proptest = "1.5"
 approx = "0.5"
-criterion = { version = "0.5", features = ["html_reports"] }
+criterion = { version = "0.8", features = ["html_reports"] }
 
 # Python binding
 pyo3 = { version = "0.28", features = ["extension-module", "abi3-py39"] }
