@@ -189,6 +189,15 @@ mod tests {
         assert!(ChaikinVolatility::new(10, 0).is_err());
     }
 
+    /// Cover the const accessor `periods` (69-71) and the Indicator-impl
+    /// `name` body (99-101). `warmup_period` is exercised elsewhere.
+    #[test]
+    fn accessors_and_metadata() {
+        let cv = ChaikinVolatility::new(10, 10).unwrap();
+        assert_eq!(cv.periods(), (10, 10));
+        assert_eq!(cv.name(), "ChaikinVolatility");
+    }
+
     #[test]
     fn reset_clears_state() {
         let candles: Vec<Candle> = (0..40)
