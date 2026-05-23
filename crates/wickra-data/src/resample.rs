@@ -193,6 +193,20 @@ mod tests {
     }
 
     #[test]
+    fn absorb_lowers_low_on_dipping_candle() {
+        // The first candle in the bucket sets low = 10.0; the second dips to
+        // 8.0 and must overwrite. Exercises the `c.low < self.low` branch in
+        // RolledBar::absorb that the other resampler tests never trigger
+        // because their follow-up candles always have a higher low.
+        let mut r = Resampler::new(Timeframe::new(5).unwrap());
+        r.push(c(0, 10.0, 11.0, 10.0, 10.5, 1.0)).unwrap();
+        r.push(c(1, 10.5, 11.5, 8.0, 9.0, 1.0)).unwrap();
+        let bar = r.flush().unwrap().unwrap();
+        assert_eq!(bar.low, 8.0);
+        assert_eq!(bar.high, 11.5);
+    }
+
+    #[test]
     fn flushes_a_non_finite_volume_as_an_error() {
         let mut r = Resampler::new(Timeframe::new(5).unwrap());
         // Two near-max volumes in the same bucket sum to +inf.
