@@ -134,6 +134,50 @@ jobs:
         with:
           command: check
 
+  # Time-boxed fuzz smoke. Each target runs for ~30 s with libfuzzer; any panic
+  # fails the job. The goal is to catch a regression in the harness (e.g. a
+  # newly added indicator that panics on a particular input shape), not to
+  # discover novel bugs — long fuzz campaigns should be run on dedicated
+  # infrastructure with persistent corpora.
+  fuzz-smoke:
+    name: Fuzz (smoke)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Install nightly Rust
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable branch, 2026-03-27
+        with:
+          toolchain: nightly
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        with:
+          workspaces: fuzz
+
+      - name: Install cargo-fuzz
+        run: cargo install cargo-fuzz --locked
+
+      - name: Fuzz csv_reader (30 s)
+        run: cargo +nightly fuzz run csv_reader -- -max_total_time=30
+        working-directory: fuzz
+
+      - name: Fuzz binance_envelope (30 s)
+        run: cargo +nightly fuzz run binance_envelope -- -max_total_time=30
+        working-directory: fuzz
+
+      - name: Fuzz indicator_update (30 s)
+        run: cargo +nightly fuzz run indicator_update -- -max_total_time=30
+        working-directory: fuzz
+
+      - name: Fuzz indicator_update_candle (30 s)
+        run: cargo +nightly fuzz run indicator_update_candle -- -max_total_time=30
+        working-directory: fuzz
+
+      - name: Fuzz tick_aggregator (30 s)
+        run: cargo +nightly fuzz run tick_aggregator -- -max_total_time=30
+        working-directory: fuzz
+
   python:
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}

@@ -17,7 +17,8 @@ rustup toolchain install nightly
 | --- | --- |
 | `csv_reader` | `CandleReader` over arbitrary bytes — headers, cells, BOM, binary noise. |
 | `binance_envelope` | `RawWsEnvelope` deserialization from arbitrary strings. |
-| `indicator_update` | RSI / EMA streaming + batch over arbitrary `f64` sequences (NaN, ±inf, jumps). |
+| `indicator_update` | Every scalar-input indicator (SMA / EMA / WMA / RSI / DEMA / TEMA / HMA / ROC / TRIX / SMMA / TRIMA / ZLEMA / KAMA / T3 / MOM / CMO / TSI / PMO / StochRSI / DPO / PPO / Coppock / StdDev / UlcerIndex / HistoricalVolatility / LinearRegression / LinRegSlope / LinRegAngle / VHF / ZScore / MACD / Bollinger) streamed + batched over arbitrary `f64` sequences (NaN, ±inf, jumps). |
+| `indicator_update_candle` | Every candle-input indicator (ATR, NATR, TrueRange, ChaikinVolatility, Keltner, Donchian, PSAR, SuperTrend, ChandelierExit, ChandeKrollStop, ATRTrailingStop, ADX, Aroon, AroonOscillator, Vortex, MassIndex, ChoppinessIndex, CCI, WilliamsR, AwesomeOscillator, AcceleratorOscillator, UltimateOscillator, BalanceOfPower, OBV, MFI, VWAP, RollingVWAP, VWMA, ADL, VPT, CMF, ChaikinOscillator, ForceIndex, EaseOfMovement, TypicalPrice, MedianPrice, WeightedClose, Stochastic) streamed + batched over fuzz-derived OHLCV candles. |
 | `tick_aggregator` | `TickAggregator` over arbitrary `(price, volume, timestamp)` triples. |
 
 ## Run
@@ -27,6 +28,7 @@ rustup toolchain install nightly
 cargo +nightly fuzz run csv_reader
 cargo +nightly fuzz run binance_envelope
 cargo +nightly fuzz run indicator_update
+cargo +nightly fuzz run indicator_update_candle
 cargo +nightly fuzz run tick_aggregator
 ```
 

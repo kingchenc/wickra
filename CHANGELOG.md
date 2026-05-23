@@ -24,6 +24,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   site makes the invariant explicit.
 
 ### Changed
+- Fuzz suite expanded from 2 indicators to the full catalogue (audit finding
+  R9). The existing `indicator_update` target now exercises every scalar-input
+  indicator (~33 classes including MACD and Bollinger Bands); a new
+  `indicator_update_candle` target exercises every candle-input indicator (~37
+  classes, including ATR, ADX, Stochastic, PSAR, Keltner, SuperTrend,
+  ChandelierExit, AwesomeOscillator, OBV, MFI, VWAP, RollingVWAP, and the rest
+  of the volume / volatility / trailing-stop / price-statistics families). Each
+  iteration sweeps every indicator through both the streaming `update` loop
+  and a full `batch` call so any state-mutation bug surfaces on either path.
+  CI gains a `fuzz-smoke` job that runs each of the five targets for 30 s on
+  every push and pull-request.
 - `UlcerIndex::update` now tracks the trailing maximum with a monotonically-
   decreasing deque of `(index, price)` pairs instead of scanning the whole
   trailing window on every tick. The indicator now honours the `Indicator`
