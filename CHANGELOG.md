@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.5] - TBD
+## [0.1.5] - 2026-05-23
 
 ### Fixed
 - `HistoricalVolatility::update` no longer substitutes a `0.0` log-return on
