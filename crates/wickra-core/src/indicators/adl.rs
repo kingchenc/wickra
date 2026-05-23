@@ -127,6 +127,14 @@ mod tests {
         assert!(adl.update(candle(8.0, 10.0, 8.0, 9.0, 50.0, 0)).is_some());
     }
 
+    /// Cover the Indicator-impl `name` body (94-96). The other accessors
+    /// are exercised by existing tests; `name` was never queried.
+    #[test]
+    fn accessors_and_metadata() {
+        let adl = Adl::new();
+        assert_eq!(adl.name(), "ADL");
+    }
+
     #[test]
     fn close_at_high_accumulates_full_volume() {
         // Every bar closes at its high: MFM = +1, so ADL grows by `volume`.
