@@ -22,7 +22,7 @@ when proposing features or depending on Wickra elsewhere.
 | `bindings/node` | napi-rs bindings (`wickra` on npm). |
 | `bindings/wasm` | wasm-bindgen bindings (`wickra-wasm` on npm). |
 | `examples/` | Runnable examples. |
-| `docs/wiki/` | Documentation sources. |
+| `docs/` | Pointer to the project Wiki, which holds all documentation. |
 
 ## Building and testing
 
@@ -75,8 +75,10 @@ wasm-pack test --node bindings/wasm
   of `update` calls.
 - **Bindings.** A change to a public indicator API must be mirrored across the
   Python, Node, and WASM bindings, including their type stubs / `.d.ts`.
-- **Docs.** Update the relevant page under `docs/wiki/` and the `README.md`
-  when behaviour or the public API changes.
+- **Docs.** Update the relevant page on the
+  [project Wiki](https://github.com/kingchenc/wickra/wiki) and the
+  `README.md` when behaviour or the public API changes. The Wiki lives in
+  a separate git repository: `https://github.com/kingchenc/wickra.wiki.git`.
 - **Changelog.** Add an entry under `## [Unreleased]` in `CHANGELOG.md`.
 
 ## Commit and pull-request workflow

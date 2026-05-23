@@ -24,8 +24,9 @@
 - [ ] New behaviour has tests; bug fixes have a regression test.
 - [ ] Public API changes are mirrored in the Python / Node / WASM bindings
       and their type stubs (if applicable).
-- [ ] Documentation under `docs/wiki/` and the `README.md` is updated
-      (if applicable).
+- [ ] The relevant page on the [project Wiki](https://github.com/kingchenc/wickra/wiki)
+      and the `README.md` are updated (if applicable). Wiki edits go to a
+      separate repository: `https://github.com/kingchenc/wickra.wiki.git`.
 - [ ] An entry was added under `## [Unreleased]` in `CHANGELOG.md`.
 
 ## Notes for reviewers
