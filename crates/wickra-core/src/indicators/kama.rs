@@ -131,6 +131,20 @@ mod tests {
     use crate::traits::BatchExt;
     use approx::assert_relative_eq;
 
+    /// Cover the `periods` accessor (65-67) and the Indicator-impl
+    /// `warmup_period` (115-117) + `name` (123-125). Existing tests
+    /// inspect KAMA output but never query the metadata.
+    #[test]
+    fn accessors_and_metadata() {
+        let k = Kama::classic();
+        let (er, fast, slow) = k.periods();
+        assert_eq!(er, 10);
+        assert!((fast - 2.0 / (2.0 + 1.0)).abs() < 1e-12);
+        assert!((slow - 2.0 / (30.0 + 1.0)).abs() < 1e-12);
+        assert_eq!(k.warmup_period(), 11);
+        assert_eq!(k.name(), "KAMA");
+    }
+
     #[test]
     fn constant_series_yields_constant_kama() {
         let mut k = Kama::classic();
