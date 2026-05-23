@@ -562,7 +562,8 @@ mod tests {
 
     /// Spawn a mock WS server that accepts one connection, drops the
     /// listener (so any reconnect lands on a refused port), and then hands
-    /// the upgraded socket to `handler`.
+    /// the upgraded socket to `handler`. Every step `.unwrap()`s — a failure
+    /// here is a bug in the test scaffolding, not in the production code.
     async fn one_shot_server<F, Fut>(handler: F) -> String
     where
         F: FnOnce(WebSocketStream<TcpStream>) -> Fut + Send + 'static,
@@ -571,21 +572,23 @@ mod tests {
         let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
         let base_url = format!("ws://{}", listener.local_addr().unwrap());
         tokio::spawn(async move {
-            let Ok((stream, _)) = listener.accept().await else {
-                return;
-            };
+            let (stream, _) = listener.accept().await.unwrap();
             drop(listener);
-            if let Ok(ws) = tokio_tungstenite::accept_async(stream).await {
-                handler(ws).await;
-            }
+            let ws = tokio_tungstenite::accept_async(stream).await.unwrap();
+            handler(ws).await;
         });
         base_url
     }
 
-    /// Spawn a mock WS server that keeps accepting new connections and
-    /// invokes `handler` for each. Use for tests that exercise a reconnect
-    /// success path (the second accept serves a kline).
-    async fn multi_shot_server<F, Fut>(handler: F) -> String
+    /// Spawn a mock WS server that accepts exactly `n_accepts` connections
+    /// and invokes `handler` for each (with a zero-based index). Returns a
+    /// [`JoinHandle`](tokio::task::JoinHandle) the test can await so every
+    /// spawned handler is guaranteed to reach its closing brace before the
+    /// runtime is torn down.
+    async fn multi_shot_server<F, Fut>(
+        n_accepts: u32,
+        handler: F,
+    ) -> (String, tokio::task::JoinHandle<()>)
     where
         F: Fn(u32, WebSocketStream<TcpStream>) -> Fut + Send + Sync + 'static,
         Fut: std::future::Future<Output = ()> + Send + 'static,
@@ -593,20 +596,21 @@ mod tests {
         let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
         let base_url = format!("ws://{}", listener.local_addr().unwrap());
         let handler = Arc::new(handler);
-        tokio::spawn(async move {
-            let mut n: u32 = 0;
-            while let Ok((stream, _)) = listener.accept().await {
+        let h = tokio::spawn(async move {
+            let mut joins = Vec::with_capacity(n_accepts as usize);
+            for index in 0..n_accepts {
+                let (stream, _) = listener.accept().await.unwrap();
                 let handler = handler.clone();
-                let index = n;
-                n += 1;
-                tokio::spawn(async move {
-                    if let Ok(ws) = tokio_tungstenite::accept_async(stream).await {
-                        handler(index, ws).await;
-                    }
-                });
+                joins.push(tokio::spawn(async move {
+                    let ws = tokio_tungstenite::accept_async(stream).await.unwrap();
+                    handler(index, ws).await;
+                }));
+            }
+            for j in joins {
+                j.await.unwrap();
             }
         });
-        base_url
+        (base_url, h)
     }
 
     #[tokio::test]
@@ -716,18 +720,17 @@ mod tests {
     #[tokio::test]
     async fn next_event_reconnects_after_a_server_close_frame() {
         let kline = sample_kline_text();
-        let base = multi_shot_server(move |index, mut ws| {
+        let (base, server_done) = multi_shot_server(2, move |index, mut ws| {
             let kline = kline.clone();
             async move {
-                if index == 0 {
+                let msg = if index == 0 {
                     // First connection: send a clean Close so the client
                     // exercises the Message::Close reconnect path.
-                    let _ = ws.send(Message::Close(None)).await;
-                    while let Some(Ok(_)) = ws.next().await {}
+                    Message::Close(None)
                 } else {
-                    let _ = ws.send(Message::Text(kline.into())).await;
-                    while let Some(Ok(_)) = ws.next().await {}
-                }
+                    Message::Text(kline.into())
+                };
+                let _ = ws.send(msg).await;
             }
         })
         .await;
@@ -744,6 +747,11 @@ mod tests {
             .unwrap()
             .expect("reconnect succeeds and the second connection serves a kline");
         assert_eq!(event.symbol, "btcusdt");
+        // Wait for every spawned handler to reach its final state.
+        tokio::time::timeout(Duration::from_secs(1), server_done)
+            .await
+            .unwrap()
+            .unwrap();
     }
 
     #[tokio::test]
@@ -751,18 +759,18 @@ mod tests {
         let kline = sample_kline_text();
         let stall_token = Arc::new(AtomicU32::new(0));
         let stall_token_h = stall_token.clone();
-        let base = multi_shot_server(move |index, mut ws| {
+        let (base, server_done) = multi_shot_server(2, move |index, mut ws| {
             let kline = kline.clone();
             let stall_token = stall_token_h.clone();
             async move {
                 if index == 0 {
-                    // First connection: never write anything. The client must
-                    // hit its read_timeout and trigger a reconnect.
+                    // First connection: never write anything. Outlast the
+                    // client's 80 ms read_timeout but bounded so the
+                    // handler still completes for the coverage check.
                     stall_token.fetch_add(1, Ordering::SeqCst);
-                    while let Some(Ok(_)) = ws.next().await {}
+                    tokio::time::sleep(Duration::from_millis(250)).await;
                 } else {
                     let _ = ws.send(Message::Text(kline.into())).await;
-                    while let Some(Ok(_)) = ws.next().await {}
                 }
             }
         })
@@ -785,6 +793,10 @@ mod tests {
             .expect("client times out, reconnects, and reads the kline");
         assert_eq!(event.symbol, "btcusdt");
         assert!(stall_token.load(Ordering::SeqCst) >= 1);
+        tokio::time::timeout(Duration::from_secs(1), server_done)
+            .await
+            .unwrap()
+            .unwrap();
     }
 
     #[tokio::test]
