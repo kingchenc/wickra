@@ -173,7 +173,10 @@ mod tests {
     use approx::assert_relative_eq;
 
     fn naive(prices: &[f64], period: usize, mult: f64) -> BollingerOutput {
-        assert!(prices.len() >= period, "naive requires at least `period` prices");
+        assert!(
+            prices.len() >= period,
+            "naive requires at least `period` prices"
+        );
         let w = &prices[prices.len() - period..];
         let mean = w.iter().sum::<f64>() / period as f64;
         let var = w.iter().map(|x| (x - mean).powi(2)).sum::<f64>() / period as f64;
