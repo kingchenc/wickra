@@ -142,6 +142,34 @@ mod tests {
         assert!(matches!(Ppo::new(12, 12), Err(Error::InvalidPeriod { .. })));
     }
 
+    /// Cover the const accessors `periods` / `value` (lines 71-78) and the
+    /// Indicator-impl `name` body (122-124). `warmup_period` is already
+    /// covered by `first_emission_at_warmup_period`.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut ppo = Ppo::new(12, 26).unwrap();
+        assert_eq!(ppo.periods(), (12, 26));
+        assert_eq!(ppo.name(), "PPO");
+        assert_eq!(ppo.value(), None);
+        for i in 1..=26 {
+            ppo.update(f64::from(i));
+        }
+        assert!(ppo.value().is_some());
+    }
+
+    /// Cover the `s == 0.0` defensive branch (line 96). PPO divides by
+    /// the slow EMA; existing tests use prices ≈ 100, so the slow EMA
+    /// is never 0. Feed a stream of zeros — both EMAs converge to 0.0
+    /// and the indicator must emit exactly 0.0 (flat-momentum fallback)
+    /// rather than NaN.
+    #[test]
+    fn zero_slow_ema_yields_zero_ppo() {
+        let mut ppo = Ppo::new(3, 6).unwrap();
+        let out = ppo.batch(&[0.0_f64; 20]);
+        let last = out.into_iter().flatten().last().expect("emits");
+        assert_eq!(last, 0.0);
+    }
+
     #[test]
     fn first_emission_at_warmup_period() {
         let mut ppo = Ppo::new(3, 6).unwrap();
