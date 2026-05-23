@@ -154,12 +154,12 @@ mod tests {
         assert!(out[8].is_some());
     }
 
-    /// `warmup_period() == 1-based index of the first `Some`` for every legal
-    /// parameter combination — including the parameter set
-    /// `(roc_long=4, roc_short=2, wma=3)` that an external audit claimed
-    /// would prove the formula off by one. It does not: the slower ROC first
-    /// emits at 0-based index 4, the WMA needs 3 such inputs and emits at
-    /// 0-based index 6 (the 7th input), which is what
+    /// `warmup_period()` equals the 1-based index of the first emitted
+    /// `Some` for every legal parameter combination — including the
+    /// parameter set `(roc_long=4, roc_short=2, wma=3)` that an external
+    /// audit claimed would prove the formula off by one. It does not: the
+    /// slower ROC first emits at 0-based index 4, the WMA needs 3 such inputs
+    /// and emits at 0-based index 6 (the 7th input), which is what
     /// `roc_long.max(roc_short) + wma = max(4, 2) + 3 = 7` reports.
     #[test]
     fn warmup_period_matches_first_some_for_every_parameter_set() {
