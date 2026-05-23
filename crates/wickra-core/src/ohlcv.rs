@@ -216,6 +216,34 @@ mod tests {
         assert!(matches!(err, Error::InvalidCandle { .. }));
     }
 
+    /// Cover the unchecked constructor `Candle::new_unchecked` (lines 86-102).
+    /// Every existing test routes through the validating `Candle::new`, so the
+    /// unchecked path is dead.
+    ///
+    /// The first assertion shows that a valid set of fields round-trips
+    /// verbatim. The second feeds `high < low` (which `Candle::new` would
+    /// reject with `Error::InvalidCandle`) and asserts the unchecked
+    /// constructor still produces the struct as-is — documenting and
+    /// enforcing the API contract that the unchecked variant performs no
+    /// validation and is the caller's responsibility.
+    #[test]
+    fn candle_new_unchecked_preserves_fields_verbatim() {
+        let c = Candle::new_unchecked(1.0, 2.0, 0.5, 1.5, 100.0, 42);
+        assert_eq!(c.open, 1.0);
+        assert_eq!(c.high, 2.0);
+        assert_eq!(c.low, 0.5);
+        assert_eq!(c.close, 1.5);
+        assert_eq!(c.volume, 100.0);
+        assert_eq!(c.timestamp, 42);
+
+        // Skip-validation contract: an OHLC combination that the checked
+        // constructor rejects (high < low) is still built without error.
+        assert!(Candle::new(10.0, 9.0, 10.0, 10.0, 1.0, 0).is_err());
+        let unchecked = Candle::new_unchecked(10.0, 9.0, 10.0, 10.0, 1.0, 0);
+        assert_eq!(unchecked.high, 9.0);
+        assert_eq!(unchecked.low, 10.0);
+    }
+
     #[test]
     fn candle_typical_price() {
         let c = Candle::new(10.0, 12.0, 9.0, 11.0, 1.0, 0).unwrap();
