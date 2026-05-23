@@ -196,6 +196,15 @@ mod tests {
         assert!(ChaikinOscillator::new(5, 5).is_err());
     }
 
+    /// Cover the const accessor `periods` (76-78) and the Indicator-impl
+    /// `name` body (109-111). `warmup_period` is exercised elsewhere.
+    #[test]
+    fn accessors_and_metadata() {
+        let osc = ChaikinOscillator::classic();
+        assert_eq!(osc.periods(), (3, 10));
+        assert_eq!(osc.name(), "ChaikinOscillator");
+    }
+
     #[test]
     fn reset_clears_state() {
         let candles: Vec<Candle> = (0..40).map(|i| cdl(100.0 + i as f64, 50.0, i)).collect();
