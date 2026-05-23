@@ -80,7 +80,19 @@ recomputing history on each tick.
 
 ## Multi-output indicators
 
-`MACD` and `BollingerBands` return a structured object from `update`:
+Several indicators return a structured object from `update` (or `null` during
+warmup). The full list and their field names:
+
+| Indicator           | `update` return shape                            |
+|---------------------|--------------------------------------------------|
+| `MACD`              | `{ macd, signal, histogram }`                    |
+| `BollingerBands`    | `{ upper, middle, lower, stddev }`               |
+| `Stochastic`        | `{ k, d }`                                       |
+| `ADX`               | `{ plusDi, minusDi, adx }`                       |
+| `Keltner`           | `{ upper, middle, lower }`                       |
+| `Donchian`          | `{ upper, middle, lower }`                       |
+| `Aroon`             | `{ up, down }`                                   |
+| `SuperTrend`        | `{ value, direction }`                           |
 
 ```javascript
 import init, { MACD } from "wickra-wasm";
@@ -96,8 +108,17 @@ console.log(last);
 ```
 
 `batch` returns a flat `Float64Array`; multi-output indicators interleave
-their fields per row (`[macd0, signal0, hist0, macd1, ...]`). The exact
-layout is documented in the generated `pkg/wickra_wasm.d.ts`.
+their fields per row (e.g. MACD: `[macd0, signal0, hist0, macd1, ...]`). The
+exact layout is documented in the generated `pkg/wickra_wasm.d.ts`.
+
+> Since `wickra-wasm@0.1.5`, every candle-input indicator (ATR, ADX,
+> WilliamsR, CCI, MFI, PSAR, Keltner, Donchian, VWAP, RollingVWAP,
+> AwesomeOscillator, Aroon, Stochastic, OBV, and the rest of the
+> volume / volatility / trailing-stop / price-statistics families) exposes
+> the same streaming API as `MACD` here — `update`, `batch`, `reset`,
+> `isReady` and `warmupPeriod`. Earlier releases only shipped `batch` for
+> twelve of these classes; browser code no longer needs to replay `batch`
+> on every tick.
 
 ## Errors
 
