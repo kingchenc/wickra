@@ -161,6 +161,23 @@ mod tests {
         assert!(matches!(T3::new(0, 0.7), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessors `period` / `volume_factor` / `value` and
+    /// the Indicator-impl `name` (lines 95-107, 148-150). Existing tests
+    /// query `warmup_period` (covered by `first_emission_at_warmup_period`)
+    /// but never inspect period, v, value, or name.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut t3 = T3::new(5, 0.7).unwrap();
+        assert_eq!(t3.period(), 5);
+        assert_relative_eq!(t3.volume_factor(), 0.7, epsilon = 1e-12);
+        assert_eq!(t3.name(), "T3");
+        assert_eq!(t3.value(), None);
+        for _ in 0..t3.warmup_period() {
+            t3.update(50.0);
+        }
+        assert!(t3.value().is_some());
+    }
+
     #[test]
     fn new_rejects_out_of_range_volume_factor() {
         assert!(matches!(T3::new(5, -0.1), Err(Error::InvalidPeriod { .. })));
