@@ -246,15 +246,21 @@ mod tests {
             })
             .collect();
         let mut psar = Psar::classic();
-        for (i, sar) in psar.batch(&candles).into_iter().enumerate() {
-            if let Some(s) = sar {
-                assert!(
-                    s <= candles[i].low + 1e-9,
-                    "SAR {s} should be <= low {} at i={i}",
-                    candles[i].low
-                );
-            }
-        }
+        let violations: Vec<(usize, f64, f64)> = psar
+            .batch(&candles)
+            .into_iter()
+            .enumerate()
+            .filter_map(|(i, sar)| {
+                sar.and_then(|s| {
+                    if s > candles[i].low + 1e-9 {
+                        Some((i, s, candles[i].low))
+                    } else {
+                        None
+                    }
+                })
+            })
+            .collect();
+        assert!(violations.is_empty(), "SAR above low: {violations:?}");
     }
 
     #[test]
@@ -267,13 +273,23 @@ mod tests {
             })
             .collect();
         let mut psar = Psar::classic();
-        let outs = psar.batch(&candles);
         // After the trend establishes downward, SAR should sit above highs.
-        for (i, sar) in outs.into_iter().enumerate().skip(5) {
-            if let Some(s) = sar {
-                assert!(s >= candles[i].high - 1e-9);
-            }
-        }
+        let violations: Vec<(usize, f64, f64)> = psar
+            .batch(&candles)
+            .into_iter()
+            .enumerate()
+            .skip(5)
+            .filter_map(|(i, sar)| {
+                sar.and_then(|s| {
+                    if s < candles[i].high - 1e-9 {
+                        Some((i, s, candles[i].high))
+                    } else {
+                        None
+                    }
+                })
+            })
+            .collect();
+        assert!(violations.is_empty(), "SAR below high: {violations:?}");
     }
 
     #[test]
@@ -290,6 +306,16 @@ mod tests {
             a.batch(&candles),
             candles.iter().map(|x| b.update(*x)).collect::<Vec<_>>()
         );
+    }
+
+    /// Cover the Indicator-impl `warmup_period` (206-208) and `name`
+    /// (220-222). PSAR's warmup is the constant 2 (seed candle + first
+    /// emitting candle); the name is the literal "PSAR".
+    #[test]
+    fn accessors_and_metadata() {
+        let psar = Psar::classic();
+        assert_eq!(psar.warmup_period(), 2);
+        assert_eq!(psar.name(), "PSAR");
     }
 
     #[test]
