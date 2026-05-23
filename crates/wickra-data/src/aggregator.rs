@@ -325,16 +325,18 @@ impl TickAggregator {
         }
 
         out.reserve(gap_count as usize);
+        // Bucket alignment guarantees start + (gap_count - 1) * step ≤
+        // next_bucket - step < i64::MAX, so iterating `gap_count` times
+        // with `saturating_add(step)` cannot reach i64::MAX inside the
+        // loop body. `prev.close` is finite (it came from a validated
+        // bar) and volume is exactly 0.0, so the OHLCV invariants hold
+        // by construction — skip re-validation via Candle::new_unchecked.
         let mut t = start;
-        while t < next_bucket {
-            // `prev.close` is finite (it came from a validated bar), so this
-            // flat candle always passes `Candle::new`'s checks.
-            out.push(Candle::new(
+        for _ in 0..gap_count {
+            out.push(Candle::new_unchecked(
                 prev.close, prev.close, prev.close, prev.close, 0.0, t,
-            )?);
-            t = t.checked_add(step).ok_or_else(|| {
-                Error::Malformed("timestamp overflow while gap-filling".to_string())
-            })?;
+            ));
+            t = t.saturating_add(step);
         }
         Ok(())
     }
@@ -367,6 +369,30 @@ mod tests {
     fn timeframe_rejects_non_positive() {
         assert!(Timeframe::new(0).is_err());
         assert!(Timeframe::new(-1).is_err());
+    }
+
+    /// Cover the `Timeframe::millis`, `Timeframe::seconds`, and
+    /// `Timeframe::one_minute_ms` convenience constructors (lines 40-52).
+    /// All existing tests build Timeframes via `new` / `minutes` / `hours` /
+    /// `days`, never via the three thin convenience wrappers.
+    #[test]
+    fn timeframe_convenience_constructors() {
+        assert_eq!(Timeframe::millis(250).unwrap().bucket(), 250);
+        assert!(Timeframe::millis(0).is_err());
+        assert_eq!(Timeframe::seconds(30).unwrap().bucket(), 30);
+        assert!(Timeframe::seconds(-1).is_err());
+        // one_minute_ms is the infallible 60_000-ms shortcut.
+        assert_eq!(Timeframe::one_minute_ms().bucket(), 60_000);
+    }
+
+    /// Cover the `TickAggregator::timeframe` const accessor (lines 353-355).
+    /// Existing tests only inspect emitted candles, never query the
+    /// configured timeframe back out.
+    #[test]
+    fn aggregator_timeframe_getter() {
+        let tf = Timeframe::new(60).unwrap();
+        let agg = TickAggregator::new(tf);
+        assert_eq!(agg.timeframe().bucket(), 60);
     }
 
     #[test]
