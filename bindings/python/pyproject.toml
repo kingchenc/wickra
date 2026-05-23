@@ -8,6 +8,7 @@ version = "0.1.5"
 description = "Streaming-first technical indicators: incremental, fast, install-free."
 readme = "README.md"
 license = { text = "PolyForm-Noncommercial-1.0.0" }
+authors = [{ name = "kingchenc", email = "kingchencp@gmail.com" }]
 requires-python = ">=3.9"
 keywords = ["finance", "trading", "indicators", "technical-analysis", "ta-lib"]
 classifiers = [
