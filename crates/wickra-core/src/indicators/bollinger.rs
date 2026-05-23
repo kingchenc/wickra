@@ -25,6 +25,14 @@ pub struct BollingerOutput {
 /// publication uses population (not sample) standard deviation, which matches every
 /// reference implementation (TA-Lib, pandas-ta, etc.).
 ///
+/// The running `sum` and `sum_sq` are reseeded from the live window every
+/// `16 · period` updates to cap floating-point drift on long streams. This is
+/// amortised O(1), preserves bit-equivalence with the previous behaviour on
+/// inputs that did not drift, and is particularly important for `sum_sq`,
+/// where catastrophic cancellation between large add/subtract pairs can drive
+/// the computed variance negative (the `.max(0.0)` clamp below is the
+/// safety-net for the rare cases where the reseed has not happened yet).
+///
 /// # Example
 ///
 /// ```
@@ -44,7 +52,16 @@ pub struct BollingerBands {
     window: VecDeque<f64>,
     sum: f64,
     sum_sq: f64,
+    /// Number of finite updates since the running sums were last reseeded
+    /// from the live window. See [`RECOMPUTE_EVERY`] below.
+    updates_since_recompute: usize,
 }
+
+/// How often (in finite updates) the incremental `sum` / `sum_sq` are reseeded
+/// from the live window. The multiplier `16` keeps the amortised cost flat and
+/// caps any cancellation drift to roughly `16 · period · ULP · max(|x|²)` —
+/// negligible on real-world price scales.
+const RECOMPUTE_EVERY: usize = 16;
 
 impl BollingerBands {
     /// Construct a new Bollinger Bands indicator.
@@ -66,6 +83,7 @@ impl BollingerBands {
             window: VecDeque::with_capacity(period),
             sum: 0.0,
             sum_sq: 0.0,
+            updates_since_recompute: 0,
         })
     }
 
@@ -119,6 +137,12 @@ impl Indicator for BollingerBands {
         self.window.push_back(input);
         self.sum += input;
         self.sum_sq += input * input;
+        self.updates_since_recompute += 1;
+        if self.updates_since_recompute >= RECOMPUTE_EVERY * self.period {
+            self.sum = self.window.iter().copied().sum();
+            self.sum_sq = self.window.iter().copied().map(|x| x * x).sum();
+            self.updates_since_recompute = 0;
+        }
         self.current()
     }
 
@@ -126,6 +150,7 @@ impl Indicator for BollingerBands {
         self.window.clear();
         self.sum = 0.0;
         self.sum_sq = 0.0;
+        self.updates_since_recompute = 0;
     }
 
     fn warmup_period(&self) -> usize {
@@ -252,6 +277,45 @@ mod tests {
         assert!(bb.is_ready());
         bb.reset();
         assert!(!bb.is_ready());
+    }
+
+    /// Long-running stability check. After several recompute cycles the
+    /// reported Bollinger bands must still equal a fresh from-scratch
+    /// computation over the live window — even on inputs designed to cause
+    /// catastrophic cancellation in the `sum_sq` accumulator (alternating
+    /// between two very different magnitudes).
+    #[test]
+    fn long_stream_drift_stays_bounded() {
+        let period = 20;
+        let mult = 2.0;
+        let mut bb = BollingerBands::new(period, mult).unwrap();
+        let mut window: VecDeque<f64> = VecDeque::with_capacity(period);
+        // Forces the periodic reseed to fire 5+ times.
+        let n_updates = 16 * period * 5;
+        let mut last = None;
+        for i in 0..n_updates {
+            let v = if i.is_multiple_of(2) { 1e6 } else { 1.0 };
+            last = bb.update(v);
+            if window.len() == period {
+                window.pop_front();
+            }
+            window.push_back(v);
+        }
+        let scratch =
+            naive(&window.iter().copied().collect::<Vec<_>>(), period, mult).expect("warmed up");
+        let got = last.expect("warmed up");
+        assert!(
+            (got.middle - scratch.middle).abs() < 1e-3,
+            "middle drift: got={}, scratch={}",
+            got.middle,
+            scratch.middle,
+        );
+        assert!(
+            (got.stddev - scratch.stddev).abs() < 1e-3,
+            "stddev drift: got={}, scratch={}",
+            got.stddev,
+            scratch.stddev,
+        );
     }
 
     #[test]

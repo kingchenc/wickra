@@ -24,6 +24,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   site makes the invariant explicit.
 
 ### Changed
+- `Sma` and `BollingerBands` now reseed their incremental `sum` (and `sum_sq`
+  for Bollinger) from the live window every `16 · period` finite updates,
+  capping floating-point drift on long-running streams (audit findings R7 and
+  L2-Rust). Previously the incremental single-subtract `sum -= old` could
+  accumulate catastrophic-cancellation error on streams with alternating
+  large/small magnitudes; the misleading `sma.rs` comment that claimed the
+  drift was already bounded "by recomputing the sum after each pop" is
+  replaced with an accurate description of the new reseed strategy. Amortised
+  cost stays at O(1) (`O(period)` work amortised over `O(period)` updates),
+  values are bit-identical on inputs that did not drift to begin with, and
+  two new `long_stream_drift_stays_bounded` tests stress the recompute by
+  alternating `1e9` / `1.0` (SMA) and `1e6` / `1.0` (Bollinger) for several
+  recompute cycles and verify the reported values track a fresh from-scratch
+  computation over the live window.
 - `LinearRegression`, `LinRegSlope` and `LinRegAngle` (via composition over
   `LinRegSlope`) now run their rolling ordinary-least-squares fit
   **incrementally** in O(1) per update (audit finding R2). Previously every

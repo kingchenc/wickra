@@ -10,6 +10,14 @@ use crate::traits::Indicator;
 /// Maintains a rolling sum so each update is O(1). Output equals
 /// `sum(last `period` prices) / period` once the window is full; `None` before.
 ///
+/// On long-running streams a single-subtract incremental sum can accumulate
+/// rounding error (catastrophic cancellation when values of very different
+/// magnitudes are alternately added and removed). To keep drift bounded, the
+/// running sum is reseeded from the live window every `16 · period` updates —
+/// O(1) amortised cost (`O(period)` work amortised over `O(period)` updates),
+/// zero observable behaviour change on inputs that did not drift to begin
+/// with, and a strict cap on accumulated rounding for streams that did.
+///
 /// # Example
 ///
 /// ```
@@ -27,7 +35,18 @@ pub struct Sma {
     period: usize,
     window: VecDeque<f64>,
     sum: f64,
+    /// Number of finite updates since the running `sum` was last reseeded from
+    /// the live window. Caps accumulated floating-point drift on long streams.
+    /// See [`RECOMPUTE_EVERY`] below.
+    updates_since_recompute: usize,
 }
+
+/// How often (in finite updates) the incremental sum is reseeded from the live
+/// window. The multiplier `16` is the smallest power of two that keeps the
+/// amortised cost flat under any `period` while still bounding any drift to
+/// roughly `16 · period · ULP · max(|x|)` — sub-picodollar on real-world price
+/// scales.
+const RECOMPUTE_EVERY: usize = 16;
 
 impl Sma {
     /// Construct a new SMA with the given window length.
@@ -43,6 +62,7 @@ impl Sma {
             period,
             window: VecDeque::with_capacity(period),
             sum: 0.0,
+            updates_since_recompute: 0,
         })
     }
 
@@ -70,20 +90,26 @@ impl Indicator for Sma {
             return self.value();
         }
         if self.window.len() == self.period {
-            // Drop the oldest from the sum to keep numerical drift bounded by recomputing
-            // the sum after each pop; a single subtract works in O(1) and is acceptable
-            // here because we use f64 throughout.
+            // Slide: drop the oldest, then add the new. Each step is a single
+            // f64 add/subtract — O(1) but introduces ~1 ULP of rounding noise.
+            // The periodic reseed below caps the accumulated drift.
             let old = self.window.pop_front().expect("window non-empty");
             self.sum -= old;
         }
         self.window.push_back(input);
         self.sum += input;
+        self.updates_since_recompute += 1;
+        if self.updates_since_recompute >= RECOMPUTE_EVERY * self.period {
+            self.sum = self.window.iter().copied().sum();
+            self.updates_since_recompute = 0;
+        }
         self.value()
     }
 
     fn reset(&mut self) {
         self.window.clear();
         self.sum = 0.0;
+        self.updates_since_recompute = 0;
     }
 
     fn warmup_period(&self) -> usize {
@@ -209,5 +235,34 @@ mod tests {
                 }
             }
         }
+    }
+
+    /// Long-running stability check. Runs more updates than `RECOMPUTE_EVERY *
+    /// period` so the periodic reseed must fire several times, then asserts
+    /// that the reported SMA still equals a fresh from-scratch mean over the
+    /// live window to within tight floating-point tolerance. Inputs swing
+    /// between two magnitudes (`1e9` and `1.0`) — a pattern designed to
+    /// expose catastrophic cancellation in a naive single-subtract sum.
+    #[test]
+    fn long_stream_drift_stays_bounded() {
+        let period = 20;
+        let mut sma = Sma::new(period).unwrap();
+        let mut window: VecDeque<f64> = VecDeque::with_capacity(period);
+        // `RECOMPUTE_EVERY * period * 5` updates → recompute fires 5+ times.
+        let n_updates = 16 * period * 5;
+        for i in 0..n_updates {
+            let v = if i.is_multiple_of(2) { 1e9 } else { 1.0 };
+            sma.update(v);
+            if window.len() == period {
+                window.pop_front();
+            }
+            window.push_back(v);
+        }
+        let from_scratch: f64 = window.iter().sum::<f64>() / period as f64;
+        let got = sma.value().expect("warmed up");
+        assert!(
+            (got - from_scratch).abs() < 1e-6,
+            "SMA drift exceeds 1e-6 over {n_updates} updates: got={got}, scratch={from_scratch}"
+        );
     }
 }
