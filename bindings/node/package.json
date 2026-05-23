@@ -5,7 +5,7 @@
   "author": "kingchenc <kingchencp@gmail.com>",
   "main": "index.js",
   "types": "index.d.ts",
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "PolyForm-Noncommercial-1.0.0",
   "keywords": [
     "trading",
     "indicators",
@@ -44,7 +44,7 @@
     }
   },
   "engines": {
-    "node": ">= 16"
+    "node": ">= 18"
   },
   "optionalDependencies": {
     "wickra-linux-x64-gnu": "0.1.4",

@@ -6,9 +6,9 @@
   "files": [
     "wickra.win32-arm64-msvc.node"
   ],
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "PolyForm-Noncommercial-1.0.0",
   "engines": {
-    "node": ">= 16"
+    "node": ">= 18"
   },
   "os": [
     "win32"

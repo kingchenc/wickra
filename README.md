@@ -52,7 +52,21 @@ multi-language reach, and active maintenance.
 
 ## Benchmark: how much faster is "streaming-first"?
 
-Reproduced on this machine with `python -m benchmarks.compare_libraries`.
+The numbers below were measured on a single developer workstation and are not
+guaranteed to reproduce identically on different hardware — absolute µs values
+depend on CPU, memory clock and OS scheduler. Read them as **relative
+speedups** between libraries on identical input, not as a universal
+performance contract.
+
+- **Reproduced on:** Windows 11 Pro 26200, AMD Ryzen 9 7950X3D, 64 GB DDR5,
+  Rust 1.92 (release profile, `lto = "fat"`, `codegen-units = 1`),
+  Python 3.12, Node 20.
+- **Reproduce yourself:** `pip install -e bindings/python[bench]` then
+  `python -m benchmarks.compare_libraries`. The script auto-detects every
+  installed peer library and runs them on the same generated inputs as
+  Wickra. The CI job `cross-library-bench` runs the same script on every
+  push and uploads the raw report as a build artefact.
+
 Lower µs/op = faster. Wickra wins every batch category outright, and the
 streaming gap widens linearly with how much history a batch-only library has
 to recompute on every tick.
