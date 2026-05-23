@@ -84,6 +84,13 @@ mod tests {
         );
     }
 
+    /// Cover the Indicator-impl `name` body (61-63).
+    #[test]
+    fn name_metadata() {
+        let wc = WeightedClose::new();
+        assert_eq!(wc.name(), "WeightedClose");
+    }
+
     #[test]
     fn emits_from_first_candle() {
         let mut wc = WeightedClose::new();
