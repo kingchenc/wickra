@@ -220,6 +220,20 @@ mod tests {
         assert!(matches!(Stochastic::new(14, 0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the `Stochastic::classic()` convenience constructor plus the
+    /// `periods()` const accessor and the Indicator-impl `warmup_period`
+    /// / `name` methods. Existing tests called `Stochastic::new(_, _)`
+    /// directly and never asked for the configured periods, warmup
+    /// length, or name.
+    #[test]
+    fn classic_periods_and_metadata() {
+        let s = Stochastic::classic();
+        assert_eq!(s.periods(), (14, 3));
+        // Warmup for the classic config: k_period + d_period - 1 = 14 + 3 - 1 = 16.
+        assert_eq!(s.warmup_period(), 16);
+        assert_eq!(s.name(), "Stochastic");
+    }
+
     #[test]
     fn close_at_high_yields_k_100() {
         let candles = vec![
@@ -251,6 +265,13 @@ mod tests {
         for o in s.batch(&candles).into_iter().flatten() {
             assert_relative_eq!(o.k, 50.0, epsilon = 1e-12);
             assert_relative_eq!(o.d, 50.0, epsilon = 1e-12);
+        }
+        // Cross-check: the naive_k test helper must agree on the flat-range
+        // convention. The k_matches_naive test only feeds oscillating prices,
+        // so the helper's flat-range branch was never exercised.
+        let ks = naive_k(&candles, 14);
+        for k in ks.into_iter().skip(13) {
+            assert_relative_eq!(k.expect("ready after 14 inputs"), 50.0, epsilon = 1e-12);
         }
     }
 
