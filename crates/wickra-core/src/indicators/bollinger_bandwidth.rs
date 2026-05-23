@@ -113,6 +113,27 @@ mod tests {
         assert!(BollingerBandwidth::new(20, -1.0).is_err());
     }
 
+    /// Cover the public const accessors `period`, `multiplier`, `value` and
+    /// the Indicator-impl `warmup_period` + `name` methods. None of the
+    /// pre-existing tests inspected the metadata surface — they only fed
+    /// numeric updates and asserted on the bandwidth values, leaving the
+    /// five getter bodies (lines 54-66, 90-92, 98-100) untouched.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut bbw = BollingerBandwidth::new(20, 2.0).unwrap();
+        assert_eq!(bbw.period(), 20);
+        assert_relative_eq!(bbw.multiplier(), 2.0, epsilon = 1e-12);
+        // value() before warmup must be the literal None branch of self.last.
+        assert_eq!(bbw.value(), None);
+        assert_eq!(bbw.warmup_period(), 20);
+        assert_eq!(bbw.name(), "BollingerBandwidth");
+        // Drive past warmup so value() exercises the Some branch as well.
+        for i in 1..=20 {
+            bbw.update(f64::from(i));
+        }
+        assert!(bbw.value().is_some());
+    }
+
     #[test]
     fn constant_series_yields_zero() {
         // Flat prices: the bands collapse onto the middle, so width is 0.
@@ -123,6 +144,23 @@ mod tests {
         }
     }
 
+    /// Cover the defensive `o.middle == 0.0` branch in `update` (line 77).
+    /// All other tests use price levels ≈100, so the rolling SMA is always
+    /// strictly positive and the zero-middle fallback is unreachable. Feed
+    /// a symmetric series whose 5-bar mean is exactly 0 to force the branch
+    /// and assert the indicator yields exactly 0.0 (rather than inf/nan).
+    #[test]
+    fn zero_middle_band_yields_zero_bandwidth() {
+        let mut bbw = BollingerBandwidth::new(5, 2.0).unwrap();
+        // sum(-2, -1, 0, 1, 2) = 0 exactly in IEEE-754, so the SMA middle
+        // lands on exactly 0.0 at the fifth input. Stddev > 0, so absent
+        // the guard the next line would divide by zero.
+        let out = bbw.batch(&[-2.0, -1.0, 0.0, 1.0, 2.0]);
+        assert_eq!(out[..4], [None, None, None, None]);
+        let v = out[4].expect("warmed up");
+        assert_eq!(v, 0.0, "zero-middle fallback must emit exactly 0.0");
+    }
+
     #[test]
     fn matches_bands_definition() {
         // Bandwidth must equal (upper - lower) / middle from BollingerBands.
@@ -131,13 +169,11 @@ mod tests {
             .collect();
         let bbw_out = BollingerBandwidth::new(20, 2.0).unwrap().batch(&prices);
         let bands_out = BollingerBands::new(20, 2.0).unwrap().batch(&prices);
-        for (w, b) in bbw_out.iter().zip(bands_out.iter()) {
-            match (w, b) {
-                (Some(wv), Some(bv)) => {
-                    assert_relative_eq!(*wv, (bv.upper - bv.lower) / bv.middle, epsilon = 1e-12);
-                }
-                (None, None) => {}
-                _ => panic!("warmup mismatch"),
+        for (i, (w, b)) in bbw_out.iter().zip(bands_out.iter()).enumerate() {
+            // Same warmup period on both — emission shape must agree at every index.
+            assert_eq!(w.is_some(), b.is_some(), "warmup mismatch at index {i}");
+            if let (Some(wv), Some(bv)) = (w, b) {
+                assert_relative_eq!(*wv, (bv.upper - bv.lower) / bv.middle, epsilon = 1e-12);
             }
         }
     }
