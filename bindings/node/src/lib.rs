@@ -5,7 +5,7 @@
 //! cd bindings/node && npm install && npm run build
 //! ```
 //!
-//! Then `require("@wickra/wickra")` from Node.
+//! Then `require("wickra")` from Node.
 
 #![allow(clippy::needless_pass_by_value)]
 #![allow(missing_debug_implementations)] // napi-derive auto-generates the Node-facing types.
