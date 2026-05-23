@@ -161,6 +161,15 @@ mod tests {
         assert!(ZScore::new(0).is_err());
     }
 
+    /// Cover the const accessor `period` (59-61) and the Indicator-impl
+    /// `name` body (106-108). `warmup_period` is exercised elsewhere.
+    #[test]
+    fn accessors_and_metadata() {
+        let z = ZScore::new(20).unwrap();
+        assert_eq!(z.period(), 20);
+        assert_eq!(z.name(), "ZScore");
+    }
+
     #[test]
     fn reset_clears_state() {
         let mut z = ZScore::new(5).unwrap();
