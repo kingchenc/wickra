@@ -95,6 +95,13 @@ mod tests {
         assert_relative_eq!(out[1].unwrap(), 2.0, epsilon = 1e-12);
     }
 
+    /// Cover the Indicator-impl `name` body (73-75).
+    #[test]
+    fn name_metadata() {
+        let tr = TrueRange::new();
+        assert_eq!(tr.name(), "TrueRange");
+    }
+
     #[test]
     fn emits_from_first_candle() {
         let mut tr = TrueRange::new();
