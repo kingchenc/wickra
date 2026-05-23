@@ -135,7 +135,7 @@ The complete TypeScript definitions live at
 | `batch(...)`              | Single-output: flat `Array<number>` with `NaN` warmup.<br>Multi-output: flat interleaved `Array<number>`. |
 | `reset()`                 | Returns to a freshly-constructed state.                                |
 | `isReady()`               | `true` once the first value has been emitted.                          |
-| `warmupPeriod()`          | Present on single-output indicators (SMA, EMA, WMA, RSI, ...). Not exposed on every multi-output class — check `index.d.ts`. |
+| `warmupPeriod()`          | Present on every indicator class (single- and multi-output, scalar- and candle-input) since `0.1.5`. |
 
 A complete reference run lives in `bindings/node/__tests__/smoke.test.js`:
 
