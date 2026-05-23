@@ -394,6 +394,51 @@ mod tests {
     use super::*;
 
     #[test]
+    fn interval_as_str_covers_every_variant() {
+        // Wire-format strings are part of Binance's public protocol — pin
+        // every mapping so a typo here is caught immediately.
+        let pairs: &[(Interval, &str)] = &[
+            (Interval::OneSecond, "1s"),
+            (Interval::OneMinute, "1m"),
+            (Interval::ThreeMinutes, "3m"),
+            (Interval::FiveMinutes, "5m"),
+            (Interval::FifteenMinutes, "15m"),
+            (Interval::ThirtyMinutes, "30m"),
+            (Interval::OneHour, "1h"),
+            (Interval::TwoHours, "2h"),
+            (Interval::FourHours, "4h"),
+            (Interval::SixHours, "6h"),
+            (Interval::EightHours, "8h"),
+            (Interval::TwelveHours, "12h"),
+            (Interval::OneDay, "1d"),
+            (Interval::OneWeek, "1w"),
+        ];
+        for (iv, expected) in pairs {
+            assert_eq!(iv.as_str(), *expected);
+        }
+    }
+
+    #[test]
+    fn binance_config_default_matches_production_endpoint() {
+        let cfg = BinanceConfig::default();
+        assert_eq!(cfg.base_url, "wss://stream.binance.com:9443");
+        assert_eq!(cfg.read_timeout, Duration::from_secs(300));
+        assert_eq!(cfg.initial_reconnect_delay, Duration::from_secs(1));
+        assert_eq!(cfg.max_reconnect_backoff, Duration::from_secs(30));
+        assert_eq!(cfg.max_reconnect_attempts, 6);
+        assert_eq!(cfg.max_message_size, 8 << 20);
+        assert_eq!(cfg.max_frame_size, 2 << 20);
+    }
+
+    #[tokio::test]
+    async fn connect_rejects_an_empty_symbol_list() {
+        let err = BinanceKlineStream::connect(&[], Interval::OneMinute)
+            .await
+            .unwrap_err();
+        assert!(matches!(err, Error::Malformed(_)));
+    }
+
+    #[test]
     fn parses_real_binance_payload() {
         // Sample event format from Binance's public docs (truncated).
         let json = r#"{
