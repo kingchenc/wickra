@@ -154,6 +154,17 @@ mod tests {
         assert!(matches!(Wma::new(0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessor `period` (56-58) and the Indicator-impl
+    /// `warmup_period` (111-113) + `name` (119-121). Existing tests never
+    /// inspect these metadata methods.
+    #[test]
+    fn accessors_and_metadata() {
+        let wma = Wma::new(7).unwrap();
+        assert_eq!(wma.period(), 7);
+        assert_eq!(wma.warmup_period(), 7);
+        assert_eq!(wma.name(), "WMA");
+    }
+
     #[test]
     fn warmup_returns_none() {
         let mut wma = Wma::new(3).unwrap();
@@ -179,11 +190,11 @@ mod tests {
         let mut wma = Wma::new(7).unwrap();
         let got = wma.batch(&prices);
         let want = wma_naive(&prices, 7);
-        for (g, w) in got.iter().zip(want.iter()) {
-            match (g, w) {
-                (None, None) => {}
-                (Some(a), Some(b)) => assert_relative_eq!(*a, *b, epsilon = 1e-9),
-                _ => panic!("warmup mismatch"),
+        for (i, (g, w)) in got.iter().zip(want.iter()).enumerate() {
+            // Same warmup — emission shape must agree at every index.
+            assert_eq!(g.is_some(), w.is_some(), "warmup mismatch at index {i}");
+            if let (Some(a), Some(b)) = (g, w) {
+                assert_relative_eq!(*a, *b, epsilon = 1e-9);
             }
         }
     }

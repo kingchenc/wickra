@@ -151,6 +151,21 @@ mod tests {
         assert!(matches!(Atr::new(0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessors `period` / `value` (54-62) and the
+    /// Indicator-impl `name` body (103-105). Existing tests inspect
+    /// numeric ATR output but never query the metadata.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut atr = Atr::new(14).unwrap();
+        assert_eq!(atr.period(), 14);
+        assert_eq!(atr.name(), "ATR");
+        assert_eq!(atr.value(), None);
+        for _ in 0..14 {
+            atr.update(c(11.0, 9.0, 10.0));
+        }
+        assert!(atr.value().is_some());
+    }
+
     #[test]
     fn warmup_emits_on_period_th_candle() {
         let candles = vec![

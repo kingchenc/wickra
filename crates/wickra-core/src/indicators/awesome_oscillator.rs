@@ -118,6 +118,17 @@ mod tests {
         assert!(AwesomeOscillator::new(0, 5).is_err());
     }
 
+    /// Cover the const accessor `periods` (59-61) and the Indicator-impl
+    /// `warmup_period` (83-85) + `name` (91-93). Existing tests never
+    /// inspect these metadata methods.
+    #[test]
+    fn accessors_and_metadata() {
+        let ao = AwesomeOscillator::classic();
+        assert_eq!(ao.periods(), (5, 34));
+        assert_eq!(ao.warmup_period(), 34);
+        assert_eq!(ao.name(), "AwesomeOscillator");
+    }
+
     #[test]
     fn batch_equals_streaming() {
         let candles: Vec<Candle> = (0..50)

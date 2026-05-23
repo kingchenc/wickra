@@ -138,6 +138,17 @@ mod tests {
         assert!(Cci::with_factor(20, -1.0).is_err());
     }
 
+    /// Cover the const accessor `period` (68-70) and the Indicator-impl
+    /// `warmup_period` (102-104) + `name` (110-112). Existing tests never
+    /// inspect these metadata methods.
+    #[test]
+    fn accessors_and_metadata() {
+        let cci = Cci::new(20).unwrap();
+        assert_eq!(cci.period(), 20);
+        assert_eq!(cci.warmup_period(), 20);
+        assert_eq!(cci.name(), "CCI");
+    }
+
     #[test]
     fn batch_equals_streaming() {
         let candles: Vec<Candle> = (0..60)
