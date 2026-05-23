@@ -141,4 +141,30 @@ mod tests {
     fn rejects_zero_period() {
         assert!(Trix::new(0).is_err());
     }
+
+    /// Cover the const accessor `period` (47-49) and the Indicator-impl
+    /// `warmup_period` (84-87) + `name` (93-95). Existing tests never
+    /// inspect these metadata methods.
+    #[test]
+    fn accessors_and_metadata() {
+        let trix = Trix::new(5).unwrap();
+        assert_eq!(trix.period(), 5);
+        // Triple EMA seeds at 3*5-2 = 13; +1 for the rate-of-change pair = 14.
+        assert_eq!(trix.warmup_period(), 14);
+        assert_eq!(trix.name(), "TRIX");
+    }
+
+    /// Cover the `Some(_)` match arm at lines 66-68 — the degenerate path
+    /// where the previous triple-EMA value is exactly 0.0 (which would
+    /// otherwise divide by zero on the percent-rate formula). A series of
+    /// all-zero inputs collapses every EMA stage to 0.0, so once the
+    /// indicator warms up `prev_tr` is `Some(0.0)` and every subsequent
+    /// emission must take the fallback branch and return 0.0.
+    #[test]
+    fn zero_input_series_yields_zero_trix() {
+        let mut trix = Trix::new(3).unwrap();
+        let out = trix.batch(&[0.0_f64; 20]);
+        let last = out.into_iter().flatten().last().expect("emits");
+        assert_eq!(last, 0.0);
+    }
 }
