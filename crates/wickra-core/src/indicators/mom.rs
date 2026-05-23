@@ -114,6 +114,21 @@ mod tests {
         assert!(matches!(Mom::new(0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessors `period` / `value` (56-63) and the
+    /// Indicator-impl `name` body (101-103). Existing tests inspect
+    /// momentum output but never query the metadata.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut m = Mom::new(5).unwrap();
+        assert_eq!(m.period(), 5);
+        assert_eq!(m.name(), "MOM");
+        assert_eq!(m.value(), None);
+        for i in 1..=6 {
+            m.update(f64::from(i));
+        }
+        assert!(m.value().is_some());
+    }
+
     #[test]
     fn reference_values() {
         // MOM(3): price_t − price_{t-3}.
