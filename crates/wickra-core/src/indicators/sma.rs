@@ -136,6 +136,17 @@ mod tests {
         assert!(matches!(Sma::new(0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessor `period` (70-72) and the Indicator-impl
+    /// `warmup_period` (115-117) + `name` (123-125). Existing tests
+    /// inspect SMA output but never query the metadata.
+    #[test]
+    fn accessors_and_metadata() {
+        let sma = Sma::new(20).unwrap();
+        assert_eq!(sma.period(), 20);
+        assert_eq!(sma.warmup_period(), 20);
+        assert_eq!(sma.name(), "SMA");
+    }
+
     #[test]
     fn warmup_returns_none() {
         let mut sma = Sma::new(3).unwrap();

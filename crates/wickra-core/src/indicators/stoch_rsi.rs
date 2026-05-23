@@ -145,6 +145,21 @@ mod tests {
         assert!(matches!(StochRsi::new(14, 0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessors `periods` / `value` (69-76) and the
+    /// Indicator-impl `name` body (131-133). `warmup_period` is already
+    /// covered by `first_emission_at_warmup_period`.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut sr = StochRsi::new(14, 14).unwrap();
+        assert_eq!(sr.periods(), (14, 14));
+        assert_eq!(sr.name(), "StochRSI");
+        assert_eq!(sr.value(), None);
+        for i in 1..=sr.warmup_period() {
+            sr.update(100.0 + f64::from(u32::try_from(i).unwrap()));
+        }
+        assert!(sr.value().is_some());
+    }
+
     #[test]
     fn first_emission_at_warmup_period() {
         let mut sr = StochRsi::new(5, 4).unwrap();

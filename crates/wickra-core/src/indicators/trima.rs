@@ -112,6 +112,21 @@ mod tests {
         assert!(matches!(Trima::new(0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessors `period` / `value` (59-66) and the
+    /// Indicator-impl `name` body (99-101). Existing tests inspect
+    /// TRIMA output but never query the metadata.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut t = Trima::new(5).unwrap();
+        assert_eq!(t.period(), 5);
+        assert_eq!(t.name(), "TRIMA");
+        assert_eq!(t.value(), None);
+        for i in 1..=t.warmup_period() {
+            t.update(f64::from(u32::try_from(i).unwrap()));
+        }
+        assert!(t.value().is_some());
+    }
+
     #[test]
     fn odd_period_reference_values() {
         // TRIMA(5) is SMA(3) of SMA(3).

@@ -117,4 +117,16 @@ mod tests {
     fn rejects_zero_period() {
         assert!(Tema::new(0).is_err());
     }
+
+    /// Cover the const accessor `period` (45-47) and the Indicator-impl
+    /// `warmup_period` (67-69) + `name` (75-77). Existing tests inspect
+    /// TEMA output but never query the metadata.
+    #[test]
+    fn accessors_and_metadata() {
+        let tema = Tema::new(5).unwrap();
+        assert_eq!(tema.period(), 5);
+        // EMA1 seeds at period (5), each cascade stage needs another (period-1) inputs.
+        assert_eq!(tema.warmup_period(), 3 * 5 - 2);
+        assert_eq!(tema.name(), "TEMA");
+    }
 }
