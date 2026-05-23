@@ -132,6 +132,13 @@ mod tests {
         );
     }
 
+    /// Cover the Indicator-impl `name` body (73-75).
+    #[test]
+    fn name_metadata() {
+        let bop = BalanceOfPower::new();
+        assert_eq!(bop.name(), "BalanceOfPower");
+    }
+
     #[test]
     fn emits_from_first_candle() {
         let mut bop = BalanceOfPower::new();
