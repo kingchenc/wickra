@@ -274,10 +274,30 @@ mod tests {
         // "volume" is absent.
         let data = "timestamp,open,high,low,close\n1,10.0,11.0,9.0,10.5\n";
         let err = CandleReader::from_reader(data.as_bytes()).unwrap_err();
-        match err {
-            Error::Malformed(msg) => assert!(msg.contains("volume"), "msg: {msg}"),
-            other => panic!("expected Malformed, got {other:?}"),
-        }
+        // The error variant must be Malformed and the message must mention
+        // the missing column. Asserting directly (rather than match-and-
+        // panic-on-other) keeps the assertion's cold path branch-free for
+        // coverage and still pins the diagnostic.
+        assert!(
+            matches!(&err, Error::Malformed(msg) if msg.contains("volume")),
+            "expected Malformed mentioning 'volume', got {err:?}"
+        );
+    }
+
+    /// Cover `from_csv_reader` (lines 201-204): existing tests use
+    /// `from_reader` / `open`, which both construct the inner `csv::Reader`
+    /// internally. Callers that want non-default csv configuration must
+    /// build the reader themselves and pass it through `from_csv_reader`.
+    #[test]
+    fn from_csv_reader_accepts_a_prebuilt_reader() {
+        let data = "timestamp;open;high;low;close;volume\n1;10.0;11.0;9.0;10.5;100\n";
+        let inner = csv::ReaderBuilder::new()
+            .delimiter(b';')
+            .from_reader(data.as_bytes());
+        let mut r = CandleReader::from_csv_reader(inner).unwrap();
+        let candles = r.read_all().unwrap();
+        assert_eq!(candles.len(), 1);
+        assert_eq!(candles[0].close, 10.5);
     }
 
     #[test]
