@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- `HistoricalVolatility::update` no longer substitutes a `0.0` log-return on
+  non-positive prices (audit finding R13). Negative or zero prices are
+  semantically invalid for a log-return calculation; silently treating them as
+  "no movement" underreported realised volatility. They are now skipped — the
+  previous valid value is returned and the indicator's state (`prev_price`,
+  window, sums) is left untouched — matching how every other indicator handles
+  invalid inputs.
+- `Tick::new` now returns the new `Error::InvalidTick` variant for negative
+  volume instead of `Error::InvalidCandle` (audit finding R14). A tick is not
+  a candle, and downstream tick-stream pipelines should be able to match on a
+  semantically-correct error. The Python binding's `map_err` was extended to
+  forward the new variant as a `ValueError`; the Node and WASM bindings format
+  via `Error::to_string()` and pick the new variant up automatically.
 - `Psar::is_ready` now matches the convention shared by every other indicator:
   `is_ready() == true` iff a real value has been produced (audit finding R6).
   The previous implementation returned `self.initialised`, which flipped to

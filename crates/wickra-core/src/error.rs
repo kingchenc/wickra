@@ -21,6 +21,13 @@ pub enum Error {
     #[error("invalid candle: {message}")]
     InvalidCandle { message: &'static str },
 
+    /// A tick whose components do not satisfy the tick invariants (e.g. negative
+    /// volume) was provided. Ticks are a different concept from candles and
+    /// surface as their own variant so consumers of a tick-stream pipeline
+    /// can match on a semantically-correct error instead of `InvalidCandle`.
+    #[error("invalid tick: {message}")]
+    InvalidTick { message: &'static str },
+
     /// A multiplier or factor must be strictly positive.
     #[error("multiplier must be greater than zero")]
     NonPositiveMultiplier,

@@ -152,13 +152,14 @@ impl Tick {
     /// # Errors
     ///
     /// Returns [`Error::NonFiniteInput`] if `price` or `volume` is NaN or infinite,
-    /// or [`Error::InvalidCandle`] for `volume < 0`.
+    /// or [`Error::InvalidTick`] for `volume < 0`. (Audit finding R14 — previously
+    /// returned [`Error::InvalidCandle`], which is semantically wrong for a tick.)
     pub fn new(price: f64, volume: f64, timestamp: i64) -> Result<Self> {
         if !price.is_finite() || !volume.is_finite() {
             return Err(Error::NonFiniteInput);
         }
         if volume < 0.0 {
-            return Err(Error::InvalidCandle {
+            return Err(Error::InvalidTick {
                 message: "tick volume must be non-negative",
             });
         }
@@ -279,7 +280,14 @@ mod tests {
 
     #[test]
     fn tick_new_rejects_negative_volume() {
+        // Audit R14: the variant is `InvalidTick`, not `InvalidCandle` — a tick
+        // is not a candle, and downstream pipelines should be able to match on
+        // the correct semantic.
         let err = Tick::new(100.0, -1.0, 0).unwrap_err();
-        assert!(matches!(err, Error::InvalidCandle { .. }));
+        assert!(matches!(err, Error::InvalidTick { .. }));
+        assert!(
+            err.to_string().contains("tick volume"),
+            "expected the InvalidTick message in the formatted error, got {err}"
+        );
     }
 }

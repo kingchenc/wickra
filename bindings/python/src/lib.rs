@@ -22,7 +22,8 @@ fn map_err(e: wc::Error) -> PyErr {
         | wc::Error::InvalidPeriod { .. }
         | wc::Error::NonPositiveMultiplier
         | wc::Error::NonFiniteInput
-        | wc::Error::InvalidCandle { .. } => PyValueError::new_err(e.to_string()),
+        | wc::Error::InvalidCandle { .. }
+        | wc::Error::InvalidTick { .. } => PyValueError::new_err(e.to_string()),
     }
 }
 

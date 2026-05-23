@@ -93,22 +93,26 @@ impl Indicator for HistoricalVolatility {
     type Output = f64;
 
     fn update(&mut self, input: f64) -> Option<f64> {
-        if !input.is_finite() {
-            // Non-finite input is ignored; state is left untouched.
+        // Non-finite *and* non-positive prices are both ignored: state is left
+        // untouched and `self.last` is returned. The log-return `ln(input /
+        // prev)` is undefined for non-positive prices, and silently
+        // substituting `0.0` (the previous behaviour, audit finding R13) would
+        // underreport realised volatility by treating bad ticks as "no
+        // movement". Skipping them entirely is consistent with how the rest
+        // of the library handles invalid inputs (see SMA / EMA / ROC).
+        if !input.is_finite() || input <= 0.0 {
             return self.last;
         }
         let Some(prev) = self.prev_price else {
             self.prev_price = Some(input);
             return None;
         };
+        // `prev` was assigned from `self.prev_price`, which only ever holds
+        // valid (finite, positive) inputs because the guard above gates every
+        // assignment to it — so `(input / prev).ln()` is always well-defined.
         self.prev_price = Some(input);
 
-        let log_return = if prev <= 0.0 || input <= 0.0 {
-            // Log return is undefined for non-positive prices.
-            0.0
-        } else {
-            (input / prev).ln()
-        };
+        let log_return = (input / prev).ln();
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("window is non-empty");
             self.sum -= old;
@@ -228,6 +232,37 @@ mod tests {
         assert!(last.is_some());
         assert_eq!(hv.update(f64::NAN), last);
         assert_eq!(hv.update(f64::INFINITY), last);
+    }
+
+    /// Audit finding R13. Non-positive prices are now skipped (state left
+    /// untouched) instead of silently treated as a `0.0` log-return — the old
+    /// behaviour underreported realised volatility by treating bad ticks as
+    /// "no movement".
+    #[test]
+    fn skips_non_positive_prices() {
+        let mut hv = HistoricalVolatility::new(5, 252).unwrap();
+        // Warm up with positive prices.
+        let warmup_prices = (1..=20).map(f64::from).collect::<Vec<_>>();
+        let warmup = hv.batch(&warmup_prices);
+        let baseline = warmup
+            .last()
+            .copied()
+            .flatten()
+            .expect("warmed up by index 5");
+
+        // A negative tick must be ignored: returned value equals the previous
+        // baseline, and the next real positive tick must use the previous
+        // valid price as `prev` (not the bad one), so the next log return is
+        // exactly `ln(21 / 20)`, not `ln(21 / -5)` or anything else.
+        assert_eq!(hv.update(-5.0), Some(baseline));
+        assert_eq!(hv.update(0.0), Some(baseline));
+
+        // Snapshot the indicator's state, then advance with a real positive
+        // tick on a clone. The clone must agree with a from-scratch run that
+        // simply skipped the bad ticks — proving the state was untouched.
+        let mut control = hv.clone();
+        let after_real = hv.update(21.0).expect("ready");
+        assert_eq!(control.update(21.0).expect("ready"), after_real);
     }
 
     #[test]
