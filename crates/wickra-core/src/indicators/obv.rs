@@ -99,6 +99,21 @@ mod tests {
         Candle::new(close, close, close, close, volume, 0).unwrap()
     }
 
+    /// Cover the `value()` Some branch (line 47) and the Indicator-impl
+    /// `warmup_period` (79-81) + `name` (87-89). `reset_clears_state`
+    /// hits only the None branch of `value()`; the metadata methods were
+    /// never queried.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut obv = Obv::new();
+        assert_eq!(obv.warmup_period(), 1);
+        assert_eq!(obv.name(), "OBV");
+        assert_eq!(obv.value(), None);
+        obv.update(c(10.0, 100.0));
+        // Baseline 0 — value() Some branch.
+        assert_eq!(obv.value(), Some(0.0));
+    }
+
     #[test]
     fn first_candle_baseline_zero() {
         let mut obv = Obv::new();

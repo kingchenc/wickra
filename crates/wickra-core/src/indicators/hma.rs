@@ -128,6 +128,16 @@ mod tests {
         assert!(Hma::new(0).is_err());
     }
 
+    /// Cover the const accessor `period` (51-53) and the Indicator-impl
+    /// `name` body (87-89). `warmup_period` is covered by
+    /// `first_emission_matches_warmup_period`.
+    #[test]
+    fn accessors_and_metadata() {
+        let hma = Hma::new(9).unwrap();
+        assert_eq!(hma.period(), 9);
+        assert_eq!(hma.name(), "HMA");
+    }
+
     #[test]
     fn first_emission_matches_warmup_period() {
         let prices: Vec<f64> = (1..=40).map(f64::from).collect();
@@ -155,16 +165,16 @@ mod tests {
         let mut half = Wma::new(4).unwrap(); // (9 / 2).max(1)
         let mut full = Wma::new(9).unwrap();
         let mut smooth = Wma::new(3).unwrap(); // round(sqrt(9))
-        for &p in &prices {
+        for (i, &p) in prices.iter().enumerate() {
             let got = hma.update(p);
             let want = match (half.update(p), full.update(p)) {
                 (Some(h), Some(f)) => smooth.update(2.0 * h - f),
                 _ => None,
             };
-            match (got, want) {
-                (None, None) => {}
-                (Some(a), Some(b)) => assert_relative_eq!(a, b, epsilon = 1e-9),
-                _ => panic!("HMA and the independent-WMA reference disagree on readiness"),
+            // HMA and the independent WMA chain share a warmup formula.
+            assert_eq!(got.is_some(), want.is_some(), "readiness mismatch at {i}");
+            if let (Some(a), Some(b)) = (got, want) {
+                assert_relative_eq!(a, b, epsilon = 1e-9);
             }
         }
     }
