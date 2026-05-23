@@ -4,9 +4,11 @@ description = "Node.js bindings for the Wickra streaming-first technical indicat
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
-# napi-build emits `cargo::` directives that require Rust >= 1.77; the rest of
-# the workspace stays at 1.75 because the core crate has no such dependency.
-rust-version = "1.77"
+# napi-build 2.3.2 requires Rust >= 1.88 (newer than the workspace 1.80
+# minimum, which itself was lifted to satisfy rayon-core 1.13.0). napi-build
+# also emits `cargo::` directives that require >= 1.77 — that older floor is
+# subsumed by the 1.88 requirement now.
+rust-version = "1.88"
 license.workspace = true
 repository.workspace = true
 homepage.workspace = true

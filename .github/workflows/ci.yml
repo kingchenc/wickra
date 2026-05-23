@@ -56,9 +56,12 @@ jobs:
         run: cargo build -p wickra-examples --bins
 
   # Verify the crates still build and test on their declared minimum supported
-  # Rust version. The workspace pins rust-version = "1.75"; bindings/node needs
-  # 1.77 because napi-build emits `cargo::` directives. Without this job an
-  # accidental use of a newer API would only surface for downstream users.
+  # Rust version. The workspace pins rust-version = "1.80" (raised from 1.75
+  # so rayon-core >= 1.13.0 keeps compiling); bindings/node pins
+  # rust-version = "1.88" because napi-build 2.3.2 requires it (and that
+  # subsumes the older 1.77 floor needed for `cargo::` directives). Without
+  # this job an accidental use of a newer API would only surface for
+  # downstream users.
   msrv:
     name: ${{ matrix.name }}
     runs-on: ubuntu-latest
@@ -66,11 +69,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: MSRV workspace (Rust 1.75)
-            toolchain: "1.75"
+          - name: MSRV workspace (Rust 1.80)
+            toolchain: "1.80"
             packages: "-p wickra-core -p wickra -p wickra-data"
-          - name: MSRV node binding (Rust 1.77)
-            toolchain: "1.77"
+          - name: MSRV node binding (Rust 1.88)
+            toolchain: "1.88"
             packages: "-p wickra-node"
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
