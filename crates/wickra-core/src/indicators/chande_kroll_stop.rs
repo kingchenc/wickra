@@ -214,6 +214,18 @@ mod tests {
         assert!(ChandeKrollStop::new(10, f64::NAN, 9).is_err());
     }
 
+    /// Cover the const accessor `params` (97-99) and the Indicator-impl
+    /// `name` body (164-166). `warmup_period` is exercised elsewhere.
+    #[test]
+    fn accessors_and_metadata() {
+        let s = ChandeKrollStop::new(10, 1.0, 9).unwrap();
+        let (p, m, q) = s.params();
+        assert_eq!(p, 10);
+        assert!((m - 1.0).abs() < 1e-12);
+        assert_eq!(q, 9);
+        assert_eq!(s.name(), "ChandeKrollStop");
+    }
+
     #[test]
     fn reset_clears_state() {
         let candles: Vec<Candle> = (0..40)

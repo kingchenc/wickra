@@ -160,6 +160,15 @@ mod tests {
         assert!(ForceIndex::new(0).is_err());
     }
 
+    /// Cover the const accessor `period` (58-60) and the Indicator-impl
+    /// `name` body (93-95). `warmup_period` is exercised elsewhere.
+    #[test]
+    fn accessors_and_metadata() {
+        let fi = ForceIndex::new(13).unwrap();
+        assert_eq!(fi.period(), 13);
+        assert_eq!(fi.name(), "ForceIndex");
+    }
+
     #[test]
     fn reset_clears_state() {
         let candles: Vec<Candle> = (0..30).map(|i| c(10.0 + i as f64, 50.0, i)).collect();

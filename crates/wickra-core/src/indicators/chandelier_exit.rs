@@ -197,6 +197,17 @@ mod tests {
         assert!(ChandelierExit::new(22, f64::NAN).is_err());
     }
 
+    /// Cover the const accessor `params` (83-85) and the Indicator-impl
+    /// `name` body (128-130). `warmup_period` is exercised elsewhere.
+    #[test]
+    fn accessors_and_metadata() {
+        let ce = ChandelierExit::new(22, 3.0).unwrap();
+        let (p, m) = ce.params();
+        assert_eq!(p, 22);
+        assert!((m - 3.0).abs() < 1e-12);
+        assert_eq!(ce.name(), "ChandelierExit");
+    }
+
     #[test]
     fn reset_clears_state() {
         let candles: Vec<Candle> = (0..40)
