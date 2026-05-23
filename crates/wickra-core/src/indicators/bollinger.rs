@@ -294,7 +294,7 @@ mod tests {
         let n_updates = 16 * period * 5;
         let mut last = None;
         for i in 0..n_updates {
-            let v = if i.is_multiple_of(2) { 1e6 } else { 1.0 };
+            let v = if i % 2 == 0 { 1e6 } else { 1.0 };
             last = bb.update(v);
             if window.len() == period {
                 window.pop_front();

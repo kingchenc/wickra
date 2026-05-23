@@ -48,14 +48,22 @@ jobs:
         run: cargo build -p wickra --benches --verbose
 
       - name: Compile examples
-        run: |
-          cargo build -p wickra --example backtest
-          cargo build -p wickra-data --example live_binance --features live-binance
+        # All runnable examples now live in the dedicated wickra-examples crate
+        # (examples/rust/src/bin/*.rs) which enables the live-binance feature
+        # on its wickra-data dep, so a single --bins build covers backtest,
+        # live_binance, fetch_btcusdt, multi_timeframe, parallel_assets and
+        # streaming.
+        run: cargo build -p wickra-examples --bins
 
   # Verify the crates still build and test on their declared minimum supported
-  # Rust version. The workspace pins rust-version = "1.75"; bindings/node needs
-  # 1.77 because napi-build emits `cargo::` directives. Without this job an
-  # accidental use of a newer API would only surface for downstream users.
+  # Rust version. The workspace pins rust-version = "1.85" — that floor is
+  # set by clap_lex 1.1.0 (transitively pulled in by the criterion dev-dep)
+  # which needs the stabilized edition2024 feature (stable since Rust 1.85);
+  # rayon-core 1.13.0 only needed 1.80 and is subsumed by the 1.85 floor.
+  # bindings/node pins rust-version = "1.88" because napi-build 2.3.2
+  # requires it (and that subsumes the older 1.77 floor needed for
+  # `cargo::` directives). Without this job an accidental use of a newer
+  # API would only surface for downstream users.
   msrv:
     name: ${{ matrix.name }}
     runs-on: ubuntu-latest
@@ -63,11 +71,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: MSRV workspace (Rust 1.75)
-            toolchain: "1.75"
+          - name: MSRV workspace (Rust 1.85)
+            toolchain: "1.85"
             packages: "-p wickra-core -p wickra -p wickra-data"
-          - name: MSRV node binding (Rust 1.77)
-            toolchain: "1.77"
+          - name: MSRV node binding (Rust 1.88)
+            toolchain: "1.88"
             packages: "-p wickra-node"
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -156,26 +164,35 @@ jobs:
           workspaces: fuzz
 
       - name: Install cargo-fuzz
-        run: cargo install cargo-fuzz --locked
+        # Use the prebuilt binary from taiki-e/install-action instead of
+        # `cargo install cargo-fuzz --locked`. The latter resolves the
+        # version graph from cargo-fuzz's own Cargo.lock, which pins to
+        # rustix 0.36.5 — a version that still uses internal `rustc_*`
+        # attributes the modern nightly compiler rejects, so the install
+        # never gets off the ground. The prebuilt binary avoids the entire
+        # transitive-dep compile.
+        uses: taiki-e/install-action@e0eafa9a0d485c37f97c0f7beb930a58a2facbac # v2.79.4
+        with:
+          tool: cargo-fuzz
 
       - name: Fuzz csv_reader (30 s)
-        run: cargo +nightly fuzz run csv_reader -- -max_total_time=30
+        run: cargo +nightly fuzz run --target x86_64-unknown-linux-gnu csv_reader -- -max_total_time=30
         working-directory: fuzz
 
       - name: Fuzz binance_envelope (30 s)
-        run: cargo +nightly fuzz run binance_envelope -- -max_total_time=30
+        run: cargo +nightly fuzz run --target x86_64-unknown-linux-gnu binance_envelope -- -max_total_time=30
         working-directory: fuzz
 
       - name: Fuzz indicator_update (30 s)
-        run: cargo +nightly fuzz run indicator_update -- -max_total_time=30
+        run: cargo +nightly fuzz run --target x86_64-unknown-linux-gnu indicator_update -- -max_total_time=30
         working-directory: fuzz
 
       - name: Fuzz indicator_update_candle (30 s)
-        run: cargo +nightly fuzz run indicator_update_candle -- -max_total_time=30
+        run: cargo +nightly fuzz run --target x86_64-unknown-linux-gnu indicator_update_candle -- -max_total_time=30
         working-directory: fuzz
 
       - name: Fuzz tick_aggregator (30 s)
-        run: cargo +nightly fuzz run tick_aggregator -- -max_total_time=30
+        run: cargo +nightly fuzz run --target x86_64-unknown-linux-gnu tick_aggregator -- -max_total_time=30
         working-directory: fuzz
 
   python:

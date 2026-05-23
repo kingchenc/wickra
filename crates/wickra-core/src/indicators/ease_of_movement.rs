@@ -95,7 +95,7 @@ impl Indicator for EaseOfMovement {
     type Output = f64;
 
     fn update(&mut self, candle: Candle) -> Option<f64> {
-        let mid = (candle.high + candle.low) / 2.0;
+        let mid = f64::midpoint(candle.high, candle.low);
         let Some(prev_mid) = self.prev_mid else {
             // The first candle only establishes the previous midpoint.
             self.prev_mid = Some(mid);

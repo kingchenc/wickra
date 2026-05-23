@@ -107,7 +107,7 @@ impl Indicator for SuperTrend {
 
     fn update(&mut self, candle: Candle) -> Option<SuperTrendOutput> {
         let atr = self.atr.update(candle)?;
-        let hl2 = (candle.high + candle.low) / 2.0;
+        let hl2 = f64::midpoint(candle.high, candle.low);
         let basic_upper = hl2 + self.multiplier * atr;
         let basic_lower = hl2 - self.multiplier * atr;
 
@@ -184,7 +184,7 @@ mod tests {
     use crate::traits::BatchExt;
 
     fn c(high: f64, low: f64, close: f64, ts: i64) -> Candle {
-        Candle::new((high + low) / 2.0, high, low, close, 1.0, ts).unwrap()
+        Candle::new(f64::midpoint(high, low), high, low, close, 1.0, ts).unwrap()
     }
 
     #[test]

@@ -110,7 +110,7 @@ impl Candle {
     /// The mid price `(high + low) / 2`.
     #[inline]
     pub fn median_price(&self) -> f64 {
-        (self.high + self.low) / 2.0
+        f64::midpoint(self.high, self.low)
     }
 
     /// The weighted close `(high + low + 2*close) / 4`.
