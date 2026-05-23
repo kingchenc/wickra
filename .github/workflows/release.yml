@@ -106,6 +106,9 @@ jobs:
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: "3.11"
+      - name: Sync root README into bindings/python so it ships with the wheel
+        shell: bash
+        run: cp README.md bindings/python/README.md
       - uses: PyO3/maturin-action@e83996d129638aa358a18fbd1dfb82f0b0fb5d3b # v1.51.0
         with:
           working-directory: bindings/python
@@ -124,6 +127,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Sync root README into bindings/python so it ships in the sdist
+        run: cp README.md bindings/python/README.md
       - uses: PyO3/maturin-action@e83996d129638aa358a18fbd1dfb82f0b0fb5d3b # v1.51.0
         with:
           working-directory: bindings/python
@@ -289,6 +294,14 @@ jobs:
           done
           exit $fail
 
+      - name: Sync root README into bindings/node so it ships with the npm tarball
+        # npm reads README.md from the package directory at publish time. Copy
+        # the canonical root README in just before the publish so every
+        # registry shows the same project page.
+        shell: bash
+        run: cp ../../README.md README.md
+        working-directory: bindings/node
+
       - name: Publish main package to npm (idempotent)
         working-directory: bindings/node
         env:
@@ -358,6 +371,12 @@ jobs:
           targets: wasm32-unknown-unknown
 
       - uses: jetli/wasm-pack-action@0d096b08b4e5a7de8c28de67e11e945404e9eefa # v0.4.0
+
+      - name: Sync root README into bindings/wasm so wasm-pack ships it in pkg/
+        # wasm-pack copies the crate's README.md into the generated pkg/
+        # directory it then publishes. Refresh it from the canonical root
+        # README right before the build.
+        run: cp README.md bindings/wasm/README.md
 
       - name: Build WASM package (bundler target)
         run: wasm-pack build bindings/wasm --target bundler --release --features panic-hook
