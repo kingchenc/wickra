@@ -113,6 +113,25 @@ mod tests {
         assert!(PercentB::new(20, -1.0).is_err());
     }
 
+    /// Cover the public const accessors `period`, `multiplier`, `value`
+    /// and the Indicator-impl `warmup_period` + `name` methods. Existing
+    /// tests only exercise the numeric output of `update` / `batch` /
+    /// `reset` / `is_ready`, so the five getter bodies (lines 53-65,
+    /// 90-92, 98-100) were dead.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut pb = PercentB::new(20, 2.0).unwrap();
+        assert_eq!(pb.period(), 20);
+        assert_relative_eq!(pb.multiplier(), 2.0, epsilon = 1e-12);
+        assert_eq!(pb.value(), None);
+        assert_eq!(pb.warmup_period(), 20);
+        assert_eq!(pb.name(), "PercentB");
+        for i in 1..=20 {
+            pb.update(f64::from(i));
+        }
+        assert!(pb.value().is_some());
+    }
+
     #[test]
     fn constant_series_yields_midpoint() {
         // Flat prices: bands collapse, price is exactly mid-band -> 0.5.
@@ -132,33 +151,33 @@ mod tests {
         let pb_out = PercentB::new(20, 2.0).unwrap().batch(&prices);
         let bands_out = BollingerBands::new(20, 2.0).unwrap().batch(&prices);
         for (i, (p, b)) in pb_out.iter().zip(bands_out.iter()).enumerate() {
-            match (p, b) {
-                (Some(pv), Some(bv)) => {
-                    let want = (prices[i] - bv.lower) / (bv.upper - bv.lower);
-                    assert_relative_eq!(*pv, want, epsilon = 1e-12);
-                }
-                (None, None) => {}
-                _ => panic!("warmup mismatch at {i}"),
+            // Same warmup — emission shape must agree at every index.
+            assert_eq!(p.is_some(), b.is_some(), "warmup mismatch at index {i}");
+            if let (Some(pv), Some(bv)) = (p, b) {
+                let want = (prices[i] - bv.lower) / (bv.upper - bv.lower);
+                assert_relative_eq!(*pv, want, epsilon = 1e-12);
             }
         }
     }
 
+    /// Deterministic price-at-middle assertion. With period=3, multiplier=2,
+    /// inputs `[1.0, 5.0, 3.0]` give SMA = (1+5+3)/3 = 3.0 at index 2, which
+    /// equals the third price exactly. The stddev is √(8/3) ≈ 1.633, so the
+    /// bands have non-zero width (the width==0 fallback at line 77 is NOT
+    /// taken) and the divide path at line 79 runs. Because price sits on
+    /// the centre line of symmetric bands, %b lands on exactly 0.5.
+    ///
+    /// The previous oscillation-based variant of this test never landed
+    /// `prices[i]` within 1e-9 of the rolling SMA, so its inner
+    /// `assert_relative_eq!` line was never executed.
     #[test]
     fn price_at_middle_is_half() {
-        // A symmetric oscillation keeps the SMA centred; when price crosses
-        // the SMA, %b passes through 0.5. Verified via the bands definition.
-        let prices: Vec<f64> = (1..=60)
-            .map(|i| 100.0 + (f64::from(i) * 0.5).sin() * 5.0)
-            .collect();
-        let pb_out = PercentB::new(20, 2.0).unwrap().batch(&prices);
-        let bands_out = BollingerBands::new(20, 2.0).unwrap().batch(&prices);
-        for (i, (p, b)) in pb_out.iter().zip(bands_out.iter()).enumerate() {
-            if let (Some(pv), Some(bv)) = (p, b) {
-                if (prices[i] - bv.middle).abs() < 1e-9 {
-                    assert_relative_eq!(*pv, 0.5, epsilon = 1e-6);
-                }
-            }
-        }
+        let mut pb = PercentB::new(3, 2.0).unwrap();
+        let out = pb.batch(&[1.0, 5.0, 3.0]);
+        assert_eq!(out[0], None);
+        assert_eq!(out[1], None);
+        let v = out[2].expect("warmed up at index 2");
+        assert_relative_eq!(v, 0.5, epsilon = 1e-12);
     }
 
     #[test]
