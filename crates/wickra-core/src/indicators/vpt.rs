@@ -129,6 +129,30 @@ mod tests {
         assert_relative_eq!(out[2].unwrap(), 20.0 - 600.0 / 11.0, epsilon = 1e-12);
     }
 
+    /// Cover the `value()` Some branch (line 57) and the Indicator-impl
+    /// `name` body (100-102). `reset_clears_state` hits only the None
+    /// branch; the name was never queried.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut vpt = VolumePriceTrend::new();
+        assert_eq!(vpt.name(), "VPT");
+        assert_eq!(vpt.value(), None);
+        vpt.update(candle(100.0, 50.0, 0));
+        assert_eq!(vpt.value(), Some(0.0));
+    }
+
+    /// Cover the `prev == 0.0` defensive branch (line 77) — the previous
+    /// close is exactly 0, making the percentage ROC undefined. The
+    /// indicator must contribute 0 to the running total rather than NaN.
+    #[test]
+    fn zero_previous_close_contributes_zero() {
+        let mut vpt = VolumePriceTrend::new();
+        vpt.update(candle(0.0, 100.0, 0)); // baseline; prev_close = 0
+        let v = vpt.update(candle(50.0, 200.0, 1)).expect("emits");
+        // ROC fallback is 0, so total stays at 0.
+        assert_eq!(v, 0.0);
+    }
+
     #[test]
     fn emits_from_first_candle_at_zero() {
         let mut vpt = VolumePriceTrend::new();
