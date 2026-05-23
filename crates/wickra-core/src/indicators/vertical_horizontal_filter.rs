@@ -177,6 +177,15 @@ mod tests {
         assert!(VerticalHorizontalFilter::new(0).is_err());
     }
 
+    /// Cover the const accessor `period` (61-63) and the Indicator-impl
+    /// `name` body (119-121). `warmup_period` is exercised elsewhere.
+    #[test]
+    fn accessors_and_metadata() {
+        let vhf = VerticalHorizontalFilter::new(28).unwrap();
+        assert_eq!(vhf.period(), 28);
+        assert_eq!(vhf.name(), "VerticalHorizontalFilter");
+    }
+
     #[test]
     fn reset_clears_state() {
         let mut vhf = VerticalHorizontalFilter::new(8).unwrap();
