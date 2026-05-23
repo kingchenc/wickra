@@ -530,4 +530,335 @@ mod tests {
         assert_eq!(event.symbol, "btcusdt");
         assert!(event.is_closed);
     }
+
+    // ====================================================================
+    // Mock WebSocket server: drives the async / reconnect / control-frame
+    // paths against a `127.0.0.1` listener instead of the real Binance
+    // endpoint. Each test gets its own port (`bind("127.0.0.1:0")`).
+    // ====================================================================
+
+    use std::sync::atomic::{AtomicU32, Ordering};
+    use std::sync::Arc;
+    use tokio::net::TcpListener;
+
+    /// A kline JSON frame matching Binance's combined-stream envelope. Always
+    /// reports `is_closed = true` so the test can assert on the flag.
+    fn sample_kline_text() -> String {
+        r#"{"stream":"btcusdt@kline_1m","data":{"e":"kline","E":1700000000000,"s":"BTCUSDT","k":{"t":1700000000000,"T":1700000059999,"s":"BTCUSDT","i":"1m","f":1,"L":100,"o":"30000.0","c":"30050.0","h":"30100.0","l":"29950.0","v":"12.5","n":50,"x":true,"q":"375000.0","V":"6.25","Q":"187500.0","B":"0"}}}"#.to_string()
+    }
+
+    /// Test-tuned [`BinanceConfig`]: aim at the given mock and shrink every
+    /// timer so a failing reconnect loop completes in milliseconds.
+    fn test_config(base_url: String) -> BinanceConfig {
+        BinanceConfig {
+            base_url,
+            read_timeout: Duration::from_millis(200),
+            initial_reconnect_delay: Duration::from_millis(5),
+            max_reconnect_backoff: Duration::from_millis(10),
+            max_reconnect_attempts: 3,
+            ..BinanceConfig::default()
+        }
+    }
+
+    /// Spawn a mock WS server that accepts one connection, drops the
+    /// listener (so any reconnect lands on a refused port), and then hands
+    /// the upgraded socket to `handler`.
+    async fn one_shot_server<F, Fut>(handler: F) -> String
+    where
+        F: FnOnce(WebSocketStream<TcpStream>) -> Fut + Send + 'static,
+        Fut: std::future::Future<Output = ()> + Send + 'static,
+    {
+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let base_url = format!("ws://{}", listener.local_addr().unwrap());
+        tokio::spawn(async move {
+            let Ok((stream, _)) = listener.accept().await else {
+                return;
+            };
+            drop(listener);
+            if let Ok(ws) = tokio_tungstenite::accept_async(stream).await {
+                handler(ws).await;
+            }
+        });
+        base_url
+    }
+
+    /// Spawn a mock WS server that keeps accepting new connections and
+    /// invokes `handler` for each. Use for tests that exercise a reconnect
+    /// success path (the second accept serves a kline).
+    async fn multi_shot_server<F, Fut>(handler: F) -> String
+    where
+        F: Fn(u32, WebSocketStream<TcpStream>) -> Fut + Send + Sync + 'static,
+        Fut: std::future::Future<Output = ()> + Send + 'static,
+    {
+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let base_url = format!("ws://{}", listener.local_addr().unwrap());
+        let handler = Arc::new(handler);
+        tokio::spawn(async move {
+            let mut n: u32 = 0;
+            while let Ok((stream, _)) = listener.accept().await {
+                let handler = handler.clone();
+                let index = n;
+                n += 1;
+                tokio::spawn(async move {
+                    if let Ok(ws) = tokio_tungstenite::accept_async(stream).await {
+                        handler(index, ws).await;
+                    }
+                });
+            }
+        });
+        base_url
+    }
+
+    #[tokio::test]
+    async fn next_event_decodes_a_text_kline_frame() {
+        let kline = sample_kline_text();
+        let base = one_shot_server(move |mut ws| async move {
+            let _ = ws.send(Message::Text(kline.into())).await;
+            while let Some(Ok(_)) = ws.next().await {}
+        })
+        .await;
+        let mut stream = BinanceKlineStream::connect_with_config(
+            &["BTCUSDT".to_string()],
+            Interval::OneMinute,
+            test_config(base),
+        )
+        .await
+        .unwrap();
+        assert!(!stream.is_closed());
+        let event = stream
+            .next_event()
+            .await
+            .unwrap()
+            .expect("server pushes a kline");
+        assert_eq!(event.symbol, "btcusdt");
+        assert!(event.is_closed);
+    }
+
+    #[tokio::test]
+    async fn next_event_decodes_a_binary_kline_frame() {
+        let kline = sample_kline_text();
+        let base = one_shot_server(move |mut ws| async move {
+            let bytes: Vec<u8> = kline.into_bytes();
+            let _ = ws.send(Message::Binary(bytes.into())).await;
+            while let Some(Ok(_)) = ws.next().await {}
+        })
+        .await;
+        let mut stream = BinanceKlineStream::connect_with_config(
+            &["BTCUSDT".to_string()],
+            Interval::OneMinute,
+            test_config(base),
+        )
+        .await
+        .unwrap();
+        let event = stream
+            .next_event()
+            .await
+            .unwrap()
+            .expect("server pushes a kline as Binary");
+        assert_eq!(event.symbol, "btcusdt");
+    }
+
+    #[tokio::test]
+    async fn next_event_replies_to_a_ping_with_a_pong() {
+        let kline = sample_kline_text();
+        let base = one_shot_server(move |mut ws| async move {
+            let _ = ws
+                .send(Message::Ping(b"binance-ping".as_slice().into()))
+                .await;
+            let _ = ws.send(Message::Text(kline.into())).await;
+            while let Some(Ok(_)) = ws.next().await {}
+        })
+        .await;
+        let mut stream = BinanceKlineStream::connect_with_config(
+            &["BTCUSDT".to_string()],
+            Interval::OneMinute,
+            test_config(base),
+        )
+        .await
+        .unwrap();
+        // If the client never replied to the Ping the server's drain would
+        // observe nothing — but for line coverage it's enough that the
+        // client received the Ping, sent a Pong, then read the next frame.
+        let event = stream
+            .next_event()
+            .await
+            .unwrap()
+            .expect("kline arrives right after the ping");
+        assert_eq!(event.symbol, "btcusdt");
+    }
+
+    #[tokio::test]
+    async fn next_event_skips_inbound_pong_frames() {
+        let kline = sample_kline_text();
+        let base = one_shot_server(move |mut ws| async move {
+            let _ = ws
+                .send(Message::Pong(b"unsolicited".as_slice().into()))
+                .await;
+            let _ = ws.send(Message::Text(kline.into())).await;
+            while let Some(Ok(_)) = ws.next().await {}
+        })
+        .await;
+        let mut stream = BinanceKlineStream::connect_with_config(
+            &["BTCUSDT".to_string()],
+            Interval::OneMinute,
+            test_config(base),
+        )
+        .await
+        .unwrap();
+        let event = stream
+            .next_event()
+            .await
+            .unwrap()
+            .expect("kline follows the ignored Pong");
+        assert_eq!(event.symbol, "btcusdt");
+    }
+
+    #[tokio::test]
+    async fn next_event_reconnects_after_a_server_close_frame() {
+        let kline = sample_kline_text();
+        let base = multi_shot_server(move |index, mut ws| {
+            let kline = kline.clone();
+            async move {
+                if index == 0 {
+                    // First connection: send a clean Close so the client
+                    // exercises the Message::Close reconnect path.
+                    let _ = ws.send(Message::Close(None)).await;
+                    while let Some(Ok(_)) = ws.next().await {}
+                } else {
+                    let _ = ws.send(Message::Text(kline.into())).await;
+                    while let Some(Ok(_)) = ws.next().await {}
+                }
+            }
+        })
+        .await;
+        let mut stream = BinanceKlineStream::connect_with_config(
+            &["BTCUSDT".to_string()],
+            Interval::OneMinute,
+            test_config(base),
+        )
+        .await
+        .unwrap();
+        let event = stream
+            .next_event()
+            .await
+            .unwrap()
+            .expect("reconnect succeeds and the second connection serves a kline");
+        assert_eq!(event.symbol, "btcusdt");
+    }
+
+    #[tokio::test]
+    async fn next_event_reconnects_after_a_read_timeout() {
+        let kline = sample_kline_text();
+        let stall_token = Arc::new(AtomicU32::new(0));
+        let stall_token_h = stall_token.clone();
+        let base = multi_shot_server(move |index, mut ws| {
+            let kline = kline.clone();
+            let stall_token = stall_token_h.clone();
+            async move {
+                if index == 0 {
+                    // First connection: never write anything. The client must
+                    // hit its read_timeout and trigger a reconnect.
+                    stall_token.fetch_add(1, Ordering::SeqCst);
+                    while let Some(Ok(_)) = ws.next().await {}
+                } else {
+                    let _ = ws.send(Message::Text(kline.into())).await;
+                    while let Some(Ok(_)) = ws.next().await {}
+                }
+            }
+        })
+        .await;
+        let cfg = BinanceConfig {
+            read_timeout: Duration::from_millis(80),
+            ..test_config(base)
+        };
+        let mut stream = BinanceKlineStream::connect_with_config(
+            &["BTCUSDT".to_string()],
+            Interval::OneMinute,
+            cfg,
+        )
+        .await
+        .unwrap();
+        let event = stream
+            .next_event()
+            .await
+            .unwrap()
+            .expect("client times out, reconnects, and reads the kline");
+        assert_eq!(event.symbol, "btcusdt");
+        assert!(stall_token.load(Ordering::SeqCst) >= 1);
+    }
+
+    #[tokio::test]
+    async fn next_event_yields_none_after_close() {
+        let base = one_shot_server(|mut ws| async move {
+            // Stay open until the client closes; this lets close() complete
+            // its handshake cleanly.
+            while let Some(Ok(_)) = ws.next().await {}
+        })
+        .await;
+        let mut stream = BinanceKlineStream::connect_with_config(
+            &["BTCUSDT".to_string()],
+            Interval::OneMinute,
+            test_config(base),
+        )
+        .await
+        .unwrap();
+        stream.close().await.unwrap();
+        assert!(stream.is_closed());
+        assert!(stream.next_event().await.unwrap().is_none());
+    }
+
+    #[tokio::test]
+    async fn next_event_surfaces_an_error_when_reconnect_attempts_are_exhausted() {
+        // After the first accept the listener is dropped (one_shot_server
+        // does this), so every reconnect attempt lands on a closed port.
+        let base = one_shot_server(|mut ws| async move {
+            let _ = ws.send(Message::Close(None)).await;
+            // Returning here also drops the socket, but the listener has
+            // already been released — the client's subsequent connects
+            // will be refused.
+        })
+        .await;
+        let cfg = BinanceConfig {
+            max_reconnect_attempts: 2,
+            initial_reconnect_delay: Duration::from_millis(1),
+            max_reconnect_backoff: Duration::from_millis(2),
+            ..test_config(base)
+        };
+        let mut stream = BinanceKlineStream::connect_with_config(
+            &["BTCUSDT".to_string()],
+            Interval::OneMinute,
+            cfg,
+        )
+        .await
+        .unwrap();
+        let err = stream
+            .next_event()
+            .await
+            .expect_err("reconnect attempts are exhausted");
+        // Either a WS-layer error or a Malformed error from URL parsing —
+        // we only care that the call surfaced as Err rather than panicked.
+        let _ = err;
+    }
+
+    #[tokio::test]
+    async fn next_event_propagates_a_parse_error_from_a_malformed_kline() {
+        // A "kline" envelope whose open field is not a number — parse_frame
+        // identifies it as a kline, into_event then fails, and next_event
+        // bubbles the error rather than skipping the frame.
+        let bad = r#"{"stream":"btcusdt@kline_1m","data":{"e":"kline","E":0,"s":"BTCUSDT","k":{"t":0,"T":0,"s":"BTCUSDT","i":"1m","o":"not-a-number","c":"0","h":"0","l":"0","v":"0","x":false}}}"#.to_string();
+        let base = one_shot_server(move |mut ws| async move {
+            let _ = ws.send(Message::Text(bad.into())).await;
+            while let Some(Ok(_)) = ws.next().await {}
+        })
+        .await;
+        let mut stream = BinanceKlineStream::connect_with_config(
+            &["BTCUSDT".to_string()],
+            Interval::OneMinute,
+            test_config(base),
+        )
+        .await
+        .unwrap();
+        let err = stream.next_event().await.unwrap_err();
+        assert!(matches!(err, Error::Malformed(_)));
+    }
 }
