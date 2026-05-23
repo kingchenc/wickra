@@ -188,6 +188,15 @@ mod tests {
         assert!(LinRegSlope::new(2).is_ok());
     }
 
+    /// Cover the const accessor `period` (80-82) and the Indicator-impl
+    /// `name` body (125-127). `warmup_period` is exercised elsewhere.
+    #[test]
+    fn accessors_and_metadata() {
+        let ls = LinRegSlope::new(14).unwrap();
+        assert_eq!(ls.period(), 14);
+        assert_eq!(ls.name(), "LinRegSlope");
+    }
+
     #[test]
     fn reset_clears_state() {
         let mut ls = LinRegSlope::new(5).unwrap();

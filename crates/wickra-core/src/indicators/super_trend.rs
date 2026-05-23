@@ -281,6 +281,17 @@ mod tests {
         assert!(SuperTrend::new(10, f64::NAN).is_err());
     }
 
+    /// Cover the const accessor `params` (99-101) and the Indicator-impl
+    /// `name` body (176-178). `warmup_period` is exercised elsewhere.
+    #[test]
+    fn accessors_and_metadata() {
+        let st = SuperTrend::new(10, 3.0).unwrap();
+        let (p, m) = st.params();
+        assert_eq!(p, 10);
+        assert!((m - 3.0).abs() < 1e-12);
+        assert_eq!(st.name(), "SuperTrend");
+    }
+
     #[test]
     fn reset_clears_state() {
         let candles: Vec<Candle> = (0..40)

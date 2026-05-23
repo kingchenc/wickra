@@ -199,6 +199,15 @@ mod tests {
         assert!(LinearRegression::new(2).is_ok());
     }
 
+    /// Cover the const accessor `period` (92-94) and the Indicator-impl
+    /// `name` body (142-144). `warmup_period` is exercised elsewhere.
+    #[test]
+    fn accessors_and_metadata() {
+        let lr = LinearRegression::new(14).unwrap();
+        assert_eq!(lr.period(), 14);
+        assert_eq!(lr.name(), "LinearRegression");
+    }
+
     #[test]
     fn reset_clears_state() {
         let mut lr = LinearRegression::new(5).unwrap();

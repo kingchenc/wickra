@@ -155,6 +155,21 @@ mod tests {
         ));
     }
 
+    /// Cover the const accessors `periods` / `value` (81-88) and the
+    /// Indicator-impl `name` body (135-137). `warmup_period` is exercised
+    /// elsewhere.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut m = MacdIndicator::new(12, 26, 9).unwrap();
+        assert_eq!(m.periods(), (12, 26, 9));
+        assert_eq!(m.name(), "MACD");
+        assert!(m.value().is_none());
+        for i in 1..=m.warmup_period() {
+            m.update(100.0 + f64::from(u32::try_from(i).unwrap()));
+        }
+        assert!(m.value().is_some());
+    }
+
     #[test]
     fn rejects_zero_periods() {
         assert!(matches!(

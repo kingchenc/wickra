@@ -162,6 +162,19 @@ mod tests {
         assert!(Keltner::new(20, 10, -1.0).is_err());
     }
 
+    /// Cover the const accessor `periods` (68-70) and the Indicator-impl
+    /// `name` body (106-108). Existing tests inspect band output but
+    /// never query the metadata.
+    #[test]
+    fn accessors_and_metadata() {
+        let k = Keltner::new(20, 10, 2.0).unwrap();
+        let (ema, atr, mult) = k.periods();
+        assert_eq!(ema, 20);
+        assert_eq!(atr, 10);
+        assert!((mult - 2.0).abs() < 1e-12);
+        assert_eq!(k.name(), "KeltnerChannels");
+    }
+
     #[test]
     fn reset_clears_state() {
         let candles: Vec<Candle> = (0..50)
