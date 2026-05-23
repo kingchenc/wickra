@@ -131,6 +131,22 @@ mod tests {
         assert!(matches!(StdDev::new(0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessors `period` / `value` and the Indicator-impl
+    /// `warmup_period` / `name` methods (lines 64-71, 110-112, 118-120).
+    /// Existing tests only inspect numeric outputs of `update` / `batch`.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut sd = StdDev::new(14).unwrap();
+        assert_eq!(sd.period(), 14);
+        assert_eq!(sd.warmup_period(), 14);
+        assert_eq!(sd.name(), "StdDev");
+        assert_eq!(sd.value(), None);
+        for i in 1..=14 {
+            sd.update(f64::from(i));
+        }
+        assert!(sd.value().is_some());
+    }
+
     #[test]
     fn reference_value() {
         // StdDev(3) of [2, 4, 6]: mean = 4, variance = (4+0+4)/3 = 8/3.
