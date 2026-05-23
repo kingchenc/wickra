@@ -275,6 +275,54 @@ mod tests {
         assert_eq!(c.update(1.0), Some(8.0));
     }
 
+    /// Cover the `Chain::first` / `Chain::second` borrow accessors and the
+    /// `Chain::warmup_period` + `Chain::name` Indicator-impl bodies.
+    ///
+    /// Existing chain tests only invoked the Indicator surface (`update`,
+    /// `reset`, `is_ready`) on the wrapped `Chain`. The const borrow accessors
+    /// and the `warmup_period` / `name` impls were never traversed, so Codecov
+    /// flagged traits.rs lines 140-142, 145-147, 167-170, 176-178 as missed.
+    /// `chain.warmup_period()` also reaches `Doubler::warmup_period`
+    /// (228-230), and `chain.first().name()` reaches `Doubler::name`
+    /// (234-236) — both helper methods were uncovered for the same reason.
+    #[test]
+    fn chain_accessors_and_metadata() {
+        let chain = Chain::new(Doubler::default(), Doubler::default());
+        // Borrow accessors return the wrapped stages; query each via .name()
+        // so Doubler::name (lines 234-236) is also exercised.
+        assert_eq!(chain.first().name(), "Doubler");
+        assert_eq!(chain.second().name(), "Doubler");
+        // Doubler::warmup_period (lines 228-230) is 0; Chain::warmup_period
+        // sums the two, so the result must also be 0.
+        assert_eq!(chain.first().warmup_period(), 0);
+        assert_eq!(chain.second().warmup_period(), 0);
+        assert_eq!(chain.warmup_period(), 0);
+        // Chain::name returns the literal "Chain" (line 177).
+        assert_eq!(chain.name(), "Chain");
+    }
+
+    /// Cover the full Indicator surface of the `Identity` test helper:
+    /// `reset` (198-200), `warmup_period` (201-203), `is_ready` (204-206),
+    /// and `name` (207-209). The only other test using `Identity`
+    /// (`batch_replays_update`) calls `batch`, which exercises `update`
+    /// alone, leaving the remaining four trait methods uncovered.
+    #[test]
+    fn identity_helper_full_indicator_surface() {
+        let mut id = Identity::default();
+        // warmup_period is the literal 0; name is the literal "Identity".
+        assert_eq!(id.warmup_period(), 0);
+        assert_eq!(id.name(), "Identity");
+        // is_ready exercises the `self.seen` return with seen=false first…
+        assert!(!id.is_ready());
+        // …then with seen=true after a single update.
+        let out = id.update(42.0);
+        assert_eq!(out, Some(42.0));
+        assert!(id.is_ready());
+        // reset() flips seen back to false; is_ready reflects it.
+        id.reset();
+        assert!(!id.is_ready());
+    }
+
     #[cfg(feature = "parallel")]
     #[test]
     fn batch_parallel_runs_independent_instances() {
