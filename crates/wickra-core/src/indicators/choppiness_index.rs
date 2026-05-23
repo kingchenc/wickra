@@ -191,6 +191,15 @@ mod tests {
         assert!(ChoppinessIndex::new(2).is_ok());
     }
 
+    /// Cover the const accessor `period` (73-75) and the Indicator-impl
+    /// `name` body (125-127). `warmup_period` is exercised elsewhere.
+    #[test]
+    fn accessors_and_metadata() {
+        let ci = ChoppinessIndex::new(14).unwrap();
+        assert_eq!(ci.period(), 14);
+        assert_eq!(ci.name(), "ChoppinessIndex");
+    }
+
     #[test]
     fn reset_clears_state() {
         let candles: Vec<Candle> = (0..20).map(|i| c(11.0, 9.0, 10.0, i)).collect();
