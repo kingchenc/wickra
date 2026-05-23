@@ -143,6 +143,23 @@ mod tests {
         assert!(matches!(Coppock::new(14, 11, 0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessors `periods` / `value` (lines 68-75) and the
+    /// Indicator-impl `name` body (128-130). Existing tests inspect numeric
+    /// output and `warmup_period` but never query the configured periods,
+    /// the current cached value, or the indicator name.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut c = Coppock::new(14, 11, 10).unwrap();
+        assert_eq!(c.periods(), (14, 11, 10));
+        assert_eq!(c.name(), "Coppock");
+        assert_eq!(c.value(), None);
+        // Drive past warmup so value() flips to Some.
+        for i in 1..=u32::try_from(c.warmup_period()).unwrap() {
+            c.update(100.0 + f64::from(i));
+        }
+        assert!(c.value().is_some());
+    }
+
     #[test]
     fn first_emission_at_warmup_period() {
         let mut c = Coppock::new(6, 4, 3).unwrap();
@@ -176,8 +193,7 @@ mod tests {
             }
             assert!(
                 out[warmup - 1].is_some(),
-                "Coppock({long}, {short}, {wma}): warmup_period() = {warmup} but index {} is None",
-                warmup - 1,
+                "Coppock({long}, {short}, {wma}): warmup_period() = {warmup} but the warmup index is None",
             );
         }
     }

@@ -121,6 +121,39 @@ mod tests {
         assert_eq!(natr.warmup_period(), 14);
     }
 
+    /// Cover the const accessors `period` / `value` (lines 59-66) and the
+    /// Indicator-impl `name` body (98-100). `warmup_period` is covered
+    /// already by `warmup_period_matches_atr`.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut natr = Natr::new(14).unwrap();
+        assert_eq!(natr.period(), 14);
+        assert_eq!(natr.name(), "NATR");
+        assert_eq!(natr.value(), None);
+        let candles: Vec<Candle> = (0..14)
+            .map(|i| candle(100.0, 102.0, 98.0, 101.0, i))
+            .collect();
+        for c in &candles {
+            natr.update(*c);
+        }
+        assert!(natr.value().is_some());
+    }
+
+    /// Cover the `candle.close == 0.0` defensive branch (line 77). All
+    /// other tests feed candles with close ≈ 100, so the zero-close
+    /// fallback never fired. Feed an all-zero candle series — the Candle
+    /// validator accepts open == high == low == close == 0 with positive
+    /// volume, and ATR is 0 each bar, so the indicator must emit exactly
+    /// 0.0 rather than computing 100 * 0 / 0 = NaN.
+    #[test]
+    fn zero_close_yields_zero_natr() {
+        let candles: Vec<Candle> = (0..15).map(|i| candle(0.0, 0.0, 0.0, 0.0, i)).collect();
+        let mut natr = Natr::new(5).unwrap();
+        let out = natr.batch(&candles);
+        let last = out.into_iter().flatten().last().expect("emits");
+        assert_eq!(last, 0.0);
+    }
+
     #[test]
     fn natr_is_atr_over_close_as_percent() {
         // NATR must equal 100 * ATR / close, bar for bar.
@@ -133,13 +166,11 @@ mod tests {
         let natr_out = Natr::new(14).unwrap().batch(&candles);
         let atr_out = Atr::new(14).unwrap().batch(&candles);
         for (i, (n, a)) in natr_out.iter().zip(atr_out.iter()).enumerate() {
-            match (n, a) {
-                (Some(nv), Some(av)) => {
-                    let want = 100.0 * av / candles[i].close;
-                    assert_relative_eq!(*nv, want, epsilon = 1e-9);
-                }
-                (None, None) => {}
-                _ => panic!("warmup mismatch at {i}"),
+            // Same warmup period — emission shape must agree at every index.
+            assert_eq!(n.is_some(), a.is_some(), "warmup mismatch at index {i}");
+            if let (Some(nv), Some(av)) = (n, a) {
+                let want = 100.0 * av / candles[i].close;
+                assert_relative_eq!(*nv, want, epsilon = 1e-9);
             }
         }
     }
