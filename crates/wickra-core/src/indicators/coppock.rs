@@ -104,8 +104,20 @@ impl Indicator for Coppock {
     }
 
     fn warmup_period(&self) -> usize {
-        // Both ROCs must be ready (the longer one is `period + 1`), then the
-        // WMA needs `wma_period` of their summed values.
+        // Let `L = max(roc_long_period, roc_short_period)` and `W = wma_period`.
+        // Both ROCs need `period + 1` inputs to emit; the slower one therefore
+        // first emits at **0-based index L** (= the `(L + 1)`-th input). From
+        // that bar onward both ROCs feed the WMA in lock-step, so the WMA
+        // sees its `W`-th input at 0-based index `L + W − 1` — the first bar
+        // it emits. `warmup_period` is the 1-based count of inputs needed for
+        // the first `Some` value, which is `(L + W − 1) + 1 = L + W`.
+        //
+        // Worked example for `Coppock::new(6, 4, 3)`:
+        //   - ROC(6).first_some at index 6 (the 7th input).
+        //   - ROC(4).first_some at index 4 (the 5th input). Both available
+        //     from index 6 onward.
+        //   - WMA(3) consumes 3 inputs at indices 6, 7, 8 → first WMA `Some`
+        //     at index 8 (the 9th input). `warmup_period() == 9`.
         self.roc_long_period.max(self.roc_short_period) + self.wma_period
     }
 
@@ -140,6 +152,34 @@ mod tests {
             assert!(v.is_none());
         }
         assert!(out[8].is_some());
+    }
+
+    /// `warmup_period() == 1-based index of the first `Some`` for every legal
+    /// parameter combination — including the parameter set
+    /// `(roc_long=4, roc_short=2, wma=3)` that an external audit claimed
+    /// would prove the formula off by one. It does not: the slower ROC first
+    /// emits at 0-based index 4, the WMA needs 3 such inputs and emits at
+    /// 0-based index 6 (the 7th input), which is what
+    /// `roc_long.max(roc_short) + wma = max(4, 2) + 3 = 7` reports.
+    #[test]
+    fn warmup_period_matches_first_some_for_every_parameter_set() {
+        let prices: Vec<f64> = (1..=80).map(|i| 100.0 + f64::from(i)).collect();
+        for &(long, short, wma) in &[(6, 4, 3), (14, 11, 10), (4, 2, 3), (10, 3, 5), (3, 3, 3)] {
+            let mut c = Coppock::new(long, short, wma).unwrap();
+            let warmup = c.warmup_period();
+            let out = c.batch(&prices);
+            for (i, v) in out.iter().enumerate().take(warmup - 1) {
+                assert!(
+                    v.is_none(),
+                    "Coppock({long}, {short}, {wma}): index {i} expected None during warmup, got {v:?}"
+                );
+            }
+            assert!(
+                out[warmup - 1].is_some(),
+                "Coppock({long}, {short}, {wma}): warmup_period() = {warmup} but index {} is None",
+                warmup - 1,
+            );
+        }
     }
 
     #[test]
