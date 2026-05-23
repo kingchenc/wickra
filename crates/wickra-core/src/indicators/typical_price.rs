@@ -85,6 +85,13 @@ mod tests {
         );
     }
 
+    /// Cover the Indicator-impl `name` body (62-64).
+    #[test]
+    fn name_metadata() {
+        let tp = TypicalPrice::new();
+        assert_eq!(tp.name(), "TypicalPrice");
+    }
+
     #[test]
     fn emits_from_first_candle() {
         let mut tp = TypicalPrice::new();
