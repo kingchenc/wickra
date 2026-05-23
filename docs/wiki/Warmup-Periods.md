@@ -21,6 +21,13 @@ index" in 0-indexed terms is `warmup_period − 1`.
 
 ## Single-output indicators
 
+> The rows are keyed by **constructor**, not by indicator name. `Vwap`
+> appears twice — once for the cumulative `Vwap::new()` and once for the
+> finite-window `RollingVwap::new(period)` — because the two share the
+> indicator name `Vwap` (see [Indicators-Overview.md](Indicators-Overview.md))
+> but have different warmup periods. That is the only such pair; every other
+> row is one canonical indicator.
+
 | Indicator       | Constructor                                  | Formula                          | `warmup_period()` for shown args | Inputs at first emission |
 |-----------------|----------------------------------------------|----------------------------------|----------------------------------|--------------------------|
 | `Sma`           | `Sma::new(14)`                               | `period`                         | 14                               | 14th                     |

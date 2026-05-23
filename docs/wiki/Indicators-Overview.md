@@ -28,7 +28,7 @@ The eight families:
 | 4 | [Price Oscillators](#price-oscillators) | 5 | Difference-of-averages momentum around zero. |
 | 5 | [Volatility & Bands](#volatility--bands) | 12 | How wide is the range; where are the envelopes? |
 | 6 | [Trailing Stops](#trailing-stops) | 5 | Where is the stop-loss for this trend? |
-| 7 | [Volume](#volume) | 9 | Is volume confirming the move? |
+| 7 | [Volume](#volume) | 8 | Is volume confirming the move? |
 | 8 | [Price Statistics](#price-statistics) | 7 | Per-bar price transforms and rolling regressions. |
 
 ## Moving Averages
@@ -141,8 +141,7 @@ Price moves weighted or confirmed by traded volume. All take `Candle` input.
 | Indicator | One-liner | Input | Output | Range | Defaults | Warmup | Deep dive |
 |-----------|-----------|-------|--------|-------|----------|--------|-----------|
 | `Obv`     | On-Balance Volume: cumulative signed volume. | `Candle` | `f64` | unbounded (drifts with volume) | (no parameters) | `1` | [Indicator-Obv.md](indicators/volume/Indicator-Obv.md) |
-| `Vwap`    | Cumulative volume-weighted average price from the stream start. | `Candle` | `f64` | unbounded (price scale) | (no parameters) | `1` | [Indicator-Vwap.md](indicators/volume/Indicator-Vwap.md) |
-| `RollingVwap` | VWAP over a sliding window instead of since-start. | `Candle` | `f64` | unbounded (price scale) | `period` | `period` | [Indicator-Vwap.md → RollingVwap](indicators/volume/Indicator-Vwap.md#rollingvwap-finite-window) |
+| `Vwap`    | Cumulative volume-weighted average price from the stream start; a sibling `RollingVwap(period)` is exposed for a finite window. | `Candle` | `f64` | unbounded (price scale) | (no parameters) | `1` (cumulative); `period` (rolling) | [Indicator-Vwap.md](indicators/volume/Indicator-Vwap.md) (cumulative + [rolling](indicators/volume/Indicator-Vwap.md#rollingvwap-finite-window)) |
 | `Adl`     | Accumulation/Distribution Line; cumulative range-weighted volume. | `Candle` | `f64` | unbounded (drifts with volume) | (no parameters) | `1` | [Indicator-Adl.md](indicators/volume/Indicator-Adl.md) |
 | `VolumePriceTrend` | Cumulative `volume · ROC`; volume weighted by percentage move. | `Candle` | `f64` | unbounded (drifts with volume) | (no parameters) | `1` | [Indicator-VolumePriceTrend.md](indicators/volume/Indicator-VolumePriceTrend.md) |
 | `ChaikinMoneyFlow` | Summed money-flow volume over summed volume across `period` bars. | `Candle` | `f64` | `[−1, +1]` | `period = 20` (Python) | `period` | [Indicator-ChaikinMoneyFlow.md](indicators/volume/Indicator-ChaikinMoneyFlow.md) |
