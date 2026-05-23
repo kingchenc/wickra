@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- `Psar::is_ready` now matches the convention shared by every other indicator:
+  `is_ready() == true` iff a real value has been produced (audit finding R6).
+  The previous implementation returned `self.initialised`, which flipped to
+  `true` after the seed candle even though the seed candle itself returns
+  `None`. A streaming consumer that wrote
+  `if ind.is_ready() { use(ind.update(c)?) }` would hit an unexpected `None`
+  on the first post-seed update. The fix introduces a `has_emitted` gate set
+  when the first `Some` value is returned.
+- `Psar::reset` now restores the compute fields (`prev_high`, `prev_low`,
+  `sar`, `ep`) to `f64::NAN` sentinels instead of `0.0` (audit Opus-Bonus 1).
+  The fields are gated by `initialised` today, so the `0.0` sentinel never
+  leaked into output — but a future refactor that read them pre-init would
+  have silently treated `0.0` as a real price. A `debug_assert!` at the read
+  site makes the invariant explicit.
+
 ### Changed
 - `UlcerIndex::update` now tracks the trailing maximum with a monotonically-
   decreasing deque of `(index, price)` pairs instead of scanning the whole

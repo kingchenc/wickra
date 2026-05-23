@@ -38,7 +38,18 @@ pub struct Psar {
     af_step: f64,
     af_max: f64,
 
+    /// `true` once the first candle has been observed and the seed values
+    /// (`prev_high`, `prev_low`, `sar`, `ep`) are valid. `false` is the
+    /// constructor / `reset()` state in which the compute-fields hold
+    /// `f64::NAN` sentinels.
     initialised: bool,
+    /// `true` once `update` has returned the first `Some(sar)`. Drives
+    /// [`Indicator::is_ready`] so it matches the convention of every other
+    /// indicator: `is_ready() == true` ↔ the most recent `update` produced
+    /// (or could produce) a real value. PSAR's seed candle returns `None`
+    /// while `initialised` flips to `true`, which is why `is_ready` cannot
+    /// just mirror `initialised`.
+    has_emitted: bool,
     prev_high: f64,
     prev_low: f64,
     trend: Trend,
@@ -69,11 +80,17 @@ impl Psar {
             af_step,
             af_max,
             initialised: false,
-            prev_high: 0.0,
-            prev_low: 0.0,
+            has_emitted: false,
+            // NaN sentinels: any read of these fields before the seed candle
+            // overwrites them is a logic bug. The `initialised` flag gates
+            // every read, and the `debug_assert!` in `update` makes the
+            // invariant explicit so a future refactor cannot silently treat a
+            // sentinel as a real price.
+            prev_high: f64::NAN,
+            prev_low: f64::NAN,
             trend: Trend::Up,
-            sar: 0.0,
-            ep: 0.0,
+            sar: f64::NAN,
+            ep: f64::NAN,
             af: af_start,
         })
     }
@@ -100,8 +117,21 @@ impl Indicator for Psar {
             self.trend = Trend::Up;
             self.af = self.af_start;
             self.initialised = true;
+            // `has_emitted` stays false — this is the seed bar; the first
+            // `Some` lands on the next call.
             return None;
         }
+
+        // After `initialised` flips to `true`, every compute field is guaranteed
+        // finite. This guards against a future refactor that changes the seed
+        // gate but leaves a NaN sentinel reachable.
+        debug_assert!(
+            self.prev_high.is_finite()
+                && self.prev_low.is_finite()
+                && self.sar.is_finite()
+                && self.ep.is_finite(),
+            "PSAR seed state must be finite once initialised"
+        );
 
         // Predicted SAR for this period (before clamping to prior two extremes).
         let mut new_sar = self.sar + self.af * (self.ep - self.sar);
@@ -155,19 +185,21 @@ impl Indicator for Psar {
         self.sar = output_sar;
         self.prev_high = candle.high;
         self.prev_low = candle.low;
+        self.has_emitted = true;
         Some(output_sar)
     }
 
     fn reset(&mut self) {
-        // Restore every field to its constructor state. The re-seed on the next
-        // `update` would overwrite the trend/extremes anyway, but a complete
-        // reset keeps the struct consistent for inspection and future changes.
+        // Restore every field to its constructor state. The compute fields
+        // return to `f64::NAN` sentinels so a future refactor that reads them
+        // before re-seeding cannot silently treat `0.0` as a real price.
         self.initialised = false;
-        self.prev_high = 0.0;
-        self.prev_low = 0.0;
+        self.has_emitted = false;
+        self.prev_high = f64::NAN;
+        self.prev_low = f64::NAN;
         self.trend = Trend::Up;
-        self.sar = 0.0;
-        self.ep = 0.0;
+        self.sar = f64::NAN;
+        self.ep = f64::NAN;
         self.af = self.af_start;
     }
 
@@ -176,7 +208,13 @@ impl Indicator for Psar {
     }
 
     fn is_ready(&self) -> bool {
-        self.initialised
+        // Match the convention of every other indicator: `is_ready` flips to
+        // `true` only once a real value has been returned. The previous
+        // implementation returned `self.initialised`, which is `true` *after*
+        // the seed candle (which itself returns `None`) — so a streaming
+        // consumer that wrote `if ind.is_ready() { use(ind.update(c)?) }`
+        // would hit a `None` it didn't expect. (Audit finding R6.)
+        self.has_emitted
     }
 
     fn name(&self) -> &'static str {
@@ -260,6 +298,28 @@ mod tests {
         assert!(Psar::new(0.02, 0.0, 0.20).is_err());
         assert!(Psar::new(0.30, 0.02, 0.20).is_err());
         assert!(Psar::new(f64::NAN, 0.02, 0.20).is_err());
+    }
+
+    #[test]
+    fn is_ready_only_after_first_some_value() {
+        // Audit R6: the previous implementation flipped `is_ready` to true on
+        // the seed candle (which returns `None`), making the convention
+        // `is_ready == last_value.is_some()` a lie. The new gate is
+        // `has_emitted`, set when `update` returns its first `Some`.
+        let mut psar = Psar::classic();
+        assert!(!psar.is_ready(), "fresh PSAR must not be ready");
+        let first = psar.update(c(11.0, 9.0, 10.0));
+        assert!(first.is_none(), "seed candle returns None by design");
+        assert!(
+            !psar.is_ready(),
+            "is_ready must stay false until a Some value is produced"
+        );
+        let second = psar.update(c(12.0, 10.0, 11.0));
+        assert!(second.is_some(), "second candle must emit");
+        assert!(
+            psar.is_ready(),
+            "is_ready must flip to true once a real value has been returned"
+        );
     }
 
     #[test]
