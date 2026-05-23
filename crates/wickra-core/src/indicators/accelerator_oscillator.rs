@@ -165,6 +165,16 @@ mod tests {
         assert!(AcceleratorOscillator::new(34, 5, 5).is_err());
     }
 
+    /// Cover the const accessor `params` (69-71) and the Indicator-impl
+    /// `name` body (99-101). Existing tests inspect numeric output but
+    /// never query the metadata.
+    #[test]
+    fn accessors_and_metadata() {
+        let ac = AcceleratorOscillator::classic();
+        assert_eq!(ac.params(), (5, 34, 5));
+        assert_eq!(ac.name(), "AcceleratorOscillator");
+    }
+
     #[test]
     fn reset_clears_state() {
         let candles: Vec<Candle> = (0..60).map(|i| c(11.0, 9.0, 10.0, i)).collect();

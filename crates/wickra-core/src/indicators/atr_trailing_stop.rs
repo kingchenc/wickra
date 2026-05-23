@@ -234,6 +234,17 @@ mod tests {
         assert!(AtrTrailingStop::new(14, f64::NAN).is_err());
     }
 
+    /// Cover the const accessor `params` (77-79) and the Indicator-impl
+    /// `name` body (130-132). `warmup_period` is exercised elsewhere.
+    #[test]
+    fn accessors_and_metadata() {
+        let s = AtrTrailingStop::classic();
+        let (atr_p, mult) = s.params();
+        assert_eq!(atr_p, 14);
+        assert!((mult - 3.0).abs() < 1e-12);
+        assert_eq!(s.name(), "AtrTrailingStop");
+    }
+
     #[test]
     fn reset_clears_state() {
         let candles: Vec<Candle> = (0..40)

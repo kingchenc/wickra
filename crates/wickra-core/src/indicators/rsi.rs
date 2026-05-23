@@ -202,6 +202,34 @@ mod tests {
         assert!(matches!(Rsi::new(0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessors `period` / `value` (60-67) and the
+    /// Indicator-impl `name` body (145-147). `warmup_period` is covered
+    /// already by `warmup_period_is_period_plus_one`.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut rsi = Rsi::new(14).unwrap();
+        assert_eq!(rsi.period(), 14);
+        assert_eq!(rsi.name(), "RSI");
+        assert_eq!(rsi.value(), None);
+        for i in 1..=15 {
+            rsi.update(100.0 + f64::from(i));
+        }
+        assert!(rsi.value().is_some());
+    }
+
+    /// Cover the `ag == 0` branch (line 167) of the test-helper `rsi_naive`:
+    /// when both `avg_gain` and `avg_loss` are 0 (a perfectly flat series),
+    /// the helper must return the neutral 50.0. The proptest reference uses
+    /// random inputs that essentially never hit zero gains AND zero losses
+    /// simultaneously, leaving this branch dead in the helper.
+    #[test]
+    fn naive_helper_flat_series_yields_50() {
+        let ks = rsi_naive(&[42.0; 20], 5);
+        for r in ks.into_iter().skip(5) {
+            assert_eq!(r.expect("ready after period+1 inputs"), 50.0);
+        }
+    }
+
     #[test]
     fn warmup_period_is_period_plus_one() {
         let rsi = Rsi::new(14).unwrap();

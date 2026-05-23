@@ -182,4 +182,13 @@ mod tests {
         assert!(!a.is_ready());
         assert_eq!(a.update(candles[0]), None);
     }
+
+    /// Cover the const accessor `period` (56-58) and the Indicator-impl
+    /// `name` body (104-106). `warmup_period` is exercised elsewhere.
+    #[test]
+    fn accessors_and_metadata() {
+        let a = Aroon::new(14).unwrap();
+        assert_eq!(a.period(), 14);
+        assert_eq!(a.name(), "Aroon");
+    }
 }
