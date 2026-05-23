@@ -174,6 +174,28 @@ mod tests {
         assert!(matches!(Vortex::new(0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessors `period` / `value` (84-91) and the
+    /// Indicator-impl `name` body (157-159). `warmup_period` is covered
+    /// elsewhere.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut v = Vortex::new(14).unwrap();
+        assert_eq!(v.period(), 14);
+        assert_eq!(v.name(), "Vortex");
+        assert!(v.value().is_none());
+        let warmup = i64::try_from(v.warmup_period()).unwrap();
+        let candles: Vec<Candle> = (0..warmup)
+            .map(|i| {
+                let p = 100.0 + (i as f64 * 0.3).sin() * 5.0;
+                Candle::new(p, p + 1.0, p - 1.0, p, 1.0, i).unwrap()
+            })
+            .collect();
+        for c in &candles {
+            v.update(*c);
+        }
+        assert!(v.value().is_some());
+    }
+
     #[test]
     fn reference_values() {
         // Vortex(2) over three explicit candles (high, low, close):

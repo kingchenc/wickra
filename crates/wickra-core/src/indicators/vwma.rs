@@ -147,6 +147,22 @@ mod tests {
         assert!(matches!(Vwma::new(0), Err(Error::PeriodZero)));
     }
 
+    /// Cover the const accessors `period` / `value` (72-79) and the
+    /// Indicator-impl `name` body (129-131). Existing tests inspect
+    /// VWMA output but never query the metadata.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut v = Vwma::new(5).unwrap();
+        assert_eq!(v.period(), 5);
+        assert_eq!(v.name(), "VWMA");
+        assert_eq!(v.value(), None);
+        for i in 1..=5i64 {
+            let p = 100.0 + i as f64;
+            v.update(Candle::new(p, p, p, p, 1.0, i).unwrap());
+        }
+        assert!(v.value().is_some());
+    }
+
     #[test]
     fn reference_value() {
         // VWMA(2): (10·1 + 20·3) / (1 + 3) = 70 / 4 = 17.5.

@@ -222,6 +222,28 @@ mod tests {
         ));
     }
 
+    /// Cover the const accessors `periods` / `value` (96-103) and the
+    /// Indicator-impl `name` body (193-195). `warmup_period` is covered
+    /// by `first_emission_at_warmup_period`.
+    #[test]
+    fn accessors_and_metadata() {
+        let mut uo = UltimateOscillator::new(7, 14, 28).unwrap();
+        assert_eq!(uo.periods(), (7, 14, 28));
+        assert_eq!(uo.name(), "UltimateOscillator");
+        assert_eq!(uo.value(), None);
+        let warmup = i64::try_from(uo.warmup_period()).unwrap();
+        let candles: Vec<Candle> = (0..warmup)
+            .map(|i| {
+                let p = 100.0 + (i as f64 * 0.3).sin() * 5.0;
+                Candle::new(p, p + 1.0, p - 1.0, p, 1.0, i).unwrap()
+            })
+            .collect();
+        for c in &candles {
+            uo.update(*c);
+        }
+        assert!(uo.value().is_some());
+    }
+
     #[test]
     fn first_emission_at_warmup_period() {
         let mut uo = UltimateOscillator::new(2, 3, 5).unwrap();
