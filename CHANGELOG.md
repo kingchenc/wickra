@@ -8,13 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-- **MSRV bumped.** Workspace minimum supported Rust version is now **1.80**
+- **MSRV bumped.** Workspace minimum supported Rust version is now **1.85**
   (was 1.75) and the Node binding (`wickra-node`) is now **1.88** (was 1.77).
   The bumps are driven by transitive-dependency floors that were lifted in
-  recent updates: `rayon-core >= 1.13.0` requires Rust 1.80, and
-  `napi-build >= 2.3.2` requires Rust 1.88. Pinning the deps to the older
-  versions would have frozen us out of future security fixes from those
-  upstreams, so lifting the MSRV is the cleaner path for a young 0.x
+  recent updates: `clap_lex >= 1.1.0` (pulled in via the criterion dev-dep)
+  requires the stabilized `edition2024` feature (stable since Rust 1.85),
+  and `napi-build >= 2.3.2` requires Rust 1.88. Pinning the deps to the
+  older versions would have frozen us out of future security fixes from
+  those upstreams, so lifting the MSRV is the cleaner path for a young 0.x
   library. Downstream consumers on older Rust toolchains can stay on
   Wickra 0.2.0.
 

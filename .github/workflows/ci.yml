@@ -56,12 +56,14 @@ jobs:
         run: cargo build -p wickra-examples --bins
 
   # Verify the crates still build and test on their declared minimum supported
-  # Rust version. The workspace pins rust-version = "1.80" (raised from 1.75
-  # so rayon-core >= 1.13.0 keeps compiling); bindings/node pins
-  # rust-version = "1.88" because napi-build 2.3.2 requires it (and that
-  # subsumes the older 1.77 floor needed for `cargo::` directives). Without
-  # this job an accidental use of a newer API would only surface for
-  # downstream users.
+  # Rust version. The workspace pins rust-version = "1.85" — that floor is
+  # set by clap_lex 1.1.0 (transitively pulled in by the criterion dev-dep)
+  # which needs the stabilized edition2024 feature (stable since Rust 1.85);
+  # rayon-core 1.13.0 only needed 1.80 and is subsumed by the 1.85 floor.
+  # bindings/node pins rust-version = "1.88" because napi-build 2.3.2
+  # requires it (and that subsumes the older 1.77 floor needed for
+  # `cargo::` directives). Without this job an accidental use of a newer
+  # API would only surface for downstream users.
   msrv:
     name: ${{ matrix.name }}
     runs-on: ubuntu-latest
@@ -69,8 +71,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: MSRV workspace (Rust 1.80)
-            toolchain: "1.80"
+          - name: MSRV workspace (Rust 1.85)
+            toolchain: "1.85"
             packages: "-p wickra-core -p wickra -p wickra-data"
           - name: MSRV node binding (Rust 1.88)
             toolchain: "1.88"
@@ -174,23 +176,23 @@ jobs:
           tool: cargo-fuzz
 
       - name: Fuzz csv_reader (30 s)
-        run: cargo +nightly fuzz run csv_reader -- -max_total_time=30
+        run: cargo +nightly fuzz run --target x86_64-unknown-linux-gnu csv_reader -- -max_total_time=30
         working-directory: fuzz
 
       - name: Fuzz binance_envelope (30 s)
-        run: cargo +nightly fuzz run binance_envelope -- -max_total_time=30
+        run: cargo +nightly fuzz run --target x86_64-unknown-linux-gnu binance_envelope -- -max_total_time=30
         working-directory: fuzz
 
       - name: Fuzz indicator_update (30 s)
-        run: cargo +nightly fuzz run indicator_update -- -max_total_time=30
+        run: cargo +nightly fuzz run --target x86_64-unknown-linux-gnu indicator_update -- -max_total_time=30
         working-directory: fuzz
 
       - name: Fuzz indicator_update_candle (30 s)
-        run: cargo +nightly fuzz run indicator_update_candle -- -max_total_time=30
+        run: cargo +nightly fuzz run --target x86_64-unknown-linux-gnu indicator_update_candle -- -max_total_time=30
         working-directory: fuzz
 
       - name: Fuzz tick_aggregator (30 s)
-        run: cargo +nightly fuzz run tick_aggregator -- -max_total_time=30
+        run: cargo +nightly fuzz run --target x86_64-unknown-linux-gnu tick_aggregator -- -max_total_time=30
         working-directory: fuzz
 
   python:
