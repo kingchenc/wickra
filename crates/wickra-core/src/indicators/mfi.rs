@@ -181,6 +181,34 @@ mod tests {
         assert!(!mfi.is_ready());
     }
 
+    /// Cover the const accessor `period` (58-60) and the Indicator-impl
+    /// `name` body (132-134). `warmup_period` is already covered elsewhere.
+    #[test]
+    fn accessors_and_metadata() {
+        let mfi = Mfi::new(14).unwrap();
+        assert_eq!(mfi.period(), 14);
+        assert_eq!(mfi.name(), "MFI");
+    }
+
+    /// Cover the `tp == prev` arm (line 85) — when typical price equals
+    /// the previous typical price, both flows are 0 — and the all-zero-
+    /// flow fallback `Some(50.0)` (line 105). Existing tests use varying
+    /// candles so the flat-TP arm and the zero-flow fallback never fired.
+    #[test]
+    fn flat_typical_prices_default_to_50() {
+        let mut mfi = Mfi::new(3).unwrap();
+        let candles: Vec<Candle> = (0..6)
+            .map(|i| Candle::new(10.0, 10.0, 10.0, 10.0, 1.0, i).unwrap())
+            .collect();
+        let last = mfi
+            .batch(&candles)
+            .into_iter()
+            .flatten()
+            .last()
+            .expect("emits");
+        assert_eq!(last, 50.0);
+    }
+
     #[test]
     fn rejects_zero_period() {
         assert!(Mfi::new(0).is_err());
