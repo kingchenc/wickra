@@ -87,6 +87,14 @@ def test_awesome_oscillator_histogram_flat_series_converges_to_zero():
     np.testing.assert_allclose(out[6:], 0.0, atol=1e-12)
 
 
+def test_stc_constant_series_yields_zero():
+    # Flat input collapses both stochastic stages to zero -> STC stays at 0.
+    out = ta.STC(3, 5, 4, 0.5).batch(np.full(60, 42.0, dtype=np.float64))
+    ready = out[~np.isnan(out)]
+    assert ready.size > 0
+    np.testing.assert_array_equal(ready[-5:], np.zeros(5))
+
+
 def test_elder_impulse_constant_series_is_neutral():
     # Flat input -> neither EMA nor MACD histogram moves -> Impulse stays at 0.
     out = ta.ElderImpulse(13, 12, 26, 9).batch(np.full(120, 42.0, dtype=np.float64))

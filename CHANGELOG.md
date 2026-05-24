@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Family 03 — MACD & Price Oscillators.** `Stc` (Schaff Trend Cycle,
+  Doug Schaff): doubly-`Stochastic`-smoothed MACD producing a bounded
+  `[0, 100]` reading that reacts faster than `MACD` itself. Four
+  parameters `(fast = 23, slow = 50, schaff_period = 10, factor = 0.5)`.
+  Output is clamped to `[0, 100]` to absorb floating-point rounding.
+  Exposed in all four bindings.
 - **Family 03 — MACD & Price Oscillators.** `ElderImpulse` (Alexander
   Elder's Impulse System): tri-state momentum gauge combining `EMA`
   trend slope with `MACD` histogram slope. Returns `+1` (green/buy)

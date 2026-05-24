@@ -50,6 +50,7 @@ const scalarFactories = {
   APO: () => new wickra.APO(12, 26),
   CFO: () => new wickra.CFO(14),
   ElderImpulse: () => new wickra.ElderImpulse(13, 12, 26, 9),
+  STC: () => new wickra.STC(23, 50, 10, 0.5),
   DPO: () => new wickra.DPO(20),
   Coppock: () => new wickra.Coppock(14, 11, 10),
   StdDev: () => new wickra.StdDev(20),
@@ -281,6 +282,15 @@ test('AwesomeOscillatorHistogram on a flat median converges to zero', () => {
   );
   // warmup = 5 + 3 - 1 = 7.
   for (let i = 6; i < n; i++) assert.ok(Math.abs(out[i]) < 1e-12);
+});
+
+test('STC on a flat series stays at zero', () => {
+  const out = new wickra.STC(3, 5, 4, 0.5).batch(Array(60).fill(42));
+  // Latest values must be exactly zero.
+  for (let i = out.length - 5; i < out.length; i++) {
+    if (Number.isNaN(out[i])) continue;
+    assert.equal(out[i], 0);
+  }
 });
 
 test('ElderImpulse on a flat series stays neutral (0)', () => {
