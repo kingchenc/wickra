@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Family 02 — Momentum Oscillators.** `PGO` (Pretty Good Oscillator,
+  Mark Johnson): `(close − SMA(close, period)) / EMA(TR, period)`.
+  Candle input, single parameter `period` (default 14). Roughly counts
+  how many ATR-equivalents the close is from its mean. Exposed in all
+  four bindings.
 - **Family 02 — Momentum Oscillators.** `RVI` (Relative Vigor Index,
   Dorsey): per-bar ratio `SMA(close - open, period) / SMA(high - low,
   period)`. Candle input, single parameter `period` (default 10).

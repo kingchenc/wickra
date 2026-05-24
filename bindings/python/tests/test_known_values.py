@@ -66,6 +66,18 @@ def test_rsi_wilder_textbook_first_value():
     assert math.isclose(out[14], 70.464, abs_tol=0.05)
 
 
+def test_pgo_flat_close_yields_zero():
+    # On a constant close the numerator (close − SMA) is zero, so PGO emits 0
+    # regardless of the TR-EMA in the denominator.
+    n = 20
+    high = np.full(n, 11.0)
+    low = np.full(n, 9.0)
+    close = np.full(n, 10.0)
+    out = ta.PGO(5).batch(high, low, close)
+    assert np.all(np.isnan(out[:4]))
+    np.testing.assert_allclose(out[4:], 0.0, atol=1e-12)
+
+
 def test_rvi_reference_value_period_2():
     # Two bars: (open, high, low, close) = (10, 11, 9, 10.5), (10.5, 11.5, 10, 11).
     #   num = (0.5 + 0.5) = 1.0; den = (2.0 + 1.5) = 3.5; RVI = 1 / 3.5.

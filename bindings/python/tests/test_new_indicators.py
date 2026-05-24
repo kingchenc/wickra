@@ -94,6 +94,7 @@ CANDLE_SCALAR = {
         lambda: ta.RVI(10),
         lambda ind, h, l, c, v: ind.batch(c, h, l, c),
     ),
+    "PGO": (lambda: ta.PGO(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "UltimateOscillator": (
         lambda: ta.UltimateOscillator(7, 14, 28),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
