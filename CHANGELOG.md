@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.6] - 2026-05-24
+
+### Fixed
+- **docs.rs build.** Rust 1.92 removed the `doc_auto_cfg` feature gate
+  and folded it back into `doc_cfg` (rust-lang/rust#138907). docs.rs
+  builds against the latest nightly and sets `--cfg docsrs`, so every
+  published 0.2.x failed with E0557 on the
+  `#![cfg_attr(docsrs, feature(doc_auto_cfg))]` line at the top of
+  `wickra`, `wickra-core`, and `wickra-data`. GitHub CI didn't see
+  this — stable rustc never enables the `docsrs` cfg. The three
+  library crates now gate on `doc_cfg` (same intent, same rendered
+  output on docs.rs, builds again on nightly).
+
+### Changed
+- **README — Wickra is now the top row of every comparison table.**
+  The "Why Wickra exists" library matrix and the per-indicator
+  benchmark tables previously placed Wickra at the bottom; a reader
+  landing on the README is here to compare *against* Wickra, so the
+  pivot row belongs at the top with a ★ marker. Same column data,
+  same winner annotations — only row order changed. Mirrored across
+  the umbrella README and every binding README so crates.io / PyPI /
+  npm landing pages stay in sync.
+
 ## [0.2.5] - 2026-05-24
 
 ### Added
@@ -352,7 +375,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/kingchenc/wickra/compare/v0.2.5...HEAD
+[Unreleased]: https://github.com/kingchenc/wickra/compare/v0.2.6...HEAD
+[0.2.6]: https://github.com/kingchenc/wickra/compare/v0.2.5...v0.2.6
 [0.2.5]: https://github.com/kingchenc/wickra/compare/v0.2.1...v0.2.5
 [0.2.1]: https://github.com/kingchenc/wickra/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/kingchenc/wickra/compare/v0.1.4...v0.2.0

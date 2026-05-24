@@ -34,7 +34,7 @@
 //! assert_eq!(out, vec![None, None, Some(2.0), Some(3.0)]);
 //! ```
 
-#![cfg_attr(docsrs, feature(doc_auto_cfg))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 
 mod error;
 mod ohlcv;
