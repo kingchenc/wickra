@@ -88,6 +88,7 @@ const candleScalar = {
   VWMA: { make: () => new wickra.VWMA(20), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
   RVI: { make: () => new wickra.RVI(10), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   PGO: { make: () => new wickra.PGO(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  SMI: { make: () => new wickra.SMI(5, 3, 3), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   UltimateOscillator: { make: () => new wickra.UltimateOscillator(7, 14, 28), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   AroonOscillator: { make: () => new wickra.AroonOscillator(14), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   NATR: { make: () => new wickra.NATR(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
@@ -260,6 +261,13 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+test('SMI with close at range centre emits zero after warmup', () => {
+  const n = 60;
+  const out = new wickra.SMI(5, 3, 3).batch(Array(n).fill(11), Array(n).fill(9), Array(n).fill(10));
+  // warmup_period = 5 + 3 + 3 - 2 = 9.
+  for (let i = 8; i < n; i++) assert.ok(Math.abs(out[i]) < 1e-12);
 });
 
 test('KST on a flat series emits zero after warmup', () => {

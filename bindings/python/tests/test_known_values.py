@@ -66,6 +66,15 @@ def test_rsi_wilder_textbook_first_value():
     assert math.isclose(out[14], 70.464, abs_tol=0.05)
 
 
+def test_smi_close_at_centre_yields_zero():
+    # Close at the midpoint of a flat high/low range -> displacement is
+    # always zero -> SMI converges to 0.
+    n = 60
+    out = ta.SMI(5, 3, 3).batch(np.full(n, 11.0), np.full(n, 9.0), np.full(n, 10.0))
+    # warmup_period = 5 + 3 + 3 - 2 = 9.
+    np.testing.assert_allclose(out[8:], 0.0, atol=1e-12)
+
+
 def test_kst_constant_series_yields_zero():
     # ROC is zero on a flat input, so every RCMA is zero, so KST and its
     # signal SMA are both zero after warmup.

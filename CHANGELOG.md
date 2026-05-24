@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Family 02 — Momentum Oscillators.** `SMI` (Stochastic Momentum
+  Index, Blau): doubly-`EMA`-smoothed bounded oscillator measuring the
+  close's displacement from the centre of the recent high-low range,
+  scaled by the smoothed range. Candle input, three parameters
+  `(period, d_period, d2_period)` (defaults 5 / 3 / 3). Exposed in all
+  four bindings.
 - **Family 02 — Momentum Oscillators.** `KST` (Know Sure Thing, Pring):
   weighted sum of four `SMA`-smoothed `ROC` series with Pring's fixed
   weights `1, 2, 3, 4`, plus an `SMA` signal line. Nine parameters
