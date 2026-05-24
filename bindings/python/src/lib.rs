@@ -812,6 +812,74 @@ impl PyKama {
     }
 }
 
+// ============================== Inertia ==============================
+
+#[pyclass(name = "Inertia", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyInertia {
+    inner: wc::Inertia,
+}
+
+#[pymethods]
+impl PyInertia {
+    #[new]
+    #[pyo3(signature = (rvi_period=14, linreg_period=20))]
+    fn new(rvi_period: usize, linreg_period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Inertia::new(rvi_period, linreg_period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        open: PyReadonlyArray1<'py, f64>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let o = open
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if !(o.len() == h.len() && h.len() == l.len() && l.len() == c.len()) {
+            return Err(PyValueError::new_err(
+                "open, high, low and close must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(c.len());
+        for i in 0..c.len() {
+            let candle = wc::Candle::new(o[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (r, l) = self.inner.periods();
+        format!("Inertia(rvi_period={r}, linreg_period={l})")
+    }
+}
+
 // ============================== Connors RSI ==============================
 
 #[pyclass(name = "ConnorsRSI", module = "wickra._wickra", skip_from_py_object)]
@@ -4861,6 +4929,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PySmi>()?;
     m.add_class::<PyLaguerreRsi>()?;
     m.add_class::<PyConnorsRsi>()?;
+    m.add_class::<PyInertia>()?;
     m.add_class::<PyCci>()?;
     m.add_class::<PyRoc>()?;
     m.add_class::<PyWilliamsR>()?;

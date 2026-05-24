@@ -397,6 +397,61 @@ impl WasmPgo {
     }
 }
 
+#[wasm_bindgen(js_name = Inertia)]
+pub struct WasmInertia {
+    inner: wc::Inertia,
+}
+
+#[wasm_bindgen(js_class = Inertia)]
+impl WasmInertia {
+    #[wasm_bindgen(constructor)]
+    pub fn new(rvi_period: usize, linreg_period: usize) -> Result<WasmInertia, JsError> {
+        Ok(Self {
+            inner: wc::Inertia::new(rvi_period, linreg_period).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = make_candle_ohlc(open, high, low, close)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if !(open.len() == high.len() && high.len() == low.len() && low.len() == close.len()) {
+            return Err(JsError::new(
+                "open, high, low and close must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            let c = make_candle_ohlc(open[i], high[i], low[i], close[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[wasm_bindgen(js_name = RVI)]
 pub struct WasmRvi {
     inner: wc::Rvi,

@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Family 02 — Momentum Oscillators.** `Inertia` (Dorsey): a
+  `LinearRegression` smoothing of the `RVI` series — preserves trend
+  direction while damping the underlying ratio. Candle input, two
+  parameters `(rvi_period, linreg_period)` (defaults 14 / 20). Exposed
+  in all four bindings.
 - **Family 02 — Momentum Oscillators.** `ConnorsRsi`: Larry Connors'
   3-component aggregate — `RSI(close)`, `RSI(streak)`, and the
   percentile rank of the 1-bar return over the recent `period_rank`

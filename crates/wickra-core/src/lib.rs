@@ -49,7 +49,7 @@ pub use indicators::{
     BollingerOutput, Cci, ChaikinMoneyFlow, ChaikinOscillator, ChaikinVolatility, ChandeKrollStop,
     ChandeKrollStopOutput, ChandelierExit, ChandelierExitOutput, ChoppinessIndex, Cmo, ConnorsRsi,
     Coppock, Dema, Donchian, DonchianOutput, Dpo, EaseOfMovement, Ema, ForceIndex,
-    HistoricalVolatility, Hma, Kama, Keltner, KeltnerOutput, Kst, KstOutput, LaguerreRsi,
+    HistoricalVolatility, Hma, Inertia, Kama, Keltner, KeltnerOutput, Kst, KstOutput, LaguerreRsi,
     LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, MacdOutput, MassIndex, MedianPrice,
     Mfi, Mom, Natr, Obv, PercentB, Pgo, Pmo, Ppo, Psar, Roc, RollingVwap, Rsi, Rvi, Sma, Smi, Smma,
     StdDev, StochRsi, Stochastic, StochasticOutput, SuperTrend, SuperTrendOutput, Tema, Trima,

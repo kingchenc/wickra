@@ -66,6 +66,18 @@ def test_rsi_wilder_textbook_first_value():
     assert math.isclose(out[14], 70.464, abs_tol=0.05)
 
 
+def test_inertia_constant_rvi_passes_through_linreg():
+    # Every bar identical (open, high, low, close) = (10, 11, 9, 10.5):
+    # RVI = (c-o) / (h-l) = 0.5 / 2 = 0.25 every bar. LinReg of a constant
+    # series equals that constant after warmup.
+    n = 60
+    out = ta.Inertia(3, 4).batch(
+        np.full(n, 10.0), np.full(n, 11.0), np.full(n, 9.0), np.full(n, 10.5)
+    )
+    # warmup_period = 3 + 4 - 1 = 6.
+    np.testing.assert_allclose(out[5:], 0.25, atol=1e-12)
+
+
 def test_connors_rsi_output_is_bounded():
     # CRSI is the average of three [0, 100] components, so the aggregate must
     # also sit in [0, 100] after warmup.
