@@ -97,6 +97,7 @@ const candleScalar = {
   ForceIndex: { make: () => new wickra.ForceIndex(13), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
   EaseOfMovement: { make: () => new wickra.EaseOfMovement(14, 1e8), step: (ind, i) => ind.update(high[i], low[i], volume[i]), batch: (ind) => ind.batch(high, low, volume) },
   KVO: { make: () => new wickra.KVO(34, 55), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
+  VolumeOscillator: { make: () => new wickra.VolumeOscillator(14, 28), step: (ind, i) => ind.update(volume[i]), batch: (ind) => ind.batch(volume) },
   AtrTrailingStop: { make: () => new wickra.AtrTrailingStop(14, 3), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   TypicalPrice: { make: () => new wickra.TypicalPrice(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   MedianPrice: { make: () => new wickra.MedianPrice(), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },

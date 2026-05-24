@@ -3312,6 +3312,66 @@ impl PyForceIndex {
     }
 }
 
+// ============================== Volume Oscillator ==============================
+
+#[pyclass(
+    name = "VolumeOscillator",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyVolumeOscillator {
+    inner: wc::VolumeOscillator,
+}
+
+#[pymethods]
+impl PyVolumeOscillator {
+    #[new]
+    #[pyo3(signature = (fast=14, slow=28))]
+    fn new(fast: usize, slow: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::VolumeOscillator::new(fast, slow).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over a 1-D numpy volume array.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let mut out = Vec::with_capacity(v.len());
+        for &vol in v {
+            let candle = wc::Candle::new(10.0, 10.0, 10.0, 10.0, vol, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn periods(&self) -> (usize, usize) {
+        self.inner.periods()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (fast, slow) = self.inner.periods();
+        format!("VolumeOscillator(fast={fast}, slow={slow})")
+    }
+}
+
 // ============================== Klinger Volume Oscillator ==============================
 
 #[pyclass(name = "KVO", module = "wickra._wickra", skip_from_py_object)]
@@ -4609,6 +4669,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyChaikinOscillator>()?;
     m.add_class::<PyForceIndex>()?;
     m.add_class::<PyKvo>()?;
+    m.add_class::<PyVolumeOscillator>()?;
     m.add_class::<PyEaseOfMovement>()?;
     m.add_class::<PySuperTrend>()?;
     m.add_class::<PyChandelierExit>()?;

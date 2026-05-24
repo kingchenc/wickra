@@ -122,6 +122,10 @@ CANDLE_SCALAR = {
         lambda: ta.KVO(34, 55),
         lambda ind, h, l, c, v: ind.batch(h, l, c, v),
     ),
+    "VolumeOscillator": (
+        lambda: ta.VolumeOscillator(14, 28),
+        lambda ind, h, l, c, v: ind.batch(v),
+    ),
     "AtrTrailingStop": (
         lambda: ta.AtrTrailingStop(14, 3.0),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
@@ -248,6 +252,16 @@ def test_weighted_close_reference():
     assert ta.WeightedClose().update((10.0, 12.0, 8.0, 11.0, 1.0, 0)) == pytest.approx(
         10.5
     )
+
+
+def test_volume_oscillator_reference():
+    # fast=2, slow=4 over volumes [10, 20, 30, 40, 50]:
+    # bar 4 -> fast=(30+40)/2=35, slow=(10+20+30+40)/4=25 -> VO = 100*(35-25)/25 = 40.
+    vo = ta.VolumeOscillator(2, 4)
+    out = vo.batch(np.array([10.0, 20.0, 30.0, 40.0, 50.0]))
+    assert math.isnan(out[2])
+    assert out[3] == pytest.approx(40.0)
+    assert out[4] == pytest.approx(1000.0 / 35.0)
 
 
 def test_kvo_constant_series_is_zero():

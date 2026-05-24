@@ -20,7 +20,7 @@ use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Through
 use std::hint::black_box;
 use wickra::{
     Atr, BatchExt, BollingerBands, Candle, Ema, Indicator, Kvo, MacdIndicator, Obv, Rsi, Sma,
-    Stochastic, Wma,
+    Stochastic, VolumeOscillator, Wma,
 };
 use wickra_data::csv::CandleReader;
 
@@ -145,6 +145,9 @@ fn benches(c: &mut Criterion) {
     bench_candle_input(c, "stochastic", &candles, Stochastic::classic);
     bench_candle_input(c, "obv", &candles, Obv::new);
     bench_candle_input(c, "kvo", &candles, Kvo::classic);
+    bench_candle_input(c, "volume_oscillator", &candles, || {
+        VolumeOscillator::new(14, 28).unwrap()
+    });
 }
 
 criterion_group!(name = wickra_benches; config = Criterion::default(); targets = benches);

@@ -1514,6 +1514,51 @@ impl ForceIndexNode {
     }
 }
 
+// ============================== Volume Oscillator ==============================
+
+#[napi(js_name = "VolumeOscillator")]
+pub struct VolumeOscillatorNode {
+    inner: wc::VolumeOscillator,
+}
+
+#[napi]
+impl VolumeOscillatorNode {
+    #[napi(constructor)]
+    pub fn new(fast: u32, slow: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::VolumeOscillator::new(fast as usize, slow as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, volume: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(10.0, 10.0, 10.0, volume)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, volume: Vec<f64>) -> napi::Result<Vec<f64>> {
+        let mut out = Vec::with_capacity(volume.len());
+        for &v in &volume {
+            out.push(
+                self.inner
+                    .update(cnd(10.0, 10.0, 10.0, v)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== Klinger Volume Oscillator ==============================
 
 #[napi(js_name = "KVO")]

@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   volume-force oscillator: `EMA(vf, fast) − EMA(vf, slow)` over a daily
   volume force scaled by cumulative-measurement ratio. Classic
   `(fast, slow) = (34, 55)` exposed via `Kvo::classic()`.
+- **Volume Oscillator (VO).** Percent difference between a fast and a
+  slow SMA of bar volume: `100 · (SMA(vol, fast) − SMA(vol, slow)) /
+  SMA(vol, slow)`. Default `(14, 28)`.
 
 ## [0.2.7] - 2026-05-24
 
