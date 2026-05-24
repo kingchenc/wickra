@@ -59,6 +59,7 @@ const scalarFactories = {
   VerticalHorizontalFilter: () => new wickra.VerticalHorizontalFilter(28),
   ZScore: () => new wickra.ZScore(20),
   LinRegAngle: () => new wickra.LinRegAngle(14),
+  RVI: () => new wickra.RVI(10),
 };
 
 for (const [name, make] of Object.entries(scalarFactories)) {
@@ -257,4 +258,12 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+test('RVI pure uptrend saturates at 100', () => {
+  const prices = Array.from({ length: 40 }, (_, i) => i + 1);
+  const out = new wickra.RVI(5).batch(prices);
+  for (let i = 9; i < out.length; i++) {
+    assert.ok(Math.abs(out[i] - 100) < 1e-9, `RVI[${i}] = ${out[i]}`);
+  }
 });

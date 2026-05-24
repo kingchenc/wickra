@@ -63,6 +63,7 @@ SCALAR = [
     (ta.VerticalHorizontalFilter, (28,)),
     (ta.ZScore, (20,)),
     (ta.LinRegAngle, (14,)),
+    (ta.RVI, (10,)),
 ]
 
 

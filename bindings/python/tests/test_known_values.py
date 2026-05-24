@@ -112,3 +112,11 @@ def test_obv_cumulative_known_sequence():
     volume = np.array([100.0, 20.0, 30.0, 40.0, 10.0])
     out = ta.OBV().batch(close, volume)
     np.testing.assert_allclose(out, [0.0, 20.0, -10.0, -10.0, 0.0])
+
+
+def test_rvi_pure_uptrend_saturates_at_one_hundred():
+    # Strictly rising closes -> every stddev sample classified as "up" -> RVI = 100.
+    out = ta.RVI(5).batch(np.arange(1.0, 41.0, dtype=np.float64))
+    ready = out[~np.isnan(out)]
+    assert ready.size > 0
+    np.testing.assert_allclose(ready[-10:], 100.0, atol=1e-9)

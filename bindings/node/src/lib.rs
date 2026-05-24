@@ -117,6 +117,45 @@ node_scalar_indicator!(
 );
 node_scalar_indicator!(ZScoreNode, "ZScore", wc::ZScore);
 
+// RVI takes a single `period` parameter but additionally rejects `period == 1`
+// (a 1-bar standard deviation is always zero), so the `clamp_period`-to-1
+// strategy from `node_scalar_indicator!` would panic via `must`. Use a
+// hand-rolled fallible constructor that throws a JS error instead.
+#[napi(js_name = "RVI")]
+pub struct RviNode {
+    inner: wc::Rvi,
+}
+
+#[napi]
+impl RviNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Rvi::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== MACD ==============================
 
 /// MACD triple: macd line, signal line, histogram.

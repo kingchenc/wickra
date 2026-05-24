@@ -84,6 +84,7 @@ from ._wickra import (
     AtrTrailingStop,
     TrueRange,
     ChaikinVolatility,
+    RVI,
     # Volume
     OBV,
     VWAP,
@@ -165,6 +166,7 @@ __all__ = [
     "AtrTrailingStop",
     "TrueRange",
     "ChaikinVolatility",
+    "RVI",
     # Volume
     "OBV",
     "VWAP",

@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **RVI (Relative Volatility Index).** Donald Dorsey's RSI-shaped
+  volatility gauge: partition the rolling standard deviation of close
+  into "up" (close rose) and "down" (close fell) samples, Wilder-smooth
+  each side, and compute `100 · AvgUp / (AvgUp + AvgDown)`. Bounded on
+  `[0, 100]`; saturates at `100` in pure uptrends, `0` in pure
+  downtrends, and falls back to `50` on a completely flat series (same
+  undefined-RS convention as `RSI`). Single `period` parameter (default
+  `10`) drives both the stddev window and the Wilder smoothing.
+
 ## [0.2.7] - 2026-05-24
 
 ### Added

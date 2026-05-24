@@ -4476,6 +4476,58 @@ impl PyLinRegAngle {
     }
 }
 
+// ============================== RVI ==============================
+
+#[pyclass(name = "RVI", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyRvi {
+    inner: wc::Rvi,
+}
+
+#[pymethods]
+impl PyRvi {
+    #[new]
+    #[pyo3(signature = (period=10))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Rvi::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("RVI(period={})", self.inner.period())
+    }
+}
+
 // ============================== Module ==============================
 
 #[pymodule]
@@ -4553,5 +4605,6 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyChaikinVolatility>()?;
     m.add_class::<PyZScore>()?;
     m.add_class::<PyLinRegAngle>()?;
+    m.add_class::<PyRvi>()?;
     Ok(())
 }
