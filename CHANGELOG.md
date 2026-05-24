@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Family 02 — Momentum Oscillators.** `KST` (Know Sure Thing, Pring):
+  weighted sum of four `SMA`-smoothed `ROC` series with Pring's fixed
+  weights `1, 2, 3, 4`, plus an `SMA` signal line. Nine parameters
+  (four ROC periods, four SMA periods, signal period); `Kst::classic()`
+  uses Pring's recommended defaults. Multi-output indicator emitting
+  `KstOutput { kst, signal }`. Exposed in all four bindings.
 - **Family 02 — Momentum Oscillators.** `PGO` (Pretty Good Oscillator,
   Mark Johnson): `(close − SMA(close, period)) / EMA(TR, period)`.
   Candle input, single parameter `period` (default 14). Roughly counts

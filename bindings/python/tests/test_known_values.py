@@ -66,6 +66,18 @@ def test_rsi_wilder_textbook_first_value():
     assert math.isclose(out[14], 70.464, abs_tol=0.05)
 
 
+def test_kst_constant_series_yields_zero():
+    # ROC is zero on a flat input, so every RCMA is zero, so KST and its
+    # signal SMA are both zero after warmup.
+    kst = ta.KST(10, 15, 20, 30, 10, 10, 10, 15, 9)
+    out = kst.batch(np.full(80, 42.0, dtype=np.float64))
+    warmup = kst.warmup_period()
+    # Use NaN-safe comparison on the post-warmup tail.
+    tail = out[warmup - 1 :]
+    assert np.all(np.isfinite(tail))
+    np.testing.assert_allclose(tail, 0.0, atol=1e-12)
+
+
 def test_pgo_flat_close_yields_zero():
     # On a constant close the numerator (close − SMA) is zero, so PGO emits 0
     # regardless of the TR-EMA in the denominator.

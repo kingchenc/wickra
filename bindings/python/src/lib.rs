@@ -812,6 +812,72 @@ impl PyKama {
     }
 }
 
+// ============================== KST ==============================
+
+#[pyclass(name = "KST", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyKst {
+    inner: wc::Kst,
+}
+
+#[pymethods]
+impl PyKst {
+    #[new]
+    #[pyo3(signature = (roc1=10, roc2=15, roc3=20, roc4=30, sma1=10, sma2=10, sma3=10, sma4=15, signal=9))]
+    #[allow(clippy::too_many_arguments)]
+    fn new(
+        roc1: usize,
+        roc2: usize,
+        roc3: usize,
+        roc4: usize,
+        sma1: usize,
+        sma2: usize,
+        sma3: usize,
+        sma4: usize,
+        signal: usize,
+    ) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Kst::new(roc1, roc2, roc3, roc4, sma1, sma2, sma3, sma4, signal)
+                .map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<(f64, f64)> {
+        self.inner.update(value).map(|o| (o.kst, o.signal))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let n = slice.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for (i, p) in slice.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 2] = o.kst;
+                out[i * 2 + 1] = o.signal;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "KST".to_string()
+    }
+}
+
 // ============================== PGO ==============================
 
 #[pyclass(name = "PGO", module = "wickra._wickra", skip_from_py_object)]
@@ -4634,6 +4700,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyKama>()?;
     m.add_class::<PyRvi>()?;
     m.add_class::<PyPgo>()?;
+    m.add_class::<PyKst>()?;
     m.add_class::<PyCci>()?;
     m.add_class::<PyRoc>()?;
     m.add_class::<PyWilliamsR>()?;

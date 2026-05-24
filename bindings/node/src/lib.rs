@@ -1074,6 +1074,79 @@ fn cnd4(open: f64, high: f64, low: f64, close: f64) -> napi::Result<wc::Candle> 
     wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)
 }
 
+#[napi(object)]
+pub struct KstValue {
+    pub kst: f64,
+    pub signal: f64,
+}
+
+#[napi(js_name = "KST")]
+pub struct KstNode {
+    inner: wc::Kst,
+}
+#[napi]
+impl KstNode {
+    #[napi(constructor)]
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        roc1: u32,
+        roc2: u32,
+        roc3: u32,
+        roc4: u32,
+        sma1: u32,
+        sma2: u32,
+        sma3: u32,
+        sma4: u32,
+        signal: u32,
+    ) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Kst::new(
+                clamp_period(roc1),
+                clamp_period(roc2),
+                clamp_period(roc3),
+                clamp_period(roc4),
+                clamp_period(sma1),
+                clamp_period(sma2),
+                clamp_period(sma3),
+                clamp_period(sma4),
+                clamp_period(signal),
+            )
+            .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<KstValue> {
+        self.inner.update(value).map(|o| KstValue {
+            kst: o.kst,
+            signal: o.signal,
+        })
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        let n = prices.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 2] = o.kst;
+                out[i * 2 + 1] = o.signal;
+            }
+        }
+        out
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 #[napi(js_name = "PGO")]
 pub struct PgoNode {
     inner: wc::Pgo,

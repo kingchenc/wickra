@@ -241,6 +241,68 @@ fn make_candle_ohlc(o: f64, h: f64, l: f64, c: f64) -> Result<wc::Candle, JsErro
     wc::Candle::new(o, h, l, c, 0.0, 0).map_err(map_err)
 }
 
+#[wasm_bindgen(js_name = KST)]
+pub struct WasmKst {
+    inner: wc::Kst,
+}
+
+#[wasm_bindgen(js_class = KST)]
+impl WasmKst {
+    #[wasm_bindgen(constructor)]
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        roc1: usize,
+        roc2: usize,
+        roc3: usize,
+        roc4: usize,
+        sma1: usize,
+        sma2: usize,
+        sma3: usize,
+        sma4: usize,
+        signal: usize,
+    ) -> Result<WasmKst, JsError> {
+        Ok(Self {
+            inner: wc::Kst::new(roc1, roc2, roc3, roc4, sma1, sma2, sma3, sma4, signal)
+                .map_err(map_err)?,
+        })
+    }
+    /// Returns `[kst0, signal0, kst1, signal1, ...]`, length `2n`.
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let n = prices.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 2] = o.kst;
+                out[i * 2 + 1] = o.signal;
+            }
+        }
+        Float64Array::from(out.as_slice())
+    }
+    /// Streaming update. Returns `{ kst, signal }` once warm, else `null`.
+    pub fn update(&mut self, value: f64) -> JsValue {
+        match self.inner.update(value) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"kst".into(), &o.kst.into()).ok();
+                Reflect::set(&obj, &"signal".into(), &o.signal.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        }
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[wasm_bindgen(js_name = PGO)]
 pub struct WasmPgo {
     inner: wc::Pgo,

@@ -124,6 +124,7 @@ for (const [name, d] of Object.entries(candleScalar)) {
 // --- Multi-output indicators: object update vs interleaved batch ---
 
 const multi = {
+  KST: { make: () => new wickra.KST(10, 15, 20, 30, 10, 10, 10, 15, 9), fields: ['kst', 'signal'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   MACD: { make: () => new wickra.MACD(12, 26, 9), fields: ['macd', 'signal', 'histogram'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   BollingerBands: { make: () => new wickra.BollingerBands(20, 2), fields: ['upper', 'middle', 'lower', 'stddev'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   Stochastic: { make: () => new wickra.Stochastic(14, 3), fields: ['k', 'd'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
@@ -259,6 +260,17 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+test('KST on a flat series emits zero after warmup', () => {
+  const kst = new wickra.KST(10, 15, 20, 30, 10, 10, 10, 15, 9);
+  const n = 80;
+  const out = kst.batch(Array(n).fill(42));
+  const warmup = kst.warmupPeriod();
+  for (let i = warmup - 1; i < n; i++) {
+    assert.ok(Math.abs(out[i * 2]) < 1e-12, `kst[${i}] = ${out[i * 2]}`);
+    assert.ok(Math.abs(out[i * 2 + 1]) < 1e-12, `signal[${i}] = ${out[i * 2 + 1]}`);
+  }
 });
 
 test('PGO(5) on a flat close emits zero after warmup', () => {

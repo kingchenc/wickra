@@ -195,6 +195,12 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 
 MULTI = {
     "Vortex": (lambda: ta.Vortex(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
+    "KST": (
+        lambda: ta.KST(10, 15, 20, 30, 10, 10, 10, 15, 9),
+        # KST is scalar-input — it only uses `c`. The MULTI helper signature
+        # supplies the OHLCV columns; pass `c` directly to its scalar batch.
+        lambda ind, h, l, c, v: ind.batch(c),
+    ),
     "SuperTrend": (
         lambda: ta.SuperTrend(10, 3.0),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
