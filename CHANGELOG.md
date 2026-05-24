@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **ADXR (Average Directional Movement Index Rating)** in the Trend &
+  Directional family. Wilder's directional-strength smoother: the
+  average of the current `ADX` and the `ADX` from `period - 1` bars
+  ago. Warmup is `3 * period - 1` (e.g. 41 for the default `period =
+  14`). Shipped across all four bindings (Rust core, Python, Node,
+  WASM) plus fuzz/test/bench coverage.
+
 ## [0.2.7] - 2026-05-24
 
 ### Added

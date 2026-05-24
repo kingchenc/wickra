@@ -310,7 +310,7 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, MOM, CMO, DPO, StdDev, UlcerIndex, VerticalHorizontalFilter, ZScore, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, RollingVWAP, AwesomeOscillator, Aroon, KAMA, T3, TSI, PMO, ADL, VolumePriceTrend, ChaikinMoneyFlow, ChaikinOscillator, ForceIndex, EaseOfMovement, SuperTrend, ChandelierExit, ChandeKrollStop, AtrTrailingStop, TypicalPrice, MedianPrice, WeightedClose, LinearRegression, LinRegSlope, AcceleratorOscillator, BalanceOfPower, ChoppinessIndex, TrueRange, ChaikinVolatility, LinRegAngle, BollingerBandwidth, PercentB, NATR, HistoricalVolatility, AroonOscillator, Vortex, MassIndex, StochRSI, UltimateOscillator, PPO, Coppock, VWMA } = nativeBinding
+const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, MOM, CMO, DPO, StdDev, UlcerIndex, VerticalHorizontalFilter, ZScore, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, ADXR, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, RollingVWAP, AwesomeOscillator, Aroon, KAMA, T3, TSI, PMO, ADL, VolumePriceTrend, ChaikinMoneyFlow, ChaikinOscillator, ForceIndex, EaseOfMovement, SuperTrend, ChandelierExit, ChandeKrollStop, AtrTrailingStop, TypicalPrice, MedianPrice, WeightedClose, LinearRegression, LinRegSlope, AcceleratorOscillator, BalanceOfPower, ChoppinessIndex, TrueRange, ChaikinVolatility, LinRegAngle, BollingerBandwidth, PercentB, NATR, HistoricalVolatility, AroonOscillator, Vortex, MassIndex, StochRSI, UltimateOscillator, PPO, Coppock, VWMA } = nativeBinding
 
 module.exports.version = version
 module.exports.SMA = SMA
@@ -338,6 +338,7 @@ module.exports.ATR = ATR
 module.exports.Stochastic = Stochastic
 module.exports.OBV = OBV
 module.exports.ADX = ADX
+module.exports.ADXR = ADXR
 module.exports.CCI = CCI
 module.exports.WilliamsR = WilliamsR
 module.exports.MFI = MFI

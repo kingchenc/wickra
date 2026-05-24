@@ -156,6 +156,10 @@ CANDLE_SCALAR = {
         lambda: ta.ChaikinVolatility(10, 10),
         lambda ind, h, l, c, v: ind.batch(h, l),
     ),
+    "ADXR": (
+        lambda: ta.ADXR(7),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
 }
 
 
@@ -280,6 +284,19 @@ def test_linreg_angle_reference():
     # A series rising by 1 per step has slope 1, and atan(1) = 45 degrees.
     out = ta.LinRegAngle(5).batch(np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0]))
     assert out[4] == pytest.approx(45.0)
+
+
+def test_adxr_reference_on_pure_uptrend():
+    # On a pure linear uptrend ADX saturates at 100, so ADXR (average of two
+    # saturated ADX values period-1 bars apart) also reads 100.
+    n = 100
+    base = np.arange(n, dtype=np.float64) * 2.0 + 100.0
+    high = base + 1.0
+    low = base - 0.5
+    close = base + 0.5
+    out = ta.ADXR(5).batch(high, low, close)
+    last = out[~np.isnan(out)][-1]
+    assert last == pytest.approx(100.0)
 
 
 def test_z_score_reference():
