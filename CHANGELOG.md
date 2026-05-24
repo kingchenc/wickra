@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.5] - 2026-05-24
+
+### Added
+- `BinanceConfig` plus `BinanceKlineStream::connect_with_config(symbols, interval, config)`
+  in `wickra-data`'s `live::binance` module. `connect()` keeps its previous
+  signature and now forwards to the new entry-point with the defaults, so the
+  public API is backwards-compatible. The config lets callers point the
+  stream at Binance Testnet (`wss://testnet.binance.vision`) or tune the
+  read timeout, reconnect attempt count, initial / capped backoff and frame
+  size limits without rewriting the connector.
+- README **Disclaimer** section clarifying that Wickra is an indicator
+  toolkit (not a trading system) and that any production-trading use is at
+  the caller's own risk. The legal terms in [LICENSE](LICENSE) are
+  unchanged.
+
+### Changed
+- `BinanceKlineStream::next_event` now writes the Pong reply to a server
+  `Ping` on a best-effort basis. A failed write means the connection is
+  already dead, so the existing timeout / read-error reconnect arm one
+  loop iteration later picks it up — the previous explicit reconnect on
+  Pong-write failure is gone. Observable behaviour is unchanged for every
+  healthy connection.
+
 ## [0.2.1] - 2026-05-23
 
 ### Changed
@@ -329,7 +352,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/kingchenc/wickra/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/kingchenc/wickra/compare/v0.2.5...HEAD
+[0.2.5]: https://github.com/kingchenc/wickra/compare/v0.2.1...v0.2.5
 [0.2.1]: https://github.com/kingchenc/wickra/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/kingchenc/wickra/compare/v0.1.4...v0.2.0
 [0.1.4]: https://github.com/kingchenc/wickra/compare/v0.1.3...v0.1.4

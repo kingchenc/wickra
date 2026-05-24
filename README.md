@@ -287,6 +287,16 @@ government, hobby trading bots: all fine. The one thing that's not allowed is
 commercial sale of the software or of services built around it. If you want to
 use Wickra commercially, get in touch about a license.
 
+## Disclaimer
+
+Wickra is an indicator toolkit, not a trading system. Values it computes are
+deterministic transforms of the input data — they are not financial advice and
+they do not predict the market. Any use of this library in a production
+trading context is at your own risk.
+
+The library is provided **as is**, without warranty of any kind; see
+[LICENSE](LICENSE) for the full terms.
+
 ---
 
 <p align="center">
