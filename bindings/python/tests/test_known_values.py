@@ -105,6 +105,20 @@ def test_mcginley_dynamic_reference_value():
     assert math.isclose(out[3], expected, abs_tol=1e-12)
 
 
+def test_frama_constant_series_yields_the_constant():
+    # Flat input -> degenerate ranges -> alpha clamps to 0.01 and the EMA
+    # recurrence holds the seed value.
+    out = ta.FRAMA(4).batch(np.full(20, 42.0, dtype=np.float64))
+    assert np.all(np.isnan(out[:3]))
+    np.testing.assert_allclose(out[3:], 42.0, atol=1e-12)
+
+
+def test_frama_pure_uptrend_hugs_latest():
+    # Monotonic uptrend -> alpha pushed toward 1.0, FRAMA tracks close.
+    out = ta.FRAMA(4).batch(np.arange(1.0, 9.0, dtype=np.float64))
+    assert math.isclose(out[-1], 8.0, abs_tol=0.05)
+
+
 def test_macd_constant_series_converges_to_zero():
     out = ta.MACD().batch(np.full(200, 100.0))
     # Last row's MACD and signal must be ~0.

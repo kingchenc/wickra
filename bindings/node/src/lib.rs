@@ -117,6 +117,7 @@ node_scalar_indicator!(
 );
 node_scalar_indicator!(ZScoreNode, "ZScore", wc::ZScore);
 node_scalar_indicator!(McGinleyDynamicNode, "McGinleyDynamic", wc::McGinleyDynamic);
+node_scalar_indicator!(FramaNode, "FRAMA", wc::Frama);
 
 // ============================== MACD ==============================
 

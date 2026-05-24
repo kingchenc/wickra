@@ -81,6 +81,7 @@ wasm_scalar_indicator!(WasmZlema, "ZLEMA", wc::Zlema, period: usize);
 wasm_scalar_indicator!(WasmT3, "T3", wc::T3, period: usize, v: f64);
 wasm_scalar_indicator!(WasmAlma, "ALMA", wc::Alma, period: usize, offset: f64, sigma: f64);
 wasm_scalar_indicator!(WasmMcGinleyDynamic, "McGinleyDynamic", wc::McGinleyDynamic, period: usize);
+wasm_scalar_indicator!(WasmFrama, "FRAMA", wc::Frama, period: usize);
 wasm_scalar_indicator!(WasmMom, "MOM", wc::Mom, period: usize);
 wasm_scalar_indicator!(WasmCmo, "CMO", wc::Cmo, period: usize);
 wasm_scalar_indicator!(WasmTsi, "TSI", wc::Tsi, long: usize, short: usize);

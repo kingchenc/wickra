@@ -39,6 +39,7 @@ const scalarFactories = {
   KAMA: () => new wickra.KAMA(10, 2, 30),
   ALMA: () => new wickra.ALMA(9, 0.85, 6.0),
   McGinleyDynamic: () => new wickra.McGinleyDynamic(10),
+  FRAMA: () => new wickra.FRAMA(16),
   SMMA: () => new wickra.SMMA(14),
   TRIMA: () => new wickra.TRIMA(20),
   ZLEMA: () => new wickra.ZLEMA(14),
@@ -259,6 +260,11 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+test('FRAMA pure uptrend hugs the latest close', () => {
+  const out = new wickra.FRAMA(4).batch([1, 2, 3, 4, 5, 6, 7, 8]);
+  assert.ok(Math.abs(out[out.length - 1] - 8) < 0.05);
 });
 
 test('McGinleyDynamic(3) seeds with SMA and recurses on the next price', () => {

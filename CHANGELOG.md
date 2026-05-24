@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `[0, 1]`) and kernel width (`sigma > 0`). Community-standard defaults
   `(period = 9, offset = 0.85, sigma = 6.0)` available via `Alma::classic()`.
   Exposed in all four bindings (Rust, Python, Node, WASM).
+- **Family 01 — Moving Averages.** `FRAMA` (Fractal Adaptive Moving
+  Average, Ehlers 2005): adapts its smoothing constant to the fractal
+  dimension of the recent window — fast in trends, slow in chop. Single
+  parameter `period` (must be even, default 16). Exposed in all four
+  bindings.
 - **Family 01 — Moving Averages.** `McGinleyDynamic`: John McGinley's
   self-adjusting MA. Single parameter `period`; the recurrence
   `MD + (price - MD) / (0.6 * period * (price / MD)^4)` speeds up when price

@@ -19,8 +19,8 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use std::hint::black_box;
 use wickra::{
-    Alma, Atr, BatchExt, BollingerBands, Candle, Ema, Indicator, MacdIndicator, McGinleyDynamic,
-    Obv, Rsi, Sma, Stochastic, Wma,
+    Alma, Atr, BatchExt, BollingerBands, Candle, Ema, Frama, Indicator, MacdIndicator,
+    McGinleyDynamic, Obv, Rsi, Sma, Stochastic, Wma,
 };
 use wickra_data::csv::CandleReader;
 
@@ -143,6 +143,7 @@ fn benches(c: &mut Criterion) {
     bench_scalar(c, "mcginley_dynamic", &closes, || {
         McGinleyDynamic::new(10).unwrap()
     });
+    bench_scalar(c, "frama", &closes, || Frama::new(16).unwrap());
     bench_macd(c, &closes);
     bench_bollinger(c, &closes);
     bench_candle_input(c, "atr", &candles, || Atr::new(14).unwrap());
