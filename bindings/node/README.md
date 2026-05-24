@@ -36,16 +36,16 @@ for price in live_feed:
 The Python TA ecosystem has plenty of libraries — TA-Lib, pandas-ta, finta,
 talipp, tulipy — and every one of them shares the same blind spot:
 
-| Library            | Install pain    | Streaming | Multi-language | Active |
-|--------------------|-----------------|-----------|----------------|--------|
-| TA-Lib (Python)    | yes (C deps)    | no        | no             | barely |
-| pandas-ta          | clean           | no        | no             | slow   |
-| finta              | clean           | no        | no             | stale  |
-| ta-lib-python      | yes (C deps)    | no        | no             | barely |
-| talipp             | clean           | yes       | no             | yes    |
-| Tulip Indicators   | yes (C deps)    | no        | partial        | stale  |
-| ooples (C#)        | clean           | no        | C# only        | yes    |
-| **Wickra**         | **clean**       | **yes**   | **Python+Node+WASM+Rust** | **yes** |
+| Library                | Install pain    | Streaming | Multi-language | Active |
+|------------------------|-----------------|-----------|----------------|--------|
+| **★&nbsp;Wickra**      | **clean**       | **yes**   | **Python + Node + WASM + Rust** | **yes** |
+| TA-Lib (Python)        | yes (C deps)    | no        | no             | barely |
+| pandas-ta              | clean           | no        | no             | slow   |
+| finta                  | clean           | no        | no             | stale  |
+| ta-lib-python          | yes (C deps)    | no        | no             | barely |
+| talipp                 | clean           | yes       | no             | yes    |
+| Tulip Indicators       | yes (C deps)    | no        | partial        | stale  |
+| ooples (C#)            | clean           | no        | C# only        | yes    |
 
 Wickra is the only library that combines all of: clean install, streaming,
 multi-language reach, and active maintenance.
@@ -76,7 +76,7 @@ to recompute on every tick.
 Reading the table: each cell shows that library's runtime, plus how many times
 slower it is than Wickra in parentheses. **★** marks the winner per row.
 
-| Indicator           | Wickra              | finta                       | talipp                        |
+| Indicator           | **★&nbsp;Wickra**   | finta                       | talipp                        |
 |---------------------|---------------------|-----------------------------|-------------------------------|
 | SMA(20)             | **95.6 µs ★**       | 343.5 µs (3.6× slower)      | 7 640.6 µs (79.9× slower)     |
 | EMA(20)             | **64.6 µs ★**       | 223.1 µs (3.5× slower)      | 12 160.9 µs (188.2× slower)   |
@@ -90,7 +90,7 @@ slower it is than Wickra in parentheses. **★** marks the winner per row.
 A batch-only library has to re-run its full indicator over the entire history on
 every new tick; Wickra updates state in O(1).
 
-| Indicator | Wickra (per tick)   | talipp (per tick)         |
+| Indicator | **★&nbsp;Wickra (per tick)** | talipp (per tick)         |
 |-----------|---------------------|---------------------------|
 | RSI(14)   | **0.119 µs ★**      | 1.644 µs (13.8× slower)   |
 
