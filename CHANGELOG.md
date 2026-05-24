@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Rogers-Satchell Volatility.** Drift-free OHLC realised-volatility
+  estimator from Rogers, Satchell & Yoon (1994). Per-bar sample is
+  `ln(H/C)·ln(H/O) + ln(L/C)·ln(L/O)`; every term is non-negative by
+  construction (high >= open, close; low <= open, close), so the
+  rolling mean is exact, not biased, under arbitrary drift. The
+  algebraic drift-cancellation is what differentiates it from
+  Garman-Klass. Output annualised to a percent. Defaults:
+  `period = 20`, `trading_periods = 252`.
 - **Garman-Klass Volatility.** Garman & Klass (1980) OHLC realised
   volatility estimator: per-bar sample is
   `0.5·(ln H/L)² − (2·ln2 − 1)·(ln C/O)²`, then take the annualised

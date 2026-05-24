@@ -142,3 +142,14 @@ def test_garman_klass_zero_movement_yields_zero():
     ready = out[~np.isnan(out)]
     assert ready.size > 0
     np.testing.assert_allclose(ready, 0.0, atol=1e-12)
+
+
+def test_rogers_satchell_zero_movement_yields_zero():
+    o = np.full(30, 10.0)
+    h = np.full(30, 10.0)
+    l = np.full(30, 10.0)
+    c = np.full(30, 10.0)
+    out = ta.RogersSatchellVolatility(14, 252).batch(o, h, l, c)
+    ready = out[~np.isnan(out)]
+    assert ready.size > 0
+    np.testing.assert_allclose(ready, 0.0, atol=1e-12)

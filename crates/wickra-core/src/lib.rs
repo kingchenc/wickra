@@ -51,11 +51,11 @@ pub use indicators::{
     Dema, Donchian, DonchianOutput, Dpo, EaseOfMovement, Ema, ForceIndex, GarmanKlassVolatility,
     HistoricalVolatility, Hma, Kama, Keltner, KeltnerOutput, LinRegAngle, LinRegSlope,
     LinearRegression, MacdIndicator, MacdOutput, MassIndex, MedianPrice, Mfi, Mom, Natr, Obv,
-    ParkinsonVolatility, PercentB, Pmo, Ppo, Psar, Roc, RollingVwap, Rsi, Rvi, Sma, Smma, StdDev,
-    StochRsi, Stochastic, StochasticOutput, SuperTrend, SuperTrendOutput, Tema, Trima, Trix,
-    TrueRange, Tsi, TypicalPrice, UlcerIndex, UltimateOscillator, VerticalHorizontalFilter,
-    VolumePriceTrend, Vortex, VortexOutput, Vwap, Vwma, WeightedClose, WilliamsR, Wma, ZScore,
-    Zlema, T3,
+    ParkinsonVolatility, PercentB, Pmo, Ppo, Psar, Roc, RogersSatchellVolatility, RollingVwap, Rsi,
+    Rvi, Sma, Smma, StdDev, StochRsi, Stochastic, StochasticOutput, SuperTrend, SuperTrendOutput,
+    Tema, Trima, Trix, TrueRange, Tsi, TypicalPrice, UlcerIndex, UltimateOscillator,
+    VerticalHorizontalFilter, VolumePriceTrend, Vortex, VortexOutput, Vwap, Vwma, WeightedClose,
+    WilliamsR, Wma, ZScore, Zlema, T3,
 };
 pub use ohlcv::{Candle, Tick};
 pub use traits::{BatchExt, Chain, Indicator};

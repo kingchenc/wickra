@@ -87,6 +87,7 @@ from ._wickra import (
     RVI,
     ParkinsonVolatility,
     GarmanKlassVolatility,
+    RogersSatchellVolatility,
     # Volume
     OBV,
     VWAP,
@@ -171,6 +172,7 @@ __all__ = [
     "RVI",
     "ParkinsonVolatility",
     "GarmanKlassVolatility",
+    "RogersSatchellVolatility",
     # Volume
     "OBV",
     "VWAP",
