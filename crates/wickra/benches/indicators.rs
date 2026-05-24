@@ -21,6 +21,7 @@ use std::hint::black_box;
 use wickra::{
     Atr, BatchExt, BollingerBands, Candle, Ema, GarmanKlassVolatility, Indicator, MacdIndicator,
     Obv, ParkinsonVolatility, RogersSatchellVolatility, Rsi, Rvi, Sma, Stochastic, Wma,
+    YangZhangVolatility,
 };
 use wickra_data::csv::CandleReader;
 
@@ -153,6 +154,9 @@ fn benches(c: &mut Criterion) {
     });
     bench_candle_input(c, "rogers_satchell", &candles, || {
         RogersSatchellVolatility::new(20, 252).unwrap()
+    });
+    bench_candle_input(c, "yang_zhang", &candles, || {
+        YangZhangVolatility::new(20, 252).unwrap()
     });
 }
 

@@ -171,6 +171,10 @@ CANDLE_SCALAR = {
         lambda: ta.RogersSatchellVolatility(20, 252),
         lambda ind, h, l, c, v: ind.batch(c, h, l, c),
     ),
+    "YangZhangVolatility": (
+        lambda: ta.YangZhangVolatility(20, 252),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
 }
 
 

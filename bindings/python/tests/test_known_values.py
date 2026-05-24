@@ -153,3 +153,16 @@ def test_rogers_satchell_zero_movement_yields_zero():
     ready = out[~np.isnan(out)]
     assert ready.size > 0
     np.testing.assert_allclose(ready, 0.0, atol=1e-12)
+
+
+def test_yang_zhang_zero_movement_yields_zero():
+    # O == H == L == C and constant across bars -> every sub-component is
+    # zero -> Yang-Zhang sigma is zero.
+    o = np.full(30, 10.0)
+    h = np.full(30, 10.0)
+    l = np.full(30, 10.0)
+    c = np.full(30, 10.0)
+    out = ta.YangZhangVolatility(14, 252).batch(o, h, l, c)
+    ready = out[~np.isnan(out)]
+    assert ready.size > 0
+    np.testing.assert_allclose(ready, 0.0, atol=1e-12)

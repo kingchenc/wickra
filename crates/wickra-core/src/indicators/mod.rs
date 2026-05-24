@@ -77,6 +77,7 @@ mod vwma;
 mod weighted_close;
 mod williams_r;
 mod wma;
+mod yang_zhang;
 mod z_score;
 mod zlema;
 
@@ -153,5 +154,6 @@ pub use vwma::Vwma;
 pub use weighted_close::WeightedClose;
 pub use williams_r::WilliamsR;
 pub use wma::Wma;
+pub use yang_zhang::YangZhangVolatility;
 pub use z_score::ZScore;
 pub use zlema::Zlema;

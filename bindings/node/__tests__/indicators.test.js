@@ -109,6 +109,7 @@ const candleScalar = {
   ParkinsonVolatility: { make: () => new wickra.ParkinsonVolatility(20, 252), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   GarmanKlassVolatility: { make: () => new wickra.GarmanKlassVolatility(20, 252), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   RogersSatchellVolatility: { make: () => new wickra.RogersSatchellVolatility(20, 252), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  YangZhangVolatility: { make: () => new wickra.YangZhangVolatility(20, 252), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {
@@ -296,5 +297,14 @@ test('RogersSatchellVolatility zero-movement bars yield zero', () => {
   const out = new wickra.RogersSatchellVolatility(14, 252).batch(flat, flat, flat, flat);
   for (let i = 13; i < n; i++) {
     assert.ok(Math.abs(out[i]) < 1e-12, `RS[${i}] = ${out[i]}`);
+  }
+});
+
+test('YangZhangVolatility zero-movement bars yield zero', () => {
+  const n = 30;
+  const flat = Array(n).fill(10);
+  const out = new wickra.YangZhangVolatility(14, 252).batch(flat, flat, flat, flat);
+  for (let i = 14; i < n; i++) {
+    assert.ok(Math.abs(out[i]) < 1e-12, `YZ[${i}] = ${out[i]}`);
   }
 });

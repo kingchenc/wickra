@@ -2431,6 +2431,69 @@ impl ChaikinVolatilityNode {
     }
 }
 
+// ============================== Yang-Zhang Volatility ==============================
+
+#[napi(js_name = "YangZhangVolatility")]
+pub struct YangZhangVolatilityNode {
+    inner: wc::YangZhangVolatility,
+}
+
+#[napi]
+impl YangZhangVolatilityNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, trading_periods: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::YangZhangVolatility::new(period as usize, trading_periods as usize)
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<f64>> {
+        let candle = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(self.inner.update(candle))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open: Vec<f64>,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        let n = open.len();
+        if high.len() != n || low.len() != n || close.len() != n {
+            return Err(NapiError::from_reason(
+                "open, high, low, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let candle =
+                wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== Rogers-Satchell Volatility ==============================
 
 #[napi(js_name = "RogersSatchellVolatility")]

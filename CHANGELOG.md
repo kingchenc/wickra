@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Yang-Zhang Volatility.** Yang & Zhang (2000) gold-standard OHLC
+  estimator: a convex blend of overnight (close-to-open), open-to-close
+  and Rogers-Satchell variances. The blending factor
+  `k = 0.34 / (1.34 + (n+1)/(n-1))` is the one that minimises
+  estimator variance under driftless GBM with overnight gaps. The
+  overnight and open-to-close pieces use sample variance (Bessel's
+  correction, divisor `n−1`), so the indicator needs `period + 1` bars
+  to emit. Output annualised to a percent. Defaults: `period = 20`,
+  `trading_periods = 252`. The recommended OHLC estimator for equities,
+  futures, and any asset with material close-to-open gaps.
 - **Rogers-Satchell Volatility.** Drift-free OHLC realised-volatility
   estimator from Rogers, Satchell & Yoon (1994). Per-bar sample is
   `ln(H/C)·ln(H/O) + ln(L/C)·ln(L/O)`; every term is non-negative by

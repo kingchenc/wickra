@@ -99,6 +99,62 @@ wasm_scalar_indicator!(WasmZScore, "ZScore", wc::ZScore, period: usize);
 wasm_scalar_indicator!(WasmLinRegAngle, "LinRegAngle", wc::LinRegAngle, period: usize);
 wasm_scalar_indicator!(WasmRvi, "RVI", wc::Rvi, period: usize);
 
+// ---------- Yang-Zhang Volatility (OHLC candle, 2 params) ----------
+
+#[wasm_bindgen(js_name = YangZhangVolatility)]
+pub struct WasmYangZhangVolatility {
+    inner: wc::YangZhangVolatility,
+}
+
+#[wasm_bindgen(js_class = YangZhangVolatility)]
+impl WasmYangZhangVolatility {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, trading_periods: usize) -> Result<WasmYangZhangVolatility, JsError> {
+        Ok(Self {
+            inner: wc::YangZhangVolatility::new(period, trading_periods).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = open.len();
+        if high.len() != n || low.len() != n || close.len() != n {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let c = wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 // ---------- Rogers-Satchell Volatility (OHLC candle, 2 params) ----------
 
 #[wasm_bindgen(js_name = RogersSatchellVolatility)]
