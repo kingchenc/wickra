@@ -28,6 +28,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   downtrend, and returns the neutral 50 on a perfectly flat market.
   Canonical Python defaults `(sma_period=60, dev_period=30)`; warmup
   `= sma_period + dev_period − 1`.
+- **Know Sure Thing (KST)** in the Trend & Directional family.
+  Martin Pring's weighted sum of four smoothed ROCs:
+  `RCMA_i = SMA(ROC(close, roc_i), sma_i)` then
+  `KST = 1·RCMA_1 + 2·RCMA_2 + 3·RCMA_3 + 4·RCMA_4`, plus an
+  `SMA(KST, signal_period)` signal line. `Kst::classic()` exposes
+  Pring's `(roc = (10, 15, 20, 30), sma = (10, 10, 10, 15),
+  signal = 9)` parameter set; warmup
+  `= max(roc_i + sma_i) + signal_period − 1` (53 for the classic
+  defaults). Multi-output `(kst, signal)` across all four bindings.
 
 ## [0.2.7] - 2026-05-24
 

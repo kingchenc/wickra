@@ -1268,6 +1268,90 @@ impl PmoNode {
 
 // ============================== VWMA ==============================
 
+// ============================== KST ==============================
+
+/// KST value object: the `kst` line and its `signal` SMA.
+#[napi(object)]
+pub struct KstValue {
+    pub kst: f64,
+    pub signal: f64,
+}
+
+#[napi(js_name = "KST")]
+pub struct KstNode {
+    inner: wc::Kst,
+}
+
+#[napi]
+impl KstNode {
+    #[napi(constructor)]
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        roc1: u32,
+        roc2: u32,
+        roc3: u32,
+        roc4: u32,
+        sma1: u32,
+        sma2: u32,
+        sma3: u32,
+        sma4: u32,
+        signal_period: u32,
+    ) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Kst::new(
+                roc1 as usize,
+                roc2 as usize,
+                roc3 as usize,
+                roc4 as usize,
+                sma1 as usize,
+                sma2 as usize,
+                sma3 as usize,
+                sma4 as usize,
+                signal_period as usize,
+            )
+            .map_err(map_err)?,
+        })
+    }
+    #[napi(factory)]
+    pub fn classic() -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Kst::classic().map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<KstValue> {
+        self.inner.update(value).map(|o| KstValue {
+            kst: o.kst,
+            signal: o.signal,
+        })
+    }
+    /// Returns `[kst0, signal0, kst1, signal1, ...]`, length `2 * n`. Warmup is NaN.
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        let n = prices.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for (i, &p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(p) {
+                out[i * 2] = o.kst;
+                out[i * 2 + 1] = o.signal;
+            }
+        }
+        out
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== TII ==============================
 
 #[napi(js_name = "TII")]

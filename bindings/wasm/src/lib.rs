@@ -84,6 +84,74 @@ wasm_scalar_indicator!(WasmCmo, "CMO", wc::Cmo, period: usize);
 wasm_scalar_indicator!(WasmTsi, "TSI", wc::Tsi, long: usize, short: usize);
 wasm_scalar_indicator!(WasmPmo, "PMO", wc::Pmo, smoothing1: usize, smoothing2: usize);
 wasm_scalar_indicator!(WasmTii, "TII", wc::Tii, sma_period: usize, dev_period: usize);
+
+#[wasm_bindgen(js_name = KST)]
+pub struct WasmKst {
+    inner: wc::Kst,
+}
+
+#[wasm_bindgen(js_class = KST)]
+impl WasmKst {
+    #[wasm_bindgen(constructor)]
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        roc1: usize,
+        roc2: usize,
+        roc3: usize,
+        roc4: usize,
+        sma1: usize,
+        sma2: usize,
+        sma3: usize,
+        sma4: usize,
+        signal_period: usize,
+    ) -> Result<WasmKst, JsError> {
+        Ok(Self {
+            inner: wc::Kst::new(
+                roc1,
+                roc2,
+                roc3,
+                roc4,
+                sma1,
+                sma2,
+                sma3,
+                sma4,
+                signal_period,
+            )
+            .map_err(map_err)?,
+        })
+    }
+    pub fn classic() -> Result<WasmKst, JsError> {
+        Ok(Self {
+            inner: wc::Kst::classic().map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, value: f64) -> JsValue {
+        match self.inner.update(value) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"kst".into(), &o.kst.into()).ok();
+                Reflect::set(&obj, &"signal".into(), &o.signal.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        }
+    }
+    /// Returns `[kst0, signal0, kst1, signal1, ...]`, length `2 * n`. Warmup is NaN.
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let n = prices.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for (i, &p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(p) {
+                out[i * 2] = o.kst;
+                out[i * 2 + 1] = o.signal;
+            }
+        }
+        Float64Array::from(out.as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
 wasm_scalar_indicator!(WasmStochRsi, "StochRSI", wc::StochRsi, rsi_period: usize, stoch_period: usize);
 wasm_scalar_indicator!(WasmDpo, "DPO", wc::Dpo, period: usize);
 wasm_scalar_indicator!(WasmPpo, "PPO", wc::Ppo, fast: usize, slow: usize);

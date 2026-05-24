@@ -310,7 +310,7 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, MOM, CMO, DPO, StdDev, UlcerIndex, VerticalHorizontalFilter, ZScore, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, ADXR, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, RollingVWAP, AwesomeOscillator, Aroon, KAMA, T3, TSI, PMO, TII, ADL, VolumePriceTrend, ChaikinMoneyFlow, ChaikinOscillator, ForceIndex, EaseOfMovement, SuperTrend, ChandelierExit, ChandeKrollStop, AtrTrailingStop, TypicalPrice, MedianPrice, WeightedClose, LinearRegression, LinRegSlope, AcceleratorOscillator, BalanceOfPower, ChoppinessIndex, TrueRange, ChaikinVolatility, LinRegAngle, BollingerBandwidth, PercentB, NATR, HistoricalVolatility, AroonOscillator, Vortex, RWI, MassIndex, StochRSI, UltimateOscillator, PPO, Coppock, VWMA } = nativeBinding
+const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, MOM, CMO, DPO, StdDev, UlcerIndex, VerticalHorizontalFilter, ZScore, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, ADXR, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, RollingVWAP, AwesomeOscillator, Aroon, KAMA, T3, TSI, PMO, TII, KST, ADL, VolumePriceTrend, ChaikinMoneyFlow, ChaikinOscillator, ForceIndex, EaseOfMovement, SuperTrend, ChandelierExit, ChandeKrollStop, AtrTrailingStop, TypicalPrice, MedianPrice, WeightedClose, LinearRegression, LinRegSlope, AcceleratorOscillator, BalanceOfPower, ChoppinessIndex, TrueRange, ChaikinVolatility, LinRegAngle, BollingerBandwidth, PercentB, NATR, HistoricalVolatility, AroonOscillator, Vortex, RWI, MassIndex, StochRSI, UltimateOscillator, PPO, Coppock, VWMA } = nativeBinding
 
 module.exports.version = version
 module.exports.SMA = SMA
@@ -354,6 +354,7 @@ module.exports.T3 = T3
 module.exports.TSI = TSI
 module.exports.PMO = PMO
 module.exports.TII = TII
+module.exports.KST = KST
 module.exports.ADL = ADL
 module.exports.VolumePriceTrend = VolumePriceTrend
 module.exports.ChaikinMoneyFlow = ChaikinMoneyFlow

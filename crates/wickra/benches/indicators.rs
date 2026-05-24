@@ -19,8 +19,8 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use std::hint::black_box;
 use wickra::{
-    Adxr, Atr, BatchExt, BollingerBands, Candle, Ema, Indicator, MacdIndicator, Obv, Rsi, Rwi, Sma,
-    Stochastic, Tii, Wma,
+    Adxr, Atr, BatchExt, BollingerBands, Candle, Ema, Indicator, Kst, MacdIndicator, Obv, Rsi, Rwi,
+    Sma, Stochastic, Tii, Wma,
 };
 use wickra_data::csv::CandleReader;
 
@@ -67,6 +67,24 @@ where
             b.iter(|| {
                 let mut ind = make();
                 black_box(ind.batch(prices));
+            });
+        });
+    }
+    group.finish();
+}
+
+fn bench_kst(c: &mut Criterion, prices: &[f64]) {
+    let mut group = c.benchmark_group("kst");
+    for &n in SIZES {
+        let n = n.min(prices.len());
+        let series = &prices[..n];
+        group.throughput(Throughput::Elements(n as u64));
+        group.bench_with_input(BenchmarkId::new("streaming", n), series, |b, prices| {
+            b.iter(|| {
+                let mut ind = Kst::classic().unwrap();
+                for p in prices {
+                    black_box(ind.update(*p));
+                }
             });
         });
     }
@@ -141,6 +159,7 @@ fn benches(c: &mut Criterion) {
     bench_scalar(c, "rsi", &closes, || Rsi::new(14).unwrap());
     bench_scalar(c, "tii", &closes, || Tii::new(60, 30).unwrap());
     bench_macd(c, &closes);
+    bench_kst(c, &closes);
     bench_bollinger(c, &closes);
     bench_candle_input(c, "atr", &candles, || Atr::new(14).unwrap());
     bench_candle_input(c, "adxr", &candles, || Adxr::new(14).unwrap());

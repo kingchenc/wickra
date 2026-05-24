@@ -232,6 +232,26 @@ def test_multi_streaming_matches_batch(name, ohlcv):
     assert _eq_nan(batch, np.array(rows, dtype=np.float64)), f"{name} mismatch"
 
 
+# --- Scalar-input, multi-output indicators --------------------------------
+
+MULTI_SCALAR = {
+    "KST": (lambda: ta.KST.classic(), 2),
+}
+
+
+@pytest.mark.parametrize("name", list(MULTI_SCALAR))
+def test_multi_scalar_streaming_matches_batch(name, sine_prices):
+    make, k = MULTI_SCALAR[name]
+    batch = make().batch(sine_prices)
+    assert batch.shape == (sine_prices.size, k)
+    streamer = make()
+    rows = []
+    for p in sine_prices:
+        v = streamer.update(float(p))
+        rows.append([math.nan] * k if v is None else list(v))
+    assert _eq_nan(batch, np.array(rows, dtype=np.float64)), f"{name} mismatch"
+
+
 # --- Reference values -----------------------------------------------------
 
 
@@ -286,6 +306,13 @@ def test_linreg_angle_reference():
     # A series rising by 1 per step has slope 1, and atan(1) = 45 degrees.
     out = ta.LinRegAngle(5).batch(np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0]))
     assert out[4] == pytest.approx(45.0)
+
+
+def test_kst_classic_constants_yield_zero():
+    out = ta.KST.classic().batch(np.full(120, 100.0))
+    last_row = out[~np.isnan(out[:, 0])][-1]
+    assert last_row[0] == pytest.approx(0.0)
+    assert last_row[1] == pytest.approx(0.0)
 
 
 def test_tii_pure_uptrend_saturates_at_100():
@@ -343,6 +370,7 @@ def test_new_indicators_expose_lifecycle():
     instances = [make() for make, _ in CANDLE_SCALAR.values()]
     instances += [make() for make, _ in MULTI.values()]
     instances += [cls(*args) for cls, args in SCALAR]
+    instances += [make() for make, _ in MULTI_SCALAR.values()]
     for ind in instances:
         assert ind.is_ready() is False
         assert ind.warmup_period() >= 1

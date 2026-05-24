@@ -16,9 +16,9 @@
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
     BatchExt, BollingerBands, Cmo, Coppock, Dema, Dpo, Ema, HistoricalVolatility, Hma, Indicator,
-    Kama, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, Mom, Pmo, Ppo, Roc, Rsi, Sma,
-    Smma, StdDev, StochRsi, T3, Tema, Tii, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter,
-    Wma, ZScore, Zlema,
+    Kama, Kst, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, Mom, Pmo, Ppo, Roc, Rsi,
+    Sma, Smma, StdDev, StochRsi, T3, Tema, Tii, Trima, Trix, Tsi, UlcerIndex,
+    VerticalHorizontalFilter, Wma, ZScore, Zlema,
 };
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
@@ -72,14 +72,22 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| VerticalHorizontalFilter::new(14).unwrap(), &data);
     drive(|| ZScore::new(14).unwrap(), &data);
 
-    // MACD and Bollinger Bands have non-`f64` outputs, so they cannot use the
-    // generic `drive` helper above. Streaming + batch are still both exercised.
+    // MACD, KST, and Bollinger Bands have non-`f64` outputs, so they cannot
+    // use the generic `drive` helper above. Streaming + batch are still both
+    // exercised.
     {
         let mut macd = MacdIndicator::new(12, 26, 9).unwrap();
         for &x in &data {
             let _ = macd.update(x);
         }
         let _ = MacdIndicator::new(12, 26, 9).unwrap().batch(&data);
+    }
+    {
+        let mut kst = Kst::classic().unwrap();
+        for &x in &data {
+            let _ = kst.update(x);
+        }
+        let _ = Kst::classic().unwrap().batch(&data);
     }
     {
         let mut bb = BollingerBands::new(20, 2.0).unwrap();
