@@ -58,7 +58,7 @@ depend on CPU, memory clock and OS scheduler. Read them as **relative
 speedups** between libraries on identical input, not as a universal
 performance contract.
 
-- **Reproduced on:** Windows 11 Pro 26200, AMD Ryzen 9 7950X3D, 64 GB DDR5,
+- **Reproduced on:** Windows 11 Pro 26200, AMD Ryzen 9 9950X, 64 GB DDR5,
   Rust 1.92 (release profile, `lto = "fat"`, `codegen-units = 1`),
   Python 3.12, Node 20.
 - **Reproduce yourself:** `pip install -e bindings/python[bench]` then
