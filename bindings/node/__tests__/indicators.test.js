@@ -102,6 +102,7 @@ const candleScalar = {
   MedianPrice: { make: () => new wickra.MedianPrice(), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   WeightedClose: { make: () => new wickra.WeightedClose(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   AcceleratorOscillator: { make: () => new wickra.AcceleratorOscillator(5, 34, 5), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  AwesomeOscillatorHistogram: { make: () => new wickra.AwesomeOscillatorHistogram(5, 34, 5), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   BalanceOfPower: { make: () => new wickra.BalanceOfPower(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   ChoppinessIndex: { make: () => new wickra.ChoppinessIndex(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   TrueRange: { make: () => new wickra.TrueRange(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
@@ -258,6 +259,16 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+test('AwesomeOscillatorHistogram on a flat median converges to zero', () => {
+  const n = 50;
+  const out = new wickra.AwesomeOscillatorHistogram(3, 5, 3).batch(
+    Array(n).fill(11),
+    Array(n).fill(9),
+  );
+  // warmup = 5 + 3 - 1 = 7.
+  for (let i = 6; i < n; i++) assert.ok(Math.abs(out[i]) < 1e-12);
 });
 
 test('APO(3, 5) on a flat series converges to zero', () => {

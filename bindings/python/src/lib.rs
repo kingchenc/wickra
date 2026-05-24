@@ -812,6 +812,68 @@ impl PyKama {
     }
 }
 
+// ============================== AwesomeOscillatorHistogram ==============================
+
+#[pyclass(
+    name = "AwesomeOscillatorHistogram",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyAoHist {
+    inner: wc::AwesomeOscillatorHistogram,
+}
+
+#[pymethods]
+impl PyAoHist {
+    #[new]
+    #[pyo3(signature = (fast=5, slow=34, sma_period=5))]
+    fn new(fast: usize, slow: usize, sma_period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::AwesomeOscillatorHistogram::new(fast, slow, sma_period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (f, s, k) = self.inner.periods();
+        format!("AwesomeOscillatorHistogram(fast={f}, slow={s}, sma_period={k})")
+    }
+}
+
 // ============================== APO ==============================
 
 #[pyclass(name = "APO", module = "wickra._wickra", skip_from_py_object)]
@@ -4540,6 +4602,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyHma>()?;
     m.add_class::<PyKama>()?;
     m.add_class::<PyApo>()?;
+    m.add_class::<PyAoHist>()?;
     m.add_class::<PyCci>()?;
     m.add_class::<PyRoc>()?;
     m.add_class::<PyWilliamsR>()?;

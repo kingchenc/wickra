@@ -24,7 +24,8 @@
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
     AcceleratorOscillator, Adl, Adx, Aroon, AroonOscillator, Atr, AtrTrailingStop,
-    AwesomeOscillator, BalanceOfPower, BatchExt, Candle, Cci, ChaikinMoneyFlow, ChaikinOscillator,
+    AwesomeOscillator, AwesomeOscillatorHistogram, BalanceOfPower, BatchExt, Candle, Cci,
+    ChaikinMoneyFlow, ChaikinOscillator,
     ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex, Donchian, EaseOfMovement,
     ForceIndex, Indicator, Keltner, MassIndex, MedianPrice, Mfi, Natr, Obv, Psar, RollingVwap,
     Stochastic, SuperTrend, TrueRange, TypicalPrice, UltimateOscillator, VolumePriceTrend, Vortex,
@@ -97,6 +98,10 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| Cci::new(20).unwrap(), &candles);
     drive(|| WilliamsR::new(14).unwrap(), &candles);
     drive(|| AwesomeOscillator::new(5, 34).unwrap(), &candles);
+    drive(
+        || AwesomeOscillatorHistogram::new(5, 34, 5).unwrap(),
+        &candles,
+    );
     drive(|| AcceleratorOscillator::new(5, 34, 5).unwrap(), &candles);
     drive(|| UltimateOscillator::new(7, 14, 28).unwrap(), &candles);
     drive(BalanceOfPower::new, &candles);

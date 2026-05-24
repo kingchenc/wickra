@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Family 03 — MACD & Price Oscillators.** `AwesomeOscillatorHistogram`:
+  `AO − SMA(AO, sma_period)`. A configurable variant of the existing
+  `AcceleratorOscillator` (which fixes `(fast, slow, sma) = (5, 34, 5)`).
+  Three parameters; defaults match Bill Williams' Accelerator. Exposed
+  in all four bindings.
 - **Family 03 — MACD & Price Oscillators.** `APO` (Absolute Price
   Oscillator): `EMA(close, fast) − EMA(close, slow)`. Like MACD's line
   without the signal EMA. Default `(fast = 12, slow = 26)`. `fast` must

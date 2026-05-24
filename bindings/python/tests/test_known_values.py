@@ -66,6 +66,16 @@ def test_rsi_wilder_textbook_first_value():
     assert math.isclose(out[14], 70.464, abs_tol=0.05)
 
 
+def test_awesome_oscillator_histogram_flat_series_converges_to_zero():
+    # Flat median price -> AO = 0 -> SMA(AO) = 0 -> AOHist = 0.
+    n = 50
+    high = np.full(n, 11.0)
+    low = np.full(n, 9.0)
+    out = ta.AwesomeOscillatorHistogram(3, 5, 3).batch(high, low)
+    # warmup = slow + sma - 1 = 5 + 3 - 1 = 7.
+    np.testing.assert_allclose(out[6:], 0.0, atol=1e-12)
+
+
 def test_apo_constant_series_converges_to_zero():
     # Both EMAs reproduce a constant exactly, so APO = 0 after warmup.
     out = ta.APO(3, 5).batch(np.full(30, 42.0, dtype=np.float64))

@@ -1068,6 +1068,58 @@ impl AroonNode {
     }
 }
 
+#[napi(js_name = "AwesomeOscillatorHistogram")]
+pub struct AwesomeOscillatorHistogramNode {
+    inner: wc::AwesomeOscillatorHistogram,
+}
+#[napi]
+impl AwesomeOscillatorHistogramNode {
+    #[napi(constructor)]
+    pub fn new(fast: u32, slow: u32, sma_period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::AwesomeOscillatorHistogram::new(
+                clamp_period(fast),
+                clamp_period(slow),
+                clamp_period(sma_period),
+            )
+            .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, low, 0.0)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() {
+            return Err(NapiError::from_reason(
+                "high and low must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], low[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 #[napi(js_name = "APO")]
 pub struct ApoNode {
     inner: wc::Apo,

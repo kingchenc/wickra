@@ -139,6 +139,10 @@ CANDLE_SCALAR = {
         lambda: ta.AcceleratorOscillator(5, 34, 5),
         lambda ind, h, l, c, v: ind.batch(h, l),
     ),
+    "AwesomeOscillatorHistogram": (
+        lambda: ta.AwesomeOscillatorHistogram(5, 34, 5),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+    ),
     "BalanceOfPower": (
         # The streaming 6-tuple feeds open == close, so batch matches with
         # the close column standing in for open.
