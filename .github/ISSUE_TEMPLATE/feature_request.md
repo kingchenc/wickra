@@ -1,7 +1,7 @@
 ---
 name: Feature request
 about: Suggest a new indicator or capability for Wickra
-title: "[feature] "
+title: "[Feature] "
 labels: enhancement
 assignees: ""
 ---

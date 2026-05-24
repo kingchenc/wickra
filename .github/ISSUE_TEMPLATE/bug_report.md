@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Report incorrect behaviour in Wickra
-title: "[bug] "
+title: "[Bug] "
 labels: bug
 assignees: ""
 ---
@@ -32,7 +32,7 @@ assignees: ""
 - Wickra version:
 - Language / binding: <!-- Rust crate / Python / Node / WASM -->
 - OS and architecture:
-- Rust / Python / Node version (if relevant):
+- Rust / Python / Node version (If relevant):
 
 ## Additional context
 
