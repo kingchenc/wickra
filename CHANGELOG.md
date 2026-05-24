@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `[0, 1]`) and kernel width (`sigma > 0`). Community-standard defaults
   `(period = 9, offset = 0.85, sigma = 6.0)` available via `Alma::classic()`.
   Exposed in all four bindings (Rust, Python, Node, WASM).
+- **Family 01 — Moving Averages.** `VIDYA` (Variable Index Dynamic
+  Average, Chande 1992): EMA whose smoothing factor is scaled by the
+  absolute Chande Momentum Oscillator. Two parameters `period` and
+  `cmo_period` (defaults 14 / 9). Exposed in all four bindings.
 - **Family 01 — Moving Averages.** `FRAMA` (Fractal Adaptive Moving
   Average, Ehlers 2005): adapts its smoothing constant to the fractal
   dimension of the recent window — fast in trends, slow in chop. Single

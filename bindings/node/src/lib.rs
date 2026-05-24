@@ -1105,6 +1105,43 @@ impl KamaNode {
     }
 }
 
+// ============================== VIDYA ==============================
+
+#[napi(js_name = "VIDYA")]
+pub struct VidyaNode {
+    inner: wc::Vidya,
+}
+#[napi]
+impl VidyaNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, cmo_period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Vidya::new(clamp_period(period), clamp_period(cmo_period))
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+}
+
 // ============================== ALMA ==============================
 
 #[napi(js_name = "ALMA")]

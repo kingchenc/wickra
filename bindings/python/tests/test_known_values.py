@@ -119,6 +119,13 @@ def test_frama_pure_uptrend_hugs_latest():
     assert math.isclose(out[-1], 8.0, abs_tol=0.05)
 
 
+def test_vidya_constant_series_holds_seed():
+    # CMO = 0 on a flat series -> alpha = 0 -> VIDYA holds its seed value.
+    out = ta.VIDYA(14, 4).batch(np.full(20, 42.0, dtype=np.float64))
+    assert np.all(np.isnan(out[:4]))
+    np.testing.assert_allclose(out[4:], 42.0, atol=1e-12)
+
+
 def test_macd_constant_series_converges_to_zero():
     out = ta.MACD().batch(np.full(200, 100.0))
     # Last row's MACD and signal must be ~0.

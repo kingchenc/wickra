@@ -812,6 +812,99 @@ impl PyKama {
     }
 }
 
+// ============================== FRAMA ==============================
+
+#[pyclass(name = "FRAMA", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyFrama {
+    inner: wc::Frama,
+}
+
+#[pymethods]
+impl PyFrama {
+    #[new]
+    #[pyo3(signature = (period=16))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Frama::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("FRAMA(period={})", self.inner.period())
+    }
+}
+
+// ============================== VIDYA ==============================
+
+#[pyclass(name = "VIDYA", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyVidya {
+    inner: wc::Vidya,
+}
+
+#[pymethods]
+impl PyVidya {
+    #[new]
+    #[pyo3(signature = (period=14, cmo_period=9))]
+    fn new(period: usize, cmo_period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Vidya::new(period, cmo_period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (p, c) = self.inner.periods();
+        format!("VIDYA(period={p}, cmo_period={c})")
+    }
+}
+
 // ============================== McGinley Dynamic ==============================
 
 #[pyclass(
@@ -4609,6 +4702,8 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyKama>()?;
     m.add_class::<PyAlma>()?;
     m.add_class::<PyMcGinleyDynamic>()?;
+    m.add_class::<PyFrama>()?;
+    m.add_class::<PyVidya>()?;
     m.add_class::<PyCci>()?;
     m.add_class::<PyRoc>()?;
     m.add_class::<PyWilliamsR>()?;

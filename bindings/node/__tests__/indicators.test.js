@@ -40,6 +40,7 @@ const scalarFactories = {
   ALMA: () => new wickra.ALMA(9, 0.85, 6.0),
   McGinleyDynamic: () => new wickra.McGinleyDynamic(10),
   FRAMA: () => new wickra.FRAMA(16),
+  VIDYA: () => new wickra.VIDYA(14, 9),
   SMMA: () => new wickra.SMMA(14),
   TRIMA: () => new wickra.TRIMA(20),
   ZLEMA: () => new wickra.ZLEMA(14),
@@ -260,6 +261,12 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+test('VIDYA on a flat series holds the seed', () => {
+  const out = new wickra.VIDYA(14, 4).batch(Array(20).fill(42));
+  for (let i = 0; i < 4; i++) assert.ok(Number.isNaN(out[i]));
+  for (let i = 4; i < 20; i++) assert.ok(Math.abs(out[i] - 42) < 1e-12);
 });
 
 test('FRAMA pure uptrend hugs the latest close', () => {
