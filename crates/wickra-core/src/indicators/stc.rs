@@ -46,7 +46,7 @@ pub struct Stc {
     macd_window: VecDeque<f64>,
     d_window: VecDeque<f64>,
     last_d: Option<f64>,
-    last_stc: Option<f64>,
+    last_value: Option<f64>,
 }
 
 impl Stc {
@@ -77,7 +77,7 @@ impl Stc {
             macd_window: VecDeque::with_capacity(schaff_period),
             d_window: VecDeque::with_capacity(schaff_period),
             last_d: None,
-            last_stc: None,
+            last_value: None,
         })
     }
 
@@ -157,11 +157,11 @@ impl Indicator for Stc {
             0.0
         };
 
-        let stc = match self.last_stc {
+        let stc = match self.last_value {
             Some(prev) => prev + self.factor * (k2 - prev),
             None => k2,
         };
-        self.last_stc = Some(stc);
+        self.last_value = Some(stc);
         Some(stc.clamp(0.0, 100.0))
     }
 
@@ -171,7 +171,7 @@ impl Indicator for Stc {
         self.macd_window.clear();
         self.d_window.clear();
         self.last_d = None;
-        self.last_stc = None;
+        self.last_value = None;
     }
 
     fn warmup_period(&self) -> usize {
@@ -182,7 +182,7 @@ impl Indicator for Stc {
     }
 
     fn is_ready(&self) -> bool {
-        self.last_stc.is_some() && self.d_window.len() == self.schaff_period
+        self.last_value.is_some() && self.d_window.len() == self.schaff_period
     }
 
     fn name(&self) -> &'static str {
@@ -324,6 +324,6 @@ mod tests {
         assert!(stc.is_ready());
         stc.reset();
         assert!(!stc.is_ready());
-        assert!(stc.last_stc.is_none());
+        assert!(stc.last_value.is_none());
     }
 }
