@@ -860,6 +860,71 @@ impl PyFrama {
     }
 }
 
+// ============================== Alligator ==============================
+
+#[pyclass(name = "Alligator", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyAlligator {
+    inner: wc::Alligator,
+}
+
+#[pymethods]
+impl PyAlligator {
+    #[new]
+    #[pyo3(signature = (jaw=13, teeth=8, lips=5))]
+    fn new(jaw: usize, teeth: usize, lips: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Alligator::new(jaw, teeth, lips).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.jaw, o.teeth, o.lips)))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 3] = o.jaw;
+                out[i * 3 + 1] = o.teeth;
+                out[i * 3 + 2] = o.lips;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (j, t, l) = self.inner.periods();
+        format!("Alligator(jaw={j}, teeth={t}, lips={l})")
+    }
+}
+
 // ============================== JMA ==============================
 
 #[pyclass(name = "JMA", module = "wickra._wickra", skip_from_py_object)]
@@ -4750,6 +4815,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyFrama>()?;
     m.add_class::<PyVidya>()?;
     m.add_class::<PyJma>()?;
+    m.add_class::<PyAlligator>()?;
     m.add_class::<PyCci>()?;
     m.add_class::<PyRoc>()?;
     m.add_class::<PyWilliamsR>()?;

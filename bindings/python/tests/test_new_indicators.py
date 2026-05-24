@@ -231,6 +231,24 @@ def test_multi_streaming_matches_batch(name, ohlcv):
     assert _eq_nan(batch, np.array(rows, dtype=np.float64)), f"{name} mismatch"
 
 
+# --- Alligator (3-tuple output) -------------------------------------------
+
+
+def test_alligator_streaming_matches_batch(ohlcv):
+    high, low, _, _ = ohlcv
+    alligator = ta.Alligator(13, 8, 5)
+    batch = alligator.batch(high, low)
+    assert batch.shape == (high.size, 3)
+
+    streamer = ta.Alligator(13, 8, 5)
+    rows = []
+    for i in range(high.size):
+        candle = (float(low[i]), float(high[i]), float(low[i]), float(low[i]), 0.0, i)
+        v = streamer.update(candle)
+        rows.append([math.nan, math.nan, math.nan] if v is None else list(v))
+    assert _eq_nan(batch, np.array(rows, dtype=np.float64)), "Alligator mismatch"
+
+
 # --- Reference values -----------------------------------------------------
 
 
@@ -301,6 +319,7 @@ def test_new_indicators_expose_lifecycle():
     instances = [make() for make, _ in CANDLE_SCALAR.values()]
     instances += [make() for make, _ in MULTI.values()]
     instances += [cls(*args) for cls, args in SCALAR]
+    instances.append(ta.Alligator(13, 8, 5))
     for ind in instances:
         assert ind.is_ready() is False
         assert ind.warmup_period() >= 1

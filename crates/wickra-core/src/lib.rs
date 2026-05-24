@@ -44,18 +44,18 @@ pub mod indicators;
 
 pub use error::{Error, Result};
 pub use indicators::{
-    AcceleratorOscillator, Adl, Adx, AdxOutput, Alma, Aroon, AroonOscillator, AroonOutput, Atr,
-    AtrTrailingStop, AwesomeOscillator, BalanceOfPower, BollingerBands, BollingerBandwidth,
-    BollingerOutput, Cci, ChaikinMoneyFlow, ChaikinOscillator, ChaikinVolatility, ChandeKrollStop,
-    ChandeKrollStopOutput, ChandelierExit, ChandelierExitOutput, ChoppinessIndex, Cmo, Coppock,
-    Dema, Donchian, DonchianOutput, Dpo, EaseOfMovement, Ema, ForceIndex, Frama,
-    HistoricalVolatility, Hma, Jma, Kama, Keltner, KeltnerOutput, LinRegAngle, LinRegSlope,
-    LinearRegression, MacdIndicator, MacdOutput, MassIndex, McGinleyDynamic, MedianPrice, Mfi, Mom,
-    Natr, Obv, PercentB, Pmo, Ppo, Psar, Roc, RollingVwap, Rsi, Sma, Smma, StdDev, StochRsi,
-    Stochastic, StochasticOutput, SuperTrend, SuperTrendOutput, Tema, Trima, Trix, TrueRange, Tsi,
-    TypicalPrice, UlcerIndex, UltimateOscillator, VerticalHorizontalFilter, Vidya,
-    VolumePriceTrend, Vortex, VortexOutput, Vwap, Vwma, WeightedClose, WilliamsR, Wma, ZScore,
-    Zlema, T3,
+    AcceleratorOscillator, Adl, Adx, AdxOutput, Alligator, AlligatorOutput, Alma, Aroon,
+    AroonOscillator, AroonOutput, Atr, AtrTrailingStop, AwesomeOscillator, BalanceOfPower,
+    BollingerBands, BollingerBandwidth, BollingerOutput, Cci, ChaikinMoneyFlow, ChaikinOscillator,
+    ChaikinVolatility, ChandeKrollStop, ChandeKrollStopOutput, ChandelierExit,
+    ChandelierExitOutput, ChoppinessIndex, Cmo, Coppock, Dema, Donchian, DonchianOutput, Dpo,
+    EaseOfMovement, Ema, ForceIndex, Frama, HistoricalVolatility, Hma, Jma, Kama, Keltner,
+    KeltnerOutput, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, MacdOutput,
+    MassIndex, McGinleyDynamic, MedianPrice, Mfi, Mom, Natr, Obv, PercentB, Pmo, Ppo, Psar, Roc,
+    RollingVwap, Rsi, Sma, Smma, StdDev, StochRsi, Stochastic, StochasticOutput, SuperTrend,
+    SuperTrendOutput, Tema, Trima, Trix, TrueRange, Tsi, TypicalPrice, UlcerIndex,
+    UltimateOscillator, VerticalHorizontalFilter, Vidya, VolumePriceTrend, Vortex, VortexOutput,
+    Vwap, Vwma, WeightedClose, WilliamsR, Wma, ZScore, Zlema, T3,
 };
 pub use ohlcv::{Candle, Tick};
 pub use traits::{BatchExt, Chain, Indicator};

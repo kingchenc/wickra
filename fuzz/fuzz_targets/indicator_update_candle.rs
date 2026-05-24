@@ -23,7 +23,7 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    AcceleratorOscillator, Adl, Adx, Aroon, AroonOscillator, Atr, AtrTrailingStop,
+    AcceleratorOscillator, Adl, Adx, Alligator, Aroon, AroonOscillator, Atr, AtrTrailingStop,
     AwesomeOscillator, BalanceOfPower, BatchExt, Candle, Cci, ChaikinMoneyFlow, ChaikinOscillator,
     ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex, Donchian, EaseOfMovement,
     ForceIndex, Indicator, Keltner, MassIndex, MedianPrice, Mfi, Natr, Obv, Psar, RollingVwap,
@@ -88,6 +88,7 @@ fuzz_target!(|data: Vec<f64>| {
     // --- Trend & Directional ---
     drive(|| Adx::new(14).unwrap(), &candles);
     drive(|| Aroon::new(14).unwrap(), &candles);
+    drive(|| Alligator::new(13, 8, 5).unwrap(), &candles);
     drive(|| AroonOscillator::new(14).unwrap(), &candles);
     drive(|| Vortex::new(14).unwrap(), &candles);
     drive(|| MassIndex::new(9, 25).unwrap(), &candles);

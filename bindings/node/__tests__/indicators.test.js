@@ -127,6 +127,7 @@ for (const [name, d] of Object.entries(candleScalar)) {
 // --- Multi-output indicators: object update vs interleaved batch ---
 
 const multi = {
+  Alligator: { make: () => new wickra.Alligator(13, 8, 5), fields: ['jaw', 'teeth', 'lips'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   MACD: { make: () => new wickra.MACD(12, 26, 9), fields: ['macd', 'signal', 'histogram'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   BollingerBands: { make: () => new wickra.BollingerBands(20, 2), fields: ['upper', 'middle', 'lower', 'stddev'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   Stochastic: { make: () => new wickra.Stochastic(14, 3), fields: ['k', 'd'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
@@ -262,6 +263,17 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+test('Alligator on a flat median price seeds to that median', () => {
+  const n = 30;
+  const out = new wickra.Alligator(13, 8, 5).batch(Array(n).fill(11), Array(n).fill(9));
+  // All three SMMAs see median (11 + 9) / 2 = 10 every bar.
+  for (let i = 12; i < n; i++) {
+    assert.ok(Math.abs(out[i * 3] - 10) < 1e-12, `jaw at ${i}: ${out[i * 3]}`);
+    assert.ok(Math.abs(out[i * 3 + 1] - 10) < 1e-12);
+    assert.ok(Math.abs(out[i * 3 + 2] - 10) < 1e-12);
+  }
 });
 
 test('JMA on a flat series reproduces the constant', () => {

@@ -43,6 +43,7 @@ from ._wickra import (
     FRAMA,
     VIDYA,
     JMA,
+    Alligator,
     # Momentum
     RSI,
     MACD,
@@ -129,6 +130,7 @@ __all__ = [
     "FRAMA",
     "VIDYA",
     "JMA",
+    "Alligator",
     # Momentum
     "RSI",
     "MACD",

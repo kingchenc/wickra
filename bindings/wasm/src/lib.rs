@@ -1947,6 +1947,63 @@ impl WasmAo {
     }
 }
 
+#[wasm_bindgen(js_name = Alligator)]
+pub struct WasmAlligator {
+    inner: wc::Alligator,
+}
+
+#[wasm_bindgen(js_class = Alligator)]
+impl WasmAlligator {
+    #[wasm_bindgen(constructor)]
+    pub fn new(jaw: usize, teeth: usize, lips: usize) -> Result<WasmAlligator, JsError> {
+        Ok(Self {
+            inner: wc::Alligator::new(jaw, teeth, lips).map_err(map_err)?,
+        })
+    }
+    /// Returns `[jaw0, teeth0, lips0, jaw1, teeth1, lips1, ...]`, length `3n`.
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], low[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 3] = o.jaw;
+                out[i * 3 + 1] = o.teeth;
+                out[i * 3 + 2] = o.lips;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    /// Streaming update. Returns `{ jaw, teeth, lips }` once warm, else `null`.
+    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"jaw".into(), &o.jaw.into()).ok();
+                Reflect::set(&obj, &"teeth".into(), &o.teeth.into()).ok();
+                Reflect::set(&obj, &"lips".into(), &o.lips.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[wasm_bindgen(js_name = Aroon)]
 pub struct WasmAroon {
     inner: wc::Aroon,

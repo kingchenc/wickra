@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `[0, 1]`) and kernel width (`sigma > 0`). Community-standard defaults
   `(period = 9, offset = 0.85, sigma = 6.0)` available via `Alma::classic()`.
   Exposed in all four bindings (Rust, Python, Node, WASM).
+- **Family 01 — Moving Averages.** `Alligator` (Bill Williams): three
+  SMMA lines (Jaw / Teeth / Lips) of the median price `(high + low) / 2`
+  with default periods 13 / 8 / 5. Multi-output indicator emitting
+  `AlligatorOutput { jaw, teeth, lips }`. Visual chart shift is left to
+  the consumer. Exposed in all four bindings.
 - **Family 01 — Moving Averages.** `JMA` (Jurik Moving Average):
   three-stage filter reconstruction of Mark Jurik's adaptive MA.
   Three parameters: `period` (14), `phase` in `[-100, 100]` (0), `power`

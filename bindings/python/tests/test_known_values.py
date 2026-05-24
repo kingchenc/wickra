@@ -126,6 +126,20 @@ def test_jma_constant_series_yields_the_constant():
     np.testing.assert_allclose(out, 42.0, atol=1e-12)
 
 
+def test_alligator_constant_series_holds_at_median_price():
+    # Median price = (11 + 9) / 2 = 10 on every candle, so all three SMMAs
+    # seed at 10 and stay there.
+    n = 30
+    high = np.full(n, 11.0)
+    low = np.full(n, 9.0)
+    out = ta.Alligator(13, 8, 5).batch(high, low)
+    assert out.shape == (n, 3)
+    for row in out[12:]:
+        assert math.isclose(row[0], 10.0, abs_tol=1e-12)
+        assert math.isclose(row[1], 10.0, abs_tol=1e-12)
+        assert math.isclose(row[2], 10.0, abs_tol=1e-12)
+
+
 def test_vidya_constant_series_holds_seed():
     # CMO = 0 on a flat series -> alpha = 0 -> VIDYA holds its seed value.
     out = ta.VIDYA(14, 4).batch(np.full(20, 42.0, dtype=np.float64))
