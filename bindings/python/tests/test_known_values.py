@@ -88,6 +88,23 @@ def test_alma_reference_value_period_3():
     assert out[2] > 20.0
 
 
+def test_mcginley_dynamic_constant_series_yields_the_constant():
+    # ratio = 1, so the recurrence collapses to MD + 0 / divisor = MD.
+    out = ta.McGinleyDynamic(5).batch(np.full(30, 42.0, dtype=np.float64))
+    assert np.all(np.isnan(out[:4]))
+    np.testing.assert_allclose(out[4:], 42.0, atol=1e-12)
+
+
+def test_mcginley_dynamic_reference_value():
+    # Period 3, seed = SMA([10, 20, 30]) = 20.0. Next price 40.0:
+    # ratio   = 2; divisor = 0.6 * 3 * 16 = 28.8; next = 20 + 20/28.8.
+    out = ta.McGinleyDynamic(3).batch(np.array([10.0, 20.0, 30.0, 40.0]))
+    assert math.isnan(out[0]) and math.isnan(out[1])
+    assert math.isclose(out[2], 20.0, abs_tol=1e-12)
+    expected = 20.0 + 20.0 / (0.6 * 3.0 * 16.0)
+    assert math.isclose(out[3], expected, abs_tol=1e-12)
+
+
 def test_macd_constant_series_converges_to_zero():
     out = ta.MACD().batch(np.full(200, 100.0))
     # Last row's MACD and signal must be ~0.

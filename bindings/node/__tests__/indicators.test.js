@@ -38,6 +38,7 @@ const scalarFactories = {
   TRIX: () => new wickra.TRIX(9),
   KAMA: () => new wickra.KAMA(10, 2, 30),
   ALMA: () => new wickra.ALMA(9, 0.85, 6.0),
+  McGinleyDynamic: () => new wickra.McGinleyDynamic(10),
   SMMA: () => new wickra.SMMA(14),
   TRIMA: () => new wickra.TRIMA(20),
   ZLEMA: () => new wickra.ZLEMA(14),
@@ -258,6 +259,15 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+test('McGinleyDynamic(3) seeds with SMA and recurses on the next price', () => {
+  // Seed = SMA([10, 20, 30]) = 20. On 40: ratio = 2, divisor = 0.6*3*16 = 28.8.
+  const out = new wickra.McGinleyDynamic(3).batch([10, 20, 30, 40]);
+  assert.ok(Number.isNaN(out[0]) && Number.isNaN(out[1]));
+  assert.ok(Math.abs(out[2] - 20) < 1e-12);
+  const expected = 20 + 20 / (0.6 * 3 * 16);
+  assert.ok(Math.abs(out[3] - expected) < 1e-12);
 });
 
 test('ALMA(3, 0.85, 6) reference value on [10, 20, 30]', () => {

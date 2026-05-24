@@ -39,6 +39,7 @@ from ._wickra import (
     T3,
     VWMA,
     ALMA,
+    McGinleyDynamic,
     # Momentum
     RSI,
     MACD,
@@ -121,6 +122,7 @@ __all__ = [
     "T3",
     "VWMA",
     "ALMA",
+    "McGinleyDynamic",
     # Momentum
     "RSI",
     "MACD",

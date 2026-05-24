@@ -116,6 +116,7 @@ node_scalar_indicator!(
     wc::VerticalHorizontalFilter
 );
 node_scalar_indicator!(ZScoreNode, "ZScore", wc::ZScore);
+node_scalar_indicator!(McGinleyDynamicNode, "McGinleyDynamic", wc::McGinleyDynamic);
 
 // ============================== MACD ==============================
 

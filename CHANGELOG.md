@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `[0, 1]`) and kernel width (`sigma > 0`). Community-standard defaults
   `(period = 9, offset = 0.85, sigma = 6.0)` available via `Alma::classic()`.
   Exposed in all four bindings (Rust, Python, Node, WASM).
+- **Family 01 — Moving Averages.** `McGinleyDynamic`: John McGinley's
+  self-adjusting MA. Single parameter `period`; the recurrence
+  `MD + (price - MD) / (0.6 * period * (price / MD)^4)` speeds up when price
+  falls below the indicator and damps when price runs above. Seeded with the
+  simple average of the first `period` inputs. Exposed in all four bindings.
 
 ## [0.2.7] - 2026-05-24
 
