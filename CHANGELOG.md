@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Garman-Klass Volatility.** Garman & Klass (1980) OHLC realised
+  volatility estimator: per-bar sample is
+  `0.5·(ln H/L)² − (2·ln2 − 1)·(ln C/O)²`, then take the annualised
+  square root of the rolling mean. Roughly 7.4× more statistically
+  efficient than close-to-close stddev under driftless GBM. Output
+  annualised to a percent. Defaults: `period = 20`,
+  `trading_periods = 252`.
 - **Parkinson Volatility.** Michael Parkinson's (1980) high-low realised
   volatility estimator: `sigma² = (1 / (4n·ln2)) · Σ (ln(H/L))²`. Output
   annualised to a percent in the same style as `HistoricalVolatility`

@@ -26,9 +26,9 @@ use wickra_core::{
     AcceleratorOscillator, Adl, Adx, Aroon, AroonOscillator, Atr, AtrTrailingStop,
     AwesomeOscillator, BalanceOfPower, BatchExt, Candle, Cci, ChaikinMoneyFlow, ChaikinOscillator,
     ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex, Donchian, EaseOfMovement,
-    ForceIndex, Indicator, Keltner, MassIndex, MedianPrice, Mfi, Natr, Obv, ParkinsonVolatility,
-    Psar, RollingVwap, Stochastic, SuperTrend, TrueRange, TypicalPrice, UltimateOscillator,
-    VolumePriceTrend, Vortex, Vwap, Vwma, WeightedClose, WilliamsR,
+    ForceIndex, GarmanKlassVolatility, Indicator, Keltner, MassIndex, MedianPrice, Mfi, Natr, Obv,
+    ParkinsonVolatility, Psar, RollingVwap, Stochastic, SuperTrend, TrueRange, TypicalPrice,
+    UltimateOscillator, VolumePriceTrend, Vortex, Vwap, Vwma, WeightedClose, WilliamsR,
 };
 
 /// Convert a flat `f64` stream into a `Vec<Candle>` by chunking it into
@@ -74,6 +74,7 @@ fuzz_target!(|data: Vec<f64>| {
     drive(TrueRange::new, &candles);
     drive(|| ChaikinVolatility::new(10, 10).unwrap(), &candles);
     drive(|| ParkinsonVolatility::new(20, 252).unwrap(), &candles);
+    drive(|| GarmanKlassVolatility::new(20, 252).unwrap(), &candles);
 
     // --- Bands & Channels ---
     drive(|| Keltner::new(20, 10, 2.0).unwrap(), &candles);

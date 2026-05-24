@@ -107,6 +107,7 @@ const candleScalar = {
   TrueRange: { make: () => new wickra.TrueRange(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ChaikinVolatility: { make: () => new wickra.ChaikinVolatility(10, 10), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   ParkinsonVolatility: { make: () => new wickra.ParkinsonVolatility(20, 252), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  GarmanKlassVolatility: { make: () => new wickra.GarmanKlassVolatility(20, 252), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {
@@ -276,5 +277,14 @@ test('ParkinsonVolatility zero-range bars yield zero', () => {
   const out = new wickra.ParkinsonVolatility(14, 252).batch(h, l);
   for (let i = 13; i < n; i++) {
     assert.ok(Math.abs(out[i]) < 1e-12, `Parkinson[${i}] = ${out[i]}`);
+  }
+});
+
+test('GarmanKlassVolatility zero-movement bars yield zero', () => {
+  const n = 30;
+  const flat = Array(n).fill(10);
+  const out = new wickra.GarmanKlassVolatility(14, 252).batch(flat, flat, flat, flat);
+  for (let i = 13; i < n; i++) {
+    assert.ok(Math.abs(out[i]) < 1e-12, `GK[${i}] = ${out[i]}`);
   }
 });

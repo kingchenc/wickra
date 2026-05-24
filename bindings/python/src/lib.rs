@@ -4476,6 +4476,83 @@ impl PyLinRegAngle {
     }
 }
 
+// ============================== Garman-Klass Volatility ==============================
+
+#[pyclass(
+    name = "GarmanKlassVolatility",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyGarmanKlassVolatility {
+    inner: wc::GarmanKlassVolatility,
+}
+
+#[pymethods]
+impl PyGarmanKlassVolatility {
+    #[new]
+    #[pyo3(signature = (period=20, trading_periods=252))]
+    fn new(period: usize, trading_periods: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::GarmanKlassVolatility::new(period, trading_periods).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over numpy columns open, high, low, close (all equal length).
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        open: PyReadonlyArray1<'py, f64>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let o = open
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let cl = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if o.len() != h.len() || h.len() != l.len() || l.len() != cl.len() {
+            return Err(PyValueError::new_err(
+                "open, high, low, close must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(o.len());
+        for i in 0..o.len() {
+            let candle = wc::Candle::new(o[i], h[i], l[i], cl[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn periods(&self) -> (usize, usize) {
+        self.inner.periods()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (p, t) = self.inner.periods();
+        format!("GarmanKlassVolatility(period={p}, trading_periods={t})")
+    }
+}
+
 // ============================== Parkinson Volatility ==============================
 
 #[pyclass(
@@ -4674,5 +4751,6 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyLinRegAngle>()?;
     m.add_class::<PyRvi>()?;
     m.add_class::<PyParkinsonVolatility>()?;
+    m.add_class::<PyGarmanKlassVolatility>()?;
     Ok(())
 }

@@ -161,6 +161,12 @@ CANDLE_SCALAR = {
         lambda: ta.ParkinsonVolatility(20, 252),
         lambda ind, h, l, c, v: ind.batch(h, l),
     ),
+    "GarmanKlassVolatility": (
+        # The streaming 6-tuple feeds open == close, so batch matches with
+        # the close column standing in for open.
+        lambda: ta.GarmanKlassVolatility(20, 252),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
 }
 
 
