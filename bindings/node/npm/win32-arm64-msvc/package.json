@@ -1,17 +1,17 @@
 {
-  "name": "wickra-darwin-arm64",
+  "name": "wickra-win32-arm64-msvc",
   "version": "0.2.7",
-  "description": "Native binding for wickra (macOS Apple Silicon). Installed automatically as an optional dependency of wickra on matching platforms.",
-  "main": "wickra.darwin-arm64.node",
+  "description": "Native binding for wickra (Windows arm64 MSVC). Installed automatically as an optional dependency of wickra on matching platforms.",
+  "main": "wickra.win32-arm64-msvc.node",
   "files": [
-    "wickra.darwin-arm64.node"
+    "wickra.win32-arm64-msvc.node"
   ],
   "license": "PolyForm-Noncommercial-1.0.0",
   "engines": {
     "node": ">= 18"
   },
   "os": [
-    "darwin"
+    "win32"
   ],
   "cpu": [
     "arm64"

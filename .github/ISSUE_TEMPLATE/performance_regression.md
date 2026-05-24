@@ -44,7 +44,7 @@ ema/update              time:   [38.5 ns 38.7 ns 38.9 ns]
 
 | Field        | Value                                  |
 | ------------ | -------------------------------------- |
-| CPU          | `e.g. Ryzen 9 7950X, AVX2 + AVX512`    |
+| CPU          | `e.g. Ryzen 9 9950X, AVX2 + AVX512`    |
 | OS / arch    | `e.g. Linux 6.8 x86_64`                |
 | Toolchain    | `rustc 1.x.y`                          |
 | Build flags  | `RUSTFLAGS=...`, `--release`, profile  |

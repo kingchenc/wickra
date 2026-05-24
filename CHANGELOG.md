@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.7] - 2026-05-24
+
+### Added
+- **Windows ARM64 is back.** npm Support unblocked the
+  `wickra-win32-arm64-msvc` sub-package name (same path
+  `wickra-win32-x64-msvc` took through 0.1.4) and transferred write
+  access to @kingchenc. 0.2.7 ships the binding for
+  `aarch64-pc-windows-msvc` alongside the existing five platforms:
+  the `napi.triples.additional` entry, the `optionalDependencies`
+  pin, the `bindings/node/npm/win32-arm64-msvc/` sub-package and the
+  `windows-11-arm` row of the release.yml node-build matrix are all
+  restored from 8aa74cb. `npm install wickra` on Windows ARM64 now
+  resolves to a native build instead of failing the loader's
+  optional-dep lookup. PyPI's `win_arm64` wheel was unaffected and
+  carries through as before.
+
+### Changed
+- **Benchmark CPU renamed.** The "Reproduced on" line in every
+  README listed an AMD Ryzen 9 7950X3D; the canonical machine is
+  actually a Ryzen 9 9950X. Speedup ratios in the tables are
+  unchanged (they're relative across libraries on the same machine),
+  only the labelling is corrected. The performance-regression issue
+  template's CPU example was updated for consistency.
+
 ## [0.2.6] - 2026-05-24
 
 ### Fixed
@@ -375,7 +399,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/kingchenc/wickra/compare/v0.2.6...HEAD
+[Unreleased]: https://github.com/kingchenc/wickra/compare/v0.2.7...HEAD
+[0.2.7]: https://github.com/kingchenc/wickra/compare/v0.2.6...v0.2.7
 [0.2.6]: https://github.com/kingchenc/wickra/compare/v0.2.5...v0.2.6
 [0.2.5]: https://github.com/kingchenc/wickra/compare/v0.2.1...v0.2.5
 [0.2.1]: https://github.com/kingchenc/wickra/compare/v0.2.0...v0.2.1

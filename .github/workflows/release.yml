@@ -173,15 +173,7 @@ jobs:
           - { host: macos-latest, target: x86_64-apple-darwin }
           - { host: macos-latest, target: aarch64-apple-darwin }
           - { host: windows-latest, target: x86_64-pc-windows-msvc }
-          # NOTE: aarch64-pc-windows-msvc is temporarily skipped for 0.2.6.
-          # The wickra-win32-arm64-msvc npm subpackage name is blocked by the
-          # npm spam-detection filter for new accounts (same situation that
-          # affected wickra-win32-x64-msvc through 0.1.4 until npm Support
-          # unblocked it). A support ticket is open; once the new arm64 name
-          # is unblocked this matrix entry will be restored alongside the
-          # corresponding optionalDependencies / napi.triples / npm/<target>
-          # entries in a follow-up release.
-          # - { host: windows-11-arm, target: aarch64-pc-windows-msvc }
+          - { host: windows-11-arm, target: aarch64-pc-windows-msvc }
     runs-on: ${{ matrix.host }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
