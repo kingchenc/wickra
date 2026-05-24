@@ -92,6 +92,7 @@ def test_scalar_streaming_matches_batch(cls, args, sine_prices):
 
 CANDLE_SCALAR = {
     "VWMA": (lambda: ta.VWMA(20), lambda ind, h, l, c, v: ind.batch(c, v)),
+    "EVWMA": (lambda: ta.EVWMA(20), lambda ind, h, l, c, v: ind.batch(c, v)),
     "UltimateOscillator": (
         lambda: ta.UltimateOscillator(7, 14, 28),
         lambda ind, h, l, c, v: ind.batch(h, l, c),

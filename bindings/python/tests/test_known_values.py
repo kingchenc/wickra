@@ -126,6 +126,16 @@ def test_jma_constant_series_yields_the_constant():
     np.testing.assert_allclose(out, 42.0, atol=1e-12)
 
 
+def test_evwma_reference_value_period_2():
+    # EVWMA(2). Bars: (close, volume) = (10, 1), (20, 3), (30, 1).
+    #   Bar 2: sum_v = 4, seeded prev = 20, EVWMA = (1*20 + 3*20)/4 = 20.
+    #   Bar 3: sum_v = 4 (drops 1, gains 1), EVWMA = (3*20 + 1*30)/4 = 22.5.
+    out = ta.EVWMA(2).batch(np.array([10.0, 20.0, 30.0]), np.array([1.0, 3.0, 1.0]))
+    assert math.isnan(out[0])
+    assert math.isclose(out[1], 20.0, abs_tol=1e-12)
+    assert math.isclose(out[2], 22.5, abs_tol=1e-12)
+
+
 def test_alligator_constant_series_holds_at_median_price():
     # Median price = (11 + 9) / 2 = 10 on every candle, so all three SMMAs
     # seed at 10 and stay there.

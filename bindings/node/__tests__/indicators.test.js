@@ -91,6 +91,7 @@ const candleScalar = {
   AwesomeOscillator: { make: () => new wickra.AwesomeOscillator(5, 34), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   OBV: { make: () => new wickra.OBV(), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
   VWMA: { make: () => new wickra.VWMA(20), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
+  EVWMA: { make: () => new wickra.EVWMA(20), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
   UltimateOscillator: { make: () => new wickra.UltimateOscillator(7, 14, 28), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   AroonOscillator: { make: () => new wickra.AroonOscillator(14), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   NATR: { make: () => new wickra.NATR(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
@@ -263,6 +264,13 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+test('EVWMA(2) reference values on [10, 20, 30] with volumes [1, 3, 1]', () => {
+  const out = new wickra.EVWMA(2).batch([10, 20, 30], [1, 3, 1]);
+  assert.ok(Number.isNaN(out[0]));
+  assert.ok(Math.abs(out[1] - 20) < 1e-12);
+  assert.ok(Math.abs(out[2] - 22.5) < 1e-12);
 });
 
 test('Alligator on a flat median price seeds to that median', () => {

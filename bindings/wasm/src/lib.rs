@@ -1377,6 +1377,47 @@ impl WasmMassIndex {
     }
 }
 
+#[wasm_bindgen(js_name = EVWMA)]
+pub struct WasmEvwma {
+    inner: wc::Evwma,
+}
+
+#[wasm_bindgen(js_class = EVWMA)]
+impl WasmEvwma {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmEvwma, JsError> {
+        Ok(Self {
+            inner: wc::Evwma::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, close: f64, volume: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(close, close, close, volume)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(&mut self, close: &[f64], volume: &[f64]) -> Result<Float64Array, JsError> {
+        if close.len() != volume.len() {
+            return Err(JsError::new("close and volume must be equal length"));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            let c = make_candle(close[i], close[i], close[i], volume[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[wasm_bindgen(js_name = VWMA)]
 pub struct WasmVwma {
     inner: wc::Vwma,

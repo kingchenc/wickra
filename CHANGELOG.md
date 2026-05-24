@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `[0, 1]`) and kernel width (`sigma > 0`). Community-standard defaults
   `(period = 9, offset = 0.85, sigma = 6.0)` available via `Alma::classic()`.
   Exposed in all four bindings (Rust, Python, Node, WASM).
+- **Family 01 — Moving Averages.** `EVWMA` (Elastic Volume-Weighted
+  Moving Average, Fries 2001): an "elastic" recurrence whose smoothing
+  weight is the bar's volume relative to the running window-volume.
+  Candle input (uses close + volume), single parameter `period`
+  (default 20). Holds its previous value if the entire window has zero
+  volume. Exposed in all four bindings.
 - **Family 01 — Moving Averages.** `Alligator` (Bill Williams): three
   SMMA lines (Jaw / Teeth / Lips) of the median price `(high + low) / 2`
   with default periods 13 / 8 / 5. Multi-output indicator emitting

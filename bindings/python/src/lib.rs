@@ -860,6 +860,69 @@ impl PyFrama {
     }
 }
 
+// ============================== EVWMA ==============================
+
+#[pyclass(name = "EVWMA", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyEvwma {
+    inner: wc::Evwma,
+}
+
+#[pymethods]
+impl PyEvwma {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Evwma::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if c.len() != v.len() {
+            return Err(PyValueError::new_err(
+                "close and volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(c.len());
+        for i in 0..c.len() {
+            let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("EVWMA(period={})", self.inner.period())
+    }
+}
+
 // ============================== Alligator ==============================
 
 #[pyclass(name = "Alligator", module = "wickra._wickra", skip_from_py_object)]
@@ -4816,6 +4879,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyVidya>()?;
     m.add_class::<PyJma>()?;
     m.add_class::<PyAlligator>()?;
+    m.add_class::<PyEvwma>()?;
     m.add_class::<PyCci>()?;
     m.add_class::<PyRoc>()?;
     m.add_class::<PyWilliamsR>()?;

@@ -1105,6 +1105,55 @@ impl KamaNode {
     }
 }
 
+// ============================== EVWMA ==============================
+
+#[napi(js_name = "EVWMA")]
+pub struct EvwmaNode {
+    inner: wc::Evwma,
+}
+#[napi]
+impl EvwmaNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Evwma::new(clamp_period(period)).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, close: f64, volume: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(close, close, close, volume)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, close: Vec<f64>, volume: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if close.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "close and volume must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            out.push(
+                self.inner
+                    .update(cnd(close[i], close[i], close[i], volume[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== Alligator ==============================
 
 #[napi(object)]
