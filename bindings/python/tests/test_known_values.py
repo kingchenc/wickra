@@ -66,6 +66,17 @@ def test_rsi_wilder_textbook_first_value():
     assert math.isclose(out[14], 70.464, abs_tol=0.05)
 
 
+def test_connors_rsi_output_is_bounded():
+    # CRSI is the average of three [0, 100] components, so the aggregate must
+    # also sit in [0, 100] after warmup.
+    prices = 100.0 + 20.0 * np.sin(np.linspace(0, 30, 250))
+    out = ta.ConnorsRSI(3, 2, 100).batch(prices.astype(np.float64))
+    ready = out[~np.isnan(out)]
+    assert ready.size > 0
+    assert ready.min() >= 0.0
+    assert ready.max() <= 100.0
+
+
 def test_laguerre_rsi_constant_series_stays_at_mid_band():
     # All four Laguerre stages seed to the first input, so subsequent flat
     # inputs keep them equal and the up/down accumulator is 0 — Wickra maps

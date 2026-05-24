@@ -1074,6 +1074,45 @@ fn cnd4(open: f64, high: f64, low: f64, close: f64) -> napi::Result<wc::Candle> 
     wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)
 }
 
+#[napi(js_name = "ConnorsRSI")]
+pub struct ConnorsRsiNode {
+    inner: wc::ConnorsRsi,
+}
+#[napi]
+impl ConnorsRsiNode {
+    #[napi(constructor)]
+    pub fn new(period_rsi: u32, period_streak: u32, period_rank: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::ConnorsRsi::new(
+                clamp_period(period_rsi),
+                clamp_period(period_streak),
+                clamp_period(period_rank),
+            )
+            .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 #[napi(js_name = "LaguerreRSI")]
 pub struct LaguerreRsiNode {
     inner: wc::LaguerreRsi,

@@ -98,6 +98,7 @@ wasm_scalar_indicator!(WasmVerticalHorizontalFilter, "VerticalHorizontalFilter",
 wasm_scalar_indicator!(WasmZScore, "ZScore", wc::ZScore, period: usize);
 wasm_scalar_indicator!(WasmLinRegAngle, "LinRegAngle", wc::LinRegAngle, period: usize);
 wasm_scalar_indicator!(WasmLaguerreRsi, "LaguerreRSI", wc::LaguerreRsi, gamma: f64);
+wasm_scalar_indicator!(WasmConnorsRsi, "ConnorsRSI", wc::ConnorsRsi, period_rsi: usize, period_streak: usize, period_rank: usize);
 
 // ---------- KAMA (three params) ----------
 

@@ -60,6 +60,7 @@ const scalarFactories = {
   ZScore: () => new wickra.ZScore(20),
   LinRegAngle: () => new wickra.LinRegAngle(14),
   LaguerreRSI: () => new wickra.LaguerreRSI(0.5),
+  ConnorsRSI: () => new wickra.ConnorsRSI(3, 2, 100),
 };
 
 for (const [name, make] of Object.entries(scalarFactories)) {
@@ -262,6 +263,15 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+test('ConnorsRSI stays bounded in [0, 100]', () => {
+  const prices = Array.from({ length: 250 }, (_, i) => 100 + 20 * Math.sin(i * 0.12));
+  const out = new wickra.ConnorsRSI(3, 2, 100).batch(prices);
+  for (let i = 0; i < out.length; i++) {
+    if (Number.isNaN(out[i])) continue;
+    assert.ok(out[i] >= 0 && out[i] <= 100, `out[${i}] = ${out[i]}`);
+  }
 });
 
 test('LaguerreRSI on a flat series stays at the neutral 50', () => {

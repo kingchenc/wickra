@@ -812,6 +812,51 @@ impl PyKama {
     }
 }
 
+// ============================== Connors RSI ==============================
+
+#[pyclass(name = "ConnorsRSI", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyConnorsRsi {
+    inner: wc::ConnorsRsi,
+}
+
+#[pymethods]
+impl PyConnorsRsi {
+    #[new]
+    #[pyo3(signature = (period_rsi=3, period_streak=2, period_rank=100))]
+    fn new(period_rsi: usize, period_streak: usize, period_rank: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::ConnorsRsi::new(period_rsi, period_streak, period_rank).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (r, s, k) = self.inner.periods();
+        format!("ConnorsRSI(period_rsi={r}, period_streak={s}, period_rank={k})")
+    }
+}
+
 // ============================== Laguerre RSI ==============================
 
 #[pyclass(name = "LaguerreRSI", module = "wickra._wickra", skip_from_py_object)]
@@ -4815,6 +4860,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyKst>()?;
     m.add_class::<PySmi>()?;
     m.add_class::<PyLaguerreRsi>()?;
+    m.add_class::<PyConnorsRsi>()?;
     m.add_class::<PyCci>()?;
     m.add_class::<PyRoc>()?;
     m.add_class::<PyWilliamsR>()?;

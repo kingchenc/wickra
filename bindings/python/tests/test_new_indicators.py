@@ -64,6 +64,7 @@ SCALAR = [
     (ta.ZScore, (20,)),
     (ta.LinRegAngle, (14,)),
     (ta.LaguerreRSI, (0.5,)),
+    (ta.ConnorsRSI, (3, 2, 100)),
 ]
 
 

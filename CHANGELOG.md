@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Family 02 — Momentum Oscillators.** `ConnorsRsi`: Larry Connors'
+  3-component aggregate — `RSI(close)`, `RSI(streak)`, and the
+  percentile rank of the 1-bar return over the recent `period_rank`
+  returns. Bounded in `[0, 100]`. Three parameters
+  `(period_rsi, period_streak, period_rank)` (defaults 3 / 2 / 100).
+  Exposed in all four bindings.
 - **Family 02 — Momentum Oscillators.** `LaguerreRsi` (Ehlers):
   four-stage Laguerre polynomial filter wrapped in an RSI-style up/down
   accumulator. Single parameter `gamma` in `[0, 1]` (default 0.5) trades
