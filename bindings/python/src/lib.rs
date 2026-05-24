@@ -3312,6 +3312,125 @@ impl PyForceIndex {
     }
 }
 
+// ============================== Negative Volume Index ==============================
+
+#[pyclass(name = "NVI", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyNvi {
+    inner: wc::Nvi,
+}
+
+#[pymethods]
+impl PyNvi {
+    #[new]
+    #[pyo3(signature = (baseline=1000.0))]
+    fn new(baseline: f64) -> Self {
+        Self {
+            inner: wc::Nvi::with_baseline(baseline),
+        }
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over close + volume numpy arrays.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if c.len() != v.len() {
+            return Err(PyValueError::new_err(
+                "close and volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(c.len());
+        for i in 0..c.len() {
+            let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "NVI()".to_string()
+    }
+}
+
+// ============================== Positive Volume Index ==============================
+
+#[pyclass(name = "PVI", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyPvi {
+    inner: wc::Pvi,
+}
+
+#[pymethods]
+impl PyPvi {
+    #[new]
+    #[pyo3(signature = (baseline=1000.0))]
+    fn new(baseline: f64) -> Self {
+        Self {
+            inner: wc::Pvi::with_baseline(baseline),
+        }
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if c.len() != v.len() {
+            return Err(PyValueError::new_err(
+                "close and volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(c.len());
+        for i in 0..c.len() {
+            let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "PVI()".to_string()
+    }
+}
+
 // ============================== Volume Oscillator ==============================
 
 #[pyclass(
@@ -4670,6 +4789,8 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyForceIndex>()?;
     m.add_class::<PyKvo>()?;
     m.add_class::<PyVolumeOscillator>()?;
+    m.add_class::<PyNvi>()?;
+    m.add_class::<PyPvi>()?;
     m.add_class::<PyEaseOfMovement>()?;
     m.add_class::<PySuperTrend>()?;
     m.add_class::<PyChandelierExit>()?;

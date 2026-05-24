@@ -109,7 +109,7 @@ python -m benchmarks.compare_libraries
 
 ## Indicators
 
-73 streaming-first indicators across eight families. Every one passes the
+75 streaming-first indicators across eight families. Every one passes the
 `batch == streaming` equivalence test, reference-value tests, and reset
 semantics tests.
 
@@ -121,7 +121,7 @@ semantics tests.
 | Price Oscillators    | PPO, DPO, Coppock, Accelerator Oscillator, Balance of Power |
 | Volatility & Bands   | ATR, Bollinger Bands, Keltner Channels, Donchian Channels, NATR, StdDev, Ulcer Index, Historical Volatility, Bollinger Bandwidth, %B, True Range, Chaikin Volatility |
 | Trailing Stops       | Parabolic SAR, SuperTrend, Chandelier Exit, Chande Kroll Stop, ATR Trailing Stop |
-| Volume               | OBV, VWAP (cumulative + rolling), ADL, Volume-Price Trend, Chaikin Money Flow, Chaikin Oscillator, Force Index, Ease of Movement, Klinger Volume Oscillator, Volume Oscillator |
+| Volume               | OBV, VWAP (cumulative + rolling), ADL, Volume-Price Trend, Chaikin Money Flow, Chaikin Oscillator, Force Index, Ease of Movement, Klinger Volume Oscillator, Volume Oscillator, NVI, PVI |
 | Price Statistics     | Typical Price, Median Price, Weighted Close, Linear Regression, Linear Regression Slope, Z-Score, Linear Regression Angle |
 
 Adding a new indicator means implementing one trait in Rust; all four bindings

@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Volume Oscillator (VO).** Percent difference between a fast and a
   slow SMA of bar volume: `100 · (SMA(vol, fast) − SMA(vol, slow)) /
   SMA(vol, slow)`. Default `(14, 28)`.
+- **Negative Volume Index (NVI).** Paul Dysart's cumulative index that
+  only updates on volume-contraction bars (`volume_t < volume_{t−1}`),
+  absorbing the percent close change on those quiet days. Fosback
+  baseline `1000.0`, configurable via `Nvi::with_baseline`.
+- **Positive Volume Index (PVI).** The complementary index that
+  updates on volume-expansion bars (`volume_t > volume_{t−1}`).
 
 ## [0.2.7] - 2026-05-24
 

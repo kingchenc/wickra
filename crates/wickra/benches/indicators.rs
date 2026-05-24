@@ -19,8 +19,8 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use std::hint::black_box;
 use wickra::{
-    Atr, BatchExt, BollingerBands, Candle, Ema, Indicator, Kvo, MacdIndicator, Obv, Rsi, Sma,
-    Stochastic, VolumeOscillator, Wma,
+    Atr, BatchExt, BollingerBands, Candle, Ema, Indicator, Kvo, MacdIndicator, Nvi, Obv, Pvi, Rsi,
+    Sma, Stochastic, VolumeOscillator, Wma,
 };
 use wickra_data::csv::CandleReader;
 
@@ -148,6 +148,8 @@ fn benches(c: &mut Criterion) {
     bench_candle_input(c, "volume_oscillator", &candles, || {
         VolumeOscillator::new(14, 28).unwrap()
     });
+    bench_candle_input(c, "nvi", &candles, Nvi::new);
+    bench_candle_input(c, "pvi", &candles, Pvi::new);
 }
 
 criterion_group!(name = wickra_benches; config = Criterion::default(); targets = benches);

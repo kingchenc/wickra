@@ -95,6 +95,8 @@ from ._wickra import (
     ForceIndex,
     KVO,
     VolumeOscillator,
+    NVI,
+    PVI,
     EaseOfMovement,
     # Statistics
     TypicalPrice,
@@ -178,6 +180,8 @@ __all__ = [
     "ForceIndex",
     "KVO",
     "VolumeOscillator",
+    "NVI",
+    "PVI",
     "EaseOfMovement",
     # Statistics
     "TypicalPrice",

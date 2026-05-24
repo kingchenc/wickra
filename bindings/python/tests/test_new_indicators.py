@@ -126,6 +126,14 @@ CANDLE_SCALAR = {
         lambda: ta.VolumeOscillator(14, 28),
         lambda ind, h, l, c, v: ind.batch(v),
     ),
+    "NVI": (
+        lambda: ta.NVI(),
+        lambda ind, h, l, c, v: ind.batch(c, v),
+    ),
+    "PVI": (
+        lambda: ta.PVI(),
+        lambda ind, h, l, c, v: ind.batch(c, v),
+    ),
     "AtrTrailingStop": (
         lambda: ta.AtrTrailingStop(14, 3.0),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
@@ -252,6 +260,23 @@ def test_weighted_close_reference():
     assert ta.WeightedClose().update((10.0, 12.0, 8.0, 11.0, 1.0, 0)) == pytest.approx(
         10.5
     )
+
+
+def test_nvi_reference():
+    # closes [10, 11], volumes [200, 100]: volume contracts -> NVI absorbs +10%.
+    # 1000 * (1 + 0.1) = 1100.
+    nvi = ta.NVI()
+    out = nvi.batch(np.array([10.0, 11.0]), np.array([200.0, 100.0]))
+    assert out[0] == pytest.approx(1000.0)
+    assert out[1] == pytest.approx(1100.0)
+
+
+def test_pvi_reference():
+    # closes [10, 11], volumes [100, 200]: volume expands -> PVI absorbs +10%.
+    pvi = ta.PVI()
+    out = pvi.batch(np.array([10.0, 11.0]), np.array([100.0, 200.0]))
+    assert out[0] == pytest.approx(1000.0)
+    assert out[1] == pytest.approx(1100.0)
 
 
 def test_volume_oscillator_reference():
