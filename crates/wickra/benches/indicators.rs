@@ -20,7 +20,7 @@ use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Through
 use std::hint::black_box;
 use wickra::{
     Atr, BatchExt, BollingerBands, Candle, Ema, GarmanKlassVolatility, Indicator, MacdIndicator,
-    Obv, ParkinsonVolatility, RogersSatchellVolatility, Rsi, Rvi, Sma, Stochastic, Wma,
+    Obv, ParkinsonVolatility, RogersSatchellVolatility, Rsi, RviVolatility, Sma, Stochastic, Wma,
     YangZhangVolatility,
 };
 use wickra_data::csv::CandleReader;
@@ -145,7 +145,9 @@ fn benches(c: &mut Criterion) {
     bench_candle_input(c, "atr", &candles, || Atr::new(14).unwrap());
     bench_candle_input(c, "stochastic", &candles, Stochastic::classic);
     bench_candle_input(c, "obv", &candles, Obv::new);
-    bench_scalar(c, "rvi", &closes, || Rvi::new(10).unwrap());
+    bench_scalar(c, "rvi_volatility", &closes, || {
+        RviVolatility::new(10).unwrap()
+    });
     bench_candle_input(c, "parkinson", &candles, || {
         ParkinsonVolatility::new(20, 252).unwrap()
     });

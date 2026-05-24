@@ -117,21 +117,23 @@ node_scalar_indicator!(
 );
 node_scalar_indicator!(ZScoreNode, "ZScore", wc::ZScore);
 
-// RVI takes a single `period` parameter but additionally rejects `period == 1`
-// (a 1-bar standard deviation is always zero), so the `clamp_period`-to-1
-// strategy from `node_scalar_indicator!` would panic via `must`. Use a
-// hand-rolled fallible constructor that throws a JS error instead.
-#[napi(js_name = "RVI")]
-pub struct RviNode {
-    inner: wc::Rvi,
+// RviVolatility (Relative Volatility Index, Donald Dorsey). Disambiguated
+// from `RVI` = Relative Vigor Index in Family 02. Takes a single `period`
+// parameter and additionally rejects `period == 1` (a 1-bar standard
+// deviation is always zero), so the `clamp_period`-to-1 strategy from
+// `node_scalar_indicator!` would panic via `must`. Hand-rolled fallible
+// constructor instead, throws a JS error on bad period.
+#[napi(js_name = "RVIVolatility")]
+pub struct RviVolatilityNode {
+    inner: wc::RviVolatility,
 }
 
 #[napi]
-impl RviNode {
+impl RviVolatilityNode {
     #[napi(constructor)]
     pub fn new(period: u32) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Rvi::new(period as usize).map_err(map_err)?,
+            inner: wc::RviVolatility::new(period as usize).map_err(map_err)?,
         })
     }
     #[napi]

@@ -40,14 +40,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Roughly 5× more statistically efficient than close-to-close stddev
   under a driftless-GBM assumption. Defaults: `period = 20`,
   `trading_periods = 252`.
-- **RVI (Relative Volatility Index).** Donald Dorsey's RSI-shaped
-  volatility gauge: partition the rolling standard deviation of close
-  into "up" (close rose) and "down" (close fell) samples, Wilder-smooth
-  each side, and compute `100 · AvgUp / (AvgUp + AvgDown)`. Bounded on
-  `[0, 100]`; saturates at `100` in pure uptrends, `0` in pure
-  downtrends, and falls back to `50` on a completely flat series (same
-  undefined-RS convention as `RSI`). Single `period` parameter (default
-  `10`) drives both the stddev window and the Wilder smoothing.
+- **RVIVolatility (Relative Volatility Index).** Donald Dorsey's
+  RSI-shaped volatility gauge: partition the rolling standard
+  deviation of close into "up" (close rose) and "down" (close fell)
+  samples, Wilder-smooth each side, and compute
+  `100 · AvgUp / (AvgUp + AvgDown)`. Bounded on `[0, 100]`; saturates
+  at `100` in pure uptrends, `0` in pure downtrends, and falls back to
+  `50` on a completely flat series (same undefined-RS convention as
+  `RSI`). Single `period` parameter (default `10`) drives both the
+  stddev window and the Wilder smoothing. Named `RVIVolatility` rather
+  than plain `RVI` to disambiguate from Relative Vigor Index, which
+  ships in Family 02 under the shorter `RVI` name.
 
 ## [0.2.7] - 2026-05-24
 

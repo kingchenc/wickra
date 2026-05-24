@@ -97,7 +97,7 @@ wasm_scalar_indicator!(WasmLinRegSlope, "LinRegSlope", wc::LinRegSlope, period: 
 wasm_scalar_indicator!(WasmVerticalHorizontalFilter, "VerticalHorizontalFilter", wc::VerticalHorizontalFilter, period: usize);
 wasm_scalar_indicator!(WasmZScore, "ZScore", wc::ZScore, period: usize);
 wasm_scalar_indicator!(WasmLinRegAngle, "LinRegAngle", wc::LinRegAngle, period: usize);
-wasm_scalar_indicator!(WasmRvi, "RVI", wc::Rvi, period: usize);
+wasm_scalar_indicator!(WasmRviVolatility, "RVIVolatility", wc::RviVolatility, period: usize);
 
 // ---------- Yang-Zhang Volatility (OHLC candle, 2 params) ----------
 

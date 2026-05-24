@@ -29,9 +29,9 @@ use crate::traits::Indicator;
 /// # Example
 ///
 /// ```
-/// use wickra_core::{Indicator, Rvi};
+/// use wickra_core::{Indicator, RviVolatility};
 ///
-/// let mut indicator = Rvi::new(10).unwrap();
+/// let mut indicator = RviVolatility::new(10).unwrap();
 /// let mut last = None;
 /// for i in 0..80 {
 ///     last = indicator.update(100.0 + (f64::from(i) * 0.3).sin() * 5.0);
@@ -39,7 +39,7 @@ use crate::traits::Indicator;
 /// assert!(last.is_some());
 /// ```
 #[derive(Debug, Clone)]
-pub struct Rvi {
+pub struct RviVolatility {
     period: usize,
     // Rolling-stddev state.
     window: VecDeque<f64>,
@@ -55,7 +55,7 @@ pub struct Rvi {
     last_value: Option<f64>,
 }
 
-impl Rvi {
+impl RviVolatility {
     /// Construct an RVI with the given period.
     ///
     /// `period` is used both as the standard-deviation window length and as
@@ -111,7 +111,7 @@ impl Rvi {
     }
 }
 
-impl Indicator for Rvi {
+impl Indicator for RviVolatility {
     type Input = f64;
     type Output = f64;
 
@@ -209,7 +209,7 @@ impl Indicator for Rvi {
     }
 
     fn name(&self) -> &'static str {
-        "RVI"
+        "RVIVolatility"
     }
 }
 
@@ -221,19 +221,22 @@ mod tests {
 
     #[test]
     fn rejects_zero_period() {
-        assert!(matches!(Rvi::new(0), Err(Error::PeriodZero)));
+        assert!(matches!(RviVolatility::new(0), Err(Error::PeriodZero)));
     }
 
     #[test]
     fn rejects_period_one() {
-        assert!(matches!(Rvi::new(1), Err(Error::InvalidPeriod { .. })));
+        assert!(matches!(
+            RviVolatility::new(1),
+            Err(Error::InvalidPeriod { .. })
+        ));
     }
 
     #[test]
     fn accessors_and_metadata() {
-        let rvi = Rvi::new(14).unwrap();
+        let rvi = RviVolatility::new(14).unwrap();
         assert_eq!(rvi.period(), 14);
-        assert_eq!(rvi.name(), "RVI");
+        assert_eq!(rvi.name(), "RVIVolatility");
         assert_eq!(rvi.value(), None);
         assert_eq!(rvi.warmup_period(), 27);
         assert!(!rvi.is_ready());
@@ -244,7 +247,7 @@ mod tests {
         // Flat input -> stddev is zero every bar and direction is "unchanged",
         // so both avg_up and avg_down stay at zero -> the undefined-RS
         // convention returns 50.
-        let mut rvi = Rvi::new(5).unwrap();
+        let mut rvi = RviVolatility::new(5).unwrap();
         let out = rvi.batch(&[42.0; 40]);
         for v in out.iter().skip(9).flatten() {
             assert_relative_eq!(*v, 50.0, epsilon = 1e-12);
@@ -255,7 +258,7 @@ mod tests {
     fn pure_uptrend_saturates_to_one_hundred() {
         // Every bar's close is above the previous -> every stddev sample is
         // classified as up, every down sample is zero -> RVI = 100.
-        let mut rvi = Rvi::new(5).unwrap();
+        let mut rvi = RviVolatility::new(5).unwrap();
         let prices: Vec<f64> = (1..=40).map(f64::from).collect();
         let out = rvi.batch(&prices);
         for v in out.iter().skip(9).flatten() {
@@ -265,7 +268,7 @@ mod tests {
 
     #[test]
     fn pure_downtrend_saturates_to_zero() {
-        let mut rvi = Rvi::new(5).unwrap();
+        let mut rvi = RviVolatility::new(5).unwrap();
         let prices: Vec<f64> = (1..=40).rev().map(f64::from).collect();
         let out = rvi.batch(&prices);
         for v in out.iter().skip(9).flatten() {
@@ -275,7 +278,7 @@ mod tests {
 
     #[test]
     fn output_is_bounded() {
-        let mut rvi = Rvi::new(10).unwrap();
+        let mut rvi = RviVolatility::new(10).unwrap();
         let prices: Vec<f64> = (0..200)
             .map(|i| 100.0 + (f64::from(i) * 0.3).sin() * 12.0)
             .collect();
@@ -286,7 +289,7 @@ mod tests {
 
     #[test]
     fn first_emission_at_warmup_period() {
-        let mut rvi = Rvi::new(5).unwrap();
+        let mut rvi = RviVolatility::new(5).unwrap();
         assert_eq!(rvi.warmup_period(), 9);
         let prices: Vec<f64> = (0..30)
             .map(|i| 100.0 + (f64::from(i) * 0.4).sin() * 3.0)
@@ -306,15 +309,15 @@ mod tests {
         let prices: Vec<f64> = (0..120)
             .map(|i| 100.0 + (f64::from(i) * 0.25).sin() * 9.0)
             .collect();
-        let batch = Rvi::new(10).unwrap().batch(&prices);
-        let mut streamer = Rvi::new(10).unwrap();
+        let batch = RviVolatility::new(10).unwrap().batch(&prices);
+        let mut streamer = RviVolatility::new(10).unwrap();
         let streamed: Vec<_> = prices.iter().map(|p| streamer.update(*p)).collect();
         assert_eq!(batch, streamed);
     }
 
     #[test]
     fn reset_clears_state() {
-        let mut rvi = Rvi::new(5).unwrap();
+        let mut rvi = RviVolatility::new(5).unwrap();
         rvi.batch(&(1..=40).map(f64::from).collect::<Vec<_>>());
         assert!(rvi.is_ready());
         rvi.reset();
@@ -325,7 +328,7 @@ mod tests {
 
     #[test]
     fn ignores_non_finite_input() {
-        let mut rvi = Rvi::new(5).unwrap();
+        let mut rvi = RviVolatility::new(5).unwrap();
         let out = rvi.batch(&(1..=40).map(f64::from).collect::<Vec<_>>());
         let last = *out.last().unwrap();
         assert!(last.is_some());

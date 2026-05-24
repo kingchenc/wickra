@@ -4778,21 +4778,25 @@ impl PyParkinsonVolatility {
     }
 }
 
-// ============================== RVI ==============================
+// ============================== RVI (Volatility) ==============================
+//
+// Named `RVIVolatility` rather than plain `RVI` to disambiguate from
+// Relative Vigor Index (a separate momentum indicator that lives in
+// Family 02 with the shorter `RVI` name).
 
-#[pyclass(name = "RVI", module = "wickra._wickra", skip_from_py_object)]
+#[pyclass(name = "RVIVolatility", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
-struct PyRvi {
-    inner: wc::Rvi,
+struct PyRviVolatility {
+    inner: wc::RviVolatility,
 }
 
 #[pymethods]
-impl PyRvi {
+impl PyRviVolatility {
     #[new]
     #[pyo3(signature = (period=10))]
     fn new(period: usize) -> PyResult<Self> {
         Ok(Self {
-            inner: wc::Rvi::new(period).map_err(map_err)?,
+            inner: wc::RviVolatility::new(period).map_err(map_err)?,
         })
     }
     fn update(&mut self, value: f64) -> Option<f64> {
@@ -4826,7 +4830,7 @@ impl PyRvi {
         self.inner.warmup_period()
     }
     fn __repr__(&self) -> String {
-        format!("RVI(period={})", self.inner.period())
+        format!("RVIVolatility(period={})", self.inner.period())
     }
 }
 
@@ -4907,7 +4911,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyChaikinVolatility>()?;
     m.add_class::<PyZScore>()?;
     m.add_class::<PyLinRegAngle>()?;
-    m.add_class::<PyRvi>()?;
+    m.add_class::<PyRviVolatility>()?;
     m.add_class::<PyParkinsonVolatility>()?;
     m.add_class::<PyGarmanKlassVolatility>()?;
     m.add_class::<PyRogersSatchellVolatility>()?;
