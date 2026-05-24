@@ -313,9 +313,11 @@ impl BinanceKlineStream {
                     }
                 }
                 Message::Ping(payload) => {
-                    if self.socket.send(Message::Pong(payload)).await.is_err() {
-                        self.reconnect().await?;
-                    }
+                    // Best-effort Pong reply. If the write fails the
+                    // connection is already dead — the next read will
+                    // surface the error and trigger reconnect through
+                    // the timeout/err arm above.
+                    let _ = self.socket.send(Message::Pong(payload)).await;
                 }
                 Message::Pong(_) | Message::Frame(_) => {}
                 Message::Close(_) => {
@@ -850,6 +852,37 @@ mod tests {
         // Either a WS-layer error or a Malformed error from URL parsing —
         // we only care that the call surfaced as Err rather than panicked.
         let _ = err;
+    }
+
+    #[tokio::test]
+    async fn next_event_skips_non_kline_frames_and_returns_the_next_kline() {
+        // Drives the loop through the Text- *and* Binary-arm "frame was
+        // not a kline, keep reading" fall-throughs before serving the
+        // actual kline.
+        let kline = sample_kline_text();
+        let base = one_shot_server(move |mut ws| async move {
+            let _ = ws
+                .send(Message::Text(r#"{"result":null,"id":1}"#.into()))
+                .await;
+            let _ = ws
+                .send(Message::Binary(b"{\"id\":2}".to_vec().into()))
+                .await;
+            let _ = ws.send(Message::Text(kline.into())).await;
+        })
+        .await;
+        let mut stream = BinanceKlineStream::connect_with_config(
+            &["BTCUSDT".to_string()],
+            Interval::OneMinute,
+            test_config(base),
+        )
+        .await
+        .unwrap();
+        let event = stream
+            .next_event()
+            .await
+            .unwrap()
+            .expect("kline arrives after the two skipped control frames");
+        assert_eq!(event.symbol, "btcusdt");
     }
 
     #[tokio::test]
