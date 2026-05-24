@@ -66,6 +66,28 @@ def test_rsi_wilder_textbook_first_value():
     assert math.isclose(out[14], 70.464, abs_tol=0.05)
 
 
+def test_alma_constant_series_yields_the_constant():
+    # ALMA's Gaussian weights are normalised, so any constant series is
+    # reproduced exactly after warmup.
+    out = ta.ALMA(9, 0.85, 6.0).batch(np.full(30, 42.0, dtype=np.float64))
+    assert np.all(np.isnan(out[:8]))
+    np.testing.assert_allclose(out[8:], 42.0, atol=1e-12)
+
+
+def test_alma_reference_value_period_3():
+    # ALMA(period=3, offset=0.85, sigma=6) on [10, 20, 30].
+    # m = 0.85 * 2 = 1.7; s = 3 / 6 = 0.5; 2*s^2 = 0.5.
+    out = ta.ALMA(3, 0.85, 6.0).batch(np.array([10.0, 20.0, 30.0]))
+    assert math.isnan(out[0]) and math.isnan(out[1])
+    # Independently compute the expected Gaussian-weighted sum.
+    w = np.exp(-((np.arange(3, dtype=np.float64) - 1.7) ** 2) / 0.5)
+    expected = float(np.dot([10.0, 20.0, 30.0], w) / w.sum())
+    assert math.isclose(out[2], expected, abs_tol=1e-12)
+    # Sanity: heavy offset toward the newest sample lifts the average above
+    # the simple mean of 20.
+    assert out[2] > 20.0
+
+
 def test_macd_constant_series_converges_to_zero():
     out = ta.MACD().batch(np.full(200, 100.0))
     # Last row's MACD and signal must be ~0.

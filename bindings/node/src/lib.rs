@@ -1103,6 +1103,42 @@ impl KamaNode {
     }
 }
 
+// ============================== ALMA ==============================
+
+#[napi(js_name = "ALMA")]
+pub struct AlmaNode {
+    inner: wc::Alma,
+}
+#[napi]
+impl AlmaNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, offset: f64, sigma: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Alma::new(clamp_period(period), offset, sigma).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+}
+
 // ============================== T3 ==============================
 
 #[napi(js_name = "T3")]

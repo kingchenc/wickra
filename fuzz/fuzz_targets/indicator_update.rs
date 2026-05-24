@@ -15,10 +15,10 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    BatchExt, BollingerBands, Cmo, Coppock, Dema, Dpo, Ema, HistoricalVolatility, Hma, Indicator,
-    Kama, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, Mom, Pmo, Ppo, Roc, Rsi, Sma,
-    Smma, StdDev, StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Wma,
-    ZScore, Zlema,
+    Alma, BatchExt, BollingerBands, Cmo, Coppock, Dema, Dpo, Ema, HistoricalVolatility, Hma,
+    Indicator, Kama, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, Mom, Pmo, Ppo, Roc,
+    Rsi, Sma, Smma, StdDev, StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex,
+    VerticalHorizontalFilter, Wma, ZScore, Zlema,
 };
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
@@ -53,6 +53,7 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| Trima::new(14).unwrap(), &data);
     drive(|| Zlema::new(14).unwrap(), &data);
     drive(|| Kama::new(10, 2, 30).unwrap(), &data);
+    drive(|| Alma::new(9, 0.85, 6.0).unwrap(), &data);
     drive(|| T3::new(14, 0.7).unwrap(), &data);
     drive(|| Mom::new(14).unwrap(), &data);
     drive(|| Cmo::new(14).unwrap(), &data);

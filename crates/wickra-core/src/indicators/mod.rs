@@ -7,6 +7,7 @@
 mod accelerator_oscillator;
 mod adl;
 mod adx;
+mod alma;
 mod aroon;
 mod aroon_oscillator;
 mod atr;
@@ -79,6 +80,7 @@ mod zlema;
 pub use accelerator_oscillator::AcceleratorOscillator;
 pub use adl::Adl;
 pub use adx::{Adx, AdxOutput};
+pub use alma::Alma;
 pub use aroon::{Aroon, AroonOutput};
 pub use aroon_oscillator::AroonOscillator;
 pub use atr::Atr;

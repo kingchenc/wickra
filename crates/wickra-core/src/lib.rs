@@ -44,7 +44,7 @@ pub mod indicators;
 
 pub use error::{Error, Result};
 pub use indicators::{
-    AcceleratorOscillator, Adl, Adx, AdxOutput, Aroon, AroonOscillator, AroonOutput, Atr,
+    AcceleratorOscillator, Adl, Adx, AdxOutput, Alma, Aroon, AroonOscillator, AroonOutput, Atr,
     AtrTrailingStop, AwesomeOscillator, BalanceOfPower, BollingerBands, BollingerBandwidth,
     BollingerOutput, Cci, ChaikinMoneyFlow, ChaikinOscillator, ChaikinVolatility, ChandeKrollStop,
     ChandeKrollStopOutput, ChandelierExit, ChandelierExitOutput, ChoppinessIndex, Cmo, Coppock,

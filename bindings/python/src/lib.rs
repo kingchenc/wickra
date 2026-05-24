@@ -812,6 +812,67 @@ impl PyKama {
     }
 }
 
+// ============================== ALMA ==============================
+
+#[pyclass(name = "ALMA", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyAlma {
+    inner: wc::Alma,
+}
+
+#[pymethods]
+impl PyAlma {
+    #[new]
+    #[pyo3(signature = (period=9, offset=0.85, sigma=6.0))]
+    fn new(period: usize, offset: f64, sigma: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Alma::new(period, offset, sigma).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn offset(&self) -> f64 {
+        self.inner.offset()
+    }
+    #[getter]
+    fn sigma(&self) -> f64 {
+        self.inner.sigma()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "ALMA(period={}, offset={}, sigma={})",
+            self.inner.period(),
+            self.inner.offset(),
+            self.inner.sigma()
+        )
+    }
+}
+
 // ============================== CCI ==============================
 
 #[pyclass(name = "CCI", module = "wickra._wickra", skip_from_py_object)]
@@ -4494,6 +4555,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyTema>()?;
     m.add_class::<PyHma>()?;
     m.add_class::<PyKama>()?;
+    m.add_class::<PyAlma>()?;
     m.add_class::<PyCci>()?;
     m.add_class::<PyRoc>()?;
     m.add_class::<PyWilliamsR>()?;

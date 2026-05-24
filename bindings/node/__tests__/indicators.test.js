@@ -37,6 +37,7 @@ const scalarFactories = {
   ROC: () => new wickra.ROC(12),
   TRIX: () => new wickra.TRIX(9),
   KAMA: () => new wickra.KAMA(10, 2, 30),
+  ALMA: () => new wickra.ALMA(9, 0.85, 6.0),
   SMMA: () => new wickra.SMMA(14),
   TRIMA: () => new wickra.TRIMA(20),
   ZLEMA: () => new wickra.ZLEMA(14),
@@ -257,4 +258,17 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+test('ALMA(3, 0.85, 6) reference value on [10, 20, 30]', () => {
+  // m = 0.85 * 2 = 1.7; s = 3 / 6 = 0.5; 2*s^2 = 0.5.
+  const out = new wickra.ALMA(3, 0.85, 6).batch([10, 20, 30]);
+  assert.ok(Number.isNaN(out[0]) && Number.isNaN(out[1]));
+  const w = [0, 1, 2].map((i) => Math.exp(-Math.pow(i - 1.7, 2) / 0.5));
+  const s = w[0] + w[1] + w[2];
+  const expected = (10 * w[0] + 20 * w[1] + 30 * w[2]) / s;
+  assert.ok(Math.abs(out[2] - expected) < 1e-12);
+  // The heavy offset toward the newest sample lifts the average above the
+  // simple mean of 20.
+  assert.ok(out[2] > 20);
 });

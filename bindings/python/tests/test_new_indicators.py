@@ -44,6 +44,7 @@ SCALAR = [
     (ta.SMMA, (14,)),
     (ta.TRIMA, (20,)),
     (ta.ZLEMA, (14,)),
+    (ta.ALMA, (9, 0.85, 6.0)),
     (ta.T3, (5, 0.7)),
     (ta.MOM, (10,)),
     (ta.CMO, (14,)),

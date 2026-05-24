@@ -38,6 +38,7 @@ from ._wickra import (
     ZLEMA,
     T3,
     VWMA,
+    ALMA,
     # Momentum
     RSI,
     MACD,
@@ -119,6 +120,7 @@ __all__ = [
     "ZLEMA",
     "T3",
     "VWMA",
+    "ALMA",
     # Momentum
     "RSI",
     "MACD",

@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Family 01 — Moving Averages.** `ALMA` (Arnaud Legoux Moving Average):
+  Gaussian-weighted moving average with configurable centre (`offset` in
+  `[0, 1]`) and kernel width (`sigma > 0`). Community-standard defaults
+  `(period = 9, offset = 0.85, sigma = 6.0)` available via `Alma::classic()`.
+  Exposed in all four bindings (Rust, Python, Node, WASM).
+
 ## [0.2.7] - 2026-05-24
 
 ### Added
