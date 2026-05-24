@@ -1120,6 +1120,51 @@ impl AwesomeOscillatorHistogramNode {
     }
 }
 
+#[napi(js_name = "ElderImpulse")]
+pub struct ElderImpulseNode {
+    inner: wc::ElderImpulse,
+}
+#[napi]
+impl ElderImpulseNode {
+    #[napi(constructor)]
+    pub fn new(
+        ema_period: u32,
+        macd_fast: u32,
+        macd_slow: u32,
+        macd_signal: u32,
+    ) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::ElderImpulse::new(
+                clamp_period(ema_period),
+                clamp_period(macd_fast),
+                clamp_period(macd_slow),
+                clamp_period(macd_signal),
+            )
+            .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 #[napi(object)]
 pub struct ZeroLagMacdValue {
     pub macd: f64,

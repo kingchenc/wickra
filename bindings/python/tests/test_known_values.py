@@ -87,6 +87,14 @@ def test_awesome_oscillator_histogram_flat_series_converges_to_zero():
     np.testing.assert_allclose(out[6:], 0.0, atol=1e-12)
 
 
+def test_elder_impulse_constant_series_is_neutral():
+    # Flat input -> neither EMA nor MACD histogram moves -> Impulse stays at 0.
+    out = ta.ElderImpulse(13, 12, 26, 9).batch(np.full(120, 42.0, dtype=np.float64))
+    ready = out[~np.isnan(out)]
+    assert ready.size > 0
+    np.testing.assert_array_equal(ready, np.zeros_like(ready))
+
+
 def test_cfo_perfect_linear_series_yields_zero():
     # LinReg of a perfectly linear series fits exactly, so CFO = 0 after warmup.
     out = ta.CFO(5).batch(np.arange(1.0, 21.0, dtype=np.float64) * 2.0)

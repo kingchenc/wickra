@@ -88,6 +88,7 @@ wasm_scalar_indicator!(WasmDpo, "DPO", wc::Dpo, period: usize);
 wasm_scalar_indicator!(WasmPpo, "PPO", wc::Ppo, fast: usize, slow: usize);
 wasm_scalar_indicator!(WasmApo, "APO", wc::Apo, fast: usize, slow: usize);
 wasm_scalar_indicator!(WasmCfo, "CFO", wc::Cfo, period: usize);
+wasm_scalar_indicator!(WasmElderImpulse, "ElderImpulse", wc::ElderImpulse, ema_period: usize, macd_fast: usize, macd_slow: usize, macd_signal: usize);
 
 #[wasm_bindgen(js_name = ZeroLagMACD)]
 pub struct WasmZeroLagMacd {

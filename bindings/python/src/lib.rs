@@ -874,6 +874,57 @@ impl PyAoHist {
     }
 }
 
+// ============================== ElderImpulse ==============================
+
+#[pyclass(name = "ElderImpulse", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyElderImpulse {
+    inner: wc::ElderImpulse,
+}
+
+#[pymethods]
+impl PyElderImpulse {
+    #[new]
+    #[pyo3(signature = (ema_period=13, macd_fast=12, macd_slow=26, macd_signal=9))]
+    fn new(
+        ema_period: usize,
+        macd_fast: usize,
+        macd_slow: usize,
+        macd_signal: usize,
+    ) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::ElderImpulse::new(ema_period, macd_fast, macd_slow, macd_signal)
+                .map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (e, f, s, sig) = self.inner.periods();
+        format!("ElderImpulse(ema_period={e}, macd_fast={f}, macd_slow={s}, macd_signal={sig})")
+    }
+}
+
 // ============================== ZeroLagMACD ==============================
 
 #[pyclass(name = "ZeroLagMACD", module = "wickra._wickra", skip_from_py_object)]
@@ -4711,6 +4762,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyAoHist>()?;
     m.add_class::<PyCfo>()?;
     m.add_class::<PyZeroLagMacd>()?;
+    m.add_class::<PyElderImpulse>()?;
     m.add_class::<PyCci>()?;
     m.add_class::<PyRoc>()?;
     m.add_class::<PyWilliamsR>()?;

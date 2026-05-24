@@ -49,13 +49,13 @@ pub use indicators::{
     BollingerBandwidth, BollingerOutput, Cci, Cfo, ChaikinMoneyFlow, ChaikinOscillator,
     ChaikinVolatility, ChandeKrollStop, ChandeKrollStopOutput, ChandelierExit,
     ChandelierExitOutput, ChoppinessIndex, Cmo, Coppock, Dema, Donchian, DonchianOutput, Dpo,
-    EaseOfMovement, Ema, ForceIndex, HistoricalVolatility, Hma, Kama, Keltner, KeltnerOutput,
-    LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, MacdOutput, MassIndex, MedianPrice,
-    Mfi, Mom, Natr, Obv, PercentB, Pmo, Ppo, Psar, Roc, RollingVwap, Rsi, Sma, Smma, StdDev,
-    StochRsi, Stochastic, StochasticOutput, SuperTrend, SuperTrendOutput, Tema, Trima, Trix,
-    TrueRange, Tsi, TypicalPrice, UlcerIndex, UltimateOscillator, VerticalHorizontalFilter,
-    VolumePriceTrend, Vortex, VortexOutput, Vwap, Vwma, WeightedClose, WilliamsR, Wma, ZScore,
-    ZeroLagMacd, ZeroLagMacdOutput, Zlema, T3,
+    EaseOfMovement, ElderImpulse, Ema, ForceIndex, HistoricalVolatility, Hma, Kama, Keltner,
+    KeltnerOutput, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, MacdOutput,
+    MassIndex, MedianPrice, Mfi, Mom, Natr, Obv, PercentB, Pmo, Ppo, Psar, Roc, RollingVwap, Rsi,
+    Sma, Smma, StdDev, StochRsi, Stochastic, StochasticOutput, SuperTrend, SuperTrendOutput, Tema,
+    Trima, Trix, TrueRange, Tsi, TypicalPrice, UlcerIndex, UltimateOscillator,
+    VerticalHorizontalFilter, VolumePriceTrend, Vortex, VortexOutput, Vwap, Vwma, WeightedClose,
+    WilliamsR, Wma, ZScore, ZeroLagMacd, ZeroLagMacdOutput, Zlema, T3,
 };
 pub use ohlcv::{Candle, Tick};
 pub use traits::{BatchExt, Chain, Indicator};

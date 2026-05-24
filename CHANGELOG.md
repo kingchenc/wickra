@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Family 03 — MACD & Price Oscillators.** `ElderImpulse` (Alexander
+  Elder's Impulse System): tri-state momentum gauge combining `EMA`
+  trend slope with `MACD` histogram slope. Returns `+1` (green/buy)
+  when both rise, `−1` (red/sell) when both fall, `0` (blue/neutral)
+  on disagreement. Four parameters
+  `(ema_period, macd_fast, macd_slow, macd_signal)`; defaults
+  `(13, 12, 26, 9)` track *Come Into My Trading Room*. Exposed in all
+  four bindings.
 - **Family 03 — MACD & Price Oscillators.** `ZeroLagMacd`: classic
   MACD topology with `ZLEMA` substituted for `EMA` everywhere — faster
   reaction to trend changes at the cost of slightly noisier readings.
