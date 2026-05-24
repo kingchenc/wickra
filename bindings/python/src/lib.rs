@@ -2391,6 +2391,87 @@ impl PyRwi {
     }
 }
 
+// ============================== WaveTrend ==============================
+
+#[pyclass(name = "WaveTrend", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyWaveTrend {
+    inner: wc::WaveTrend,
+}
+
+#[pymethods]
+impl PyWaveTrend {
+    #[new]
+    #[pyo3(signature = (channel_period=10, average_period=21, signal_period=4))]
+    fn new(channel_period: usize, average_period: usize, signal_period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::WaveTrend::new(channel_period, average_period, signal_period)
+                .map_err(map_err)?,
+        })
+    }
+    #[staticmethod]
+    fn classic() -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::WaveTrend::classic().map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.wt1, o.wt2)))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 2] = o.wt1;
+                out[i * 2 + 1] = o.wt2;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn periods(&self) -> (usize, usize, usize) {
+        self.inner.periods()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (cp, ap, sp) = self.inner.periods();
+        format!("WaveTrend(channel_period={cp}, average_period={ap}, signal_period={sp})")
+    }
+}
+
 // ============================== Mass Index ==============================
 
 #[pyclass(name = "MassIndex", module = "wickra._wickra", skip_from_py_object)]
@@ -4820,6 +4901,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyAroonOscillator>()?;
     m.add_class::<PyVortex>()?;
     m.add_class::<PyRwi>()?;
+    m.add_class::<PyWaveTrend>()?;
     m.add_class::<PyMassIndex>()?;
     m.add_class::<PyNatr>()?;
     m.add_class::<PyStdDev>()?;

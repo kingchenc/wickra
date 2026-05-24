@@ -20,7 +20,7 @@ use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Through
 use std::hint::black_box;
 use wickra::{
     Adxr, Atr, BatchExt, BollingerBands, Candle, Ema, Indicator, Kst, MacdIndicator, Obv, Rsi, Rwi,
-    Sma, Stochastic, Tii, Wma,
+    Sma, Stochastic, Tii, WaveTrend, Wma,
 };
 use wickra_data::csv::CandleReader;
 
@@ -164,6 +164,7 @@ fn benches(c: &mut Criterion) {
     bench_candle_input(c, "atr", &candles, || Atr::new(14).unwrap());
     bench_candle_input(c, "adxr", &candles, || Adxr::new(14).unwrap());
     bench_candle_input(c, "rwi", &candles, || Rwi::new(14).unwrap());
+    bench_candle_input(c, "wave_trend", &candles, || WaveTrend::classic().unwrap());
     bench_candle_input(c, "stochastic", &candles, Stochastic::classic);
     bench_candle_input(c, "obv", &candles, Obv::new);
 }

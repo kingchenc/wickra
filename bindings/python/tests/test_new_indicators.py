@@ -193,6 +193,10 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 MULTI = {
     "Vortex": (lambda: ta.Vortex(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "RWI": (lambda: ta.RWI(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
+    "WaveTrend": (
+        lambda: ta.WaveTrend.classic(),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
     "SuperTrend": (
         lambda: ta.SuperTrend(10, 3.0),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
@@ -306,6 +310,18 @@ def test_linreg_angle_reference():
     # A series rising by 1 per step has slope 1, and atan(1) = 45 degrees.
     out = ta.LinRegAngle(5).batch(np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0]))
     assert out[4] == pytest.approx(45.0)
+
+
+def test_wave_trend_flat_market_yields_zero():
+    # On a perfectly flat market the flat-tolerance guard keeps both lines
+    # at exactly zero (otherwise the ratio ci = (ap - esa) / (0.015 * d)
+    # would explode on the first esa ULP).
+    out = ta.WaveTrend.classic().batch(
+        np.full(80, 10.0), np.full(80, 10.0), np.full(80, 10.0)
+    )
+    last = out[~np.isnan(out[:, 0])][-1]
+    assert last[0] == 0.0
+    assert last[1] == 0.0
 
 
 def test_kst_classic_constants_yield_zero():

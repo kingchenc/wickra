@@ -37,6 +37,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   signal = 9)` parameter set; warmup
   `= max(roc_i + sma_i) + signal_period − 1` (53 for the classic
   defaults). Multi-output `(kst, signal)` across all four bindings.
+- **Wave Trend Oscillator (LazyBear)** in the Trend & Directional
+  family. Two-line mean-reverting momentum gauge built from the
+  typical price and three cascaded EMAs:
+  `esa = EMA(ap, channel)`, `d = EMA(|ap − esa|, channel)`,
+  `ci = (ap − esa) / (0.015 · d)`, `wt1 = EMA(ci, average)`,
+  `wt2 = SMA(wt1, signal)`. `WaveTrend::classic()` exposes the
+  LazyBear defaults `(channel = 10, average = 21, signal = 4)`;
+  warmup `= 2 · channel + average + signal − 3` (42 for the classic
+  defaults). Includes a sub-ULP flat-tolerance guard on `ci` so a
+  perfectly flat market reports `(0, 0)` instead of the
+  mathematically indeterminate `−1 / 0.015 = −66.67`. Multi-output
+  `(wt1, wt2)` across all four bindings.
 
 ## [0.2.7] - 2026-05-24
 

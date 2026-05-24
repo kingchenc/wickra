@@ -28,7 +28,7 @@ use wickra_core::{
     ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex, Donchian, EaseOfMovement,
     ForceIndex, Indicator, Keltner, MassIndex, MedianPrice, Mfi, Natr, Obv, Psar, RollingVwap, Rwi,
     Stochastic, SuperTrend, TrueRange, TypicalPrice, UltimateOscillator, VolumePriceTrend, Vortex,
-    Vwap, Vwma, WeightedClose, WilliamsR,
+    Vwap, Vwma, WaveTrend, WeightedClose, WilliamsR,
 };
 
 /// Convert a flat `f64` stream into a `Vec<Candle>` by chunking it into
@@ -92,6 +92,7 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| AroonOscillator::new(14).unwrap(), &candles);
     drive(|| Vortex::new(14).unwrap(), &candles);
     drive(|| Rwi::new(14).unwrap(), &candles);
+    drive(|| WaveTrend::classic().unwrap(), &candles);
     drive(|| MassIndex::new(9, 25).unwrap(), &candles);
     drive(|| ChoppinessIndex::new(14).unwrap(), &candles);
 

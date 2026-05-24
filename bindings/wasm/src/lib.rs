@@ -1408,6 +1408,66 @@ impl WasmVortex {
     }
 }
 
+#[wasm_bindgen(js_name = WaveTrend)]
+pub struct WasmWaveTrend {
+    inner: wc::WaveTrend,
+}
+
+#[wasm_bindgen(js_class = WaveTrend)]
+impl WasmWaveTrend {
+    #[wasm_bindgen(constructor)]
+    pub fn new(
+        channel_period: usize,
+        average_period: usize,
+        signal_period: usize,
+    ) -> Result<WasmWaveTrend, JsError> {
+        Ok(Self {
+            inner: wc::WaveTrend::new(channel_period, average_period, signal_period)
+                .map_err(map_err)?,
+        })
+    }
+    pub fn classic() -> Result<WasmWaveTrend, JsError> {
+        Ok(Self {
+            inner: wc::WaveTrend::classic().map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"wt1".into(), &o.wt1.into()).ok();
+                Reflect::set(&obj, &"wt2".into(), &o.wt2.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.wt1;
+                out[i * 2 + 1] = o.wt2;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
 #[wasm_bindgen(js_name = RWI)]
 pub struct WasmRwi {
     inner: wc::Rwi,
