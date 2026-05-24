@@ -66,6 +66,14 @@ def test_rsi_wilder_textbook_first_value():
     assert math.isclose(out[14], 70.464, abs_tol=0.05)
 
 
+def test_laguerre_rsi_constant_series_stays_at_mid_band():
+    # All four Laguerre stages seed to the first input, so subsequent flat
+    # inputs keep them equal and the up/down accumulator is 0 — Wickra maps
+    # that to the neutral 50.
+    out = ta.LaguerreRSI(0.5).batch(np.full(40, 42.0, dtype=np.float64))
+    np.testing.assert_allclose(out, 50.0, atol=1e-12)
+
+
 def test_smi_close_at_centre_yields_zero():
     # Close at the midpoint of a flat high/low range -> displacement is
     # always zero -> SMI converges to 0.

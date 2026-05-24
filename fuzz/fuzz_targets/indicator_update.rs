@@ -16,8 +16,8 @@
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
     BatchExt, BollingerBands, Cmo, Coppock, Dema, Dpo, Ema, HistoricalVolatility, Hma, Indicator,
-    Kama, Kst, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, Mom, Pmo, Ppo, Roc, Rsi,
-    Sma,
+    Kama, Kst, LaguerreRsi, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, Mom, Pmo,
+    Ppo, Roc, Rsi, Sma,
     Smma, StdDev, StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Wma,
     ZScore, Zlema,
 };
@@ -71,6 +71,7 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| LinRegAngle::new(14).unwrap(), &data);
     drive(|| VerticalHorizontalFilter::new(14).unwrap(), &data);
     drive(|| ZScore::new(14).unwrap(), &data);
+    drive(|| LaguerreRsi::new(0.5).unwrap(), &data);
 
     // KST is scalar-input but emits `KstOutput`, so it bypasses the generic
     // `drive` helper. Streaming + batch are still both exercised.

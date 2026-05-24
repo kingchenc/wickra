@@ -812,6 +812,54 @@ impl PyKama {
     }
 }
 
+// ============================== Laguerre RSI ==============================
+
+#[pyclass(name = "LaguerreRSI", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyLaguerreRsi {
+    inner: wc::LaguerreRsi,
+}
+
+#[pymethods]
+impl PyLaguerreRsi {
+    #[new]
+    #[pyo3(signature = (gamma=0.5))]
+    fn new(gamma: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::LaguerreRsi::new(gamma).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn gamma(&self) -> f64 {
+        self.inner.gamma()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("LaguerreRSI(gamma={})", self.inner.gamma())
+    }
+}
+
 // ============================== SMI ==============================
 
 #[pyclass(name = "SMI", module = "wickra._wickra", skip_from_py_object)]
@@ -4766,6 +4814,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyPgo>()?;
     m.add_class::<PyKst>()?;
     m.add_class::<PySmi>()?;
+    m.add_class::<PyLaguerreRsi>()?;
     m.add_class::<PyCci>()?;
     m.add_class::<PyRoc>()?;
     m.add_class::<PyWilliamsR>()?;

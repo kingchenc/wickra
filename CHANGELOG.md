@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Family 02 — Momentum Oscillators.** `LaguerreRsi` (Ehlers):
+  four-stage Laguerre polynomial filter wrapped in an RSI-style up/down
+  accumulator. Single parameter `gamma` in `[0, 1]` (default 0.5) trades
+  lag for smoothness. State is seeded to the first input so a constant
+  series stays at the neutral 50. Output clamped to `[0, 100]`. Exposed
+  in all four bindings.
 - **Family 02 — Momentum Oscillators.** `SMI` (Stochastic Momentum
   Index, Blau): doubly-`EMA`-smoothed bounded oscillator measuring the
   close's displacement from the centre of the recent high-low range,
