@@ -42,6 +42,7 @@ from ._wickra import (
     McGinleyDynamic,
     FRAMA,
     VIDYA,
+    JMA,
     # Momentum
     RSI,
     MACD,
@@ -127,6 +128,7 @@ __all__ = [
     "McGinleyDynamic",
     "FRAMA",
     "VIDYA",
+    "JMA",
     # Momentum
     "RSI",
     "MACD",

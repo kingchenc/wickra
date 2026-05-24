@@ -41,6 +41,7 @@ const scalarFactories = {
   McGinleyDynamic: () => new wickra.McGinleyDynamic(10),
   FRAMA: () => new wickra.FRAMA(16),
   VIDYA: () => new wickra.VIDYA(14, 9),
+  JMA: () => new wickra.JMA(14, 0, 2),
   SMMA: () => new wickra.SMMA(14),
   TRIMA: () => new wickra.TRIMA(20),
   ZLEMA: () => new wickra.ZLEMA(14),
@@ -261,6 +262,11 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+test('JMA on a flat series reproduces the constant', () => {
+  const out = new wickra.JMA(14, 0, 2).batch(Array(30).fill(42));
+  for (let i = 0; i < 30; i++) assert.ok(Math.abs(out[i] - 42) < 1e-12);
 });
 
 test('VIDYA on a flat series holds the seed', () => {

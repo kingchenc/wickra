@@ -1105,6 +1105,42 @@ impl KamaNode {
     }
 }
 
+// ============================== JMA ==============================
+
+#[napi(js_name = "JMA")]
+pub struct JmaNode {
+    inner: wc::Jma,
+}
+#[napi]
+impl JmaNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, phase: f64, power: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Jma::new(clamp_period(period), phase, power).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+}
+
 // ============================== VIDYA ==============================
 
 #[napi(js_name = "VIDYA")]

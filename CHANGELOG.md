@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `[0, 1]`) and kernel width (`sigma > 0`). Community-standard defaults
   `(period = 9, offset = 0.85, sigma = 6.0)` available via `Alma::classic()`.
   Exposed in all four bindings (Rust, Python, Node, WASM).
+- **Family 01 — Moving Averages.** `JMA` (Jurik Moving Average):
+  three-stage filter reconstruction of Mark Jurik's adaptive MA.
+  Three parameters: `period` (14), `phase` in `[-100, 100]` (0), `power`
+  in `1..=4` (2). State is seeded to the first input so a constant series
+  is reproduced exactly. Exposed in all four bindings.
 - **Family 01 — Moving Averages.** `VIDYA` (Variable Index Dynamic
   Average, Chande 1992): EMA whose smoothing factor is scaled by the
   absolute Chande Momentum Oscillator. Two parameters `period` and

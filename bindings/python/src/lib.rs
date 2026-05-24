@@ -860,6 +860,51 @@ impl PyFrama {
     }
 }
 
+// ============================== JMA ==============================
+
+#[pyclass(name = "JMA", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyJma {
+    inner: wc::Jma,
+}
+
+#[pymethods]
+impl PyJma {
+    #[new]
+    #[pyo3(signature = (period=14, phase=0.0, power=2))]
+    fn new(period: usize, phase: f64, power: u32) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Jma::new(period, phase, power).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (p, ph, pw) = self.inner.params();
+        format!("JMA(period={p}, phase={ph}, power={pw})")
+    }
+}
+
 // ============================== VIDYA ==============================
 
 #[pyclass(name = "VIDYA", module = "wickra._wickra", skip_from_py_object)]
@@ -4704,6 +4749,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyMcGinleyDynamic>()?;
     m.add_class::<PyFrama>()?;
     m.add_class::<PyVidya>()?;
+    m.add_class::<PyJma>()?;
     m.add_class::<PyCci>()?;
     m.add_class::<PyRoc>()?;
     m.add_class::<PyWilliamsR>()?;

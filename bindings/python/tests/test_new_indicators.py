@@ -48,6 +48,7 @@ SCALAR = [
     (ta.McGinleyDynamic, (10,)),
     (ta.FRAMA, (16,)),
     (ta.VIDYA, (14, 9)),
+    (ta.JMA, (14, 0.0, 2)),
     (ta.T3, (5, 0.7)),
     (ta.MOM, (10,)),
     (ta.CMO, (14,)),

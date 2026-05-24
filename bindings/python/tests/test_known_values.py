@@ -119,6 +119,13 @@ def test_frama_pure_uptrend_hugs_latest():
     assert math.isclose(out[-1], 8.0, abs_tol=0.05)
 
 
+def test_jma_constant_series_yields_the_constant():
+    # JMA seeds e0 and the output to the first input, so a constant series
+    # is reproduced exactly from the first sample.
+    out = ta.JMA(14, 0.0, 2).batch(np.full(30, 42.0, dtype=np.float64))
+    np.testing.assert_allclose(out, 42.0, atol=1e-12)
+
+
 def test_vidya_constant_series_holds_seed():
     # CMO = 0 on a flat series -> alpha = 0 -> VIDYA holds its seed value.
     out = ta.VIDYA(14, 4).batch(np.full(20, 42.0, dtype=np.float64))
