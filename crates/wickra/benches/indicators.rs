@@ -19,8 +19,9 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use std::hint::black_box;
 use wickra::{
-    Atr, BatchExt, BollingerBands, Candle, Ema, Indicator, MacdIndicator, Obv, Rsi, Sma,
-    Stochastic, Wma,
+    AccelerationBands, Atr, AtrBands, BatchExt, BollingerBands, Candle, DoubleBollinger, Ema,
+    FractalChaosBands, HurstChannel, Indicator, LinRegChannel, MaEnvelope, MacdIndicator, Obv, Rsi,
+    Sma, StandardErrorBands, StarcBands, Stochastic, TtmSqueeze, VwapStdDevBands, Wma,
 };
 use wickra_data::csv::CandleReader;
 
@@ -144,6 +145,64 @@ fn benches(c: &mut Criterion) {
     bench_candle_input(c, "atr", &candles, || Atr::new(14).unwrap());
     bench_candle_input(c, "stochastic", &candles, Stochastic::classic);
     bench_candle_input(c, "obv", &candles, Obv::new);
+
+    // --- Family 05: Bands & Channels ---
+    bench_candle_input(c, "acceleration_bands", &candles, || {
+        AccelerationBands::new(20, 0.001).unwrap()
+    });
+    bench_candle_input(c, "starc_bands", &candles, || {
+        StarcBands::new(6, 15, 2.0).unwrap()
+    });
+    bench_candle_input(c, "atr_bands", &candles, || AtrBands::new(14, 3.0).unwrap());
+    bench_candle_input(c, "hurst_channel", &candles, || {
+        HurstChannel::new(10, 0.5).unwrap()
+    });
+    bench_candle_input(c, "ttm_squeeze", &candles, || {
+        TtmSqueeze::new(20, 2.0, 1.5).unwrap()
+    });
+    bench_candle_input(c, "fractal_chaos_bands", &candles, || {
+        FractalChaosBands::new(2).unwrap()
+    });
+    bench_candle_input(c, "vwap_stddev_bands", &candles, || {
+        VwapStdDevBands::new(2.0).unwrap()
+    });
+    bench_scalar_multi(c, "ma_envelope", &closes, || {
+        MaEnvelope::new(20, 0.025).unwrap()
+    });
+    bench_scalar_multi(c, "linreg_channel", &closes, || {
+        LinRegChannel::new(20, 2.0).unwrap()
+    });
+    bench_scalar_multi(c, "standard_error_bands", &closes, || {
+        StandardErrorBands::new(21, 2.0).unwrap()
+    });
+    bench_scalar_multi(c, "double_bollinger", &closes, || {
+        DoubleBollinger::new(20, 1.0, 2.0).unwrap()
+    });
+}
+
+/// Variant of `bench_scalar` for scalar-input indicators whose output is *not*
+/// `f64` (band/channel structs). Streaming-only path keeps the benchmark
+/// expression flat across all multi-output indicators.
+fn bench_scalar_multi<I, F, O>(c: &mut Criterion, name: &str, prices: &[f64], make: F)
+where
+    F: Fn() -> I,
+    I: Indicator<Input = f64, Output = O>,
+{
+    let mut group = c.benchmark_group(name);
+    for &n in SIZES {
+        let n = n.min(prices.len());
+        let series = &prices[..n];
+        group.throughput(Throughput::Elements(n as u64));
+        group.bench_with_input(BenchmarkId::new("streaming", n), series, |b, prices| {
+            b.iter(|| {
+                let mut ind = make();
+                for p in prices {
+                    black_box(ind.update(*p));
+                }
+            });
+        });
+    }
+    group.finish();
 }
 
 criterion_group!(name = wickra_benches; config = Criterion::default(); targets = benches);

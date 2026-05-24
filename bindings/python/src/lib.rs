@@ -4476,6 +4476,732 @@ impl PyLinRegAngle {
     }
 }
 
+// ============================== MA Envelope ==============================
+
+#[pyclass(name = "MaEnvelope", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyMaEnvelope {
+    inner: wc::MaEnvelope,
+}
+
+#[pymethods]
+impl PyMaEnvelope {
+    #[new]
+    #[pyo3(signature = (period=20, percent=0.025))]
+    fn new(period: usize, percent: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::MaEnvelope::new(period, percent).map_err(map_err)?,
+        })
+    }
+    /// Returns `(upper, middle, lower)` or `None` during warmup.
+    fn update(&mut self, value: f64) -> Option<(f64, f64, f64)> {
+        self.inner
+            .update(value)
+            .map(|o| (o.upper, o.middle, o.lower))
+    }
+    /// Batch returns shape `(n, 3)` columns `[upper, middle, lower]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let n = slice.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for (i, p) in slice.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== Acceleration Bands ==============================
+
+#[pyclass(
+    name = "AccelerationBands",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyAccelerationBands {
+    inner: wc::AccelerationBands,
+}
+
+#[pymethods]
+impl PyAccelerationBands {
+    #[new]
+    #[pyo3(signature = (period=20, factor=0.001))]
+    fn new(period: usize, factor: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::AccelerationBands::new(period, factor).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.upper, o.middle, o.lower)))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== STARC Bands ==============================
+
+#[pyclass(name = "StarcBands", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyStarcBands {
+    inner: wc::StarcBands,
+}
+
+#[pymethods]
+impl PyStarcBands {
+    #[new]
+    #[pyo3(signature = (sma_period=6, atr_period=15, multiplier=2.0))]
+    fn new(sma_period: usize, atr_period: usize, multiplier: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::StarcBands::new(sma_period, atr_period, multiplier).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.upper, o.middle, o.lower)))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== ATR Bands ==============================
+
+#[pyclass(name = "AtrBands", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyAtrBands {
+    inner: wc::AtrBands,
+}
+
+#[pymethods]
+impl PyAtrBands {
+    #[new]
+    #[pyo3(signature = (period=14, multiplier=3.0))]
+    fn new(period: usize, multiplier: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::AtrBands::new(period, multiplier).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.upper, o.middle, o.lower)))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== Hurst Channel ==============================
+
+#[pyclass(name = "HurstChannel", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyHurstChannel {
+    inner: wc::HurstChannel,
+}
+
+#[pymethods]
+impl PyHurstChannel {
+    #[new]
+    #[pyo3(signature = (period=10, multiplier=0.5))]
+    fn new(period: usize, multiplier: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::HurstChannel::new(period, multiplier).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.upper, o.middle, o.lower)))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== LinReg Channel ==============================
+
+#[pyclass(name = "LinRegChannel", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyLinRegChannel {
+    inner: wc::LinRegChannel,
+}
+
+#[pymethods]
+impl PyLinRegChannel {
+    #[new]
+    #[pyo3(signature = (period=20, multiplier=2.0))]
+    fn new(period: usize, multiplier: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::LinRegChannel::new(period, multiplier).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<(f64, f64, f64)> {
+        self.inner
+            .update(value)
+            .map(|o| (o.upper, o.middle, o.lower))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let n = slice.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for (i, p) in slice.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== Standard Error Bands ==============================
+
+#[pyclass(
+    name = "StandardErrorBands",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyStandardErrorBands {
+    inner: wc::StandardErrorBands,
+}
+
+#[pymethods]
+impl PyStandardErrorBands {
+    #[new]
+    #[pyo3(signature = (period=21, multiplier=2.0))]
+    fn new(period: usize, multiplier: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::StandardErrorBands::new(period, multiplier).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<(f64, f64, f64)> {
+        self.inner
+            .update(value)
+            .map(|o| (o.upper, o.middle, o.lower))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let n = slice.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for (i, p) in slice.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== Double Bollinger ==============================
+
+#[pyclass(
+    name = "DoubleBollinger",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyDoubleBollinger {
+    inner: wc::DoubleBollinger,
+}
+
+#[pymethods]
+impl PyDoubleBollinger {
+    #[new]
+    #[pyo3(signature = (period=20, k_inner=1.0, k_outer=2.0))]
+    fn new(period: usize, k_inner: f64, k_outer: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::DoubleBollinger::new(period, k_inner, k_outer).map_err(map_err)?,
+        })
+    }
+    /// Returns `(upper_outer, upper_inner, middle, lower_inner, lower_outer)`.
+    fn update(&mut self, value: f64) -> Option<(f64, f64, f64, f64, f64)> {
+        self.inner.update(value).map(|o| {
+            (
+                o.upper_outer,
+                o.upper_inner,
+                o.middle,
+                o.lower_inner,
+                o.lower_outer,
+            )
+        })
+    }
+    /// Returns shape `(n, 5)` columns
+    /// `[upper_outer, upper_inner, middle, lower_inner, lower_outer]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let n = slice.len();
+        let mut out = vec![f64::NAN; n * 5];
+        for (i, p) in slice.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 5] = o.upper_outer;
+                out[i * 5 + 1] = o.upper_inner;
+                out[i * 5 + 2] = o.middle;
+                out[i * 5 + 3] = o.lower_inner;
+                out[i * 5 + 4] = o.lower_outer;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 5), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== TTM Squeeze ==============================
+
+#[pyclass(name = "TtmSqueeze", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyTtmSqueeze {
+    inner: wc::TtmSqueeze,
+}
+
+#[pymethods]
+impl PyTtmSqueeze {
+    #[new]
+    #[pyo3(signature = (period=20, bb_mult=2.0, kc_mult=1.5))]
+    fn new(period: usize, bb_mult: f64, kc_mult: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::TtmSqueeze::new(period, bb_mult, kc_mult).map_err(map_err)?,
+        })
+    }
+    /// Returns `(squeeze, momentum)` or `None` during warmup. `squeeze` is
+    /// `1.0` while BB ⊂ KC, `0.0` otherwise.
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.squeeze, o.momentum)))
+    }
+    /// Returns shape `(n, 2)` columns `[squeeze, momentum]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 2] = o.squeeze;
+                out[i * 2 + 1] = o.momentum;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== Fractal Chaos Bands ==============================
+
+#[pyclass(
+    name = "FractalChaosBands",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyFractalChaosBands {
+    inner: wc::FractalChaosBands,
+}
+
+#[pymethods]
+impl PyFractalChaosBands {
+    #[new]
+    #[pyo3(signature = (k=2))]
+    fn new(k: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::FractalChaosBands::new(k).map_err(map_err)?,
+        })
+    }
+    /// Returns `(upper, lower)` or `None` until both fractals have confirmed.
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.upper, o.lower)))
+    }
+    /// Returns shape `(n, 2)` columns `[upper, lower]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 2] = o.upper;
+                out[i * 2 + 1] = o.lower;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== VWAP StdDev Bands ==============================
+
+#[pyclass(
+    name = "VwapStdDevBands",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyVwapStdDevBands {
+    inner: wc::VwapStdDevBands,
+}
+
+#[pymethods]
+impl PyVwapStdDevBands {
+    #[new]
+    #[pyo3(signature = (multiplier=2.0))]
+    fn new(multiplier: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::VwapStdDevBands::new(multiplier).map_err(map_err)?,
+        })
+    }
+    /// Returns `(upper, middle, lower, stddev)` or `None` until volume is non-zero.
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self
+            .inner
+            .update(c)
+            .map(|o| (o.upper, o.middle, o.lower, o.stddev)))
+    }
+    /// Returns shape `(n, 4)` columns `[upper, middle, lower, stddev]`.
+    #[allow(clippy::many_single_char_names)]
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close, volume must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 4];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 4] = o.upper;
+                out[i * 4 + 1] = o.middle;
+                out[i * 4 + 2] = o.lower;
+                out[i * 4 + 3] = o.stddev;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 4), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 // ============================== Module ==============================
 
 #[pymodule]
@@ -4553,5 +5279,16 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyChaikinVolatility>()?;
     m.add_class::<PyZScore>()?;
     m.add_class::<PyLinRegAngle>()?;
+    m.add_class::<PyMaEnvelope>()?;
+    m.add_class::<PyAccelerationBands>()?;
+    m.add_class::<PyStarcBands>()?;
+    m.add_class::<PyAtrBands>()?;
+    m.add_class::<PyHurstChannel>()?;
+    m.add_class::<PyLinRegChannel>()?;
+    m.add_class::<PyStandardErrorBands>()?;
+    m.add_class::<PyDoubleBollinger>()?;
+    m.add_class::<PyTtmSqueeze>()?;
+    m.add_class::<PyFractalChaosBands>()?;
+    m.add_class::<PyVwapStdDevBands>()?;
     Ok(())
 }

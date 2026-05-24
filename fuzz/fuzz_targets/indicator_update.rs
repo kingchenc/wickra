@@ -15,10 +15,10 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    BatchExt, BollingerBands, Cmo, Coppock, Dema, Dpo, Ema, HistoricalVolatility, Hma, Indicator,
-    Kama, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, Mom, Pmo, Ppo, Roc, Rsi, Sma,
-    Smma, StdDev, StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Wma,
-    ZScore, Zlema,
+    BatchExt, BollingerBands, Cmo, Coppock, Dema, DoubleBollinger, Dpo, Ema, HistoricalVolatility,
+    Hma, Indicator, Kama, LinRegAngle, LinRegChannel, LinRegSlope, LinearRegression,
+    MaEnvelope, MacdIndicator, Mom, Pmo, Ppo, Roc, Rsi, Sma, Smma, StandardErrorBands, StdDev,
+    StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Wma, ZScore, Zlema,
 };
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
@@ -86,5 +86,35 @@ fuzz_target!(|data: Vec<f64>| {
             let _ = bb.update(x);
         }
         let _ = BollingerBands::new(20, 2.0).unwrap().batch(&data);
+    }
+
+    // --- Family 05: scalar-input band/channel indicators (multi-output) ---
+    {
+        let mut env = MaEnvelope::new(20, 0.025).unwrap();
+        for &x in &data {
+            let _ = env.update(x);
+        }
+        let _ = MaEnvelope::new(20, 0.025).unwrap().batch(&data);
+    }
+    {
+        let mut ch = LinRegChannel::new(20, 2.0).unwrap();
+        for &x in &data {
+            let _ = ch.update(x);
+        }
+        let _ = LinRegChannel::new(20, 2.0).unwrap().batch(&data);
+    }
+    {
+        let mut seb = StandardErrorBands::new(21, 2.0).unwrap();
+        for &x in &data {
+            let _ = seb.update(x);
+        }
+        let _ = StandardErrorBands::new(21, 2.0).unwrap().batch(&data);
+    }
+    {
+        let mut db = DoubleBollinger::new(20, 1.0, 2.0).unwrap();
+        for &x in &data {
+            let _ = db.update(x);
+        }
+        let _ = DoubleBollinger::new(20, 1.0, 2.0).unwrap().batch(&data);
     }
 });

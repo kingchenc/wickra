@@ -23,12 +23,13 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    AcceleratorOscillator, Adl, Adx, Aroon, AroonOscillator, Atr, AtrTrailingStop,
-    AwesomeOscillator, BalanceOfPower, BatchExt, Candle, Cci, ChaikinMoneyFlow, ChaikinOscillator,
-    ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex, Donchian, EaseOfMovement,
-    ForceIndex, Indicator, Keltner, MassIndex, MedianPrice, Mfi, Natr, Obv, Psar, RollingVwap,
-    Stochastic, SuperTrend, TrueRange, TypicalPrice, UltimateOscillator, VolumePriceTrend, Vortex,
-    Vwap, Vwma, WeightedClose, WilliamsR,
+    AccelerationBands, AcceleratorOscillator, Adl, Adx, Aroon, AroonOscillator, Atr, AtrBands,
+    AtrTrailingStop, AwesomeOscillator, BalanceOfPower, BatchExt, Candle, Cci, ChaikinMoneyFlow,
+    ChaikinOscillator, ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex,
+    Donchian, EaseOfMovement, ForceIndex, FractalChaosBands, HurstChannel, Indicator, Keltner,
+    MassIndex, MedianPrice, Mfi, Natr, Obv, Psar, RollingVwap, StarcBands, Stochastic, SuperTrend,
+    TrueRange, TtmSqueeze, TypicalPrice, UltimateOscillator, VolumePriceTrend, Vortex, Vwap,
+    VwapStdDevBands, Vwma, WeightedClose, WilliamsR,
 };
 
 /// Convert a flat `f64` stream into a `Vec<Candle>` by chunking it into
@@ -126,5 +127,56 @@ fuzz_target!(|data: Vec<f64>| {
             let _ = s.update(*c);
         }
         let _ = Stochastic::new(14, 3).unwrap().batch(&candles);
+    }
+
+    // --- Family 05: candle-input band/channel indicators (multi-output) ---
+    {
+        let mut ab = AccelerationBands::new(20, 0.001).unwrap();
+        for c in &candles {
+            let _ = ab.update(*c);
+        }
+        let _ = AccelerationBands::new(20, 0.001).unwrap().batch(&candles);
+    }
+    {
+        let mut sb = StarcBands::new(6, 15, 2.0).unwrap();
+        for c in &candles {
+            let _ = sb.update(*c);
+        }
+        let _ = StarcBands::new(6, 15, 2.0).unwrap().batch(&candles);
+    }
+    {
+        let mut atrb = AtrBands::new(14, 3.0).unwrap();
+        for c in &candles {
+            let _ = atrb.update(*c);
+        }
+        let _ = AtrBands::new(14, 3.0).unwrap().batch(&candles);
+    }
+    {
+        let mut hc = HurstChannel::new(10, 0.5).unwrap();
+        for c in &candles {
+            let _ = hc.update(*c);
+        }
+        let _ = HurstChannel::new(10, 0.5).unwrap().batch(&candles);
+    }
+    {
+        let mut ts = TtmSqueeze::new(20, 2.0, 1.5).unwrap();
+        for c in &candles {
+            let _ = ts.update(*c);
+        }
+        let _ = TtmSqueeze::new(20, 2.0, 1.5).unwrap().batch(&candles);
+    }
+    {
+        let mut fc = FractalChaosBands::new(2).unwrap();
+        for c in &candles {
+            let _ = fc.update(*c);
+        }
+        let _ = FractalChaosBands::new(2).unwrap().batch(&candles);
+    }
+    {
+        let mut vb = VwapStdDevBands::new(2.0).unwrap();
+        for c in &candles {
+            let _ = vb.update(*c);
+        }
+        let _ = VwapStdDevBands::new(2.0).unwrap().batch(&candles);
     }
 });

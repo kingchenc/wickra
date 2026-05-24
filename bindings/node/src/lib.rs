@@ -2981,3 +2981,762 @@ impl VwmaNode {
         self.inner.warmup_period() as u32
     }
 }
+
+// ============================== Family 05: Bands & Channels ==============================
+
+// ---------- MA Envelope ----------
+
+#[napi(object)]
+pub struct MaEnvelopeValue {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+#[napi(js_name = "MaEnvelope")]
+pub struct MaEnvelopeNode {
+    inner: wc::MaEnvelope,
+}
+
+#[napi]
+impl MaEnvelopeNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, percent: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::MaEnvelope::new(period as usize, percent).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<MaEnvelopeValue> {
+        self.inner.update(value).map(|o| MaEnvelopeValue {
+            upper: o.upper,
+            middle: o.middle,
+            lower: o.lower,
+        })
+    }
+    /// Flat `[upper0, middle0, lower0, upper1, ...]`, length `3 * n`.
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        let mut out = vec![f64::NAN; prices.len() * 3];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        out
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ---------- Acceleration Bands ----------
+
+#[napi(object)]
+pub struct AccelerationBandsValue {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+#[napi(js_name = "AccelerationBands")]
+pub struct AccelerationBandsNode {
+    inner: wc::AccelerationBands,
+}
+
+#[napi]
+impl AccelerationBandsNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, factor: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::AccelerationBands::new(period as usize, factor).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<AccelerationBandsValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| AccelerationBandsValue {
+                upper: o.upper,
+                middle: o.middle,
+                lower: o.lower,
+            }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ---------- STARC Bands ----------
+
+#[napi(object)]
+pub struct StarcBandsValue {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+#[napi(js_name = "StarcBands")]
+pub struct StarcBandsNode {
+    inner: wc::StarcBands,
+}
+
+#[napi]
+impl StarcBandsNode {
+    #[napi(constructor)]
+    pub fn new(sma_period: u32, atr_period: u32, multiplier: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::StarcBands::new(sma_period as usize, atr_period as usize, multiplier)
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<StarcBandsValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| StarcBandsValue {
+                upper: o.upper,
+                middle: o.middle,
+                lower: o.lower,
+            }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ---------- ATR Bands ----------
+
+#[napi(object)]
+pub struct AtrBandsValue {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+#[napi(js_name = "AtrBands")]
+pub struct AtrBandsNode {
+    inner: wc::AtrBands,
+}
+
+#[napi]
+impl AtrBandsNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, multiplier: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::AtrBands::new(period as usize, multiplier).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<AtrBandsValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| AtrBandsValue {
+                upper: o.upper,
+                middle: o.middle,
+                lower: o.lower,
+            }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ---------- Hurst Channel ----------
+
+#[napi(object)]
+pub struct HurstChannelValue {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+#[napi(js_name = "HurstChannel")]
+pub struct HurstChannelNode {
+    inner: wc::HurstChannel,
+}
+
+#[napi]
+impl HurstChannelNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, multiplier: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::HurstChannel::new(period as usize, multiplier).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<HurstChannelValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| HurstChannelValue {
+                upper: o.upper,
+                middle: o.middle,
+                lower: o.lower,
+            }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ---------- LinReg Channel ----------
+
+#[napi(object)]
+pub struct LinRegChannelValue {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+#[napi(js_name = "LinRegChannel")]
+pub struct LinRegChannelNode {
+    inner: wc::LinRegChannel,
+}
+
+#[napi]
+impl LinRegChannelNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, multiplier: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::LinRegChannel::new(period as usize, multiplier).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<LinRegChannelValue> {
+        self.inner.update(value).map(|o| LinRegChannelValue {
+            upper: o.upper,
+            middle: o.middle,
+            lower: o.lower,
+        })
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        let mut out = vec![f64::NAN; prices.len() * 3];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        out
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ---------- Standard Error Bands ----------
+
+#[napi(object)]
+pub struct StandardErrorBandsValue {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+#[napi(js_name = "StandardErrorBands")]
+pub struct StandardErrorBandsNode {
+    inner: wc::StandardErrorBands,
+}
+
+#[napi]
+impl StandardErrorBandsNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, multiplier: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::StandardErrorBands::new(period as usize, multiplier).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<StandardErrorBandsValue> {
+        self.inner.update(value).map(|o| StandardErrorBandsValue {
+            upper: o.upper,
+            middle: o.middle,
+            lower: o.lower,
+        })
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        let mut out = vec![f64::NAN; prices.len() * 3];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        out
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ---------- Double Bollinger ----------
+
+#[napi(object)]
+pub struct DoubleBollingerValue {
+    #[napi(js_name = "upperOuter")]
+    pub upper_outer: f64,
+    #[napi(js_name = "upperInner")]
+    pub upper_inner: f64,
+    pub middle: f64,
+    #[napi(js_name = "lowerInner")]
+    pub lower_inner: f64,
+    #[napi(js_name = "lowerOuter")]
+    pub lower_outer: f64,
+}
+
+#[napi(js_name = "DoubleBollinger")]
+pub struct DoubleBollingerNode {
+    inner: wc::DoubleBollinger,
+}
+
+#[napi]
+impl DoubleBollingerNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, k_inner: f64, k_outer: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::DoubleBollinger::new(period as usize, k_inner, k_outer).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<DoubleBollingerValue> {
+        self.inner.update(value).map(|o| DoubleBollingerValue {
+            upper_outer: o.upper_outer,
+            upper_inner: o.upper_inner,
+            middle: o.middle,
+            lower_inner: o.lower_inner,
+            lower_outer: o.lower_outer,
+        })
+    }
+    /// Flat `[u_o, u_i, m, l_i, l_o, ...]`, length `5 * n`.
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        let mut out = vec![f64::NAN; prices.len() * 5];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 5] = o.upper_outer;
+                out[i * 5 + 1] = o.upper_inner;
+                out[i * 5 + 2] = o.middle;
+                out[i * 5 + 3] = o.lower_inner;
+                out[i * 5 + 4] = o.lower_outer;
+            }
+        }
+        out
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ---------- TTM Squeeze ----------
+
+#[napi(object)]
+pub struct TtmSqueezeValue {
+    pub squeeze: f64,
+    pub momentum: f64,
+}
+
+#[napi(js_name = "TtmSqueeze")]
+pub struct TtmSqueezeNode {
+    inner: wc::TtmSqueeze,
+}
+
+#[napi]
+impl TtmSqueezeNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, bb_mult: f64, kc_mult: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::TtmSqueeze::new(period as usize, bb_mult, kc_mult).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<TtmSqueezeValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| TtmSqueezeValue {
+                squeeze: o.squeeze,
+                momentum: o.momentum,
+            }))
+    }
+    /// Flat `[sq0, mom0, sq1, mom1, ...]`, length `2 * n`.
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 2] = o.squeeze;
+                out[i * 2 + 1] = o.momentum;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ---------- Fractal Chaos Bands ----------
+
+#[napi(object)]
+pub struct FractalChaosBandsValue {
+    pub upper: f64,
+    pub lower: f64,
+}
+
+#[napi(js_name = "FractalChaosBands")]
+pub struct FractalChaosBandsNode {
+    inner: wc::FractalChaosBands,
+}
+
+#[napi]
+impl FractalChaosBandsNode {
+    #[napi(constructor)]
+    pub fn new(k: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::FractalChaosBands::new(k as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<FractalChaosBandsValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, low, 0.0)?)
+            .map(|o| FractalChaosBandsValue {
+                upper: o.upper,
+                lower: o.lower,
+            }))
+    }
+    /// Flat `[u0, l0, u1, l1, ...]`, length `2 * n`.
+    #[napi]
+    pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() {
+            return Err(NapiError::from_reason(
+                "high and low must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], low[i], 0.0)?) {
+                out[i * 2] = o.upper;
+                out[i * 2 + 1] = o.lower;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ---------- VWAP StdDev Bands ----------
+
+#[napi(object)]
+pub struct VwapStdDevBandsValue {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+    pub stddev: f64,
+}
+
+#[napi(js_name = "VwapStdDevBands")]
+pub struct VwapStdDevBandsNode {
+    inner: wc::VwapStdDevBands,
+}
+
+#[napi]
+impl VwapStdDevBandsNode {
+    #[napi(constructor)]
+    pub fn new(multiplier: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::VwapStdDevBands::new(multiplier).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> napi::Result<Option<VwapStdDevBandsValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, volume)?)
+            .map(|o| VwapStdDevBandsValue {
+                upper: o.upper,
+                middle: o.middle,
+                lower: o.lower,
+                stddev: o.stddev,
+            }))
+    }
+    /// Flat `[u0, m0, l0, sd0, ...]`, length `4 * n`.
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+        volume: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        let n = high.len();
+        if low.len() != n || close.len() != n || volume.len() != n {
+            return Err(NapiError::from_reason(
+                "high, low, close, volume must be equal length".to_string(),
+            ));
+        }
+        let mut out = vec![f64::NAN; n * 4];
+        for i in 0..n {
+            if let Some(o) = self
+                .inner
+                .update(cnd(high[i], low[i], close[i], volume[i])?)
+            {
+                out[i * 4] = o.upper;
+                out[i * 4 + 1] = o.middle;
+                out[i * 4 + 2] = o.lower;
+                out[i * 4 + 3] = o.stddev;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
