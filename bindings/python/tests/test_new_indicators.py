@@ -193,6 +193,11 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 
 MULTI = {
     "Vortex": (lambda: ta.Vortex(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
+    "ZeroLagMACD": (
+        # Scalar-input multi-output; the MULTI helper passes the close column.
+        lambda: ta.ZeroLagMACD(12, 26, 9),
+        lambda ind, h, l, c, v: ind.batch(c),
+    ),
     "SuperTrend": (
         lambda: ta.SuperTrend(10, 3.0),
         lambda ind, h, l, c, v: ind.batch(h, l, c),

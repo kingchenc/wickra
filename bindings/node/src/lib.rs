@@ -1120,6 +1120,65 @@ impl AwesomeOscillatorHistogramNode {
     }
 }
 
+#[napi(object)]
+pub struct ZeroLagMacdValue {
+    pub macd: f64,
+    pub signal: f64,
+    pub histogram: f64,
+}
+
+#[napi(js_name = "ZeroLagMACD")]
+pub struct ZeroLagMacdNode {
+    inner: wc::ZeroLagMacd,
+}
+#[napi]
+impl ZeroLagMacdNode {
+    #[napi(constructor)]
+    pub fn new(fast: u32, slow: u32, signal: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::ZeroLagMacd::new(
+                clamp_period(fast),
+                clamp_period(slow),
+                clamp_period(signal),
+            )
+            .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<ZeroLagMacdValue> {
+        self.inner.update(value).map(|o| ZeroLagMacdValue {
+            macd: o.macd,
+            signal: o.signal,
+            histogram: o.histogram,
+        })
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        let n = prices.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.macd;
+                out[i * 3 + 1] = o.signal;
+                out[i * 3 + 2] = o.histogram;
+            }
+        }
+        out
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 #[napi(js_name = "CFO")]
 pub struct CfoNode {
     inner: wc::Cfo,

@@ -88,6 +88,58 @@ wasm_scalar_indicator!(WasmDpo, "DPO", wc::Dpo, period: usize);
 wasm_scalar_indicator!(WasmPpo, "PPO", wc::Ppo, fast: usize, slow: usize);
 wasm_scalar_indicator!(WasmApo, "APO", wc::Apo, fast: usize, slow: usize);
 wasm_scalar_indicator!(WasmCfo, "CFO", wc::Cfo, period: usize);
+
+#[wasm_bindgen(js_name = ZeroLagMACD)]
+pub struct WasmZeroLagMacd {
+    inner: wc::ZeroLagMacd,
+}
+
+#[wasm_bindgen(js_class = ZeroLagMACD)]
+impl WasmZeroLagMacd {
+    #[wasm_bindgen(constructor)]
+    pub fn new(fast: usize, slow: usize, signal: usize) -> Result<WasmZeroLagMacd, JsError> {
+        Ok(Self {
+            inner: wc::ZeroLagMacd::new(fast, slow, signal).map_err(map_err)?,
+        })
+    }
+    /// Returns `[macd0, signal0, histogram0, ...]`, length `3n`.
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let n = prices.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.macd;
+                out[i * 3 + 1] = o.signal;
+                out[i * 3 + 2] = o.histogram;
+            }
+        }
+        Float64Array::from(out.as_slice())
+    }
+    /// Returns `{ macd, signal, histogram }` once warm, else `null`.
+    pub fn update(&mut self, value: f64) -> JsValue {
+        match self.inner.update(value) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"macd".into(), &o.macd.into()).ok();
+                Reflect::set(&obj, &"signal".into(), &o.signal.into()).ok();
+                Reflect::set(&obj, &"histogram".into(), &o.histogram.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        }
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
 wasm_scalar_indicator!(WasmCoppock, "Coppock", wc::Coppock, roc_long: usize, roc_short: usize, wma_period: usize);
 wasm_scalar_indicator!(WasmStdDev, "StdDev", wc::StdDev, period: usize);
 wasm_scalar_indicator!(WasmUlcerIndex, "UlcerIndex", wc::UlcerIndex, period: usize);

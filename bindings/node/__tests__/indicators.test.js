@@ -125,6 +125,7 @@ for (const [name, d] of Object.entries(candleScalar)) {
 // --- Multi-output indicators: object update vs interleaved batch ---
 
 const multi = {
+  ZeroLagMACD: { make: () => new wickra.ZeroLagMACD(12, 26, 9), fields: ['macd', 'signal', 'histogram'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   MACD: { make: () => new wickra.MACD(12, 26, 9), fields: ['macd', 'signal', 'histogram'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   BollingerBands: { make: () => new wickra.BollingerBands(20, 2), fields: ['upper', 'middle', 'lower', 'stddev'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   Stochastic: { make: () => new wickra.Stochastic(14, 3), fields: ['k', 'd'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
@@ -260,6 +261,15 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+test('ZeroLagMACD on a flat series converges to zero', () => {
+  const out = new wickra.ZeroLagMACD(3, 5, 3).batch(Array(60).fill(42));
+  // Last interleaved row: macd, signal, histogram all 0.
+  const n = 60;
+  assert.ok(Math.abs(out[(n - 1) * 3]) < 1e-12);
+  assert.ok(Math.abs(out[(n - 1) * 3 + 1]) < 1e-12);
+  assert.ok(Math.abs(out[(n - 1) * 3 + 2]) < 1e-12);
 });
 
 test('AwesomeOscillatorHistogram on a flat median converges to zero', () => {

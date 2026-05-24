@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Family 03 — MACD & Price Oscillators.** `ZeroLagMacd`: classic
+  MACD topology with `ZLEMA` substituted for `EMA` everywhere — faster
+  reaction to trend changes at the cost of slightly noisier readings.
+  Multi-output `ZeroLagMacdOutput { macd, signal, histogram }`. Three
+  parameters `(fast = 12, slow = 26, signal = 9)`; `fast` must be
+  strictly less than `slow`. Exposed in all four bindings.
 - **Family 03 — MACD & Price Oscillators.** `CFO` (Chande Forecast
   Oscillator): `100 · (close − LinReg(close, period)) / close`. Positive
   when the close overshoots the linear forecast, negative when it

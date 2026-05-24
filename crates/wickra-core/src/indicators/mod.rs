@@ -77,6 +77,7 @@ mod weighted_close;
 mod williams_r;
 mod wma;
 mod z_score;
+mod zero_lag_macd;
 mod zlema;
 
 pub use accelerator_oscillator::AcceleratorOscillator;
@@ -152,4 +153,5 @@ pub use weighted_close::WeightedClose;
 pub use williams_r::WilliamsR;
 pub use wma::Wma;
 pub use z_score::ZScore;
+pub use zero_lag_macd::{ZeroLagMacd, ZeroLagMacdOutput};
 pub use zlema::Zlema;

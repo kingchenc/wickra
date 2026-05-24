@@ -66,6 +66,17 @@ def test_rsi_wilder_textbook_first_value():
     assert math.isclose(out[14], 70.464, abs_tol=0.05)
 
 
+def test_zero_lag_macd_constant_series_converges_to_zero():
+    # Each inner ZLEMA reproduces a constant, so macd, signal and histogram
+    # are all 0 once the slowest branch warms up.
+    out = ta.ZeroLagMACD(3, 5, 3).batch(np.full(60, 42.0, dtype=np.float64))
+    # Take the last row and verify all three columns are 0.
+    last = out[-1]
+    assert math.isclose(last[0], 0.0, abs_tol=1e-12)
+    assert math.isclose(last[1], 0.0, abs_tol=1e-12)
+    assert math.isclose(last[2], 0.0, abs_tol=1e-12)
+
+
 def test_awesome_oscillator_histogram_flat_series_converges_to_zero():
     # Flat median price -> AO = 0 -> SMA(AO) = 0 -> AOHist = 0.
     n = 50

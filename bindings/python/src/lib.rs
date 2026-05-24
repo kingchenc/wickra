@@ -874,6 +874,64 @@ impl PyAoHist {
     }
 }
 
+// ============================== ZeroLagMACD ==============================
+
+#[pyclass(name = "ZeroLagMACD", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyZeroLagMacd {
+    inner: wc::ZeroLagMacd,
+}
+
+#[pymethods]
+impl PyZeroLagMacd {
+    #[new]
+    #[pyo3(signature = (fast=12, slow=26, signal=9))]
+    fn new(fast: usize, slow: usize, signal: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::ZeroLagMacd::new(fast, slow, signal).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<(f64, f64, f64)> {
+        self.inner
+            .update(value)
+            .map(|o| (o.macd, o.signal, o.histogram))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let n = slice.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for (i, p) in slice.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.macd;
+                out[i * 3 + 1] = o.signal;
+                out[i * 3 + 2] = o.histogram;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (f, s, sig) = self.inner.periods();
+        format!("ZeroLagMACD(fast={f}, slow={s}, signal={sig})")
+    }
+}
+
 // ============================== CFO ==============================
 
 #[pyclass(name = "CFO", module = "wickra._wickra", skip_from_py_object)]
@@ -4652,6 +4710,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyApo>()?;
     m.add_class::<PyAoHist>()?;
     m.add_class::<PyCfo>()?;
+    m.add_class::<PyZeroLagMacd>()?;
     m.add_class::<PyCci>()?;
     m.add_class::<PyRoc>()?;
     m.add_class::<PyWilliamsR>()?;

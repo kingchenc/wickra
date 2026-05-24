@@ -55,7 +55,7 @@ pub use indicators::{
     StochRsi, Stochastic, StochasticOutput, SuperTrend, SuperTrendOutput, Tema, Trima, Trix,
     TrueRange, Tsi, TypicalPrice, UlcerIndex, UltimateOscillator, VerticalHorizontalFilter,
     VolumePriceTrend, Vortex, VortexOutput, Vwap, Vwma, WeightedClose, WilliamsR, Wma, ZScore,
-    Zlema, T3,
+    ZeroLagMacd, ZeroLagMacdOutput, Zlema, T3,
 };
 pub use ohlcv::{Candle, Tick};
 pub use traits::{BatchExt, Chain, Indicator};

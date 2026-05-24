@@ -17,7 +17,7 @@ use libfuzzer_sys::fuzz_target;
 use wickra_core::{
     Apo, BatchExt, BollingerBands, Cfo, Cmo, Coppock, Dema, Dpo, Ema, HistoricalVolatility, Hma,
     Indicator, Kama, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, Mom, Pmo, Ppo, Roc,
-    Rsi, Sma,
+    Rsi, Sma, ZeroLagMacd,
     Smma, StdDev, StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Wma,
     ZScore, Zlema,
 };
@@ -73,6 +73,16 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| LinRegAngle::new(14).unwrap(), &data);
     drive(|| VerticalHorizontalFilter::new(14).unwrap(), &data);
     drive(|| ZScore::new(14).unwrap(), &data);
+
+    // Zero-Lag MACD shares MACD's multi-output topology, so it gets the
+    // same hand-rolled streaming + batch drive as classic MACD below.
+    {
+        let mut z = ZeroLagMacd::classic();
+        for &x in &data {
+            let _ = z.update(x);
+        }
+        let _ = ZeroLagMacd::classic().batch(&data);
+    }
 
     // MACD and Bollinger Bands have non-`f64` outputs, so they cannot use the
     // generic `drive` helper above. Streaming + batch are still both exercised.
