@@ -87,6 +87,13 @@ def test_scalar_streaming_matches_batch(cls, args, sine_prices):
 
 CANDLE_SCALAR = {
     "VWMA": (lambda: ta.VWMA(20), lambda ind, h, l, c, v: ind.batch(c, v)),
+    "RVI": (
+        # extract_candle pulls the open price from index 0 of the tuple; the
+        # streaming test below already builds candles with open == close, so
+        # match that here by passing close as the open column.
+        lambda: ta.RVI(10),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
     "UltimateOscillator": (
         lambda: ta.UltimateOscillator(7, 14, 28),
         lambda ind, h, l, c, v: ind.batch(h, l, c),

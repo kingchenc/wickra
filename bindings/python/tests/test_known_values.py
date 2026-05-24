@@ -66,6 +66,19 @@ def test_rsi_wilder_textbook_first_value():
     assert math.isclose(out[14], 70.464, abs_tol=0.05)
 
 
+def test_rvi_reference_value_period_2():
+    # Two bars: (open, high, low, close) = (10, 11, 9, 10.5), (10.5, 11.5, 10, 11).
+    #   num = (0.5 + 0.5) = 1.0; den = (2.0 + 1.5) = 3.5; RVI = 1 / 3.5.
+    out = ta.RVI(2).batch(
+        np.array([10.0, 10.5]),
+        np.array([11.0, 11.5]),
+        np.array([9.0, 10.0]),
+        np.array([10.5, 11.0]),
+    )
+    assert math.isnan(out[0])
+    assert math.isclose(out[1], 1.0 / 3.5, abs_tol=1e-12)
+
+
 def test_macd_constant_series_converges_to_zero():
     out = ta.MACD().batch(np.full(200, 100.0))
     # Last row's MACD and signal must be ~0.

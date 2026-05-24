@@ -1068,6 +1068,71 @@ impl AroonNode {
     }
 }
 
+// Helper for OHLC-input indicators that need the open price (not provided
+// by `cnd` which fakes open == close).
+fn cnd4(open: f64, high: f64, low: f64, close: f64) -> napi::Result<wc::Candle> {
+    wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)
+}
+
+#[napi(js_name = "RVI")]
+pub struct RviNode {
+    inner: wc::Rvi,
+}
+#[napi]
+impl RviNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Rvi::new(clamp_period(period)).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd4(open, high, low, close)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open: Vec<f64>,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if !(open.len() == high.len() && high.len() == low.len() && low.len() == close.len()) {
+            return Err(NapiError::from_reason(
+                "open, high, low and close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            out.push(
+                self.inner
+                    .update(cnd4(open[i], high[i], low[i], close[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 #[napi(js_name = "KAMA")]
 pub struct KamaNode {
     inner: wc::Kama,

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Family 02 — Momentum Oscillators.** `RVI` (Relative Vigor Index,
+  Dorsey): per-bar ratio `SMA(close - open, period) / SMA(high - low,
+  period)`. Candle input, single parameter `period` (default 10).
+  Positive on average-bullish windows, negative on average-bearish.
+  Holds previous value if the entire window has zero range. Exposed in
+  all four bindings.
+
 ## [0.2.7] - 2026-05-24
 
 ### Added

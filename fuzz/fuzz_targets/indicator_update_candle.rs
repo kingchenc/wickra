@@ -26,7 +26,7 @@ use wickra_core::{
     AcceleratorOscillator, Adl, Adx, Aroon, AroonOscillator, Atr, AtrTrailingStop,
     AwesomeOscillator, BalanceOfPower, BatchExt, Candle, Cci, ChaikinMoneyFlow, ChaikinOscillator,
     ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex, Donchian, EaseOfMovement,
-    ForceIndex, Indicator, Keltner, MassIndex, MedianPrice, Mfi, Natr, Obv, Psar, RollingVwap,
+    ForceIndex, Indicator, Keltner, MassIndex, MedianPrice, Mfi, Natr, Obv, Psar, RollingVwap, Rvi,
     Stochastic, SuperTrend, TrueRange, TypicalPrice, UltimateOscillator, VolumePriceTrend, Vortex,
     Vwap, Vwma, WeightedClose, WilliamsR,
 };
@@ -95,6 +95,7 @@ fuzz_target!(|data: Vec<f64>| {
 
     // --- Momentum & Oscillators ---
     drive(|| Cci::new(20).unwrap(), &candles);
+    drive(|| Rvi::new(10).unwrap(), &candles);
     drive(|| WilliamsR::new(14).unwrap(), &candles);
     drive(|| AwesomeOscillator::new(5, 34).unwrap(), &candles);
     drive(|| AcceleratorOscillator::new(5, 34, 5).unwrap(), &candles);
