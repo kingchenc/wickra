@@ -191,6 +191,7 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 
 MULTI = {
     "Vortex": (lambda: ta.Vortex(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
+    "RWI": (lambda: ta.RWI(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "SuperTrend": (
         lambda: ta.SuperTrend(10, 3.0),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
@@ -284,6 +285,19 @@ def test_linreg_angle_reference():
     # A series rising by 1 per step has slope 1, and atan(1) = 45 degrees.
     out = ta.LinRegAngle(5).batch(np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0]))
     assert out[4] == pytest.approx(45.0)
+
+
+def test_rwi_reference_uptrend_dominates_low_line():
+    # In a pure linear uptrend RWI_High >> RWI_Low.
+    n = 60
+    base = np.arange(n, dtype=np.float64) * 2.0 + 100.0
+    high = base + 1.0
+    low = base - 0.5
+    close = base + 0.5
+    out = ta.RWI(14).batch(high, low, close)
+    last_row = out[~np.isnan(out[:, 0])][-1]
+    assert last_row[0] > last_row[1], f"RWI_High {last_row[0]} must dominate RWI_Low {last_row[1]}"
+    assert last_row[0] > 1.0
 
 
 def test_adxr_reference_on_pure_uptrend():

@@ -14,6 +14,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ago. Warmup is `3 * period - 1` (e.g. 41 for the default `period =
   14`). Shipped across all four bindings (Rust core, Python, Node,
   WASM) plus fuzz/test/bench coverage.
+- **Random Walk Index (RWI)** in the Trend & Directional family. Mike
+  Poulos' trend-vs.-random-walk gauge: for each lookback `i ∈ [2,
+  period]` the ratio of actual displacement to the random-walk
+  expectation `ATR_i * sqrt(i)` is taken; the per-bar output is the
+  maximum across lookbacks for both the high (`RWI_High`) and low
+  (`RWI_Low`) directions. Multi-output `(high, low)` across all four
+  bindings; warmup `= period`.
 
 ## [0.2.7] - 2026-05-24
 

@@ -51,8 +51,8 @@ pub use indicators::{
     Dema, Donchian, DonchianOutput, Dpo, EaseOfMovement, Ema, ForceIndex, HistoricalVolatility,
     Hma, Kama, Keltner, KeltnerOutput, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator,
     MacdOutput, MassIndex, MedianPrice, Mfi, Mom, Natr, Obv, PercentB, Pmo, Ppo, Psar, Roc,
-    RollingVwap, Rsi, Sma, Smma, StdDev, StochRsi, Stochastic, StochasticOutput, SuperTrend,
-    SuperTrendOutput, Tema, Trima, Trix, TrueRange, Tsi, TypicalPrice, UlcerIndex,
+    RollingVwap, Rsi, Rwi, RwiOutput, Sma, Smma, StdDev, StochRsi, Stochastic, StochasticOutput,
+    SuperTrend, SuperTrendOutput, Tema, Trima, Trix, TrueRange, Tsi, TypicalPrice, UlcerIndex,
     UltimateOscillator, VerticalHorizontalFilter, VolumePriceTrend, Vortex, VortexOutput, Vwap,
     Vwma, WeightedClose, WilliamsR, Wma, ZScore, Zlema, T3,
 };
