@@ -118,6 +118,10 @@ CANDLE_SCALAR = {
         lambda: ta.EaseOfMovement(14),
         lambda ind, h, l, c, v: ind.batch(h, l, v),
     ),
+    "KVO": (
+        lambda: ta.KVO(34, 55),
+        lambda ind, h, l, c, v: ind.batch(h, l, c, v),
+    ),
     "AtrTrailingStop": (
         lambda: ta.AtrTrailingStop(14, 3.0),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
@@ -244,6 +248,19 @@ def test_weighted_close_reference():
     assert ta.WeightedClose().update((10.0, 12.0, 8.0, 11.0, 1.0, 0)) == pytest.approx(
         10.5
     )
+
+
+def test_kvo_constant_series_is_zero():
+    # A flat series produces dm with no sign change; vf collapses to 0 every
+    # bar and both EMAs hold at 0, so the KVO line stays at 0.
+    kvo = ta.KVO(3, 6)
+    high = np.full(60, 10.0)
+    low = np.full(60, 10.0)
+    close = np.full(60, 10.0)
+    volume = np.full(60, 100.0)
+    out = kvo.batch(high, low, close, volume)
+    for v in out[~np.isnan(out)]:
+        assert v == pytest.approx(0.0, abs=1e-12)
 
 
 def test_chaikin_money_flow_reference():

@@ -3312,6 +3312,79 @@ impl PyForceIndex {
     }
 }
 
+// ============================== Klinger Volume Oscillator ==============================
+
+#[pyclass(name = "KVO", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyKvo {
+    inner: wc::Kvo,
+}
+
+#[pymethods]
+impl PyKvo {
+    #[new]
+    #[pyo3(signature = (fast=34, slow=55))]
+    fn new(fast: usize, slow: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Kvo::new(fast, slow).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over high/low/close/volume numpy columns.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close, volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn periods(&self) -> (usize, usize) {
+        self.inner.periods()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (fast, slow) = self.inner.periods();
+        format!("KVO(fast={fast}, slow={slow})")
+    }
+}
+
 // ============================== Ease of Movement ==============================
 
 #[pyclass(
@@ -4535,6 +4608,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyChaikinMoneyFlow>()?;
     m.add_class::<PyChaikinOscillator>()?;
     m.add_class::<PyForceIndex>()?;
+    m.add_class::<PyKvo>()?;
     m.add_class::<PyEaseOfMovement>()?;
     m.add_class::<PySuperTrend>()?;
     m.add_class::<PyChandelierExit>()?;

@@ -93,6 +93,7 @@ from ._wickra import (
     ChaikinMoneyFlow,
     ChaikinOscillator,
     ForceIndex,
+    KVO,
     EaseOfMovement,
     # Statistics
     TypicalPrice,
@@ -174,6 +175,7 @@ __all__ = [
     "ChaikinMoneyFlow",
     "ChaikinOscillator",
     "ForceIndex",
+    "KVO",
     "EaseOfMovement",
     # Statistics
     "TypicalPrice",

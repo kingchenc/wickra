@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Klinger Volume Oscillator (KVO).** Stephen J. Klinger's trend-aware
+  volume-force oscillator: `EMA(vf, fast) − EMA(vf, slow)` over a daily
+  volume force scaled by cumulative-measurement ratio. Classic
+  `(fast, slow) = (34, 55)` exposed via `Kvo::classic()`.
+
 ## [0.2.7] - 2026-05-24
 
 ### Added
