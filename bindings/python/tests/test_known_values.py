@@ -76,6 +76,12 @@ def test_awesome_oscillator_histogram_flat_series_converges_to_zero():
     np.testing.assert_allclose(out[6:], 0.0, atol=1e-12)
 
 
+def test_cfo_perfect_linear_series_yields_zero():
+    # LinReg of a perfectly linear series fits exactly, so CFO = 0 after warmup.
+    out = ta.CFO(5).batch(np.arange(1.0, 21.0, dtype=np.float64) * 2.0)
+    np.testing.assert_allclose(out[4:], 0.0, atol=1e-9)
+
+
 def test_apo_constant_series_converges_to_zero():
     # Both EMAs reproduce a constant exactly, so APO = 0 after warmup.
     out = ta.APO(3, 5).batch(np.full(30, 42.0, dtype=np.float64))

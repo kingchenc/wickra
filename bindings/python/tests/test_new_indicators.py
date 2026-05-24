@@ -52,6 +52,7 @@ SCALAR = [
     (ta.StochRSI, (14, 14)),
     (ta.PPO, (12, 26)),
     (ta.APO, (12, 26)),
+    (ta.CFO, (14,)),
     (ta.DPO, (20,)),
     (ta.Coppock, (14, 11, 10)),
     (ta.StdDev, (20,)),

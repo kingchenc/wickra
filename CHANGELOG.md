@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Family 03 — MACD & Price Oscillators.** `CFO` (Chande Forecast
+  Oscillator): `100 · (close − LinReg(close, period)) / close`. Positive
+  when the close overshoots the linear forecast, negative when it
+  undershoots. Holds the previous value if the close is zero. Default
+  period 14. Exposed in all four bindings.
 - **Family 03 — MACD & Price Oscillators.** `AwesomeOscillatorHistogram`:
   `AO − SMA(AO, sma_period)`. A configurable variant of the existing
   `AcceleratorOscillator` (which fixes `(fast, slow, sma) = (5, 34, 5)`).

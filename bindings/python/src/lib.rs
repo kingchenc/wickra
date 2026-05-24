@@ -874,6 +874,54 @@ impl PyAoHist {
     }
 }
 
+// ============================== CFO ==============================
+
+#[pyclass(name = "CFO", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyCfo {
+    inner: wc::Cfo,
+}
+
+#[pymethods]
+impl PyCfo {
+    #[new]
+    #[pyo3(signature = (period=14))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Cfo::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("CFO(period={})", self.inner.period())
+    }
+}
+
 // ============================== APO ==============================
 
 #[pyclass(name = "APO", module = "wickra._wickra", skip_from_py_object)]
@@ -4603,6 +4651,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyKama>()?;
     m.add_class::<PyApo>()?;
     m.add_class::<PyAoHist>()?;
+    m.add_class::<PyCfo>()?;
     m.add_class::<PyCci>()?;
     m.add_class::<PyRoc>()?;
     m.add_class::<PyWilliamsR>()?;

@@ -48,6 +48,7 @@ const scalarFactories = {
   StochRSI: () => new wickra.StochRSI(14, 14),
   PPO: () => new wickra.PPO(12, 26),
   APO: () => new wickra.APO(12, 26),
+  CFO: () => new wickra.CFO(14),
   DPO: () => new wickra.DPO(20),
   Coppock: () => new wickra.Coppock(14, 11, 10),
   StdDev: () => new wickra.StdDev(20),
@@ -269,6 +270,12 @@ test('AwesomeOscillatorHistogram on a flat median converges to zero', () => {
   );
   // warmup = 5 + 3 - 1 = 7.
   for (let i = 6; i < n; i++) assert.ok(Math.abs(out[i]) < 1e-12);
+});
+
+test('CFO(5) on a perfectly linear series yields zero', () => {
+  const prices = Array.from({ length: 20 }, (_, i) => (i + 1) * 2);
+  const out = new wickra.CFO(5).batch(prices);
+  for (let i = 4; i < 20; i++) assert.ok(Math.abs(out[i]) < 1e-9);
 });
 
 test('APO(3, 5) on a flat series converges to zero', () => {

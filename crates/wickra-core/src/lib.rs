@@ -46,7 +46,7 @@ pub use error::{Error, Result};
 pub use indicators::{
     AcceleratorOscillator, Adl, Adx, AdxOutput, Apo, Aroon, AroonOscillator, AroonOutput, Atr,
     AtrTrailingStop, AwesomeOscillator, AwesomeOscillatorHistogram, BalanceOfPower, BollingerBands,
-    BollingerBandwidth, BollingerOutput, Cci, ChaikinMoneyFlow, ChaikinOscillator,
+    BollingerBandwidth, BollingerOutput, Cci, Cfo, ChaikinMoneyFlow, ChaikinOscillator,
     ChaikinVolatility, ChandeKrollStop, ChandeKrollStopOutput, ChandelierExit,
     ChandelierExitOutput, ChoppinessIndex, Cmo, Coppock, Dema, Donchian, DonchianOutput, Dpo,
     EaseOfMovement, Ema, ForceIndex, HistoricalVolatility, Hma, Kama, Keltner, KeltnerOutput,
