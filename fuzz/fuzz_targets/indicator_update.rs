@@ -17,8 +17,8 @@ use libfuzzer_sys::fuzz_target;
 use wickra_core::{
     BatchExt, BollingerBands, Cmo, Coppock, Dema, Dpo, Ema, HistoricalVolatility, Hma, Indicator,
     Kama, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, Mom, Pmo, Ppo, Roc, Rsi, Sma,
-    Smma, StdDev, StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Wma,
-    ZScore, Zlema,
+    Smma, StdDev, StochRsi, T3, Tema, Tii, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter,
+    Wma, ZScore, Zlema,
 };
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
@@ -58,6 +58,7 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| Cmo::new(14).unwrap(), &data);
     drive(|| Tsi::new(25, 13).unwrap(), &data);
     drive(|| Pmo::new(35, 20).unwrap(), &data);
+    drive(|| Tii::new(60, 30).unwrap(), &data);
     drive(|| StochRsi::new(14, 14).unwrap(), &data);
     drive(|| Dpo::new(14).unwrap(), &data);
     drive(|| Ppo::new(12, 26).unwrap(), &data);

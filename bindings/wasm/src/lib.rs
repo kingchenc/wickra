@@ -83,6 +83,7 @@ wasm_scalar_indicator!(WasmMom, "MOM", wc::Mom, period: usize);
 wasm_scalar_indicator!(WasmCmo, "CMO", wc::Cmo, period: usize);
 wasm_scalar_indicator!(WasmTsi, "TSI", wc::Tsi, long: usize, short: usize);
 wasm_scalar_indicator!(WasmPmo, "PMO", wc::Pmo, smoothing1: usize, smoothing2: usize);
+wasm_scalar_indicator!(WasmTii, "TII", wc::Tii, sma_period: usize, dev_period: usize);
 wasm_scalar_indicator!(WasmStochRsi, "StochRSI", wc::StochRsi, rsi_period: usize, stoch_period: usize);
 wasm_scalar_indicator!(WasmDpo, "DPO", wc::Dpo, period: usize);
 wasm_scalar_indicator!(WasmPpo, "PPO", wc::Ppo, fast: usize, slow: usize);

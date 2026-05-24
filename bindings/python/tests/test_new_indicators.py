@@ -49,6 +49,7 @@ SCALAR = [
     (ta.CMO, (14,)),
     (ta.TSI, (25, 13)),
     (ta.PMO, (35, 20)),
+    (ta.TII, (20, 10)),
     (ta.StochRSI, (14, 14)),
     (ta.PPO, (12, 26)),
     (ta.DPO, (20,)),
@@ -285,6 +286,21 @@ def test_linreg_angle_reference():
     # A series rising by 1 per step has slope 1, and atan(1) = 45 degrees.
     out = ta.LinRegAngle(5).batch(np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0]))
     assert out[4] == pytest.approx(45.0)
+
+
+def test_tii_pure_uptrend_saturates_at_100():
+    # On a strictly increasing series every close sits above the lagging
+    # SMA, so every deviation is positive and TII reaches 100.
+    prices = np.arange(80, dtype=np.float64) + 100.0
+    out = ta.TII(10, 5).batch(prices)
+    last = out[~np.isnan(out)][-1]
+    assert last == pytest.approx(100.0)
+
+
+def test_tii_flat_market_yields_50():
+    out = ta.TII(5, 4).batch(np.full(30, 10.0))
+    last = out[~np.isnan(out)][-1]
+    assert last == 50.0
 
 
 def test_rwi_reference_uptrend_dominates_low_line():

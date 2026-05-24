@@ -21,6 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   maximum across lookbacks for both the high (`RWI_High`) and low
   (`RWI_Low`) directions. Multi-output `(high, low)` across all four
   bindings; warmup `= period`.
+- **Trend Intensity Index (TII)** in the Trend & Directional family.
+  M.H. Pee's `[0, 100]` oscillator: the share of the most recent
+  `dev_period` SMA-deviations that are positive, scaled to
+  `[0, 100]`. Saturates at 100 on a pure uptrend, at 0 on a pure
+  downtrend, and returns the neutral 50 on a perfectly flat market.
+  Canonical Python defaults `(sma_period=60, dev_period=30)`; warmup
+  `= sma_period + dev_period − 1`.
 
 ## [0.2.7] - 2026-05-24
 

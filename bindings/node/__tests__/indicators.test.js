@@ -45,6 +45,7 @@ const scalarFactories = {
   CMO: () => new wickra.CMO(14),
   TSI: () => new wickra.TSI(25, 13),
   PMO: () => new wickra.PMO(35, 20),
+  TII: () => new wickra.TII(20, 10),
   StochRSI: () => new wickra.StochRSI(14, 14),
   PPO: () => new wickra.PPO(12, 26),
   DPO: () => new wickra.DPO(20),

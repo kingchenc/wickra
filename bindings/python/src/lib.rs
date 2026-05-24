@@ -2960,6 +2960,59 @@ impl PyPmo {
     }
 }
 
+// ============================== TII ==============================
+
+#[pyclass(name = "TII", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyTii {
+    inner: wc::Tii,
+}
+
+#[pymethods]
+impl PyTii {
+    #[new]
+    #[pyo3(signature = (sma_period=60, dev_period=30))]
+    fn new(sma_period: usize, dev_period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Tii::new(sma_period, dev_period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn periods(&self) -> (usize, usize) {
+        self.inner.periods()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (s, d) = self.inner.periods();
+        format!("TII(sma_period={s}, dev_period={d})")
+    }
+}
+
 // ============================== ZLEMA ==============================
 
 #[pyclass(name = "ZLEMA", module = "wickra._wickra", skip_from_py_object)]
@@ -4666,6 +4719,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyCmo>()?;
     m.add_class::<PyTsi>()?;
     m.add_class::<PyPmo>()?;
+    m.add_class::<PyTii>()?;
     m.add_class::<PyStochRsi>()?;
     m.add_class::<PyUltimateOscillator>()?;
     m.add_class::<PyPpo>()?;
