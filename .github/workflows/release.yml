@@ -173,7 +173,7 @@ jobs:
           - { host: macos-latest, target: x86_64-apple-darwin }
           - { host: macos-latest, target: aarch64-apple-darwin }
           - { host: windows-latest, target: x86_64-pc-windows-msvc }
-          # NOTE: aarch64-pc-windows-msvc is temporarily skipped for 0.2.1.
+          # NOTE: aarch64-pc-windows-msvc is temporarily skipped for 0.2.5.
           # The wickra-win32-arm64-msvc npm subpackage name is blocked by the
           # npm spam-detection filter for new accounts (same situation that
           # affected wickra-win32-x64-msvc through 0.1.4 until npm Support
