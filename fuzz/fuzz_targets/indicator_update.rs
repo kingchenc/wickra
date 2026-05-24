@@ -15,8 +15,9 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    BatchExt, BollingerBands, Cmo, Coppock, Dema, Dpo, Ema, HistoricalVolatility, Hma, Indicator,
-    Kama, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, Mom, Pmo, Ppo, Roc, Rsi, Sma,
+    Apo, BatchExt, BollingerBands, Cmo, Coppock, Dema, Dpo, Ema, HistoricalVolatility, Hma,
+    Indicator, Kama, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, Mom, Pmo, Ppo, Roc,
+    Rsi, Sma,
     Smma, StdDev, StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Wma,
     ZScore, Zlema,
 };
@@ -61,6 +62,7 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| StochRsi::new(14, 14).unwrap(), &data);
     drive(|| Dpo::new(14).unwrap(), &data);
     drive(|| Ppo::new(12, 26).unwrap(), &data);
+    drive(|| Apo::new(12, 26).unwrap(), &data);
     drive(|| Coppock::new(14, 11, 10).unwrap(), &data);
     drive(|| StdDev::new(14).unwrap(), &data);
     drive(|| UlcerIndex::new(14).unwrap(), &data);

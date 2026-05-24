@@ -66,6 +66,13 @@ def test_rsi_wilder_textbook_first_value():
     assert math.isclose(out[14], 70.464, abs_tol=0.05)
 
 
+def test_apo_constant_series_converges_to_zero():
+    # Both EMAs reproduce a constant exactly, so APO = 0 after warmup.
+    out = ta.APO(3, 5).batch(np.full(30, 42.0, dtype=np.float64))
+    assert np.all(np.isnan(out[:4]))
+    np.testing.assert_allclose(out[4:], 0.0, atol=1e-12)
+
+
 def test_macd_constant_series_converges_to_zero():
     out = ta.MACD().batch(np.full(200, 100.0))
     # Last row's MACD and signal must be ~0.

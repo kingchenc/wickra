@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Family 03 — MACD & Price Oscillators.** `APO` (Absolute Price
+  Oscillator): `EMA(close, fast) − EMA(close, slow)`. Like MACD's line
+  without the signal EMA. Default `(fast = 12, slow = 26)`. `fast` must
+  be strictly less than `slow`. Exposed in all four bindings.
+
 ## [0.2.7] - 2026-05-24
 
 ### Added

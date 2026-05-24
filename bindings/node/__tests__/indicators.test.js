@@ -47,6 +47,7 @@ const scalarFactories = {
   PMO: () => new wickra.PMO(35, 20),
   StochRSI: () => new wickra.StochRSI(14, 14),
   PPO: () => new wickra.PPO(12, 26),
+  APO: () => new wickra.APO(12, 26),
   DPO: () => new wickra.DPO(20),
   Coppock: () => new wickra.Coppock(14, 11, 10),
   StdDev: () => new wickra.StdDev(20),
@@ -257,4 +258,10 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+test('APO(3, 5) on a flat series converges to zero', () => {
+  const out = new wickra.APO(3, 5).batch(Array(30).fill(42));
+  for (let i = 0; i < 4; i++) assert.ok(Number.isNaN(out[i]));
+  for (let i = 4; i < 30; i++) assert.ok(Math.abs(out[i]) < 1e-12);
 });
