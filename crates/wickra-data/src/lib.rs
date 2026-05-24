@@ -7,7 +7,7 @@
 //! - [`live`] (feature `live-binance`): connect to exchange websockets and yield
 //!   typed events compatible with the rest of the crate.
 
-#![cfg_attr(docsrs, feature(doc_auto_cfg))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 // `tokio_tungstenite::Error` is large by itself (~200 B). Boxing every Err
 // variant per clippy::result_large_err just shifts allocation pressure into
 // the hot path. We accept the size because errors are rare in this crate.
