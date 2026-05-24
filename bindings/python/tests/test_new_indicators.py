@@ -157,6 +157,10 @@ CANDLE_SCALAR = {
         lambda: ta.ChaikinVolatility(10, 10),
         lambda ind, h, l, c, v: ind.batch(h, l),
     ),
+    "ParkinsonVolatility": (
+        lambda: ta.ParkinsonVolatility(20, 252),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+    ),
 }
 
 

@@ -106,6 +106,7 @@ const candleScalar = {
   ChoppinessIndex: { make: () => new wickra.ChoppinessIndex(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   TrueRange: { make: () => new wickra.TrueRange(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ChaikinVolatility: { make: () => new wickra.ChaikinVolatility(10, 10), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  ParkinsonVolatility: { make: () => new wickra.ParkinsonVolatility(20, 252), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {
@@ -265,5 +266,15 @@ test('RVI pure uptrend saturates at 100', () => {
   const out = new wickra.RVI(5).batch(prices);
   for (let i = 9; i < out.length; i++) {
     assert.ok(Math.abs(out[i] - 100) < 1e-9, `RVI[${i}] = ${out[i]}`);
+  }
+});
+
+test('ParkinsonVolatility zero-range bars yield zero', () => {
+  const n = 30;
+  const h = Array(n).fill(10);
+  const l = Array(n).fill(10);
+  const out = new wickra.ParkinsonVolatility(14, 252).batch(h, l);
+  for (let i = 13; i < n; i++) {
+    assert.ok(Math.abs(out[i]) < 1e-12, `Parkinson[${i}] = ${out[i]}`);
   }
 });

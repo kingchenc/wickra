@@ -85,6 +85,7 @@ from ._wickra import (
     TrueRange,
     ChaikinVolatility,
     RVI,
+    ParkinsonVolatility,
     # Volume
     OBV,
     VWAP,
@@ -167,6 +168,7 @@ __all__ = [
     "TrueRange",
     "ChaikinVolatility",
     "RVI",
+    "ParkinsonVolatility",
     # Volume
     "OBV",
     "VWAP",

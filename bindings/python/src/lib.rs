@@ -4476,6 +4476,73 @@ impl PyLinRegAngle {
     }
 }
 
+// ============================== Parkinson Volatility ==============================
+
+#[pyclass(
+    name = "ParkinsonVolatility",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyParkinsonVolatility {
+    inner: wc::ParkinsonVolatility,
+}
+
+#[pymethods]
+impl PyParkinsonVolatility {
+    #[new]
+    #[pyo3(signature = (period=20, trading_periods=252))]
+    fn new(period: usize, trading_periods: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::ParkinsonVolatility::new(period, trading_periods).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over numpy columns high, low (both equal length).
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn periods(&self) -> (usize, usize) {
+        self.inner.periods()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (p, t) = self.inner.periods();
+        format!("ParkinsonVolatility(period={p}, trading_periods={t})")
+    }
+}
+
 // ============================== RVI ==============================
 
 #[pyclass(name = "RVI", module = "wickra._wickra", skip_from_py_object)]
@@ -4606,5 +4673,6 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyZScore>()?;
     m.add_class::<PyLinRegAngle>()?;
     m.add_class::<PyRvi>()?;
+    m.add_class::<PyParkinsonVolatility>()?;
     Ok(())
 }

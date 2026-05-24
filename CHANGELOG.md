@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Parkinson Volatility.** Michael Parkinson's (1980) high-low realised
+  volatility estimator: `sigma² = (1 / (4n·ln2)) · Σ (ln(H/L))²`. Output
+  annualised to a percent in the same style as `HistoricalVolatility`
+  (pass `trading_periods = 1` for the raw per-bar `sigma·100` figure).
+  Roughly 5× more statistically efficient than close-to-close stddev
+  under a driftless-GBM assumption. Defaults: `period = 20`,
+  `trading_periods = 252`.
 - **RVI (Relative Volatility Index).** Donald Dorsey's RSI-shaped
   volatility gauge: partition the rolling standard deviation of close
   into "up" (close rose) and "down" (close fell) samples, Wilder-smooth

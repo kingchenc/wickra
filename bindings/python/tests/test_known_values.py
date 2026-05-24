@@ -120,3 +120,13 @@ def test_rvi_pure_uptrend_saturates_at_one_hundred():
     ready = out[~np.isnan(out)]
     assert ready.size > 0
     np.testing.assert_allclose(ready[-10:], 100.0, atol=1e-9)
+
+
+def test_parkinson_volatility_zero_range_yields_zero():
+    # H == L every bar -> ln(H/L) = 0 -> Parkinson sigma is zero.
+    h = np.full(30, 10.0)
+    l = np.full(30, 10.0)
+    out = ta.ParkinsonVolatility(14, 252).batch(h, l)
+    ready = out[~np.isnan(out)]
+    assert ready.size > 0
+    np.testing.assert_allclose(ready, 0.0, atol=1e-12)
