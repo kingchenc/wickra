@@ -157,20 +157,15 @@ impl Indicator for HurstExponent {
         let mut count = 0usize;
         for k in 1..=self.chunks {
             // k chunks each of size m; ignore the integer-division leftover
-            // bars at the end of the window.
+            // bars at the end of the window. The `period >= 2 * chunks`
+            // constructor invariant guarantees m >= 2 for every k in range.
             let m = self.period / k;
-            if m < 2 {
-                continue;
-            }
             // Average R/S across the k chunks of size m to reduce noise.
             let mut acc = 0.0;
             let mut chunks_used = 0;
             for c in 0..k {
                 let start = c * m;
                 let end = start + m;
-                if end > buf.len() {
-                    break;
-                }
                 if let Some(rs) = rescaled_range(&buf[start..end]) {
                     acc += rs;
                     chunks_used += 1;
@@ -193,11 +188,11 @@ impl Indicator for HurstExponent {
             // canonical fallback for R/S on white noise is H = 0.5.
             return Some(0.5);
         }
+        // With chunks >= 2 and period >= 2 * chunks, m_1 = period and
+        // m_2 = period / 2 are always distinct, so the variance of the
+        // log-m values is strictly positive and `denom > 0`.
         let n = count as f64;
         let denom = n * sum_xx - sum_x * sum_x;
-        if denom == 0.0 {
-            return Some(0.5);
-        }
         let slope = (n * sum_xy - sum_x * sum_y) / denom;
         Some(slope.clamp(0.0, 1.0))
     }
