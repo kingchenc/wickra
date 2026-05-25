@@ -310,7 +310,7 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, MOM, CMO, DPO, StdDev, UlcerIndex, VerticalHorizontalFilter, ZScore, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, RollingVWAP, AwesomeOscillator, Aroon, KAMA, RVI, PGO, KST, SMI, LaguerreRSI, ConnorsRSI, Inertia, ALMA, McGinleyDynamic, FRAMA, VIDYA, JMA, Alligator, EVWMA, T3, TSI, PMO, ADL, VolumePriceTrend, ChaikinMoneyFlow, ChaikinOscillator, ForceIndex, EaseOfMovement, SuperTrend, ChandelierExit, ChandeKrollStop, AtrTrailingStop, TypicalPrice, MedianPrice, WeightedClose, LinearRegression, LinRegSlope, AcceleratorOscillator, BalanceOfPower, ChoppinessIndex, TrueRange, ChaikinVolatility, LinRegAngle, BollingerBandwidth, PercentB, NATR, HistoricalVolatility, AroonOscillator, Vortex, MassIndex, StochRSI, UltimateOscillator, PPO, Coppock, VWMA } = nativeBinding
+const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, MOM, CMO, DPO, StdDev, UlcerIndex, VerticalHorizontalFilter, ZScore, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, RollingVWAP, AwesomeOscillator, Aroon, KAMA, RVI, PGO, KST, SMI, LaguerreRSI, ConnorsRSI, Inertia, ALMA, McGinleyDynamic, FRAMA, VIDYA, JMA, Alligator, EVWMA, APO, AwesomeOscillatorHistogram, CFO, ZeroLagMACD, ElderImpulse, STC, T3, TSI, PMO, ADL, VolumePriceTrend, ChaikinMoneyFlow, ChaikinOscillator, ForceIndex, EaseOfMovement, SuperTrend, ChandelierExit, ChandeKrollStop, AtrTrailingStop, TypicalPrice, MedianPrice, WeightedClose, LinearRegression, LinRegSlope, AcceleratorOscillator, BalanceOfPower, ChoppinessIndex, TrueRange, ChaikinVolatility, LinRegAngle, BollingerBandwidth, PercentB, NATR, HistoricalVolatility, AroonOscillator, Vortex, MassIndex, StochRSI, UltimateOscillator, PPO, Coppock, VWMA } = nativeBinding
 
 module.exports.version = version
 module.exports.SMA = SMA
@@ -363,6 +363,12 @@ module.exports.VIDYA = VIDYA
 module.exports.JMA = JMA
 module.exports.Alligator = Alligator
 module.exports.EVWMA = EVWMA
+module.exports.APO = APO
+module.exports.AwesomeOscillatorHistogram = AwesomeOscillatorHistogram
+module.exports.CFO = CFO
+module.exports.ZeroLagMACD = ZeroLagMACD
+module.exports.ElderImpulse = ElderImpulse
+module.exports.STC = STC
 module.exports.T3 = T3
 module.exports.TSI = TSI
 module.exports.PMO = PMO

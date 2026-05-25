@@ -56,6 +56,10 @@ SCALAR = [
     (ta.PMO, (35, 20)),
     (ta.StochRSI, (14, 14)),
     (ta.PPO, (12, 26)),
+    (ta.APO, (12, 26)),
+    (ta.CFO, (14,)),
+    (ta.ElderImpulse, (13, 12, 26, 9)),
+    (ta.STC, (23, 50, 10, 0.5)),
     (ta.DPO, (20,)),
     (ta.Coppock, (14, 11, 10)),
     (ta.StdDev, (20,)),
@@ -157,6 +161,10 @@ CANDLE_SCALAR = {
     ),
     "AcceleratorOscillator": (
         lambda: ta.AcceleratorOscillator(5, 34, 5),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+    ),
+    "AwesomeOscillatorHistogram": (
+        lambda: ta.AwesomeOscillatorHistogram(5, 34, 5),
         lambda ind, h, l, c, v: ind.batch(h, l),
     ),
     "BalanceOfPower": (
@@ -275,6 +283,22 @@ def test_multi_scalar_streaming_matches_batch(name, ohlcv):
     assert _eq_nan(batch, np.array(rows, dtype=np.float64)), f"{name} mismatch"
 
 
+# --- ZeroLagMACD (scalar input, 3-tuple output: macd / signal / histogram) -
+
+
+def test_zero_lag_macd_streaming_matches_batch(ohlcv):
+    _, _, close, _ = ohlcv
+    batch = ta.ZeroLagMACD(12, 26, 9).batch(close)
+    assert batch.shape == (close.size, 3)
+
+    streamer = ta.ZeroLagMACD(12, 26, 9)
+    rows = []
+    for p in close:
+        v = streamer.update(float(p))
+        rows.append([math.nan, math.nan, math.nan] if v is None else list(v))
+    assert _eq_nan(batch, np.array(rows, dtype=np.float64)), "ZeroLagMACD mismatch"
+
+
 # --- Alligator (3-tuple output) -------------------------------------------
 
 
@@ -362,8 +386,10 @@ def test_z_score_reference():
 def test_new_indicators_expose_lifecycle():
     instances = [make() for make, _ in CANDLE_SCALAR.values()]
     instances += [make() for make, _ in MULTI.values()]
+    instances += [make() for make, _ in MULTI_SCALAR_INPUT.values()]
     instances += [cls(*args) for cls, args in SCALAR]
     instances.append(ta.Alligator(13, 8, 5))
+    instances.append(ta.ZeroLagMACD(12, 26, 9))
     for ind in instances:
         assert ind.is_ready() is False
         assert ind.warmup_period() >= 1

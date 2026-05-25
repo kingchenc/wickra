@@ -234,6 +234,56 @@ def test_vidya_constant_series_holds_seed():
     np.testing.assert_allclose(out[4:], 42.0, atol=1e-12)
 
 
+def test_zero_lag_macd_constant_series_converges_to_zero():
+    # Each inner ZLEMA reproduces a constant, so macd, signal and histogram
+    # are all 0 once the slowest branch warms up.
+    out = ta.ZeroLagMACD(3, 5, 3).batch(np.full(60, 42.0, dtype=np.float64))
+    # Take the last row and verify all three columns are 0.
+    last = out[-1]
+    assert math.isclose(last[0], 0.0, abs_tol=1e-12)
+    assert math.isclose(last[1], 0.0, abs_tol=1e-12)
+    assert math.isclose(last[2], 0.0, abs_tol=1e-12)
+
+
+def test_awesome_oscillator_histogram_flat_series_converges_to_zero():
+    # Flat median price -> AO = 0 -> SMA(AO) = 0 -> AOHist = 0.
+    n = 50
+    high = np.full(n, 11.0)
+    low = np.full(n, 9.0)
+    out = ta.AwesomeOscillatorHistogram(3, 5, 3).batch(high, low)
+    # warmup = slow + sma - 1 = 5 + 3 - 1 = 7.
+    np.testing.assert_allclose(out[6:], 0.0, atol=1e-12)
+
+
+def test_stc_constant_series_yields_zero():
+    # Flat input collapses both stochastic stages to zero -> STC stays at 0.
+    out = ta.STC(3, 5, 4, 0.5).batch(np.full(60, 42.0, dtype=np.float64))
+    ready = out[~np.isnan(out)]
+    assert ready.size > 0
+    np.testing.assert_array_equal(ready[-5:], np.zeros(5))
+
+
+def test_elder_impulse_constant_series_is_neutral():
+    # Flat input -> neither EMA nor MACD histogram moves -> Impulse stays at 0.
+    out = ta.ElderImpulse(13, 12, 26, 9).batch(np.full(120, 42.0, dtype=np.float64))
+    ready = out[~np.isnan(out)]
+    assert ready.size > 0
+    np.testing.assert_array_equal(ready, np.zeros_like(ready))
+
+
+def test_cfo_perfect_linear_series_yields_zero():
+    # LinReg of a perfectly linear series fits exactly, so CFO = 0 after warmup.
+    out = ta.CFO(5).batch(np.arange(1.0, 21.0, dtype=np.float64) * 2.0)
+    np.testing.assert_allclose(out[4:], 0.0, atol=1e-9)
+
+
+def test_apo_constant_series_converges_to_zero():
+    # Both EMAs reproduce a constant exactly, so APO = 0 after warmup.
+    out = ta.APO(3, 5).batch(np.full(30, 42.0, dtype=np.float64))
+    assert np.all(np.isnan(out[:4]))
+    np.testing.assert_allclose(out[4:], 0.0, atol=1e-12)
+
+
 def test_macd_constant_series_converges_to_zero():
     out = ta.MACD().batch(np.full(200, 100.0))
     # Last row's MACD and signal must be ~0.

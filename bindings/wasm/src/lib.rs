@@ -91,6 +91,62 @@ wasm_scalar_indicator!(WasmPmo, "PMO", wc::Pmo, smoothing1: usize, smoothing2: u
 wasm_scalar_indicator!(WasmStochRsi, "StochRSI", wc::StochRsi, rsi_period: usize, stoch_period: usize);
 wasm_scalar_indicator!(WasmDpo, "DPO", wc::Dpo, period: usize);
 wasm_scalar_indicator!(WasmPpo, "PPO", wc::Ppo, fast: usize, slow: usize);
+wasm_scalar_indicator!(WasmApo, "APO", wc::Apo, fast: usize, slow: usize);
+wasm_scalar_indicator!(WasmCfo, "CFO", wc::Cfo, period: usize);
+wasm_scalar_indicator!(WasmElderImpulse, "ElderImpulse", wc::ElderImpulse, ema_period: usize, macd_fast: usize, macd_slow: usize, macd_signal: usize);
+wasm_scalar_indicator!(WasmStc, "STC", wc::Stc, fast: usize, slow: usize, schaff_period: usize, factor: f64);
+
+#[wasm_bindgen(js_name = ZeroLagMACD)]
+pub struct WasmZeroLagMacd {
+    inner: wc::ZeroLagMacd,
+}
+
+#[wasm_bindgen(js_class = ZeroLagMACD)]
+impl WasmZeroLagMacd {
+    #[wasm_bindgen(constructor)]
+    pub fn new(fast: usize, slow: usize, signal: usize) -> Result<WasmZeroLagMacd, JsError> {
+        Ok(Self {
+            inner: wc::ZeroLagMacd::new(fast, slow, signal).map_err(map_err)?,
+        })
+    }
+    /// Returns `[macd0, signal0, histogram0, ...]`, length `3n`.
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let n = prices.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.macd;
+                out[i * 3 + 1] = o.signal;
+                out[i * 3 + 2] = o.histogram;
+            }
+        }
+        Float64Array::from(out.as_slice())
+    }
+    /// Returns `{ macd, signal, histogram }` once warm, else `null`.
+    pub fn update(&mut self, value: f64) -> JsValue {
+        match self.inner.update(value) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"macd".into(), &o.macd.into()).ok();
+                Reflect::set(&obj, &"signal".into(), &o.signal.into()).ok();
+                Reflect::set(&obj, &"histogram".into(), &o.histogram.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        }
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
 wasm_scalar_indicator!(WasmCoppock, "Coppock", wc::Coppock, roc_long: usize, roc_short: usize, wma_period: usize);
 wasm_scalar_indicator!(WasmStdDev, "StdDev", wc::StdDev, period: usize);
 wasm_scalar_indicator!(WasmUlcerIndex, "UlcerIndex", wc::UlcerIndex, period: usize);
@@ -2201,6 +2257,47 @@ impl WasmRollingVwap {
         let mut out = Vec::with_capacity(high.len());
         for i in 0..high.len() {
             let c = make_candle(high[i], low[i], close[i], volume[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = AwesomeOscillatorHistogram)]
+pub struct WasmAoHist {
+    inner: wc::AwesomeOscillatorHistogram,
+}
+
+#[wasm_bindgen(js_class = AwesomeOscillatorHistogram)]
+impl WasmAoHist {
+    #[wasm_bindgen(constructor)]
+    pub fn new(fast: usize, slow: usize, sma_period: usize) -> Result<WasmAoHist, JsError> {
+        Ok(Self {
+            inner: wc::AwesomeOscillatorHistogram::new(fast, slow, sma_period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let c = make_candle(high[i], low[i], low[i], 0.0)?;
             out.push(self.inner.update(c).unwrap_or(f64::NAN));
         }
         Ok(Float64Array::from(out.as_slice()))

@@ -15,11 +15,11 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    Alma, BatchExt, BollingerBands, Cmo, ConnorsRsi, Coppock, Dema, Dpo, Ema, Frama,
-    HistoricalVolatility, Hma, Indicator, Jma, Kama, Kst, LaguerreRsi, LinRegAngle, LinRegSlope,
-    LinearRegression, MacdIndicator, McGinleyDynamic, Mom, Pmo, Ppo, Roc, Rsi, Sma, Smma, StdDev,
-    StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Vidya, Wma, ZScore,
-    Zlema,
+    Alma, Apo, BatchExt, BollingerBands, Cfo, Cmo, ConnorsRsi, Coppock, Dema, Dpo, ElderImpulse,
+    Ema, Frama, HistoricalVolatility, Hma, Indicator, Jma, Kama, Kst, LaguerreRsi, LinRegAngle,
+    LinRegSlope, LinearRegression, MacdIndicator, McGinleyDynamic, Mom, Pmo, Ppo, Roc, Rsi, Sma,
+    Smma, Stc, StdDev, StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter,
+    Vidya, Wma, ZScore, ZeroLagMacd, Zlema,
 };
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
@@ -67,6 +67,10 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| StochRsi::new(14, 14).unwrap(), &data);
     drive(|| Dpo::new(14).unwrap(), &data);
     drive(|| Ppo::new(12, 26).unwrap(), &data);
+    drive(|| Apo::new(12, 26).unwrap(), &data);
+    drive(|| Cfo::new(14).unwrap(), &data);
+    drive(|| ElderImpulse::classic(), &data);
+    drive(|| Stc::classic(), &data);
     drive(|| Coppock::new(14, 11, 10).unwrap(), &data);
     drive(|| StdDev::new(14).unwrap(), &data);
     drive(|| UlcerIndex::new(14).unwrap(), &data);
@@ -87,6 +91,16 @@ fuzz_target!(|data: Vec<f64>| {
             let _ = kst.update(x);
         }
         let _ = Kst::classic().batch(&data);
+    }
+
+    // Zero-Lag MACD shares MACD's multi-output topology, so it gets the
+    // same hand-rolled streaming + batch drive as classic MACD below.
+    {
+        let mut z = ZeroLagMacd::classic();
+        for &x in &data {
+            let _ = z.update(x);
+        }
+        let _ = ZeroLagMacd::classic().batch(&data);
     }
 
     // MACD and Bollinger Bands have non-`f64` outputs, so they cannot use the

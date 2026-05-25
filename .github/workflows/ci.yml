@@ -212,7 +212,27 @@ jobs:
       - name: Cache cargo
         uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
 
+      # setup-python downloads the interpreter from the Actions tool cache /
+      # nodejs CDN and occasionally hangs or 5xx's on the Windows runners.
+      # Run it with continue-on-error, then retry once after a backoff so a
+      # single CDN flake does not fail the whole job (see also: GitHub
+      # Actions runner-images#7061).
       - name: Set up Python
+        id: setup_python
+        continue-on-error: true
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Wait before Python retry
+        if: steps.setup_python.outcome == 'failure'
+        shell: bash
+        run: |
+          echo "::warning::setup-python failed (likely CDN flake), waiting 30s before retry..."
+          sleep 30
+
+      - name: Set up Python (retry)
+        if: steps.setup_python.outcome == 'failure'
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: ${{ matrix.python-version }}
@@ -295,7 +315,26 @@ jobs:
       - name: Cache cargo
         uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
 
+      # setup-node downloads Node from nodejs.org and we've seen it fail on
+      # Windows runners with "Attempting to download 18..." followed by a
+      # silent hang or curl error. Retry once after a backoff so a single
+      # CDN flake does not fail the whole job.
       - name: Set up Node
+        id: setup_node
+        continue-on-error: true
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Wait before Node retry
+        if: steps.setup_node.outcome == 'failure'
+        shell: bash
+        run: |
+          echo "::warning::setup-node failed (likely CDN flake), waiting 30s before retry..."
+          sleep 30
+
+      - name: Set up Node (retry)
+        if: steps.setup_node.outcome == 'failure'
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: ${{ matrix.node-version }}

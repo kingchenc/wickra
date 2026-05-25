@@ -1620,6 +1620,315 @@ impl PyAlma {
     }
 }
 
+// ============================== AwesomeOscillatorHistogram ==============================
+
+#[pyclass(
+    name = "AwesomeOscillatorHistogram",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyAoHist {
+    inner: wc::AwesomeOscillatorHistogram,
+}
+
+#[pymethods]
+impl PyAoHist {
+    #[new]
+    #[pyo3(signature = (fast=5, slow=34, sma_period=5))]
+    fn new(fast: usize, slow: usize, sma_period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::AwesomeOscillatorHistogram::new(fast, slow, sma_period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (f, s, k) = self.inner.periods();
+        format!("AwesomeOscillatorHistogram(fast={f}, slow={s}, sma_period={k})")
+    }
+}
+
+// ============================== STC ==============================
+
+#[pyclass(name = "STC", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyStc {
+    inner: wc::Stc,
+}
+
+#[pymethods]
+impl PyStc {
+    #[new]
+    #[pyo3(signature = (fast=23, slow=50, schaff_period=10, factor=0.5))]
+    fn new(fast: usize, slow: usize, schaff_period: usize, factor: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Stc::new(fast, slow, schaff_period, factor).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (f, s, p, k) = self.inner.params();
+        format!("STC(fast={f}, slow={s}, schaff_period={p}, factor={k})")
+    }
+}
+
+// ============================== ElderImpulse ==============================
+
+#[pyclass(name = "ElderImpulse", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyElderImpulse {
+    inner: wc::ElderImpulse,
+}
+
+#[pymethods]
+impl PyElderImpulse {
+    #[new]
+    #[pyo3(signature = (ema_period=13, macd_fast=12, macd_slow=26, macd_signal=9))]
+    fn new(
+        ema_period: usize,
+        macd_fast: usize,
+        macd_slow: usize,
+        macd_signal: usize,
+    ) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::ElderImpulse::new(ema_period, macd_fast, macd_slow, macd_signal)
+                .map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (e, f, s, sig) = self.inner.periods();
+        format!("ElderImpulse(ema_period={e}, macd_fast={f}, macd_slow={s}, macd_signal={sig})")
+    }
+}
+
+// ============================== ZeroLagMACD ==============================
+
+#[pyclass(name = "ZeroLagMACD", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyZeroLagMacd {
+    inner: wc::ZeroLagMacd,
+}
+
+#[pymethods]
+impl PyZeroLagMacd {
+    #[new]
+    #[pyo3(signature = (fast=12, slow=26, signal=9))]
+    fn new(fast: usize, slow: usize, signal: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::ZeroLagMacd::new(fast, slow, signal).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<(f64, f64, f64)> {
+        self.inner
+            .update(value)
+            .map(|o| (o.macd, o.signal, o.histogram))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let n = slice.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for (i, p) in slice.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.macd;
+                out[i * 3 + 1] = o.signal;
+                out[i * 3 + 2] = o.histogram;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (f, s, sig) = self.inner.periods();
+        format!("ZeroLagMACD(fast={f}, slow={s}, signal={sig})")
+    }
+}
+
+// ============================== CFO ==============================
+
+#[pyclass(name = "CFO", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyCfo {
+    inner: wc::Cfo,
+}
+
+#[pymethods]
+impl PyCfo {
+    #[new]
+    #[pyo3(signature = (period=14))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Cfo::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("CFO(period={})", self.inner.period())
+    }
+}
+
+// ============================== APO ==============================
+
+#[pyclass(name = "APO", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyApo {
+    inner: wc::Apo,
+}
+
+#[pymethods]
+impl PyApo {
+    #[new]
+    #[pyo3(signature = (fast=12, slow=26))]
+    fn new(fast: usize, slow: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Apo::new(fast, slow).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (f, s) = self.inner.periods();
+        format!("APO(fast={f}, slow={s})")
+    }
+}
+
 // ============================== CCI ==============================
 
 #[pyclass(name = "CCI", module = "wickra._wickra", skip_from_py_object)]
@@ -5375,5 +5684,11 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyJma>()?;
     m.add_class::<PyAlligator>()?;
     m.add_class::<PyEvwma>()?;
+    m.add_class::<PyApo>()?;
+    m.add_class::<PyAoHist>()?;
+    m.add_class::<PyCfo>()?;
+    m.add_class::<PyZeroLagMacd>()?;
+    m.add_class::<PyElderImpulse>()?;
+    m.add_class::<PyStc>()?;
     Ok(())
 }

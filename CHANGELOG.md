@@ -8,6 +8,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Family 03 — MACD & Price Oscillators.** `Stc` (Schaff Trend Cycle,
+  Doug Schaff): doubly-`Stochastic`-smoothed MACD producing a bounded
+  `[0, 100]` reading that reacts faster than `MACD` itself. Four
+  parameters `(fast = 23, slow = 50, schaff_period = 10, factor = 0.5)`.
+  Output is clamped to `[0, 100]` to absorb floating-point rounding.
+  Exposed in all four bindings.
+- **Family 03 — MACD & Price Oscillators.** `ElderImpulse` (Alexander
+  Elder's Impulse System): tri-state momentum gauge combining `EMA`
+  trend slope with `MACD` histogram slope. Returns `+1` (green/buy)
+  when both rise, `−1` (red/sell) when both fall, `0` (blue/neutral)
+  on disagreement. Four parameters
+  `(ema_period, macd_fast, macd_slow, macd_signal)`; defaults
+  `(13, 12, 26, 9)` track *Come Into My Trading Room*. Exposed in all
+  four bindings.
+- **Family 03 — MACD & Price Oscillators.** `ZeroLagMacd`: classic
+  MACD topology with `ZLEMA` substituted for `EMA` everywhere — faster
+  reaction to trend changes at the cost of slightly noisier readings.
+  Multi-output `ZeroLagMacdOutput { macd, signal, histogram }`. Three
+  parameters `(fast = 12, slow = 26, signal = 9)`; `fast` must be
+  strictly less than `slow`. Exposed in all four bindings.
+- **Family 03 — MACD & Price Oscillators.** `CFO` (Chande Forecast
+  Oscillator): `100 · (close − LinReg(close, period)) / close`. Positive
+  when the close overshoots the linear forecast, negative when it
+  undershoots. Holds the previous value if the close is zero. Default
+  period 14. Exposed in all four bindings.
+- **Family 03 — MACD & Price Oscillators.** `AwesomeOscillatorHistogram`:
+  `AO − SMA(AO, sma_period)`. A configurable variant of the existing
+  `AcceleratorOscillator` (which fixes `(fast, slow, sma) = (5, 34, 5)`).
+  Three parameters; defaults match Bill Williams' Accelerator. Exposed
+  in all four bindings.
+- **Family 03 — MACD & Price Oscillators.** `APO` (Absolute Price
+  Oscillator): `EMA(close, fast) − EMA(close, slow)`. Like MACD's line
+  without the signal EMA. Default `(fast = 12, slow = 26)`. `fast` must
+  be strictly less than `slow`. Exposed in all four bindings.
 - **Family 02 — Momentum Oscillators.** `Inertia` (Dorsey): a
   `LinearRegression` smoothing of the `RVI` series — preserves trend
   direction while damping the underlying ratio. Candle input, two
