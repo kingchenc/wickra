@@ -141,7 +141,7 @@ mod tests {
 
     #[test]
     fn accessors_and_metadata() {
-        let s = SpinningTop::new();
+        let s = SpinningTop::default();
         assert_eq!(s.name(), "SpinningTop");
         assert_eq!(s.warmup_period(), 1);
         assert!(!s.is_ready());

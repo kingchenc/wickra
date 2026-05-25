@@ -141,7 +141,7 @@ mod tests {
 
     #[test]
     fn accessors_and_metadata() {
-        let m = Marubozu::new();
+        let m = Marubozu::default();
         assert_eq!(m.name(), "Marubozu");
         assert_eq!(m.warmup_period(), 1);
         assert!(!m.is_ready());

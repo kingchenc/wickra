@@ -130,7 +130,7 @@ mod tests {
 
     #[test]
     fn accessors_and_metadata() {
-        let d = Doji::new();
+        let d = Doji::default();
         assert_eq!(d.name(), "Doji");
         assert_eq!(d.warmup_period(), 1);
         assert!(!d.is_ready());

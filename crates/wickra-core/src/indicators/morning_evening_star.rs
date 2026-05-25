@@ -188,4 +188,24 @@ mod tests {
         assert!(!m.is_ready());
         assert_eq!(m.update(c(12.0, 12.2, 9.5, 10.0, 0)), Some(0.0));
     }
+
+    #[test]
+    fn doji_outer_bar_yields_zero() {
+        // Bar1 is a doji (body == 0): body1 == 0 -> guard triggers, returns 0.
+        let mut m = MorningEveningStar::new();
+        m.update(c(10.0, 11.0, 9.0, 10.0, 0)); // doji bar1
+        m.update(c(9.9, 10.1, 9.7, 9.95, 1));
+        assert_eq!(m.update(c(10.1, 12.0, 10.0, 11.8, 2)), Some(0.0));
+    }
+
+    #[test]
+    fn same_direction_bars_yield_zero() {
+        // Bar1 red, star small, bar3 also red (wrong direction) -> falls through to else 0.
+        let mut m = MorningEveningStar::new();
+        m.update(c(12.0, 12.2, 9.5, 10.0, 0)); // long red (body 2)
+        m.update(c(9.9, 10.1, 9.7, 9.95, 1)); // small star
+                                              // Bar3 red, closes below mid (11); doesn't match morning star (bar3 must be green)
+                                              // and also doesn't match evening star (bar1 must be green).
+        assert_eq!(m.update(c(11.0, 11.2, 9.0, 9.5, 2)), Some(0.0));
+    }
 }

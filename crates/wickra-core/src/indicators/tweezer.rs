@@ -143,7 +143,7 @@ mod tests {
 
     #[test]
     fn accessors_and_metadata() {
-        let t = Tweezer::new();
+        let t = Tweezer::default();
         assert_eq!(t.name(), "Tweezer");
         assert_eq!(t.warmup_period(), 2);
         assert!(!t.is_ready());
