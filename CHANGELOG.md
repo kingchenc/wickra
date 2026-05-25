@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Market Profile family** (3 new indicators, opens family #9 across the
+  catalogue):
+  - `ValueArea(period, bin_count, value_area_pct)` — rolling
+    bin-approximation volume profile over the last `period` candles.
+    Outputs `{poc, vah, val}`: Point of Control is the bin with the highest
+    cumulative volume; the Value Area expands symmetrically from POC and
+    always absorbs the higher-volume neighbour next, until the configured
+    percentage of total volume (default 70%) is enclosed. Each candle's
+    volume is spread uniformly across its `[low, high]` range; single-print
+    bars (`low == high`) drop their entire volume into one bin.
+  - `InitialBalance(period)` — first-N-bar session high / low, frozen
+    once `period` bars have been ingested. Outputs `{high, low}`. Default
+    `period = 12` (one-hour IB on 5-minute bars for US equities). Callers
+    MUST invoke `reset()` at every session boundary, otherwise the IB
+    locks and stays fixed for the lifetime of the instance.
+  - `OpeningRange(period)` — same lock-after-N-bars semantics as IB but
+    with a smaller default window (`period = 6`, 30 min on 5-minute
+    bars) and a third output `breakout_distance` = `close - or_mid`,
+    signed (positive above the range, negative below).
+- Histogram-output Market Profile variants (Volume Profile / VPVR /
+  Composite Profile) and tick-data-only variants (TPO / Single Print /
+  Cumulative Delta / Order Flow Delta / Volume-Weighted Open) are
+  deliberately out of scope of this PR: the former need a new
+  histogram-output API layer, the latter need tick / L2 data which
+  `wickra-data` does not yet expose.
+
 ## [0.2.7] - 2026-05-24
 
 ### Added

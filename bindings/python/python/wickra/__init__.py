@@ -102,6 +102,10 @@ from ._wickra import (
     LinRegSlope,
     ZScore,
     LinRegAngle,
+    # Market Profile
+    ValueArea,
+    InitialBalance,
+    OpeningRange,
 )
 
 __all__ = [
@@ -183,4 +187,8 @@ __all__ = [
     "LinRegSlope",
     "ZScore",
     "LinRegAngle",
+    # Market Profile
+    "ValueArea",
+    "InitialBalance",
+    "OpeningRange",
 ]

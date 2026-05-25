@@ -26,9 +26,9 @@ use wickra_core::{
     AcceleratorOscillator, Adl, Adx, Aroon, AroonOscillator, Atr, AtrTrailingStop,
     AwesomeOscillator, BalanceOfPower, BatchExt, Candle, Cci, ChaikinMoneyFlow, ChaikinOscillator,
     ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex, Donchian, EaseOfMovement,
-    ForceIndex, Indicator, Keltner, MassIndex, MedianPrice, Mfi, Natr, Obv, Psar, RollingVwap,
-    Stochastic, SuperTrend, TrueRange, TypicalPrice, UltimateOscillator, VolumePriceTrend, Vortex,
-    Vwap, Vwma, WeightedClose, WilliamsR,
+    ForceIndex, Indicator, InitialBalance, Keltner, MassIndex, MedianPrice, Mfi, Natr, Obv,
+    OpeningRange, Psar, RollingVwap, Stochastic, SuperTrend, TrueRange, TypicalPrice,
+    UltimateOscillator, ValueArea, VolumePriceTrend, Vortex, Vwap, Vwma, WeightedClose, WilliamsR,
 };
 
 /// Convert a flat `f64` stream into a `Vec<Candle>` by chunking it into
@@ -127,4 +127,9 @@ fuzz_target!(|data: Vec<f64>| {
         }
         let _ = Stochastic::new(14, 3).unwrap().batch(&candles);
     }
+
+    // --- Market Profile (multi-output) ---
+    drive(|| ValueArea::new(20, 50, 0.70).unwrap(), &candles);
+    drive(|| InitialBalance::new(12).unwrap(), &candles);
+    drive(|| OpeningRange::new(6).unwrap(), &candles);
 });

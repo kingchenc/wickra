@@ -1997,6 +1997,204 @@ impl WasmAroon {
     }
 }
 
+#[wasm_bindgen(js_name = ValueArea)]
+pub struct WasmValueArea {
+    inner: wc::ValueArea,
+}
+
+#[wasm_bindgen(js_class = ValueArea)]
+impl WasmValueArea {
+    #[wasm_bindgen(constructor)]
+    pub fn new(
+        period: usize,
+        bin_count: usize,
+        value_area_pct: f64,
+    ) -> Result<WasmValueArea, JsError> {
+        Ok(Self {
+            inner: wc::ValueArea::new(period, bin_count, value_area_pct).map_err(map_err)?,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        volume: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != volume.len() {
+            return Err(JsError::new("high, low, volume must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let mid = (high[i] + low[i]) / 2.0;
+            let c = wc::Candle::new(mid, high[i], low[i], mid, volume[i], 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 3] = o.poc;
+                out[i * 3 + 1] = o.vah;
+                out[i * 3 + 2] = o.val;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    /// Streaming update. Returns `{ poc, vah, val }` once warm, else `null`.
+    pub fn update(&mut self, high: f64, low: f64, volume: f64) -> Result<JsValue, JsError> {
+        let mid = (high + low) / 2.0;
+        let c = wc::Candle::new(mid, high, low, mid, volume, 0).map_err(map_err)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"poc".into(), &o.poc.into()).ok();
+                Reflect::set(&obj, &"vah".into(), &o.vah.into()).ok();
+                Reflect::set(&obj, &"val".into(), &o.val.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = InitialBalance)]
+pub struct WasmInitialBalance {
+    inner: wc::InitialBalance,
+}
+
+#[wasm_bindgen(js_class = InitialBalance)]
+impl WasmInitialBalance {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmInitialBalance, JsError> {
+        Ok(Self {
+            inner: wc::InitialBalance::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let mid = (high[i] + low[i]) / 2.0;
+            let c = wc::Candle::new(mid, high[i], low[i], mid, 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.high;
+                out[i * 2 + 1] = o.low;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    /// Streaming update. Returns `{ high, low }`.
+    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+        let mid = (high + low) / 2.0;
+        let c = wc::Candle::new(mid, high, low, mid, 0.0, 0).map_err(map_err)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"high".into(), &o.high.into()).ok();
+                Reflect::set(&obj, &"low".into(), &o.low.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = isLocked)]
+    pub fn is_locked(&self) -> bool {
+        self.inner.is_locked()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = OpeningRange)]
+pub struct WasmOpeningRange {
+    inner: wc::OpeningRange,
+}
+
+#[wasm_bindgen(js_class = OpeningRange)]
+impl WasmOpeningRange {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmOpeningRange, JsError> {
+        Ok(Self {
+            inner: wc::OpeningRange::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let c =
+                wc::Candle::new(close[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 3] = o.high;
+                out[i * 3 + 1] = o.low;
+                out[i * 3 + 2] = o.breakout_distance;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    /// Streaming update. Returns `{ high, low, breakoutDistance }`.
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = wc::Candle::new(close, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"high".into(), &o.high.into()).ok();
+                Reflect::set(&obj, &"low".into(), &o.low.into()).ok();
+                Reflect::set(
+                    &obj,
+                    &"breakoutDistance".into(),
+                    &o.breakout_distance.into(),
+                )
+                .ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = isLocked)]
+    pub fn is_locked(&self) -> bool {
+        self.inner.is_locked()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
