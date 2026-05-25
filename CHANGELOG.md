@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Family 01 — Moving Averages.** `ALMA` (Arnaud Legoux Moving Average):
+  Gaussian-weighted moving average with configurable centre (`offset` in
+  `[0, 1]`) and kernel width (`sigma > 0`). Community-standard defaults
+  `(period = 9, offset = 0.85, sigma = 6.0)` available via `Alma::classic()`.
+  Exposed in all four bindings (Rust, Python, Node, WASM).
+- **Family 01 — Moving Averages.** `EVWMA` (Elastic Volume-Weighted
+  Moving Average, Fries 2001): an "elastic" recurrence whose smoothing
+  weight is the bar's volume relative to the running window-volume.
+  Candle input (uses close + volume), single parameter `period`
+  (default 20). Holds its previous value if the entire window has zero
+  volume. Exposed in all four bindings.
+- **Family 01 — Moving Averages.** `Alligator` (Bill Williams): three
+  SMMA lines (Jaw / Teeth / Lips) of the median price `(high + low) / 2`
+  with default periods 13 / 8 / 5. Multi-output indicator emitting
+  `AlligatorOutput { jaw, teeth, lips }`. Visual chart shift is left to
+  the consumer. Exposed in all four bindings.
+- **Family 01 — Moving Averages.** `JMA` (Jurik Moving Average):
+  three-stage filter reconstruction of Mark Jurik's adaptive MA.
+  Three parameters: `period` (14), `phase` in `[-100, 100]` (0), `power`
+  in `1..=4` (2). State is seeded to the first input so a constant series
+  is reproduced exactly. Exposed in all four bindings.
+- **Family 01 — Moving Averages.** `VIDYA` (Variable Index Dynamic
+  Average, Chande 1992): EMA whose smoothing factor is scaled by the
+  absolute Chande Momentum Oscillator. Two parameters `period` and
+  `cmo_period` (defaults 14 / 9). Exposed in all four bindings.
+- **Family 01 — Moving Averages.** `FRAMA` (Fractal Adaptive Moving
+  Average, Ehlers 2005): adapts its smoothing constant to the fractal
+  dimension of the recent window — fast in trends, slow in chop. Single
+  parameter `period` (must be even, default 16). Exposed in all four
+  bindings.
+- **Family 01 — Moving Averages.** `McGinleyDynamic`: John McGinley's
+  self-adjusting MA. Single parameter `period`; the recurrence
+  `MD + (price - MD) / (0.6 * period * (price / MD)^4)` speeds up when price
+  falls below the indicator and damps when price runs above. Seeded with the
+  simple average of the first `period` inputs. Exposed in all four bindings.
+
 ## [0.2.7] - 2026-05-24
 
 ### Added

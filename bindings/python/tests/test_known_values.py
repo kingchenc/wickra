@@ -66,6 +66,97 @@ def test_rsi_wilder_textbook_first_value():
     assert math.isclose(out[14], 70.464, abs_tol=0.05)
 
 
+def test_alma_constant_series_yields_the_constant():
+    # ALMA's Gaussian weights are normalised, so any constant series is
+    # reproduced exactly after warmup.
+    out = ta.ALMA(9, 0.85, 6.0).batch(np.full(30, 42.0, dtype=np.float64))
+    assert np.all(np.isnan(out[:8]))
+    np.testing.assert_allclose(out[8:], 42.0, atol=1e-12)
+
+
+def test_alma_reference_value_period_3():
+    # ALMA(period=3, offset=0.85, sigma=6) on [10, 20, 30].
+    # m = 0.85 * 2 = 1.7; s = 3 / 6 = 0.5; 2*s^2 = 0.5.
+    out = ta.ALMA(3, 0.85, 6.0).batch(np.array([10.0, 20.0, 30.0]))
+    assert math.isnan(out[0]) and math.isnan(out[1])
+    # Independently compute the expected Gaussian-weighted sum.
+    w = np.exp(-((np.arange(3, dtype=np.float64) - 1.7) ** 2) / 0.5)
+    expected = float(np.dot([10.0, 20.0, 30.0], w) / w.sum())
+    assert math.isclose(out[2], expected, abs_tol=1e-12)
+    # Sanity: heavy offset toward the newest sample lifts the average above
+    # the simple mean of 20.
+    assert out[2] > 20.0
+
+
+def test_mcginley_dynamic_constant_series_yields_the_constant():
+    # ratio = 1, so the recurrence collapses to MD + 0 / divisor = MD.
+    out = ta.McGinleyDynamic(5).batch(np.full(30, 42.0, dtype=np.float64))
+    assert np.all(np.isnan(out[:4]))
+    np.testing.assert_allclose(out[4:], 42.0, atol=1e-12)
+
+
+def test_mcginley_dynamic_reference_value():
+    # Period 3, seed = SMA([10, 20, 30]) = 20.0. Next price 40.0:
+    # ratio   = 2; divisor = 0.6 * 3 * 16 = 28.8; next = 20 + 20/28.8.
+    out = ta.McGinleyDynamic(3).batch(np.array([10.0, 20.0, 30.0, 40.0]))
+    assert math.isnan(out[0]) and math.isnan(out[1])
+    assert math.isclose(out[2], 20.0, abs_tol=1e-12)
+    expected = 20.0 + 20.0 / (0.6 * 3.0 * 16.0)
+    assert math.isclose(out[3], expected, abs_tol=1e-12)
+
+
+def test_frama_constant_series_yields_the_constant():
+    # Flat input -> degenerate ranges -> alpha clamps to 0.01 and the EMA
+    # recurrence holds the seed value.
+    out = ta.FRAMA(4).batch(np.full(20, 42.0, dtype=np.float64))
+    assert np.all(np.isnan(out[:3]))
+    np.testing.assert_allclose(out[3:], 42.0, atol=1e-12)
+
+
+def test_frama_pure_uptrend_hugs_latest():
+    # Monotonic uptrend -> alpha pushed toward 1.0, FRAMA tracks close.
+    out = ta.FRAMA(4).batch(np.arange(1.0, 9.0, dtype=np.float64))
+    assert math.isclose(out[-1], 8.0, abs_tol=0.05)
+
+
+def test_jma_constant_series_yields_the_constant():
+    # JMA seeds e0 and the output to the first input, so a constant series
+    # is reproduced exactly from the first sample.
+    out = ta.JMA(14, 0.0, 2).batch(np.full(30, 42.0, dtype=np.float64))
+    np.testing.assert_allclose(out, 42.0, atol=1e-12)
+
+
+def test_evwma_reference_value_period_2():
+    # EVWMA(2). Bars: (close, volume) = (10, 1), (20, 3), (30, 1).
+    #   Bar 2: sum_v = 4, seeded prev = 20, EVWMA = (1*20 + 3*20)/4 = 20.
+    #   Bar 3: sum_v = 4 (drops 1, gains 1), EVWMA = (3*20 + 1*30)/4 = 22.5.
+    out = ta.EVWMA(2).batch(np.array([10.0, 20.0, 30.0]), np.array([1.0, 3.0, 1.0]))
+    assert math.isnan(out[0])
+    assert math.isclose(out[1], 20.0, abs_tol=1e-12)
+    assert math.isclose(out[2], 22.5, abs_tol=1e-12)
+
+
+def test_alligator_constant_series_holds_at_median_price():
+    # Median price = (11 + 9) / 2 = 10 on every candle, so all three SMMAs
+    # seed at 10 and stay there.
+    n = 30
+    high = np.full(n, 11.0)
+    low = np.full(n, 9.0)
+    out = ta.Alligator(13, 8, 5).batch(high, low)
+    assert out.shape == (n, 3)
+    for row in out[12:]:
+        assert math.isclose(row[0], 10.0, abs_tol=1e-12)
+        assert math.isclose(row[1], 10.0, abs_tol=1e-12)
+        assert math.isclose(row[2], 10.0, abs_tol=1e-12)
+
+
+def test_vidya_constant_series_holds_seed():
+    # CMO = 0 on a flat series -> alpha = 0 -> VIDYA holds its seed value.
+    out = ta.VIDYA(14, 4).batch(np.full(20, 42.0, dtype=np.float64))
+    assert np.all(np.isnan(out[:4]))
+    np.testing.assert_allclose(out[4:], 42.0, atol=1e-12)
+
+
 def test_macd_constant_series_converges_to_zero():
     out = ta.MACD().batch(np.full(200, 100.0))
     # Last row's MACD and signal must be ~0.
