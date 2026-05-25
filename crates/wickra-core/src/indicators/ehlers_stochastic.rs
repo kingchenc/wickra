@@ -211,4 +211,14 @@ mod tests {
         es.reset();
         assert!(!es.is_ready());
     }
+
+    #[test]
+    fn flat_window_emits_zero() {
+        // A constant series has zero high-pass output, so `max == min` and the
+        // `range > 0.0` guard takes the `0.0` fallback rather than dividing.
+        let mut es = EhlersStochastic::new(20).unwrap();
+        for v in es.batch(&[100.0_f64; 150]).into_iter().flatten() {
+            assert_eq!(v, 0.0);
+        }
+    }
 }

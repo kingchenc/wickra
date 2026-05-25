@@ -127,6 +127,11 @@ impl Indicator for CyberneticCycle {
         let one_minus_alpha = 1.0 - self.alpha;
         let drv = one_minus_half_alpha * one_minus_half_alpha;
 
+        // The 3-slot `smooth_buf` and `cycle_buf` ring buffers fill within a
+        // few updates, so the pattern match only fails during warmup. The
+        // `else` branch is therefore the Ehlers initial condition: the
+        // second-difference of the raw input series, scaled by 0.5 — matches
+        // the EasyLanguage implementation's first-bar fallback.
         let cycle = if let (Some(s0), Some(s1), Some(s2), Some(c1), Some(c2)) = (
             self.smooth_buf[0],
             self.smooth_buf[1],
@@ -136,18 +141,13 @@ impl Indicator for CyberneticCycle {
         ) {
             drv * (s0 - 2.0 * s1 + s2) + 2.0 * one_minus_alpha * c1
                 - one_minus_alpha * one_minus_alpha * c2
-        } else if self.count < 7 {
-            // Ehlers initial condition: cycle starts as the second-difference
-            // of the raw input series, scaled by 0.5 (matches the EasyLanguage
-            // implementation's first-bar fallback).
+        } else {
             let (x0, x1, x2) = (
                 self.in_buf[0].unwrap_or(input),
                 self.in_buf[1].unwrap_or(input),
                 self.in_buf[2].unwrap_or(input),
             );
             (x0 - 2.0 * x1 + x2) / 4.0
-        } else {
-            0.0
         };
 
         Self::push3(&mut self.cycle_buf, cycle);
