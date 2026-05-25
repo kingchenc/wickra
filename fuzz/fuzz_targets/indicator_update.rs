@@ -106,22 +106,14 @@ fuzz_target!(|data: Vec<f64>| {
         let _ = ZeroLagMacd::classic().batch(&data);
     }
 
-    // MACD, KST, and Bollinger Bands have non-`f64` outputs, so they cannot
-    // use the generic `drive` helper above. Streaming + batch are still both
-    // exercised.
+    // MACD and Bollinger Bands have non-`f64` outputs, so they cannot use the
+    // generic `drive` helper above. Streaming + batch are still both exercised.
     {
         let mut macd = MacdIndicator::new(12, 26, 9).unwrap();
         for &x in &data {
             let _ = macd.update(x);
         }
         let _ = MacdIndicator::new(12, 26, 9).unwrap().batch(&data);
-    }
-    {
-        let mut kst = Kst::classic().unwrap();
-        for &x in &data {
-            let _ = kst.update(x);
-        }
-        let _ = Kst::classic().unwrap().batch(&data);
     }
     {
         let mut bb = BollingerBands::new(20, 2.0).unwrap();

@@ -1399,6 +1399,12 @@ impl KstNode {
             .map_err(map_err)?,
         })
     }
+    #[napi(factory)]
+    pub fn classic() -> Self {
+        Self {
+            inner: wc::Kst::classic(),
+        }
+    }
     #[napi]
     pub fn update(&mut self, value: f64) -> Option<KstValue> {
         self.inner.update(value).map(|o| KstValue {

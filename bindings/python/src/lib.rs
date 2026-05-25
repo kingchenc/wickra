@@ -1066,6 +1066,12 @@ impl PyKst {
                 .map_err(map_err)?,
         })
     }
+    #[staticmethod]
+    fn classic() -> Self {
+        Self {
+            inner: wc::Kst::classic(),
+        }
+    }
     fn update(&mut self, value: f64) -> Option<(f64, f64)> {
         self.inner.update(value).map(|o| (o.kst, o.signal))
     }
