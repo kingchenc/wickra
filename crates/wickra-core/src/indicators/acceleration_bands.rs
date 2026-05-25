@@ -246,6 +246,20 @@ mod tests {
         assert_eq!(ab.update(candles[0]), None);
     }
 
+    #[test]
+    fn zero_price_candle_collapses_ratio_to_zero() {
+        // `high + low == 0` is geometrically only reachable with a fully-zero
+        // bar (high >= low and both non-negative for a real market, but
+        // `Candle::new` accepts the degenerate `(0, 0, 0, 0)` case). The
+        // ratio guard must fire and the bands all collapse to zero.
+        let zero = Candle::new(0.0, 0.0, 0.0, 0.0, 1.0, 0).unwrap();
+        let mut ab = AccelerationBands::new(1, 0.5).unwrap();
+        let v = ab.update(zero).unwrap();
+        assert_relative_eq!(v.upper, 0.0, epsilon = 1e-12);
+        assert_relative_eq!(v.middle, 0.0, epsilon = 1e-12);
+        assert_relative_eq!(v.lower, 0.0, epsilon = 1e-12);
+    }
+
     /// Hand-computed reference. Single bar with `high = 12`, `low = 8`,
     /// `close = 10`, `factor = 0.5`, `period = 1`.
     /// `ratio  = (12 − 8) / (12 + 8) = 0.2`
