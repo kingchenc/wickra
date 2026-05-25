@@ -1,4 +1,4 @@
-//! HiLo Activator (Crabel).
+//! `HiLo` Activator (Crabel).
 
 use std::collections::VecDeque;
 
@@ -6,8 +6,8 @@ use crate::error::{Error, Result};
 use crate::ohlcv::Candle;
 use crate::traits::Indicator;
 
-/// HiLo Activator — Robert Krausz's adaptation of Linda Bradford Raschke and
-/// Larry Connors' "HiLo" rule, popularised by Toby Crabel. Two simple moving
+/// `HiLo` Activator — Robert Krausz's adaptation of Linda Bradford Raschke and
+/// Larry Connors' "`HiLo`" rule, popularised by Toby Crabel. Two simple moving
 /// averages — of the high and of the low — bracket price; the trailing stop
 /// for a long sits at the SMA-of-low, and for a short at the SMA-of-high.
 ///
@@ -59,7 +59,7 @@ pub struct HiLoActivator {
 }
 
 impl HiLoActivator {
-    /// Construct a HiLo Activator with an explicit SMA window.
+    /// Construct a `HiLo` Activator with an explicit SMA window.
     ///
     /// # Errors
     /// Returns [`Error::PeriodZero`] if `period == 0`.
@@ -114,25 +114,22 @@ impl Indicator for HiLoActivator {
         let hi_sma = self.sum_high / p;
         let lo_sma = self.sum_low / p;
 
-        let out = match self.prev_smas {
-            Some((prev_hi, prev_lo)) => {
-                if candle.close > prev_hi {
-                    self.long = true;
-                } else if candle.close < prev_lo {
-                    self.long = false;
-                }
-                self.started = true;
-                if self.long {
-                    prev_lo
-                } else {
-                    prev_hi
-                }
+        let out = if let Some((prev_hi, prev_lo)) = self.prev_smas {
+            if candle.close > prev_hi {
+                self.long = true;
+            } else if candle.close < prev_lo {
+                self.long = false;
             }
+            self.started = true;
+            if self.long {
+                prev_lo
+            } else {
+                prev_hi
+            }
+        } else {
             // First SMA-ready bar seeds yesterday's bands for the next call.
-            None => {
-                self.prev_smas = Some((hi_sma, lo_sma));
-                return None;
-            }
+            self.prev_smas = Some((hi_sma, lo_sma));
+            return None;
         };
         self.prev_smas = Some((hi_sma, lo_sma));
         Some(out)

@@ -221,7 +221,7 @@ mod tests {
     #[test]
     fn batch_equals_streaming() {
         let prices: Vec<f64> = (0..80)
-            .map(|i| 100.0 + (i as f64 * 0.3).sin() * 8.0)
+            .map(|i| 100.0 + (f64::from(i) * 0.3).sin() * 8.0)
             .collect();
         let mut a = RenkoTrailingStop::classic();
         let mut b = RenkoTrailingStop::classic();

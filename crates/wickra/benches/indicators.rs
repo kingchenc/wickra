@@ -155,6 +155,7 @@ where
     group.finish();
 }
 
+#[allow(clippy::too_many_lines)]
 fn benches(c: &mut Criterion) {
     let candles = load_candles();
     let closes: Vec<f64> = candles.iter().map(|c| c.close).collect();
