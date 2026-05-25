@@ -44,18 +44,26 @@ pub mod indicators;
 
 pub use error::{Error, Result};
 pub use indicators::{
-    AcceleratorOscillator, Adl, Adx, AdxOutput, Adxr, Aroon, AroonOscillator, AroonOutput, Atr,
-    AtrTrailingStop, AwesomeOscillator, BalanceOfPower, BollingerBands, BollingerBandwidth,
-    BollingerOutput, Cci, ChaikinMoneyFlow, ChaikinOscillator, ChaikinVolatility, ChandeKrollStop,
-    ChandeKrollStopOutput, ChandelierExit, ChandelierExitOutput, ChoppinessIndex, Cmo, Coppock,
-    Dema, Donchian, DonchianOutput, Dpo, EaseOfMovement, Ema, ForceIndex, HistoricalVolatility,
-    Hma, Kama, Keltner, KeltnerOutput, Kst, KstOutput, LinRegAngle, LinRegSlope, LinearRegression,
-    MacdIndicator, MacdOutput, MassIndex, MedianPrice, Mfi, Mom, Natr, Obv, PercentB, Pmo, Ppo,
-    Psar, Roc, RollingVwap, Rsi, Rwi, RwiOutput, Sma, Smma, StdDev, StochRsi, Stochastic,
-    StochasticOutput, SuperTrend, SuperTrendOutput, Tema, Tii, Trima, Trix, TrueRange, Tsi,
-    TypicalPrice, UlcerIndex, UltimateOscillator, VerticalHorizontalFilter, VolumePriceTrend,
-    Vortex, VortexOutput, Vwap, Vwma, WaveTrend, WaveTrendOutput, WeightedClose, WilliamsR, Wma,
-    ZScore, Zlema, T3,
+    AccelerationBands, AccelerationBandsOutput, AcceleratorOscillator, Adl, Adx, AdxOutput, Adxr,
+    Alligator, AlligatorOutput, Alma, Apo, Aroon, AroonOscillator, AroonOutput, Atr, AtrBands,
+    AtrBandsOutput, AtrTrailingStop, AwesomeOscillator, AwesomeOscillatorHistogram, BalanceOfPower,
+    BollingerBands, BollingerBandwidth, BollingerOutput, Cci, Cfo, ChaikinMoneyFlow,
+    ChaikinOscillator, ChaikinVolatility, ChandeKrollStop, ChandeKrollStopOutput, ChandelierExit,
+    ChandelierExitOutput, ChoppinessIndex, Cmo, ConnorsRsi, Coppock, Dema, Donchian,
+    DonchianOutput, DoubleBollinger, DoubleBollingerOutput, Dpo, EaseOfMovement, ElderImpulse, Ema,
+    Evwma, ForceIndex, FractalChaosBands, FractalChaosBandsOutput, Frama, GarmanKlassVolatility,
+    HistoricalVolatility, Hma, HurstChannel, HurstChannelOutput, Inertia, Jma, Kama, Keltner,
+    KeltnerOutput, Kst, KstOutput, LaguerreRsi, LinRegAngle, LinRegChannel, LinRegChannelOutput,
+    LinRegSlope, LinearRegression, MaEnvelope, MaEnvelopeOutput, MacdIndicator, MacdOutput,
+    MassIndex, McGinleyDynamic, MedianPrice, Mfi, Mom, Natr, Obv, ParkinsonVolatility, PercentB,
+    Pgo, Pmo, Ppo, Psar, Roc, RogersSatchellVolatility, RollingVwap, Rsi, Rvi, RviVolatility, Rwi,
+    RwiOutput, Sma, Smi, Smma, StandardErrorBands, StandardErrorBandsOutput, StarcBands,
+    StarcBandsOutput, Stc, StdDev, StochRsi, Stochastic, StochasticOutput, SuperTrend,
+    SuperTrendOutput, Tema, Tii, Trima, Trix, TrueRange, Tsi, TtmSqueeze, TtmSqueezeOutput,
+    TypicalPrice, UlcerIndex, UltimateOscillator, VerticalHorizontalFilter, Vidya,
+    VolumePriceTrend, Vortex, VortexOutput, Vwap, VwapStdDevBands, VwapStdDevBandsOutput, Vwma,
+    WaveTrend, WaveTrendOutput, WeightedClose, WilliamsR, Wma, YangZhangVolatility, ZScore,
+    ZeroLagMacd, ZeroLagMacdOutput, Zlema, T3,
 };
 pub use ohlcv::{Candle, Tick};
 pub use traits::{BatchExt, Chain, Indicator};
