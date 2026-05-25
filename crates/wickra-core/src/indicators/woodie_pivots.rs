@@ -165,8 +165,15 @@ mod tests {
 
     #[test]
     fn batch_equals_streaming() {
-        let candles: Vec<Candle> = (0..40)
-            .map(|i| c(f64::from(i) + 2.0, f64::from(i), f64::from(i) + 1.0, i))
+        let candles: Vec<Candle> = (0_i32..40)
+            .map(|i| {
+                c(
+                    f64::from(i) + 2.0,
+                    f64::from(i),
+                    f64::from(i) + 1.0,
+                    i.into(),
+                )
+            })
             .collect();
         let mut a = WoodiePivots::new();
         let mut b = WoodiePivots::new();

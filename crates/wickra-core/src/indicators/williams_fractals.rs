@@ -136,7 +136,7 @@ mod tests {
         let highs = [1.0, 2.0, 5.0, 2.0, 1.0];
         let mut last = None;
         for (i, &h) in highs.iter().enumerate() {
-            last = wf.update(c(h, h - 0.5, i as i64));
+            last = wf.update(c(h, h - 0.5, i64::try_from(i).unwrap()));
         }
         let o = last.expect("fifth bar emits");
         assert_eq!(o.up, Some(5.0));
@@ -150,7 +150,7 @@ mod tests {
         let lows = [5.0, 4.0, 1.0, 4.0, 5.0];
         let mut last = None;
         for (i, &l) in lows.iter().enumerate() {
-            last = wf.update(c(l + 0.5, l, i as i64));
+            last = wf.update(c(l + 0.5, l, i64::try_from(i).unwrap()));
         }
         let o = last.expect("fifth bar emits");
         assert_eq!(o.down, Some(1.0));
@@ -180,7 +180,7 @@ mod tests {
         let highs = [1.0, 5.0, 5.0, 2.0, 1.0];
         let mut last = None;
         for (i, &h) in highs.iter().enumerate() {
-            last = wf.update(c(h, h - 0.5, i as i64));
+            last = wf.update(c(h, h - 0.5, i64::try_from(i).unwrap()));
         }
         let o = last.unwrap();
         assert_eq!(o.up, None);

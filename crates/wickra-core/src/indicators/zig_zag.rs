@@ -1,10 +1,10 @@
-//! ZigZag — percentage-threshold swing detector.
+//! `ZigZag` — percentage-threshold swing detector.
 
 use crate::error::{Error, Result};
 use crate::ohlcv::Candle;
 use crate::traits::Indicator;
 
-/// ZigZag output: the price of the bar that completed the most recent swing
+/// `ZigZag` output: the price of the bar that completed the most recent swing
 /// and its direction (`+1.0` for a high swing, `-1.0` for a low swing).
 ///
 /// The price is the high of the bar at which the high-swing was anchored, or
@@ -18,7 +18,7 @@ pub struct ZigZagOutput {
     pub direction: f64,
 }
 
-/// ZigZag — a non-repainting percent-threshold swing detector. Tracks the most
+/// `ZigZag` — a non-repainting percent-threshold swing detector. Tracks the most
 /// recent extreme (high or low) and confirms a reversal once price has moved
 /// the configured percentage away from it.
 ///
@@ -67,7 +67,7 @@ struct State {
 }
 
 impl ZigZag {
-    /// Construct a new ZigZag with a fractional reversal threshold (e.g. `0.05`
+    /// Construct a new `ZigZag` with a fractional reversal threshold (e.g. `0.05`
     /// for a 5% swing).
     ///
     /// # Errors

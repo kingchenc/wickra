@@ -1,9 +1,9 @@
-//! DeMark Pivot Points.
+//! `DeMark` Pivot Points.
 
 use crate::ohlcv::Candle;
 use crate::traits::Indicator;
 
-/// DeMark Pivot Points output: a single resistance, pivot and support.
+/// `DeMark` Pivot Points output: a single resistance, pivot and support.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct DemarkPivotsOutput {
     /// Pivot Point: `X / 4` where `X` is the conditional sum (see [`DemarkPivots`]).
@@ -14,7 +14,7 @@ pub struct DemarkPivotsOutput {
     pub s1: f64,
 }
 
-/// DeMark Pivot Points — Tom DeMark's conditional pivot formulation, derived
+/// `DeMark` Pivot Points — Tom `DeMark`'s conditional pivot formulation, derived
 /// from a sum `X` that depends on whether the bar closed up, down or flat.
 ///
 /// ```text
@@ -28,7 +28,7 @@ pub struct DemarkPivotsOutput {
 /// ```
 ///
 /// Unlike the classic pivots, only one resistance and one support are
-/// produced; DeMark's intent is a tighter, condition-sensitive set rather than
+/// produced; `DeMark`'s intent is a tighter, condition-sensitive set rather than
 /// a multi-tier fan. The branching means a bar's open carries information that
 /// other pivot variants discard.
 ///
@@ -48,7 +48,7 @@ pub struct DemarkPivots {
 }
 
 impl DemarkPivots {
-    /// Construct a new DeMark Pivot Points indicator.
+    /// Construct a new `DeMark` Pivot Points indicator.
     pub const fn new() -> Self {
         Self { ready: false }
     }
@@ -59,20 +59,23 @@ impl Indicator for DemarkPivots {
     type Output = DemarkPivotsOutput;
 
     fn update(&mut self, candle: Candle) -> Option<DemarkPivotsOutput> {
-        let (o, h, l, c) = (candle.open, candle.high, candle.low, candle.close);
-        let x = if c < o {
-            2.0 * h + l + c
-        } else if c > o {
-            h + 2.0 * l + c
+        let open = candle.open;
+        let high = candle.high;
+        let low = candle.low;
+        let close = candle.close;
+        let x = if close < open {
+            2.0 * high + low + close
+        } else if close > open {
+            high + 2.0 * low + close
         } else {
-            h + l + 2.0 * c
+            high + low + 2.0 * close
         };
         let pp = x / 4.0;
         let half = x / 2.0;
         let out = DemarkPivotsOutput {
             pp,
-            r1: half - l,
-            s1: half - h,
+            r1: half - low,
+            s1: half - high,
         };
         self.ready = true;
         Some(out)
