@@ -68,6 +68,8 @@ SCALAR = [
     (ta.VerticalHorizontalFilter, (28,)),
     (ta.ZScore, (20,)),
     (ta.LinRegAngle, (14,)),
+    (ta.LaguerreRSI, (0.5,)),
+    (ta.ConnorsRSI, (3, 2, 100)),
 ]
 
 
@@ -92,6 +94,19 @@ def test_scalar_streaming_matches_batch(cls, args, sine_prices):
 
 CANDLE_SCALAR = {
     "VWMA": (lambda: ta.VWMA(20), lambda ind, h, l, c, v: ind.batch(c, v)),
+    "RVI": (
+        # extract_candle pulls the open price from index 0 of the tuple; the
+        # streaming test below already builds candles with open == close, so
+        # match that here by passing close as the open column.
+        lambda: ta.RVI(10),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Inertia": (
+        lambda: ta.Inertia(14, 20),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "PGO": (lambda: ta.PGO(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
+    "SMI": (lambda: ta.SMI(5, 3, 3), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "EVWMA": (lambda: ta.EVWMA(20), lambda ind, h, l, c, v: ind.batch(c, v)),
     "UltimateOscillator": (
         lambda: ta.UltimateOscillator(7, 14, 28),
@@ -207,6 +222,18 @@ MULTI = {
     ),
 }
 
+# --- Scalar-input, multi-output indicators --------------------------------
+#
+# Same shape contract as MULTI (batch returns (n, 2)) but streaming feeds a
+# single float instead of a candle tuple.
+
+MULTI_SCALAR_INPUT = {
+    "KST": (
+        lambda: ta.KST(10, 15, 20, 30, 10, 10, 10, 15, 9),
+        lambda ind, c: ind.batch(c),
+    ),
+}
+
 
 @pytest.mark.parametrize("name", list(MULTI))
 def test_multi_streaming_matches_batch(name, ohlcv):
@@ -228,6 +255,22 @@ def test_multi_streaming_matches_batch(name, ohlcv):
             i,
         )
         v = streamer.update(candle)
+        rows.append([math.nan, math.nan] if v is None else list(v))
+    assert _eq_nan(batch, np.array(rows, dtype=np.float64)), f"{name} mismatch"
+
+
+@pytest.mark.parametrize("name", list(MULTI_SCALAR_INPUT))
+def test_multi_scalar_streaming_matches_batch(name, ohlcv):
+    _, _, close, _ = ohlcv
+    make, batch_call = MULTI_SCALAR_INPUT[name]
+
+    batch = batch_call(make(), close)
+    assert batch.shape == (close.size, 2)
+
+    streamer = make()
+    rows = []
+    for p in close:
+        v = streamer.update(float(p))
         rows.append([math.nan, math.nan] if v is None else list(v))
     assert _eq_nan(batch, np.array(rows, dtype=np.float64)), f"{name} mismatch"
 

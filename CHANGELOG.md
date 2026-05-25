@@ -8,6 +8,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Family 02 — Momentum Oscillators.** `Inertia` (Dorsey): a
+  `LinearRegression` smoothing of the `RVI` series — preserves trend
+  direction while damping the underlying ratio. Candle input, two
+  parameters `(rvi_period, linreg_period)` (defaults 14 / 20). Exposed
+  in all four bindings.
+- **Family 02 — Momentum Oscillators.** `ConnorsRsi`: Larry Connors'
+  3-component aggregate — `RSI(close)`, `RSI(streak)`, and the
+  percentile rank of the 1-bar return over the recent `period_rank`
+  returns. Bounded in `[0, 100]`. Three parameters
+  `(period_rsi, period_streak, period_rank)` (defaults 3 / 2 / 100).
+  Exposed in all four bindings.
+- **Family 02 — Momentum Oscillators.** `LaguerreRsi` (Ehlers):
+  four-stage Laguerre polynomial filter wrapped in an RSI-style up/down
+  accumulator. Single parameter `gamma` in `[0, 1]` (default 0.5) trades
+  lag for smoothness. State is seeded to the first input so a constant
+  series stays at the neutral 50. Output clamped to `[0, 100]`. Exposed
+  in all four bindings.
+- **Family 02 — Momentum Oscillators.** `SMI` (Stochastic Momentum
+  Index, Blau): doubly-`EMA`-smoothed bounded oscillator measuring the
+  close's displacement from the centre of the recent high-low range,
+  scaled by the smoothed range. Candle input, three parameters
+  `(period, d_period, d2_period)` (defaults 5 / 3 / 3). Exposed in all
+  four bindings.
+- **Family 02 — Momentum Oscillators.** `KST` (Know Sure Thing, Pring):
+  weighted sum of four `SMA`-smoothed `ROC` series with Pring's fixed
+  weights `1, 2, 3, 4`, plus an `SMA` signal line. Nine parameters
+  (four ROC periods, four SMA periods, signal period); `Kst::classic()`
+  uses Pring's recommended defaults. Multi-output indicator emitting
+  `KstOutput { kst, signal }`. Exposed in all four bindings.
+- **Family 02 — Momentum Oscillators.** `PGO` (Pretty Good Oscillator,
+  Mark Johnson): `(close − SMA(close, period)) / EMA(TR, period)`.
+  Candle input, single parameter `period` (default 14). Roughly counts
+  how many ATR-equivalents the close is from its mean. Exposed in all
+  four bindings.
+- **Family 02 — Momentum Oscillators.** `RVI` (Relative Vigor Index,
+  Dorsey): per-bar ratio `SMA(close - open, period) / SMA(high - low,
+  period)`. Candle input, single parameter `period` (default 10).
+  Positive on average-bullish windows, negative on average-bearish.
+  Holds previous value if the entire window has zero range. Exposed in
+  all four bindings.
 - **Family 01 — Moving Averages.** `ALMA` (Arnaud Legoux Moving Average):
   Gaussian-weighted moving average with configurable centre (`offset` in
   `[0, 1]`) and kernel width (`sigma > 0`). Community-standard defaults

@@ -66,6 +66,83 @@ def test_rsi_wilder_textbook_first_value():
     assert math.isclose(out[14], 70.464, abs_tol=0.05)
 
 
+def test_inertia_constant_rvi_passes_through_linreg():
+    # Every bar identical (open, high, low, close) = (10, 11, 9, 10.5):
+    # RVI = (c-o) / (h-l) = 0.5 / 2 = 0.25 every bar. LinReg of a constant
+    # series equals that constant after warmup.
+    n = 60
+    out = ta.Inertia(3, 4).batch(
+        np.full(n, 10.0), np.full(n, 11.0), np.full(n, 9.0), np.full(n, 10.5)
+    )
+    # warmup_period = 3 + 4 - 1 = 6.
+    np.testing.assert_allclose(out[5:], 0.25, atol=1e-12)
+
+
+def test_connors_rsi_output_is_bounded():
+    # CRSI is the average of three [0, 100] components, so the aggregate must
+    # also sit in [0, 100] after warmup.
+    prices = 100.0 + 20.0 * np.sin(np.linspace(0, 30, 250))
+    out = ta.ConnorsRSI(3, 2, 100).batch(prices.astype(np.float64))
+    ready = out[~np.isnan(out)]
+    assert ready.size > 0
+    assert ready.min() >= 0.0
+    assert ready.max() <= 100.0
+
+
+def test_laguerre_rsi_constant_series_stays_at_mid_band():
+    # All four Laguerre stages seed to the first input, so subsequent flat
+    # inputs keep them equal and the up/down accumulator is 0 — Wickra maps
+    # that to the neutral 50.
+    out = ta.LaguerreRSI(0.5).batch(np.full(40, 42.0, dtype=np.float64))
+    np.testing.assert_allclose(out, 50.0, atol=1e-12)
+
+
+def test_smi_close_at_centre_yields_zero():
+    # Close at the midpoint of a flat high/low range -> displacement is
+    # always zero -> SMI converges to 0.
+    n = 60
+    out = ta.SMI(5, 3, 3).batch(np.full(n, 11.0), np.full(n, 9.0), np.full(n, 10.0))
+    # warmup_period = 5 + 3 + 3 - 2 = 9.
+    np.testing.assert_allclose(out[8:], 0.0, atol=1e-12)
+
+
+def test_kst_constant_series_yields_zero():
+    # ROC is zero on a flat input, so every RCMA is zero, so KST and its
+    # signal SMA are both zero after warmup.
+    kst = ta.KST(10, 15, 20, 30, 10, 10, 10, 15, 9)
+    out = kst.batch(np.full(80, 42.0, dtype=np.float64))
+    warmup = kst.warmup_period()
+    # Use NaN-safe comparison on the post-warmup tail.
+    tail = out[warmup - 1 :]
+    assert np.all(np.isfinite(tail))
+    np.testing.assert_allclose(tail, 0.0, atol=1e-12)
+
+
+def test_pgo_flat_close_yields_zero():
+    # On a constant close the numerator (close − SMA) is zero, so PGO emits 0
+    # regardless of the TR-EMA in the denominator.
+    n = 20
+    high = np.full(n, 11.0)
+    low = np.full(n, 9.0)
+    close = np.full(n, 10.0)
+    out = ta.PGO(5).batch(high, low, close)
+    assert np.all(np.isnan(out[:4]))
+    np.testing.assert_allclose(out[4:], 0.0, atol=1e-12)
+
+
+def test_rvi_reference_value_period_2():
+    # Two bars: (open, high, low, close) = (10, 11, 9, 10.5), (10.5, 11.5, 10, 11).
+    #   num = (0.5 + 0.5) = 1.0; den = (2.0 + 1.5) = 3.5; RVI = 1 / 3.5.
+    out = ta.RVI(2).batch(
+        np.array([10.0, 10.5]),
+        np.array([11.0, 11.5]),
+        np.array([9.0, 10.0]),
+        np.array([10.5, 11.0]),
+    )
+    assert math.isnan(out[0])
+    assert math.isclose(out[1], 1.0 / 3.5, abs_tol=1e-12)
+
+
 def test_alma_constant_series_yields_the_constant():
     # ALMA's Gaussian weights are normalised, so any constant series is
     # reproduced exactly after warmup.

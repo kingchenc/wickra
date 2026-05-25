@@ -15,10 +15,11 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    Alma, BatchExt, BollingerBands, Cmo, Coppock, Dema, Dpo, Ema, Frama, HistoricalVolatility, Hma,
-    Indicator, Jma, Kama, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator,
-    McGinleyDynamic, Mom, Pmo, Ppo, Roc, Rsi, Sma, Smma, StdDev, StochRsi, T3, Tema, Trima, Trix,
-    Tsi, UlcerIndex, VerticalHorizontalFilter, Vidya, Wma, ZScore, Zlema,
+    Alma, BatchExt, BollingerBands, Cmo, ConnorsRsi, Coppock, Dema, Dpo, Ema, Frama,
+    HistoricalVolatility, Hma, Indicator, Jma, Kama, Kst, LaguerreRsi, LinRegAngle, LinRegSlope,
+    LinearRegression, MacdIndicator, McGinleyDynamic, Mom, Pmo, Ppo, Roc, Rsi, Sma, Smma, StdDev,
+    StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Vidya, Wma, ZScore,
+    Zlema,
 };
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
@@ -75,6 +76,18 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| LinRegAngle::new(14).unwrap(), &data);
     drive(|| VerticalHorizontalFilter::new(14).unwrap(), &data);
     drive(|| ZScore::new(14).unwrap(), &data);
+    drive(|| LaguerreRsi::new(0.5).unwrap(), &data);
+    drive(|| ConnorsRsi::classic(), &data);
+
+    // KST is scalar-input but emits `KstOutput`, so it bypasses the generic
+    // `drive` helper. Streaming + batch are still both exercised.
+    {
+        let mut kst = Kst::classic();
+        for &x in &data {
+            let _ = kst.update(x);
+        }
+        let _ = Kst::classic().batch(&data);
+    }
 
     // MACD and Bollinger Bands have non-`f64` outputs, so they cannot use the
     // generic `drive` helper above. Streaming + batch are still both exercised.

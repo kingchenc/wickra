@@ -64,6 +64,8 @@ const scalarFactories = {
   VerticalHorizontalFilter: () => new wickra.VerticalHorizontalFilter(28),
   ZScore: () => new wickra.ZScore(20),
   LinRegAngle: () => new wickra.LinRegAngle(14),
+  LaguerreRSI: () => new wickra.LaguerreRSI(0.5),
+  ConnorsRSI: () => new wickra.ConnorsRSI(3, 2, 100),
 };
 
 for (const [name, make] of Object.entries(scalarFactories)) {
@@ -91,6 +93,10 @@ const candleScalar = {
   AwesomeOscillator: { make: () => new wickra.AwesomeOscillator(5, 34), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   OBV: { make: () => new wickra.OBV(), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
   VWMA: { make: () => new wickra.VWMA(20), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
+  RVI: { make: () => new wickra.RVI(10), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Inertia: { make: () => new wickra.Inertia(14, 20), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  PGO: { make: () => new wickra.PGO(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  SMI: { make: () => new wickra.SMI(5, 3, 3), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   EVWMA: { make: () => new wickra.EVWMA(20), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
   UltimateOscillator: { make: () => new wickra.UltimateOscillator(7, 14, 28), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   AroonOscillator: { make: () => new wickra.AroonOscillator(14), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
@@ -128,6 +134,7 @@ for (const [name, d] of Object.entries(candleScalar)) {
 // --- Multi-output indicators: object update vs interleaved batch ---
 
 const multi = {
+  KST: { make: () => new wickra.KST(10, 15, 20, 30, 10, 10, 10, 15, 9), fields: ['kst', 'signal'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   Alligator: { make: () => new wickra.Alligator(13, 8, 5), fields: ['jaw', 'teeth', 'lips'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   MACD: { make: () => new wickra.MACD(12, 26, 9), fields: ['macd', 'signal', 'histogram'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   BollingerBands: { make: () => new wickra.BollingerBands(20, 2), fields: ['upper', 'middle', 'lower', 'stddev'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
@@ -264,6 +271,64 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+test('Inertia(3, 4) on a constant RVI series equals that RVI', () => {
+  const n = 60;
+  // Every bar (open, high, low, close) = (10, 11, 9, 10.5) -> RVI = 0.25.
+  const out = new wickra.Inertia(3, 4).batch(
+    Array(n).fill(10),
+    Array(n).fill(11),
+    Array(n).fill(9),
+    Array(n).fill(10.5),
+  );
+  for (let i = 5; i < n; i++) assert.ok(Math.abs(out[i] - 0.25) < 1e-12);
+});
+
+test('ConnorsRSI stays bounded in [0, 100]', () => {
+  const prices = Array.from({ length: 250 }, (_, i) => 100 + 20 * Math.sin(i * 0.12));
+  const out = new wickra.ConnorsRSI(3, 2, 100).batch(prices);
+  for (let i = 0; i < out.length; i++) {
+    if (Number.isNaN(out[i])) continue;
+    assert.ok(out[i] >= 0 && out[i] <= 100, `out[${i}] = ${out[i]}`);
+  }
+});
+
+test('LaguerreRSI on a flat series stays at the neutral 50', () => {
+  const out = new wickra.LaguerreRSI(0.5).batch(Array(40).fill(42));
+  for (let i = 0; i < out.length; i++) assert.ok(Math.abs(out[i] - 50) < 1e-12);
+});
+
+test('SMI with close at range centre emits zero after warmup', () => {
+  const n = 60;
+  const out = new wickra.SMI(5, 3, 3).batch(Array(n).fill(11), Array(n).fill(9), Array(n).fill(10));
+  // warmup_period = 5 + 3 + 3 - 2 = 9.
+  for (let i = 8; i < n; i++) assert.ok(Math.abs(out[i]) < 1e-12);
+});
+
+test('KST on a flat series emits zero after warmup', () => {
+  const kst = new wickra.KST(10, 15, 20, 30, 10, 10, 10, 15, 9);
+  const n = 80;
+  const out = kst.batch(Array(n).fill(42));
+  const warmup = kst.warmupPeriod();
+  for (let i = warmup - 1; i < n; i++) {
+    assert.ok(Math.abs(out[i * 2]) < 1e-12, `kst[${i}] = ${out[i * 2]}`);
+    assert.ok(Math.abs(out[i * 2 + 1]) < 1e-12, `signal[${i}] = ${out[i * 2 + 1]}`);
+  }
+});
+
+test('PGO(5) on a flat close emits zero after warmup', () => {
+  const n = 20;
+  const out = new wickra.PGO(5).batch(Array(n).fill(11), Array(n).fill(9), Array(n).fill(10));
+  for (let i = 0; i < 4; i++) assert.ok(Number.isNaN(out[i]));
+  for (let i = 4; i < n; i++) assert.ok(Math.abs(out[i]) < 1e-12, `out[${i}] = ${out[i]}`);
+});
+
+test('RVI(2) reference value on two bars', () => {
+  // Bars (open, high, low, close): (10, 11, 9, 10.5), (10.5, 11.5, 10, 11).
+  const out = new wickra.RVI(2).batch([10, 10.5], [11, 11.5], [9, 10], [10.5, 11]);
+  assert.ok(Number.isNaN(out[0]));
+  assert.ok(Math.abs(out[1] - 1 / 3.5) < 1e-12);
 });
 
 test('EVWMA(2) reference values on [10, 20, 30] with volumes [1, 3, 1]', () => {
