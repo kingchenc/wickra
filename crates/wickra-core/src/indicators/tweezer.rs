@@ -60,7 +60,7 @@ impl Tweezer {
     ///
     /// `tolerance` must lie in `[0, 1)`.
     pub fn with_tolerance(tolerance: f64) -> Result<Self> {
-        if !(tolerance >= 0.0 && tolerance < 1.0) {
+        if !(0.0..1.0).contains(&tolerance) {
             return Err(Error::InvalidPeriod {
                 message: "tweezer tolerance must lie in [0, 1)",
             });

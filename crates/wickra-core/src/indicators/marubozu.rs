@@ -57,7 +57,7 @@ impl Marubozu {
     ///
     /// `shadow_tolerance` must lie in `[0, 1)`.
     pub fn with_tolerance(shadow_tolerance: f64) -> Result<Self> {
-        if !(shadow_tolerance >= 0.0 && shadow_tolerance < 1.0) {
+        if !(0.0..1.0).contains(&shadow_tolerance) {
             return Err(Error::InvalidPeriod {
                 message: "marubozu shadow tolerance must lie in [0, 1)",
             });
