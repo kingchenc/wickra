@@ -105,7 +105,7 @@ impl OpeningRange {
     }
 
     fn snapshot(&self) -> OpeningRangeOutput {
-        let mid = (self.high + self.low) / 2.0;
+        let mid = f64::midpoint(self.high, self.low);
         OpeningRangeOutput {
             high: self.high,
             low: self.low,
@@ -166,7 +166,7 @@ mod tests {
     use approx::assert_relative_eq;
 
     fn c(high: f64, low: f64, close: f64, ts: i64) -> Candle {
-        let open = (high + low) / 2.0;
+        let open = f64::midpoint(high, low);
         Candle::new(open, high, low, close, 10.0, ts).unwrap()
     }
 

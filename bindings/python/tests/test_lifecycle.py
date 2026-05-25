@@ -112,3 +112,20 @@ def test_opening_range_reset_unlocks():
 def test_value_area_warmup_equals_period():
     assert ta.ValueArea(20, 50, 0.70).warmup_period() == 20
     assert ta.ValueArea(10, 30, 0.80).warmup_period() == 10
+
+
+def test_ehlers_indicators_lifecycle():
+    # Spot-check a few Family-10 entries beyond what test_new_indicators covers.
+    series = np.linspace(1.0, 200.0, 200) + np.sin(np.arange(200) * 0.3) * 5.0
+    for ind in [
+        ta.SuperSmoother(10),
+        ta.FisherTransform(10),
+        ta.MAMA(),
+        ta.HilbertDominantCycle(),
+        ta.SineWave(),
+    ]:
+        assert not ind.is_ready()
+        ind.batch(series)
+        assert ind.is_ready()
+        ind.reset()
+        assert not ind.is_ready()

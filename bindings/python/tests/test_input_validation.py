@@ -71,3 +71,32 @@ def test_value_area_unequal_length_raises():
     volume = np.array([10.0, 10.0, 10.0])
     with pytest.raises(ValueError):
         ta.ValueArea(2, 10, 0.7).batch(high, low, volume)
+
+
+def test_ichimoku_rejects_zero_and_non_increasing_periods():
+    with pytest.raises(ValueError):
+        ta.Ichimoku(0, 26, 52, 26)
+    with pytest.raises(ValueError):
+        ta.Ichimoku(9, 26, 52, 0)
+    # Periods must satisfy tenkan < kijun < senkou_b.
+    with pytest.raises(ValueError):
+        ta.Ichimoku(26, 9, 52, 26)
+    with pytest.raises(ValueError):
+        ta.Ichimoku(9, 52, 52, 26)
+
+
+def test_family_10_ehlers_rejects_invalid_parameters():
+    with pytest.raises(ValueError):
+        ta.SuperSmoother(0)
+    with pytest.raises(ValueError):
+        ta.FisherTransform(0)
+    with pytest.raises(ValueError):
+        ta.InverseFisherTransform(0.0)
+    with pytest.raises(ValueError):
+        ta.DecyclerOscillator(30, 10)
+    with pytest.raises(ValueError):
+        ta.RoofingFilter(48, 10)
+    with pytest.raises(ValueError):
+        ta.MAMA(0.05, 0.5)
+    with pytest.raises(ValueError):
+        ta.EmpiricalModeDecomposition(20, 0.0)

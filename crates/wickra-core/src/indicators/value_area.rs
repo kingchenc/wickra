@@ -43,6 +43,7 @@ pub struct ValueAreaOutput {
 /// }
 /// assert!(va.is_ready());
 /// ```
+#[allow(clippy::struct_field_names)]
 #[derive(Debug, Clone)]
 pub struct ValueArea {
     period: usize,
@@ -195,9 +196,11 @@ impl ValueArea {
     }
 
     fn price_to_bin(&self, price: f64, win_low: f64, bin_width: f64) -> usize {
-        let raw = ((price - win_low) / bin_width).floor() as isize;
-        let max = self.bin_count as isize - 1;
-        raw.clamp(0, max) as usize
+        // Clamp the float into [0, bin_count - 1] before casting so the
+        // `as usize` step cannot overflow or wrap.
+        let raw = ((price - win_low) / bin_width).floor();
+        let max = (self.bin_count - 1) as f64;
+        raw.clamp(0.0, max) as usize
     }
 }
 
@@ -362,13 +365,13 @@ mod tests {
         candles.push(c(110.0, 110.5, 109.5, 110.0, 1000.0, 4));
         let mut v = ValueArea::new(5, 50, 0.70).unwrap();
         let out = v.batch(&candles).into_iter().flatten().last().unwrap();
-        // POC should be close to 110 (within one bin width of the bar 4 mid).
-        let bin_width = (110.5 - 99.5) / 50.0;
+        // POC must fall inside the high-volume bar's [low, high] range; ties
+        // among equal-volume bins resolve to the lowest index, so the POC
+        // sits on the left edge of bar 4's range rather than at its midpoint.
         assert!(
-            (out.poc - 110.0).abs() <= bin_width,
-            "POC {} not near 110 (bin {})",
-            out.poc,
-            bin_width
+            (109.5..=110.5).contains(&out.poc),
+            "POC {} not inside [109.5, 110.5]",
+            out.poc
         );
         // VAH and VAL bracket POC.
         assert!(out.vah >= out.poc);

@@ -117,6 +117,30 @@ def test_obv_streaming_matches_batch(ohlc_series):
     assert _equal_with_nan(batch, streamed)
 
 
+def test_mama_streaming_matches_batch(sine_prices):
+    batch = ta.MAMA().batch(sine_prices)
+    streamer = ta.MAMA()
+    rows = []
+    for p in sine_prices:
+        v = streamer.update(float(p))
+        if v is None:
+            rows.append([math.nan, math.nan])
+        else:
+            rows.append(list(v))
+    streamed = np.array(rows, dtype=np.float64)
+    assert _equal_with_nan(batch, streamed)
+
+
+def test_super_smoother_streaming_matches_batch(sine_prices):
+    batch = ta.SuperSmoother(10).batch(sine_prices)
+    streamer = ta.SuperSmoother(10)
+    streamed = np.array(
+        [math.nan if (v := streamer.update(float(p))) is None else float(v) for p in sine_prices],
+        dtype=np.float64,
+    )
+    assert _equal_with_nan(batch, streamed)
+
+
 def test_rolling_vwap_streaming_matches_batch(ohlc_series):
     # RollingVWAP(20) on the shared OHLC series. Provides finite-memory VWAP
     # parity coverage now that the indicator is exposed across all bindings.

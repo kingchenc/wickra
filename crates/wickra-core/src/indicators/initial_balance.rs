@@ -159,7 +159,7 @@ mod tests {
 
     fn c(high: f64, low: f64, ts: i64) -> Candle {
         // open / close pinned inside [low, high] so the candle validates.
-        let mid = (high + low) / 2.0;
+        let mid = f64::midpoint(high, low);
         Candle::new(mid, high, low, mid, 10.0, ts).unwrap()
     }
 
