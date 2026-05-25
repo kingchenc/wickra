@@ -19,8 +19,8 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use std::hint::black_box;
 use wickra::{
-    Atr, BatchExt, BollingerBands, Candle, Ema, Indicator, MacdIndicator, Obv, Pgo, Rsi, Rvi, Sma,
-    Stochastic, Wma,
+    Alma, Atr, BatchExt, BollingerBands, Candle, Ema, Frama, Indicator, Jma, MacdIndicator,
+    McGinleyDynamic, Obv, Pgo, Rsi, Rvi, Sma, Stochastic, Vidya, Wma,
 };
 use wickra_data::csv::CandleReader;
 
@@ -139,6 +139,13 @@ fn benches(c: &mut Criterion) {
     bench_scalar(c, "ema", &closes, || Ema::new(14).unwrap());
     bench_scalar(c, "wma", &closes, || Wma::new(14).unwrap());
     bench_scalar(c, "rsi", &closes, || Rsi::new(14).unwrap());
+    bench_scalar(c, "alma", &closes, || Alma::new(9, 0.85, 6.0).unwrap());
+    bench_scalar(c, "mcginley_dynamic", &closes, || {
+        McGinleyDynamic::new(10).unwrap()
+    });
+    bench_scalar(c, "frama", &closes, || Frama::new(16).unwrap());
+    bench_scalar(c, "vidya", &closes, || Vidya::new(14, 9).unwrap());
+    bench_scalar(c, "jma", &closes, || Jma::new(14, 0.0, 2).unwrap());
     bench_macd(c, &closes);
     bench_bollinger(c, &closes);
     bench_candle_input(c, "atr", &candles, || Atr::new(14).unwrap());

@@ -116,6 +116,8 @@ node_scalar_indicator!(
     wc::VerticalHorizontalFilter
 );
 node_scalar_indicator!(ZScoreNode, "ZScore", wc::ZScore);
+node_scalar_indicator!(McGinleyDynamicNode, "McGinleyDynamic", wc::McGinleyDynamic);
+node_scalar_indicator!(FramaNode, "FRAMA", wc::Frama);
 
 // ============================== MACD ==============================
 
@@ -1459,6 +1461,229 @@ impl KamaNode {
         Ok(Self {
             inner: wc::Kama::new(er_period as usize, fast as usize, slow as usize)
                 .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+}
+
+// ============================== EVWMA ==============================
+
+#[napi(js_name = "EVWMA")]
+pub struct EvwmaNode {
+    inner: wc::Evwma,
+}
+#[napi]
+impl EvwmaNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Evwma::new(clamp_period(period)).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, close: f64, volume: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(close, close, close, volume)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, close: Vec<f64>, volume: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if close.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "close and volume must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            out.push(
+                self.inner
+                    .update(cnd(close[i], close[i], close[i], volume[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Alligator ==============================
+
+#[napi(object)]
+pub struct AlligatorValue {
+    pub jaw: f64,
+    pub teeth: f64,
+    pub lips: f64,
+}
+
+#[napi(js_name = "Alligator")]
+pub struct AlligatorNode {
+    inner: wc::Alligator,
+}
+#[napi]
+impl AlligatorNode {
+    #[napi(constructor)]
+    pub fn new(jaw: u32, teeth: u32, lips: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Alligator::new(clamp_period(jaw), clamp_period(teeth), clamp_period(lips))
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<AlligatorValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, low, 0.0)?)
+            .map(|o| AlligatorValue {
+                jaw: o.jaw,
+                teeth: o.teeth,
+                lips: o.lips,
+            }))
+    }
+    #[napi]
+    pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() {
+            return Err(NapiError::from_reason(
+                "high and low must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], low[i], 0.0)?) {
+                out[i * 3] = o.jaw;
+                out[i * 3 + 1] = o.teeth;
+                out[i * 3 + 2] = o.lips;
+            }
+        }
+        Ok(out)
+    }
+}
+
+// ============================== JMA ==============================
+
+#[napi(js_name = "JMA")]
+pub struct JmaNode {
+    inner: wc::Jma,
+}
+#[napi]
+impl JmaNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, phase: f64, power: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Jma::new(clamp_period(period), phase, power).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+}
+
+// ============================== VIDYA ==============================
+
+#[napi(js_name = "VIDYA")]
+pub struct VidyaNode {
+    inner: wc::Vidya,
+}
+#[napi]
+impl VidyaNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, cmo_period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Vidya::new(clamp_period(period), clamp_period(cmo_period))
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+}
+
+// ============================== ALMA ==============================
+
+#[napi(js_name = "ALMA")]
+pub struct AlmaNode {
+    inner: wc::Alma,
+}
+#[napi]
+impl AlmaNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, offset: f64, sigma: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Alma::new(clamp_period(period), offset, sigma).map_err(map_err)?,
         })
     }
     #[napi]

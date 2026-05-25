@@ -1241,6 +1241,385 @@ impl PyRvi {
     }
 }
 
+// ============================== FRAMA ==============================
+
+#[pyclass(name = "FRAMA", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyFrama {
+    inner: wc::Frama,
+}
+
+#[pymethods]
+impl PyFrama {
+    #[new]
+    #[pyo3(signature = (period=16))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Frama::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("FRAMA(period={})", self.inner.period())
+    }
+}
+
+// ============================== EVWMA ==============================
+
+#[pyclass(name = "EVWMA", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyEvwma {
+    inner: wc::Evwma,
+}
+
+#[pymethods]
+impl PyEvwma {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Evwma::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if c.len() != v.len() {
+            return Err(PyValueError::new_err(
+                "close and volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(c.len());
+        for i in 0..c.len() {
+            let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("EVWMA(period={})", self.inner.period())
+    }
+}
+
+// ============================== Alligator ==============================
+
+#[pyclass(name = "Alligator", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyAlligator {
+    inner: wc::Alligator,
+}
+
+#[pymethods]
+impl PyAlligator {
+    #[new]
+    #[pyo3(signature = (jaw=13, teeth=8, lips=5))]
+    fn new(jaw: usize, teeth: usize, lips: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Alligator::new(jaw, teeth, lips).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.jaw, o.teeth, o.lips)))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 3] = o.jaw;
+                out[i * 3 + 1] = o.teeth;
+                out[i * 3 + 2] = o.lips;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (j, t, l) = self.inner.periods();
+        format!("Alligator(jaw={j}, teeth={t}, lips={l})")
+    }
+}
+
+// ============================== JMA ==============================
+
+#[pyclass(name = "JMA", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyJma {
+    inner: wc::Jma,
+}
+
+#[pymethods]
+impl PyJma {
+    #[new]
+    #[pyo3(signature = (period=14, phase=0.0, power=2))]
+    fn new(period: usize, phase: f64, power: u32) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Jma::new(period, phase, power).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (p, ph, pw) = self.inner.params();
+        format!("JMA(period={p}, phase={ph}, power={pw})")
+    }
+}
+
+// ============================== VIDYA ==============================
+
+#[pyclass(name = "VIDYA", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyVidya {
+    inner: wc::Vidya,
+}
+
+#[pymethods]
+impl PyVidya {
+    #[new]
+    #[pyo3(signature = (period=14, cmo_period=9))]
+    fn new(period: usize, cmo_period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Vidya::new(period, cmo_period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (p, c) = self.inner.periods();
+        format!("VIDYA(period={p}, cmo_period={c})")
+    }
+}
+
+// ============================== McGinley Dynamic ==============================
+
+#[pyclass(
+    name = "McGinleyDynamic",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyMcGinleyDynamic {
+    inner: wc::McGinleyDynamic,
+}
+
+#[pymethods]
+impl PyMcGinleyDynamic {
+    #[new]
+    #[pyo3(signature = (period=10))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::McGinleyDynamic::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("McGinleyDynamic(period={})", self.inner.period())
+    }
+}
+
+// ============================== ALMA ==============================
+
+#[pyclass(name = "ALMA", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyAlma {
+    inner: wc::Alma,
+}
+
+#[pymethods]
+impl PyAlma {
+    #[new]
+    #[pyo3(signature = (period=9, offset=0.85, sigma=6.0))]
+    fn new(period: usize, offset: f64, sigma: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Alma::new(period, offset, sigma).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn offset(&self) -> f64 {
+        self.inner.offset()
+    }
+    #[getter]
+    fn sigma(&self) -> f64 {
+        self.inner.sigma()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "ALMA(period={}, offset={}, sigma={})",
+            self.inner.period(),
+            self.inner.offset(),
+            self.inner.sigma()
+        )
+    }
+}
+
 // ============================== CCI ==============================
 
 #[pyclass(name = "CCI", module = "wickra._wickra", skip_from_py_object)]
@@ -4989,5 +5368,12 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyChaikinVolatility>()?;
     m.add_class::<PyZScore>()?;
     m.add_class::<PyLinRegAngle>()?;
+    m.add_class::<PyAlma>()?;
+    m.add_class::<PyFrama>()?;
+    m.add_class::<PyMcGinleyDynamic>()?;
+    m.add_class::<PyVidya>()?;
+    m.add_class::<PyJma>()?;
+    m.add_class::<PyAlligator>()?;
+    m.add_class::<PyEvwma>()?;
     Ok(())
 }

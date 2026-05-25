@@ -109,13 +109,13 @@ python -m benchmarks.compare_libraries
 
 ## Indicators
 
-78 streaming-first indicators across eight families. Every one passes the
+85 streaming-first indicators across eight families. Every one passes the
 `batch == streaming` equivalence test, reference-value tests, and reset
 semantics tests.
 
 | Family | Indicators |
 |--------|-----------|
-| Moving Averages      | SMA, EMA, WMA, DEMA, TEMA, HMA, KAMA, SMMA, TRIMA, ZLEMA, T3, VWMA |
+| Moving Averages      | SMA, EMA, WMA, DEMA, TEMA, HMA, KAMA, SMMA, TRIMA, ZLEMA, T3, VWMA, ALMA, McGinley Dynamic, FRAMA, VIDYA, JMA, Alligator, EVWMA |
 | Momentum Oscillators | RSI (Wilder), Stochastic, CCI, ROC, Williams %R, MFI, Awesome Oscillator, MOM, CMO, TSI, PMO, StochRSI, Ultimate Oscillator, RVI, PGO, KST, SMI, Laguerre RSI, Connors RSI, Inertia |
 | Trend & Directional  | MACD, ADX (+DI/-DI), Aroon, TRIX, Aroon Oscillator, Vortex, Mass Index, Choppiness Index, Vertical Horizontal Filter |
 | Price Oscillators    | PPO, DPO, Coppock, Accelerator Oscillator, Balance of Power |
@@ -195,7 +195,7 @@ A Python live-trading example using the public `websockets` package lives at
 ```
 wickra/
 ├── crates/
-│   ├── wickra-core/         core engine + all 71 indicators
+│   ├── wickra-core/         core engine + all 78 indicators
 │   ├── wickra/              top-level facade crate (publishes on crates.io) + benches/
 │   └── wickra-data/         CSV reader, tick aggregator, live exchange feeds
 ├── bindings/

@@ -15,11 +15,11 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    BatchExt, BollingerBands, Cmo, ConnorsRsi, Coppock, Dema, Dpo, Ema, HistoricalVolatility, Hma,
-    Indicator, Kama, Kst, LaguerreRsi, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator,
-    Mom, Pmo, Ppo, Roc, Rsi, Sma,
-    Smma, StdDev, StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Wma,
-    ZScore, Zlema,
+    Alma, BatchExt, BollingerBands, Cmo, ConnorsRsi, Coppock, Dema, Dpo, Ema, Frama,
+    HistoricalVolatility, Hma, Indicator, Jma, Kama, Kst, LaguerreRsi, LinRegAngle, LinRegSlope,
+    LinearRegression, MacdIndicator, McGinleyDynamic, Mom, Pmo, Ppo, Roc, Rsi, Sma, Smma, StdDev,
+    StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Vidya, Wma, ZScore,
+    Zlema,
 };
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
@@ -54,6 +54,11 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| Trima::new(14).unwrap(), &data);
     drive(|| Zlema::new(14).unwrap(), &data);
     drive(|| Kama::new(10, 2, 30).unwrap(), &data);
+    drive(|| Alma::new(9, 0.85, 6.0).unwrap(), &data);
+    drive(|| McGinleyDynamic::new(10).unwrap(), &data);
+    drive(|| Frama::new(16).unwrap(), &data);
+    drive(|| Vidya::new(14, 9).unwrap(), &data);
+    drive(|| Jma::new(14, 0.0, 2).unwrap(), &data);
     drive(|| T3::new(14, 0.7).unwrap(), &data);
     drive(|| Mom::new(14).unwrap(), &data);
     drive(|| Cmo::new(14).unwrap(), &data);
