@@ -1,3 +1,5 @@
+#![allow(clippy::doc_markdown)]
+
 //! Tom DeMark DeMarker (TD DeMarker) — bounded [0, 1] oscillator built from
 //! highs and lows.
 //!

@@ -1,3 +1,5 @@
+#![allow(clippy::doc_markdown)]
+
 //! Tom DeMark TD Sequential (Setup + Countdown).
 //!
 //! TD Sequential is DeMark's flagship two-phase exhaustion pattern:

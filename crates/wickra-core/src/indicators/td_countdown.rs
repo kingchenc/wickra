@@ -1,3 +1,5 @@
+#![allow(clippy::doc_markdown)]
+
 //! Tom DeMark TD Countdown (standalone 13-bar countdown).
 //!
 //! The Countdown is the second half of DeMark's TD Sequential, packaged

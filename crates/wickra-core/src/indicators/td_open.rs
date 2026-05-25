@@ -1,3 +1,5 @@
+#![allow(clippy::doc_markdown)]
+
 //! Tom DeMark TD Open — open-vs-prior-range gap-reversal signal.
 //!
 //! TD Open flags bars whose open prints *outside* the prior bar's range

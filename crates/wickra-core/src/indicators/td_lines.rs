@@ -1,3 +1,5 @@
+#![allow(clippy::doc_markdown)]
+
 //! Tom DeMark TD Lines (TDST — TD Setup Trend Support / Resistance levels).
 //!
 //! Once a TD Setup completes in either direction, DeMark defines two
@@ -225,7 +227,7 @@ mod tests {
                     f64::from(v) + 0.5,
                     f64::from(v) - 0.5,
                     f64::from(v),
-                    i as i64,
+                    i64::try_from(i).unwrap(),
                 )
             })
             .collect();

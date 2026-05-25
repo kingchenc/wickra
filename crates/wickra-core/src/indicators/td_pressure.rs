@@ -1,3 +1,5 @@
+#![allow(clippy::doc_markdown)]
+
 //! Tom DeMark TD Pressure — volume-weighted buying / selling pressure
 //! oscillator.
 //!

@@ -1,3 +1,5 @@
+#![allow(clippy::doc_markdown)]
+
 //! Tom DeMark TD Risk Level — protective-stop levels derived from setup
 //! extremes.
 //!

@@ -1,3 +1,5 @@
+#![allow(clippy::doc_markdown)]
+
 //! Tom DeMark Range Expansion Index (TD REI).
 //!
 //! The TD REI is a `period`-bar bounded oscillator in `[-100, 100]` that

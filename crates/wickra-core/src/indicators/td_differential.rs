@@ -1,3 +1,5 @@
+#![allow(clippy::doc_markdown)]
+
 //! Tom DeMark TD Differential — 2-bar momentum-divergence reversal pattern.
 //!
 //! TD Differential flags an exhaustion-and-reversal candle whose buying or

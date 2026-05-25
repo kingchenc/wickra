@@ -1,3 +1,5 @@
+#![allow(clippy::doc_markdown)]
+
 //! Tom DeMark TD Combo — an aggressive variant of TD Countdown.
 //!
 //! TD Combo is DeMark's stricter countdown variant. Unlike vanilla TD

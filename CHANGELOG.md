@@ -34,6 +34,272 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Rust, Python, Node, and WASM bindings with `batch == streaming`
   equivalence tests, candle-stream fuzz coverage, and benchmark
   entries on the BTCUSDT 1-minute dataset.
+- **Family 08 — Pivots & Support/Resistance.** Seven new indicators land
+  the previously empty pivot family: Classic (Floor-Trader) Pivot Points
+  with three resistance and support tiers, Fibonacci Pivots spaced by
+  0.382 / 0.618 / 1.000 of the prior range, Camarilla Pivots
+  (Nick Stott's four-tier `(H − L) · 1.1 / {12, 6, 4, 2}` levels),
+  Woodie Pivots with the close-weighted `PP = (H + L + 2·C) / 4`,
+  DeMark Pivots whose conditional `X` depends on whether the bar closed
+  up, down or flat, Williams Fractals as a five-bar swing detector and
+  ZigZag as a percent-threshold swing tracker. Every level/swing is
+  exposed across Rust, Python, Node and WASM with the standard
+  `update` / `batch` / `reset` / `is_ready` / `warmup_period` surface
+  and matching streaming-vs-batch and reference-value tests. The fuzz
+  candle target now covers all seven.
+- **Family 09 — Trailing Stops, seven new indicators.** Rounds out the
+  trailing-stop family from 5 to 12: `HiLoActivator` (Crabel's
+  SMA-of-high / SMA-of-low trail), `VoltyStop` (Cynthia Kase's
+  extreme-anchor ATR stop), `YoyoExit` (long-only ATR trail with a
+  re-entry trigger), `DonchianStop` (the original Turtle exit, lowest
+  low / highest high), `PercentageTrailingStop` (fixed-percent trail),
+  `StepTrailingStop` (round-number grid trail) and `RenkoTrailingStop`
+  (block-anchored Renko-style trail). All wired into the four bindings
+  (Rust, Python, Node, WASM), the streaming + batch fuzz targets, and
+  the bench harness.
+- **Klinger Volume Oscillator (KVO).** Stephen J. Klinger's trend-aware
+  volume-force oscillator: `EMA(vf, fast) − EMA(vf, slow)` over a daily
+  volume force scaled by cumulative-measurement ratio. Classic
+  `(fast, slow) = (34, 55)` exposed via `Kvo::classic()`.
+- **Volume Oscillator (VO).** Percent difference between a fast and a
+  slow SMA of bar volume: `100 · (SMA(vol, fast) − SMA(vol, slow)) /
+  SMA(vol, slow)`. Default `(14, 28)`.
+- **Negative Volume Index (NVI).** Paul Dysart's cumulative index that
+  only updates on volume-contraction bars (`volume_t < volume_{t−1}`),
+  absorbing the percent close change on those quiet days. Fosback
+  baseline `1000.0`, configurable via `Nvi::with_baseline`.
+- **Positive Volume Index (PVI).** The complementary index that
+  updates on volume-expansion bars (`volume_t > volume_{t−1}`).
+- **Williams Accumulation/Distribution.** Larry Williams' volume-less
+  cumulative flow that anchors to the previous close (true high/low) and
+  classifies each bar as accumulation, distribution, or neutral by the
+  sign of the close-to-close change.
+- **Anchored VWAP.** A cumulative VWAP whose accumulation begins at a
+  user-chosen anchor bar rather than the session open. Re-anchor at
+  runtime via `AnchoredVwap::set_anchor` for click-to-anchor trader
+  workflows.
+- **Demand Index (Sibbet).** James Sibbet's smoothed buying-vs-selling
+  pressure ratio in the streaming-friendly textbook form
+  `EMA(volume · close-return · (1 + range/close), period)`.
+- **Time Segmented Volume (TSV).** Don Worden's rolling sum of signed
+  volume weighted by the close-to-close move: a window-sum measure of
+  net accumulation/distribution.
+- **Volume Zone Oscillator (VZO).** Walid Khalil's normalised
+  volume-flow oscillator bounded in `[−100, 100]`, defined as
+  `100 · EMA(signed_volume) / EMA(volume)`.
+- **Market Facilitation Index (Bill Williams).** Per-bar
+  `(high − low) / volume` — how much price movement the market produces
+  per unit of volume.
+- **ADXR (Average Directional Movement Index Rating)** in the Trend &
+  Directional family. Wilder's directional-strength smoother: the
+  average of the current `ADX` and the `ADX` from `period - 1` bars
+  ago. Warmup is `3 * period - 1` (e.g. 41 for the default `period =
+  14`). Shipped across all four bindings (Rust core, Python, Node,
+  WASM) plus fuzz/test/bench coverage.
+- **Random Walk Index (RWI)** in the Trend & Directional family. Mike
+  Poulos' trend-vs.-random-walk gauge: for each lookback `i ∈ [2,
+  period]` the ratio of actual displacement to the random-walk
+  expectation `ATR_i * sqrt(i)` is taken; the per-bar output is the
+  maximum across lookbacks for both the high (`RWI_High`) and low
+  (`RWI_Low`) directions. Multi-output `(high, low)` across all four
+  bindings; warmup `= period`.
+- **Trend Intensity Index (TII)** in the Trend & Directional family.
+  M.H. Pee's `[0, 100]` oscillator: the share of the most recent
+  `dev_period` SMA-deviations that are positive, scaled to
+  `[0, 100]`. Saturates at 100 on a pure uptrend, at 0 on a pure
+  downtrend, and returns the neutral 50 on a perfectly flat market.
+  Canonical Python defaults `(sma_period=60, dev_period=30)`; warmup
+  `= sma_period + dev_period − 1`.
+- **Wave Trend Oscillator (LazyBear)** in the Trend & Directional
+  family. Two-line mean-reverting momentum gauge built from the
+  typical price and three cascaded EMAs:
+  `esa = EMA(ap, channel)`, `d = EMA(|ap − esa|, channel)`,
+  `ci = (ap − esa) / (0.015 · d)`, `wt1 = EMA(ci, average)`,
+  `wt2 = SMA(wt1, signal)`. `WaveTrend::classic()` exposes the
+  LazyBear defaults `(channel = 10, average = 21, signal = 4)`;
+  warmup `= 2 · channel + average + signal − 3` (42 for the classic
+  defaults). Includes a sub-ULP flat-tolerance guard on `ci` so a
+  perfectly flat market reports `(0, 0)` instead of the
+  mathematically indeterminate `−1 / 0.015 = −66.67`. Multi-output
+  `(wt1, wt2)` across all four bindings.
+- **Family 05 — Bands & Channels (11 new indicators).** Eleven additional
+  price-envelope overlays organised into the new "Bands & Channels"
+  family, exposed across all four bindings (Rust, Python, Node, WASM):
+  - `MaEnvelope` — SMA centerline with fixed-percent envelope (the oldest
+    band overlay still in use).
+  - `AccelerationBands` — Price Headley's momentum-biased bands that widen
+    with the bar's relative range `(H − L) / (H + L)`.
+  - `StarcBands` — Stoller Average Range Channel: SMA(close) ± k·ATR
+    (Keltner's SMA-centerline sibling).
+  - `AtrBands` — Close-anchored envelope of width `k · ATR`, the standard
+    volatility-targeting stop/target band.
+  - `HurstChannel` — SMA centerline wrapped by the rolling high-low range
+    (Brian Millard / Hurst-cycle channel).
+  - `LinRegChannel` — Linear-regression endpoint ± k·σ of the residuals,
+    measuring dispersion about the *trend* rather than the mean.
+  - `StandardErrorBands` — Linear regression with the OLS standard error
+    (denominator `n − 2`) for prediction-interval bands.
+  - `DoubleBollinger` — Kathy Lien's `±1σ` plus `±2σ` zone-partition setup.
+  - `TtmSqueeze` — John Carter's BB-inside-KC squeeze flag paired with a
+    detrended-close momentum reading.
+  - `FractalChaosBands` — Bill Williams 5-bar fractal high/low envelope.
+  - `VwapStdDevBands` — Cumulative VWAP with volume-weighted standard
+    deviation bands.
+  Indicator count rises from 71 to 82 across nine families; the README
+  family table and the wiki overview/sidebar/warmup pages were updated to
+  match.
+- **Yang-Zhang Volatility.** Yang & Zhang (2000) gold-standard OHLC
+  estimator: a convex blend of overnight (close-to-open), open-to-close
+  and Rogers-Satchell variances. The blending factor
+  `k = 0.34 / (1.34 + (n+1)/(n-1))` is the one that minimises
+  estimator variance under driftless GBM with overnight gaps. The
+  overnight and open-to-close pieces use sample variance (Bessel's
+  correction, divisor `n−1`), so the indicator needs `period + 1` bars
+  to emit. Output annualised to a percent. Defaults: `period = 20`,
+  `trading_periods = 252`. The recommended OHLC estimator for equities,
+  futures, and any asset with material close-to-open gaps.
+- **Rogers-Satchell Volatility.** Drift-free OHLC realised-volatility
+  estimator from Rogers, Satchell & Yoon (1994). Per-bar sample is
+  `ln(H/C)·ln(H/O) + ln(L/C)·ln(L/O)`; every term is non-negative by
+  construction (high >= open, close; low <= open, close), so the
+  rolling mean is exact, not biased, under arbitrary drift. The
+  algebraic drift-cancellation is what differentiates it from
+  Garman-Klass. Output annualised to a percent. Defaults:
+  `period = 20`, `trading_periods = 252`.
+- **Garman-Klass Volatility.** Garman & Klass (1980) OHLC realised
+  volatility estimator: per-bar sample is
+  `0.5·(ln H/L)² − (2·ln2 − 1)·(ln C/O)²`, then take the annualised
+  square root of the rolling mean. Roughly 7.4× more statistically
+  efficient than close-to-close stddev under driftless GBM. Output
+  annualised to a percent. Defaults: `period = 20`,
+  `trading_periods = 252`.
+- **Parkinson Volatility.** Michael Parkinson's (1980) high-low realised
+  volatility estimator: `sigma² = (1 / (4n·ln2)) · Σ (ln(H/L))²`. Output
+  annualised to a percent in the same style as `HistoricalVolatility`
+  (pass `trading_periods = 1` for the raw per-bar `sigma·100` figure).
+  Roughly 5× more statistically efficient than close-to-close stddev
+  under a driftless-GBM assumption. Defaults: `period = 20`,
+  `trading_periods = 252`.
+- **RVIVolatility (Relative Volatility Index).** Donald Dorsey's
+  RSI-shaped volatility gauge: partition the rolling standard
+  deviation of close into "up" (close rose) and "down" (close fell)
+  samples, Wilder-smooth each side, and compute
+  `100 · AvgUp / (AvgUp + AvgDown)`. Bounded on `[0, 100]`; saturates
+  at `100` in pure uptrends, `0` in pure downtrends, and falls back to
+  `50` on a completely flat series (same undefined-RS convention as
+  `RSI`). Single `period` parameter (default `10`) drives both the
+  stddev window and the Wilder smoothing. Named `RVIVolatility` rather
+  than plain `RVI` to disambiguate from Relative Vigor Index, which
+  ships in Family 02 under the shorter `RVI` name.
+- **Family 03 — MACD & Price Oscillators.** `Stc` (Schaff Trend Cycle,
+  Doug Schaff): doubly-`Stochastic`-smoothed MACD producing a bounded
+  `[0, 100]` reading that reacts faster than `MACD` itself. Four
+  parameters `(fast = 23, slow = 50, schaff_period = 10, factor = 0.5)`.
+  Output is clamped to `[0, 100]` to absorb floating-point rounding.
+  Exposed in all four bindings.
+- **Family 03 — MACD & Price Oscillators.** `ElderImpulse` (Alexander
+  Elder's Impulse System): tri-state momentum gauge combining `EMA`
+  trend slope with `MACD` histogram slope. Returns `+1` (green/buy)
+  when both rise, `−1` (red/sell) when both fall, `0` (blue/neutral)
+  on disagreement. Four parameters
+  `(ema_period, macd_fast, macd_slow, macd_signal)`; defaults
+  `(13, 12, 26, 9)` track *Come Into My Trading Room*. Exposed in all
+  four bindings.
+- **Family 03 — MACD & Price Oscillators.** `ZeroLagMacd`: classic
+  MACD topology with `ZLEMA` substituted for `EMA` everywhere — faster
+  reaction to trend changes at the cost of slightly noisier readings.
+  Multi-output `ZeroLagMacdOutput { macd, signal, histogram }`. Three
+  parameters `(fast = 12, slow = 26, signal = 9)`; `fast` must be
+  strictly less than `slow`. Exposed in all four bindings.
+- **Family 03 — MACD & Price Oscillators.** `CFO` (Chande Forecast
+  Oscillator): `100 · (close − LinReg(close, period)) / close`. Positive
+  when the close overshoots the linear forecast, negative when it
+  undershoots. Holds the previous value if the close is zero. Default
+  period 14. Exposed in all four bindings.
+- **Family 03 — MACD & Price Oscillators.** `AwesomeOscillatorHistogram`:
+  `AO − SMA(AO, sma_period)`. A configurable variant of the existing
+  `AcceleratorOscillator` (which fixes `(fast, slow, sma) = (5, 34, 5)`).
+  Three parameters; defaults match Bill Williams' Accelerator. Exposed
+  in all four bindings.
+- **Family 03 — MACD & Price Oscillators.** `APO` (Absolute Price
+  Oscillator): `EMA(close, fast) − EMA(close, slow)`. Like MACD's line
+  without the signal EMA. Default `(fast = 12, slow = 26)`. `fast` must
+  be strictly less than `slow`. Exposed in all four bindings.
+- **Family 02 — Momentum Oscillators.** `Inertia` (Dorsey): a
+  `LinearRegression` smoothing of the `RVI` series — preserves trend
+  direction while damping the underlying ratio. Candle input, two
+  parameters `(rvi_period, linreg_period)` (defaults 14 / 20). Exposed
+  in all four bindings.
+- **Family 02 — Momentum Oscillators.** `ConnorsRsi`: Larry Connors'
+  3-component aggregate — `RSI(close)`, `RSI(streak)`, and the
+  percentile rank of the 1-bar return over the recent `period_rank`
+  returns. Bounded in `[0, 100]`. Three parameters
+  `(period_rsi, period_streak, period_rank)` (defaults 3 / 2 / 100).
+  Exposed in all four bindings.
+- **Family 02 — Momentum Oscillators.** `LaguerreRsi` (Ehlers):
+  four-stage Laguerre polynomial filter wrapped in an RSI-style up/down
+  accumulator. Single parameter `gamma` in `[0, 1]` (default 0.5) trades
+  lag for smoothness. State is seeded to the first input so a constant
+  series stays at the neutral 50. Output clamped to `[0, 100]`. Exposed
+  in all four bindings.
+- **Family 02 — Momentum Oscillators.** `SMI` (Stochastic Momentum
+  Index, Blau): doubly-`EMA`-smoothed bounded oscillator measuring the
+  close's displacement from the centre of the recent high-low range,
+  scaled by the smoothed range. Candle input, three parameters
+  `(period, d_period, d2_period)` (defaults 5 / 3 / 3). Exposed in all
+  four bindings.
+- **Family 02 — Momentum Oscillators.** `KST` (Know Sure Thing, Pring):
+  weighted sum of four `SMA`-smoothed `ROC` series with Pring's fixed
+  weights `1, 2, 3, 4`, plus an `SMA` signal line. Nine parameters
+  (four ROC periods, four SMA periods, signal period); `Kst::classic()`
+  uses Pring's recommended defaults. Multi-output indicator emitting
+  `KstOutput { kst, signal }`. Exposed in all four bindings.
+- **Family 02 — Momentum Oscillators.** `PGO` (Pretty Good Oscillator,
+  Mark Johnson): `(close − SMA(close, period)) / EMA(TR, period)`.
+  Candle input, single parameter `period` (default 14). Roughly counts
+  how many ATR-equivalents the close is from its mean. Exposed in all
+  four bindings.
+- **Family 02 — Momentum Oscillators.** `RVI` (Relative Vigor Index,
+  Dorsey): per-bar ratio `SMA(close - open, period) / SMA(high - low,
+  period)`. Candle input, single parameter `period` (default 10).
+  Positive on average-bullish windows, negative on average-bearish.
+  Holds previous value if the entire window has zero range. Exposed in
+  all four bindings.
+- **Family 01 — Moving Averages.** `ALMA` (Arnaud Legoux Moving Average):
+  Gaussian-weighted moving average with configurable centre (`offset` in
+  `[0, 1]`) and kernel width (`sigma > 0`). Community-standard defaults
+  `(period = 9, offset = 0.85, sigma = 6.0)` available via `Alma::classic()`.
+  Exposed in all four bindings (Rust, Python, Node, WASM).
+- **Family 01 — Moving Averages.** `EVWMA` (Elastic Volume-Weighted
+  Moving Average, Fries 2001): an "elastic" recurrence whose smoothing
+  weight is the bar's volume relative to the running window-volume.
+  Candle input (uses close + volume), single parameter `period`
+  (default 20). Holds its previous value if the entire window has zero
+  volume. Exposed in all four bindings.
+- **Family 01 — Moving Averages.** `Alligator` (Bill Williams): three
+  SMMA lines (Jaw / Teeth / Lips) of the median price `(high + low) / 2`
+  with default periods 13 / 8 / 5. Multi-output indicator emitting
+  `AlligatorOutput { jaw, teeth, lips }`. Visual chart shift is left to
+  the consumer. Exposed in all four bindings.
+- **Family 01 — Moving Averages.** `JMA` (Jurik Moving Average):
+  three-stage filter reconstruction of Mark Jurik's adaptive MA.
+  Three parameters: `period` (14), `phase` in `[-100, 100]` (0), `power`
+  in `1..=4` (2). State is seeded to the first input so a constant series
+  is reproduced exactly. Exposed in all four bindings.
+- **Family 01 — Moving Averages.** `VIDYA` (Variable Index Dynamic
+  Average, Chande 1992): EMA whose smoothing factor is scaled by the
+  absolute Chande Momentum Oscillator. Two parameters `period` and
+  `cmo_period` (defaults 14 / 9). Exposed in all four bindings.
+- **Family 01 — Moving Averages.** `FRAMA` (Fractal Adaptive Moving
+  Average, Ehlers 2005): adapts its smoothing constant to the fractal
+  dimension of the recent window — fast in trends, slow in chop. Single
+  parameter `period` (must be even, default 16). Exposed in all four
+  bindings.
+- **Family 01 — Moving Averages.** `McGinleyDynamic`: John McGinley's
+  self-adjusting MA. Single parameter `period`; the recurrence
+  `MD + (price - MD) / (0.6 * period * (price / MD)^4)` speeds up when price
+  falls below the indicator and damps when price runs above. Seeded with the
+  simple average of the first `period` inputs. Exposed in all four bindings.
 
 ## [0.2.7] - 2026-05-24
 

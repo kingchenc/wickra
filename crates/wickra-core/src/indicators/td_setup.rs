@@ -1,3 +1,5 @@
+#![allow(clippy::doc_markdown)]
+
 //! Tom DeMark TD Setup (9-bar buy / sell setup).
 //!
 //! The TD Setup is the first half of DeMark's TD Sequential. It counts how many
@@ -173,7 +175,7 @@ mod tests {
         let candles: Vec<Candle> = (1..=20)
             .rev()
             .enumerate()
-            .map(|(i, v)| c(f64::from(v), i as i64))
+            .map(|(i, v)| c(f64::from(v), i64::try_from(i).unwrap()))
             .collect();
         let mut setup = TdSetup::classic();
         let out = setup.batch(&candles);

@@ -1,3 +1,5 @@
+#![allow(clippy::doc_markdown)]
+
 //! Tom DeMark TD Range Projection — next-bar high/low projection from the
 //! current bar's open/high/low/close (DeMark's "X-projection" pivot).
 //!
