@@ -15,10 +15,11 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    BatchExt, BollingerBands, Cmo, Coppock, Dema, Dpo, Ema, HistoricalVolatility, Hma, Indicator,
-    Kama, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, Mom, Pmo, Ppo, Roc, Rsi,
-    RviVolatility, Sma, Smma, StdDev, StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex,
-    VerticalHorizontalFilter, Wma, ZScore, Zlema,
+    Alma, Apo, BatchExt, BollingerBands, Cfo, Cmo, ConnorsRsi, Coppock, Dema, Dpo, ElderImpulse,
+    Ema, Frama, HistoricalVolatility, Hma, Indicator, Jma, Kama, Kst, LaguerreRsi, LinRegAngle,
+    LinRegSlope, LinearRegression, MacdIndicator, McGinleyDynamic, Mom, Pmo, Ppo, Roc, Rsi,
+    RviVolatility, Sma, Smma, Stc, StdDev, StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex,
+    VerticalHorizontalFilter, Vidya, Wma, ZScore, ZeroLagMacd, Zlema,
 };
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
@@ -53,6 +54,11 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| Trima::new(14).unwrap(), &data);
     drive(|| Zlema::new(14).unwrap(), &data);
     drive(|| Kama::new(10, 2, 30).unwrap(), &data);
+    drive(|| Alma::new(9, 0.85, 6.0).unwrap(), &data);
+    drive(|| McGinleyDynamic::new(10).unwrap(), &data);
+    drive(|| Frama::new(16).unwrap(), &data);
+    drive(|| Vidya::new(14, 9).unwrap(), &data);
+    drive(|| Jma::new(14, 0.0, 2).unwrap(), &data);
     drive(|| T3::new(14, 0.7).unwrap(), &data);
     drive(|| Mom::new(14).unwrap(), &data);
     drive(|| Cmo::new(14).unwrap(), &data);
@@ -61,6 +67,10 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| StochRsi::new(14, 14).unwrap(), &data);
     drive(|| Dpo::new(14).unwrap(), &data);
     drive(|| Ppo::new(12, 26).unwrap(), &data);
+    drive(|| Apo::new(12, 26).unwrap(), &data);
+    drive(|| Cfo::new(14).unwrap(), &data);
+    drive(|| ElderImpulse::classic(), &data);
+    drive(|| Stc::classic(), &data);
     drive(|| Coppock::new(14, 11, 10).unwrap(), &data);
     drive(|| StdDev::new(14).unwrap(), &data);
     drive(|| UlcerIndex::new(14).unwrap(), &data);
@@ -71,6 +81,28 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| VerticalHorizontalFilter::new(14).unwrap(), &data);
     drive(|| ZScore::new(14).unwrap(), &data);
     drive(|| RviVolatility::new(10).unwrap(), &data);
+    drive(|| LaguerreRsi::new(0.5).unwrap(), &data);
+    drive(|| ConnorsRsi::classic(), &data);
+
+    // KST is scalar-input but emits `KstOutput`, so it bypasses the generic
+    // `drive` helper. Streaming + batch are still both exercised.
+    {
+        let mut kst = Kst::classic();
+        for &x in &data {
+            let _ = kst.update(x);
+        }
+        let _ = Kst::classic().batch(&data);
+    }
+
+    // Zero-Lag MACD shares MACD's multi-output topology, so it gets the
+    // same hand-rolled streaming + batch drive as classic MACD below.
+    {
+        let mut z = ZeroLagMacd::classic();
+        for &x in &data {
+            let _ = z.update(x);
+        }
+        let _ = ZeroLagMacd::classic().batch(&data);
+    }
 
     // MACD and Bollinger Bands have non-`f64` outputs, so they cannot use the
     // generic `drive` helper above. Streaming + batch are still both exercised.

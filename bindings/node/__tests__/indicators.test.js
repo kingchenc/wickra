@@ -37,6 +37,11 @@ const scalarFactories = {
   ROC: () => new wickra.ROC(12),
   TRIX: () => new wickra.TRIX(9),
   KAMA: () => new wickra.KAMA(10, 2, 30),
+  ALMA: () => new wickra.ALMA(9, 0.85, 6.0),
+  McGinleyDynamic: () => new wickra.McGinleyDynamic(10),
+  FRAMA: () => new wickra.FRAMA(16),
+  VIDYA: () => new wickra.VIDYA(14, 9),
+  JMA: () => new wickra.JMA(14, 0, 2),
   SMMA: () => new wickra.SMMA(14),
   TRIMA: () => new wickra.TRIMA(20),
   ZLEMA: () => new wickra.ZLEMA(14),
@@ -47,6 +52,10 @@ const scalarFactories = {
   PMO: () => new wickra.PMO(35, 20),
   StochRSI: () => new wickra.StochRSI(14, 14),
   PPO: () => new wickra.PPO(12, 26),
+  APO: () => new wickra.APO(12, 26),
+  CFO: () => new wickra.CFO(14),
+  ElderImpulse: () => new wickra.ElderImpulse(13, 12, 26, 9),
+  STC: () => new wickra.STC(23, 50, 10, 0.5),
   DPO: () => new wickra.DPO(20),
   Coppock: () => new wickra.Coppock(14, 11, 10),
   StdDev: () => new wickra.StdDev(20),
@@ -59,6 +68,8 @@ const scalarFactories = {
   VerticalHorizontalFilter: () => new wickra.VerticalHorizontalFilter(28),
   ZScore: () => new wickra.ZScore(20),
   LinRegAngle: () => new wickra.LinRegAngle(14),
+  LaguerreRSI: () => new wickra.LaguerreRSI(0.5),
+  ConnorsRSI: () => new wickra.ConnorsRSI(3, 2, 100),
   RVIVolatility: () => new wickra.RVIVolatility(10),
 };
 
@@ -87,6 +98,11 @@ const candleScalar = {
   AwesomeOscillator: { make: () => new wickra.AwesomeOscillator(5, 34), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   OBV: { make: () => new wickra.OBV(), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
   VWMA: { make: () => new wickra.VWMA(20), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
+  RVI: { make: () => new wickra.RVI(10), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Inertia: { make: () => new wickra.Inertia(14, 20), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  PGO: { make: () => new wickra.PGO(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  SMI: { make: () => new wickra.SMI(5, 3, 3), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  EVWMA: { make: () => new wickra.EVWMA(20), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
   UltimateOscillator: { make: () => new wickra.UltimateOscillator(7, 14, 28), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   AroonOscillator: { make: () => new wickra.AroonOscillator(14), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   NATR: { make: () => new wickra.NATR(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
@@ -102,6 +118,7 @@ const candleScalar = {
   MedianPrice: { make: () => new wickra.MedianPrice(), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   WeightedClose: { make: () => new wickra.WeightedClose(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   AcceleratorOscillator: { make: () => new wickra.AcceleratorOscillator(5, 34, 5), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  AwesomeOscillatorHistogram: { make: () => new wickra.AwesomeOscillatorHistogram(5, 34, 5), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   BalanceOfPower: { make: () => new wickra.BalanceOfPower(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   ChoppinessIndex: { make: () => new wickra.ChoppinessIndex(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   TrueRange: { make: () => new wickra.TrueRange(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
@@ -127,6 +144,9 @@ for (const [name, d] of Object.entries(candleScalar)) {
 // --- Multi-output indicators: object update vs interleaved batch ---
 
 const multi = {
+  KST: { make: () => new wickra.KST(10, 15, 20, 30, 10, 10, 10, 15, 9), fields: ['kst', 'signal'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
+  Alligator: { make: () => new wickra.Alligator(13, 8, 5), fields: ['jaw', 'teeth', 'lips'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  ZeroLagMACD: { make: () => new wickra.ZeroLagMACD(12, 26, 9), fields: ['macd', 'signal', 'histogram'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   MACD: { make: () => new wickra.MACD(12, 26, 9), fields: ['macd', 'signal', 'histogram'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   BollingerBands: { make: () => new wickra.BollingerBands(20, 2), fields: ['upper', 'middle', 'lower', 'stddev'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   Stochastic: { make: () => new wickra.Stochastic(14, 3), fields: ['k', 'd'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
@@ -307,4 +327,166 @@ test('YangZhangVolatility zero-movement bars yield zero', () => {
   for (let i = 14; i < n; i++) {
     assert.ok(Math.abs(out[i]) < 1e-12, `YZ[${i}] = ${out[i]}`);
   }
+});
+
+test('ZeroLagMACD on a flat series converges to zero', () => {
+  const out = new wickra.ZeroLagMACD(3, 5, 3).batch(Array(60).fill(42));
+  // Last interleaved row: macd, signal, histogram all 0.
+  const n = 60;
+  assert.ok(Math.abs(out[(n - 1) * 3]) < 1e-12);
+  assert.ok(Math.abs(out[(n - 1) * 3 + 1]) < 1e-12);
+  assert.ok(Math.abs(out[(n - 1) * 3 + 2]) < 1e-12);
+});
+
+test('AwesomeOscillatorHistogram on a flat median converges to zero', () => {
+  const n = 50;
+  const out = new wickra.AwesomeOscillatorHistogram(3, 5, 3).batch(
+    Array(n).fill(11),
+    Array(n).fill(9),
+  );
+  // warmup = 5 + 3 - 1 = 7.
+  for (let i = 6; i < n; i++) assert.ok(Math.abs(out[i]) < 1e-12);
+});
+
+test('STC on a flat series stays at zero', () => {
+  const out = new wickra.STC(3, 5, 4, 0.5).batch(Array(60).fill(42));
+  // Latest values must be exactly zero.
+  for (let i = out.length - 5; i < out.length; i++) {
+    if (Number.isNaN(out[i])) continue;
+    assert.equal(out[i], 0);
+  }
+});
+
+test('ElderImpulse on a flat series stays neutral (0)', () => {
+  const out = new wickra.ElderImpulse(13, 12, 26, 9).batch(Array(120).fill(42));
+  for (let i = 0; i < out.length; i++) {
+    if (Number.isNaN(out[i])) continue;
+    assert.equal(out[i], 0);
+  }
+});
+
+test('CFO(5) on a perfectly linear series yields zero', () => {
+  const prices = Array.from({ length: 20 }, (_, i) => (i + 1) * 2);
+  const out = new wickra.CFO(5).batch(prices);
+  for (let i = 4; i < 20; i++) assert.ok(Math.abs(out[i]) < 1e-9);
+});
+
+test('APO(3, 5) on a flat series converges to zero', () => {
+  const out = new wickra.APO(3, 5).batch(Array(30).fill(42));
+  for (let i = 0; i < 4; i++) assert.ok(Number.isNaN(out[i]));
+  for (let i = 4; i < 30; i++) assert.ok(Math.abs(out[i]) < 1e-12);
+});
+
+test('Inertia(3, 4) on a constant RVI series equals that RVI', () => {
+  const n = 60;
+  // Every bar (open, high, low, close) = (10, 11, 9, 10.5) -> RVI = 0.25.
+  const out = new wickra.Inertia(3, 4).batch(
+    Array(n).fill(10),
+    Array(n).fill(11),
+    Array(n).fill(9),
+    Array(n).fill(10.5),
+  );
+  for (let i = 5; i < n; i++) assert.ok(Math.abs(out[i] - 0.25) < 1e-12);
+});
+
+test('ConnorsRSI stays bounded in [0, 100]', () => {
+  const prices = Array.from({ length: 250 }, (_, i) => 100 + 20 * Math.sin(i * 0.12));
+  const out = new wickra.ConnorsRSI(3, 2, 100).batch(prices);
+  for (let i = 0; i < out.length; i++) {
+    if (Number.isNaN(out[i])) continue;
+    assert.ok(out[i] >= 0 && out[i] <= 100, `out[${i}] = ${out[i]}`);
+  }
+});
+
+test('LaguerreRSI on a flat series stays at the neutral 50', () => {
+  const out = new wickra.LaguerreRSI(0.5).batch(Array(40).fill(42));
+  for (let i = 0; i < out.length; i++) assert.ok(Math.abs(out[i] - 50) < 1e-12);
+});
+
+test('SMI with close at range centre emits zero after warmup', () => {
+  const n = 60;
+  const out = new wickra.SMI(5, 3, 3).batch(Array(n).fill(11), Array(n).fill(9), Array(n).fill(10));
+  // warmup_period = 5 + 3 + 3 - 2 = 9.
+  for (let i = 8; i < n; i++) assert.ok(Math.abs(out[i]) < 1e-12);
+});
+
+test('KST on a flat series emits zero after warmup', () => {
+  const kst = new wickra.KST(10, 15, 20, 30, 10, 10, 10, 15, 9);
+  const n = 80;
+  const out = kst.batch(Array(n).fill(42));
+  const warmup = kst.warmupPeriod();
+  for (let i = warmup - 1; i < n; i++) {
+    assert.ok(Math.abs(out[i * 2]) < 1e-12, `kst[${i}] = ${out[i * 2]}`);
+    assert.ok(Math.abs(out[i * 2 + 1]) < 1e-12, `signal[${i}] = ${out[i * 2 + 1]}`);
+  }
+});
+
+test('PGO(5) on a flat close emits zero after warmup', () => {
+  const n = 20;
+  const out = new wickra.PGO(5).batch(Array(n).fill(11), Array(n).fill(9), Array(n).fill(10));
+  for (let i = 0; i < 4; i++) assert.ok(Number.isNaN(out[i]));
+  for (let i = 4; i < n; i++) assert.ok(Math.abs(out[i]) < 1e-12, `out[${i}] = ${out[i]}`);
+});
+
+test('RVI(2) reference value on two bars', () => {
+  // Bars (open, high, low, close): (10, 11, 9, 10.5), (10.5, 11.5, 10, 11).
+  const out = new wickra.RVI(2).batch([10, 10.5], [11, 11.5], [9, 10], [10.5, 11]);
+  assert.ok(Number.isNaN(out[0]));
+  assert.ok(Math.abs(out[1] - 1 / 3.5) < 1e-12);
+});
+
+test('EVWMA(2) reference values on [10, 20, 30] with volumes [1, 3, 1]', () => {
+  const out = new wickra.EVWMA(2).batch([10, 20, 30], [1, 3, 1]);
+  assert.ok(Number.isNaN(out[0]));
+  assert.ok(Math.abs(out[1] - 20) < 1e-12);
+  assert.ok(Math.abs(out[2] - 22.5) < 1e-12);
+});
+
+test('Alligator on a flat median price seeds to that median', () => {
+  const n = 30;
+  const out = new wickra.Alligator(13, 8, 5).batch(Array(n).fill(11), Array(n).fill(9));
+  // All three SMMAs see median (11 + 9) / 2 = 10 every bar.
+  for (let i = 12; i < n; i++) {
+    assert.ok(Math.abs(out[i * 3] - 10) < 1e-12, `jaw at ${i}: ${out[i * 3]}`);
+    assert.ok(Math.abs(out[i * 3 + 1] - 10) < 1e-12);
+    assert.ok(Math.abs(out[i * 3 + 2] - 10) < 1e-12);
+  }
+});
+
+test('JMA on a flat series reproduces the constant', () => {
+  const out = new wickra.JMA(14, 0, 2).batch(Array(30).fill(42));
+  for (let i = 0; i < 30; i++) assert.ok(Math.abs(out[i] - 42) < 1e-12);
+});
+
+test('VIDYA on a flat series holds the seed', () => {
+  const out = new wickra.VIDYA(14, 4).batch(Array(20).fill(42));
+  for (let i = 0; i < 4; i++) assert.ok(Number.isNaN(out[i]));
+  for (let i = 4; i < 20; i++) assert.ok(Math.abs(out[i] - 42) < 1e-12);
+});
+
+test('FRAMA pure uptrend hugs the latest close', () => {
+  const out = new wickra.FRAMA(4).batch([1, 2, 3, 4, 5, 6, 7, 8]);
+  assert.ok(Math.abs(out[out.length - 1] - 8) < 0.05);
+});
+
+test('McGinleyDynamic(3) seeds with SMA and recurses on the next price', () => {
+  // Seed = SMA([10, 20, 30]) = 20. On 40: ratio = 2, divisor = 0.6*3*16 = 28.8.
+  const out = new wickra.McGinleyDynamic(3).batch([10, 20, 30, 40]);
+  assert.ok(Number.isNaN(out[0]) && Number.isNaN(out[1]));
+  assert.ok(Math.abs(out[2] - 20) < 1e-12);
+  const expected = 20 + 20 / (0.6 * 3 * 16);
+  assert.ok(Math.abs(out[3] - expected) < 1e-12);
+});
+
+test('ALMA(3, 0.85, 6) reference value on [10, 20, 30]', () => {
+  // m = 0.85 * 2 = 1.7; s = 3 / 6 = 0.5; 2*s^2 = 0.5.
+  const out = new wickra.ALMA(3, 0.85, 6).batch([10, 20, 30]);
+  assert.ok(Number.isNaN(out[0]) && Number.isNaN(out[1]));
+  const w = [0, 1, 2].map((i) => Math.exp(-Math.pow(i - 1.7, 2) / 0.5));
+  const s = w[0] + w[1] + w[2];
+  const expected = (10 * w[0] + 20 * w[1] + 30 * w[2]) / s;
+  assert.ok(Math.abs(out[2] - expected) < 1e-12);
+  // The heavy offset toward the newest sample lifts the average above the
+  // simple mean of 20.
+  assert.ok(out[2] > 20);
 });
