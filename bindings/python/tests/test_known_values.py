@@ -332,6 +332,113 @@ def test_obv_cumulative_known_sequence():
     np.testing.assert_allclose(out, [0.0, 20.0, -10.0, -10.0, 0.0])
 
 
+# --- DeMark family ---------------------------------------------------------
+
+
+def test_td_setup_buy_setup_completes_at_minus_9_uptrend():
+    # Strictly rising closes -> every bar has close > close[-4] (sell setup);
+    # the streak hits -9 at index 12 and caps there.
+    h = np.arange(2.0, 22.0)
+    l = h - 1.0
+    c = h - 0.5
+    out = ta.TDSetup(4, 9).batch(h, l, c)
+    assert out[12] == pytest.approx(-9.0)
+    assert out[-1] == pytest.approx(-9.0)
+
+
+def test_td_demarker_downtrend_pegs_at_zero():
+    n = 20
+    h = np.arange(30.0, 30.0 - n, -1.0)
+    l = h - 2.0
+    out = ta.TDDeMarker(5).batch(h, l)
+    assert out[-1] == pytest.approx(0.0)
+
+
+def test_td_pressure_pure_bearish_yields_minus_100():
+    n = 20
+    open_ = np.full(n, 11.0)
+    high = np.full(n, 11.0)
+    low = np.full(n, 9.0)
+    close = np.full(n, 9.0)
+    volume = np.full(n, 100.0)
+    out = ta.TDPressure(5).batch(open_, high, low, close, volume)
+    assert out[-1] == pytest.approx(-100.0)
+
+
+def test_td_combo_uptrend_completes_to_minus_13():
+    # Pure uptrend -> setup completes, then combo conditions (close>=high[-2],
+    # high>=prev.high, close>prev.close) all hold for every subsequent bar
+    # -> sell combo saturates at -13.
+    n = 40
+    high = np.arange(1.0, 1.0 + n) + 0.5
+    low = high - 1.0
+    close = high - 0.5
+    out = ta.TDCombo().batch(high, low, close)
+    assert out[-1] == pytest.approx(-13.0)
+
+
+def test_td_countdown_uptrend_completes_to_minus_13():
+    n = 40
+    high = np.arange(1.0, 1.0 + n) + 0.5
+    low = high - 1.0
+    close = high - 0.5
+    out = ta.TDCountdown().batch(high, low, close)
+    assert out[-1] == pytest.approx(-13.0)
+
+
+def test_td_range_projection_doji_reference():
+    # open=close=10, high=12, low=9 -> doji branch.
+    # pivot_sum = 12 + 9 + 2*10 = 41; half = 20.5.
+    # projHigh = 20.5 - 9 = 11.5; projLow = 20.5 - 12 = 8.5.
+    out = ta.TDRangeProjection().batch(
+        np.array([10.0]), np.array([12.0]), np.array([9.0]), np.array([10.0])
+    )
+    assert out[0, 0] == pytest.approx(11.5)
+    assert out[0, 1] == pytest.approx(8.5)
+
+
+def test_td_open_sell_signal_reference():
+    # Prev high=12. Curr open=13 > 12, curr low=11 < 12 -> -1.
+    td = ta.TDOpen()
+    assert td.update((10.0, 12.0, 9.0, 11.0, 1.0, 0)) is None
+    assert td.update((13.0, 13.5, 11.0, 11.5, 1.0, 1)) == pytest.approx(-1.0)
+
+
+def test_td_differential_sell_signal_reference():
+    # Prev high=10, low=8, close=9: buying=1, selling=1.
+    # Curr high=12, low=9.8, close=10.5: close>prev.close, selling=1.5>1,
+    # buying=0.7<1 -> sell signal -1.
+    td = ta.TDDifferential()
+    assert td.update((9.0, 10.0, 8.0, 9.0, 1.0, 0)) is None
+    assert td.update((10.5, 12.0, 9.8, 10.5, 1.0, 1)) == pytest.approx(-1.0)
+
+
+def test_td_lines_uptrend_support_reference():
+    # Strictly rising series -> sell setup completes at idx 12, the
+    # lowest low across bars 4..=12 is the low at idx 4 = 4.5.
+    n = 20
+    high = np.arange(1.0, 1.0 + n) + 0.5
+    low = high - 1.0
+    close = high - 0.5
+    out = ta.TDLines().batch(high, low, close)
+    assert math.isnan(out[-1, 0])
+    assert out[-1, 1] == pytest.approx(4.5)
+
+
+def test_td_risk_level_uptrend_sell_risk_reference():
+    # Strictly rising series -> sell setup completes at idx 12 with high
+    # 13.5 and true range 1.5 -> sell_risk = 13.5 + 1.5 = 15.0.
+    # Subsequent setups re-ratchet the level, so we check the first emission
+    # at idx 12 rather than the latest value.
+    n = 20
+    high = np.arange(1.0, 1.0 + n) + 0.5
+    low = high - 1.0
+    close = high - 0.5
+    out = ta.TDRiskLevel().batch(high, low, close)
+    assert math.isnan(out[12, 0])
+    assert out[12, 1] == pytest.approx(15.0)
+
+
 def test_percentage_trailing_stop_seed_and_ratchet():
     # 10% trail: first close 100 -> stop 90; next 110 -> stop max(90, 99) = 99.
     s = ta.PercentageTrailingStop(10.0)

@@ -63,13 +63,16 @@ pub use indicators::{
     Psar, Pvi, RenkoTrailingStop, Roc, RogersSatchellVolatility, RollingVwap, Rsi, Rvi,
     RviVolatility, Rwi, RwiOutput, Sma, Smi, Smma, StandardErrorBands, StandardErrorBandsOutput,
     StarcBands, StarcBandsOutput, Stc, StdDev, StepTrailingStop, StochRsi, Stochastic,
-    StochasticOutput, SuperTrend, SuperTrendOutput, Tema, Tii, Trima, Trix, TrueRange, Tsi, Tsv,
-    TtmSqueeze, TtmSqueezeOutput, TypicalPrice, UlcerIndex, UltimateOscillator,
-    VerticalHorizontalFilter, Vidya, VoltyStop, VolumeOscillator, VolumePriceTrend, Vortex,
-    VortexOutput, Vwap, VwapStdDevBands, VwapStdDevBandsOutput, Vwma, Vzo, WaveTrend,
-    WaveTrendOutput, WeightedClose, WilliamsFractals, WilliamsFractalsOutput, WilliamsR, Wma,
-    WoodiePivots, WoodiePivotsOutput, YangZhangVolatility, YoyoExit, ZScore, ZeroLagMacd,
-    ZeroLagMacdOutput, ZigZag, ZigZagOutput, Zlema, T3,
+    StochasticOutput, SuperTrend, SuperTrendOutput, TdCombo, TdCountdown, TdDeMarker,
+    TdDifferential, TdLines, TdLinesOutput, TdOpen, TdPressure, TdRangeProjection,
+    TdRangeProjectionOutput, TdRei, TdRiskLevel, TdRiskLevelOutput, TdSequential,
+    TdSequentialOutput, TdSetup, Tema, Tii, Trima, Trix, TrueRange, Tsi, Tsv, TtmSqueeze,
+    TtmSqueezeOutput, TypicalPrice, UlcerIndex, UltimateOscillator, VerticalHorizontalFilter,
+    Vidya, VoltyStop, VolumeOscillator, VolumePriceTrend, Vortex, VortexOutput, Vwap,
+    VwapStdDevBands, VwapStdDevBandsOutput, Vwma, Vzo, WaveTrend, WaveTrendOutput, WeightedClose,
+    WilliamsFractals, WilliamsFractalsOutput, WilliamsR, Wma, WoodiePivots, WoodiePivotsOutput,
+    YangZhangVolatility, YoyoExit, ZScore, ZeroLagMacd, ZeroLagMacdOutput, ZigZag, ZigZagOutput,
+    Zlema, T3,
 };
 pub use ohlcv::{Candle, Tick};
 pub use traits::{BatchExt, Chain, Indicator};

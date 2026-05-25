@@ -169,6 +169,19 @@ from ._wickra import (
     DemarkPivots,
     WilliamsFractals,
     ZigZag,
+    # DeMark
+    TDSetup,
+    TDSequential,
+    TDDeMarker,
+    TDREI,
+    TDPressure,
+    TDCombo,
+    TDCountdown,
+    TDLines,
+    TDRangeProjection,
+    TDDifferential,
+    TDOpen,
+    TDRiskLevel,
 )
 
 __all__ = [
@@ -317,4 +330,17 @@ __all__ = [
     "DemarkPivots",
     "WilliamsFractals",
     "ZigZag",
+    # DeMark
+    "TDSetup",
+    "TDSequential",
+    "TDDeMarker",
+    "TDREI",
+    "TDPressure",
+    "TDCombo",
+    "TDCountdown",
+    "TDLines",
+    "TDRangeProjection",
+    "TDDifferential",
+    "TDOpen",
+    "TDRiskLevel",
 ]

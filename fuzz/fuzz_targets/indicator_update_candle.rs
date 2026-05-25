@@ -31,10 +31,11 @@ use wickra_core::{
     FibonacciPivots, ForceIndex, FractalChaosBands, GarmanKlassVolatility, HiLoActivator,
     HurstChannel, Indicator, Inertia, Keltner, Kvo, MarketFacilitationIndex, MassIndex, MedianPrice,
     Mfi, Natr, Nvi, Obv, ParkinsonVolatility, Pgo, Psar, Pvi, RogersSatchellVolatility, RollingVwap,
-    Rvi, Rwi, Smi, StarcBands, Stochastic, SuperTrend, TrueRange, Tsv, TtmSqueeze, TypicalPrice,
-    UltimateOscillator, VoltyStop, VolumeOscillator, VolumePriceTrend, Vortex, Vwap, VwapStdDevBands,
-    Vwma, Vzo, WaveTrend, WeightedClose, WilliamsFractals, WilliamsR, WoodiePivots,
-    YangZhangVolatility, YoyoExit, ZigZag,
+    Rvi, Rwi, Smi, StarcBands, Stochastic, SuperTrend, TdCombo, TdCountdown, TdDeMarker,
+    TdDifferential, TdLines, TdOpen, TdPressure, TdRangeProjection, TdRei, TdRiskLevel,
+    TdSequential, TdSetup, TrueRange, Tsv, TtmSqueeze, TypicalPrice, UltimateOscillator, VoltyStop,
+    VolumeOscillator, VolumePriceTrend, Vortex, Vwap, VwapStdDevBands, Vwma, Vzo, WaveTrend,
+    WeightedClose, WilliamsFractals, WilliamsR, WoodiePivots, YangZhangVolatility, YoyoExit, ZigZag,
 };
 
 /// Convert a flat `f64` stream into a `Vec<Candle>` by chunking it into
@@ -162,6 +163,38 @@ fuzz_target!(|data: Vec<f64>| {
             let _ = s.update(*c);
         }
         let _ = Stochastic::new(14, 3).unwrap().batch(&candles);
+    }
+
+    // --- DeMark family ---
+    drive(|| TdSetup::new(4, 9).unwrap(), &candles);
+    drive(|| TdDeMarker::new(14).unwrap(), &candles);
+    drive(|| TdRei::new(5).unwrap(), &candles);
+    drive(|| TdPressure::new(5).unwrap(), &candles);
+    drive(|| TdCombo::new(4, 9, 2, 13).unwrap(), &candles);
+    drive(|| TdCountdown::new(4, 9, 2, 13).unwrap(), &candles);
+    drive(TdDifferential::new, &candles);
+    drive(TdOpen::new, &candles);
+    drive(TdRangeProjection::new, &candles);
+    {
+        let mut s = TdSequential::new(4, 9, 2, 13).unwrap();
+        for c in &candles {
+            let _ = s.update(*c);
+        }
+        let _ = TdSequential::new(4, 9, 2, 13).unwrap().batch(&candles);
+    }
+    {
+        let mut s = TdLines::new(4, 9).unwrap();
+        for c in &candles {
+            let _ = s.update(*c);
+        }
+        let _ = TdLines::new(4, 9).unwrap().batch(&candles);
+    }
+    {
+        let mut s = TdRiskLevel::new(4, 9).unwrap();
+        for c in &candles {
+            let _ = s.update(*c);
+        }
+        let _ = TdRiskLevel::new(4, 9).unwrap().batch(&candles);
     }
 
     // --- Pivots & Support/Resistance (multi-output) ---

@@ -25,9 +25,11 @@ use wickra::{
     HiLoActivator, HurstChannel, Indicator, Jma, Kst, Kvo, LinRegChannel, MaEnvelope,
     MacdIndicator, MarketFacilitationIndex, McGinleyDynamic, Nvi, Obv, ParkinsonVolatility,
     PercentageTrailingStop, Pgo, Pvi, RenkoTrailingStop, RogersSatchellVolatility, Rsi, Rvi,
-    RviVolatility, Rwi, Sma, StandardErrorBands, StarcBands, StepTrailingStop, Stochastic, Tii,
-    Tsv, TtmSqueeze, Vidya, VoltyStop, VolumeOscillator, VwapStdDevBands, Vzo, WaveTrend,
-    WilliamsFractals, Wma, WoodiePivots, YangZhangVolatility, YoyoExit, ZigZag,
+    RviVolatility, Rwi, Sma, StandardErrorBands, StarcBands, StepTrailingStop, Stochastic, TdCombo,
+    TdCountdown, TdDeMarker, TdDifferential, TdLines, TdOpen, TdPressure, TdRangeProjection, TdRei,
+    TdRiskLevel, TdSequential, TdSetup, Tii, Tsv, TtmSqueeze, Vidya, VoltyStop, VolumeOscillator,
+    VwapStdDevBands, Vzo, WaveTrend, WilliamsFractals, Wma, WoodiePivots, YangZhangVolatility,
+    YoyoExit, ZigZag,
 };
 use wickra_data::csv::CandleReader;
 
@@ -182,6 +184,20 @@ fn benches(c: &mut Criterion) {
     bench_candle_input(c, "wave_trend", &candles, || WaveTrend::classic().unwrap());
     bench_candle_input(c, "stochastic", &candles, Stochastic::classic);
     bench_candle_input(c, "obv", &candles, Obv::new);
+
+    // --- Family 11: DeMark ---
+    bench_candle_input(c, "td_setup", &candles, TdSetup::classic);
+    bench_candle_input(c, "td_sequential", &candles, TdSequential::classic);
+    bench_candle_input(c, "td_demarker", &candles, || TdDeMarker::new(14).unwrap());
+    bench_candle_input(c, "td_rei", &candles, TdRei::classic);
+    bench_candle_input(c, "td_pressure", &candles, || TdPressure::new(5).unwrap());
+    bench_candle_input(c, "td_combo", &candles, TdCombo::classic);
+    bench_candle_input(c, "td_countdown", &candles, TdCountdown::classic);
+    bench_candle_input(c, "td_lines", &candles, TdLines::classic);
+    bench_candle_input(c, "td_risk_level", &candles, TdRiskLevel::classic);
+    bench_candle_input(c, "td_range_projection", &candles, TdRangeProjection::new);
+    bench_candle_input(c, "td_differential", &candles, TdDifferential::new);
+    bench_candle_input(c, "td_open", &candles, TdOpen::new);
 
     // --- Family 08: Pivots & Support/Resistance ---
     bench_candle_input(c, "classic_pivots", &candles, ClassicPivots::new);
