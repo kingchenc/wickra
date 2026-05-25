@@ -44,7 +44,7 @@ pub mod indicators;
 
 pub use error::{Error, Result};
 pub use indicators::{
-    AccelerationBands, AccelerationBandsOutput, AcceleratorOscillator, Adl, Adx, AdxOutput,
+    AccelerationBands, AccelerationBandsOutput, AcceleratorOscillator, Adl, Adx, AdxOutput, Adxr,
     Alligator, AlligatorOutput, Alma, Apo, Aroon, AroonOscillator, AroonOutput, Atr, AtrBands,
     AtrBandsOutput, AtrTrailingStop, AwesomeOscillator, AwesomeOscillatorHistogram, BalanceOfPower,
     BollingerBands, BollingerBandwidth, BollingerOutput, Cci, Cfo, ChaikinMoneyFlow,
@@ -56,13 +56,14 @@ pub use indicators::{
     KeltnerOutput, Kst, KstOutput, LaguerreRsi, LinRegAngle, LinRegChannel, LinRegChannelOutput,
     LinRegSlope, LinearRegression, MaEnvelope, MaEnvelopeOutput, MacdIndicator, MacdOutput,
     MassIndex, McGinleyDynamic, MedianPrice, Mfi, Mom, Natr, Obv, ParkinsonVolatility, PercentB,
-    Pgo, Pmo, Ppo, Psar, Roc, RogersSatchellVolatility, RollingVwap, Rsi, Rvi, RviVolatility, Sma,
-    Smi, Smma, StandardErrorBands, StandardErrorBandsOutput, StarcBands, StarcBandsOutput, Stc,
-    StdDev, StochRsi, Stochastic, StochasticOutput, SuperTrend, SuperTrendOutput, Tema, Trima,
-    Trix, TrueRange, Tsi, TtmSqueeze, TtmSqueezeOutput, TypicalPrice, UlcerIndex,
-    UltimateOscillator, VerticalHorizontalFilter, Vidya, VolumePriceTrend, Vortex, VortexOutput,
-    Vwap, VwapStdDevBands, VwapStdDevBandsOutput, Vwma, WeightedClose, WilliamsR, Wma,
-    YangZhangVolatility, ZScore, ZeroLagMacd, ZeroLagMacdOutput, Zlema, T3,
+    Pgo, Pmo, Ppo, Psar, Roc, RogersSatchellVolatility, RollingVwap, Rsi, Rvi, RviVolatility, Rwi,
+    RwiOutput, Sma, Smi, Smma, StandardErrorBands, StandardErrorBandsOutput, StarcBands,
+    StarcBandsOutput, Stc, StdDev, StochRsi, Stochastic, StochasticOutput, SuperTrend,
+    SuperTrendOutput, Tema, Tii, Trima, Trix, TrueRange, Tsi, TtmSqueeze, TtmSqueezeOutput,
+    TypicalPrice, UlcerIndex, UltimateOscillator, VerticalHorizontalFilter, Vidya,
+    VolumePriceTrend, Vortex, VortexOutput, Vwap, VwapStdDevBands, VwapStdDevBandsOutput, Vwma,
+    WaveTrend, WaveTrendOutput, WeightedClose, WilliamsR, Wma, YangZhangVolatility, ZScore,
+    ZeroLagMacd, ZeroLagMacdOutput, Zlema, T3,
 };
 pub use ohlcv::{Candle, Tick};
 pub use traits::{BatchExt, Chain, Indicator};

@@ -19,11 +19,12 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use std::hint::black_box;
 use wickra::{
-    AccelerationBands, Alma, Atr, AtrBands, BatchExt, BollingerBands, Candle, DoubleBollinger, Ema,
-    FractalChaosBands, Frama, GarmanKlassVolatility, HurstChannel, Indicator, Jma, LinRegChannel,
-    MaEnvelope, MacdIndicator, McGinleyDynamic, Obv, ParkinsonVolatility, Pgo,
-    RogersSatchellVolatility, Rsi, Rvi, RviVolatility, Sma, StandardErrorBands, StarcBands,
-    Stochastic, TtmSqueeze, Vidya, VwapStdDevBands, Wma, YangZhangVolatility,
+    AccelerationBands, Adxr, Alma, Atr, AtrBands, BatchExt, BollingerBands, Candle,
+    DoubleBollinger, Ema, FractalChaosBands, Frama, GarmanKlassVolatility, HurstChannel, Indicator,
+    Jma, Kst, LinRegChannel, MaEnvelope, MacdIndicator, McGinleyDynamic, Obv, ParkinsonVolatility,
+    Pgo, RogersSatchellVolatility, Rsi, Rvi, RviVolatility, Rwi, Sma, StandardErrorBands,
+    StarcBands, Stochastic, Tii, TtmSqueeze, Vidya, VwapStdDevBands, WaveTrend, Wma,
+    YangZhangVolatility,
 };
 use wickra_data::csv::CandleReader;
 
@@ -70,6 +71,24 @@ where
             b.iter(|| {
                 let mut ind = make();
                 black_box(ind.batch(prices));
+            });
+        });
+    }
+    group.finish();
+}
+
+fn bench_kst(c: &mut Criterion, prices: &[f64]) {
+    let mut group = c.benchmark_group("kst");
+    for &n in SIZES {
+        let n = n.min(prices.len());
+        let series = &prices[..n];
+        group.throughput(Throughput::Elements(n as u64));
+        group.bench_with_input(BenchmarkId::new("streaming", n), series, |b, prices| {
+            b.iter(|| {
+                let mut ind = Kst::classic();
+                for p in prices {
+                    black_box(ind.update(*p));
+                }
             });
         });
     }
@@ -142,6 +161,7 @@ fn benches(c: &mut Criterion) {
     bench_scalar(c, "ema", &closes, || Ema::new(14).unwrap());
     bench_scalar(c, "wma", &closes, || Wma::new(14).unwrap());
     bench_scalar(c, "rsi", &closes, || Rsi::new(14).unwrap());
+    bench_scalar(c, "tii", &closes, || Tii::new(60, 30).unwrap());
     bench_scalar(c, "alma", &closes, || Alma::new(9, 0.85, 6.0).unwrap());
     bench_scalar(c, "mcginley_dynamic", &closes, || {
         McGinleyDynamic::new(10).unwrap()
@@ -150,8 +170,12 @@ fn benches(c: &mut Criterion) {
     bench_scalar(c, "vidya", &closes, || Vidya::new(14, 9).unwrap());
     bench_scalar(c, "jma", &closes, || Jma::new(14, 0.0, 2).unwrap());
     bench_macd(c, &closes);
+    bench_kst(c, &closes);
     bench_bollinger(c, &closes);
     bench_candle_input(c, "atr", &candles, || Atr::new(14).unwrap());
+    bench_candle_input(c, "adxr", &candles, || Adxr::new(14).unwrap());
+    bench_candle_input(c, "rwi", &candles, || Rwi::new(14).unwrap());
+    bench_candle_input(c, "wave_trend", &candles, || WaveTrend::classic().unwrap());
     bench_candle_input(c, "stochastic", &candles, Stochastic::classic);
     bench_candle_input(c, "obv", &candles, Obv::new);
 

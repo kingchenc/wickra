@@ -1066,6 +1066,12 @@ impl PyKst {
                 .map_err(map_err)?,
         })
     }
+    #[staticmethod]
+    fn classic() -> Self {
+        Self {
+            inner: wc::Kst::classic(),
+        }
+    }
     fn update(&mut self, value: f64) -> Option<(f64, f64)> {
         self.inner.update(value).map(|o| (o.kst, o.signal))
     }
@@ -2170,6 +2176,80 @@ impl PyAdx {
     }
     fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+}
+
+// ============================== ADXR ==============================
+
+#[pyclass(name = "ADXR", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyAdxr {
+    inner: wc::Adxr,
+}
+
+#[pymethods]
+impl PyAdxr {
+    #[new]
+    #[pyo3(signature = (period=14))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Adxr::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(v) = self.inner.update(candle) {
+                out[i] = v;
+            }
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("ADXR(period={})", self.inner.period())
     }
 }
 
@@ -3359,6 +3439,162 @@ impl PyVortex {
     }
 }
 
+// ============================== RWI ==============================
+
+#[pyclass(name = "RWI", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyRwi {
+    inner: wc::Rwi,
+}
+
+#[pymethods]
+impl PyRwi {
+    #[new]
+    #[pyo3(signature = (period=14))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Rwi::new(period).map_err(map_err)?,
+        })
+    }
+    /// Returns `(high, low)` or `None` during warmup.
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.high, o.low)))
+    }
+    /// Batch over high/low/close numpy columns. Returns shape `(n, 2)` for `[high, low]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 2] = o.high;
+                out[i * 2 + 1] = o.low;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("RWI(period={})", self.inner.period())
+    }
+}
+
+// ============================== WaveTrend ==============================
+
+#[pyclass(name = "WaveTrend", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyWaveTrend {
+    inner: wc::WaveTrend,
+}
+
+#[pymethods]
+impl PyWaveTrend {
+    #[new]
+    #[pyo3(signature = (channel_period=10, average_period=21, signal_period=4))]
+    fn new(channel_period: usize, average_period: usize, signal_period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::WaveTrend::new(channel_period, average_period, signal_period)
+                .map_err(map_err)?,
+        })
+    }
+    #[staticmethod]
+    fn classic() -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::WaveTrend::classic().map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.wt1, o.wt2)))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 2] = o.wt1;
+                out[i * 2 + 1] = o.wt2;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn periods(&self) -> (usize, usize, usize) {
+        self.inner.periods()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (cp, ap, sp) = self.inner.periods();
+        format!("WaveTrend(channel_period={cp}, average_period={ap}, signal_period={sp})")
+    }
+}
+
 // ============================== Mass Index ==============================
 
 #[pyclass(name = "MassIndex", module = "wickra._wickra", skip_from_py_object)]
@@ -3925,6 +4161,59 @@ impl PyPmo {
     fn __repr__(&self) -> String {
         let (s1, s2) = self.inner.periods();
         format!("PMO(smoothing1={s1}, smoothing2={s2})")
+    }
+}
+
+// ============================== TII ==============================
+
+#[pyclass(name = "TII", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyTii {
+    inner: wc::Tii,
+}
+
+#[pymethods]
+impl PyTii {
+    #[new]
+    #[pyo3(signature = (sma_period=60, dev_period=30))]
+    fn new(sma_period: usize, dev_period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Tii::new(sma_period, dev_period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn periods(&self) -> (usize, usize) {
+        self.inner.periods()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (s, d) = self.inner.periods();
+        format!("TII(sma_period={s}, dev_period={d})")
     }
 }
 
@@ -6705,6 +6994,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyRoc>()?;
     m.add_class::<PyWilliamsR>()?;
     m.add_class::<PyAdx>()?;
+    m.add_class::<PyAdxr>()?;
     m.add_class::<PyMfi>()?;
     m.add_class::<PyTrix>()?;
     m.add_class::<PyPsar>()?;
@@ -6723,6 +7013,8 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyCmo>()?;
     m.add_class::<PyTsi>()?;
     m.add_class::<PyPmo>()?;
+    m.add_class::<PyTii>()?;
+    m.add_class::<PyKst>()?;
     m.add_class::<PyStochRsi>()?;
     m.add_class::<PyUltimateOscillator>()?;
     m.add_class::<PyPpo>()?;
@@ -6730,6 +7022,8 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyCoppock>()?;
     m.add_class::<PyAroonOscillator>()?;
     m.add_class::<PyVortex>()?;
+    m.add_class::<PyRwi>()?;
+    m.add_class::<PyWaveTrend>()?;
     m.add_class::<PyMassIndex>()?;
     m.add_class::<PyNatr>()?;
     m.add_class::<PyStdDev>()?;

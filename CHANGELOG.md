@@ -8,6 +8,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **ADXR (Average Directional Movement Index Rating)** in the Trend &
+  Directional family. Wilder's directional-strength smoother: the
+  average of the current `ADX` and the `ADX` from `period - 1` bars
+  ago. Warmup is `3 * period - 1` (e.g. 41 for the default `period =
+  14`). Shipped across all four bindings (Rust core, Python, Node,
+  WASM) plus fuzz/test/bench coverage.
+- **Random Walk Index (RWI)** in the Trend & Directional family. Mike
+  Poulos' trend-vs.-random-walk gauge: for each lookback `i ∈ [2,
+  period]` the ratio of actual displacement to the random-walk
+  expectation `ATR_i * sqrt(i)` is taken; the per-bar output is the
+  maximum across lookbacks for both the high (`RWI_High`) and low
+  (`RWI_Low`) directions. Multi-output `(high, low)` across all four
+  bindings; warmup `= period`.
+- **Trend Intensity Index (TII)** in the Trend & Directional family.
+  M.H. Pee's `[0, 100]` oscillator: the share of the most recent
+  `dev_period` SMA-deviations that are positive, scaled to
+  `[0, 100]`. Saturates at 100 on a pure uptrend, at 0 on a pure
+  downtrend, and returns the neutral 50 on a perfectly flat market.
+  Canonical Python defaults `(sma_period=60, dev_period=30)`; warmup
+  `= sma_period + dev_period − 1`.
+- **Wave Trend Oscillator (LazyBear)** in the Trend & Directional
+  family. Two-line mean-reverting momentum gauge built from the
+  typical price and three cascaded EMAs:
+  `esa = EMA(ap, channel)`, `d = EMA(|ap − esa|, channel)`,
+  `ci = (ap − esa) / (0.015 · d)`, `wt1 = EMA(ci, average)`,
+  `wt2 = SMA(wt1, signal)`. `WaveTrend::classic()` exposes the
+  LazyBear defaults `(channel = 10, average = 21, signal = 4)`;
+  warmup `= 2 · channel + average + signal − 3` (42 for the classic
+  defaults). Includes a sub-ULP flat-tolerance guard on `ci` so a
+  perfectly flat market reports `(0, 0)` instead of the
+  mathematically indeterminate `−1 / 0.015 = −66.67`. Multi-output
+  `(wt1, wt2)` across all four bindings.
 - **Family 05 — Bands & Channels (11 new indicators).** Eleven additional
   price-envelope overlays organised into the new "Bands & Channels"
   family, exposed across all four bindings (Rust, Python, Node, WASM):

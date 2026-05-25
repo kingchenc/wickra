@@ -23,14 +23,14 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    AccelerationBands, AcceleratorOscillator, Adl, Adx, Alligator, Aroon, AroonOscillator, Atr,
-    AtrBands, AtrTrailingStop, AwesomeOscillator, AwesomeOscillatorHistogram, BalanceOfPower,
+    AccelerationBands, AcceleratorOscillator, Adl, Adx, Adxr, Alligator, Aroon, AroonOscillator,
+    Atr, AtrBands, AtrTrailingStop, AwesomeOscillator, AwesomeOscillatorHistogram, BalanceOfPower,
     BatchExt, Candle, Cci, ChaikinMoneyFlow, ChaikinOscillator, ChaikinVolatility, ChandeKrollStop,
     ChandelierExit, ChoppinessIndex, Donchian, EaseOfMovement, Evwma, ForceIndex, FractalChaosBands,
     GarmanKlassVolatility, HurstChannel, Indicator, Inertia, Keltner, MassIndex, MedianPrice, Mfi,
-    Natr, Obv, ParkinsonVolatility, Pgo, Psar, RogersSatchellVolatility, RollingVwap, Rvi, Smi,
+    Natr, Obv, ParkinsonVolatility, Pgo, Psar, RogersSatchellVolatility, RollingVwap, Rvi, Rwi, Smi,
     StarcBands, Stochastic, SuperTrend, TrueRange, TtmSqueeze, TypicalPrice, UltimateOscillator,
-    VolumePriceTrend, Vortex, Vwap, VwapStdDevBands, Vwma, WeightedClose, WilliamsR,
+    VolumePriceTrend, Vortex, Vwap, VwapStdDevBands, Vwma, WaveTrend, WeightedClose, WilliamsR,
     YangZhangVolatility,
 };
 
@@ -94,10 +94,13 @@ fuzz_target!(|data: Vec<f64>| {
 
     // --- Trend & Directional ---
     drive(|| Adx::new(14).unwrap(), &candles);
+    drive(|| Adxr::new(14).unwrap(), &candles);
     drive(|| Aroon::new(14).unwrap(), &candles);
     drive(|| Alligator::new(13, 8, 5).unwrap(), &candles);
     drive(|| AroonOscillator::new(14).unwrap(), &candles);
     drive(|| Vortex::new(14).unwrap(), &candles);
+    drive(|| Rwi::new(14).unwrap(), &candles);
+    drive(|| WaveTrend::classic().unwrap(), &candles);
     drive(|| MassIndex::new(9, 25).unwrap(), &candles);
     drive(|| ChoppinessIndex::new(14).unwrap(), &candles);
 

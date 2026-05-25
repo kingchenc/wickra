@@ -54,6 +54,7 @@ SCALAR = [
     (ta.CMO, (14,)),
     (ta.TSI, (25, 13)),
     (ta.PMO, (35, 20)),
+    (ta.TII, (20, 10)),
     (ta.StochRSI, (14, 14)),
     (ta.PPO, (12, 26)),
     (ta.APO, (12, 26)),
@@ -196,6 +197,10 @@ CANDLE_SCALAR = {
         lambda: ta.ChaikinVolatility(10, 10),
         lambda ind, h, l, c, v: ind.batch(h, l),
     ),
+    "ADXR": (
+        lambda: ta.ADXR(7),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
     "ParkinsonVolatility": (
         lambda: ta.ParkinsonVolatility(20, 252),
         lambda ind, h, l, c, v: ind.batch(h, l),
@@ -245,6 +250,11 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 
 MULTI = {
     "Vortex": (lambda: ta.Vortex(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
+    "RWI": (lambda: ta.RWI(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
+    "WaveTrend": (
+        lambda: ta.WaveTrend.classic(),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
     "SuperTrend": (
         lambda: ta.SuperTrend(10, 3.0),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
@@ -487,6 +497,66 @@ def test_linreg_angle_reference():
     # A series rising by 1 per step has slope 1, and atan(1) = 45 degrees.
     out = ta.LinRegAngle(5).batch(np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0]))
     assert out[4] == pytest.approx(45.0)
+
+
+def test_wave_trend_flat_market_yields_zero():
+    # On a perfectly flat market the flat-tolerance guard keeps both lines
+    # at exactly zero (otherwise the ratio ci = (ap - esa) / (0.015 * d)
+    # would explode on the first esa ULP).
+    out = ta.WaveTrend.classic().batch(
+        np.full(80, 10.0), np.full(80, 10.0), np.full(80, 10.0)
+    )
+    last = out[~np.isnan(out[:, 0])][-1]
+    assert last[0] == 0.0
+    assert last[1] == 0.0
+
+
+def test_kst_classic_constants_yield_zero():
+    out = ta.KST.classic().batch(np.full(120, 100.0))
+    last_row = out[~np.isnan(out[:, 0])][-1]
+    assert last_row[0] == pytest.approx(0.0)
+    assert last_row[1] == pytest.approx(0.0)
+
+
+def test_tii_pure_uptrend_saturates_at_100():
+    # On a strictly increasing series every close sits above the lagging
+    # SMA, so every deviation is positive and TII reaches 100.
+    prices = np.arange(80, dtype=np.float64) + 100.0
+    out = ta.TII(10, 5).batch(prices)
+    last = out[~np.isnan(out)][-1]
+    assert last == pytest.approx(100.0)
+
+
+def test_tii_flat_market_yields_50():
+    out = ta.TII(5, 4).batch(np.full(30, 10.0))
+    last = out[~np.isnan(out)][-1]
+    assert last == 50.0
+
+
+def test_rwi_reference_uptrend_dominates_low_line():
+    # In a pure linear uptrend RWI_High >> RWI_Low.
+    n = 60
+    base = np.arange(n, dtype=np.float64) * 2.0 + 100.0
+    high = base + 1.0
+    low = base - 0.5
+    close = base + 0.5
+    out = ta.RWI(14).batch(high, low, close)
+    last_row = out[~np.isnan(out[:, 0])][-1]
+    assert last_row[0] > last_row[1], f"RWI_High {last_row[0]} must dominate RWI_Low {last_row[1]}"
+    assert last_row[0] > 1.0
+
+
+def test_adxr_reference_on_pure_uptrend():
+    # On a pure linear uptrend ADX saturates at 100, so ADXR (average of two
+    # saturated ADX values period-1 bars apart) also reads 100.
+    n = 100
+    base = np.arange(n, dtype=np.float64) * 2.0 + 100.0
+    high = base + 1.0
+    low = base - 0.5
+    close = base + 0.5
+    out = ta.ADXR(5).batch(high, low, close)
+    last = out[~np.isnan(out)][-1]
+    assert last == pytest.approx(100.0)
 
 
 def test_z_score_reference():
