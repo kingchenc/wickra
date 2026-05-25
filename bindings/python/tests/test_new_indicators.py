@@ -304,11 +304,20 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 # --- Candle-input, multi-output indicators --------------------------------
 
 MULTI = {
-    "Vortex": (lambda: ta.Vortex(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
-    "RWI": (lambda: ta.RWI(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
+    "Vortex": (
+        lambda: ta.Vortex(14),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+        2,
+    ),
+    "RWI": (
+        lambda: ta.RWI(14),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+        2,
+    ),
     "WaveTrend": (
         lambda: ta.WaveTrend.classic(),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
+        2,
     ),
     "SuperTrend": (
         lambda: ta.SuperTrend(10, 3.0),
@@ -365,17 +374,20 @@ MULTI = {
     "DonchianStop": (
         lambda: ta.DonchianStop(10),
         lambda ind, h, l, c, v: ind.batch(h, l),
+        2,
     ),
     # Family 05 candle-input bands. Each entry is
-    # `(factory, batch_call, output_arity, streaming_fields)` where
-    # `streaming_fields` is the tuple shape returned by `update(...)`.
+    # `(factory, batch_call, output_arity)` where the third element is the
+    # tuple shape returned by `update(...)`.
     "TtmSqueeze": (
         lambda: ta.TtmSqueeze(20, 2.0, 1.5),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
+        2,
     ),
     "FractalChaosBands": (
         lambda: ta.FractalChaosBands(2),
         lambda ind, h, l, c, v: ind.batch(h, l),
+        2,
     ),
 }
 
@@ -993,7 +1005,7 @@ def test_fractal_chaos_bands_detects_peak_and_trough():
 
 def test_new_indicators_expose_lifecycle():
     instances = [make() for make, _ in CANDLE_SCALAR.values()]
-    instances += [make() for make, _ in MULTI.values()]
+    instances += [t[0]() for t in MULTI.values()]
     instances += [make() for make, _ in MULTI_SCALAR_INPUT.values()]
     instances += [cls(*args) for cls, args in SCALAR]
     instances += [make() for make, _ in SCALAR_MULTI.values()]
