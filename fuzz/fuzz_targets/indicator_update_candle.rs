@@ -25,15 +25,16 @@ use libfuzzer_sys::fuzz_target;
 use wickra_core::{
     AccelerationBands, AcceleratorOscillator, AdOscillator, Adl, Adx, Adxr, Alligator,
     AnchoredVwap, Aroon, AroonOscillator, Atr, AtrBands, AtrTrailingStop, AwesomeOscillator,
-    AwesomeOscillatorHistogram, BalanceOfPower, BatchExt, Candle, Cci, ChaikinMoneyFlow,
+    AwesomeOscillatorHistogram, BalanceOfPower, BatchExt, Camarilla, Candle, Cci, ChaikinMoneyFlow,
     ChaikinOscillator, ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex,
-    DemandIndex, Donchian, DonchianStop, EaseOfMovement, Evwma, ForceIndex, FractalChaosBands,
-    GarmanKlassVolatility, HiLoActivator, HurstChannel, Indicator, Inertia, Keltner, Kvo,
-    MarketFacilitationIndex, MassIndex, MedianPrice, Mfi, Natr, Nvi, Obv, ParkinsonVolatility, Pgo,
-    Psar, Pvi, RogersSatchellVolatility, RollingVwap, Rvi, Rwi, Smi, StarcBands, Stochastic,
-    SuperTrend, TrueRange, Tsv, TtmSqueeze, TypicalPrice, UltimateOscillator, VoltyStop,
-    VolumeOscillator, VolumePriceTrend, Vortex, Vwap, VwapStdDevBands, Vwma, Vzo, WaveTrend,
-    WeightedClose, WilliamsR, YangZhangVolatility, YoyoExit,
+    ClassicPivots, DemandIndex, DemarkPivots, Donchian, DonchianStop, EaseOfMovement, Evwma,
+    FibonacciPivots, ForceIndex, FractalChaosBands, GarmanKlassVolatility, HiLoActivator,
+    HurstChannel, Indicator, Inertia, Keltner, Kvo, MarketFacilitationIndex, MassIndex, MedianPrice,
+    Mfi, Natr, Nvi, Obv, ParkinsonVolatility, Pgo, Psar, Pvi, RogersSatchellVolatility, RollingVwap,
+    Rvi, Rwi, Smi, StarcBands, Stochastic, SuperTrend, TrueRange, Tsv, TtmSqueeze, TypicalPrice,
+    UltimateOscillator, VoltyStop, VolumeOscillator, VolumePriceTrend, Vortex, Vwap, VwapStdDevBands,
+    Vwma, Vzo, WaveTrend, WeightedClose, WilliamsFractals, WilliamsR, WoodiePivots,
+    YangZhangVolatility, YoyoExit, ZigZag,
 };
 
 /// Convert a flat `f64` stream into a `Vec<Candle>` by chunking it into
@@ -162,6 +163,15 @@ fuzz_target!(|data: Vec<f64>| {
         }
         let _ = Stochastic::new(14, 3).unwrap().batch(&candles);
     }
+
+    // --- Pivots & Support/Resistance (multi-output) ---
+    drive(ClassicPivots::new, &candles);
+    drive(FibonacciPivots::new, &candles);
+    drive(Camarilla::new, &candles);
+    drive(WoodiePivots::new, &candles);
+    drive(DemarkPivots::new, &candles);
+    drive(WilliamsFractals::new, &candles);
+    drive(|| ZigZag::new(0.05).unwrap(), &candles);
 
     // --- Donchian Stop (multi-output) ---
     {

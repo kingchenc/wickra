@@ -161,6 +161,14 @@ from ._wickra import (
     TtmSqueeze,
     FractalChaosBands,
     VwapStdDevBands,
+    # Pivots & S/R
+    ClassicPivots,
+    FibonacciPivots,
+    Camarilla,
+    WoodiePivots,
+    DemarkPivots,
+    WilliamsFractals,
+    ZigZag,
 )
 
 __all__ = [
@@ -301,4 +309,12 @@ __all__ = [
     "TtmSqueeze",
     "FractalChaosBands",
     "VwapStdDevBands",
+    # Pivots & S/R
+    "ClassicPivots",
+    "FibonacciPivots",
+    "Camarilla",
+    "WoodiePivots",
+    "DemarkPivots",
+    "WilliamsFractals",
+    "ZigZag",
 ]

@@ -192,6 +192,14 @@ const multi = {
   TtmSqueeze: { make: () => new wickra.TtmSqueeze(20, 2, 1.5), fields: ['squeeze', 'momentum'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   FractalChaosBands: { make: () => new wickra.FractalChaosBands(2), fields: ['upper', 'lower'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   VwapStdDevBands: { make: () => new wickra.VwapStdDevBands(2), fields: ['upper', 'middle', 'lower', 'stddev'], step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
+  // Family 08: Pivots & Support/Resistance
+  ClassicPivots: { make: () => new wickra.ClassicPivots(), fields: ['pp', 'r1', 'r2', 'r3', 's1', 's2', 's3'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  FibonacciPivots: { make: () => new wickra.FibonacciPivots(), fields: ['pp', 'r1', 'r2', 'r3', 's1', 's2', 's3'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  Camarilla: { make: () => new wickra.Camarilla(), fields: ['pp', 'r1', 'r2', 'r3', 'r4', 's1', 's2', 's3', 's4'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  WoodiePivots: { make: () => new wickra.WoodiePivots(), fields: ['pp', 'r1', 'r2', 's1', 's2'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  DemarkPivots: { make: () => new wickra.DemarkPivots(), fields: ['pp', 'r1', 's1'], step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  WilliamsFractals: { make: () => new wickra.WilliamsFractals(), fields: ['up', 'down'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  ZigZag: { make: () => new wickra.ZigZag(0.02), fields: ['swing', 'direction'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
 };
 
 for (const [name, d] of Object.entries(multi)) {

@@ -304,38 +304,90 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 # --- Candle-input, multi-output indicators --------------------------------
 
 MULTI = {
-    "Vortex": (lambda: ta.Vortex(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
-    "RWI": (lambda: ta.RWI(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
+    "Vortex": (
+        lambda: ta.Vortex(14),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+        2,
+    ),
+    "RWI": (
+        lambda: ta.RWI(14),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+        2,
+    ),
     "WaveTrend": (
         lambda: ta.WaveTrend.classic(),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
+        2,
     ),
     "SuperTrend": (
         lambda: ta.SuperTrend(10, 3.0),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
+        2,
     ),
     "ChandelierExit": (
         lambda: ta.ChandelierExit(22, 3.0),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
+        2,
     ),
     "ChandeKrollStop": (
         lambda: ta.ChandeKrollStop(10, 1.0, 9),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
+        2,
+    ),
+    "ClassicPivots": (
+        lambda: ta.ClassicPivots(),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+        7,
+    ),
+    "FibonacciPivots": (
+        lambda: ta.FibonacciPivots(),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+        7,
+    ),
+    "Camarilla": (
+        lambda: ta.Camarilla(),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+        9,
+    ),
+    "WoodiePivots": (
+        lambda: ta.WoodiePivots(),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+        5,
+    ),
+    "DemarkPivots": (
+        # batch needs open; pass close in for open since the synthetic OHLCV
+        # streaming feeds open=close as well.
+        lambda: ta.DemarkPivots(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+        3,
+    ),
+    "WilliamsFractals": (
+        lambda: ta.WilliamsFractals(),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+        2,
+    ),
+    "ZigZag": (
+        lambda: ta.ZigZag(0.02),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+        2,
     ),
     "DonchianStop": (
         lambda: ta.DonchianStop(10),
         lambda ind, h, l, c, v: ind.batch(h, l),
+        2,
     ),
     # Family 05 candle-input bands. Each entry is
-    # `(factory, batch_call, output_arity, streaming_fields)` where
-    # `streaming_fields` is the tuple shape returned by `update(...)`.
+    # `(factory, batch_call, output_arity)` where the third element is the
+    # tuple shape returned by `update(...)`.
     "TtmSqueeze": (
         lambda: ta.TtmSqueeze(20, 2.0, 1.5),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
+        2,
     ),
     "FractalChaosBands": (
         lambda: ta.FractalChaosBands(2),
         lambda ind, h, l, c, v: ind.batch(h, l),
+        2,
     ),
 }
 
@@ -364,10 +416,10 @@ MULTI_SCALAR_INPUT = {
 @pytest.mark.parametrize("name", list(MULTI))
 def test_multi_streaming_matches_batch(name, ohlcv):
     high, low, close, volume = ohlcv
-    make, batch_call = MULTI[name]
+    make, batch_call, k = MULTI[name]
 
     batch = batch_call(make(), high, low, close, volume)
-    assert batch.shape == (close.size, 2)
+    assert batch.shape == (close.size, k)
 
     streamer = make()
     rows = []
@@ -381,7 +433,13 @@ def test_multi_streaming_matches_batch(name, ohlcv):
             i,
         )
         v = streamer.update(candle)
-        rows.append([math.nan, math.nan] if v is None else list(v))
+        if v is None:
+            rows.append([math.nan] * k)
+        else:
+            # WilliamsFractals returns (Optional[float], Optional[float]); the
+            # batch helper writes NaN for None. Normalise tuple/list entries
+            # the same way before the equality check.
+            rows.append([math.nan if x is None else float(x) for x in v])
     assert _eq_nan(batch, np.array(rows, dtype=np.float64)), f"{name} mismatch"
 
 
@@ -757,6 +815,89 @@ def test_z_score_reference():
     assert out[1] == pytest.approx(1.0)
 
 
+def test_classic_pivots_reference():
+    # H=110, L=90, C=105 -> PP = 305/3, R1 = 2·PP − L, S1 = 2·PP − H.
+    cp = ta.ClassicPivots()
+    pp, r1, r2, r3, s1, s2, s3 = cp.update((105.0, 110.0, 90.0, 105.0, 1.0, 0))
+    expected_pp = 305.0 / 3.0
+    assert pp == pytest.approx(expected_pp)
+    assert r1 == pytest.approx(2 * expected_pp - 90.0)
+    assert s1 == pytest.approx(2 * expected_pp - 110.0)
+    assert r2 == pytest.approx(expected_pp + 20.0)
+    assert s2 == pytest.approx(expected_pp - 20.0)
+    assert r3 > r2 and s3 < s2
+
+
+def test_fibonacci_pivots_reference():
+    # H=110, L=90, C=100 -> PP=100, range=20, R1=PP+0.382·range, etc.
+    fp = ta.FibonacciPivots()
+    pp, r1, r2, r3, s1, s2, s3 = fp.update((100.0, 110.0, 90.0, 100.0, 1.0, 0))
+    assert pp == pytest.approx(100.0)
+    assert r1 == pytest.approx(100.0 + 0.382 * 20.0)
+    assert r2 == pytest.approx(100.0 + 0.618 * 20.0)
+    assert r3 == pytest.approx(100.0 + 20.0)
+    assert s1 == pytest.approx(100.0 - 0.382 * 20.0)
+    assert s3 == pytest.approx(100.0 - 20.0)
+
+
+def test_camarilla_pivots_reference():
+    # H=110, L=90, C=105 -> R4 = C + range · 1.1 / 2 = 105 + 11 = 116.
+    cm = ta.Camarilla()
+    pp, r1, r2, r3, r4, s1, s2, s3, s4 = cm.update((105.0, 110.0, 90.0, 105.0, 1.0, 0))
+    range_ = 20.0
+    assert r1 == pytest.approx(105.0 + range_ * 1.1 / 12.0)
+    assert r4 == pytest.approx(105.0 + range_ * 1.1 / 2.0)
+    assert s4 == pytest.approx(105.0 - range_ * 1.1 / 2.0)
+    assert pp == pytest.approx(305.0 / 3.0)
+    # Strict widening with index.
+    assert r4 > r3 > r2 > r1
+    assert s4 < s3 < s2 < s1
+
+
+def test_woodie_pivots_reference():
+    # H=110, L=90, C=108 -> PP = (110 + 90 + 216) / 4 = 104.
+    wp = ta.WoodiePivots()
+    pp, r1, r2, s1, s2 = wp.update((108.0, 110.0, 90.0, 108.0, 1.0, 0))
+    assert pp == pytest.approx(104.0)
+    assert r1 == pytest.approx(2 * 104.0 - 90.0)
+    assert s1 == pytest.approx(2 * 104.0 - 110.0)
+    assert r2 == pytest.approx(104.0 + 20.0)
+    assert s2 == pytest.approx(104.0 - 20.0)
+
+
+def test_demark_pivots_up_bar_reference():
+    # Up bar: O=100, H=120, L=80, C=110 -> X = H + 2L + C = 390, PP = 97.5.
+    dp = ta.DemarkPivots()
+    pp, r1, s1 = dp.update((100.0, 120.0, 80.0, 110.0, 1.0, 0))
+    assert pp == pytest.approx(97.5)
+    assert r1 == pytest.approx(195.0 - 80.0)
+    assert s1 == pytest.approx(195.0 - 120.0)
+
+
+def test_williams_fractals_isolated_peak():
+    # Highs 1, 2, 5, 2, 1; the centre is strictly above both neighbours.
+    wf = ta.WilliamsFractals()
+    last = None
+    for i, h in enumerate([1.0, 2.0, 5.0, 2.0, 1.0]):
+        last = wf.update((h, h, h - 0.5, h, 1.0, i))
+    assert last is not None
+    up, down = last
+    assert up == pytest.approx(5.0)
+    assert down is None
+
+
+def test_zigzag_confirms_after_threshold_reversal():
+    # 100 -> 120 (uptrend pivot) -> 100 (16.7% drop confirms swing high).
+    zz = ta.ZigZag(0.10)
+    assert zz.update((100.0, 100.5, 99.5, 100.0, 1.0, 0)) is None
+    assert zz.update((120.0, 120.5, 119.5, 120.0, 1.0, 1)) is None
+    confirmed = zz.update((100.0, 100.5, 99.5, 100.0, 1.0, 2))
+    assert confirmed is not None
+    swing, direction = confirmed
+    assert swing == pytest.approx(120.5)
+    assert direction == 1.0
+
+
 # --- Family 05 reference values ---------------------------------------------
 
 
@@ -864,7 +1005,7 @@ def test_fractal_chaos_bands_detects_peak_and_trough():
 
 def test_new_indicators_expose_lifecycle():
     instances = [make() for make, _ in CANDLE_SCALAR.values()]
-    instances += [make() for make, _ in MULTI.values()]
+    instances += [t[0]() for t in MULTI.values()]
     instances += [make() for make, _ in MULTI_SCALAR_INPUT.values()]
     instances += [cls(*args) for cls, args in SCALAR]
     instances += [make() for make, _ in SCALAR_MULTI.values()]

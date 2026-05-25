@@ -20,13 +20,14 @@ use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Through
 use std::hint::black_box;
 use wickra::{
     AccelerationBands, AdOscillator, Adxr, Alma, AnchoredVwap, Atr, AtrBands, BatchExt,
-    BollingerBands, Candle, DemandIndex, DonchianStop, DoubleBollinger, Ema, FractalChaosBands,
-    Frama, GarmanKlassVolatility, HiLoActivator, HurstChannel, Indicator, Jma, Kst, Kvo,
-    LinRegChannel, MaEnvelope, MacdIndicator, MarketFacilitationIndex, McGinleyDynamic, Nvi, Obv,
-    ParkinsonVolatility, PercentageTrailingStop, Pgo, Pvi, RenkoTrailingStop,
-    RogersSatchellVolatility, Rsi, Rvi, RviVolatility, Rwi, Sma, StandardErrorBands, StarcBands,
-    StepTrailingStop, Stochastic, Tii, Tsv, TtmSqueeze, Vidya, VoltyStop, VolumeOscillator,
-    VwapStdDevBands, Vzo, WaveTrend, Wma, YangZhangVolatility, YoyoExit,
+    BollingerBands, Camarilla, Candle, ClassicPivots, DemandIndex, DemarkPivots, DonchianStop,
+    DoubleBollinger, Ema, FibonacciPivots, FractalChaosBands, Frama, GarmanKlassVolatility,
+    HiLoActivator, HurstChannel, Indicator, Jma, Kst, Kvo, LinRegChannel, MaEnvelope,
+    MacdIndicator, MarketFacilitationIndex, McGinleyDynamic, Nvi, Obv, ParkinsonVolatility,
+    PercentageTrailingStop, Pgo, Pvi, RenkoTrailingStop, RogersSatchellVolatility, Rsi, Rvi,
+    RviVolatility, Rwi, Sma, StandardErrorBands, StarcBands, StepTrailingStop, Stochastic, Tii,
+    Tsv, TtmSqueeze, Vidya, VoltyStop, VolumeOscillator, VwapStdDevBands, Vzo, WaveTrend,
+    WilliamsFractals, Wma, WoodiePivots, YangZhangVolatility, YoyoExit, ZigZag,
 };
 use wickra_data::csv::CandleReader;
 
@@ -181,6 +182,15 @@ fn benches(c: &mut Criterion) {
     bench_candle_input(c, "wave_trend", &candles, || WaveTrend::classic().unwrap());
     bench_candle_input(c, "stochastic", &candles, Stochastic::classic);
     bench_candle_input(c, "obv", &candles, Obv::new);
+
+    // --- Family 08: Pivots & Support/Resistance ---
+    bench_candle_input(c, "classic_pivots", &candles, ClassicPivots::new);
+    bench_candle_input(c, "fibonacci_pivots", &candles, FibonacciPivots::new);
+    bench_candle_input(c, "camarilla", &candles, Camarilla::new);
+    bench_candle_input(c, "woodie_pivots", &candles, WoodiePivots::new);
+    bench_candle_input(c, "demark_pivots", &candles, DemarkPivots::new);
+    bench_candle_input(c, "williams_fractals", &candles, WilliamsFractals::new);
+    bench_candle_input(c, "zig_zag", &candles, || ZigZag::new(0.05).unwrap());
 
     // --- Family 09: Trailing Stops ---
     bench_candle_input(c, "hilo_activator", &candles, HiLoActivator::classic);

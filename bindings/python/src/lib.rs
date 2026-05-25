@@ -8047,6 +8047,534 @@ impl PyVwapStdDevBands {
     }
 }
 
+// ============================== Classic Pivots ==============================
+
+#[pyclass(name = "ClassicPivots", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyClassicPivots {
+    inner: wc::ClassicPivots,
+}
+
+#[pymethods]
+impl PyClassicPivots {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::ClassicPivots::new(),
+        }
+    }
+    /// Returns `(pp, r1, r2, r3, s1, s2, s3)` or None during warmup.
+    fn update(
+        &mut self,
+        candle: &Bound<'_, PyAny>,
+    ) -> PyResult<Option<(f64, f64, f64, f64, f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self
+            .inner
+            .update(c)
+            .map(|o| (o.pp, o.r1, o.r2, o.r3, o.s1, o.s2, o.s3)))
+    }
+    /// Batch over numpy columns high, low, close. Returns shape `(n, 7)` for
+    /// `[pp, r1, r2, r3, s1, s2, s3]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 7];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 7] = o.pp;
+                out[i * 7 + 1] = o.r1;
+                out[i * 7 + 2] = o.r2;
+                out[i * 7 + 3] = o.r3;
+                out[i * 7 + 4] = o.s1;
+                out[i * 7 + 5] = o.s2;
+                out[i * 7 + 6] = o.s3;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 7), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== Fibonacci Pivots ==============================
+
+#[pyclass(
+    name = "FibonacciPivots",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyFibonacciPivots {
+    inner: wc::FibonacciPivots,
+}
+
+#[pymethods]
+impl PyFibonacciPivots {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::FibonacciPivots::new(),
+        }
+    }
+    fn update(
+        &mut self,
+        candle: &Bound<'_, PyAny>,
+    ) -> PyResult<Option<(f64, f64, f64, f64, f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self
+            .inner
+            .update(c)
+            .map(|o| (o.pp, o.r1, o.r2, o.r3, o.s1, o.s2, o.s3)))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 7];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 7] = o.pp;
+                out[i * 7 + 1] = o.r1;
+                out[i * 7 + 2] = o.r2;
+                out[i * 7 + 3] = o.r3;
+                out[i * 7 + 4] = o.s1;
+                out[i * 7 + 5] = o.s2;
+                out[i * 7 + 6] = o.s3;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 7), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== Camarilla Pivots ==============================
+
+#[pyclass(name = "Camarilla", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyCamarilla {
+    inner: wc::Camarilla,
+}
+
+#[pymethods]
+impl PyCamarilla {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::Camarilla::new(),
+        }
+    }
+    /// Returns `(pp, r1, r2, r3, r4, s1, s2, s3, s4)` or None during warmup.
+    #[allow(clippy::type_complexity)]
+    fn update(
+        &mut self,
+        candle: &Bound<'_, PyAny>,
+    ) -> PyResult<Option<(f64, f64, f64, f64, f64, f64, f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self
+            .inner
+            .update(c)
+            .map(|o| (o.pp, o.r1, o.r2, o.r3, o.r4, o.s1, o.s2, o.s3, o.s4)))
+    }
+    /// Batch over numpy columns high, low, close. Returns shape `(n, 9)` for
+    /// `[pp, r1, r2, r3, r4, s1, s2, s3, s4]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 9];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 9] = o.pp;
+                out[i * 9 + 1] = o.r1;
+                out[i * 9 + 2] = o.r2;
+                out[i * 9 + 3] = o.r3;
+                out[i * 9 + 4] = o.r4;
+                out[i * 9 + 5] = o.s1;
+                out[i * 9 + 6] = o.s2;
+                out[i * 9 + 7] = o.s3;
+                out[i * 9 + 8] = o.s4;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 9), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== Woodie Pivots ==============================
+
+#[pyclass(name = "WoodiePivots", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyWoodiePivots {
+    inner: wc::WoodiePivots,
+}
+
+#[pymethods]
+impl PyWoodiePivots {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::WoodiePivots::new(),
+        }
+    }
+    /// Returns `(pp, r1, r2, s1, s2)` or None during warmup.
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.pp, o.r1, o.r2, o.s1, o.s2)))
+    }
+    /// Batch over numpy columns high, low, close. Returns shape `(n, 5)` for
+    /// `[pp, r1, r2, s1, s2]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 5];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 5] = o.pp;
+                out[i * 5 + 1] = o.r1;
+                out[i * 5 + 2] = o.r2;
+                out[i * 5 + 3] = o.s1;
+                out[i * 5 + 4] = o.s2;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 5), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== DeMark Pivots ==============================
+
+#[pyclass(name = "DemarkPivots", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyDemarkPivots {
+    inner: wc::DemarkPivots,
+}
+
+#[pymethods]
+impl PyDemarkPivots {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::DemarkPivots::new(),
+        }
+    }
+    /// Returns `(pp, r1, s1)` or None during warmup.
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.pp, o.r1, o.s1)))
+    }
+    /// Batch over numpy columns open, high, low, close. Returns shape `(n, 3)`
+    /// for `[pp, r1, s1]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        open: PyReadonlyArray1<'py, f64>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let o = open
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "open, high, low, close must be equal length",
+            ));
+        }
+        let n = o.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let candle = wc::Candle::new(o[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(v) = self.inner.update(candle) {
+                out[i * 3] = v.pp;
+                out[i * 3 + 1] = v.r1;
+                out[i * 3 + 2] = v.s1;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== Williams Fractals ==============================
+
+#[pyclass(
+    name = "WilliamsFractals",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyWilliamsFractals {
+    inner: wc::WilliamsFractals,
+}
+
+#[pymethods]
+impl PyWilliamsFractals {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::WilliamsFractals::new(),
+        }
+    }
+    /// Returns `(up, down)` where each component is either the fractal price
+    /// or `None` if no fractal was confirmed at the centre of the current
+    /// 5-bar window. The outer `None` is returned during warmup (first 4 bars).
+    fn update(
+        &mut self,
+        candle: &Bound<'_, PyAny>,
+    ) -> PyResult<Option<(Option<f64>, Option<f64>)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.up, o.down)))
+    }
+    /// Batch over numpy columns high, low. Returns shape `(n, 2)` for
+    /// `[up_fractal, down_fractal]`. Values are NaN both during warmup and on
+    /// bars where no fractal was confirmed.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                if let Some(v) = o.up {
+                    out[i * 2] = v;
+                }
+                if let Some(v) = o.down {
+                    out[i * 2 + 1] = v;
+                }
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== ZigZag ==============================
+
+#[pyclass(name = "ZigZag", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyZigZag {
+    inner: wc::ZigZag,
+}
+
+#[pymethods]
+impl PyZigZag {
+    #[new]
+    #[pyo3(signature = (threshold=0.05))]
+    fn new(threshold: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::ZigZag::new(threshold).map_err(map_err)?,
+        })
+    }
+    /// Returns `(swing, direction)` if a swing was confirmed on this bar,
+    /// else `None`.
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.swing, o.direction)))
+    }
+    /// Batch over numpy columns high, low. Returns shape `(n, 2)` for
+    /// `[swing_price, direction]`. NaN on bars without a confirmed swing.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 2] = o.swing;
+                out[i * 2 + 1] = o.direction;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn threshold(&self) -> f64 {
+        self.inner.threshold()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
 // ============================== Module ==============================
 
 #[pymodule]
@@ -8183,5 +8711,12 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyTtmSqueeze>()?;
     m.add_class::<PyFractalChaosBands>()?;
     m.add_class::<PyVwapStdDevBands>()?;
+    m.add_class::<PyClassicPivots>()?;
+    m.add_class::<PyFibonacciPivots>()?;
+    m.add_class::<PyCamarilla>()?;
+    m.add_class::<PyWoodiePivots>()?;
+    m.add_class::<PyDemarkPivots>()?;
+    m.add_class::<PyWilliamsFractals>()?;
+    m.add_class::<PyZigZag>()?;
     Ok(())
 }
