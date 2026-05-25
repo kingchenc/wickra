@@ -18,9 +18,10 @@ use wickra_core::{
     Alma, Apo, BatchExt, BollingerBands, Cfo, Cmo, ConnorsRsi, Coppock, Dema, DoubleBollinger, Dpo,
     ElderImpulse, Ema, Frama, HistoricalVolatility, Hma, Indicator, Jma, Kama, Kst, LaguerreRsi,
     LinRegAngle, LinRegChannel, LinRegSlope, LinearRegression, MaEnvelope, MacdIndicator,
-    McGinleyDynamic, Mom, Pmo, Ppo, Roc, Rsi, RviVolatility, Sma, Smma, StandardErrorBands, Stc,
-    StdDev, StochRsi, T3, Tema, Tii, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Vidya,
-    Wma, ZScore, ZeroLagMacd, Zlema,
+    McGinleyDynamic, Mom, PercentageTrailingStop, Pmo, Ppo, RenkoTrailingStop, Roc, Rsi,
+    RviVolatility, Sma, Smma, StandardErrorBands, Stc, StdDev, StepTrailingStop, StochRsi, T3, Tema,
+    Tii, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Vidya, Wma, ZScore, ZeroLagMacd,
+    Zlema,
 };
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
@@ -105,6 +106,11 @@ fuzz_target!(|data: Vec<f64>| {
         }
         let _ = ZeroLagMacd::classic().batch(&data);
     }
+
+    // --- Trailing Stops (scalar) ---
+    drive(|| PercentageTrailingStop::new(5.0).unwrap(), &data);
+    drive(|| StepTrailingStop::new(1.0).unwrap(), &data);
+    drive(|| RenkoTrailingStop::new(1.0).unwrap(), &data);
 
     // MACD and Bollinger Bands have non-`f64` outputs, so they cannot use the
     // generic `drive` helper above. Streaming + batch are still both exercised.

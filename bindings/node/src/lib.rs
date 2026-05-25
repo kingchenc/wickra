@@ -3404,6 +3404,350 @@ impl AtrTrailingStopNode {
     }
 }
 
+// ============================== HiLo Activator ==============================
+
+#[napi(js_name = "HiLoActivator")]
+pub struct HiLoActivatorNode {
+    inner: wc::HiLoActivator,
+}
+
+#[napi]
+impl HiLoActivatorNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::HiLoActivator::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, 0.0)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Volty Stop ==============================
+
+#[napi(js_name = "VoltyStop")]
+pub struct VoltyStopNode {
+    inner: wc::VoltyStop,
+}
+
+#[napi]
+impl VoltyStopNode {
+    #[napi(constructor)]
+    pub fn new(atr_period: u32, multiplier: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::VoltyStop::new(atr_period as usize, multiplier).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, 0.0)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Yo-Yo Exit ==============================
+
+#[napi(js_name = "YoyoExit")]
+pub struct YoyoExitNode {
+    inner: wc::YoyoExit,
+}
+
+#[napi]
+impl YoyoExitNode {
+    #[napi(constructor)]
+    pub fn new(atr_period: u32, multiplier: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::YoyoExit::new(atr_period as usize, multiplier).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, 0.0)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+    #[napi(js_name = "inTrade")]
+    pub fn in_trade(&self) -> bool {
+        self.inner.in_trade()
+    }
+}
+
+// ============================== Donchian Stop ==============================
+
+#[napi(object)]
+pub struct DonchianStopValue {
+    pub stop_long: f64,
+    pub stop_short: f64,
+}
+
+#[napi(js_name = "DonchianStop")]
+pub struct DonchianStopNode {
+    inner: wc::DonchianStop,
+}
+
+#[napi]
+impl DonchianStopNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::DonchianStop::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<DonchianStopValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, low, 0.0)?)
+            .map(|o| DonchianStopValue {
+                stop_long: o.stop_long,
+                stop_short: o.stop_short,
+            }))
+    }
+    /// Returns `[long0, short0, long1, short1, ...]`, length `2 * n`. Warmup
+    /// positions are `NaN`.
+    #[napi]
+    pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() {
+            return Err(NapiError::from_reason(
+                "high and low must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], low[i], 0.0)?) {
+                out[i * 2] = o.stop_long;
+                out[i * 2 + 1] = o.stop_short;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Percentage Trailing Stop ==============================
+
+#[napi(js_name = "PercentageTrailingStop")]
+pub struct PercentageTrailingStopNode {
+    inner: wc::PercentageTrailingStop,
+}
+
+#[napi]
+impl PercentageTrailingStopNode {
+    #[napi(constructor)]
+    pub fn new(percent: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::PercentageTrailingStop::new(percent).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Step Trailing Stop ==============================
+
+#[napi(js_name = "StepTrailingStop")]
+pub struct StepTrailingStopNode {
+    inner: wc::StepTrailingStop,
+}
+
+#[napi]
+impl StepTrailingStopNode {
+    #[napi(constructor)]
+    pub fn new(step_size: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::StepTrailingStop::new(step_size).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Renko Trailing Stop ==============================
+
+#[napi(js_name = "RenkoTrailingStop")]
+pub struct RenkoTrailingStopNode {
+    inner: wc::RenkoTrailingStop,
+}
+
+#[napi]
+impl RenkoTrailingStopNode {
+    #[napi(constructor)]
+    pub fn new(block_size: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::RenkoTrailingStop::new(block_size).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== Typical Price ==============================
 
 #[napi(js_name = "TypicalPrice")]

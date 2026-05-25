@@ -69,6 +69,9 @@ const scalarFactories = {
   VerticalHorizontalFilter: () => new wickra.VerticalHorizontalFilter(28),
   ZScore: () => new wickra.ZScore(20),
   LinRegAngle: () => new wickra.LinRegAngle(14),
+  PercentageTrailingStop: () => new wickra.PercentageTrailingStop(5),
+  StepTrailingStop: () => new wickra.StepTrailingStop(1),
+  RenkoTrailingStop: () => new wickra.RenkoTrailingStop(1),
   LaguerreRSI: () => new wickra.LaguerreRSI(0.5),
   ConnorsRSI: () => new wickra.ConnorsRSI(3, 2, 100),
   RVIVolatility: () => new wickra.RVIVolatility(10),
@@ -125,6 +128,9 @@ const candleScalar = {
   VZO: { make: () => new wickra.VZO(14), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
   MarketFacilitationIndex: { make: () => new wickra.MarketFacilitationIndex(), step: (ind, i) => ind.update(high[i], low[i], volume[i]), batch: (ind) => ind.batch(high, low, volume) },
   AtrTrailingStop: { make: () => new wickra.AtrTrailingStop(14, 3), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  HiLoActivator: { make: () => new wickra.HiLoActivator(3), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  VoltyStop: { make: () => new wickra.VoltyStop(14, 2), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  YoyoExit: { make: () => new wickra.YoyoExit(14, 2), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   TypicalPrice: { make: () => new wickra.TypicalPrice(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   MedianPrice: { make: () => new wickra.MedianPrice(), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   WeightedClose: { make: () => new wickra.WeightedClose(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
@@ -173,6 +179,7 @@ const multi = {
   SuperTrend: { make: () => new wickra.SuperTrend(10, 3), fields: ['value', 'direction'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ChandelierExit: { make: () => new wickra.ChandelierExit(22, 3), fields: ['longStop', 'shortStop'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ChandeKrollStop: { make: () => new wickra.ChandeKrollStop(10, 1, 9), fields: ['stopLong', 'stopShort'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  DonchianStop: { make: () => new wickra.DonchianStop(10), fields: ['stopLong', 'stopShort'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   // Family 05: bands & channels
   MaEnvelope: { make: () => new wickra.MaEnvelope(20, 0.025), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   AccelerationBands: { make: () => new wickra.AccelerationBands(20, 0.001), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
@@ -309,6 +316,26 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+test('PercentageTrailingStop seeds and ratchets', () => {
+  const s = new wickra.PercentageTrailingStop(10);
+  assert.ok(Math.abs(s.update(100) - 90) < 1e-9);
+  assert.ok(Math.abs(s.update(110) - 99) < 1e-9);
+});
+
+test('RenkoTrailingStop only advances after a full block', () => {
+  const s = new wickra.RenkoTrailingStop(1);
+  assert.ok(Math.abs(s.update(100) - 99) < 1e-9);
+  assert.ok(Math.abs(s.update(100.5) - 99) < 1e-9);
+  assert.ok(Math.abs(s.update(101) - 100) < 1e-9);
+});
+
+test('DonchianStop window extremes', () => {
+  const out = new wickra.DonchianStop(5).batch([1, 2, 3, 4, 5], [0, 1, 2, 3, 4]);
+  // [long0, short0, long1, short1, ...]: idx 8 (=4*2) = long_5th, idx 9 = short_5th.
+  assert.ok(Math.abs(out[8] - 0) < 1e-9);
+  assert.ok(Math.abs(out[9] - 5) < 1e-9);
 });
 
 test('MaEnvelope reference values', () => {

@@ -20,12 +20,13 @@ use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Through
 use std::hint::black_box;
 use wickra::{
     AccelerationBands, AdOscillator, Adxr, Alma, AnchoredVwap, Atr, AtrBands, BatchExt,
-    BollingerBands, Candle, DemandIndex, DoubleBollinger, Ema, FractalChaosBands, Frama,
-    GarmanKlassVolatility, HurstChannel, Indicator, Jma, Kst, Kvo, LinRegChannel, MaEnvelope,
-    MacdIndicator, MarketFacilitationIndex, McGinleyDynamic, Nvi, Obv, ParkinsonVolatility, Pgo,
-    Pvi, RogersSatchellVolatility, Rsi, Rvi, RviVolatility, Rwi, Sma, StandardErrorBands,
-    StarcBands, Stochastic, Tii, Tsv, TtmSqueeze, Vidya, VolumeOscillator, VwapStdDevBands, Vzo,
-    WaveTrend, Wma, YangZhangVolatility,
+    BollingerBands, Candle, DemandIndex, DonchianStop, DoubleBollinger, Ema, FractalChaosBands,
+    Frama, GarmanKlassVolatility, HiLoActivator, HurstChannel, Indicator, Jma, Kst, Kvo,
+    LinRegChannel, MaEnvelope, MacdIndicator, MarketFacilitationIndex, McGinleyDynamic, Nvi, Obv,
+    ParkinsonVolatility, PercentageTrailingStop, Pgo, Pvi, RenkoTrailingStop,
+    RogersSatchellVolatility, Rsi, Rvi, RviVolatility, Rwi, Sma, StandardErrorBands, StarcBands,
+    StepTrailingStop, Stochastic, Tii, Tsv, TtmSqueeze, Vidya, VoltyStop, VolumeOscillator,
+    VwapStdDevBands, Vzo, WaveTrend, Wma, YangZhangVolatility, YoyoExit,
 };
 use wickra_data::csv::CandleReader;
 
@@ -154,6 +155,7 @@ where
     group.finish();
 }
 
+#[allow(clippy::too_many_lines)]
 fn benches(c: &mut Criterion) {
     let candles = load_candles();
     let closes: Vec<f64> = candles.iter().map(|c| c.close).collect();
@@ -179,6 +181,21 @@ fn benches(c: &mut Criterion) {
     bench_candle_input(c, "wave_trend", &candles, || WaveTrend::classic().unwrap());
     bench_candle_input(c, "stochastic", &candles, Stochastic::classic);
     bench_candle_input(c, "obv", &candles, Obv::new);
+
+    // --- Family 09: Trailing Stops ---
+    bench_candle_input(c, "hilo_activator", &candles, HiLoActivator::classic);
+    bench_candle_input(c, "volty_stop", &candles, VoltyStop::classic);
+    bench_candle_input(c, "yoyo_exit", &candles, YoyoExit::classic);
+    bench_candle_input(c, "donchian_stop", &candles, DonchianStop::classic);
+    bench_scalar(c, "percentage_trailing_stop", &closes, || {
+        PercentageTrailingStop::new(5.0).unwrap()
+    });
+    bench_scalar(c, "step_trailing_stop", &closes, || {
+        StepTrailingStop::new(1.0).unwrap()
+    });
+    bench_scalar(c, "renko_trailing_stop", &closes, || {
+        RenkoTrailingStop::new(1.0).unwrap()
+    });
 
     // --- Family 07: Volume ---
     bench_candle_input(c, "kvo", &candles, Kvo::classic);

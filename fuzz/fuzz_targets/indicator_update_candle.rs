@@ -27,13 +27,13 @@ use wickra_core::{
     AnchoredVwap, Aroon, AroonOscillator, Atr, AtrBands, AtrTrailingStop, AwesomeOscillator,
     AwesomeOscillatorHistogram, BalanceOfPower, BatchExt, Candle, Cci, ChaikinMoneyFlow,
     ChaikinOscillator, ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex,
-    DemandIndex, Donchian, EaseOfMovement, Evwma, ForceIndex, FractalChaosBands,
-    GarmanKlassVolatility, HurstChannel, Indicator, Inertia, Keltner, Kvo, MarketFacilitationIndex,
-    MassIndex, MedianPrice, Mfi, Natr, Nvi, Obv, ParkinsonVolatility, Pgo, Psar, Pvi,
-    RogersSatchellVolatility, RollingVwap, Rvi, Rwi, Smi, StarcBands, Stochastic, SuperTrend,
-    TrueRange, Tsv, TtmSqueeze, TypicalPrice, UltimateOscillator, VolumeOscillator,
-    VolumePriceTrend, Vortex, Vwap, VwapStdDevBands, Vwma, Vzo, WaveTrend, WeightedClose, WilliamsR,
-    YangZhangVolatility,
+    DemandIndex, Donchian, DonchianStop, EaseOfMovement, Evwma, ForceIndex, FractalChaosBands,
+    GarmanKlassVolatility, HiLoActivator, HurstChannel, Indicator, Inertia, Keltner, Kvo,
+    MarketFacilitationIndex, MassIndex, MedianPrice, Mfi, Natr, Nvi, Obv, ParkinsonVolatility, Pgo,
+    Psar, Pvi, RogersSatchellVolatility, RollingVwap, Rvi, Rwi, Smi, StarcBands, Stochastic,
+    SuperTrend, TrueRange, Tsv, TtmSqueeze, TypicalPrice, UltimateOscillator, VoltyStop,
+    VolumeOscillator, VolumePriceTrend, Vortex, Vwap, VwapStdDevBands, Vwma, Vzo, WaveTrend,
+    WeightedClose, WilliamsR, YangZhangVolatility, YoyoExit,
 };
 
 /// Convert a flat `f64` stream into a `Vec<Candle>` by chunking it into
@@ -93,6 +93,9 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| ChandelierExit::new(22, 3.0).unwrap(), &candles);
     drive(|| ChandeKrollStop::new(10, 1.0, 9).unwrap(), &candles);
     drive(|| AtrTrailingStop::new(14, 3.0).unwrap(), &candles);
+    drive(|| HiLoActivator::new(3).unwrap(), &candles);
+    drive(|| VoltyStop::new(14, 2.0).unwrap(), &candles);
+    drive(|| YoyoExit::new(14, 2.0).unwrap(), &candles);
 
     // --- Trend & Directional ---
     drive(|| Adx::new(14).unwrap(), &candles);
@@ -158,6 +161,15 @@ fuzz_target!(|data: Vec<f64>| {
             let _ = s.update(*c);
         }
         let _ = Stochastic::new(14, 3).unwrap().batch(&candles);
+    }
+
+    // --- Donchian Stop (multi-output) ---
+    {
+        let mut s = DonchianStop::new(10).unwrap();
+        for c in &candles {
+            let _ = s.update(*c);
+        }
+        let _ = DonchianStop::new(10).unwrap().batch(&candles);
     }
 
     // --- Family 05: candle-input band/channel indicators (multi-output) ---
