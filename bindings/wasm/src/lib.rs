@@ -1997,6 +1997,182 @@ impl WasmAroon {
     }
 }
 
+// ---------- Ichimoku ----------
+
+#[wasm_bindgen(js_name = Ichimoku)]
+pub struct WasmIchimoku {
+    inner: wc::Ichimoku,
+}
+
+#[wasm_bindgen(js_class = Ichimoku)]
+impl WasmIchimoku {
+    #[wasm_bindgen(constructor)]
+    pub fn new(
+        tenkan_period: usize,
+        kijun_period: usize,
+        senkou_b_period: usize,
+        displacement: usize,
+    ) -> Result<WasmIchimoku, JsError> {
+        Ok(Self {
+            inner: wc::Ichimoku::new(tenkan_period, kijun_period, senkou_b_period, displacement)
+                .map_err(map_err)?,
+        })
+    }
+    /// Streaming update. Returns `{ tenkan, kijun, senkouA, senkouB, chikou }`
+    /// with `NaN` for any line that is not yet defined.
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"tenkan".into(), &o.tenkan.unwrap_or(f64::NAN).into()).ok();
+                Reflect::set(&obj, &"kijun".into(), &o.kijun.unwrap_or(f64::NAN).into()).ok();
+                Reflect::set(
+                    &obj,
+                    &"senkouA".into(),
+                    &o.senkou_a.unwrap_or(f64::NAN).into(),
+                )
+                .ok();
+                Reflect::set(
+                    &obj,
+                    &"senkouB".into(),
+                    &o.senkou_b.unwrap_or(f64::NAN).into(),
+                )
+                .ok();
+                Reflect::set(&obj, &"chikou".into(), &o.chikou.unwrap_or(f64::NAN).into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    /// Returns `[tenkan0, kijun0, senkouA0, senkouB0, chikou0, tenkan1, ...]`,
+    /// length `5 * n`. Cells without a defined value are `NaN`.
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 5];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                if let Some(v) = o.tenkan {
+                    out[i * 5] = v;
+                }
+                if let Some(v) = o.kijun {
+                    out[i * 5 + 1] = v;
+                }
+                if let Some(v) = o.senkou_a {
+                    out[i * 5 + 2] = v;
+                }
+                if let Some(v) = o.senkou_b {
+                    out[i * 5 + 3] = v;
+                }
+                if let Some(v) = o.chikou {
+                    out[i * 5 + 4] = v;
+                }
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- Heikin-Ashi ----------
+
+#[wasm_bindgen(js_name = HeikinAshi)]
+pub struct WasmHeikinAshi {
+    inner: wc::HeikinAshi,
+}
+
+impl Default for WasmHeikinAshi {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = HeikinAshi)]
+impl WasmHeikinAshi {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmHeikinAshi {
+        Self {
+            inner: wc::HeikinAshi::new(),
+        }
+    }
+    /// Streaming update. Returns `{ open, high, low, close }` of the
+    /// Heikin-Ashi candle.
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<JsValue, JsError> {
+        let c = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"open".into(), &o.open.into()).ok();
+                Reflect::set(&obj, &"high".into(), &o.high.into()).ok();
+                Reflect::set(&obj, &"low".into(), &o.low.into()).ok();
+                Reflect::set(&obj, &"close".into(), &o.close.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    /// Returns `[open0, high0, low0, close0, open1, ...]`, length `4 * n`.
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let n = open.len();
+        let mut out = vec![f64::NAN; n * 4];
+        for i in 0..n {
+            let c = wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 4] = o.open;
+                out[i * 4 + 1] = o.high;
+                out[i * 4 + 2] = o.low;
+                out[i * 4 + 3] = o.close;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

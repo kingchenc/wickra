@@ -26,9 +26,9 @@ use wickra_core::{
     AcceleratorOscillator, Adl, Adx, Aroon, AroonOscillator, Atr, AtrTrailingStop,
     AwesomeOscillator, BalanceOfPower, BatchExt, Candle, Cci, ChaikinMoneyFlow, ChaikinOscillator,
     ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex, Donchian, EaseOfMovement,
-    ForceIndex, Indicator, Keltner, MassIndex, MedianPrice, Mfi, Natr, Obv, Psar, RollingVwap,
-    Stochastic, SuperTrend, TrueRange, TypicalPrice, UltimateOscillator, VolumePriceTrend, Vortex,
-    Vwap, Vwma, WeightedClose, WilliamsR,
+    ForceIndex, HeikinAshi, Ichimoku, Indicator, Keltner, MassIndex, MedianPrice, Mfi, Natr, Obv,
+    Psar, RollingVwap, Stochastic, SuperTrend, TrueRange, TypicalPrice, UltimateOscillator,
+    VolumePriceTrend, Vortex, Vwap, Vwma, WeightedClose, WilliamsR,
 };
 
 /// Convert a flat `f64` stream into a `Vec<Candle>` by chunking it into
@@ -126,5 +126,23 @@ fuzz_target!(|data: Vec<f64>| {
             let _ = s.update(*c);
         }
         let _ = Stochastic::new(14, 3).unwrap().batch(&candles);
+    }
+
+    // --- Ichimoku (5 lines, hand-rolled because of multi-Option output) ---
+    {
+        let mut ichi = Ichimoku::classic();
+        for c in &candles {
+            let _ = ichi.update(*c);
+        }
+        let _ = Ichimoku::classic().batch(&candles);
+    }
+
+    // --- Heikin-Ashi (4-field candle transform) ---
+    {
+        let mut ha = HeikinAshi::new();
+        for c in &candles {
+            let _ = ha.update(*c);
+        }
+        let _ = HeikinAshi::new().batch(&candles);
     }
 });

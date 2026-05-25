@@ -55,3 +55,16 @@ def test_obv_batch_shape(ohlc_series):
     volume = np.ones_like(close)
     out = ta.OBV().batch(close, volume)
     assert out.shape == close.shape
+
+
+def test_ichimoku_batch_returns_n_by_5(ohlc_series):
+    high, low, close = ohlc_series
+    out = ta.Ichimoku().batch(high, low, close)
+    assert out.shape == (close.size, 5)
+
+
+def test_heikin_ashi_batch_returns_n_by_4(ohlc_series):
+    high, low, close = ohlc_series
+    open_ = (high + low) / 2.0
+    out = ta.HeikinAshi().batch(open_, high, low, close)
+    assert out.shape == (close.size, 4)

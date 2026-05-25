@@ -102,6 +102,9 @@ from ._wickra import (
     LinRegSlope,
     ZScore,
     LinRegAngle,
+    # Ichimoku & alternative charts
+    Ichimoku,
+    HeikinAshi,
 )
 
 __all__ = [
@@ -183,4 +186,7 @@ __all__ = [
     "LinRegSlope",
     "ZScore",
     "LinRegAngle",
+    # Ichimoku & alternative charts
+    "Ichimoku",
+    "HeikinAshi",
 ]

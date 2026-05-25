@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Family 13 — Ichimoku & alternative charts.** Two new indicators:
+  - `Ichimoku` (Ichimoku Kinko Hyo) — the full five-line cloud system
+    (Tenkan-sen, Kijun-sen, Senkou Span A/B, Chikou Span) with the
+    classic `(9, 26, 52, 26)` defaults and configurable periods. Forward
+    displacement is handled in a streaming ring buffer so the
+    currently-visible Senkou A/B at bar *n* are the values computed
+    from bar *n − displacement*.
+  - `HeikinAshi` — the candle smoothing transform that recursively
+    averages OHLC into a four-component output (`ha_open`, `ha_high`,
+    `ha_low`, `ha_close`). Seeds `ha_open` from the first bar's
+    `(open + close) / 2`.
+
+  Exposed in all four bindings (Rust, Python, Node, WASM). Renko,
+  Kagi, and Point & Figure from the family ideas list are deferred:
+  they are custom bar generators rather than indicators and belong in
+  `wickra-data`.
+
 ## [0.2.7] - 2026-05-24
 
 ### Added

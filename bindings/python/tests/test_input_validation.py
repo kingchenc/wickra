@@ -39,3 +39,15 @@ def test_roc_and_trix_have_default_periods():
     # ROC/TRIX gained constructor defaults matching the TA-Lib convention.
     assert ta.ROC().period == 10
     assert ta.TRIX() is not None
+
+
+def test_ichimoku_rejects_zero_and_non_increasing_periods():
+    with pytest.raises(ValueError):
+        ta.Ichimoku(0, 26, 52, 26)
+    with pytest.raises(ValueError):
+        ta.Ichimoku(9, 26, 52, 0)
+    # Periods must satisfy tenkan < kijun < senkou_b.
+    with pytest.raises(ValueError):
+        ta.Ichimoku(26, 9, 52, 26)
+    with pytest.raises(ValueError):
+        ta.Ichimoku(9, 52, 52, 26)

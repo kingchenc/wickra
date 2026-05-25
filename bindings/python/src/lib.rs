@@ -4476,6 +4476,198 @@ impl PyLinRegAngle {
     }
 }
 
+// ============================== Ichimoku ==============================
+
+#[pyclass(name = "Ichimoku", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyIchimoku {
+    inner: wc::Ichimoku,
+}
+
+#[pymethods]
+impl PyIchimoku {
+    #[new]
+    #[pyo3(signature = (tenkan_period=9, kijun_period=26, senkou_b_period=52, displacement=26))]
+    fn new(
+        tenkan_period: usize,
+        kijun_period: usize,
+        senkou_b_period: usize,
+        displacement: usize,
+    ) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Ichimoku::new(tenkan_period, kijun_period, senkou_b_period, displacement)
+                .map_err(map_err)?,
+        })
+    }
+    /// Returns `(tenkan, kijun, senkou_a, senkou_b, chikou)` as a 5-tuple
+    /// where each element is `float` or `None`.
+    fn update(
+        &mut self,
+        candle: &Bound<'_, PyAny>,
+    ) -> PyResult<
+        Option<(
+            Option<f64>,
+            Option<f64>,
+            Option<f64>,
+            Option<f64>,
+            Option<f64>,
+        )>,
+    > {
+        let c = extract_candle(candle)?;
+        Ok(self
+            .inner
+            .update(c)
+            .map(|o| (o.tenkan, o.kijun, o.senkou_a, o.senkou_b, o.chikou)))
+    }
+    /// Batch over high/low/close numpy columns. Returns shape `(n, 5)` with
+    /// columns `[tenkan, kijun, senkou_a, senkou_b, chikou]`. Any cell whose
+    /// underlying line is undefined at that bar is `NaN`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 5];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                if let Some(v) = o.tenkan {
+                    out[i * 5] = v;
+                }
+                if let Some(v) = o.kijun {
+                    out[i * 5 + 1] = v;
+                }
+                if let Some(v) = o.senkou_a {
+                    out[i * 5 + 2] = v;
+                }
+                if let Some(v) = o.senkou_b {
+                    out[i * 5 + 3] = v;
+                }
+                if let Some(v) = o.chikou {
+                    out[i * 5 + 4] = v;
+                }
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 5), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn periods(&self) -> (usize, usize, usize, usize) {
+        self.inner.periods()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (t, k, sb, d) = self.inner.periods();
+        format!(
+            "Ichimoku(tenkan_period={t}, kijun_period={k}, senkou_b_period={sb}, displacement={d})"
+        )
+    }
+}
+
+// ============================== Heikin-Ashi ==============================
+
+#[pyclass(name = "HeikinAshi", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone, Default)]
+struct PyHeikinAshi {
+    inner: wc::HeikinAshi,
+}
+
+#[pymethods]
+impl PyHeikinAshi {
+    #[new]
+    fn new() -> Self {
+        Self::default()
+    }
+    /// Returns `(ha_open, ha_high, ha_low, ha_close)`.
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self
+            .inner
+            .update(c)
+            .map(|o| (o.open, o.high, o.low, o.close)))
+    }
+    /// Batch over OHLC numpy columns. Returns shape `(n, 4)` with columns
+    /// `[ha_open, ha_high, ha_low, ha_close]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        open: PyReadonlyArray1<'py, f64>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let o = open
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "open, high, low, close must be equal length",
+            ));
+        }
+        let n = o.len();
+        let mut out = vec![f64::NAN; n * 4];
+        for i in 0..n {
+            let candle = wc::Candle::new(o[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(v) = self.inner.update(candle) {
+                out[i * 4] = v.open;
+                out[i * 4 + 1] = v.high;
+                out[i * 4 + 2] = v.low;
+                out[i * 4 + 3] = v.close;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 4), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "HeikinAshi()".to_string()
+    }
+}
+
 // ============================== Module ==============================
 
 #[pymodule]
@@ -4553,5 +4745,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyChaikinVolatility>()?;
     m.add_class::<PyZScore>()?;
     m.add_class::<PyLinRegAngle>()?;
+    m.add_class::<PyIchimoku>()?;
+    m.add_class::<PyHeikinAshi>()?;
     Ok(())
 }

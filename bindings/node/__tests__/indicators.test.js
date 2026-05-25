@@ -133,6 +133,8 @@ const multi = {
   SuperTrend: { make: () => new wickra.SuperTrend(10, 3), fields: ['value', 'direction'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ChandelierExit: { make: () => new wickra.ChandelierExit(22, 3), fields: ['longStop', 'shortStop'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ChandeKrollStop: { make: () => new wickra.ChandeKrollStop(10, 1, 9), fields: ['stopLong', 'stopShort'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  Ichimoku: { make: () => new wickra.Ichimoku(9, 26, 52, 26), fields: ['tenkan', 'kijun', 'senkouA', 'senkouB', 'chikou'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  HeikinAshi: { make: () => new wickra.HeikinAshi(), fields: ['open', 'high', 'low', 'close'], step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
 };
 
 for (const [name, d] of Object.entries(multi)) {
@@ -257,4 +259,26 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+test('Ichimoku classic warmup is 77 and tenkan emits at bar 9', () => {
+  const ichi = new wickra.Ichimoku(9, 26, 52, 26);
+  assert.equal(ichi.warmupPeriod(), 77);
+  const n = 30;
+  const h = Array.from({ length: n }, (_, i) => 100 + i + 2);
+  const l = Array.from({ length: n }, (_, i) => 100 + i - 2);
+  const c = Array.from({ length: n }, (_, i) => 100 + i + 1);
+  const out = ichi.batch(h, l, c);
+  // Each row has 5 columns; tenkan in col 0 is NaN before bar 9.
+  for (let i = 0; i < 8; i++) {
+    assert.ok(Number.isNaN(out[i * 5]), `tenkan should be NaN at bar ${i}`);
+  }
+  assert.ok(!Number.isNaN(out[8 * 5]), 'tenkan should be defined at bar 9');
+});
+
+test('HeikinAshi first bar seeds from real open and close', () => {
+  const ha = new wickra.HeikinAshi();
+  const out = ha.update(10, 12, 9, 11);
+  assert.ok(Math.abs(out.open - (10 + 11) / 2) < 1e-12);
+  assert.ok(Math.abs(out.close - (10 + 12 + 9 + 11) / 4) < 1e-12);
 });
