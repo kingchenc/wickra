@@ -70,7 +70,7 @@ impl MedianAbsoluteDeviation {
 
 /// Sort a slice of `f64` in-place using total ordering (NaN-safe).
 fn sort_finite(buf: &mut [f64]) {
-    buf.sort_by(|a, b| a.total_cmp(b));
+    buf.sort_by(f64::total_cmp);
 }
 
 /// Median of a sorted, non-empty slice.

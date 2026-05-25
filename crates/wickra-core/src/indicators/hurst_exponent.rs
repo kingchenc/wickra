@@ -179,7 +179,7 @@ impl Indicator for HurstExponent {
             if chunks_used == 0 {
                 continue;
             }
-            let avg_rs = acc / chunks_used as f64;
+            let avg_rs = acc / f64::from(chunks_used);
             let x = (m as f64).ln();
             let y = avg_rs.ln();
             sum_x += x;

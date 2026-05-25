@@ -1,0 +1,272 @@
+//! Ehlers Hilbert Transform Dominant Cycle period estimator.
+#![allow(clippy::manual_clamp)]
+
+use std::f64::consts::PI;
+
+use crate::traits::Indicator;
+
+/// Ehlers' Hilbert Transform–based Dominant Cycle period estimator.
+///
+/// Decomposes price into in-phase and quadrature components via Ehlers'
+/// truncated Hilbert transform, then derives the instantaneous phase. The
+/// dominant cycle period is recovered from the phase rate of change and
+/// median-smoothed. From *Rocket Science for Traders* (Ehlers 2001, ch. 7),
+/// implementation aligned with the formulation used in TA-Lib's `HT_DCPERIOD`.
+///
+/// The output is clamped to the band `[6, 50]` bars, which Ehlers identifies
+/// as the meaningful tradable cycle range. The estimator emits its first
+/// value after ~50 inputs as the moving-average chain fills.
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Indicator, HilbertDominantCycle};
+///
+/// let mut ht = HilbertDominantCycle::new();
+/// let mut last = None;
+/// for i in 0..200 {
+///     last = ht.update(100.0 + (f64::from(i) * 0.4).sin() * 5.0);
+/// }
+/// assert!(last.is_some());
+/// ```
+#[derive(Debug, Clone, Default)]
+pub struct HilbertDominantCycle {
+    // Rolling 7-tap smoother input buffer.
+    smooth_buf: Vec<f64>,
+    // Detrender / Q1 / I1 ring history (need 6 prior).
+    detrender_buf: Vec<f64>,
+    q1_buf: Vec<f64>,
+    i1_buf: Vec<f64>,
+    // Smoothed I/Q lines for phase computation.
+    prev_i2: f64,
+    prev_q2: f64,
+    prev_re: f64,
+    prev_im: f64,
+    prev_period: f64,
+    prev_smooth_period: f64,
+    count: usize,
+    last_value: Option<f64>,
+}
+
+impl HilbertDominantCycle {
+    /// Construct a new dominant cycle estimator.
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Current period estimate if available.
+    pub const fn value(&self) -> Option<f64> {
+        self.last_value
+    }
+}
+
+impl Indicator for HilbertDominantCycle {
+    type Input = f64;
+    type Output = f64;
+
+    fn update(&mut self, input: f64) -> Option<f64> {
+        if !input.is_finite() {
+            return self.last_value;
+        }
+        self.count += 1;
+
+        // 4-bar weighted moving average of the input (smoothed price).
+        // Ehlers: (4*x[0] + 3*x[1] + 2*x[2] + x[3]) / 10.
+        Self::push_front(&mut self.smooth_buf, input, 7);
+        if self.smooth_buf.len() < 4 {
+            return None;
+        }
+        let smooth = (4.0 * self.smooth_buf[0]
+            + 3.0 * self.smooth_buf[1]
+            + 2.0 * self.smooth_buf[2]
+            + self.smooth_buf[3])
+            / 10.0;
+
+        // Adaptive coefficient based on the previous period estimate.
+        let period = self.prev_period.max(6.0).min(50.0);
+        let adj = 0.075 * period + 0.54;
+
+        // We need the smooth buffer to hold ≥ 7 samples for the Hilbert taps.
+        if self.smooth_buf.len() < 7 {
+            return None;
+        }
+
+        // Ehlers' Hilbert transform of `smooth` (using current + 2/4/6 lags).
+        let s0 = smooth;
+        let s2 = self.smooth_buf[2];
+        let s4 = self.smooth_buf[4];
+        let s6 = self.smooth_buf[6];
+        let detrender = (0.0962 * s0 + 0.5769 * s2 - 0.5769 * s4 - 0.0962 * s6) * adj;
+        Self::push_front(&mut self.detrender_buf, detrender, 7);
+
+        if self.detrender_buf.len() < 7 {
+            return None;
+        }
+        // In-phase and quadrature components.
+        let q1 = (0.0962 * self.detrender_buf[0] + 0.5769 * self.detrender_buf[2]
+            - 0.5769 * self.detrender_buf[4]
+            - 0.0962 * self.detrender_buf[6])
+            * adj;
+        let i1 = self.detrender_buf[3];
+
+        Self::push_front(&mut self.q1_buf, q1, 7);
+        Self::push_front(&mut self.i1_buf, i1, 7);
+        if self.q1_buf.len() < 7 || self.i1_buf.len() < 7 {
+            return None;
+        }
+
+        // Advance the phase 90 deg via a second Hilbert pass.
+        let ji = (0.0962 * self.i1_buf[0] + 0.5769 * self.i1_buf[2]
+            - 0.5769 * self.i1_buf[4]
+            - 0.0962 * self.i1_buf[6])
+            * adj;
+        let jq = (0.0962 * self.q1_buf[0] + 0.5769 * self.q1_buf[2]
+            - 0.5769 * self.q1_buf[4]
+            - 0.0962 * self.q1_buf[6])
+            * adj;
+
+        // Phasor smoothing.
+        let mut i2 = i1 - jq;
+        let mut q2 = q1 + ji;
+        i2 = 0.2 * i2 + 0.8 * self.prev_i2;
+        q2 = 0.2 * q2 + 0.8 * self.prev_q2;
+
+        // Homodyne discriminator.
+        let mut re = i2 * self.prev_i2 + q2 * self.prev_q2;
+        let mut im = i2 * self.prev_q2 - q2 * self.prev_i2;
+        re = 0.2 * re + 0.8 * self.prev_re;
+        im = 0.2 * im + 0.8 * self.prev_im;
+
+        self.prev_i2 = i2;
+        self.prev_q2 = q2;
+        self.prev_re = re;
+        self.prev_im = im;
+
+        let mut new_period = if im.abs() > f64::EPSILON && re.abs() > f64::EPSILON {
+            2.0 * PI / im.atan2(re)
+        } else {
+            self.prev_period
+        };
+        // Rate-of-change clamp per Ehlers.
+        new_period = new_period.min(1.5 * self.prev_period);
+        new_period = new_period.max(0.67 * self.prev_period);
+        new_period = new_period.clamp(6.0, 50.0);
+
+        // EMA smoothing of the period.
+        self.prev_period = 0.2 * new_period + 0.8 * self.prev_period;
+        // Second smoothing step (TA-Lib uses 0.33/0.67).
+        self.prev_smooth_period = 0.33 * self.prev_period + 0.67 * self.prev_smooth_period;
+
+        if self.count < 50 {
+            return None;
+        }
+        self.last_value = Some(self.prev_smooth_period);
+        Some(self.prev_smooth_period)
+    }
+
+    fn reset(&mut self) {
+        self.smooth_buf.clear();
+        self.detrender_buf.clear();
+        self.q1_buf.clear();
+        self.i1_buf.clear();
+        self.prev_i2 = 0.0;
+        self.prev_q2 = 0.0;
+        self.prev_re = 0.0;
+        self.prev_im = 0.0;
+        self.prev_period = 0.0;
+        self.prev_smooth_period = 0.0;
+        self.count = 0;
+        self.last_value = None;
+    }
+
+    fn warmup_period(&self) -> usize {
+        50
+    }
+
+    fn is_ready(&self) -> bool {
+        self.last_value.is_some()
+    }
+
+    fn name(&self) -> &'static str {
+        "HilbertDominantCycle"
+    }
+}
+
+impl HilbertDominantCycle {
+    /// Push `v` at the front of `buf`, capping the length at `cap`.
+    fn push_front(buf: &mut Vec<f64>, v: f64, cap: usize) {
+        buf.insert(0, v);
+        if buf.len() > cap {
+            buf.truncate(cap);
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::traits::BatchExt;
+
+    #[test]
+    fn accessors_and_metadata() {
+        let mut ht = HilbertDominantCycle::new();
+        assert_eq!(ht.warmup_period(), 50);
+        assert_eq!(ht.name(), "HilbertDominantCycle");
+        assert!(!ht.is_ready());
+        assert!(ht.value().is_none());
+        for i in 0..120 {
+            ht.update(100.0 + (f64::from(i) * 0.3).sin() * 5.0);
+        }
+        assert!(ht.is_ready());
+        assert!(ht.value().is_some());
+    }
+
+    #[test]
+    fn output_within_clamp_band() {
+        let mut ht = HilbertDominantCycle::new();
+        let prices: Vec<f64> = (0..200)
+            .map(|i| 100.0 + (f64::from(i) * 0.4).sin() * 5.0)
+            .collect();
+        let out = ht.batch(&prices);
+        for v in out.iter().flatten() {
+            assert!((6.0..=50.0).contains(v), "period {v} outside [6, 50]");
+        }
+    }
+
+    #[test]
+    fn batch_equals_streaming() {
+        let prices: Vec<f64> = (0..200)
+            .map(|i| 100.0 + (f64::from(i) * 0.3).sin() * 5.0)
+            .collect();
+        let mut a = HilbertDominantCycle::new();
+        let mut b = HilbertDominantCycle::new();
+        let batch = a.batch(&prices);
+        let streamed: Vec<_> = prices.iter().map(|p| b.update(*p)).collect();
+        assert_eq!(batch, streamed);
+    }
+
+    #[test]
+    fn ignores_non_finite_input() {
+        let mut ht = HilbertDominantCycle::new();
+        let prices: Vec<f64> = (0..120)
+            .map(|i| 100.0 + (f64::from(i) * 0.4).sin() * 5.0)
+            .collect();
+        ht.batch(&prices);
+        let before = ht.value();
+        assert!(before.is_some());
+        assert_eq!(ht.update(f64::NAN), before);
+    }
+
+    #[test]
+    fn reset_clears_state() {
+        let mut ht = HilbertDominantCycle::new();
+        let prices: Vec<f64> = (0..120)
+            .map(|i| 100.0 + (f64::from(i) * 0.4).sin() * 5.0)
+            .collect();
+        ht.batch(&prices);
+        assert!(ht.is_ready());
+        ht.reset();
+        assert!(!ht.is_ready());
+        assert!(ht.value().is_none());
+    }
+}

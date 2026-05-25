@@ -20,7 +20,7 @@ use crate::traits::Indicator;
 ///
 /// Output is in `[−1, +1]`. `+1` means a perfect positive linear
 /// relationship; `−1` is a perfect inverse one; `0` means no linear
-/// relationship. It is the same statistic SciPy / NumPy report as
+/// relationship. It is the same statistic `SciPy` / `NumPy` report as
 /// `pearsonr` and the standardised relative of [`crate::Beta`] — Beta
 /// scales Pearson by the ratio of standard deviations.
 ///
