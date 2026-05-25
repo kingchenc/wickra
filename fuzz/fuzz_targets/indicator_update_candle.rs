@@ -23,13 +23,17 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    AcceleratorOscillator, AdOscillator, Adl, Adx, AnchoredVwap, Aroon, AroonOscillator, Atr,
-    AtrTrailingStop, AwesomeOscillator, BalanceOfPower, BatchExt, Candle, Cci, ChaikinMoneyFlow,
+    AccelerationBands, AcceleratorOscillator, AdOscillator, Adl, Adx, Adxr, Alligator,
+    AnchoredVwap, Aroon, AroonOscillator, Atr, AtrBands, AtrTrailingStop, AwesomeOscillator,
+    AwesomeOscillatorHistogram, BalanceOfPower, BatchExt, Candle, Cci, ChaikinMoneyFlow,
     ChaikinOscillator, ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex,
-    DemandIndex, Donchian, EaseOfMovement, ForceIndex, Indicator, Keltner, Kvo,
-    MarketFacilitationIndex, MassIndex, MedianPrice, Mfi, Natr, Nvi, Obv, Psar, Pvi, RollingVwap,
-    Stochastic, SuperTrend, TrueRange, Tsv, TypicalPrice, UltimateOscillator, VolumeOscillator,
-    VolumePriceTrend, Vortex, Vwap, Vwma, Vzo, WeightedClose, WilliamsR,
+    DemandIndex, Donchian, EaseOfMovement, Evwma, ForceIndex, FractalChaosBands,
+    GarmanKlassVolatility, HurstChannel, Indicator, Inertia, Keltner, Kvo, MarketFacilitationIndex,
+    MassIndex, MedianPrice, Mfi, Natr, Nvi, Obv, ParkinsonVolatility, Pgo, Psar, Pvi,
+    RogersSatchellVolatility, RollingVwap, Rvi, Rwi, Smi, StarcBands, Stochastic, SuperTrend,
+    TrueRange, Tsv, TtmSqueeze, TypicalPrice, UltimateOscillator, VolumeOscillator,
+    VolumePriceTrend, Vortex, Vwap, VwapStdDevBands, Vwma, Vzo, WaveTrend, WeightedClose, WilliamsR,
+    YangZhangVolatility,
 };
 
 /// Convert a flat `f64` stream into a `Vec<Candle>` by chunking it into
@@ -74,6 +78,10 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| Natr::new(14).unwrap(), &candles);
     drive(TrueRange::new, &candles);
     drive(|| ChaikinVolatility::new(10, 10).unwrap(), &candles);
+    drive(|| ParkinsonVolatility::new(20, 252).unwrap(), &candles);
+    drive(|| GarmanKlassVolatility::new(20, 252).unwrap(), &candles);
+    drive(|| RogersSatchellVolatility::new(20, 252).unwrap(), &candles);
+    drive(|| YangZhangVolatility::new(20, 252).unwrap(), &candles);
 
     // --- Bands & Channels ---
     drive(|| Keltner::new(20, 10, 2.0).unwrap(), &candles);
@@ -88,16 +96,28 @@ fuzz_target!(|data: Vec<f64>| {
 
     // --- Trend & Directional ---
     drive(|| Adx::new(14).unwrap(), &candles);
+    drive(|| Adxr::new(14).unwrap(), &candles);
     drive(|| Aroon::new(14).unwrap(), &candles);
+    drive(|| Alligator::new(13, 8, 5).unwrap(), &candles);
     drive(|| AroonOscillator::new(14).unwrap(), &candles);
     drive(|| Vortex::new(14).unwrap(), &candles);
+    drive(|| Rwi::new(14).unwrap(), &candles);
+    drive(|| WaveTrend::classic().unwrap(), &candles);
     drive(|| MassIndex::new(9, 25).unwrap(), &candles);
     drive(|| ChoppinessIndex::new(14).unwrap(), &candles);
 
     // --- Momentum & Oscillators ---
     drive(|| Cci::new(20).unwrap(), &candles);
+    drive(|| Rvi::new(10).unwrap(), &candles);
+    drive(|| Inertia::new(14, 20).unwrap(), &candles);
+    drive(|| Pgo::new(14).unwrap(), &candles);
+    drive(|| Smi::classic(), &candles);
     drive(|| WilliamsR::new(14).unwrap(), &candles);
     drive(|| AwesomeOscillator::new(5, 34).unwrap(), &candles);
+    drive(
+        || AwesomeOscillatorHistogram::new(5, 34, 5).unwrap(),
+        &candles,
+    );
     drive(|| AcceleratorOscillator::new(5, 34, 5).unwrap(), &candles);
     drive(|| UltimateOscillator::new(7, 14, 28).unwrap(), &candles);
     drive(BalanceOfPower::new, &candles);
@@ -108,6 +128,7 @@ fuzz_target!(|data: Vec<f64>| {
     drive(Vwap::new, &candles);
     drive(|| RollingVwap::new(20).unwrap(), &candles);
     drive(|| Vwma::new(20).unwrap(), &candles);
+    drive(|| Evwma::new(20).unwrap(), &candles);
     drive(Adl::new, &candles);
     drive(VolumePriceTrend::new, &candles);
     drive(|| ChaikinMoneyFlow::new(20).unwrap(), &candles);
@@ -137,5 +158,56 @@ fuzz_target!(|data: Vec<f64>| {
             let _ = s.update(*c);
         }
         let _ = Stochastic::new(14, 3).unwrap().batch(&candles);
+    }
+
+    // --- Family 05: candle-input band/channel indicators (multi-output) ---
+    {
+        let mut ab = AccelerationBands::new(20, 0.001).unwrap();
+        for c in &candles {
+            let _ = ab.update(*c);
+        }
+        let _ = AccelerationBands::new(20, 0.001).unwrap().batch(&candles);
+    }
+    {
+        let mut sb = StarcBands::new(6, 15, 2.0).unwrap();
+        for c in &candles {
+            let _ = sb.update(*c);
+        }
+        let _ = StarcBands::new(6, 15, 2.0).unwrap().batch(&candles);
+    }
+    {
+        let mut atrb = AtrBands::new(14, 3.0).unwrap();
+        for c in &candles {
+            let _ = atrb.update(*c);
+        }
+        let _ = AtrBands::new(14, 3.0).unwrap().batch(&candles);
+    }
+    {
+        let mut hc = HurstChannel::new(10, 0.5).unwrap();
+        for c in &candles {
+            let _ = hc.update(*c);
+        }
+        let _ = HurstChannel::new(10, 0.5).unwrap().batch(&candles);
+    }
+    {
+        let mut ts = TtmSqueeze::new(20, 2.0, 1.5).unwrap();
+        for c in &candles {
+            let _ = ts.update(*c);
+        }
+        let _ = TtmSqueeze::new(20, 2.0, 1.5).unwrap().batch(&candles);
+    }
+    {
+        let mut fc = FractalChaosBands::new(2).unwrap();
+        for c in &candles {
+            let _ = fc.update(*c);
+        }
+        let _ = FractalChaosBands::new(2).unwrap().batch(&candles);
+    }
+    {
+        let mut vb = VwapStdDevBands::new(2.0).unwrap();
+        for c in &candles {
+            let _ = vb.update(*c);
+        }
+        let _ = VwapStdDevBands::new(2.0).unwrap().batch(&candles);
     }
 });
