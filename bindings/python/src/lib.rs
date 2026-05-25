@@ -4476,6 +4476,367 @@ impl PyLinRegAngle {
     }
 }
 
+// ============================== TD Setup ==============================
+
+#[pyclass(name = "TDSetup", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyTdSetup {
+    inner: wc::TdSetup,
+}
+
+#[pymethods]
+impl PyTdSetup {
+    #[new]
+    #[pyo3(signature = (lookback=4, target=9))]
+    fn new(lookback: usize, target: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::TdSetup::new(lookback, target).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn __repr__(&self) -> String {
+        let (lb, tg) = self.inner.params();
+        format!("TDSetup(lookback={lb}, target={tg})")
+    }
+}
+
+// ============================== TD Sequential ==============================
+
+#[pyclass(name = "TDSequential", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyTdSequential {
+    inner: wc::TdSequential,
+}
+
+#[pymethods]
+impl PyTdSequential {
+    #[new]
+    #[pyo3(signature = (setup_lookback=4, setup_target=9, countdown_lookback=2, countdown_target=13))]
+    fn new(
+        setup_lookback: usize,
+        setup_target: usize,
+        countdown_lookback: usize,
+        countdown_target: usize,
+    ) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::TdSequential::new(
+                setup_lookback,
+                setup_target,
+                countdown_lookback,
+                countdown_target,
+            )
+            .map_err(map_err)?,
+        })
+    }
+    /// Returns `(setup, countdown, direction)` or `None` during warmup.
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self
+            .inner
+            .update(c)
+            .map(|o| (o.setup, o.countdown, o.direction)))
+    }
+    /// Batch returns shape `(n, 3)`: `[setup, countdown, direction]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 3] = o.setup;
+                out[i * 3 + 1] = o.countdown;
+                out[i * 3 + 2] = o.direction;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== TD DeMarker ==============================
+
+#[pyclass(name = "TDDeMarker", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyTdDeMarker {
+    inner: wc::TdDeMarker,
+}
+
+#[pymethods]
+impl PyTdDeMarker {
+    #[new]
+    #[pyo3(signature = (period=14))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::TdDeMarker::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("TDDeMarker(period={})", self.inner.period())
+    }
+}
+
+// ============================== TD REI ==============================
+
+#[pyclass(name = "TDREI", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyTdRei {
+    inner: wc::TdRei,
+}
+
+#[pymethods]
+impl PyTdRei {
+    #[new]
+    #[pyo3(signature = (period=5))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::TdRei::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("TDREI(period={})", self.inner.period())
+    }
+}
+
+// ============================== TD Pressure ==============================
+
+#[pyclass(name = "TDPressure", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyTdPressure {
+    inner: wc::TdPressure,
+}
+
+#[pymethods]
+impl PyTdPressure {
+    #[new]
+    #[pyo3(signature = (period=5))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::TdPressure::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over numpy columns: open, high, low, close, volume.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        open: PyReadonlyArray1<'py, f64>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let o = open
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
+            return Err(PyValueError::new_err(
+                "open, high, low, close, volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(o.len());
+        for i in 0..o.len() {
+            let candle = wc::Candle::new(o[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("TDPressure(period={})", self.inner.period())
+    }
+}
+
 // ============================== Module ==============================
 
 #[pymodule]
@@ -4553,5 +4914,10 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyChaikinVolatility>()?;
     m.add_class::<PyZScore>()?;
     m.add_class::<PyLinRegAngle>()?;
+    m.add_class::<PyTdSetup>()?;
+    m.add_class::<PyTdSequential>()?;
+    m.add_class::<PyTdDeMarker>()?;
+    m.add_class::<PyTdRei>()?;
+    m.add_class::<PyTdPressure>()?;
     Ok(())
 }

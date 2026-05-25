@@ -156,6 +156,18 @@ CANDLE_SCALAR = {
         lambda: ta.ChaikinVolatility(10, 10),
         lambda ind, h, l, c, v: ind.batch(h, l),
     ),
+    "TDSetup": (
+        lambda: ta.TDSetup(4, 9),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
+    "TDDeMarker": (
+        lambda: ta.TDDeMarker(14),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+    ),
+    "TDREI": (
+        lambda: ta.TDREI(5),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+    ),
 }
 
 
@@ -226,6 +238,55 @@ def test_multi_streaming_matches_batch(name, ohlcv):
     assert _eq_nan(batch, np.array(rows, dtype=np.float64)), f"{name} mismatch"
 
 
+# --- TD Pressure (OHLCV-input) -------------------------------------------
+
+
+def test_td_pressure_streaming_matches_batch(ohlcv):
+    high, low, close, volume = ohlcv
+    open_ = close.copy()  # TD Pressure needs open; reuse close as the open column.
+    batch = ta.TDPressure(5).batch(open_, high, low, close, volume)
+    assert batch.shape == close.shape
+
+    streamer = ta.TDPressure(5)
+    streamed = []
+    for i in range(close.size):
+        candle = (
+            float(open_[i]),
+            float(high[i]),
+            float(low[i]),
+            float(close[i]),
+            float(volume[i]),
+            i,
+        )
+        v = streamer.update(candle)
+        streamed.append(math.nan if v is None else float(v))
+    assert _eq_nan(batch, np.array(streamed, dtype=np.float64))
+
+
+# --- TD Sequential (3-column multi-output) ------------------------------
+
+
+def test_td_sequential_streaming_matches_batch(ohlcv):
+    high, low, close, volume = ohlcv
+    batch = ta.TDSequential().batch(high, low, close)
+    assert batch.shape == (close.size, 3)
+
+    streamer = ta.TDSequential()
+    rows = []
+    for i in range(close.size):
+        candle = (
+            float(close[i]),
+            float(high[i]),
+            float(low[i]),
+            float(close[i]),
+            float(volume[i]),
+            i,
+        )
+        v = streamer.update(candle)
+        rows.append([math.nan, math.nan, math.nan] if v is None else list(v))
+    assert _eq_nan(batch, np.array(rows, dtype=np.float64))
+
+
 # --- Reference values -----------------------------------------------------
 
 
@@ -289,6 +350,47 @@ def test_z_score_reference():
     assert out[1] == pytest.approx(1.0)
 
 
+def test_td_setup_pure_uptrend_reaches_minus_9():
+    # Every close is strictly greater than four bars ago -> sell-setup -9.
+    h = np.arange(2.0, 22.0)
+    l = h - 1.0
+    c = h - 0.5
+    out = ta.TDSetup(4, 9).batch(h, l, c)
+    # Setup completes at index 12 (warmup is 5 -> first emit at index 4 with
+    # value -1, increments to -9 at index 12).
+    assert out[12] == pytest.approx(-9.0)
+
+
+def test_td_demarker_uptrend_pegs_at_one():
+    # Strictly higher highs, strictly higher lows -> DeMax > 0, DeMin == 0
+    # -> indicator == 1 after warmup.
+    h = np.arange(11.0, 31.0)
+    l = h - 2.0
+    out = ta.TDDeMarker(5).batch(h, l)
+    assert out[-1] == pytest.approx(1.0)
+
+
+def test_td_demarker_flat_market_emits_05():
+    # All highs and lows equal -> denominator is zero -> neutral fallback 0.5.
+    h = np.full(20, 11.0)
+    l = np.full(20, 9.0)
+    out = ta.TDDeMarker(5).batch(h, l)
+    assert out[-1] == pytest.approx(0.5)
+
+
+def test_td_pressure_pure_bullish_yields_100():
+    # Every bar closes at its high (close == high, open == low) -> per-bar
+    # pressure ratio is +1 -> indicator == 100.
+    n = 20
+    open_ = np.full(n, 9.0)
+    high = np.full(n, 11.0)
+    low = np.full(n, 9.0)
+    close = np.full(n, 11.0)
+    volume = np.full(n, 100.0)
+    out = ta.TDPressure(5).batch(open_, high, low, close, volume)
+    assert out[-1] == pytest.approx(100.0)
+
+
 # --- Lifecycle ------------------------------------------------------------
 
 
@@ -296,6 +398,7 @@ def test_new_indicators_expose_lifecycle():
     instances = [make() for make, _ in CANDLE_SCALAR.values()]
     instances += [make() for make, _ in MULTI.values()]
     instances += [cls(*args) for cls, args in SCALAR]
+    instances += [ta.TDPressure(5), ta.TDSequential()]
     for ind in instances:
         assert ind.is_ready() is False
         assert ind.warmup_period() >= 1

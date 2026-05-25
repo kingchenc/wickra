@@ -105,6 +105,10 @@ const candleScalar = {
   ChoppinessIndex: { make: () => new wickra.ChoppinessIndex(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   TrueRange: { make: () => new wickra.TrueRange(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ChaikinVolatility: { make: () => new wickra.ChaikinVolatility(10, 10), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  TDSetup: { make: () => new wickra.TDSetup(4, 9), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  TDDeMarker: { make: () => new wickra.TDDeMarker(14), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  TDREI: { make: () => new wickra.TDREI(5), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  TDPressure: { make: () => new wickra.TDPressure(5), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(open, high, low, close, volume) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {
@@ -133,6 +137,7 @@ const multi = {
   SuperTrend: { make: () => new wickra.SuperTrend(10, 3), fields: ['value', 'direction'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ChandelierExit: { make: () => new wickra.ChandelierExit(22, 3), fields: ['longStop', 'shortStop'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ChandeKrollStop: { make: () => new wickra.ChandeKrollStop(10, 1, 9), fields: ['stopLong', 'stopShort'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  TDSequential: { make: () => new wickra.TDSequential(4, 9, 2, 13), fields: ['setup', 'countdown', 'direction'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
 };
 
 for (const [name, d] of Object.entries(multi)) {

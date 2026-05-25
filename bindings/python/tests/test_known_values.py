@@ -112,3 +112,36 @@ def test_obv_cumulative_known_sequence():
     volume = np.array([100.0, 20.0, 30.0, 40.0, 10.0])
     out = ta.OBV().batch(close, volume)
     np.testing.assert_allclose(out, [0.0, 20.0, -10.0, -10.0, 0.0])
+
+
+# --- DeMark family ---------------------------------------------------------
+
+
+def test_td_setup_buy_setup_completes_at_minus_9_uptrend():
+    # Strictly rising closes -> every bar has close > close[-4] (sell setup);
+    # the streak hits -9 at index 12 and caps there.
+    h = np.arange(2.0, 22.0)
+    l = h - 1.0
+    c = h - 0.5
+    out = ta.TDSetup(4, 9).batch(h, l, c)
+    assert out[12] == pytest.approx(-9.0)
+    assert out[-1] == pytest.approx(-9.0)
+
+
+def test_td_demarker_downtrend_pegs_at_zero():
+    n = 20
+    h = np.arange(30.0, 30.0 - n, -1.0)
+    l = h - 2.0
+    out = ta.TDDeMarker(5).batch(h, l)
+    assert out[-1] == pytest.approx(0.0)
+
+
+def test_td_pressure_pure_bearish_yields_minus_100():
+    n = 20
+    open_ = np.full(n, 11.0)
+    high = np.full(n, 11.0)
+    low = np.full(n, 9.0)
+    close = np.full(n, 9.0)
+    volume = np.full(n, 100.0)
+    out = ta.TDPressure(5).batch(open_, high, low, close, volume)
+    assert out[-1] == pytest.approx(-100.0)

@@ -102,6 +102,12 @@ from ._wickra import (
     LinRegSlope,
     ZScore,
     LinRegAngle,
+    # DeMark
+    TDSetup,
+    TDSequential,
+    TDDeMarker,
+    TDREI,
+    TDPressure,
 )
 
 __all__ = [
@@ -183,4 +189,10 @@ __all__ = [
     "LinRegSlope",
     "ZScore",
     "LinRegAngle",
+    # DeMark
+    "TDSetup",
+    "TDSequential",
+    "TDDeMarker",
+    "TDREI",
+    "TDPressure",
 ]

@@ -52,9 +52,10 @@ pub use indicators::{
     Hma, Kama, Keltner, KeltnerOutput, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator,
     MacdOutput, MassIndex, MedianPrice, Mfi, Mom, Natr, Obv, PercentB, Pmo, Ppo, Psar, Roc,
     RollingVwap, Rsi, Sma, Smma, StdDev, StochRsi, Stochastic, StochasticOutput, SuperTrend,
-    SuperTrendOutput, Tema, Trima, Trix, TrueRange, Tsi, TypicalPrice, UlcerIndex,
-    UltimateOscillator, VerticalHorizontalFilter, VolumePriceTrend, Vortex, VortexOutput, Vwap,
-    Vwma, WeightedClose, WilliamsR, Wma, ZScore, Zlema, T3,
+    SuperTrendOutput, TdDeMarker, TdPressure, TdRei, TdSequential, TdSequentialOutput, TdSetup,
+    Tema, Trima, Trix, TrueRange, Tsi, TypicalPrice, UlcerIndex, UltimateOscillator,
+    VerticalHorizontalFilter, VolumePriceTrend, Vortex, VortexOutput, Vwap, Vwma, WeightedClose,
+    WilliamsR, Wma, ZScore, Zlema, T3,
 };
 pub use ohlcv::{Candle, Tick};
 pub use traits::{BatchExt, Chain, Indicator};

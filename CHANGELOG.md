@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **DeMark family (family 11) — 5 new indicators.** TD Setup (9-bar
+  buy/sell setup counter with parameterised lookback and target), TD
+  Sequential (Setup + Countdown phase machine emitting setup count,
+  countdown count and active countdown direction), TD DeMarker
+  (bounded [0, 1] range oscillator built from high/low expansions),
+  TD REI (Range Expansion Index — bounded ±100 oscillator with the
+  classic 5-bar default), and TD Pressure (volume-weighted buying /
+  selling pressure normalised to ±100). All five are exposed through
+  the Rust, Python, Node, and WASM bindings with `batch == streaming`
+  equivalence tests, candle-stream fuzz coverage, and benchmark
+  entries on the BTCUSDT 1-minute dataset.
+
 ## [0.2.7] - 2026-05-24
 
 ### Added

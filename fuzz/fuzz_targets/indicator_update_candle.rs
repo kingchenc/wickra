@@ -27,8 +27,9 @@ use wickra_core::{
     AwesomeOscillator, BalanceOfPower, BatchExt, Candle, Cci, ChaikinMoneyFlow, ChaikinOscillator,
     ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex, Donchian, EaseOfMovement,
     ForceIndex, Indicator, Keltner, MassIndex, MedianPrice, Mfi, Natr, Obv, Psar, RollingVwap,
-    Stochastic, SuperTrend, TrueRange, TypicalPrice, UltimateOscillator, VolumePriceTrend, Vortex,
-    Vwap, Vwma, WeightedClose, WilliamsR,
+    Stochastic, SuperTrend, TdDeMarker, TdPressure, TdRei, TdSequential, TdSetup, TrueRange,
+    TypicalPrice, UltimateOscillator, VolumePriceTrend, Vortex, Vwap, Vwma, WeightedClose,
+    WilliamsR,
 };
 
 /// Convert a flat `f64` stream into a `Vec<Candle>` by chunking it into
@@ -126,5 +127,18 @@ fuzz_target!(|data: Vec<f64>| {
             let _ = s.update(*c);
         }
         let _ = Stochastic::new(14, 3).unwrap().batch(&candles);
+    }
+
+    // --- DeMark family ---
+    drive(|| TdSetup::new(4, 9).unwrap(), &candles);
+    drive(|| TdDeMarker::new(14).unwrap(), &candles);
+    drive(|| TdRei::new(5).unwrap(), &candles);
+    drive(|| TdPressure::new(5).unwrap(), &candles);
+    {
+        let mut s = TdSequential::new(4, 9, 2, 13).unwrap();
+        for c in &candles {
+            let _ = s.update(*c);
+        }
+        let _ = TdSequential::new(4, 9, 2, 13).unwrap().batch(&candles);
     }
 });
