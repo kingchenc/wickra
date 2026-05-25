@@ -102,6 +102,22 @@ from ._wickra import (
     LinRegSlope,
     ZScore,
     LinRegAngle,
+    # Candlestick patterns
+    Doji,
+    Hammer,
+    InvertedHammer,
+    HangingMan,
+    ShootingStar,
+    Engulfing,
+    Harami,
+    MorningEveningStar,
+    ThreeSoldiersOrCrows,
+    PiercingDarkCloud,
+    Marubozu,
+    Tweezer,
+    SpinningTop,
+    ThreeInside,
+    ThreeOutside,
 )
 
 __all__ = [
@@ -183,4 +199,20 @@ __all__ = [
     "LinRegSlope",
     "ZScore",
     "LinRegAngle",
+    # Candlestick patterns
+    "Doji",
+    "Hammer",
+    "InvertedHammer",
+    "HangingMan",
+    "ShootingStar",
+    "Engulfing",
+    "Harami",
+    "MorningEveningStar",
+    "ThreeSoldiersOrCrows",
+    "PiercingDarkCloud",
+    "Marubozu",
+    "Tweezer",
+    "SpinningTop",
+    "ThreeInside",
+    "ThreeOutside",
 ]

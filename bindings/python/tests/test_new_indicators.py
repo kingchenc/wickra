@@ -156,6 +156,68 @@ CANDLE_SCALAR = {
         lambda: ta.ChaikinVolatility(10, 10),
         lambda ind, h, l, c, v: ind.batch(h, l),
     ),
+    # Candlestick patterns -- batch takes (open, high, low, close) and the
+    # streaming side feeds close as open (same convention as BalanceOfPower).
+    "Doji": (
+        lambda: ta.Doji(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Hammer": (
+        lambda: ta.Hammer(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "InvertedHammer": (
+        lambda: ta.InvertedHammer(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "HangingMan": (
+        lambda: ta.HangingMan(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "ShootingStar": (
+        lambda: ta.ShootingStar(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Engulfing": (
+        lambda: ta.Engulfing(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Harami": (
+        lambda: ta.Harami(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "MorningEveningStar": (
+        lambda: ta.MorningEveningStar(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "ThreeSoldiersOrCrows": (
+        lambda: ta.ThreeSoldiersOrCrows(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "PiercingDarkCloud": (
+        lambda: ta.PiercingDarkCloud(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Marubozu": (
+        lambda: ta.Marubozu(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Tweezer": (
+        lambda: ta.Tweezer(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "SpinningTop": (
+        lambda: ta.SpinningTop(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "ThreeInside": (
+        lambda: ta.ThreeInside(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "ThreeOutside": (
+        lambda: ta.ThreeOutside(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
 }
 
 
@@ -287,6 +349,108 @@ def test_z_score_reference():
     out = ta.ZScore(2).batch(np.array([1.0, 3.0]))
     assert math.isnan(out[0])
     assert out[1] == pytest.approx(1.0)
+
+
+# --- Candlestick pattern reference values --------------------------------
+
+
+def test_doji_reference():
+    # body 0, range 2 -> doji.
+    assert ta.Doji().update((10.0, 11.0, 9.0, 10.0, 1.0, 0)) == pytest.approx(1.0)
+    # Marubozu shape -> not a doji.
+    assert ta.Doji().update((10.0, 12.0, 10.0, 12.0, 1.0, 0)) == pytest.approx(0.0)
+
+
+def test_hammer_reference():
+    # body 0.5, lower shadow 5.0, upper 0.1.
+    assert ta.Hammer().update((10.0, 10.6, 5.0, 10.5, 1.0, 0)) == pytest.approx(1.0)
+
+
+def test_inverted_hammer_reference():
+    assert ta.InvertedHammer().update(
+        (10.0, 15.0, 9.9, 10.5, 1.0, 0)
+    ) == pytest.approx(1.0)
+
+
+def test_hanging_man_reference():
+    assert ta.HangingMan().update((10.0, 10.6, 5.0, 10.5, 1.0, 0)) == pytest.approx(
+        -1.0
+    )
+
+
+def test_shooting_star_reference():
+    assert ta.ShootingStar().update(
+        (10.0, 15.0, 9.9, 10.5, 1.0, 0)
+    ) == pytest.approx(-1.0)
+
+
+def test_engulfing_reference():
+    e = ta.Engulfing()
+    assert e.update((11.0, 11.2, 9.8, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert e.update((9.5, 12.0, 9.5, 11.5, 1.0, 1)) == pytest.approx(1.0)
+
+
+def test_harami_reference():
+    h = ta.Harami()
+    assert h.update((12.0, 12.5, 9.5, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert h.update((10.5, 11.5, 10.4, 11.0, 1.0, 1)) == pytest.approx(1.0)
+
+
+def test_morning_evening_star_reference():
+    m = ta.MorningEveningStar()
+    assert m.update((12.0, 12.2, 9.5, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert m.update((9.9, 10.1, 9.7, 9.95, 1.0, 1)) == pytest.approx(0.0)
+    assert m.update((10.1, 12.0, 10.0, 11.8, 1.0, 2)) == pytest.approx(1.0)
+
+
+def test_three_soldiers_reference():
+    t = ta.ThreeSoldiersOrCrows()
+    assert t.update((10.0, 11.5, 9.9, 11.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((10.5, 12.5, 10.4, 12.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((11.5, 13.5, 11.4, 13.0, 1.0, 2)) == pytest.approx(1.0)
+
+
+def test_piercing_dark_cloud_reference():
+    p = ta.PiercingDarkCloud()
+    assert p.update((12.0, 12.5, 10.0, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert p.update((9.8, 11.8, 9.5, 11.5, 1.0, 1)) == pytest.approx(1.0)
+
+
+def test_marubozu_reference():
+    # Bullish marubozu: open == low, close == high.
+    assert ta.Marubozu().update(
+        (10.0, 12.0, 10.0, 12.0, 1.0, 0)
+    ) == pytest.approx(1.0)
+    assert ta.Marubozu().update(
+        (12.0, 12.0, 10.0, 10.0, 1.0, 0)
+    ) == pytest.approx(-1.0)
+
+
+def test_tweezer_reference():
+    t = ta.Tweezer()
+    assert t.update((11.0, 12.0, 9.5, 9.6, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((9.7, 10.5, 9.5, 10.2, 1.0, 1)) == pytest.approx(1.0)
+
+
+def test_spinning_top_reference():
+    # body 0.5, both shadows 3.0, range 6.5 -> body/range ~= 0.077.
+    assert ta.SpinningTop().update(
+        (10.0, 13.5, 7.0, 10.5, 1.0, 0)
+    ) == pytest.approx(1.0)
+
+
+def test_three_inside_reference():
+    t = ta.ThreeInside()
+    assert t.update((12.0, 12.5, 9.5, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((10.5, 11.5, 10.4, 11.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((11.0, 13.0, 10.9, 12.5, 1.0, 2)) == pytest.approx(1.0)
+
+
+def test_three_outside_reference():
+    t = ta.ThreeOutside()
+    assert t.update((11.0, 11.2, 9.8, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((9.5, 12.0, 9.5, 11.5, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((11.5, 13.0, 11.4, 12.5, 1.0, 2)) == pytest.approx(1.0)
 
 
 # --- Lifecycle ------------------------------------------------------------

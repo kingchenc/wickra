@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Candlestick patterns family (15 indicators).** A new "Candlestick
+  Patterns" family covers the standard 1- to 3-bar reversal and
+  continuation shapes: `Doji`, `Hammer`, `InvertedHammer`, `HangingMan`,
+  `ShootingStar`, `Engulfing`, `Harami`, `MorningEveningStar`,
+  `ThreeSoldiersOrCrows`, `PiercingDarkCloud`, `Marubozu`, `Tweezer`,
+  `SpinningTop`, `ThreeInside` and `ThreeOutside`. Every detector takes a
+  `Candle` and emits a signed `f64` (`+1.0` bullish, `-1.0` bearish, `0.0`
+  no pattern; `Doji` is direction-less and emits `+1.0`/`0.0`). The MVP is
+  a pattern-shape check only — no trend filter is applied. Available
+  across Rust, Python, Node and WASM bindings. Harmonic and chart
+  patterns remain out of scope and will follow once the pattern-detection
+  framework (pivot detector + multi-bar state machines) lands.
+
 ## [0.2.7] - 2026-05-24
 
 ### Added

@@ -4476,6 +4476,109 @@ impl PyLinRegAngle {
     }
 }
 
+// ============================== Candlestick Patterns ==============================
+//
+// All 15 patterns take Candles and emit a signed f64 signal per bar:
+//   +1.0 bullish, -1.0 bearish, 0.0 no pattern. Doji is direction-less, so it
+// uses +1.0 / 0.0 only.
+
+macro_rules! candle_pattern_no_param {
+    ($name:ident, $inner:ty, $repr:expr) => {
+        #[pyclass(name = $repr, module = "wickra._wickra", skip_from_py_object)]
+        #[derive(Clone)]
+        struct $name {
+            inner: $inner,
+        }
+
+        #[pymethods]
+        impl $name {
+            #[new]
+            fn new() -> Self {
+                Self {
+                    inner: <$inner>::new(),
+                }
+            }
+            fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+                let c = extract_candle(candle)?;
+                Ok(self.inner.update(c))
+            }
+            fn batch<'py>(
+                &mut self,
+                py: Python<'py>,
+                open: PyReadonlyArray1<'py, f64>,
+                high: PyReadonlyArray1<'py, f64>,
+                low: PyReadonlyArray1<'py, f64>,
+                close: PyReadonlyArray1<'py, f64>,
+            ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+                let o = open
+                    .as_slice()
+                    .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+                let h = high
+                    .as_slice()
+                    .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+                let l = low
+                    .as_slice()
+                    .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+                let c = close
+                    .as_slice()
+                    .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+                if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() {
+                    return Err(PyValueError::new_err(
+                        "open, high, low, close must be equal length",
+                    ));
+                }
+                let mut out = Vec::with_capacity(o.len());
+                for i in 0..o.len() {
+                    let candle =
+                        wc::Candle::new(o[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+                    out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+                }
+                Ok(out.into_pyarray(py))
+            }
+            fn reset(&mut self) {
+                self.inner.reset();
+            }
+            fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            fn warmup_period(&self) -> usize {
+                self.inner.warmup_period()
+            }
+            fn __repr__(&self) -> String {
+                format!("{}()", $repr)
+            }
+        }
+    };
+}
+
+candle_pattern_no_param!(PyDoji, wc::Doji, "Doji");
+candle_pattern_no_param!(PyHammer, wc::Hammer, "Hammer");
+candle_pattern_no_param!(PyInvertedHammer, wc::InvertedHammer, "InvertedHammer");
+candle_pattern_no_param!(PyHangingMan, wc::HangingMan, "HangingMan");
+candle_pattern_no_param!(PyShootingStar, wc::ShootingStar, "ShootingStar");
+candle_pattern_no_param!(PyEngulfing, wc::Engulfing, "Engulfing");
+candle_pattern_no_param!(PyHarami, wc::Harami, "Harami");
+candle_pattern_no_param!(
+    PyMorningEveningStar,
+    wc::MorningEveningStar,
+    "MorningEveningStar"
+);
+candle_pattern_no_param!(
+    PyThreeSoldiersOrCrows,
+    wc::ThreeSoldiersOrCrows,
+    "ThreeSoldiersOrCrows"
+);
+candle_pattern_no_param!(
+    PyPiercingDarkCloud,
+    wc::PiercingDarkCloud,
+    "PiercingDarkCloud"
+);
+candle_pattern_no_param!(PyMarubozu, wc::Marubozu, "Marubozu");
+candle_pattern_no_param!(PyTweezer, wc::Tweezer, "Tweezer");
+candle_pattern_no_param!(PySpinningTop, wc::SpinningTop, "SpinningTop");
+candle_pattern_no_param!(PyThreeInside, wc::ThreeInside, "ThreeInside");
+candle_pattern_no_param!(PyThreeOutside, wc::ThreeOutside, "ThreeOutside");
+
 // ============================== Module ==============================
 
 #[pymodule]
@@ -4553,5 +4656,21 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyChaikinVolatility>()?;
     m.add_class::<PyZScore>()?;
     m.add_class::<PyLinRegAngle>()?;
+    // Candlestick patterns.
+    m.add_class::<PyDoji>()?;
+    m.add_class::<PyHammer>()?;
+    m.add_class::<PyInvertedHammer>()?;
+    m.add_class::<PyHangingMan>()?;
+    m.add_class::<PyShootingStar>()?;
+    m.add_class::<PyEngulfing>()?;
+    m.add_class::<PyHarami>()?;
+    m.add_class::<PyMorningEveningStar>()?;
+    m.add_class::<PyThreeSoldiersOrCrows>()?;
+    m.add_class::<PyPiercingDarkCloud>()?;
+    m.add_class::<PyMarubozu>()?;
+    m.add_class::<PyTweezer>()?;
+    m.add_class::<PySpinningTop>()?;
+    m.add_class::<PyThreeInside>()?;
+    m.add_class::<PyThreeOutside>()?;
     Ok(())
 }

@@ -310,7 +310,7 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, MOM, CMO, DPO, StdDev, UlcerIndex, VerticalHorizontalFilter, ZScore, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, RollingVWAP, AwesomeOscillator, Aroon, KAMA, T3, TSI, PMO, ADL, VolumePriceTrend, ChaikinMoneyFlow, ChaikinOscillator, ForceIndex, EaseOfMovement, SuperTrend, ChandelierExit, ChandeKrollStop, AtrTrailingStop, TypicalPrice, MedianPrice, WeightedClose, LinearRegression, LinRegSlope, AcceleratorOscillator, BalanceOfPower, ChoppinessIndex, TrueRange, ChaikinVolatility, LinRegAngle, BollingerBandwidth, PercentB, NATR, HistoricalVolatility, AroonOscillator, Vortex, MassIndex, StochRSI, UltimateOscillator, PPO, Coppock, VWMA } = nativeBinding
+const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, MOM, CMO, DPO, StdDev, UlcerIndex, VerticalHorizontalFilter, ZScore, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, RollingVWAP, AwesomeOscillator, Aroon, KAMA, T3, TSI, PMO, ADL, VolumePriceTrend, ChaikinMoneyFlow, ChaikinOscillator, ForceIndex, EaseOfMovement, SuperTrend, ChandelierExit, ChandeKrollStop, AtrTrailingStop, TypicalPrice, MedianPrice, WeightedClose, LinearRegression, LinRegSlope, AcceleratorOscillator, BalanceOfPower, ChoppinessIndex, TrueRange, ChaikinVolatility, LinRegAngle, BollingerBandwidth, PercentB, NATR, HistoricalVolatility, AroonOscillator, Vortex, MassIndex, StochRSI, UltimateOscillator, PPO, Coppock, VWMA, Doji, Hammer, InvertedHammer, HangingMan, ShootingStar, Engulfing, Harami, MorningEveningStar, ThreeSoldiersOrCrows, PiercingDarkCloud, Marubozu, Tweezer, SpinningTop, ThreeInside, ThreeOutside } = nativeBinding
 
 module.exports.version = version
 module.exports.SMA = SMA
@@ -385,3 +385,18 @@ module.exports.UltimateOscillator = UltimateOscillator
 module.exports.PPO = PPO
 module.exports.Coppock = Coppock
 module.exports.VWMA = VWMA
+module.exports.Doji = Doji
+module.exports.Hammer = Hammer
+module.exports.InvertedHammer = InvertedHammer
+module.exports.HangingMan = HangingMan
+module.exports.ShootingStar = ShootingStar
+module.exports.Engulfing = Engulfing
+module.exports.Harami = Harami
+module.exports.MorningEveningStar = MorningEveningStar
+module.exports.ThreeSoldiersOrCrows = ThreeSoldiersOrCrows
+module.exports.PiercingDarkCloud = PiercingDarkCloud
+module.exports.Marubozu = Marubozu
+module.exports.Tweezer = Tweezer
+module.exports.SpinningTop = SpinningTop
+module.exports.ThreeInside = ThreeInside
+module.exports.ThreeOutside = ThreeOutside

@@ -19,8 +19,8 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use std::hint::black_box;
 use wickra::{
-    Atr, BatchExt, BollingerBands, Candle, Ema, Indicator, MacdIndicator, Obv, Rsi, Sma,
-    Stochastic, Wma,
+    Atr, BatchExt, BollingerBands, Candle, Doji, Ema, Engulfing, Hammer, Indicator, MacdIndicator,
+    MorningEveningStar, Obv, Rsi, Sma, Stochastic, ThreeInside, Wma,
 };
 use wickra_data::csv::CandleReader;
 
@@ -144,6 +144,14 @@ fn benches(c: &mut Criterion) {
     bench_candle_input(c, "atr", &candles, || Atr::new(14).unwrap());
     bench_candle_input(c, "stochastic", &candles, Stochastic::classic);
     bench_candle_input(c, "obv", &candles, Obv::new);
+    // Candlestick patterns -- 1-bar, 2-bar and 3-bar representatives. The
+    // shape check itself is stateless arithmetic, so this also serves as a
+    // cost-floor reference for the rest of the family.
+    bench_candle_input(c, "doji", &candles, Doji::new);
+    bench_candle_input(c, "hammer", &candles, Hammer::new);
+    bench_candle_input(c, "engulfing", &candles, Engulfing::new);
+    bench_candle_input(c, "morning_evening_star", &candles, MorningEveningStar::new);
+    bench_candle_input(c, "three_inside", &candles, ThreeInside::new);
 }
 
 criterion_group!(name = wickra_benches; config = Criterion::default(); targets = benches);

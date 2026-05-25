@@ -105,6 +105,21 @@ const candleScalar = {
   ChoppinessIndex: { make: () => new wickra.ChoppinessIndex(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   TrueRange: { make: () => new wickra.TrueRange(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ChaikinVolatility: { make: () => new wickra.ChaikinVolatility(10, 10), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  Doji: { make: () => new wickra.Doji(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Hammer: { make: () => new wickra.Hammer(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  InvertedHammer: { make: () => new wickra.InvertedHammer(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  HangingMan: { make: () => new wickra.HangingMan(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  ShootingStar: { make: () => new wickra.ShootingStar(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Engulfing: { make: () => new wickra.Engulfing(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Harami: { make: () => new wickra.Harami(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  MorningEveningStar: { make: () => new wickra.MorningEveningStar(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  ThreeSoldiersOrCrows: { make: () => new wickra.ThreeSoldiersOrCrows(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  PiercingDarkCloud: { make: () => new wickra.PiercingDarkCloud(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Marubozu: { make: () => new wickra.Marubozu(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Tweezer: { make: () => new wickra.Tweezer(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  SpinningTop: { make: () => new wickra.SpinningTop(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  ThreeInside: { make: () => new wickra.ThreeInside(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  ThreeOutside: { make: () => new wickra.ThreeOutside(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {
@@ -257,4 +272,88 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+// --- Candlestick pattern reference values ---
+
+test('Doji fires on a near-zero body', () => {
+  assert.equal(new wickra.Doji().update(10.0, 11.0, 9.0, 10.0), 1.0);
+  assert.equal(new wickra.Doji().update(10.0, 12.0, 10.0, 12.0), 0.0);
+});
+
+test('Hammer fires on long lower shadow', () => {
+  assert.equal(new wickra.Hammer().update(10.0, 10.6, 5.0, 10.5), 1.0);
+});
+
+test('InvertedHammer fires on long upper shadow', () => {
+  assert.equal(new wickra.InvertedHammer().update(10.0, 15.0, 9.9, 10.5), 1.0);
+});
+
+test('HangingMan is bearish hammer shape', () => {
+  assert.equal(new wickra.HangingMan().update(10.0, 10.6, 5.0, 10.5), -1.0);
+});
+
+test('ShootingStar is bearish inverted hammer shape', () => {
+  assert.equal(new wickra.ShootingStar().update(10.0, 15.0, 9.9, 10.5), -1.0);
+});
+
+test('Engulfing fires on bullish engulfing pair', () => {
+  const e = new wickra.Engulfing();
+  assert.equal(e.update(11.0, 11.2, 9.8, 10.0), 0.0);
+  assert.equal(e.update(9.5, 12.0, 9.5, 11.5), 1.0);
+});
+
+test('Harami fires on bullish harami pair', () => {
+  const h = new wickra.Harami();
+  assert.equal(h.update(12.0, 12.5, 9.5, 10.0), 0.0);
+  assert.equal(h.update(10.5, 11.5, 10.4, 11.0), 1.0);
+});
+
+test('MorningEveningStar fires on a morning star', () => {
+  const m = new wickra.MorningEveningStar();
+  assert.equal(m.update(12.0, 12.2, 9.5, 10.0), 0.0);
+  assert.equal(m.update(9.9, 10.1, 9.7, 9.95), 0.0);
+  assert.equal(m.update(10.1, 12.0, 10.0, 11.8), 1.0);
+});
+
+test('ThreeSoldiersOrCrows fires on three white soldiers', () => {
+  const t = new wickra.ThreeSoldiersOrCrows();
+  assert.equal(t.update(10.0, 11.5, 9.9, 11.0), 0.0);
+  assert.equal(t.update(10.5, 12.5, 10.4, 12.0), 0.0);
+  assert.equal(t.update(11.5, 13.5, 11.4, 13.0), 1.0);
+});
+
+test('PiercingDarkCloud fires on a piercing line', () => {
+  const p = new wickra.PiercingDarkCloud();
+  assert.equal(p.update(12.0, 12.5, 10.0, 10.0), 0.0);
+  assert.equal(p.update(9.8, 11.8, 9.5, 11.5), 1.0);
+});
+
+test('Marubozu fires on shadowless bars', () => {
+  assert.equal(new wickra.Marubozu().update(10.0, 12.0, 10.0, 12.0), 1.0);
+  assert.equal(new wickra.Marubozu().update(12.0, 12.0, 10.0, 10.0), -1.0);
+});
+
+test('Tweezer fires on a matched low', () => {
+  const t = new wickra.Tweezer();
+  assert.equal(t.update(11.0, 12.0, 9.5, 9.6), 0.0);
+  assert.equal(t.update(9.7, 10.5, 9.5, 10.2), 1.0);
+});
+
+test('SpinningTop fires on small body with long shadows', () => {
+  assert.equal(new wickra.SpinningTop().update(10.0, 13.5, 7.0, 10.5), 1.0);
+});
+
+test('ThreeInside fires on a confirmed harami', () => {
+  const t = new wickra.ThreeInside();
+  assert.equal(t.update(12.0, 12.5, 9.5, 10.0), 0.0);
+  assert.equal(t.update(10.5, 11.5, 10.4, 11.0), 0.0);
+  assert.equal(t.update(11.0, 13.0, 10.9, 12.5), 1.0);
+});
+
+test('ThreeOutside fires on a confirmed engulfing', () => {
+  const t = new wickra.ThreeOutside();
+  assert.equal(t.update(11.0, 11.2, 9.8, 10.0), 0.0);
+  assert.equal(t.update(9.5, 12.0, 9.5, 11.5), 0.0);
+  assert.equal(t.update(11.5, 13.0, 11.4, 12.5), 1.0);
 });

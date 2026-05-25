@@ -25,10 +25,12 @@ use libfuzzer_sys::fuzz_target;
 use wickra_core::{
     AcceleratorOscillator, Adl, Adx, Aroon, AroonOscillator, Atr, AtrTrailingStop,
     AwesomeOscillator, BalanceOfPower, BatchExt, Candle, Cci, ChaikinMoneyFlow, ChaikinOscillator,
-    ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex, Donchian, EaseOfMovement,
-    ForceIndex, Indicator, Keltner, MassIndex, MedianPrice, Mfi, Natr, Obv, Psar, RollingVwap,
-    Stochastic, SuperTrend, TrueRange, TypicalPrice, UltimateOscillator, VolumePriceTrend, Vortex,
-    Vwap, Vwma, WeightedClose, WilliamsR,
+    ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex, Doji, Donchian,
+    EaseOfMovement, Engulfing, ForceIndex, Hammer, HangingMan, Harami, Indicator, InvertedHammer,
+    Keltner, Marubozu, MassIndex, MedianPrice, Mfi, MorningEveningStar, Natr, Obv,
+    PiercingDarkCloud, Psar, RollingVwap, ShootingStar, SpinningTop, Stochastic, SuperTrend,
+    ThreeInside, ThreeOutside, ThreeSoldiersOrCrows, TrueRange, Tweezer, TypicalPrice,
+    UltimateOscillator, VolumePriceTrend, Vortex, Vwap, Vwma, WeightedClose, WilliamsR,
 };
 
 /// Convert a flat `f64` stream into a `Vec<Candle>` by chunking it into
@@ -127,4 +129,21 @@ fuzz_target!(|data: Vec<f64>| {
         }
         let _ = Stochastic::new(14, 3).unwrap().batch(&candles);
     }
+
+    // --- Candlestick Patterns (family 14) ---
+    drive(Doji::new, &candles);
+    drive(Hammer::new, &candles);
+    drive(InvertedHammer::new, &candles);
+    drive(HangingMan::new, &candles);
+    drive(ShootingStar::new, &candles);
+    drive(Engulfing::new, &candles);
+    drive(Harami::new, &candles);
+    drive(MorningEveningStar::new, &candles);
+    drive(ThreeSoldiersOrCrows::new, &candles);
+    drive(PiercingDarkCloud::new, &candles);
+    drive(Marubozu::new, &candles);
+    drive(Tweezer::new, &candles);
+    drive(SpinningTop::new, &candles);
+    drive(ThreeInside::new, &candles);
+    drive(ThreeOutside::new, &candles);
 });
