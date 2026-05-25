@@ -59,6 +59,22 @@ const scalarFactories = {
   VerticalHorizontalFilter: () => new wickra.VerticalHorizontalFilter(28),
   ZScore: () => new wickra.ZScore(20),
   LinRegAngle: () => new wickra.LinRegAngle(14),
+  // Family 10 — Ehlers / Cycle
+  SuperSmoother: () => new wickra.SuperSmoother(10),
+  FisherTransform: () => new wickra.FisherTransform(10),
+  InverseFisherTransform: () => new wickra.InverseFisherTransform(1.0),
+  Decycler: () => new wickra.Decycler(20),
+  DecyclerOscillator: () => new wickra.DecyclerOscillator(10, 30),
+  RoofingFilter: () => new wickra.RoofingFilter(10, 48),
+  CenterOfGravity: () => new wickra.CenterOfGravity(10),
+  CyberneticCycle: () => new wickra.CyberneticCycle(10),
+  InstantaneousTrendline: () => new wickra.InstantaneousTrendline(20),
+  EhlersStochastic: () => new wickra.EhlersStochastic(20),
+  EmpiricalModeDecomposition: () => new wickra.EmpiricalModeDecomposition(20, 0.5),
+  HilbertDominantCycle: () => new wickra.HilbertDominantCycle(),
+  AdaptiveCycle: () => new wickra.AdaptiveCycle(),
+  SineWave: () => new wickra.SineWave(),
+  FAMA: () => new wickra.FAMA(0.5, 0.05),
 };
 
 for (const [name, make] of Object.entries(scalarFactories)) {
@@ -133,6 +149,7 @@ const multi = {
   SuperTrend: { make: () => new wickra.SuperTrend(10, 3), fields: ['value', 'direction'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ChandelierExit: { make: () => new wickra.ChandelierExit(22, 3), fields: ['longStop', 'shortStop'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ChandeKrollStop: { make: () => new wickra.ChandeKrollStop(10, 1, 9), fields: ['stopLong', 'stopShort'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  MAMA: { make: () => new wickra.MAMA(0.5, 0.05), fields: ['mama', 'fama'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
 };
 
 for (const [name, d] of Object.entries(multi)) {

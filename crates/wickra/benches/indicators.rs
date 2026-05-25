@@ -19,8 +19,11 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use std::hint::black_box;
 use wickra::{
-    Atr, BatchExt, BollingerBands, Candle, Ema, Indicator, MacdIndicator, Obv, Rsi, Sma,
-    Stochastic, Wma,
+    AdaptiveCycle, Atr, BatchExt, BollingerBands, Candle, CenterOfGravity, CyberneticCycle,
+    Decycler, DecyclerOscillator, EhlersStochastic, Ema, EmpiricalModeDecomposition, Fama,
+    FisherTransform, HilbertDominantCycle, Indicator, InstantaneousTrendline,
+    InverseFisherTransform, MacdIndicator, Mama, Obv, RoofingFilter, Rsi, SineWave, Sma,
+    Stochastic, SuperSmoother, Wma,
 };
 use wickra_data::csv::CandleReader;
 
@@ -144,6 +147,67 @@ fn benches(c: &mut Criterion) {
     bench_candle_input(c, "atr", &candles, || Atr::new(14).unwrap());
     bench_candle_input(c, "stochastic", &candles, Stochastic::classic);
     bench_candle_input(c, "obv", &candles, Obv::new);
+
+    // Family 10 — Ehlers / Cycle scalar benchmarks.
+    bench_scalar(c, "super_smoother", &closes, || {
+        SuperSmoother::new(10).unwrap()
+    });
+    bench_scalar(c, "fisher_transform", &closes, || {
+        FisherTransform::new(10).unwrap()
+    });
+    bench_scalar(c, "inverse_fisher_transform", &closes, || {
+        InverseFisherTransform::new(1.0).unwrap()
+    });
+    bench_scalar(c, "decycler", &closes, || Decycler::new(20).unwrap());
+    bench_scalar(c, "decycler_oscillator", &closes, || {
+        DecyclerOscillator::new(10, 30).unwrap()
+    });
+    bench_scalar(c, "roofing_filter", &closes, || {
+        RoofingFilter::new(10, 48).unwrap()
+    });
+    bench_scalar(c, "center_of_gravity", &closes, || {
+        CenterOfGravity::new(10).unwrap()
+    });
+    bench_scalar(c, "cybernetic_cycle", &closes, || {
+        CyberneticCycle::new(10).unwrap()
+    });
+    bench_scalar(c, "instantaneous_trendline", &closes, || {
+        InstantaneousTrendline::new(20).unwrap()
+    });
+    bench_scalar(c, "ehlers_stochastic", &closes, || {
+        EhlersStochastic::new(20).unwrap()
+    });
+    bench_scalar(c, "empirical_mode_decomposition", &closes, || {
+        EmpiricalModeDecomposition::new(20, 0.5).unwrap()
+    });
+    bench_scalar(
+        c,
+        "hilbert_dominant_cycle",
+        &closes,
+        HilbertDominantCycle::new,
+    );
+    bench_scalar(c, "adaptive_cycle", &closes, AdaptiveCycle::new);
+    bench_scalar(c, "sine_wave", &closes, SineWave::new);
+    bench_scalar(c, "fama", &closes, || Fama::new(0.5, 0.05).unwrap());
+
+    // MAMA: multi-output, mirrored on macd's streaming-only bench style.
+    {
+        let mut group = c.benchmark_group("mama");
+        for &n in SIZES {
+            let n = n.min(closes.len());
+            let series = &closes[..n];
+            group.throughput(Throughput::Elements(n as u64));
+            group.bench_with_input(BenchmarkId::new("streaming", n), series, |b, prices| {
+                b.iter(|| {
+                    let mut ind = Mama::classic();
+                    for p in prices {
+                        black_box(ind.update(*p));
+                    }
+                });
+            });
+        }
+        group.finish();
+    }
 }
 
 criterion_group!(name = wickra_benches; config = Criterion::default(); targets = benches);

@@ -63,6 +63,22 @@ SCALAR = [
     (ta.VerticalHorizontalFilter, (28,)),
     (ta.ZScore, (20,)),
     (ta.LinRegAngle, (14,)),
+    # Family 10 — Ehlers / Cycle scalar indicators
+    (ta.SuperSmoother, (10,)),
+    (ta.FisherTransform, (10,)),
+    (ta.InverseFisherTransform, (1.0,)),
+    (ta.Decycler, (20,)),
+    (ta.DecyclerOscillator, (10, 30)),
+    (ta.RoofingFilter, (10, 48)),
+    (ta.CenterOfGravity, (10,)),
+    (ta.CyberneticCycle, (10,)),
+    (ta.InstantaneousTrendline, (20,)),
+    (ta.EhlersStochastic, (20,)),
+    (ta.EmpiricalModeDecomposition, (20, 0.5)),
+    (ta.HilbertDominantCycle, ()),
+    (ta.AdaptiveCycle, ()),
+    (ta.SineWave, ()),
+    (ta.FAMA, (0.5, 0.05)),
 ]
 
 
@@ -287,6 +303,54 @@ def test_z_score_reference():
     out = ta.ZScore(2).batch(np.array([1.0, 3.0]))
     assert math.isnan(out[0])
     assert out[1] == pytest.approx(1.0)
+
+
+# --- Family 10 — Ehlers / Cycle ---
+
+
+def test_mama_batch_shape_and_streaming_equivalence(sine_prices):
+    batch = ta.MAMA().batch(sine_prices)
+    assert batch.shape == (sine_prices.size, 2)
+
+    streamer = ta.MAMA()
+    rows = []
+    for p in sine_prices:
+        v = streamer.update(float(p))
+        rows.append([math.nan, math.nan] if v is None else list(v))
+    streamed = np.array(rows, dtype=np.float64)
+    assert _eq_nan(batch, streamed)
+
+
+def test_inverse_fisher_transform_zero_input_yields_zero():
+    out = ta.InverseFisherTransform(1.0).batch(np.array([0.0, 0.0, 0.0]))
+    np.testing.assert_allclose(out, [0.0, 0.0, 0.0], atol=1e-12)
+
+
+def test_fisher_transform_flat_series_is_zero():
+    # Zero range -> the normaliser yields 0, and tanh(0) chain stays at 0.
+    out = ta.FisherTransform(5).batch(np.full(20, 42.0))
+    ready = out[~np.isnan(out)]
+    assert np.all(np.abs(ready) < 1e-6)
+
+
+def test_decycler_flat_series_passes_through():
+    # High-pass of a flat input is zero, so the decycler equals the input.
+    out = ta.Decycler(20).batch(np.full(30, 100.0))
+    ready = out[~np.isnan(out)]
+    np.testing.assert_allclose(ready, 100.0, atol=1e-9)
+
+
+def test_center_of_gravity_flat_series_is_zero():
+    out = ta.CenterOfGravity(5).batch(np.full(20, 7.0))
+    ready = out[~np.isnan(out)]
+    np.testing.assert_allclose(ready, 0.0, atol=1e-12)
+
+
+def test_super_smoother_first_two_outputs_equal_inputs():
+    out = ta.SuperSmoother(10).batch(np.array([100.0, 101.0, 102.0]))
+    # The 2-pole filter is seeded with raw values for the first two bars.
+    assert out[0] == pytest.approx(100.0)
+    assert out[1] == pytest.approx(101.0)
 
 
 # --- Lifecycle ------------------------------------------------------------

@@ -15,10 +15,13 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    BatchExt, BollingerBands, Cmo, Coppock, Dema, Dpo, Ema, HistoricalVolatility, Hma, Indicator,
-    Kama, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, Mom, Pmo, Ppo, Roc, Rsi, Sma,
-    Smma, StdDev, StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Wma,
-    ZScore, Zlema,
+    AdaptiveCycle, BatchExt, BollingerBands, CenterOfGravity, Cmo, Coppock, CyberneticCycle,
+    Decycler, DecyclerOscillator, Dema, Dpo, EhlersStochastic, Ema, EmpiricalModeDecomposition,
+    Fama, FisherTransform, HilbertDominantCycle, HistoricalVolatility, Hma, Indicator,
+    InstantaneousTrendline, InverseFisherTransform, Kama, LinRegAngle, LinRegSlope,
+    LinearRegression, MacdIndicator, Mama, Mom, Pmo, Ppo, Roc, RoofingFilter, Rsi, SineWave, Sma,
+    Smma, StdDev, StochRsi, SuperSmoother, T3, Tema, Trima, Trix, Tsi, UlcerIndex,
+    VerticalHorizontalFilter, Wma, ZScore, Zlema,
 };
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
@@ -71,8 +74,26 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| VerticalHorizontalFilter::new(14).unwrap(), &data);
     drive(|| ZScore::new(14).unwrap(), &data);
 
-    // MACD and Bollinger Bands have non-`f64` outputs, so they cannot use the
-    // generic `drive` helper above. Streaming + batch are still both exercised.
+    // Family 10 — Ehlers / Cycle scalar indicators.
+    drive(|| SuperSmoother::new(10).unwrap(), &data);
+    drive(|| FisherTransform::new(10).unwrap(), &data);
+    drive(|| InverseFisherTransform::new(1.0).unwrap(), &data);
+    drive(|| Decycler::new(20).unwrap(), &data);
+    drive(|| DecyclerOscillator::new(10, 30).unwrap(), &data);
+    drive(|| RoofingFilter::new(10, 48).unwrap(), &data);
+    drive(|| CenterOfGravity::new(10).unwrap(), &data);
+    drive(|| CyberneticCycle::new(10).unwrap(), &data);
+    drive(|| InstantaneousTrendline::new(20).unwrap(), &data);
+    drive(|| EhlersStochastic::new(20).unwrap(), &data);
+    drive(|| EmpiricalModeDecomposition::new(20, 0.5).unwrap(), &data);
+    drive(HilbertDominantCycle::new, &data);
+    drive(AdaptiveCycle::new, &data);
+    drive(SineWave::new, &data);
+    drive(|| Fama::new(0.5, 0.05).unwrap(), &data);
+
+    // MACD, Bollinger Bands and MAMA have non-`f64` outputs, so they cannot
+    // use the generic `drive` helper above. Streaming + batch are still both
+    // exercised.
     {
         let mut macd = MacdIndicator::new(12, 26, 9).unwrap();
         for &x in &data {
@@ -86,5 +107,12 @@ fuzz_target!(|data: Vec<f64>| {
             let _ = bb.update(x);
         }
         let _ = BollingerBands::new(20, 2.0).unwrap().batch(&data);
+    }
+    {
+        let mut mama = Mama::new(0.5, 0.05).unwrap();
+        for &x in &data {
+            let _ = mama.update(x);
+        }
+        let _ = Mama::new(0.5, 0.05).unwrap().batch(&data);
     }
 });

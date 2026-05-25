@@ -55,3 +55,13 @@ def test_obv_batch_shape(ohlc_series):
     volume = np.ones_like(close)
     out = ta.OBV().batch(close, volume)
     assert out.shape == close.shape
+
+
+def test_ehlers_super_smoother_batch_shape(sine_prices):
+    out = ta.SuperSmoother(10).batch(sine_prices)
+    assert out.shape == sine_prices.shape
+
+
+def test_mama_batch_shape(sine_prices):
+    out = ta.MAMA().batch(sine_prices)
+    assert out.shape == (sine_prices.size, 2)

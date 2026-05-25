@@ -98,6 +98,20 @@ wasm_scalar_indicator!(WasmVerticalHorizontalFilter, "VerticalHorizontalFilter",
 wasm_scalar_indicator!(WasmZScore, "ZScore", wc::ZScore, period: usize);
 wasm_scalar_indicator!(WasmLinRegAngle, "LinRegAngle", wc::LinRegAngle, period: usize);
 
+// Family 10 — Ehlers / Cycle scalars
+wasm_scalar_indicator!(WasmSuperSmoother, "SuperSmoother", wc::SuperSmoother, period: usize);
+wasm_scalar_indicator!(WasmFisherTransform, "FisherTransform", wc::FisherTransform, period: usize);
+wasm_scalar_indicator!(WasmInverseFisherTransform, "InverseFisherTransform", wc::InverseFisherTransform, scale: f64);
+wasm_scalar_indicator!(WasmDecycler, "Decycler", wc::Decycler, period: usize);
+wasm_scalar_indicator!(WasmDecyclerOscillator, "DecyclerOscillator", wc::DecyclerOscillator, fast: usize, slow: usize);
+wasm_scalar_indicator!(WasmRoofingFilter, "RoofingFilter", wc::RoofingFilter, lp_period: usize, hp_period: usize);
+wasm_scalar_indicator!(WasmCenterOfGravity, "CenterOfGravity", wc::CenterOfGravity, period: usize);
+wasm_scalar_indicator!(WasmCyberneticCycle, "CyberneticCycle", wc::CyberneticCycle, period: usize);
+wasm_scalar_indicator!(WasmInstantaneousTrendline, "InstantaneousTrendline", wc::InstantaneousTrendline, period: usize);
+wasm_scalar_indicator!(WasmEhlersStochastic, "EhlersStochastic", wc::EhlersStochastic, period: usize);
+wasm_scalar_indicator!(WasmEmpiricalModeDecomposition, "EmpiricalModeDecomposition", wc::EmpiricalModeDecomposition, period: usize, fraction: f64);
+wasm_scalar_indicator!(WasmFama, "FAMA", wc::Fama, fast_limit: f64, slow_limit: f64);
+
 // ---------- KAMA (three params) ----------
 
 #[wasm_bindgen(js_name = KAMA)]
@@ -1983,6 +1997,156 @@ impl WasmAroon {
             }
             None => JsValue::NULL,
         })
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== Family 10: parameterless / multi-output ==============================
+
+#[wasm_bindgen(js_name = HilbertDominantCycle)]
+pub struct WasmHilbertDominantCycle {
+    inner: wc::HilbertDominantCycle,
+}
+
+#[wasm_bindgen(js_class = HilbertDominantCycle)]
+impl WasmHilbertDominantCycle {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmHilbertDominantCycle {
+        Self {
+            inner: wc::HilbertDominantCycle::new(),
+        }
+    }
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        Float64Array::from(flatten(self.inner.batch(prices)).as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = AdaptiveCycle)]
+pub struct WasmAdaptiveCycle {
+    inner: wc::AdaptiveCycle,
+}
+
+#[wasm_bindgen(js_class = AdaptiveCycle)]
+impl WasmAdaptiveCycle {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmAdaptiveCycle {
+        Self {
+            inner: wc::AdaptiveCycle::new(),
+        }
+    }
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        Float64Array::from(flatten(self.inner.batch(prices)).as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = SineWave)]
+pub struct WasmSineWave {
+    inner: wc::SineWave,
+}
+
+#[wasm_bindgen(js_class = SineWave)]
+impl WasmSineWave {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmSineWave {
+        Self {
+            inner: wc::SineWave::new(),
+        }
+    }
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        Float64Array::from(flatten(self.inner.batch(prices)).as_slice())
+    }
+    pub fn lead(&self) -> f64 {
+        self.inner.lead()
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = MAMA)]
+pub struct WasmMama {
+    inner: wc::Mama,
+}
+
+#[wasm_bindgen(js_class = MAMA)]
+impl WasmMama {
+    #[wasm_bindgen(constructor)]
+    pub fn new(fast_limit: f64, slow_limit: f64) -> Result<WasmMama, JsError> {
+        Ok(Self {
+            inner: wc::Mama::new(fast_limit, slow_limit).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, value: f64) -> JsValue {
+        match self.inner.update(value) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"mama".into(), &o.mama.into()).ok();
+                Reflect::set(&obj, &"fama".into(), &o.fama.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        }
+    }
+    /// Returns a flat `Float64Array` of length `2 * n`: `[mama0, fama0, mama1, fama1, ...]`.
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let n = prices.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 2] = o.mama;
+                out[i * 2 + 1] = o.fama;
+            }
+        }
+        Float64Array::from(out.as_slice())
     }
     pub fn reset(&mut self) {
         self.inner.reset();
