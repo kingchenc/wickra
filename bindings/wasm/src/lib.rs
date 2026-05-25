@@ -5946,6 +5946,105 @@ impl WasmOpeningRange {
     }
 }
 
+// ============================== Candlestick Patterns ==============================
+//
+// All 15 patterns take Candles (open, high, low, close) and emit a signed f64
+// signal per bar: +1.0 bullish, -1.0 bearish, 0.0 no pattern. Doji is
+// direction-less and emits 0/+1 only.
+
+macro_rules! wasm_candle_pattern {
+    ($wasm:ident, $inner:ty, $js:ident) => {
+        #[wasm_bindgen(js_name = $js)]
+        pub struct $wasm {
+            inner: $inner,
+        }
+
+        impl Default for $wasm {
+            fn default() -> Self {
+                Self::new()
+            }
+        }
+
+        #[wasm_bindgen(js_class = $js)]
+        impl $wasm {
+            #[wasm_bindgen(constructor)]
+            pub fn new() -> $wasm {
+                Self {
+                    inner: <$inner>::new(),
+                }
+            }
+            pub fn update(
+                &mut self,
+                open: f64,
+                high: f64,
+                low: f64,
+                close: f64,
+            ) -> Result<Option<f64>, JsError> {
+                let c = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+                Ok(self.inner.update(c))
+            }
+            pub fn batch(
+                &mut self,
+                open: &[f64],
+                high: &[f64],
+                low: &[f64],
+                close: &[f64],
+            ) -> Result<Float64Array, JsError> {
+                let n = open.len();
+                if high.len() != n || low.len() != n || close.len() != n {
+                    return Err(JsError::new("open, high, low, close must be equal length"));
+                }
+                let mut out = Vec::with_capacity(n);
+                for i in 0..n {
+                    let c = wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0)
+                        .map_err(map_err)?;
+                    out.push(self.inner.update(c).unwrap_or(f64::NAN));
+                }
+                Ok(Float64Array::from(out.as_slice()))
+            }
+            pub fn reset(&mut self) {
+                self.inner.reset();
+            }
+            #[wasm_bindgen(js_name = isReady)]
+            pub fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            #[wasm_bindgen(js_name = warmupPeriod)]
+            pub fn warmup_period(&self) -> usize {
+                self.inner.warmup_period()
+            }
+        }
+    };
+}
+
+wasm_candle_pattern!(WasmDoji, wc::Doji, Doji);
+wasm_candle_pattern!(WasmHammer, wc::Hammer, Hammer);
+wasm_candle_pattern!(WasmInvertedHammer, wc::InvertedHammer, InvertedHammer);
+wasm_candle_pattern!(WasmHangingMan, wc::HangingMan, HangingMan);
+wasm_candle_pattern!(WasmShootingStar, wc::ShootingStar, ShootingStar);
+wasm_candle_pattern!(WasmEngulfing, wc::Engulfing, Engulfing);
+wasm_candle_pattern!(WasmHarami, wc::Harami, Harami);
+wasm_candle_pattern!(
+    WasmMorningEveningStar,
+    wc::MorningEveningStar,
+    MorningEveningStar
+);
+wasm_candle_pattern!(
+    WasmThreeSoldiersOrCrows,
+    wc::ThreeSoldiersOrCrows,
+    ThreeSoldiersOrCrows
+);
+wasm_candle_pattern!(
+    WasmPiercingDarkCloud,
+    wc::PiercingDarkCloud,
+    PiercingDarkCloud
+);
+wasm_candle_pattern!(WasmMarubozu, wc::Marubozu, Marubozu);
+wasm_candle_pattern!(WasmTweezer, wc::Tweezer, Tweezer);
+wasm_candle_pattern!(WasmSpinningTop, wc::SpinningTop, SpinningTop);
+wasm_candle_pattern!(WasmThreeInside, wc::ThreeInside, ThreeInside);
+wasm_candle_pattern!(WasmThreeOutside, wc::ThreeOutside, ThreeOutside);
+
 #[cfg(test)]
 mod tests {
     use super::*;

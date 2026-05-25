@@ -22,19 +22,20 @@ use wickra::{
     AccelerationBands, AdOscillator, AdaptiveCycle, Adxr, Alma, AnchoredVwap, Atr, AtrBands,
     Autocorrelation, BatchExt, BollingerBands, Camarilla, Candle, CenterOfGravity, ClassicPivots,
     CoefficientOfVariation, CyberneticCycle, Decycler, DecyclerOscillator, DemandIndex,
-    DemarkPivots, DetrendedStdDev, DonchianStop, DoubleBollinger, EhlersStochastic, Ema,
-    EmpiricalModeDecomposition, Fama, FibonacciPivots, FisherTransform, FractalChaosBands, Frama,
-    GarmanKlassVolatility, HeikinAshi, HiLoActivator, HilbertDominantCycle, HurstChannel,
-    HurstExponent, Ichimoku, Indicator, InitialBalance, InstantaneousTrendline,
-    InverseFisherTransform, Jma, Kst, Kurtosis, Kvo, LinRegChannel, MaEnvelope, MacdIndicator,
-    Mama, MarketFacilitationIndex, McGinleyDynamic, MedianAbsoluteDeviation, Nvi, Obv,
-    OpeningRange, ParkinsonVolatility, PercentageTrailingStop, Pgo, Pvi, RSquared,
-    RenkoTrailingStop, RogersSatchellVolatility, RoofingFilter, Rsi, Rvi, RviVolatility, Rwi,
-    SineWave, Skewness, Sma, StandardError, StandardErrorBands, StarcBands, StepTrailingStop,
-    Stochastic, SuperSmoother, TdCombo, TdCountdown, TdDeMarker, TdDifferential, TdLines, TdOpen,
-    TdPressure, TdRangeProjection, TdRei, TdRiskLevel, TdSequential, TdSetup, Tii, Tsv, TtmSqueeze,
-    ValueArea, Variance, Vidya, VoltyStop, VolumeOscillator, VwapStdDevBands, Vzo, WaveTrend,
-    WilliamsFractals, Wma, WoodiePivots, YangZhangVolatility, YoyoExit, ZigZag,
+    DemarkPivots, DetrendedStdDev, Doji, DonchianStop, DoubleBollinger, EhlersStochastic, Ema,
+    EmpiricalModeDecomposition, Engulfing, Fama, FibonacciPivots, FisherTransform,
+    FractalChaosBands, Frama, GarmanKlassVolatility, Hammer, HeikinAshi, HiLoActivator,
+    HilbertDominantCycle, HurstChannel, HurstExponent, Ichimoku, Indicator, InitialBalance,
+    InstantaneousTrendline, InverseFisherTransform, Jma, Kst, Kurtosis, Kvo, LinRegChannel,
+    MaEnvelope, MacdIndicator, Mama, MarketFacilitationIndex, McGinleyDynamic,
+    MedianAbsoluteDeviation, MorningEveningStar, Nvi, Obv, OpeningRange, ParkinsonVolatility,
+    PercentageTrailingStop, Pgo, Pvi, RSquared, RenkoTrailingStop, RogersSatchellVolatility,
+    RoofingFilter, Rsi, Rvi, RviVolatility, Rwi, SineWave, Skewness, Sma, StandardError,
+    StandardErrorBands, StarcBands, StepTrailingStop, Stochastic, SuperSmoother, TdCombo,
+    TdCountdown, TdDeMarker, TdDifferential, TdLines, TdOpen, TdPressure, TdRangeProjection, TdRei,
+    TdRiskLevel, TdSequential, TdSetup, ThreeInside, Tii, Tsv, TtmSqueeze, ValueArea, Variance,
+    Vidya, VoltyStop, VolumeOscillator, VwapStdDevBands, Vzo, WaveTrend, WilliamsFractals, Wma,
+    WoodiePivots, YangZhangVolatility, YoyoExit, ZigZag,
 };
 use wickra_data::csv::CandleReader;
 
@@ -191,6 +192,15 @@ fn benches(c: &mut Criterion) {
     bench_candle_input(c, "obv", &candles, Obv::new);
     bench_candle_input(c, "ichimoku", &candles, Ichimoku::classic);
     bench_candle_input(c, "heikin_ashi", &candles, HeikinAshi::new);
+
+    // Family 14 — Candlestick patterns.
+    // 1-bar, 2-bar and 3-bar representatives. The shape check itself is
+    // stateless arithmetic, so this also serves as a cost-floor reference.
+    bench_candle_input(c, "doji", &candles, Doji::new);
+    bench_candle_input(c, "hammer", &candles, Hammer::new);
+    bench_candle_input(c, "engulfing", &candles, Engulfing::new);
+    bench_candle_input(c, "morning_evening_star", &candles, MorningEveningStar::new);
+    bench_candle_input(c, "three_inside", &candles, ThreeInside::new);
 
     // Family 10 — Ehlers / Cycle scalar benchmarks.
     bench_scalar(c, "super_smoother", &closes, || {

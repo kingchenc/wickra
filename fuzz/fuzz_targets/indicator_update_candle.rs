@@ -27,14 +27,16 @@ use wickra_core::{
     AnchoredVwap, Aroon, AroonOscillator, Atr, AtrBands, AtrTrailingStop, AwesomeOscillator,
     AwesomeOscillatorHistogram, BalanceOfPower, BatchExt, Camarilla, Candle, Cci,
     ChaikinMoneyFlow, ChaikinOscillator, ChaikinVolatility, ChandeKrollStop, ChandelierExit,
-    ChoppinessIndex, ClassicPivots, DemandIndex, DemarkPivots, Donchian, DonchianStop,
-    EaseOfMovement, Evwma, FibonacciPivots, ForceIndex, FractalChaosBands, GarmanKlassVolatility,
-    HeikinAshi, HiLoActivator, HurstChannel, Ichimoku, Indicator, Inertia, InitialBalance,
-    Keltner, Kvo, MarketFacilitationIndex, MassIndex, MedianPrice, Mfi, Natr, Nvi, Obv,
-    OpeningRange, ParkinsonVolatility, Pgo, Psar, Pvi, RogersSatchellVolatility, RollingVwap, Rvi,
-    Rwi, Smi, StarcBands, Stochastic, SuperTrend, TdCombo, TdCountdown, TdDeMarker, TdDifferential,
-    TdLines, TdOpen, TdPressure, TdRangeProjection, TdRei, TdRiskLevel, TdSequential, TdSetup,
-    TrueRange, Tsv, TtmSqueeze, TypicalPrice, UltimateOscillator, ValueArea, VoltyStop,
+    ChoppinessIndex, ClassicPivots, DemandIndex, DemarkPivots, Doji, Donchian, DonchianStop,
+    EaseOfMovement, Engulfing, Evwma, FibonacciPivots, ForceIndex, FractalChaosBands,
+    GarmanKlassVolatility, Hammer, HangingMan, Harami, HeikinAshi, HiLoActivator, HurstChannel, Ichimoku,
+    Indicator, Inertia, InitialBalance, InvertedHammer, Keltner, Kvo, MarketFacilitationIndex,
+    Marubozu, MassIndex, MedianPrice, Mfi, MorningEveningStar, Natr, Nvi, Obv, OpeningRange,
+    ParkinsonVolatility, Pgo, PiercingDarkCloud, Psar, Pvi, RogersSatchellVolatility, RollingVwap,
+    Rvi, Rwi, ShootingStar, Smi, SpinningTop, StarcBands, Stochastic, SuperTrend, TdCombo,
+    TdCountdown, TdDeMarker, TdDifferential, TdLines, TdOpen, TdPressure, TdRangeProjection,
+    TdRei, TdRiskLevel, TdSequential, TdSetup, ThreeInside, ThreeOutside, ThreeSoldiersOrCrows,
+    TrueRange, Tsv, TtmSqueeze, Tweezer, TypicalPrice, UltimateOscillator, ValueArea, VoltyStop,
     VolumeOscillator, VolumePriceTrend, Vortex, Vwap, VwapStdDevBands, Vwma, Vzo, WaveTrend,
     WeightedClose, WilliamsFractals, WilliamsR, WoodiePivots, YangZhangVolatility, YoyoExit,
     ZigZag,
@@ -290,4 +292,21 @@ fuzz_target!(|data: Vec<f64>| {
         }
         let _ = VwapStdDevBands::new(2.0).unwrap().batch(&candles);
     }
+
+    // --- Candlestick Patterns (family 14) ---
+    drive(Doji::new, &candles);
+    drive(Hammer::new, &candles);
+    drive(InvertedHammer::new, &candles);
+    drive(HangingMan::new, &candles);
+    drive(ShootingStar::new, &candles);
+    drive(Engulfing::new, &candles);
+    drive(Harami::new, &candles);
+    drive(MorningEveningStar::new, &candles);
+    drive(ThreeSoldiersOrCrows::new, &candles);
+    drive(PiercingDarkCloud::new, &candles);
+    drive(Marubozu::new, &candles);
+    drive(Tweezer::new, &candles);
+    drive(SpinningTop::new, &candles);
+    drive(ThreeInside::new, &candles);
+    drive(ThreeOutside::new, &candles);
 });

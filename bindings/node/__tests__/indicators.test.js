@@ -180,6 +180,22 @@ const candleScalar = {
   TDCountdown: { make: () => new wickra.TDCountdown(4, 9, 2, 13), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   TDDifferential: { make: () => new wickra.TDDifferential(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   TDOpen: { make: () => new wickra.TDOpen(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  // Family 14 — Candlestick patterns
+  Doji: { make: () => new wickra.Doji(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Hammer: { make: () => new wickra.Hammer(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  InvertedHammer: { make: () => new wickra.InvertedHammer(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  HangingMan: { make: () => new wickra.HangingMan(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  ShootingStar: { make: () => new wickra.ShootingStar(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Engulfing: { make: () => new wickra.Engulfing(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Harami: { make: () => new wickra.Harami(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  MorningEveningStar: { make: () => new wickra.MorningEveningStar(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  ThreeSoldiersOrCrows: { make: () => new wickra.ThreeSoldiersOrCrows(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  PiercingDarkCloud: { make: () => new wickra.PiercingDarkCloud(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Marubozu: { make: () => new wickra.Marubozu(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Tweezer: { make: () => new wickra.Tweezer(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  SpinningTop: { make: () => new wickra.SpinningTop(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  ThreeInside: { make: () => new wickra.ThreeInside(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  ThreeOutside: { make: () => new wickra.ThreeOutside(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {

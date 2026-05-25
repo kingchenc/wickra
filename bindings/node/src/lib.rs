@@ -8317,3 +8317,105 @@ impl OpeningRangeNode {
         Ok(out)
     }
 }
+// ============================== Candlestick Patterns ==============================
+//
+// All 15 patterns take Candles (open, high, low, close) and emit a signed f64
+// signal per bar: +1.0 bullish, -1.0 bearish, 0.0 no pattern. Doji is
+// direction-less and emits 0/+1 only.
+
+macro_rules! node_candle_pattern {
+    ($node:ident, $inner:ty, $js:literal) => {
+        #[napi(js_name = $js)]
+        pub struct $node {
+            inner: $inner,
+        }
+
+        impl Default for $node {
+            fn default() -> Self {
+                Self::new()
+            }
+        }
+
+        #[napi]
+        impl $node {
+            #[napi(constructor)]
+            pub fn new() -> Self {
+                Self {
+                    inner: <$inner>::new(),
+                }
+            }
+            #[napi]
+            pub fn update(
+                &mut self,
+                open: f64,
+                high: f64,
+                low: f64,
+                close: f64,
+            ) -> napi::Result<Option<f64>> {
+                let candle = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+                Ok(self.inner.update(candle))
+            }
+            #[napi]
+            pub fn batch(
+                &mut self,
+                open: Vec<f64>,
+                high: Vec<f64>,
+                low: Vec<f64>,
+                close: Vec<f64>,
+            ) -> napi::Result<Vec<f64>> {
+                if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+                    return Err(NapiError::from_reason(
+                        "open, high, low, close must be equal length".to_string(),
+                    ));
+                }
+                let mut out = Vec::with_capacity(open.len());
+                for i in 0..open.len() {
+                    let candle = wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0)
+                        .map_err(map_err)?;
+                    out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+                }
+                Ok(out)
+            }
+            #[napi]
+            pub fn reset(&mut self) {
+                self.inner.reset();
+            }
+            #[napi(js_name = "isReady")]
+            pub fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            #[napi(js_name = "warmupPeriod")]
+            pub fn warmup_period(&self) -> u32 {
+                self.inner.warmup_period() as u32
+            }
+        }
+    };
+}
+
+node_candle_pattern!(DojiNode, wc::Doji, "Doji");
+node_candle_pattern!(HammerNode, wc::Hammer, "Hammer");
+node_candle_pattern!(InvertedHammerNode, wc::InvertedHammer, "InvertedHammer");
+node_candle_pattern!(HangingManNode, wc::HangingMan, "HangingMan");
+node_candle_pattern!(ShootingStarNode, wc::ShootingStar, "ShootingStar");
+node_candle_pattern!(EngulfingNode, wc::Engulfing, "Engulfing");
+node_candle_pattern!(HaramiNode, wc::Harami, "Harami");
+node_candle_pattern!(
+    MorningEveningStarNode,
+    wc::MorningEveningStar,
+    "MorningEveningStar"
+);
+node_candle_pattern!(
+    ThreeSoldiersOrCrowsNode,
+    wc::ThreeSoldiersOrCrows,
+    "ThreeSoldiersOrCrows"
+);
+node_candle_pattern!(
+    PiercingDarkCloudNode,
+    wc::PiercingDarkCloud,
+    "PiercingDarkCloud"
+);
+node_candle_pattern!(MarubozuNode, wc::Marubozu, "Marubozu");
+node_candle_pattern!(TweezerNode, wc::Tweezer, "Tweezer");
+node_candle_pattern!(SpinningTopNode, wc::SpinningTop, "SpinningTop");
+node_candle_pattern!(ThreeInsideNode, wc::ThreeInside, "ThreeInside");
+node_candle_pattern!(ThreeOutsideNode, wc::ThreeOutside, "ThreeOutside");
