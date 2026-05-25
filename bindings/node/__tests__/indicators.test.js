@@ -59,7 +59,45 @@ const scalarFactories = {
   VerticalHorizontalFilter: () => new wickra.VerticalHorizontalFilter(28),
   ZScore: () => new wickra.ZScore(20),
   LinRegAngle: () => new wickra.LinRegAngle(14),
+  // Family 15 — Risk / Performance metrics (scalar f64 input).
+  SharpeRatio: () => new wickra.SharpeRatio(20, 0),
+  SortinoRatio: () => new wickra.SortinoRatio(20, 0),
+  CalmarRatio: () => new wickra.CalmarRatio(20),
+  OmegaRatio: () => new wickra.OmegaRatio(20, 0),
+  MaxDrawdown: () => new wickra.MaxDrawdown(20),
+  AverageDrawdown: () => new wickra.AverageDrawdown(20),
+  DrawdownDuration: () => new wickra.DrawdownDuration(),
+  PainIndex: () => new wickra.PainIndex(20),
+  ValueAtRisk: () => new wickra.ValueAtRisk(20, 0.95),
+  ConditionalValueAtRisk: () => new wickra.ConditionalValueAtRisk(20, 0.95),
+  ProfitFactor: () => new wickra.ProfitFactor(20),
+  GainLossRatio: () => new wickra.GainLossRatio(20),
+  RecoveryFactor: () => new wickra.RecoveryFactor(),
+  KellyCriterion: () => new wickra.KellyCriterion(20),
 };
+
+// --- Two-series (asset, benchmark) indicators ---
+
+const pairFactories = {
+  TreynorRatio: () => new wickra.TreynorRatio(20, 0),
+  InformationRatio: () => new wickra.InformationRatio(20),
+  Alpha: () => new wickra.Alpha(20, 0),
+};
+
+const asset = Array.from({ length: N }, (_, i) => 0.001 + Math.sin(i * 0.15) * 0.01);
+const bench = Array.from({ length: N }, (_, i) => 0.001 + Math.sin(i * 0.15) * 0.007);
+
+for (const [name, make] of Object.entries(pairFactories)) {
+  test(`${name}: streaming update matches batch (pair)`, () => {
+    const batch = make().batch(asset, bench);
+    const streaming = make();
+    assert.equal(batch.length, N);
+    for (let i = 0; i < N; i++) {
+      const s = num(streaming.update(asset[i], bench[i]));
+      assert.ok(eq(s, batch[i]), `${name} mismatch at ${i}: ${s} vs ${batch[i]}`);
+    }
+  });
+}
 
 for (const [name, make] of Object.entries(scalarFactories)) {
   test(`${name}: streaming update matches batch`, () => {

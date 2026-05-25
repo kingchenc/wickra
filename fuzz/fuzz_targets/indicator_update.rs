@@ -15,10 +15,12 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    BatchExt, BollingerBands, Cmo, Coppock, Dema, Dpo, Ema, HistoricalVolatility, Hma, Indicator,
-    Kama, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, Mom, Pmo, Ppo, Roc, Rsi, Sma,
-    Smma, StdDev, StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Wma,
-    ZScore, Zlema,
+    AverageDrawdown, BatchExt, BollingerBands, CalmarRatio, Cmo, ConditionalValueAtRisk, Coppock,
+    Dema, Dpo, DrawdownDuration, Ema, GainLossRatio, HistoricalVolatility, Hma, Indicator, Kama,
+    KellyCriterion, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, MaxDrawdown, Mom,
+    OmegaRatio, PainIndex, Pmo, Ppo, ProfitFactor, RecoveryFactor, Roc, Rsi, SharpeRatio, Sma,
+    Smma, SortinoRatio, StdDev, StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex, ValueAtRisk,
+    VerticalHorizontalFilter, Wma, ZScore, Zlema,
 };
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
@@ -70,6 +72,37 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| LinRegAngle::new(14).unwrap(), &data);
     drive(|| VerticalHorizontalFilter::new(14).unwrap(), &data);
     drive(|| ZScore::new(14).unwrap(), &data);
+
+    // Family 15 — Risk / Performance metrics (scalar inputs).
+    drive(|| SharpeRatio::new(20, 0.0).unwrap(), &data);
+    drive(|| SortinoRatio::new(20, 0.0).unwrap(), &data);
+    drive(|| CalmarRatio::new(20).unwrap(), &data);
+    drive(|| OmegaRatio::new(20, 0.0).unwrap(), &data);
+    drive(|| MaxDrawdown::new(20).unwrap(), &data);
+    drive(|| AverageDrawdown::new(20).unwrap(), &data);
+    drive(|| PainIndex::new(20).unwrap(), &data);
+    drive(|| ValueAtRisk::new(20, 0.95).unwrap(), &data);
+    drive(|| ConditionalValueAtRisk::new(20, 0.95).unwrap(), &data);
+    drive(|| ProfitFactor::new(20).unwrap(), &data);
+    drive(|| GainLossRatio::new(20).unwrap(), &data);
+    drive(|| KellyCriterion::new(20).unwrap(), &data);
+
+    // RecoveryFactor and DrawdownDuration produce non-`f64` outputs / have
+    // no `period` knob, so they cannot use the `drive` helper directly.
+    {
+        let mut rf = RecoveryFactor::new();
+        for &x in &data {
+            let _ = rf.update(x);
+        }
+        let _ = RecoveryFactor::new().batch(&data);
+    }
+    {
+        let mut dd = DrawdownDuration::new();
+        for &x in &data {
+            let _ = dd.update(x);
+        }
+        let _ = DrawdownDuration::new().batch(&data);
+    }
 
     // MACD and Bollinger Bands have non-`f64` outputs, so they cannot use the
     // generic `drive` helper above. Streaming + batch are still both exercised.

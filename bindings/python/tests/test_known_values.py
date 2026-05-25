@@ -112,3 +112,130 @@ def test_obv_cumulative_known_sequence():
     volume = np.array([100.0, 20.0, 30.0, 40.0, 10.0])
     out = ta.OBV().batch(close, volume)
     np.testing.assert_allclose(out, [0.0, 20.0, -10.0, -10.0, 0.0])
+
+
+# --- Family 15: Risk / Performance ---------------------------------------
+
+
+def test_sharpe_ratio_known_window():
+    # returns [0.01, 0.02, 0.03, 0.04], rf = 0; mean = 0.025;
+    # sample-var = 0.000166...; Sharpe = 0.025 / sqrt(var).
+    out = ta.SharpeRatio(4, 0.0).batch(np.array([0.01, 0.02, 0.03, 0.04]))
+    expected = 0.025 / math.sqrt(0.000_166_666_666_666_666_67)
+    assert math.isclose(out[3], expected, rel_tol=1e-9)
+
+
+def test_sortino_ratio_known_window():
+    # returns [-0.02, 0.01, -0.01, 0.03], mar = 0; mean = 0.0025;
+    # downside_sq = 0.0005; dd = sqrt(0.0005/4); Sortino = 0.0025/dd.
+    out = ta.SortinoRatio(4, 0.0).batch(np.array([-0.02, 0.01, -0.01, 0.03]))
+    expected = 0.0025 / math.sqrt(0.000_125)
+    assert math.isclose(out[3], expected, rel_tol=1e-9)
+
+
+def test_max_drawdown_known_window():
+    # window [100, 120, 90] -> peak 120, trough 90 -> 25% drawdown.
+    out = ta.MaxDrawdown(3).batch(np.array([100.0, 120.0, 90.0]))
+    assert math.isclose(out[2], 0.25, abs_tol=1e-12)
+
+
+def test_pain_index_known_window():
+    # dd[0..2] = 0, 0, 0.25; mean = 0.25/3.
+    out = ta.PainIndex(3).batch(np.array([100.0, 120.0, 90.0]))
+    assert math.isclose(out[2], 0.25 / 3.0, abs_tol=1e-12)
+
+
+def test_profit_factor_known_window():
+    # gains 0.05, losses 0.03 -> PF = 5/3.
+    out = ta.ProfitFactor(4).batch(np.array([0.02, -0.01, 0.03, -0.02]))
+    assert math.isclose(out[3], 5.0 / 3.0, rel_tol=1e-9)
+
+
+def test_gain_loss_ratio_known_window():
+    # avg_win 0.03, avg_loss 0.02 -> GLR = 1.5.
+    out = ta.GainLossRatio(4).batch(np.array([0.02, -0.01, 0.04, -0.03]))
+    assert math.isclose(out[3], 1.5, rel_tol=1e-9)
+
+
+def test_omega_ratio_known_window():
+    # gains 0.04, losses 0.03 -> Omega = 4/3.
+    out = ta.OmegaRatio(4, 0.0).batch(np.array([-0.02, 0.01, -0.01, 0.03]))
+    assert math.isclose(out[3], 4.0 / 3.0, rel_tol=1e-9)
+
+
+def test_kelly_criterion_known_window():
+    # n_win=n_loss=2, payoff=2 -> Kelly = 0.5 - 0.5/2 = 0.25.
+    out = ta.KellyCriterion(4).batch(np.array([0.02, 0.04, -0.01, -0.02]))
+    assert math.isclose(out[3], 0.25, rel_tol=1e-9)
+
+
+def test_drawdown_duration_under_water_counter():
+    out = ta.DrawdownDuration().batch(np.array([100.0, 95.0, 90.0, 85.0]))
+    np.testing.assert_allclose(out, [0.0, 1.0, 2.0, 3.0])
+
+
+def test_recovery_factor_known_path():
+    # Start 100, peak 110, trough 88 -> max_dd = 0.20; end 130 ->
+    # net_return = 0.30 -> Recovery = 1.5.
+    prices = np.array([100.0, 110.0, 105.0, 95.0, 88.0, 100.0, 120.0, 130.0])
+    out = ta.RecoveryFactor().batch(prices)
+    assert math.isclose(out[-1], 1.5, rel_tol=1e-9)
+
+
+def test_alpha_perfect_capm_fit_yields_zero():
+    bench = np.array([0.01 * i for i in range(1, 21)])
+    asset = 2.0 * bench
+    out = ta.Alpha(20, 0.0).batch(asset, bench)
+    assert math.isclose(out[-1], 0.0, abs_tol=1e-12)
+
+
+def test_alpha_additive_offset_recovered():
+    bench = np.array([0.01 * i for i in range(1, 21)])
+    asset = bench + 0.005
+    out = ta.Alpha(20, 0.0).batch(asset, bench)
+    assert math.isclose(out[-1], 0.005, rel_tol=1e-9)
+
+
+def test_treynor_ratio_known_window():
+    bench = np.array([0.01 * i for i in range(1, 21)])
+    asset = 2.0 * bench
+    out = ta.TreynorRatio(20, 0.0).batch(asset, bench)
+    assert math.isclose(out[-1], bench.mean(), rel_tol=1e-9)
+
+
+def test_information_ratio_known_window():
+    asset = np.array([0.02, 0.04, 0.06, 0.08])
+    bench = np.array([0.01, 0.02, 0.03, 0.04])
+    out = ta.InformationRatio(4).batch(asset, bench)
+    expected = 0.025 / math.sqrt(0.000_166_666_666_666_666_67)
+    assert math.isclose(out[-1], expected, rel_tol=1e-9)
+
+
+def test_value_at_risk_known_window():
+    # returns -5..4 *0.01; q=0.05*9=0.45 -> -0.0455; VaR = 0.0455.
+    returns = np.array([i * 0.01 for i in range(-5, 5)])
+    out = ta.ValueAtRisk(10, 0.95).batch(returns)
+    assert math.isclose(out[-1], 0.0455, rel_tol=1e-9)
+
+
+def test_conditional_value_at_risk_known_window():
+    # tail = {-0.10}; CVaR = 0.10.
+    returns = np.array([i * 0.01 for i in range(-10, 10)])
+    out = ta.ConditionalValueAtRisk(20, 0.95).batch(returns)
+    assert math.isclose(out[-1], 0.10, rel_tol=1e-9)
+
+
+def test_calmar_ratio_known_path():
+    # returns [0.10, -0.20, 0.05]; equity 1.0->1.10->0.88->0.924;
+    # mdd = 0.20; mean = -0.01666...; Calmar = mean / 0.20.
+    out = ta.CalmarRatio(3).batch(np.array([0.10, -0.20, 0.05]))
+    expected = ((0.10 - 0.20 + 0.05) / 3.0) / 0.20
+    assert math.isclose(out[-1], expected, rel_tol=1e-9)
+
+
+def test_average_drawdown_known_window():
+    # window [100, 120, 90, 110]: dd = 0, 0, 0.25, 10/120;
+    # mean = (0.25 + 10/120) / 4.
+    out = ta.AverageDrawdown(4).batch(np.array([100.0, 120.0, 90.0, 110.0]))
+    expected = (0.25 + 10.0 / 120.0) / 4.0
+    assert math.isclose(out[-1], expected, rel_tol=1e-12)

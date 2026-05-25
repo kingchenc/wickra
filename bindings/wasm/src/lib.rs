@@ -2392,3 +2392,241 @@ mod tests {
         );
     }
 }
+// ============================== Family 15: Risk / Performance ==============================
+
+// Most metrics need fallible `new` (period >= 2), so they're written by hand
+// rather than going through `wasm_scalar_indicator!`. Single-parameter helpers
+// reuse the same patterns as the rest of the file.
+
+wasm_scalar_indicator!(WasmCalmarRatio, "CalmarRatio", wc::CalmarRatio, period: usize);
+wasm_scalar_indicator!(WasmMaxDrawdown, "MaxDrawdown", wc::MaxDrawdown, period: usize);
+wasm_scalar_indicator!(WasmAverageDrawdown, "AverageDrawdown", wc::AverageDrawdown, period: usize);
+wasm_scalar_indicator!(WasmPainIndex, "PainIndex", wc::PainIndex, period: usize);
+wasm_scalar_indicator!(WasmProfitFactor, "ProfitFactor", wc::ProfitFactor, period: usize);
+wasm_scalar_indicator!(WasmGainLossRatio, "GainLossRatio", wc::GainLossRatio, period: usize);
+wasm_scalar_indicator!(WasmKellyCriterion, "KellyCriterion", wc::KellyCriterion, period: usize);
+wasm_scalar_indicator!(WasmSharpeRatio, "SharpeRatio", wc::SharpeRatio, period: usize, risk_free: f64);
+wasm_scalar_indicator!(WasmSortinoRatio, "SortinoRatio", wc::SortinoRatio, period: usize, mar: f64);
+wasm_scalar_indicator!(WasmOmegaRatio, "OmegaRatio", wc::OmegaRatio, period: usize, threshold: f64);
+wasm_scalar_indicator!(WasmValueAtRisk, "ValueAtRisk", wc::ValueAtRisk, period: usize, confidence: f64);
+wasm_scalar_indicator!(WasmConditionalValueAtRisk, "ConditionalValueAtRisk", wc::ConditionalValueAtRisk, period: usize, confidence: f64);
+
+// --- DrawdownDuration: u32 output, no constructor args ---
+
+#[wasm_bindgen(js_name = DrawdownDuration)]
+pub struct WasmDrawdownDuration {
+    inner: wc::DrawdownDuration,
+}
+
+impl Default for WasmDrawdownDuration {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = DrawdownDuration)]
+impl WasmDrawdownDuration {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmDrawdownDuration {
+        Self {
+            inner: wc::DrawdownDuration::new(),
+        }
+    }
+    pub fn update(&mut self, value: f64) -> Option<u32> {
+        self.inner.update(value)
+    }
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let out: Vec<f64> = prices
+            .iter()
+            .map(|p| self.inner.update(*p).map_or(f64::NAN, f64::from))
+            .collect();
+        Float64Array::from(out.as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// --- RecoveryFactor: no constructor args ---
+
+#[wasm_bindgen(js_name = RecoveryFactor)]
+pub struct WasmRecoveryFactor {
+    inner: wc::RecoveryFactor,
+}
+
+impl Default for WasmRecoveryFactor {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = RecoveryFactor)]
+impl WasmRecoveryFactor {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmRecoveryFactor {
+        Self {
+            inner: wc::RecoveryFactor::new(),
+        }
+    }
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let out = flatten(self.inner.batch(prices));
+        Float64Array::from(out.as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// --- Two-series (asset, benchmark) indicators ---
+//
+// Family 12 (PR #51) introduces `wasm_pair_indicator!` for Pearson / Beta /
+// Spearman. Family 12 is not in main, so Family 15 writes its three pair
+// wrappers by hand here; merge with PR #51 keeps the macro and re-uses it.
+
+#[wasm_bindgen(js_name = TreynorRatio)]
+pub struct WasmTreynorRatio {
+    inner: wc::TreynorRatio,
+}
+
+#[wasm_bindgen(js_class = TreynorRatio)]
+impl WasmTreynorRatio {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, risk_free: f64) -> Result<WasmTreynorRatio, JsError> {
+        Ok(Self {
+            inner: wc::TreynorRatio::new(period, risk_free).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, asset: f64, benchmark: f64) -> Option<f64> {
+        self.inner.update((asset, benchmark))
+    }
+    pub fn batch(&mut self, asset: &[f64], benchmark: &[f64]) -> Result<Float64Array, JsError> {
+        if asset.len() != benchmark.len() {
+            return Err(JsError::new("asset and benchmark must be equal length"));
+        }
+        let mut out = Vec::with_capacity(asset.len());
+        for i in 0..asset.len() {
+            out.push(
+                self.inner
+                    .update((asset[i], benchmark[i]))
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = InformationRatio)]
+pub struct WasmInformationRatio {
+    inner: wc::InformationRatio,
+}
+
+#[wasm_bindgen(js_class = InformationRatio)]
+impl WasmInformationRatio {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmInformationRatio, JsError> {
+        Ok(Self {
+            inner: wc::InformationRatio::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, asset: f64, benchmark: f64) -> Option<f64> {
+        self.inner.update((asset, benchmark))
+    }
+    pub fn batch(&mut self, asset: &[f64], benchmark: &[f64]) -> Result<Float64Array, JsError> {
+        if asset.len() != benchmark.len() {
+            return Err(JsError::new("asset and benchmark must be equal length"));
+        }
+        let mut out = Vec::with_capacity(asset.len());
+        for i in 0..asset.len() {
+            out.push(
+                self.inner
+                    .update((asset[i], benchmark[i]))
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = Alpha)]
+pub struct WasmAlpha {
+    inner: wc::Alpha,
+}
+
+#[wasm_bindgen(js_class = Alpha)]
+impl WasmAlpha {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, risk_free: f64) -> Result<WasmAlpha, JsError> {
+        Ok(Self {
+            inner: wc::Alpha::new(period, risk_free).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, asset: f64, benchmark: f64) -> Option<f64> {
+        self.inner.update((asset, benchmark))
+    }
+    pub fn batch(&mut self, asset: &[f64], benchmark: &[f64]) -> Result<Float64Array, JsError> {
+        if asset.len() != benchmark.len() {
+            return Err(JsError::new("asset and benchmark must be equal length"));
+        }
+        let mut out = Vec::with_capacity(asset.len());
+        for i in 0..asset.len() {
+            out.push(
+                self.inner
+                    .update((asset[i], benchmark[i]))
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}

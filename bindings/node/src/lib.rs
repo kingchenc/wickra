@@ -2981,3 +2981,665 @@ impl VwmaNode {
         self.inner.warmup_period() as u32
     }
 }
+// ============================== Family 15: Risk / Performance ==============================
+
+// Risk metrics with fallible `new` (most need `period >= 2`), so each wrapper
+// is written by hand rather than going through the `node_scalar_indicator!`
+// macro above.
+
+#[napi(js_name = "SharpeRatio")]
+pub struct SharpeRatioNode {
+    inner: wc::SharpeRatio,
+}
+
+#[napi]
+impl SharpeRatioNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, risk_free: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::SharpeRatio::new(period as usize, risk_free).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "SortinoRatio")]
+pub struct SortinoRatioNode {
+    inner: wc::SortinoRatio,
+}
+
+#[napi]
+impl SortinoRatioNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, mar: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::SortinoRatio::new(period as usize, mar).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "CalmarRatio")]
+pub struct CalmarRatioNode {
+    inner: wc::CalmarRatio,
+}
+
+#[napi]
+impl CalmarRatioNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::CalmarRatio::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "OmegaRatio")]
+pub struct OmegaRatioNode {
+    inner: wc::OmegaRatio,
+}
+
+#[napi]
+impl OmegaRatioNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, threshold: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::OmegaRatio::new(period as usize, threshold).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "MaxDrawdown")]
+pub struct MaxDrawdownNode {
+    inner: wc::MaxDrawdown,
+}
+
+#[napi]
+impl MaxDrawdownNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::MaxDrawdown::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "AverageDrawdown")]
+pub struct AverageDrawdownNode {
+    inner: wc::AverageDrawdown,
+}
+
+#[napi]
+impl AverageDrawdownNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::AverageDrawdown::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "DrawdownDuration")]
+pub struct DrawdownDurationNode {
+    inner: wc::DrawdownDuration,
+}
+
+impl Default for DrawdownDurationNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl DrawdownDurationNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::DrawdownDuration::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<u32> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        prices
+            .iter()
+            .map(|p| self.inner.update(*p).map_or(f64::NAN, f64::from))
+            .collect()
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "PainIndex")]
+pub struct PainIndexNode {
+    inner: wc::PainIndex,
+}
+
+#[napi]
+impl PainIndexNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::PainIndex::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "ValueAtRisk")]
+pub struct ValueAtRiskNode {
+    inner: wc::ValueAtRisk,
+}
+
+#[napi]
+impl ValueAtRiskNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, confidence: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::ValueAtRisk::new(period as usize, confidence).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "ConditionalValueAtRisk")]
+pub struct ConditionalValueAtRiskNode {
+    inner: wc::ConditionalValueAtRisk,
+}
+
+#[napi]
+impl ConditionalValueAtRiskNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, confidence: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::ConditionalValueAtRisk::new(period as usize, confidence).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "ProfitFactor")]
+pub struct ProfitFactorNode {
+    inner: wc::ProfitFactor,
+}
+
+#[napi]
+impl ProfitFactorNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::ProfitFactor::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "GainLossRatio")]
+pub struct GainLossRatioNode {
+    inner: wc::GainLossRatio,
+}
+
+#[napi]
+impl GainLossRatioNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::GainLossRatio::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "RecoveryFactor")]
+pub struct RecoveryFactorNode {
+    inner: wc::RecoveryFactor,
+}
+
+impl Default for RecoveryFactorNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl RecoveryFactorNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::RecoveryFactor::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "KellyCriterion")]
+pub struct KellyCriterionNode {
+    inner: wc::KellyCriterion,
+}
+
+#[napi]
+impl KellyCriterionNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::KellyCriterion::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// --- Two-series (asset, benchmark) indicators ---
+//
+// Family 12 (statistik-regression, PR #51) introduces a
+// `node_pair_indicator!` macro for Pearson / Beta / Spearman. Family 12 is
+// not yet in main, so Family 15 inlines its pair wrappers below by hand.
+// When PR #51 lands, the merge conflict on this file is resolved by keeping
+// the macro from Family 12 and re-using it for Treynor / IR / Alpha.
+
+#[napi(js_name = "TreynorRatio")]
+pub struct TreynorRatioNode {
+    inner: wc::TreynorRatio,
+}
+
+#[napi]
+impl TreynorRatioNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, risk_free: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::TreynorRatio::new(period as usize, risk_free).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, asset: f64, benchmark: f64) -> Option<f64> {
+        self.inner.update((asset, benchmark))
+    }
+    #[napi]
+    pub fn batch(&mut self, asset: Vec<f64>, benchmark: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if asset.len() != benchmark.len() {
+            return Err(NapiError::from_reason(
+                "asset and benchmark must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(asset.len());
+        for i in 0..asset.len() {
+            out.push(
+                self.inner
+                    .update((asset[i], benchmark[i]))
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "InformationRatio")]
+pub struct InformationRatioNode {
+    inner: wc::InformationRatio,
+}
+
+#[napi]
+impl InformationRatioNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::InformationRatio::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, asset: f64, benchmark: f64) -> Option<f64> {
+        self.inner.update((asset, benchmark))
+    }
+    #[napi]
+    pub fn batch(&mut self, asset: Vec<f64>, benchmark: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if asset.len() != benchmark.len() {
+            return Err(NapiError::from_reason(
+                "asset and benchmark must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(asset.len());
+        for i in 0..asset.len() {
+            out.push(
+                self.inner
+                    .update((asset[i], benchmark[i]))
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "Alpha")]
+pub struct AlphaNode {
+    inner: wc::Alpha,
+}
+
+#[napi]
+impl AlphaNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, risk_free: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Alpha::new(period as usize, risk_free).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, asset: f64, benchmark: f64) -> Option<f64> {
+        self.inner.update((asset, benchmark))
+    }
+    #[napi]
+    pub fn batch(&mut self, asset: Vec<f64>, benchmark: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if asset.len() != benchmark.len() {
+            return Err(NapiError::from_reason(
+                "asset and benchmark must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(asset.len());
+        for i in 0..asset.len() {
+            out.push(
+                self.inner
+                    .update((asset[i], benchmark[i]))
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}

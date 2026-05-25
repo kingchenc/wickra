@@ -19,8 +19,8 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use std::hint::black_box;
 use wickra::{
-    Atr, BatchExt, BollingerBands, Candle, Ema, Indicator, MacdIndicator, Obv, Rsi, Sma,
-    Stochastic, Wma,
+    Atr, BatchExt, BollingerBands, CalmarRatio, Candle, Ema, Indicator, MacdIndicator, MaxDrawdown,
+    Obv, ProfitFactor, Rsi, SharpeRatio, Sma, Stochastic, ValueAtRisk, Wma,
 };
 use wickra_data::csv::CandleReader;
 
@@ -144,6 +144,21 @@ fn benches(c: &mut Criterion) {
     bench_candle_input(c, "atr", &candles, || Atr::new(14).unwrap());
     bench_candle_input(c, "stochastic", &candles, Stochastic::classic);
     bench_candle_input(c, "obv", &candles, Obv::new);
+
+    // Family 15 — Risk / Performance metrics. Close-prices stand in for the
+    // equity curve / return stream; absolute numbers aren't meaningful here
+    // — what matters is the per-update cost vs. other scalar indicators.
+    bench_scalar(c, "sharpe_ratio", &closes, || {
+        SharpeRatio::new(20, 0.0).unwrap()
+    });
+    bench_scalar(c, "max_drawdown", &closes, || MaxDrawdown::new(20).unwrap());
+    bench_scalar(c, "profit_factor", &closes, || {
+        ProfitFactor::new(20).unwrap()
+    });
+    bench_scalar(c, "calmar_ratio", &closes, || CalmarRatio::new(20).unwrap());
+    bench_scalar(c, "value_at_risk", &closes, || {
+        ValueAtRisk::new(50, 0.95).unwrap()
+    });
 }
 
 criterion_group!(name = wickra_benches; config = Criterion::default(); targets = benches);
