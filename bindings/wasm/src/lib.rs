@@ -1997,6 +1997,500 @@ impl WasmAroon {
     }
 }
 
+// ============================== Pivots & S/R ==============================
+
+#[wasm_bindgen(js_name = ClassicPivots)]
+pub struct WasmClassicPivots {
+    inner: wc::ClassicPivots,
+}
+
+impl Default for WasmClassicPivots {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = ClassicPivots)]
+impl WasmClassicPivots {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmClassicPivots {
+        Self {
+            inner: wc::ClassicPivots::new(),
+        }
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"pp".into(), &o.pp.into()).ok();
+                Reflect::set(&obj, &"r1".into(), &o.r1.into()).ok();
+                Reflect::set(&obj, &"r2".into(), &o.r2.into()).ok();
+                Reflect::set(&obj, &"r3".into(), &o.r3.into()).ok();
+                Reflect::set(&obj, &"s1".into(), &o.s1.into()).ok();
+                Reflect::set(&obj, &"s2".into(), &o.s2.into()).ok();
+                Reflect::set(&obj, &"s3".into(), &o.s3.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 7];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 7] = o.pp;
+                out[i * 7 + 1] = o.r1;
+                out[i * 7 + 2] = o.r2;
+                out[i * 7 + 3] = o.r3;
+                out[i * 7 + 4] = o.s1;
+                out[i * 7 + 5] = o.s2;
+                out[i * 7 + 6] = o.s3;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = FibonacciPivots)]
+pub struct WasmFibonacciPivots {
+    inner: wc::FibonacciPivots,
+}
+
+impl Default for WasmFibonacciPivots {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = FibonacciPivots)]
+impl WasmFibonacciPivots {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmFibonacciPivots {
+        Self {
+            inner: wc::FibonacciPivots::new(),
+        }
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"pp".into(), &o.pp.into()).ok();
+                Reflect::set(&obj, &"r1".into(), &o.r1.into()).ok();
+                Reflect::set(&obj, &"r2".into(), &o.r2.into()).ok();
+                Reflect::set(&obj, &"r3".into(), &o.r3.into()).ok();
+                Reflect::set(&obj, &"s1".into(), &o.s1.into()).ok();
+                Reflect::set(&obj, &"s2".into(), &o.s2.into()).ok();
+                Reflect::set(&obj, &"s3".into(), &o.s3.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 7];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 7] = o.pp;
+                out[i * 7 + 1] = o.r1;
+                out[i * 7 + 2] = o.r2;
+                out[i * 7 + 3] = o.r3;
+                out[i * 7 + 4] = o.s1;
+                out[i * 7 + 5] = o.s2;
+                out[i * 7 + 6] = o.s3;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = Camarilla)]
+pub struct WasmCamarilla {
+    inner: wc::Camarilla,
+}
+
+impl Default for WasmCamarilla {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = Camarilla)]
+impl WasmCamarilla {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmCamarilla {
+        Self {
+            inner: wc::Camarilla::new(),
+        }
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"pp".into(), &o.pp.into()).ok();
+                Reflect::set(&obj, &"r1".into(), &o.r1.into()).ok();
+                Reflect::set(&obj, &"r2".into(), &o.r2.into()).ok();
+                Reflect::set(&obj, &"r3".into(), &o.r3.into()).ok();
+                Reflect::set(&obj, &"r4".into(), &o.r4.into()).ok();
+                Reflect::set(&obj, &"s1".into(), &o.s1.into()).ok();
+                Reflect::set(&obj, &"s2".into(), &o.s2.into()).ok();
+                Reflect::set(&obj, &"s3".into(), &o.s3.into()).ok();
+                Reflect::set(&obj, &"s4".into(), &o.s4.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 9];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 9] = o.pp;
+                out[i * 9 + 1] = o.r1;
+                out[i * 9 + 2] = o.r2;
+                out[i * 9 + 3] = o.r3;
+                out[i * 9 + 4] = o.r4;
+                out[i * 9 + 5] = o.s1;
+                out[i * 9 + 6] = o.s2;
+                out[i * 9 + 7] = o.s3;
+                out[i * 9 + 8] = o.s4;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = WoodiePivots)]
+pub struct WasmWoodiePivots {
+    inner: wc::WoodiePivots,
+}
+
+impl Default for WasmWoodiePivots {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = WoodiePivots)]
+impl WasmWoodiePivots {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmWoodiePivots {
+        Self {
+            inner: wc::WoodiePivots::new(),
+        }
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"pp".into(), &o.pp.into()).ok();
+                Reflect::set(&obj, &"r1".into(), &o.r1.into()).ok();
+                Reflect::set(&obj, &"r2".into(), &o.r2.into()).ok();
+                Reflect::set(&obj, &"s1".into(), &o.s1.into()).ok();
+                Reflect::set(&obj, &"s2".into(), &o.s2.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 5];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 5] = o.pp;
+                out[i * 5 + 1] = o.r1;
+                out[i * 5 + 2] = o.r2;
+                out[i * 5 + 3] = o.s1;
+                out[i * 5 + 4] = o.s2;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = DemarkPivots)]
+pub struct WasmDemarkPivots {
+    inner: wc::DemarkPivots,
+}
+
+impl Default for WasmDemarkPivots {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = DemarkPivots)]
+impl WasmDemarkPivots {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmDemarkPivots {
+        Self {
+            inner: wc::DemarkPivots::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<JsValue, JsError> {
+        let c = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"pp".into(), &o.pp.into()).ok();
+                Reflect::set(&obj, &"r1".into(), &o.r1.into()).ok();
+                Reflect::set(&obj, &"s1".into(), &o.s1.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let n = open.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let c = wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 3] = o.pp;
+                out[i * 3 + 1] = o.r1;
+                out[i * 3 + 2] = o.s1;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = WilliamsFractals)]
+pub struct WasmWilliamsFractals {
+    inner: wc::WilliamsFractals,
+}
+
+impl Default for WasmWilliamsFractals {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = WilliamsFractals)]
+impl WasmWilliamsFractals {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmWilliamsFractals {
+        Self {
+            inner: wc::WilliamsFractals::new(),
+        }
+    }
+    /// Returns `{ up, down }` where each is the fractal price or `NaN` when no
+    /// fractal was confirmed at the centre of the most recent 5-bar window.
+    /// Returns `null` during the four-bar warmup.
+    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"up".into(), &o.up.unwrap_or(f64::NAN).into()).ok();
+                Reflect::set(&obj, &"down".into(), &o.down.unwrap_or(f64::NAN).into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], low[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                if let Some(v) = o.up {
+                    out[i * 2] = v;
+                }
+                if let Some(v) = o.down {
+                    out[i * 2 + 1] = v;
+                }
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = ZigZag)]
+pub struct WasmZigZag {
+    inner: wc::ZigZag,
+}
+
+#[wasm_bindgen(js_class = ZigZag)]
+impl WasmZigZag {
+    #[wasm_bindgen(constructor)]
+    pub fn new(threshold: f64) -> Result<WasmZigZag, JsError> {
+        Ok(Self {
+            inner: wc::ZigZag::new(threshold).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"swing".into(), &o.swing.into()).ok();
+                Reflect::set(&obj, &"direction".into(), &o.direction.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], low[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.swing;
+                out[i * 2 + 1] = o.direction;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    #[wasm_bindgen(js_name = threshold)]
+    pub fn threshold(&self) -> f64 {
+        self.inner.threshold()
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

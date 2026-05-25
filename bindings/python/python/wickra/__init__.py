@@ -102,6 +102,14 @@ from ._wickra import (
     LinRegSlope,
     ZScore,
     LinRegAngle,
+    # Pivots & S/R
+    ClassicPivots,
+    FibonacciPivots,
+    Camarilla,
+    WoodiePivots,
+    DemarkPivots,
+    WilliamsFractals,
+    ZigZag,
 )
 
 __all__ = [
@@ -183,4 +191,12 @@ __all__ = [
     "LinRegSlope",
     "ZScore",
     "LinRegAngle",
+    # Pivots & S/R
+    "ClassicPivots",
+    "FibonacciPivots",
+    "Camarilla",
+    "WoodiePivots",
+    "DemarkPivots",
+    "WilliamsFractals",
+    "ZigZag",
 ]

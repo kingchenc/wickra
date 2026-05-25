@@ -24,11 +24,12 @@
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
     AcceleratorOscillator, Adl, Adx, Aroon, AroonOscillator, Atr, AtrTrailingStop,
-    AwesomeOscillator, BalanceOfPower, BatchExt, Candle, Cci, ChaikinMoneyFlow, ChaikinOscillator,
-    ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex, Donchian, EaseOfMovement,
-    ForceIndex, Indicator, Keltner, MassIndex, MedianPrice, Mfi, Natr, Obv, Psar, RollingVwap,
-    Stochastic, SuperTrend, TrueRange, TypicalPrice, UltimateOscillator, VolumePriceTrend, Vortex,
-    Vwap, Vwma, WeightedClose, WilliamsR,
+    AwesomeOscillator, BalanceOfPower, BatchExt, Camarilla, Candle, Cci, ChaikinMoneyFlow,
+    ChaikinOscillator, ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex,
+    ClassicPivots, DemarkPivots, Donchian, EaseOfMovement, FibonacciPivots, ForceIndex, Indicator,
+    Keltner, MassIndex, MedianPrice, Mfi, Natr, Obv, Psar, RollingVwap, Stochastic, SuperTrend,
+    TrueRange, TypicalPrice, UltimateOscillator, VolumePriceTrend, Vortex, Vwap, Vwma,
+    WeightedClose, WilliamsFractals, WilliamsR, WoodiePivots, ZigZag,
 };
 
 /// Convert a flat `f64` stream into a `Vec<Candle>` by chunking it into
@@ -127,4 +128,13 @@ fuzz_target!(|data: Vec<f64>| {
         }
         let _ = Stochastic::new(14, 3).unwrap().batch(&candles);
     }
+
+    // --- Pivots & Support/Resistance (multi-output) ---
+    drive(ClassicPivots::new, &candles);
+    drive(FibonacciPivots::new, &candles);
+    drive(Camarilla::new, &candles);
+    drive(WoodiePivots::new, &candles);
+    drive(DemarkPivots::new, &candles);
+    drive(WilliamsFractals::new, &candles);
+    drive(|| ZigZag::new(0.05).unwrap(), &candles);
 });

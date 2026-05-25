@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Family 08 — Pivots & Support/Resistance.** Seven new indicators land
+  the previously empty pivot family: Classic (Floor-Trader) Pivot Points
+  with three resistance and support tiers, Fibonacci Pivots spaced by
+  0.382 / 0.618 / 1.000 of the prior range, Camarilla Pivots
+  (Nick Stott's four-tier `(H − L) · 1.1 / {12, 6, 4, 2}` levels),
+  Woodie Pivots with the close-weighted `PP = (H + L + 2·C) / 4`,
+  DeMark Pivots whose conditional `X` depends on whether the bar closed
+  up, down or flat, Williams Fractals as a five-bar swing detector and
+  ZigZag as a percent-threshold swing tracker. Every level/swing is
+  exposed across Rust, Python, Node and WASM with the standard
+  `update` / `batch` / `reset` / `is_ready` / `warmup_period` surface
+  and matching streaming-vs-batch and reference-value tests. The fuzz
+  candle target now covers all seven.
+
 ## [0.2.7] - 2026-05-24
 
 ### Added

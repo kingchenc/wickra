@@ -2981,3 +2981,585 @@ impl VwmaNode {
         self.inner.warmup_period() as u32
     }
 }
+// ============================== Pivots & S/R ==============================
+
+#[napi(object)]
+pub struct ClassicPivotsValue {
+    pub pp: f64,
+    pub r1: f64,
+    pub r2: f64,
+    pub r3: f64,
+    pub s1: f64,
+    pub s2: f64,
+    pub s3: f64,
+}
+
+#[napi(js_name = "ClassicPivots")]
+pub struct ClassicPivotsNode {
+    inner: wc::ClassicPivots,
+}
+
+#[napi]
+impl ClassicPivotsNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::ClassicPivots::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<ClassicPivotsValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| ClassicPivotsValue {
+                pp: o.pp,
+                r1: o.r1,
+                r2: o.r2,
+                r3: o.r3,
+                s1: o.s1,
+                s2: o.s2,
+                s3: o.s3,
+            }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 7];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 7] = o.pp;
+                out[i * 7 + 1] = o.r1;
+                out[i * 7 + 2] = o.r2;
+                out[i * 7 + 3] = o.r3;
+                out[i * 7 + 4] = o.s1;
+                out[i * 7 + 5] = o.s2;
+                out[i * 7 + 6] = o.s3;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+impl Default for ClassicPivotsNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi(object)]
+pub struct FibonacciPivotsValue {
+    pub pp: f64,
+    pub r1: f64,
+    pub r2: f64,
+    pub r3: f64,
+    pub s1: f64,
+    pub s2: f64,
+    pub s3: f64,
+}
+
+#[napi(js_name = "FibonacciPivots")]
+pub struct FibonacciPivotsNode {
+    inner: wc::FibonacciPivots,
+}
+
+#[napi]
+impl FibonacciPivotsNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::FibonacciPivots::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<FibonacciPivotsValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| FibonacciPivotsValue {
+                pp: o.pp,
+                r1: o.r1,
+                r2: o.r2,
+                r3: o.r3,
+                s1: o.s1,
+                s2: o.s2,
+                s3: o.s3,
+            }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 7];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 7] = o.pp;
+                out[i * 7 + 1] = o.r1;
+                out[i * 7 + 2] = o.r2;
+                out[i * 7 + 3] = o.r3;
+                out[i * 7 + 4] = o.s1;
+                out[i * 7 + 5] = o.s2;
+                out[i * 7 + 6] = o.s3;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+impl Default for FibonacciPivotsNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi(object)]
+pub struct CamarillaValue {
+    pub pp: f64,
+    pub r1: f64,
+    pub r2: f64,
+    pub r3: f64,
+    pub r4: f64,
+    pub s1: f64,
+    pub s2: f64,
+    pub s3: f64,
+    pub s4: f64,
+}
+
+#[napi(js_name = "Camarilla")]
+pub struct CamarillaNode {
+    inner: wc::Camarilla,
+}
+
+#[napi]
+impl CamarillaNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::Camarilla::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<CamarillaValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| CamarillaValue {
+                pp: o.pp,
+                r1: o.r1,
+                r2: o.r2,
+                r3: o.r3,
+                r4: o.r4,
+                s1: o.s1,
+                s2: o.s2,
+                s3: o.s3,
+                s4: o.s4,
+            }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 9];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 9] = o.pp;
+                out[i * 9 + 1] = o.r1;
+                out[i * 9 + 2] = o.r2;
+                out[i * 9 + 3] = o.r3;
+                out[i * 9 + 4] = o.r4;
+                out[i * 9 + 5] = o.s1;
+                out[i * 9 + 6] = o.s2;
+                out[i * 9 + 7] = o.s3;
+                out[i * 9 + 8] = o.s4;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+impl Default for CamarillaNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi(object)]
+pub struct WoodiePivotsValue {
+    pub pp: f64,
+    pub r1: f64,
+    pub r2: f64,
+    pub s1: f64,
+    pub s2: f64,
+}
+
+#[napi(js_name = "WoodiePivots")]
+pub struct WoodiePivotsNode {
+    inner: wc::WoodiePivots,
+}
+
+#[napi]
+impl WoodiePivotsNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::WoodiePivots::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<WoodiePivotsValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| WoodiePivotsValue {
+                pp: o.pp,
+                r1: o.r1,
+                r2: o.r2,
+                s1: o.s1,
+                s2: o.s2,
+            }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 5];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 5] = o.pp;
+                out[i * 5 + 1] = o.r1;
+                out[i * 5 + 2] = o.r2;
+                out[i * 5 + 3] = o.s1;
+                out[i * 5 + 4] = o.s2;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+impl Default for WoodiePivotsNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi(object)]
+pub struct DemarkPivotsValue {
+    pub pp: f64,
+    pub r1: f64,
+    pub s1: f64,
+}
+
+#[napi(js_name = "DemarkPivots")]
+pub struct DemarkPivotsNode {
+    inner: wc::DemarkPivots,
+}
+
+#[napi]
+impl DemarkPivotsNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::DemarkPivots::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<DemarkPivotsValue>> {
+        let candle = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(self.inner.update(candle).map(|o| DemarkPivotsValue {
+            pp: o.pp,
+            r1: o.r1,
+            s1: o.s1,
+        }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open: Vec<f64>,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "open, high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = open.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let candle =
+                wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 3] = o.pp;
+                out[i * 3 + 1] = o.r1;
+                out[i * 3 + 2] = o.s1;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+impl Default for DemarkPivotsNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi(object)]
+pub struct WilliamsFractalsValue {
+    /// Up fractal price; NaN when no up fractal was confirmed on this bar.
+    pub up: f64,
+    /// Down fractal price; NaN when no down fractal was confirmed on this bar.
+    pub down: f64,
+}
+
+#[napi(js_name = "WilliamsFractals")]
+pub struct WilliamsFractalsNode {
+    inner: wc::WilliamsFractals,
+}
+
+#[napi]
+impl WilliamsFractalsNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::WilliamsFractals::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<WilliamsFractalsValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, low, 0.0)?)
+            .map(|o| WilliamsFractalsValue {
+                up: o.up.unwrap_or(f64::NAN),
+                down: o.down.unwrap_or(f64::NAN),
+            }))
+    }
+    #[napi]
+    pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() {
+            return Err(NapiError::from_reason(
+                "high and low must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], low[i], 0.0)?) {
+                if let Some(v) = o.up {
+                    out[i * 2] = v;
+                }
+                if let Some(v) = o.down {
+                    out[i * 2 + 1] = v;
+                }
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+impl Default for WilliamsFractalsNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi(object)]
+pub struct ZigZagValue {
+    pub swing: f64,
+    pub direction: f64,
+}
+
+#[napi(js_name = "ZigZag")]
+pub struct ZigZagNode {
+    inner: wc::ZigZag,
+}
+
+#[napi]
+impl ZigZagNode {
+    #[napi(constructor)]
+    pub fn new(threshold: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::ZigZag::new(threshold).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<ZigZagValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, low, 0.0)?)
+            .map(|o| ZigZagValue {
+                swing: o.swing,
+                direction: o.direction,
+            }))
+    }
+    #[napi]
+    pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() {
+            return Err(NapiError::from_reason(
+                "high and low must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], low[i], 0.0)?) {
+                out[i * 2] = o.swing;
+                out[i * 2 + 1] = o.direction;
+            }
+        }
+        Ok(out)
+    }
+    #[napi(getter)]
+    pub fn threshold(&self) -> f64 {
+        self.inner.threshold()
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}

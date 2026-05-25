@@ -133,6 +133,13 @@ const multi = {
   SuperTrend: { make: () => new wickra.SuperTrend(10, 3), fields: ['value', 'direction'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ChandelierExit: { make: () => new wickra.ChandelierExit(22, 3), fields: ['longStop', 'shortStop'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ChandeKrollStop: { make: () => new wickra.ChandeKrollStop(10, 1, 9), fields: ['stopLong', 'stopShort'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  ClassicPivots: { make: () => new wickra.ClassicPivots(), fields: ['pp', 'r1', 'r2', 'r3', 's1', 's2', 's3'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  FibonacciPivots: { make: () => new wickra.FibonacciPivots(), fields: ['pp', 'r1', 'r2', 'r3', 's1', 's2', 's3'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  Camarilla: { make: () => new wickra.Camarilla(), fields: ['pp', 'r1', 'r2', 'r3', 'r4', 's1', 's2', 's3', 's4'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  WoodiePivots: { make: () => new wickra.WoodiePivots(), fields: ['pp', 'r1', 'r2', 's1', 's2'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  DemarkPivots: { make: () => new wickra.DemarkPivots(), fields: ['pp', 'r1', 's1'], step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  WilliamsFractals: { make: () => new wickra.WilliamsFractals(), fields: ['up', 'down'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  ZigZag: { make: () => new wickra.ZigZag(0.02), fields: ['swing', 'direction'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
 };
 
 for (const [name, d] of Object.entries(multi)) {
