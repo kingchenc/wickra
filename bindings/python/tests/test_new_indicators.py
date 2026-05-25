@@ -1720,7 +1720,7 @@ def test_three_outside_reference():
 
 def test_new_indicators_expose_lifecycle():
     instances = [make() for make, _ in CANDLE_SCALAR.values()]
-    instances += [make() for make, _ in MULTI.values()]
+    instances += [make() for make, *_ in MULTI.values()]
     instances += [cls(*args) for cls, args in SCALAR]
     for ind in instances:
         assert ind.is_ready() is False
