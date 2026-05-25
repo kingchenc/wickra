@@ -1,0 +1,228 @@
+//! Rolling Beta — sensitivity of an asset to a benchmark.
+
+use std::collections::VecDeque;
+
+use crate::error::{Error, Result};
+use crate::traits::Indicator;
+
+/// Rolling Beta of an `asset` series relative to a `benchmark` series.
+///
+/// Each `update` receives one `(asset, benchmark)` pair. Over the trailing
+/// window of `period` pairs:
+///
+/// ```text
+/// cov_ab = (1/n) · Σ a·b − ā·b̄
+/// var_b  = (1/n) · Σ b² − b̄²
+/// Beta   = cov_ab / var_b
+/// ```
+///
+/// Beta measures how much the asset moves for a unit move in the
+/// benchmark. A reading of `1.0` means the two move together one-for-one;
+/// `2.0` means the asset typically doubles the benchmark's moves;
+/// `0.5` means it moves only half as much; `0.0` means moves are
+/// uncorrelated; negative Betas signal a hedge. It is the slope of the
+/// OLS regression of the asset on the benchmark and the foundation of the
+/// CAPM. Unlike [`crate::PearsonCorrelation`], Beta is *not* unit-free —
+/// it carries the ratio of standard deviations.
+///
+/// Each `update` is O(1): four running sums (`Σa`, `Σb`, `Σb²`, `Σa·b`)
+/// are maintained as the window slides. A flat benchmark window has zero
+/// variance and Beta is undefined; the indicator returns `0` in that
+/// case rather than producing `NaN`.
+///
+/// Conventionally Beta is computed on **returns** (typically log-returns)
+/// rather than raw prices; feed the indicator pre-computed returns if
+/// that is your convention. The pure rolling OLS slope is the same
+/// either way.
+///
+/// # Example
+///
+/// ```
+/// use wickra_core::{Beta, Indicator};
+///
+/// let mut indicator = Beta::new(20).unwrap();
+/// let mut last = None;
+/// for i in 0..40 {
+///     // Asset doubles every benchmark move.
+///     last = indicator.update((2.0 * f64::from(i), f64::from(i)));
+/// }
+/// assert!((last.unwrap() - 2.0).abs() < 1e-9);
+/// ```
+#[derive(Debug, Clone)]
+pub struct Beta {
+    period: usize,
+    window: VecDeque<(f64, f64)>,
+    sum_a: f64,
+    sum_b: f64,
+    sum_bb: f64,
+    sum_ab: f64,
+}
+
+impl Beta {
+    /// Construct a new rolling Beta.
+    ///
+    /// # Errors
+    /// Returns [`Error::InvalidPeriod`] if `period < 2`.
+    pub fn new(period: usize) -> Result<Self> {
+        if period < 2 {
+            return Err(Error::InvalidPeriod {
+                message: "beta needs period >= 2",
+            });
+        }
+        Ok(Self {
+            period,
+            window: VecDeque::with_capacity(period),
+            sum_a: 0.0,
+            sum_b: 0.0,
+            sum_bb: 0.0,
+            sum_ab: 0.0,
+        })
+    }
+
+    /// Configured period.
+    pub const fn period(&self) -> usize {
+        self.period
+    }
+}
+
+impl Indicator for Beta {
+    /// `(asset, benchmark)` pair.
+    type Input = (f64, f64);
+    type Output = f64;
+
+    fn update(&mut self, input: (f64, f64)) -> Option<f64> {
+        let (a, b) = input;
+        if self.window.len() == self.period {
+            let (oa, ob) = self.window.pop_front().expect("non-empty");
+            self.sum_a -= oa;
+            self.sum_b -= ob;
+            self.sum_bb -= ob * ob;
+            self.sum_ab -= oa * ob;
+        }
+        self.window.push_back((a, b));
+        self.sum_a += a;
+        self.sum_b += b;
+        self.sum_bb += b * b;
+        self.sum_ab += a * b;
+        if self.window.len() < self.period {
+            return None;
+        }
+        let n = self.period as f64;
+        let mean_a = self.sum_a / n;
+        let mean_b = self.sum_b / n;
+        let var_b = (self.sum_bb / n - mean_b * mean_b).max(0.0);
+        let cov = self.sum_ab / n - mean_a * mean_b;
+        if var_b == 0.0 {
+            // A flat benchmark has no defined beta.
+            return Some(0.0);
+        }
+        Some(cov / var_b)
+    }
+
+    fn reset(&mut self) {
+        self.window.clear();
+        self.sum_a = 0.0;
+        self.sum_b = 0.0;
+        self.sum_bb = 0.0;
+        self.sum_ab = 0.0;
+    }
+
+    fn warmup_period(&self) -> usize {
+        self.period
+    }
+
+    fn is_ready(&self) -> bool {
+        self.window.len() == self.period
+    }
+
+    fn name(&self) -> &'static str {
+        "Beta"
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::traits::BatchExt;
+    use approx::assert_relative_eq;
+
+    #[test]
+    fn rejects_period_below_two() {
+        assert!(Beta::new(0).is_err());
+        assert!(Beta::new(1).is_err());
+        assert!(Beta::new(2).is_ok());
+    }
+
+    #[test]
+    fn accessors_and_metadata() {
+        let b = Beta::new(14).unwrap();
+        assert_eq!(b.period(), 14);
+        assert_eq!(b.warmup_period(), 14);
+        assert_eq!(b.name(), "Beta");
+    }
+
+    #[test]
+    fn perfect_two_to_one_relationship() {
+        let pairs: Vec<(f64, f64)> = (0..10)
+            .map(|i| (2.0 * f64::from(i), f64::from(i)))
+            .collect();
+        let last = Beta::new(5)
+            .unwrap()
+            .batch(&pairs)
+            .into_iter()
+            .flatten()
+            .last()
+            .unwrap();
+        assert_relative_eq!(last, 2.0, epsilon = 1e-9);
+    }
+
+    #[test]
+    fn perfect_negative_one() {
+        let pairs: Vec<(f64, f64)> = (0..10).map(|i| (-f64::from(i), f64::from(i))).collect();
+        let last = Beta::new(5)
+            .unwrap()
+            .batch(&pairs)
+            .into_iter()
+            .flatten()
+            .last()
+            .unwrap();
+        assert_relative_eq!(last, -1.0, epsilon = 1e-9);
+    }
+
+    #[test]
+    fn constant_benchmark_yields_zero() {
+        let pairs: Vec<(f64, f64)> = (0..10).map(|i| (f64::from(i), 7.0)).collect();
+        let last = Beta::new(5)
+            .unwrap()
+            .batch(&pairs)
+            .into_iter()
+            .flatten()
+            .last()
+            .unwrap();
+        assert_relative_eq!(last, 0.0, epsilon = 1e-12);
+    }
+
+    #[test]
+    fn reset_clears_state() {
+        let mut b = Beta::new(5).unwrap();
+        b.batch(&[(1.0, 2.0), (2.0, 4.0), (3.0, 6.0), (4.0, 8.0), (5.0, 10.0)]);
+        assert!(b.is_ready());
+        b.reset();
+        assert!(!b.is_ready());
+        assert_eq!(b.update((1.0, 1.0)), None);
+    }
+
+    #[test]
+    fn batch_equals_streaming() {
+        let pairs: Vec<(f64, f64)> = (0..60)
+            .map(|i| {
+                let t = f64::from(i);
+                (t.sin() * 2.0 + 0.3 * t.cos(), t.sin())
+            })
+            .collect();
+        let batch = Beta::new(14).unwrap().batch(&pairs);
+        let mut b = Beta::new(14).unwrap();
+        let streamed: Vec<_> = pairs.iter().map(|p| b.update(*p)).collect();
+        assert_eq!(batch, streamed);
+    }
+}

@@ -95,6 +95,17 @@ SCALAR = [
     (ta.AdaptiveCycle, ()),
     (ta.SineWave, ()),
     (ta.FAMA, (0.5, 0.05)),
+    # Family 12 — Statistik / Regression
+    (ta.Variance, (20,)),
+    (ta.CoefficientOfVariation, (20,)),
+    (ta.Skewness, (20,)),
+    (ta.Kurtosis, (20,)),
+    (ta.StandardError, (14,)),
+    (ta.DetrendedStdDev, (14,)),
+    (ta.RSquared, (14,)),
+    (ta.MedianAbsoluteDeviation, (20,)),
+    (ta.Autocorrelation, (20, 1)),
+    (ta.HurstExponent, (40, 4)),
 ]
 
 
@@ -906,6 +917,111 @@ def test_z_score_reference():
     out = ta.ZScore(2).batch(np.array([1.0, 3.0]))
     assert math.isnan(out[0])
     assert out[1] == pytest.approx(1.0)
+
+
+# --- Family 12: Statistik / Regression reference values ------------------
+
+
+def test_variance_reference():
+    # Variance(3) of [2, 4, 6]: mean 4, variance (4 + 0 + 4) / 3 = 8/3.
+    out = ta.Variance(3).batch(np.array([2.0, 4.0, 6.0]))
+    assert math.isnan(out[1])
+    assert out[2] == pytest.approx(8.0 / 3.0)
+
+
+def test_coefficient_of_variation_reference():
+    # CV(3) of [2, 4, 6]: sd / mean = sqrt(8/3) / 4.
+    out = ta.CoefficientOfVariation(3).batch(np.array([2.0, 4.0, 6.0]))
+    assert out[2] == pytest.approx(math.sqrt(8.0 / 3.0) / 4.0)
+
+
+def test_skewness_symmetric_window_is_zero():
+    # Symmetric window has zero Pearson skewness.
+    out = ta.Skewness(5).batch(np.array([-2.0, -1.0, 0.0, 1.0, 2.0]))
+    assert out[4] == pytest.approx(0.0, abs=1e-9)
+
+
+def test_kurtosis_two_point_distribution_minimum():
+    # Alternating {-1, 1} has m4/m2² = 1, so excess kurtosis = -2.
+    out = ta.Kurtosis(4).batch(np.array([-1.0, 1.0, -1.0, 1.0]))
+    assert out[3] == pytest.approx(-2.0, abs=1e-9)
+
+
+def test_standard_error_perfect_line_is_zero():
+    # Residuals are zero on a perfectly linear series.
+    out = ta.StandardError(5).batch(np.linspace(1.0, 20.0, num=20, dtype=np.float64))
+    finite = out[~np.isnan(out)]
+    assert np.allclose(finite, 0.0, atol=1e-9)
+
+
+def test_detrended_std_dev_perfect_line_is_zero():
+    out = ta.DetrendedStdDev(5).batch(np.linspace(1.0, 20.0, num=20, dtype=np.float64))
+    finite = out[~np.isnan(out)]
+    assert np.allclose(finite, 0.0, atol=1e-9)
+
+
+def test_r_squared_perfect_line_is_one():
+    out = ta.RSquared(5).batch(np.linspace(1.0, 20.0, num=20, dtype=np.float64))
+    finite = out[~np.isnan(out)]
+    assert np.allclose(finite, 1.0, atol=1e-9)
+
+
+def test_median_absolute_deviation_ignores_single_outlier():
+    # 9 equal values + 1 huge outlier: MAD is still 0 (more than half agree).
+    prices = np.array([5.0] * 9 + [1000.0], dtype=np.float64)
+    out = ta.MedianAbsoluteDeviation(10).batch(prices)
+    assert out[9] == pytest.approx(0.0, abs=1e-12)
+
+
+def test_autocorrelation_alternating_series_negative():
+    # ±1 alternating: lag-1 ACF must be strongly negative.
+    prices = np.array([-1.0 if i % 2 == 0 else 1.0 for i in range(20)], dtype=np.float64)
+    out = ta.Autocorrelation(10, 1).batch(prices)
+    assert out[-1] < -0.5
+
+
+def test_hurst_exponent_trending_above_half():
+    # A clean monotone ramp is the textbook persistent series.
+    prices = np.arange(200, dtype=np.float64)
+    out = ta.HurstExponent(100, 4).batch(prices)
+    assert out[-1] > 0.5
+
+
+def test_pearson_correlation_perfect_positive_is_one():
+    x = np.arange(10, dtype=np.float64)
+    y = 2.0 * x + 3.0
+    out = ta.PearsonCorrelation(5).batch(x, y)
+    assert out[-1] == pytest.approx(1.0, abs=1e-9)
+
+
+def test_beta_perfect_two_to_one():
+    benchmark = np.arange(10, dtype=np.float64)
+    asset = 2.0 * benchmark
+    out = ta.Beta(5).batch(asset, benchmark)
+    assert out[-1] == pytest.approx(2.0, abs=1e-9)
+
+
+def test_spearman_correlation_monotone_nonlinear_is_one():
+    # y = x^3 is monotone non-linear; Spearman = 1 (Pearson would not be).
+    x = np.arange(1.0, 11.0, dtype=np.float64)
+    y = x**3
+    out = ta.SpearmanCorrelation(5).batch(x, y)
+    assert out[-1] == pytest.approx(1.0, abs=1e-9)
+
+
+def test_pair_indicators_streaming_matches_batch():
+    rng = np.linspace(0.0, 10.0, num=60, dtype=np.float64)
+    x = np.sin(rng) + 0.1 * rng
+    y = np.cos(rng * 0.3) + 0.05 * rng
+
+    for cls, args in [(ta.PearsonCorrelation, (14,)), (ta.Beta, (14,)), (ta.SpearmanCorrelation, (14,))]:
+        batch = cls(*args).batch(x, y)
+        streamer = cls(*args)
+        streamed = []
+        for i in range(x.size):
+            v = streamer.update(float(x[i]), float(y[i]))
+            streamed.append(math.nan if v is None else float(v))
+        assert _eq_nan(batch, np.array(streamed, dtype=np.float64)), f"{cls.__name__} mismatch"
 
 
 # --- Family 10 — Ehlers / Cycle ---

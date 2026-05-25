@@ -109,7 +109,7 @@ python -m benchmarks.compare_libraries
 
 ## Indicators
 
-165 streaming-first indicators across thirteen families. Every one passes the
+178 streaming-first indicators across thirteen families. Every one passes the
 `batch == streaming` equivalence test, reference-value tests, and reset
 semantics tests.
 
@@ -123,7 +123,7 @@ semantics tests.
 | Bands & Channels     | MA Envelope, Acceleration Bands, STARC Bands, ATR Bands, Hurst Channel, LinReg Channel, Standard Error Bands, Double Bollinger Bands, TTM Squeeze, Fractal Chaos Bands, VWAP StdDev Bands |
 | Trailing Stops       | Parabolic SAR, SuperTrend, Chandelier Exit, Chande Kroll Stop, ATR Trailing Stop, HiLo Activator, Volty Stop, Yo-Yo Exit, Donchian Channel Stop, Percentage Trailing Stop, Step Trailing Stop, Renko Trailing Stop |
 | Volume               | OBV, VWAP (cumulative + rolling), ADL, Volume-Price Trend, Chaikin Money Flow, Chaikin Oscillator, Force Index, Ease of Movement, Klinger Volume Oscillator, Volume Oscillator, NVI, PVI, Williams A/D, Anchored VWAP, Demand Index, TSV, VZO, Market Facilitation Index |
-| Price Statistics     | Typical Price, Median Price, Weighted Close, Linear Regression, Linear Regression Slope, Z-Score, Linear Regression Angle |
+| Price Statistics     | Typical Price, Median Price, Weighted Close, Linear Regression, Linear Regression Slope, Z-Score, Linear Regression Angle, Variance, Coefficient of Variation, Skewness, Kurtosis, Standard Error, Detrended StdDev, R², Median Absolute Deviation, Autocorrelation, Hurst Exponent, Pearson Correlation, Beta, Spearman Correlation |
 | Ehlers / Cycle (DSP) | MAMA, FAMA, Fisher Transform, Inverse Fisher Transform, SuperSmoother, Hilbert Dominant Cycle, Sine Wave, Decycler, Decycler Oscillator, Roofing Filter, Center of Gravity, Cybernetic Cycle, Adaptive Cycle, Empirical Mode Decomposition, Ehlers Stochastic, Instantaneous Trendline |
 | Pivots & S/R         | Classic Pivots, Fibonacci Pivots, Camarilla, Woodie Pivots, DeMark Pivots, Williams Fractals, ZigZag |
 | DeMark               | TD Setup, TD Sequential, TD DeMarker, TD REI, TD Pressure, TD Combo, TD Countdown, TD Lines, TD Range Projection, TD Differential, TD Open, TD Risk Level |
@@ -200,7 +200,7 @@ A Python live-trading example using the public `websockets` package lives at
 ```
 wickra/
 ├── crates/
-│   ├── wickra-core/         core engine + all 165 indicators
+│   ├── wickra-core/         core engine + all 178 indicators
 │   ├── wickra/              top-level facade crate (publishes on crates.io) + benches/
 │   └── wickra-data/         CSV reader, tick aggregator, live exchange feeds
 ├── bindings/

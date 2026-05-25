@@ -15,16 +15,18 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    AdaptiveCycle, Alma, Apo, BatchExt, BollingerBands, CenterOfGravity, Cfo, Cmo, ConnorsRsi,
-    Coppock, CyberneticCycle, Decycler, DecyclerOscillator, Dema, DoubleBollinger, Dpo,
-    EhlersStochastic, ElderImpulse, Ema, EmpiricalModeDecomposition, Fama, FisherTransform,
-    Frama, HilbertDominantCycle, HistoricalVolatility, Hma, Indicator, InstantaneousTrendline,
-    InverseFisherTransform, Jma, Kama, Kst, LaguerreRsi, LinRegAngle, LinRegChannel,
-    LinRegSlope, LinearRegression, MaEnvelope, MacdIndicator, Mama, McGinleyDynamic, Mom,
-    PercentageTrailingStop, Pmo, Ppo, RenkoTrailingStop, Roc, RoofingFilter, Rsi, RviVolatility,
-    SineWave, Sma, Smma, StandardErrorBands, Stc, StdDev, StepTrailingStop, StochRsi,
-    SuperSmoother, T3, Tema, Tii, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Vidya,
-    Wma, ZScore, ZeroLagMacd, Zlema,
+    AdaptiveCycle, Alma, Apo, Autocorrelation, BatchExt, Beta, BollingerBands, CenterOfGravity,
+    Cfo, Cmo, CoefficientOfVariation, ConnorsRsi, Coppock, CyberneticCycle, Decycler,
+    DecyclerOscillator, Dema, DetrendedStdDev, DoubleBollinger, Dpo, EhlersStochastic,
+    ElderImpulse, Ema, EmpiricalModeDecomposition, Fama, FisherTransform, Frama,
+    HilbertDominantCycle, HistoricalVolatility, Hma, HurstExponent, Indicator,
+    InstantaneousTrendline, InverseFisherTransform, Jma, Kama, Kst, Kurtosis, LaguerreRsi,
+    LinRegAngle, LinRegChannel, LinRegSlope, LinearRegression, MaEnvelope, MacdIndicator, Mama,
+    McGinleyDynamic, MedianAbsoluteDeviation, Mom, PearsonCorrelation, PercentageTrailingStop,
+    Pmo, Ppo, RSquared, RenkoTrailingStop, Roc, RoofingFilter, Rsi, RviVolatility, SineWave,
+    Skewness, Sma, Smma, SpearmanCorrelation, StandardError, StandardErrorBands, Stc, StdDev,
+    StepTrailingStop, StochRsi, SuperSmoother, T3, Tema, Tii, Trima, Trix, Tsi, UlcerIndex,
+    Variance, VerticalHorizontalFilter, Vidya, Wma, ZScore, ZeroLagMacd, Zlema,
 };
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
@@ -86,6 +88,18 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| LinRegAngle::new(14).unwrap(), &data);
     drive(|| VerticalHorizontalFilter::new(14).unwrap(), &data);
     drive(|| ZScore::new(14).unwrap(), &data);
+    drive(|| Variance::new(14).unwrap(), &data);
+    drive(|| CoefficientOfVariation::new(14).unwrap(), &data);
+    drive(|| Skewness::new(14).unwrap(), &data);
+    drive(|| Kurtosis::new(14).unwrap(), &data);
+    drive(|| StandardError::new(14).unwrap(), &data);
+    drive(|| DetrendedStdDev::new(14).unwrap(), &data);
+    drive(|| RSquared::new(14).unwrap(), &data);
+    drive(|| MedianAbsoluteDeviation::new(14).unwrap(), &data);
+    drive(|| Autocorrelation::new(14, 2).unwrap(), &data);
+    // HurstExponent needs `period >= 2 * chunks`; 16/4 is the cheapest fit
+    // that still exercises every code path.
+    drive(|| HurstExponent::new(16, 4).unwrap(), &data);
     drive(|| RviVolatility::new(10).unwrap(), &data);
     drive(|| LaguerreRsi::new(0.5).unwrap(), &data);
     drive(|| ConnorsRsi::classic(), &data);
@@ -185,5 +199,18 @@ fuzz_target!(|data: Vec<f64>| {
             let _ = db.update(x);
         }
         let _ = DoubleBollinger::new(20, 1.0, 2.0).unwrap().batch(&data);
+    }
+
+    // Family 12: Two-series indicators — pair adjacent samples of `data`.
+    {
+        let mut p = PearsonCorrelation::new(14).unwrap();
+        let mut b = Beta::new(14).unwrap();
+        let mut s = SpearmanCorrelation::new(14).unwrap();
+        for w in data.windows(2) {
+            let pair = (w[0], w[1]);
+            let _ = p.update(pair);
+            let _ = b.update(pair);
+            let _ = s.update(pair);
+        }
     }
 });

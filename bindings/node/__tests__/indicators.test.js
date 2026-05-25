@@ -91,6 +91,17 @@ const scalarFactories = {
   AdaptiveCycle: () => new wickra.AdaptiveCycle(),
   SineWave: () => new wickra.SineWave(),
   FAMA: () => new wickra.FAMA(0.5, 0.05),
+  // Family 12 — Statistik / Regression
+  Variance: () => new wickra.Variance(20),
+  CoefficientOfVariation: () => new wickra.CoefficientOfVariation(20),
+  Skewness: () => new wickra.Skewness(20),
+  Kurtosis: () => new wickra.Kurtosis(20),
+  StandardError: () => new wickra.StandardError(14),
+  DetrendedStdDev: () => new wickra.DetrendedStdDev(14),
+  RSquared: () => new wickra.RSquared(14),
+  MedianAbsoluteDeviation: () => new wickra.MedianAbsoluteDeviation(20),
+  Autocorrelation: () => new wickra.Autocorrelation(20, 1),
+  HurstExponent: () => new wickra.HurstExponent(40, 4),
 };
 
 for (const [name, make] of Object.entries(scalarFactories)) {
@@ -358,6 +369,80 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+// --- Family 12: two-series indicators (Pearson / Beta / Spearman) ---
+
+const pairFactories = {
+  PearsonCorrelation: () => new wickra.PearsonCorrelation(14),
+  Beta: () => new wickra.Beta(14),
+  SpearmanCorrelation: () => new wickra.SpearmanCorrelation(14),
+};
+
+for (const [name, make] of Object.entries(pairFactories)) {
+  test(`${name}: streaming update matches batch over a pair of series`, () => {
+    const xs = Array.from({ length: N }, (_, i) => Math.sin(i * 0.2) + 0.05 * i);
+    const ys = Array.from({ length: N }, (_, i) => Math.cos(i * 0.3) + 0.02 * i);
+    const batch = make().batch(xs, ys);
+    const streaming = make();
+    assert.equal(batch.length, N);
+    for (let i = 0; i < N; i++) {
+      const s = num(streaming.update(xs[i], ys[i]));
+      assert.ok(eq(s, batch[i]), `${name} mismatch at ${i}: ${s} vs ${batch[i]}`);
+    }
+  });
+}
+
+test('PearsonCorrelation perfect positive is 1', () => {
+  const x = Array.from({ length: 10 }, (_, i) => i);
+  const y = x.map((v) => 2 * v + 3);
+  const out = new wickra.PearsonCorrelation(5).batch(x, y);
+  assert.ok(Math.abs(out[out.length - 1] - 1) < 1e-9);
+});
+
+test('Beta perfect two-to-one', () => {
+  const bench = Array.from({ length: 10 }, (_, i) => i);
+  const asset = bench.map((v) => 2 * v);
+  const out = new wickra.Beta(5).batch(asset, bench);
+  assert.ok(Math.abs(out[out.length - 1] - 2) < 1e-9);
+});
+
+test('SpearmanCorrelation monotone non-linear is 1', () => {
+  const x = Array.from({ length: 10 }, (_, i) => i + 1);
+  const y = x.map((v) => v ** 3);
+  const out = new wickra.SpearmanCorrelation(5).batch(x, y);
+  assert.ok(Math.abs(out[out.length - 1] - 1) < 1e-9);
+});
+
+test('Variance(3) of [2, 4, 6] equals 8/3', () => {
+  const out = new wickra.Variance(3).batch([2, 4, 6]);
+  assert.ok(Math.abs(out[2] - 8 / 3) < 1e-12);
+});
+
+test('RSquared on a perfect line is 1', () => {
+  const xs = Array.from({ length: 20 }, (_, i) => 2 * i + 5);
+  const out = new wickra.RSquared(5).batch(xs);
+  for (let i = 5; i < out.length; i++) {
+    assert.ok(Math.abs(out[i] - 1) < 1e-9);
+  }
+});
+
+test('MedianAbsoluteDeviation ignores a single huge outlier', () => {
+  const xs = Array(9).fill(5).concat([1000]);
+  const out = new wickra.MedianAbsoluteDeviation(10).batch(xs);
+  assert.ok(Math.abs(out[9]) < 1e-12);
+});
+
+test('Autocorrelation of an alternating series is strongly negative at lag 1', () => {
+  const xs = Array.from({ length: 20 }, (_, i) => (i % 2 === 0 ? -1 : 1));
+  const out = new wickra.Autocorrelation(10, 1).batch(xs);
+  assert.ok(out[out.length - 1] < -0.5);
+});
+
+test('HurstExponent of a monotone ramp is above 0.5', () => {
+  const xs = Array.from({ length: 200 }, (_, i) => i);
+  const out = new wickra.HurstExponent(100, 4).batch(xs);
+  assert.ok(out[out.length - 1] > 0.5);
 });
 
 test('Ichimoku classic warmup is 77 and tenkan emits at bar 9', () => {

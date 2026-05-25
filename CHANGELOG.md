@@ -8,6 +8,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Family 12 — Statistik / Regression (13 indicators).** A complete
+  statistical toolkit for analysing rolling price distributions and
+  cross-series relationships. Every indicator ships in the Rust core
+  plus all three bindings (Python, Node, WASM), with full streaming +
+  batch parity, fuzz coverage, and benches against the BTCUSDT
+  dataset:
+  - **Variance** — rolling population variance (`StdDev` squared).
+  - **CoefficientOfVariation** — `StdDev / Mean`, dimensionless dispersion.
+  - **Skewness** — rolling third standardised moment (Pearson skewness).
+  - **Kurtosis** — rolling excess kurtosis (fourth moment minus `3`).
+  - **StandardError** — standard error of estimate for the rolling OLS
+    fit, with `n − 2` residual degrees of freedom.
+  - **DetrendedStdDev** — population standard deviation of OLS
+    residuals (the StdDev that remains after subtracting the linear
+    trend).
+  - **RSquared** — coefficient of determination of the rolling OLS
+    fit; the trend-quality filter.
+  - **MedianAbsoluteDeviation** — robust dispersion measure that
+    survives outliers (median of absolute deviations from the median).
+  - **Autocorrelation** — rolling lag-`k` Pearson autocorrelation;
+    detects periodicity and tests for white-noise behaviour.
+  - **HurstExponent** — R/S-analysis estimator of trend-persistence
+    vs. mean-reversion regime (`0.5` is random walk).
+  - **PearsonCorrelation** — rolling correlation between two
+    synchronised series; takes `(x, y)` pairs.
+  - **Beta** — rolling OLS slope of an asset on a benchmark; the CAPM
+    sensitivity coefficient.
+  - **SpearmanCorrelation** — rolling rank correlation (monotone,
+    outlier-robust analogue of Pearson).
+
+  Indicator count: 71 → 84.
 - **Family 13 — Ichimoku & alternative charts.** Two new indicators:
   - `Ichimoku` (Ichimoku Kinko Hyo) — the full five-line cloud system
     (Tenkan-sen, Kijun-sen, Senkou Span A/B, Chikou Span) with the

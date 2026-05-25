@@ -10116,6 +10116,706 @@ impl PyHeikinAshi {
     }
 }
 
+#[pyclass(name = "Variance", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyVariance {
+    inner: wc::Variance,
+}
+
+#[pymethods]
+impl PyVariance {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Variance::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("Variance(period={})", self.inner.period())
+    }
+}
+
+// ============================== CoefficientOfVariation ==============================
+
+#[pyclass(
+    name = "CoefficientOfVariation",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyCoefficientOfVariation {
+    inner: wc::CoefficientOfVariation,
+}
+
+#[pymethods]
+impl PyCoefficientOfVariation {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::CoefficientOfVariation::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("CoefficientOfVariation(period={})", self.inner.period())
+    }
+}
+
+// ============================== Skewness ==============================
+
+#[pyclass(name = "Skewness", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PySkewness {
+    inner: wc::Skewness,
+}
+
+#[pymethods]
+impl PySkewness {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Skewness::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("Skewness(period={})", self.inner.period())
+    }
+}
+
+// ============================== Kurtosis ==============================
+
+#[pyclass(name = "Kurtosis", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyKurtosis {
+    inner: wc::Kurtosis,
+}
+
+#[pymethods]
+impl PyKurtosis {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Kurtosis::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("Kurtosis(period={})", self.inner.period())
+    }
+}
+
+// ============================== StandardError ==============================
+
+#[pyclass(name = "StandardError", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyStandardError {
+    inner: wc::StandardError,
+}
+
+#[pymethods]
+impl PyStandardError {
+    #[new]
+    #[pyo3(signature = (period=14))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::StandardError::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("StandardError(period={})", self.inner.period())
+    }
+}
+
+// ============================== DetrendedStdDev ==============================
+
+#[pyclass(
+    name = "DetrendedStdDev",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyDetrendedStdDev {
+    inner: wc::DetrendedStdDev,
+}
+
+#[pymethods]
+impl PyDetrendedStdDev {
+    #[new]
+    #[pyo3(signature = (period=14))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::DetrendedStdDev::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("DetrendedStdDev(period={})", self.inner.period())
+    }
+}
+
+// ============================== RSquared ==============================
+
+#[pyclass(name = "RSquared", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyRSquared {
+    inner: wc::RSquared,
+}
+
+#[pymethods]
+impl PyRSquared {
+    #[new]
+    #[pyo3(signature = (period=14))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::RSquared::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("RSquared(period={})", self.inner.period())
+    }
+}
+
+// ============================== Autocorrelation ==============================
+
+#[pyclass(
+    name = "Autocorrelation",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyAutocorrelation {
+    inner: wc::Autocorrelation,
+}
+
+#[pymethods]
+impl PyAutocorrelation {
+    #[new]
+    #[pyo3(signature = (period=20, lag=1))]
+    fn new(period: usize, lag: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Autocorrelation::new(period, lag).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn lag(&self) -> usize {
+        self.inner.lag()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "Autocorrelation(period={}, lag={})",
+            self.inner.period(),
+            self.inner.lag()
+        )
+    }
+}
+
+// ============================== MedianAbsoluteDeviation ==============================
+
+#[pyclass(
+    name = "MedianAbsoluteDeviation",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyMedianAbsoluteDeviation {
+    inner: wc::MedianAbsoluteDeviation,
+}
+
+#[pymethods]
+impl PyMedianAbsoluteDeviation {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::MedianAbsoluteDeviation::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("MedianAbsoluteDeviation(period={})", self.inner.period())
+    }
+}
+
+// ============================== HurstExponent ==============================
+
+#[pyclass(name = "HurstExponent", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyHurstExponent {
+    inner: wc::HurstExponent,
+}
+
+#[pymethods]
+impl PyHurstExponent {
+    #[new]
+    #[pyo3(signature = (period=100, chunks=4))]
+    fn new(period: usize, chunks: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::HurstExponent::new(period, chunks).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn chunks(&self) -> usize {
+        self.inner.chunks()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "HurstExponent(period={}, chunks={})",
+            self.inner.period(),
+            self.inner.chunks()
+        )
+    }
+}
+
+// ============================== PearsonCorrelation ==============================
+
+#[pyclass(
+    name = "PearsonCorrelation",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyPearsonCorrelation {
+    inner: wc::PearsonCorrelation,
+}
+
+#[pymethods]
+impl PyPearsonCorrelation {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::PearsonCorrelation::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, x: f64, y: f64) -> Option<f64> {
+        self.inner.update((x, y))
+    }
+    /// Batch over two equally-sized numpy arrays.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        x: PyReadonlyArray1<'py, f64>,
+        y: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let xs = x
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let ys = y
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if xs.len() != ys.len() {
+            return Err(PyValueError::new_err("x and y must be equal length"));
+        }
+        let mut out = Vec::with_capacity(xs.len());
+        for i in 0..xs.len() {
+            out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("PearsonCorrelation(period={})", self.inner.period())
+    }
+}
+
+// ============================== Beta ==============================
+
+#[pyclass(name = "Beta", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyBeta {
+    inner: wc::Beta,
+}
+
+#[pymethods]
+impl PyBeta {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Beta::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, asset: f64, benchmark: f64) -> Option<f64> {
+        self.inner.update((asset, benchmark))
+    }
+    /// Batch over two equally-sized numpy arrays: asset and benchmark.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        asset: PyReadonlyArray1<'py, f64>,
+        benchmark: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let a = asset
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let b = benchmark
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if a.len() != b.len() {
+            return Err(PyValueError::new_err(
+                "asset and benchmark must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(a.len());
+        for i in 0..a.len() {
+            out.push(self.inner.update((a[i], b[i])).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("Beta(period={})", self.inner.period())
+    }
+}
+
+// ============================== SpearmanCorrelation ==============================
+
+#[pyclass(
+    name = "SpearmanCorrelation",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PySpearmanCorrelation {
+    inner: wc::SpearmanCorrelation,
+}
+
+#[pymethods]
+impl PySpearmanCorrelation {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::SpearmanCorrelation::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, x: f64, y: f64) -> Option<f64> {
+        self.inner.update((x, y))
+    }
+    /// Batch over two equally-sized numpy arrays.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        x: PyReadonlyArray1<'py, f64>,
+        y: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let xs = x
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let ys = y
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if xs.len() != ys.len() {
+            return Err(PyValueError::new_err("x and y must be equal length"));
+        }
+        let mut out = Vec::with_capacity(xs.len());
+        for i in 0..xs.len() {
+            out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("SpearmanCorrelation(period={})", self.inner.period())
+    }
+}
+
 // ============================== Module ==============================
 
 #[pymodule]
@@ -10291,5 +10991,18 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     // Family 13 — Ichimoku & alternative charts
     m.add_class::<PyIchimoku>()?;
     m.add_class::<PyHeikinAshi>()?;
+    m.add_class::<PyVariance>()?;
+    m.add_class::<PyCoefficientOfVariation>()?;
+    m.add_class::<PySkewness>()?;
+    m.add_class::<PyKurtosis>()?;
+    m.add_class::<PyStandardError>()?;
+    m.add_class::<PyDetrendedStdDev>()?;
+    m.add_class::<PyRSquared>()?;
+    m.add_class::<PyAutocorrelation>()?;
+    m.add_class::<PyMedianAbsoluteDeviation>()?;
+    m.add_class::<PyHurstExponent>()?;
+    m.add_class::<PyPearsonCorrelation>()?;
+    m.add_class::<PyBeta>()?;
+    m.add_class::<PySpearmanCorrelation>()?;
     Ok(())
 }

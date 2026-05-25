@@ -20,19 +20,21 @@ use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Through
 use std::hint::black_box;
 use wickra::{
     AccelerationBands, AdOscillator, AdaptiveCycle, Adxr, Alma, AnchoredVwap, Atr, AtrBands,
-    BatchExt, BollingerBands, Camarilla, Candle, CenterOfGravity, ClassicPivots, CyberneticCycle,
-    Decycler, DecyclerOscillator, DemandIndex, DemarkPivots, DonchianStop, DoubleBollinger,
-    EhlersStochastic, Ema, EmpiricalModeDecomposition, Fama, FibonacciPivots, FisherTransform,
-    FractalChaosBands, Frama, GarmanKlassVolatility, HeikinAshi, HiLoActivator,
-    HilbertDominantCycle, HurstChannel, Ichimoku, Indicator, InstantaneousTrendline,
-    InverseFisherTransform, Jma, Kst, Kvo, LinRegChannel, MaEnvelope, MacdIndicator, Mama,
-    MarketFacilitationIndex, McGinleyDynamic, Nvi, Obv, ParkinsonVolatility,
-    PercentageTrailingStop, Pgo, Pvi, RenkoTrailingStop, RogersSatchellVolatility, RoofingFilter,
-    Rsi, Rvi, RviVolatility, Rwi, SineWave, Sma, StandardErrorBands, StarcBands, StepTrailingStop,
-    Stochastic, SuperSmoother, TdCombo, TdCountdown, TdDeMarker, TdDifferential, TdLines, TdOpen,
-    TdPressure, TdRangeProjection, TdRei, TdRiskLevel, TdSequential, TdSetup, Tii, Tsv, TtmSqueeze,
-    Vidya, VoltyStop, VolumeOscillator, VwapStdDevBands, Vzo, WaveTrend, WilliamsFractals, Wma,
-    WoodiePivots, YangZhangVolatility, YoyoExit, ZigZag,
+    Autocorrelation, BatchExt, BollingerBands, Camarilla, Candle, CenterOfGravity, ClassicPivots,
+    CoefficientOfVariation, CyberneticCycle, Decycler, DecyclerOscillator, DemandIndex,
+    DemarkPivots, DetrendedStdDev, DonchianStop, DoubleBollinger, EhlersStochastic, Ema,
+    EmpiricalModeDecomposition, Fama, FibonacciPivots, FisherTransform, FractalChaosBands, Frama,
+    GarmanKlassVolatility, HeikinAshi, HiLoActivator, HilbertDominantCycle, HurstChannel,
+    HurstExponent, Ichimoku, Indicator, InstantaneousTrendline, InverseFisherTransform, Jma, Kst,
+    Kurtosis, Kvo, LinRegChannel, MaEnvelope, MacdIndicator, Mama, MarketFacilitationIndex,
+    McGinleyDynamic, MedianAbsoluteDeviation, Nvi, Obv, ParkinsonVolatility,
+    PercentageTrailingStop, Pgo, Pvi, RSquared, RenkoTrailingStop, RogersSatchellVolatility,
+    RoofingFilter, Rsi, Rvi, RviVolatility, Rwi, SineWave, Skewness, Sma, StandardError,
+    StandardErrorBands, StarcBands, StepTrailingStop, Stochastic, SuperSmoother, TdCombo,
+    TdCountdown, TdDeMarker, TdDifferential, TdLines, TdOpen, TdPressure, TdRangeProjection, TdRei,
+    TdRiskLevel, TdSequential, TdSetup, Tii, Tsv, TtmSqueeze, Variance, Vidya, VoltyStop,
+    VolumeOscillator, VwapStdDevBands, Vzo, WaveTrend, WilliamsFractals, Wma, WoodiePivots,
+    YangZhangVolatility, YoyoExit, ZigZag,
 };
 use wickra_data::csv::CandleReader;
 
@@ -360,6 +362,30 @@ fn benches(c: &mut Criterion) {
     });
     bench_scalar_multi(c, "double_bollinger", &closes, || {
         DoubleBollinger::new(20, 1.0, 2.0).unwrap()
+    });
+
+    // --- Family 12: Statistik / Regression ---
+    bench_scalar(c, "variance", &closes, || Variance::new(20).unwrap());
+    bench_scalar(c, "coefficient_of_variation", &closes, || {
+        CoefficientOfVariation::new(20).unwrap()
+    });
+    bench_scalar(c, "skewness", &closes, || Skewness::new(20).unwrap());
+    bench_scalar(c, "kurtosis", &closes, || Kurtosis::new(20).unwrap());
+    bench_scalar(c, "standard_error", &closes, || {
+        StandardError::new(14).unwrap()
+    });
+    bench_scalar(c, "detrended_std_dev", &closes, || {
+        DetrendedStdDev::new(14).unwrap()
+    });
+    bench_scalar(c, "r_squared", &closes, || RSquared::new(14).unwrap());
+    bench_scalar(c, "median_absolute_deviation", &closes, || {
+        MedianAbsoluteDeviation::new(20).unwrap()
+    });
+    bench_scalar(c, "autocorrelation", &closes, || {
+        Autocorrelation::new(20, 1).unwrap()
+    });
+    bench_scalar(c, "hurst_exponent", &closes, || {
+        HurstExponent::new(100, 4).unwrap()
     });
 }
 
