@@ -1285,3 +1285,102 @@ def test_new_indicators_expose_lifecycle():
         assert ind.warmup_period() >= 1
         ind.reset()
         assert ind.is_ready() is False
+
+
+# --- Ichimoku & Heikin-Ashi (Family 13) -----------------------------------
+
+
+def test_ichimoku_batch_shape_and_warmup(ohlcv):
+    high, low, close, _ = ohlcv
+    ichi = ta.Ichimoku()
+    out = ichi.batch(high, low, close)
+    assert out.shape == (close.size, 5)
+    # Warmup is 77 for the classic (9, 26, 52, 26) configuration.
+    assert ichi.warmup_period() == 77
+    # Tenkan emits from bar 9; before that, the entire column is NaN.
+    assert np.all(np.isnan(out[:8, 0]))
+    assert not math.isnan(out[8, 0])
+
+
+def test_ichimoku_streaming_matches_batch(ohlcv):
+    high, low, close, _ = ohlcv
+    batch = ta.Ichimoku().batch(high, low, close)
+
+    streamer = ta.Ichimoku()
+    rows = []
+    for i in range(close.size):
+        candle = (
+            float(close[i]),
+            float(high[i]),
+            float(low[i]),
+            float(close[i]),
+            0.0,
+            i,
+        )
+        v = streamer.update(candle)
+        if v is None:
+            rows.append([math.nan] * 5)
+        else:
+            rows.append([math.nan if x is None else float(x) for x in v])
+    assert _eq_nan(batch, np.array(rows, dtype=np.float64))
+
+
+def test_ichimoku_chikou_is_close_displacement_back():
+    # A constant series makes Chikou trivially equal to the close.
+    n = 60
+    close = np.full(n, 100.0)
+    high = close + 1.0
+    low = close - 1.0
+    out = ta.Ichimoku().batch(high, low, close)
+    # Displacement = 26, so chikou is defined from bar 25 onwards.
+    for i in range(25, n):
+        assert out[i, 4] == pytest.approx(100.0)
+
+
+def test_heikin_ashi_seed_and_recursion():
+    ha = ta.HeikinAshi()
+    # Bar 1: ha_open = (open + close) / 2, ha_close = (O+H+L+C)/4.
+    first = ha.update((10.0, 12.0, 9.0, 11.0, 0.0, 0))
+    assert first == pytest.approx(
+        (
+            (10.0 + 11.0) / 2.0,
+            max(12.0, (10.0 + 11.0) / 2.0, (10.0 + 12.0 + 9.0 + 11.0) / 4.0),
+            min(9.0, (10.0 + 11.0) / 2.0, (10.0 + 12.0 + 9.0 + 11.0) / 4.0),
+            (10.0 + 12.0 + 9.0 + 11.0) / 4.0,
+        )
+    )
+    # Bar 2: ha_open = (prev_ha_open + prev_ha_close) / 2.
+    second = ha.update((11.5, 13.0, 10.5, 12.0, 0.0, 1))
+    assert second[0] == pytest.approx((first[0] + first[3]) / 2.0)
+    assert second[3] == pytest.approx((11.5 + 13.0 + 10.5 + 12.0) / 4.0)
+
+
+def test_heikin_ashi_streaming_matches_batch(ohlcv):
+    high, low, close, _ = ohlcv
+    open_ = (high + low) / 2.0
+    batch = ta.HeikinAshi().batch(open_, high, low, close)
+
+    streamer = ta.HeikinAshi()
+    rows = []
+    for i in range(close.size):
+        candle = (
+            float(open_[i]),
+            float(high[i]),
+            float(low[i]),
+            float(close[i]),
+            0.0,
+            i,
+        )
+        v = streamer.update(candle)
+        rows.append([math.nan] * 4 if v is None else list(v))
+    assert _eq_nan(batch, np.array(rows, dtype=np.float64))
+
+
+def test_heikin_ashi_lifecycle_and_reset():
+    ha = ta.HeikinAshi()
+    assert ha.is_ready() is False
+    assert ha.warmup_period() == 1
+    ha.update((10.0, 11.0, 9.0, 10.5, 0.0, 0))
+    assert ha.is_ready() is True
+    ha.reset()
+    assert ha.is_ready() is False

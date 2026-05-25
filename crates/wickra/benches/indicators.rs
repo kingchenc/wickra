@@ -23,16 +23,16 @@ use wickra::{
     BatchExt, BollingerBands, Camarilla, Candle, CenterOfGravity, ClassicPivots, CyberneticCycle,
     Decycler, DecyclerOscillator, DemandIndex, DemarkPivots, DonchianStop, DoubleBollinger,
     EhlersStochastic, Ema, EmpiricalModeDecomposition, Fama, FibonacciPivots, FisherTransform,
-    FractalChaosBands, Frama, GarmanKlassVolatility, HiLoActivator, HilbertDominantCycle,
-    HurstChannel, Indicator, InstantaneousTrendline, InverseFisherTransform, Jma, Kst, Kvo,
-    LinRegChannel, MaEnvelope, MacdIndicator, Mama, MarketFacilitationIndex, McGinleyDynamic, Nvi,
-    Obv, ParkinsonVolatility, PercentageTrailingStop, Pgo, Pvi, RenkoTrailingStop,
-    RogersSatchellVolatility, RoofingFilter, Rsi, Rvi, RviVolatility, Rwi, SineWave, Sma,
-    StandardErrorBands, StarcBands, StepTrailingStop, Stochastic, SuperSmoother, TdCombo,
-    TdCountdown, TdDeMarker, TdDifferential, TdLines, TdOpen, TdPressure, TdRangeProjection, TdRei,
-    TdRiskLevel, TdSequential, TdSetup, Tii, Tsv, TtmSqueeze, Vidya, VoltyStop, VolumeOscillator,
-    VwapStdDevBands, Vzo, WaveTrend, WilliamsFractals, Wma, WoodiePivots, YangZhangVolatility,
-    YoyoExit, ZigZag,
+    FractalChaosBands, Frama, GarmanKlassVolatility, HeikinAshi, HiLoActivator,
+    HilbertDominantCycle, HurstChannel, Ichimoku, Indicator, InstantaneousTrendline,
+    InverseFisherTransform, Jma, Kst, Kvo, LinRegChannel, MaEnvelope, MacdIndicator, Mama,
+    MarketFacilitationIndex, McGinleyDynamic, Nvi, Obv, ParkinsonVolatility,
+    PercentageTrailingStop, Pgo, Pvi, RenkoTrailingStop, RogersSatchellVolatility, RoofingFilter,
+    Rsi, Rvi, RviVolatility, Rwi, SineWave, Sma, StandardErrorBands, StarcBands, StepTrailingStop,
+    Stochastic, SuperSmoother, TdCombo, TdCountdown, TdDeMarker, TdDifferential, TdLines, TdOpen,
+    TdPressure, TdRangeProjection, TdRei, TdRiskLevel, TdSequential, TdSetup, Tii, Tsv, TtmSqueeze,
+    Vidya, VoltyStop, VolumeOscillator, VwapStdDevBands, Vzo, WaveTrend, WilliamsFractals, Wma,
+    WoodiePivots, YangZhangVolatility, YoyoExit, ZigZag,
 };
 use wickra_data::csv::CandleReader;
 
@@ -187,6 +187,8 @@ fn benches(c: &mut Criterion) {
     bench_candle_input(c, "wave_trend", &candles, || WaveTrend::classic().unwrap());
     bench_candle_input(c, "stochastic", &candles, Stochastic::classic);
     bench_candle_input(c, "obv", &candles, Obv::new);
+    bench_candle_input(c, "ichimoku", &candles, Ichimoku::classic);
+    bench_candle_input(c, "heikin_ashi", &candles, HeikinAshi::new);
 
     // Family 10 — Ehlers / Cycle scalar benchmarks.
     bench_scalar(c, "super_smoother", &closes, || {

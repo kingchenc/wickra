@@ -41,6 +41,18 @@ def test_roc_and_trix_have_default_periods():
     assert ta.TRIX() is not None
 
 
+def test_ichimoku_rejects_zero_and_non_increasing_periods():
+    with pytest.raises(ValueError):
+        ta.Ichimoku(0, 26, 52, 26)
+    with pytest.raises(ValueError):
+        ta.Ichimoku(9, 26, 52, 0)
+    # Periods must satisfy tenkan < kijun < senkou_b.
+    with pytest.raises(ValueError):
+        ta.Ichimoku(26, 9, 52, 26)
+    with pytest.raises(ValueError):
+        ta.Ichimoku(9, 52, 52, 26)
+
+
 def test_family_10_ehlers_rejects_invalid_parameters():
     with pytest.raises(ValueError):
         ta.SuperSmoother(0)

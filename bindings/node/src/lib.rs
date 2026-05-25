@@ -7746,3 +7746,197 @@ impl FamaNode {
         self.inner.warmup_period() as u32
     }
 }
+
+// ============================== Ichimoku ==============================
+
+/// Ichimoku output: five lines, any of which may be `NaN` while the indicator
+/// is still warming up.
+#[napi(object)]
+pub struct IchimokuValue {
+    pub tenkan: f64,
+    pub kijun: f64,
+    #[napi(js_name = "senkouA")]
+    pub senkou_a: f64,
+    #[napi(js_name = "senkouB")]
+    pub senkou_b: f64,
+    pub chikou: f64,
+}
+
+#[napi(js_name = "Ichimoku")]
+pub struct IchimokuNode {
+    inner: wc::Ichimoku,
+}
+
+#[napi]
+impl IchimokuNode {
+    #[napi(constructor)]
+    pub fn new(
+        tenkan_period: u32,
+        kijun_period: u32,
+        senkou_b_period: u32,
+        displacement: u32,
+    ) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Ichimoku::new(
+                tenkan_period as usize,
+                kijun_period as usize,
+                senkou_b_period as usize,
+                displacement as usize,
+            )
+            .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<IchimokuValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| IchimokuValue {
+                tenkan: o.tenkan.unwrap_or(f64::NAN),
+                kijun: o.kijun.unwrap_or(f64::NAN),
+                senkou_a: o.senkou_a.unwrap_or(f64::NAN),
+                senkou_b: o.senkou_b.unwrap_or(f64::NAN),
+                chikou: o.chikou.unwrap_or(f64::NAN),
+            }))
+    }
+    /// Returns `[tenkan0, kijun0, senkouA0, senkouB0, chikou0, tenkan1, ...]`,
+    /// length `5 * n`. Cells without a defined value are `NaN`.
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 5];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                if let Some(v) = o.tenkan {
+                    out[i * 5] = v;
+                }
+                if let Some(v) = o.kijun {
+                    out[i * 5 + 1] = v;
+                }
+                if let Some(v) = o.senkou_a {
+                    out[i * 5 + 2] = v;
+                }
+                if let Some(v) = o.senkou_b {
+                    out[i * 5 + 3] = v;
+                }
+                if let Some(v) = o.chikou {
+                    out[i * 5 + 4] = v;
+                }
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Heikin-Ashi ==============================
+
+#[napi(object)]
+pub struct HeikinAshiValue {
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+}
+
+#[napi(js_name = "HeikinAshi")]
+pub struct HeikinAshiNode {
+    inner: wc::HeikinAshi,
+}
+
+impl Default for HeikinAshiNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl HeikinAshiNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::HeikinAshi::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<HeikinAshiValue>> {
+        let c = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(self.inner.update(c).map(|o| HeikinAshiValue {
+            open: o.open,
+            high: o.high,
+            low: o.low,
+            close: o.close,
+        }))
+    }
+    /// Returns `[open0, high0, low0, close0, open1, ...]`, length `4 * n`.
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open: Vec<f64>,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "open, high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = open.len();
+        let mut out = vec![f64::NAN; n * 4];
+        for i in 0..n {
+            let c = wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 4] = o.open;
+                out[i * 4 + 1] = o.high;
+                out[i * 4 + 2] = o.low;
+                out[i * 4 + 3] = o.close;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}

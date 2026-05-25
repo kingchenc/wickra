@@ -199,6 +199,9 @@ from ._wickra import (
     TDDifferential,
     TDOpen,
     TDRiskLevel,
+    # Ichimoku & alternative charts
+    Ichimoku,
+    HeikinAshi,
 )
 
 __all__ = [
@@ -377,4 +380,7 @@ __all__ = [
     "TDDifferential",
     "TDOpen",
     "TDRiskLevel",
+    # Ichimoku & alternative charts
+    "Ichimoku",
+    "HeikinAshi",
 ]
