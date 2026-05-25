@@ -155,12 +155,10 @@ impl Indicator for Rwi {
         for i in 2..=self.period {
             // Trs slice indices (within trs Vec): start = n - i, end = n - 1 (excl.).
             // trs has length n - 1; trs[k] = TR of candle k+1 vs candle k.
+            // count = i - 1, which is >= 1 for i >= 2.
             let tr_start = n - i;
             let tr_end = n - 1;
             let count = tr_end - tr_start;
-            if count == 0 {
-                continue;
-            }
             let atr_i: f64 = trs[tr_start..tr_end].iter().sum::<f64>() / (count as f64);
             let denom = atr_i * (i as f64).sqrt();
             if denom == 0.0 {
