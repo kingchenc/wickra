@@ -133,6 +133,14 @@ mod tests {
     }
 
     #[test]
+    fn value_returns_total_after_first_emission() {
+        let mut ad = AdOscillator::new();
+        ad.update(c(10.0, 11.0, 9.0, 10.0, 0));
+        let v = ad.update(c(11.0, 13.0, 8.0, 12.0, 1)).unwrap();
+        assert_relative_eq!(ad.value().unwrap(), v, epsilon = 1e-12);
+    }
+
+    #[test]
     fn first_bar_only_seeds() {
         let mut ad = AdOscillator::new();
         assert_eq!(ad.update(c(10.0, 11.0, 9.0, 10.0, 0)), None);

@@ -139,6 +139,15 @@ mod tests {
     }
 
     #[test]
+    fn default_matches_new() {
+        let a = Pvi::default();
+        let b = Pvi::new();
+        assert_eq!(a.warmup_period(), b.warmup_period());
+        assert_eq!(a.value(), b.value());
+        assert_eq!(a.is_ready(), b.is_ready());
+    }
+
+    #[test]
     fn first_bar_seeds_baseline() {
         let mut p = Pvi::new();
         assert_relative_eq!(

@@ -144,6 +144,15 @@ mod tests {
     }
 
     #[test]
+    fn default_matches_new() {
+        let a = Nvi::default();
+        let b = Nvi::new();
+        assert_eq!(a.warmup_period(), b.warmup_period());
+        assert_eq!(a.value(), b.value());
+        assert_eq!(a.is_ready(), b.is_ready());
+    }
+
+    #[test]
     fn first_bar_seeds_baseline() {
         let mut n = Nvi::new();
         assert_relative_eq!(

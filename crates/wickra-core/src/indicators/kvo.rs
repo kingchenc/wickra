@@ -190,6 +190,17 @@ mod tests {
     }
 
     #[test]
+    fn zero_ohlc_collapses_vf_to_zero() {
+        // Two consecutive all-zero bars: dm = 0 for both, so prev_dm + dm = 0
+        // and `cm == 0.0` fires the defensive branch, holding vf at zero.
+        let mut k = Kvo::new(3, 6).unwrap();
+        let zero = Candle::new(0.0, 0.0, 0.0, 0.0, 100.0, 0).unwrap();
+        assert_eq!(k.update(zero), None);
+        assert_eq!(k.update(zero), None);
+        assert_eq!(k.update(zero), None);
+    }
+
+    #[test]
     fn constant_series_yields_zero() {
         // dm flat -> trend never sets to a nonzero sign and vf collapses to 0
         // for every bar; both EMAs hold at 0 once seeded.
