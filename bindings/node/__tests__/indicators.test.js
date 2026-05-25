@@ -109,6 +109,10 @@ const candleScalar = {
   TDDeMarker: { make: () => new wickra.TDDeMarker(14), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   TDREI: { make: () => new wickra.TDREI(5), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   TDPressure: { make: () => new wickra.TDPressure(5), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(open, high, low, close, volume) },
+  TDCombo: { make: () => new wickra.TDCombo(4, 9, 2, 13), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  TDCountdown: { make: () => new wickra.TDCountdown(4, 9, 2, 13), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  TDDifferential: { make: () => new wickra.TDDifferential(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  TDOpen: { make: () => new wickra.TDOpen(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {
@@ -138,6 +142,9 @@ const multi = {
   ChandelierExit: { make: () => new wickra.ChandelierExit(22, 3), fields: ['longStop', 'shortStop'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ChandeKrollStop: { make: () => new wickra.ChandeKrollStop(10, 1, 9), fields: ['stopLong', 'stopShort'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   TDSequential: { make: () => new wickra.TDSequential(4, 9, 2, 13), fields: ['setup', 'countdown', 'direction'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  TDLines: { make: () => new wickra.TDLines(4, 9), fields: ['resistance', 'support'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  TDRangeProjection: { make: () => new wickra.TDRangeProjection(), fields: ['high', 'low'], step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  TDRiskLevel: { make: () => new wickra.TDRiskLevel(4, 9), fields: ['buyRisk', 'sellRisk'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
 };
 
 for (const [name, d] of Object.entries(multi)) {

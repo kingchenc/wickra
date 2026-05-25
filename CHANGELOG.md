@@ -8,15 +8,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **DeMark family (family 11) — 5 new indicators.** TD Setup (9-bar
+- **DeMark family (family 11) — 12 new indicators.** TD Setup (9-bar
   buy/sell setup counter with parameterised lookback and target), TD
   Sequential (Setup + Countdown phase machine emitting setup count,
   countdown count and active countdown direction), TD DeMarker
   (bounded [0, 1] range oscillator built from high/low expansions),
   TD REI (Range Expansion Index — bounded ±100 oscillator with the
-  classic 5-bar default), and TD Pressure (volume-weighted buying /
-  selling pressure normalised to ±100). All five are exposed through
-  the Rust, Python, Node, and WASM bindings with `batch == streaming`
+  classic 5-bar default), TD Pressure (volume-weighted buying /
+  selling pressure normalised to ±100), TD Combo (aggressive
+  countdown variant with extra monotone-low / monotone-close
+  strictness conditions on top of the classic countdown rule), TD
+  Countdown (standalone 13-bar countdown phase machine emitting
+  only the signed countdown count and direction — smaller streaming
+  payload than the full TD Sequential), TD Lines (TDST horizontal
+  support / resistance levels derived from the highs and lows of
+  the most-recently-completed setup), TD Range Projection (next-bar
+  high / low projection from the current bar's OHLC via DeMark's
+  open-vs-close-weighted pivot), TD Differential (2-bar
+  buying-pressure-vs-selling-pressure reversal pattern emitting
+  +1 / -1 / 0), TD Open (gap-and-fade reversal pattern emitting
+  +1 / -1 / 0 when the open prints outside the prior bar's range
+  but the subsequent action recovers back into it), and TD Risk
+  Level (protective stop levels derived from the lowest-low / highest-
+  high setup bar's true range). All twelve are exposed through the
+  Rust, Python, Node, and WASM bindings with `batch == streaming`
   equivalence tests, candle-stream fuzz coverage, and benchmark
   entries on the BTCUSDT 1-minute dataset.
 

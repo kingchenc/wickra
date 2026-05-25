@@ -310,7 +310,7 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, MOM, CMO, DPO, StdDev, UlcerIndex, VerticalHorizontalFilter, ZScore, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, RollingVWAP, AwesomeOscillator, Aroon, KAMA, T3, TSI, PMO, ADL, VolumePriceTrend, ChaikinMoneyFlow, ChaikinOscillator, ForceIndex, EaseOfMovement, SuperTrend, ChandelierExit, ChandeKrollStop, AtrTrailingStop, TypicalPrice, MedianPrice, WeightedClose, LinearRegression, LinRegSlope, AcceleratorOscillator, BalanceOfPower, ChoppinessIndex, TrueRange, ChaikinVolatility, LinRegAngle, BollingerBandwidth, PercentB, NATR, HistoricalVolatility, AroonOscillator, Vortex, MassIndex, StochRSI, UltimateOscillator, PPO, Coppock, VWMA, TDSetup, TDSequential, TDDeMarker, TDREI, TDPressure } = nativeBinding
+const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, MOM, CMO, DPO, StdDev, UlcerIndex, VerticalHorizontalFilter, ZScore, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, RollingVWAP, AwesomeOscillator, Aroon, KAMA, T3, TSI, PMO, ADL, VolumePriceTrend, ChaikinMoneyFlow, ChaikinOscillator, ForceIndex, EaseOfMovement, SuperTrend, ChandelierExit, ChandeKrollStop, AtrTrailingStop, TypicalPrice, MedianPrice, WeightedClose, LinearRegression, LinRegSlope, AcceleratorOscillator, BalanceOfPower, ChoppinessIndex, TrueRange, ChaikinVolatility, LinRegAngle, BollingerBandwidth, PercentB, NATR, HistoricalVolatility, AroonOscillator, Vortex, MassIndex, StochRSI, UltimateOscillator, PPO, Coppock, VWMA, TDSetup, TDSequential, TDDeMarker, TDREI, TDPressure, TDCombo, TDCountdown, TDLines, TDRangeProjection, TDDifferential, TDOpen, TDRiskLevel } = nativeBinding
 
 module.exports.version = version
 module.exports.SMA = SMA
@@ -390,3 +390,10 @@ module.exports.TDSequential = TDSequential
 module.exports.TDDeMarker = TDDeMarker
 module.exports.TDREI = TDREI
 module.exports.TDPressure = TDPressure
+module.exports.TDCombo = TDCombo
+module.exports.TDCountdown = TDCountdown
+module.exports.TDLines = TDLines
+module.exports.TDRangeProjection = TDRangeProjection
+module.exports.TDDifferential = TDDifferential
+module.exports.TDOpen = TDOpen
+module.exports.TDRiskLevel = TDRiskLevel

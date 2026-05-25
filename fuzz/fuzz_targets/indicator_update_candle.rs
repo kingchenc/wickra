@@ -27,7 +27,8 @@ use wickra_core::{
     AwesomeOscillator, BalanceOfPower, BatchExt, Candle, Cci, ChaikinMoneyFlow, ChaikinOscillator,
     ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex, Donchian, EaseOfMovement,
     ForceIndex, Indicator, Keltner, MassIndex, MedianPrice, Mfi, Natr, Obv, Psar, RollingVwap,
-    Stochastic, SuperTrend, TdDeMarker, TdPressure, TdRei, TdSequential, TdSetup, TrueRange,
+    Stochastic, SuperTrend, TdCombo, TdCountdown, TdDeMarker, TdDifferential, TdLines, TdOpen,
+    TdPressure, TdRangeProjection, TdRei, TdRiskLevel, TdSequential, TdSetup, TrueRange,
     TypicalPrice, UltimateOscillator, VolumePriceTrend, Vortex, Vwap, Vwma, WeightedClose,
     WilliamsR,
 };
@@ -134,11 +135,30 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| TdDeMarker::new(14).unwrap(), &candles);
     drive(|| TdRei::new(5).unwrap(), &candles);
     drive(|| TdPressure::new(5).unwrap(), &candles);
+    drive(|| TdCombo::new(4, 9, 2, 13).unwrap(), &candles);
+    drive(|| TdCountdown::new(4, 9, 2, 13).unwrap(), &candles);
+    drive(TdDifferential::new, &candles);
+    drive(TdOpen::new, &candles);
+    drive(TdRangeProjection::new, &candles);
     {
         let mut s = TdSequential::new(4, 9, 2, 13).unwrap();
         for c in &candles {
             let _ = s.update(*c);
         }
         let _ = TdSequential::new(4, 9, 2, 13).unwrap().batch(&candles);
+    }
+    {
+        let mut s = TdLines::new(4, 9).unwrap();
+        for c in &candles {
+            let _ = s.update(*c);
+        }
+        let _ = TdLines::new(4, 9).unwrap().batch(&candles);
+    }
+    {
+        let mut s = TdRiskLevel::new(4, 9).unwrap();
+        for c in &candles {
+            let _ = s.update(*c);
+        }
+        let _ = TdRiskLevel::new(4, 9).unwrap().batch(&candles);
     }
 });

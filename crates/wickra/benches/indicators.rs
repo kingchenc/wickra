@@ -20,7 +20,8 @@ use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Through
 use std::hint::black_box;
 use wickra::{
     Atr, BatchExt, BollingerBands, Candle, Ema, Indicator, MacdIndicator, Obv, Rsi, Sma,
-    Stochastic, TdDeMarker, TdPressure, TdRei, TdSequential, TdSetup, Wma,
+    Stochastic, TdCombo, TdCountdown, TdDeMarker, TdDifferential, TdLines, TdOpen, TdPressure,
+    TdRangeProjection, TdRei, TdRiskLevel, TdSequential, TdSetup, Wma,
 };
 use wickra_data::csv::CandleReader;
 
@@ -149,6 +150,13 @@ fn benches(c: &mut Criterion) {
     bench_candle_input(c, "td_demarker", &candles, || TdDeMarker::new(14).unwrap());
     bench_candle_input(c, "td_rei", &candles, TdRei::classic);
     bench_candle_input(c, "td_pressure", &candles, || TdPressure::new(5).unwrap());
+    bench_candle_input(c, "td_combo", &candles, TdCombo::classic);
+    bench_candle_input(c, "td_countdown", &candles, TdCountdown::classic);
+    bench_candle_input(c, "td_lines", &candles, TdLines::classic);
+    bench_candle_input(c, "td_risk_level", &candles, TdRiskLevel::classic);
+    bench_candle_input(c, "td_range_projection", &candles, TdRangeProjection::new);
+    bench_candle_input(c, "td_differential", &candles, TdDifferential::new);
+    bench_candle_input(c, "td_open", &candles, TdOpen::new);
 }
 
 criterion_group!(name = wickra_benches; config = Criterion::default(); targets = benches);

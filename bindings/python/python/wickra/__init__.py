@@ -108,6 +108,13 @@ from ._wickra import (
     TDDeMarker,
     TDREI,
     TDPressure,
+    TDCombo,
+    TDCountdown,
+    TDLines,
+    TDRangeProjection,
+    TDDifferential,
+    TDOpen,
+    TDRiskLevel,
 )
 
 __all__ = [
@@ -195,4 +202,11 @@ __all__ = [
     "TDDeMarker",
     "TDREI",
     "TDPressure",
+    "TDCombo",
+    "TDCountdown",
+    "TDLines",
+    "TDRangeProjection",
+    "TDDifferential",
+    "TDOpen",
+    "TDRiskLevel",
 ]

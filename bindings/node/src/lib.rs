@@ -3291,3 +3291,476 @@ impl TdPressureNode {
         self.inner.warmup_period() as u32
     }
 }
+
+// ============================== TD Combo ==============================
+
+#[napi(js_name = "TDCombo")]
+pub struct TdComboNode {
+    inner: wc::TdCombo,
+}
+
+#[napi]
+impl TdComboNode {
+    #[napi(constructor)]
+    pub fn new(
+        setup_lookback: u32,
+        setup_target: u32,
+        countdown_lookback: u32,
+        countdown_target: u32,
+    ) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::TdCombo::new(
+                setup_lookback as usize,
+                setup_target as usize,
+                countdown_lookback as usize,
+                countdown_target as usize,
+            )
+            .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, 0.0)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== TD Countdown ==============================
+
+#[napi(js_name = "TDCountdown")]
+pub struct TdCountdownNode {
+    inner: wc::TdCountdown,
+}
+
+#[napi]
+impl TdCountdownNode {
+    #[napi(constructor)]
+    pub fn new(
+        setup_lookback: u32,
+        setup_target: u32,
+        countdown_lookback: u32,
+        countdown_target: u32,
+    ) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::TdCountdown::new(
+                setup_lookback as usize,
+                setup_target as usize,
+                countdown_lookback as usize,
+                countdown_target as usize,
+            )
+            .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, 0.0)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== TD Lines ==============================
+
+/// TD Lines output pair: latest TDST resistance / support (NaN if unset).
+#[napi(object)]
+pub struct TdLinesValue {
+    pub resistance: f64,
+    pub support: f64,
+}
+
+#[napi(js_name = "TDLines")]
+pub struct TdLinesNode {
+    inner: wc::TdLines,
+}
+
+#[napi]
+impl TdLinesNode {
+    #[napi(constructor)]
+    pub fn new(lookback: u32, target: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::TdLines::new(lookback as usize, target as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<TdLinesValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| TdLinesValue {
+                resistance: o.resistance,
+                support: o.support,
+            }))
+    }
+    /// Batch returns a flat array `[resistance0, support0, resistance1, ...]`.
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 2] = o.resistance;
+                out[i * 2 + 1] = o.support;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== TD Range Projection ==============================
+
+/// TD Range Projection output pair: projected next-bar high / low.
+#[napi(object)]
+pub struct TdRangeProjectionValue {
+    pub high: f64,
+    pub low: f64,
+}
+
+#[napi(js_name = "TDRangeProjection")]
+pub struct TdRangeProjectionNode {
+    inner: wc::TdRangeProjection,
+}
+
+#[napi]
+impl TdRangeProjectionNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::TdRangeProjection::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<TdRangeProjectionValue>> {
+        let candle = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(self.inner.update(candle).map(|o| TdRangeProjectionValue {
+            high: o.high,
+            low: o.low,
+        }))
+    }
+    /// Batch returns a flat array `[high0, low0, high1, low1, ...]`.
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open: Vec<f64>,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "open, high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = open.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let candle =
+                wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            if let Some(p) = self.inner.update(candle) {
+                out[i * 2] = p.high;
+                out[i * 2 + 1] = p.low;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== TD Differential ==============================
+
+#[napi(js_name = "TDDifferential")]
+pub struct TdDifferentialNode {
+    inner: wc::TdDifferential,
+}
+
+#[napi]
+impl TdDifferentialNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::TdDifferential::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, 0.0)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== TD Open ==============================
+
+#[napi(js_name = "TDOpen")]
+pub struct TdOpenNode {
+    inner: wc::TdOpen,
+}
+
+#[napi]
+impl TdOpenNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::TdOpen::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<f64>> {
+        let candle = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(self.inner.update(candle))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open: Vec<f64>,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "open, high, low, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(open.len());
+        for i in 0..open.len() {
+            let candle =
+                wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== TD Risk Level ==============================
+
+/// TD Risk Level output pair: buy-side / sell-side protective stop levels
+/// (NaN if unset).
+#[napi(object)]
+pub struct TdRiskLevelValue {
+    pub buy_risk: f64,
+    pub sell_risk: f64,
+}
+
+#[napi(js_name = "TDRiskLevel")]
+pub struct TdRiskLevelNode {
+    inner: wc::TdRiskLevel,
+}
+
+#[napi]
+impl TdRiskLevelNode {
+    #[napi(constructor)]
+    pub fn new(lookback: u32, target: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::TdRiskLevel::new(lookback as usize, target as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<TdRiskLevelValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| TdRiskLevelValue {
+                buy_risk: o.buy_risk,
+                sell_risk: o.sell_risk,
+            }))
+    }
+    /// Batch returns a flat array `[buyRisk0, sellRisk0, buyRisk1, ...]`.
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 2] = o.buy_risk;
+                out[i * 2 + 1] = o.sell_risk;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}

@@ -168,6 +168,18 @@ CANDLE_SCALAR = {
         lambda: ta.TDREI(5),
         lambda ind, h, l, c, v: ind.batch(h, l),
     ),
+    "TDCombo": (
+        lambda: ta.TDCombo(4, 9, 2, 13),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
+    "TDCountdown": (
+        lambda: ta.TDCountdown(4, 9, 2, 13),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
+    "TDDifferential": (
+        lambda: ta.TDDifferential(),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
 }
 
 
@@ -391,6 +403,82 @@ def test_td_pressure_pure_bullish_yields_100():
     assert out[-1] == pytest.approx(100.0)
 
 
+def test_td_combo_uptrend_saturates_at_minus_13():
+    # Strictly increasing closes -> sell setup completes; combo conditions
+    # (close >= high[i-2], high[i] >= high[i-1], close > close[i-1]) all
+    # hold so combo saturates at -13.
+    n = 40
+    high = np.arange(1.0, 1.0 + n) + 0.5
+    low = high - 1.0
+    close = high - 0.5
+    out = ta.TDCombo().batch(high, low, close)
+    assert out[-1] == pytest.approx(-13.0)
+
+
+def test_td_countdown_uptrend_saturates_at_minus_13():
+    n = 40
+    high = np.arange(1.0, 1.0 + n) + 0.5
+    low = high - 1.0
+    close = high - 0.5
+    out = ta.TDCountdown().batch(high, low, close)
+    assert out[-1] == pytest.approx(-13.0)
+
+
+def test_td_lines_uptrend_sets_support_at_first_run_low():
+    # Strictly rising closes -> sell setup completes at idx 12; the
+    # lowest low among the setup bars (idx 4..=12) is the low at idx 4.
+    n = 20
+    high = np.arange(1.0, 1.0 + n) + 0.5
+    low = high - 1.0
+    close = high - 0.5
+    out = ta.TDLines().batch(high, low, close)
+    # support is column 1; resistance is NaN at -1.
+    assert math.isnan(out[-1, 0])
+    # low at idx 4 = 5 + 0.5 - 1.0 = 4.5.
+    assert out[-1, 1] == pytest.approx(4.5)
+
+
+def test_td_range_projection_bullish_bar_reference():
+    # open=10, high=12, low=9, close=11 (close > open) ->
+    # pivot_sum = 2*12 + 9 + 11 = 44; half = 22.
+    # projHigh = 22 - 9 = 13; projLow = 22 - 12 = 10.
+    out = ta.TDRangeProjection().batch(
+        np.array([10.0]), np.array([12.0]), np.array([9.0]), np.array([11.0])
+    )
+    assert out[0, 0] == pytest.approx(13.0)
+    assert out[0, 1] == pytest.approx(10.0)
+
+
+def test_td_differential_buy_signal_reference():
+    # Bar 0: high=10, low=8, close=9 -> warmup, returns None.
+    # Bar 1: high=9, low=7, close=8.5 -> close < prev.close, more buying
+    # pressure (1.5 > 1), less selling pressure (0.5 < 1) -> +1.
+    td = ta.TDDifferential()
+    assert td.update((9.0, 10.0, 8.0, 9.0, 1.0, 0)) is None
+    assert td.update((8.5, 9.0, 7.0, 8.5, 1.0, 1)) == pytest.approx(1.0)
+
+
+def test_td_open_buy_signal_reference():
+    # Prev bar low=10. Curr open=9 < 10, curr high=11 > 10 -> +1.
+    td = ta.TDOpen()
+    assert td.update((10.0, 11.0, 10.0, 10.5, 1.0, 0)) is None
+    assert td.update((9.0, 11.0, 8.5, 9.5, 1.0, 1)) == pytest.approx(1.0)
+
+
+def test_td_risk_level_uptrend_sets_sell_risk():
+    # Strictly rising closes -> sell setup completes at idx 12.
+    # The highest high is at idx 12 (= 13.5) with true range 1.5 ->
+    # sell_risk = 13.5 + 1.5 = 15.0.
+    n = 20
+    high = np.arange(1.0, 1.0 + n) + 0.5
+    low = high - 1.0
+    close = high - 0.5
+    out = ta.TDRiskLevel().batch(high, low, close)
+    # buy_risk is column 0; sell_risk is column 1.
+    assert math.isnan(out[-1, 0])
+    assert out[-1, 1] == pytest.approx(15.0)
+
+
 # --- Lifecycle ------------------------------------------------------------
 
 
@@ -398,7 +486,14 @@ def test_new_indicators_expose_lifecycle():
     instances = [make() for make, _ in CANDLE_SCALAR.values()]
     instances += [make() for make, _ in MULTI.values()]
     instances += [cls(*args) for cls, args in SCALAR]
-    instances += [ta.TDPressure(5), ta.TDSequential()]
+    instances += [
+        ta.TDPressure(5),
+        ta.TDSequential(),
+        ta.TDLines(),
+        ta.TDRiskLevel(),
+        ta.TDRangeProjection(),
+        ta.TDOpen(),
+    ]
     for ind in instances:
         assert ind.is_ready() is False
         assert ind.warmup_period() >= 1
