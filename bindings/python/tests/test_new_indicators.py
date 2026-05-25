@@ -202,12 +202,6 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 
 MULTI = {
     "Vortex": (lambda: ta.Vortex(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
-    "KST": (
-        lambda: ta.KST(10, 15, 20, 30, 10, 10, 10, 15, 9),
-        # KST is scalar-input — it only uses `c`. The MULTI helper signature
-        # supplies the OHLCV columns; pass `c` directly to its scalar batch.
-        lambda ind, h, l, c, v: ind.batch(c),
-    ),
     "SuperTrend": (
         lambda: ta.SuperTrend(10, 3.0),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
@@ -219,6 +213,18 @@ MULTI = {
     "ChandeKrollStop": (
         lambda: ta.ChandeKrollStop(10, 1.0, 9),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
+}
+
+# --- Scalar-input, multi-output indicators --------------------------------
+#
+# Same shape contract as MULTI (batch returns (n, 2)) but streaming feeds a
+# single float instead of a candle tuple.
+
+MULTI_SCALAR_INPUT = {
+    "KST": (
+        lambda: ta.KST(10, 15, 20, 30, 10, 10, 10, 15, 9),
+        lambda ind, c: ind.batch(c),
     ),
 }
 
@@ -243,6 +249,22 @@ def test_multi_streaming_matches_batch(name, ohlcv):
             i,
         )
         v = streamer.update(candle)
+        rows.append([math.nan, math.nan] if v is None else list(v))
+    assert _eq_nan(batch, np.array(rows, dtype=np.float64)), f"{name} mismatch"
+
+
+@pytest.mark.parametrize("name", list(MULTI_SCALAR_INPUT))
+def test_multi_scalar_streaming_matches_batch(name, ohlcv):
+    _, _, close, _ = ohlcv
+    make, batch_call = MULTI_SCALAR_INPUT[name]
+
+    batch = batch_call(make(), close)
+    assert batch.shape == (close.size, 2)
+
+    streamer = make()
+    rows = []
+    for p in close:
+        v = streamer.update(float(p))
         rows.append([math.nan, math.nan] if v is None else list(v))
     assert _eq_nan(batch, np.array(rows, dtype=np.float64)), f"{name} mismatch"
 
