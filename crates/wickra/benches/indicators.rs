@@ -19,8 +19,9 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use std::hint::black_box;
 use wickra::{
-    Atr, BatchExt, BollingerBands, Candle, Ema, Indicator, MacdIndicator, Obv, Rsi, Sma,
-    Stochastic, Wma,
+    Atr, BatchExt, BollingerBands, Candle, DonchianStop, Ema, HiLoActivator, Indicator,
+    MacdIndicator, Obv, PercentageTrailingStop, RenkoTrailingStop, Rsi, Sma, StepTrailingStop,
+    Stochastic, VoltyStop, Wma, YoyoExit,
 };
 use wickra_data::csv::CandleReader;
 
@@ -144,6 +145,19 @@ fn benches(c: &mut Criterion) {
     bench_candle_input(c, "atr", &candles, || Atr::new(14).unwrap());
     bench_candle_input(c, "stochastic", &candles, Stochastic::classic);
     bench_candle_input(c, "obv", &candles, Obv::new);
+    bench_candle_input(c, "hilo_activator", &candles, HiLoActivator::classic);
+    bench_candle_input(c, "volty_stop", &candles, VoltyStop::classic);
+    bench_candle_input(c, "yoyo_exit", &candles, YoyoExit::classic);
+    bench_candle_input(c, "donchian_stop", &candles, DonchianStop::classic);
+    bench_scalar(c, "percentage_trailing_stop", &closes, || {
+        PercentageTrailingStop::new(5.0).unwrap()
+    });
+    bench_scalar(c, "step_trailing_stop", &closes, || {
+        StepTrailingStop::new(1.0).unwrap()
+    });
+    bench_scalar(c, "renko_trailing_stop", &closes, || {
+        RenkoTrailingStop::new(1.0).unwrap()
+    });
 }
 
 criterion_group!(name = wickra_benches; config = Criterion::default(); targets = benches);

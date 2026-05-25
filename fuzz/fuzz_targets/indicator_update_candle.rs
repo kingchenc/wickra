@@ -25,10 +25,11 @@ use libfuzzer_sys::fuzz_target;
 use wickra_core::{
     AcceleratorOscillator, Adl, Adx, Aroon, AroonOscillator, Atr, AtrTrailingStop,
     AwesomeOscillator, BalanceOfPower, BatchExt, Candle, Cci, ChaikinMoneyFlow, ChaikinOscillator,
-    ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex, Donchian, EaseOfMovement,
-    ForceIndex, Indicator, Keltner, MassIndex, MedianPrice, Mfi, Natr, Obv, Psar, RollingVwap,
-    Stochastic, SuperTrend, TrueRange, TypicalPrice, UltimateOscillator, VolumePriceTrend, Vortex,
-    Vwap, Vwma, WeightedClose, WilliamsR,
+    ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex, Donchian, DonchianStop,
+    EaseOfMovement, ForceIndex, HiLoActivator, Indicator, Keltner, MassIndex, MedianPrice, Mfi,
+    Natr, Obv, Psar, RollingVwap, Stochastic, SuperTrend, TrueRange, TypicalPrice,
+    UltimateOscillator, VoltyStop, VolumePriceTrend, Vortex, Vwap, Vwma, WeightedClose, WilliamsR,
+    YoyoExit,
 };
 
 /// Convert a flat `f64` stream into a `Vec<Candle>` by chunking it into
@@ -84,6 +85,9 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| ChandelierExit::new(22, 3.0).unwrap(), &candles);
     drive(|| ChandeKrollStop::new(10, 1.0, 9).unwrap(), &candles);
     drive(|| AtrTrailingStop::new(14, 3.0).unwrap(), &candles);
+    drive(|| HiLoActivator::new(3).unwrap(), &candles);
+    drive(|| VoltyStop::new(14, 2.0).unwrap(), &candles);
+    drive(|| YoyoExit::new(14, 2.0).unwrap(), &candles);
 
     // --- Trend & Directional ---
     drive(|| Adx::new(14).unwrap(), &candles);
@@ -126,5 +130,14 @@ fuzz_target!(|data: Vec<f64>| {
             let _ = s.update(*c);
         }
         let _ = Stochastic::new(14, 3).unwrap().batch(&candles);
+    }
+
+    // --- Donchian Stop (multi-output) ---
+    {
+        let mut s = DonchianStop::new(10).unwrap();
+        for c in &candles {
+            let _ = s.update(*c);
+        }
+        let _ = DonchianStop::new(10).unwrap().batch(&candles);
     }
 });

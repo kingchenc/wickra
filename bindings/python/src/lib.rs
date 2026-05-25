@@ -3704,6 +3704,436 @@ impl PyAtrTrailingStop {
     }
 }
 
+// ============================== HiLo Activator ==============================
+
+#[pyclass(name = "HiLoActivator", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyHiLoActivator {
+    inner: wc::HiLoActivator,
+}
+
+#[pymethods]
+impl PyHiLoActivator {
+    #[new]
+    #[pyo3(signature = (period=3))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::HiLoActivator::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("HiLoActivator(period={})", self.inner.period())
+    }
+}
+
+// ============================== Volty Stop ==============================
+
+#[pyclass(name = "VoltyStop", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyVoltyStop {
+    inner: wc::VoltyStop,
+}
+
+#[pymethods]
+impl PyVoltyStop {
+    #[new]
+    #[pyo3(signature = (atr_period=14, multiplier=2.0))]
+    fn new(atr_period: usize, multiplier: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::VoltyStop::new(atr_period, multiplier).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn params(&self) -> (usize, f64) {
+        self.inner.params()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (p, m) = self.inner.params();
+        format!("VoltyStop(atr_period={p}, multiplier={m})")
+    }
+}
+
+// ============================== Yo-Yo Exit ==============================
+
+#[pyclass(name = "YoyoExit", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyYoyoExit {
+    inner: wc::YoyoExit,
+}
+
+#[pymethods]
+impl PyYoyoExit {
+    #[new]
+    #[pyo3(signature = (atr_period=14, multiplier=2.0))]
+    fn new(atr_period: usize, multiplier: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::YoyoExit::new(atr_period, multiplier).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn params(&self) -> (usize, f64) {
+        self.inner.params()
+    }
+    #[getter]
+    fn in_trade(&self) -> bool {
+        self.inner.in_trade()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (p, m) = self.inner.params();
+        format!("YoyoExit(atr_period={p}, multiplier={m})")
+    }
+}
+
+// ============================== Donchian Stop ==============================
+
+#[pyclass(name = "DonchianStop", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyDonchianStop {
+    inner: wc::DonchianStop,
+}
+
+#[pymethods]
+impl PyDonchianStop {
+    #[new]
+    #[pyo3(signature = (period=10))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::DonchianStop::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.stop_long, o.stop_short)))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 2] = o.stop_long;
+                out[i * 2 + 1] = o.stop_short;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("DonchianStop(period={})", self.inner.period())
+    }
+}
+
+// ============================== Percentage Trailing Stop ==============================
+
+#[pyclass(
+    name = "PercentageTrailingStop",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyPercentageTrailingStop {
+    inner: wc::PercentageTrailingStop,
+}
+
+#[pymethods]
+impl PyPercentageTrailingStop {
+    #[new]
+    #[pyo3(signature = (percent=5.0))]
+    fn new(percent: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::PercentageTrailingStop::new(percent).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn percent(&self) -> f64 {
+        self.inner.percent()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("PercentageTrailingStop(percent={})", self.inner.percent())
+    }
+}
+
+// ============================== Step Trailing Stop ==============================
+
+#[pyclass(
+    name = "StepTrailingStop",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyStepTrailingStop {
+    inner: wc::StepTrailingStop,
+}
+
+#[pymethods]
+impl PyStepTrailingStop {
+    #[new]
+    #[pyo3(signature = (step_size=1.0))]
+    fn new(step_size: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::StepTrailingStop::new(step_size).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn step_size(&self) -> f64 {
+        self.inner.step_size()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("StepTrailingStop(step_size={})", self.inner.step_size())
+    }
+}
+
+// ============================== Renko Trailing Stop ==============================
+
+#[pyclass(
+    name = "RenkoTrailingStop",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyRenkoTrailingStop {
+    inner: wc::RenkoTrailingStop,
+}
+
+#[pymethods]
+impl PyRenkoTrailingStop {
+    #[new]
+    #[pyo3(signature = (block_size=1.0))]
+    fn new(block_size: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::RenkoTrailingStop::new(block_size).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn block_size(&self) -> f64 {
+        self.inner.block_size()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("RenkoTrailingStop(block_size={})", self.inner.block_size())
+    }
+}
+
 // ============================== Typical Price ==============================
 
 #[pyclass(name = "TypicalPrice", module = "wickra._wickra", skip_from_py_object)]
@@ -4540,6 +4970,13 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyChandelierExit>()?;
     m.add_class::<PyChandeKrollStop>()?;
     m.add_class::<PyAtrTrailingStop>()?;
+    m.add_class::<PyHiLoActivator>()?;
+    m.add_class::<PyVoltyStop>()?;
+    m.add_class::<PyYoyoExit>()?;
+    m.add_class::<PyDonchianStop>()?;
+    m.add_class::<PyPercentageTrailingStop>()?;
+    m.add_class::<PyStepTrailingStop>()?;
+    m.add_class::<PyRenkoTrailingStop>()?;
     m.add_class::<PyTypicalPrice>()?;
     m.add_class::<PyMedianPrice>()?;
     m.add_class::<PyWeightedClose>()?;

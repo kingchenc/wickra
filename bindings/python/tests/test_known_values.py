@@ -112,3 +112,75 @@ def test_obv_cumulative_known_sequence():
     volume = np.array([100.0, 20.0, 30.0, 40.0, 10.0])
     out = ta.OBV().batch(close, volume)
     np.testing.assert_allclose(out, [0.0, 20.0, -10.0, -10.0, 0.0])
+
+
+def test_percentage_trailing_stop_seed_and_ratchet():
+    # 10% trail: first close 100 -> stop 90; next 110 -> stop max(90, 99) = 99.
+    s = ta.PercentageTrailingStop(10.0)
+    assert math.isclose(s.update(100.0), 90.0, abs_tol=1e-12)
+    assert math.isclose(s.update(110.0), 99.0, abs_tol=1e-12)
+
+
+def test_step_trailing_stop_snaps_below_close():
+    # step 1: floor((100.4 - 1) / 1) = 99.
+    s = ta.StepTrailingStop(1.0)
+    assert math.isclose(s.update(100.4), 99.0, abs_tol=1e-12)
+
+
+def test_renko_trailing_stop_holds_until_full_block():
+    # block 1: seed 100 -> stop 99; 100.5 still 99; 101 -> stop 100.
+    s = ta.RenkoTrailingStop(1.0)
+    assert math.isclose(s.update(100.0), 99.0, abs_tol=1e-12)
+    assert math.isclose(s.update(100.5), 99.0, abs_tol=1e-12)
+    assert math.isclose(s.update(101.0), 100.0, abs_tol=1e-12)
+
+
+def test_donchian_stop_window_extremes():
+    # 5-bar window of highs 1..5 and lows 0..4.
+    high = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
+    low = np.array([0.0, 1.0, 2.0, 3.0, 4.0])
+    out = ta.DonchianStop(5).batch(high, low)
+    # First 4 rows NaN, fifth row: stop_long = 0, stop_short = 5.
+    for i in range(4):
+        assert math.isnan(out[i, 0])
+        assert math.isnan(out[i, 1])
+    assert math.isclose(out[4, 0], 0.0, abs_tol=1e-12)
+    assert math.isclose(out[4, 1], 5.0, abs_tol=1e-12)
+
+
+def test_hilo_activator_flat_market_holds_low_sma():
+    # Flat candles H=11, L=9, C=10 -> close (10) sits between bands, so the
+    # initial long seed is preserved: emitted stop = lo_sma = 9.
+    h = np.full(15, 11.0)
+    l = np.full(15, 9.0)
+    c = np.full(15, 10.0)
+    out = ta.HiLoActivator(3).batch(h, l, c)
+    # warmup_period == period + 1 == 4, so indices 0..2 are NaN; index 3 onwards is 9.
+    for i in range(3):
+        assert math.isnan(out[i])
+    for i in range(3, 15):
+        assert math.isclose(out[i], 9.0, abs_tol=1e-12)
+
+
+def test_volty_stop_flat_market_constant_level():
+    # ATR=2, mult=2 -> band 4; anchor stays at close 10 -> stop = 10 - 4 = 6.
+    h = np.full(20, 11.0)
+    l = np.full(20, 9.0)
+    c = np.full(20, 10.0)
+    out = ta.VoltyStop(5, 2.0).batch(h, l, c)
+    for i in range(4):
+        assert math.isnan(out[i])
+    for i in range(4, 20):
+        assert math.isclose(out[i], 6.0, abs_tol=1e-12)
+
+
+def test_yoyo_exit_flat_market_constant_level():
+    # ATR=2, mult=2 -> band 4; trail = close - band = 10 - 4 = 6 and holds.
+    h = np.full(20, 11.0)
+    l = np.full(20, 9.0)
+    c = np.full(20, 10.0)
+    out = ta.YoyoExit(5, 2.0).batch(h, l, c)
+    for i in range(4):
+        assert math.isnan(out[i])
+    for i in range(4, 20):
+        assert math.isclose(out[i], 6.0, abs_tol=1e-12)

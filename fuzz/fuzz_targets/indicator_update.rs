@@ -16,9 +16,9 @@
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
     BatchExt, BollingerBands, Cmo, Coppock, Dema, Dpo, Ema, HistoricalVolatility, Hma, Indicator,
-    Kama, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, Mom, Pmo, Ppo, Roc, Rsi, Sma,
-    Smma, StdDev, StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Wma,
-    ZScore, Zlema,
+    Kama, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, Mom, PercentageTrailingStop,
+    Pmo, Ppo, RenkoTrailingStop, Roc, Rsi, Sma, Smma, StdDev, StepTrailingStop, StochRsi, T3, Tema,
+    Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Wma, ZScore, Zlema,
 };
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
@@ -70,6 +70,11 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| LinRegAngle::new(14).unwrap(), &data);
     drive(|| VerticalHorizontalFilter::new(14).unwrap(), &data);
     drive(|| ZScore::new(14).unwrap(), &data);
+
+    // --- Trailing Stops (scalar) ---
+    drive(|| PercentageTrailingStop::new(5.0).unwrap(), &data);
+    drive(|| StepTrailingStop::new(1.0).unwrap(), &data);
+    drive(|| RenkoTrailingStop::new(1.0).unwrap(), &data);
 
     // MACD and Bollinger Bands have non-`f64` outputs, so they cannot use the
     // generic `drive` helper above. Streaming + batch are still both exercised.

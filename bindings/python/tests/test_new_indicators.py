@@ -63,6 +63,9 @@ SCALAR = [
     (ta.VerticalHorizontalFilter, (28,)),
     (ta.ZScore, (20,)),
     (ta.LinRegAngle, (14,)),
+    (ta.PercentageTrailingStop, (5.0,)),
+    (ta.StepTrailingStop, (1.0,)),
+    (ta.RenkoTrailingStop, (1.0,)),
 ]
 
 
@@ -120,6 +123,18 @@ CANDLE_SCALAR = {
     ),
     "AtrTrailingStop": (
         lambda: ta.AtrTrailingStop(14, 3.0),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
+    "HiLoActivator": (
+        lambda: ta.HiLoActivator(3),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
+    "VoltyStop": (
+        lambda: ta.VoltyStop(14, 2.0),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
+    "YoyoExit": (
+        lambda: ta.YoyoExit(14, 2.0),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
     ),
     "TypicalPrice": (
@@ -198,6 +213,10 @@ MULTI = {
     "ChandeKrollStop": (
         lambda: ta.ChandeKrollStop(10, 1.0, 9),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
+    "DonchianStop": (
+        lambda: ta.DonchianStop(10),
+        lambda ind, h, l, c, v: ind.batch(h, l),
     ),
 }
 

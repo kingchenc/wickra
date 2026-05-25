@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Family 09 — Trailing Stops, seven new indicators.** Rounds out the
+  trailing-stop family from 5 to 12: `HiLoActivator` (Crabel's
+  SMA-of-high / SMA-of-low trail), `VoltyStop` (Cynthia Kase's
+  extreme-anchor ATR stop), `YoyoExit` (long-only ATR trail with a
+  re-entry trigger), `DonchianStop` (the original Turtle exit, lowest
+  low / highest high), `PercentageTrailingStop` (fixed-percent trail),
+  `StepTrailingStop` (round-number grid trail) and `RenkoTrailingStop`
+  (block-anchored Renko-style trail). All wired into the four bindings
+  (Rust, Python, Node, WASM), the streaming + batch fuzz targets, and
+  the bench harness. The indicator counter bumps from 71 to 78.
+
 ## [0.2.7] - 2026-05-24
 
 ### Added

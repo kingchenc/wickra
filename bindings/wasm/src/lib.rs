@@ -881,6 +881,251 @@ impl WasmAtrTrailingStop {
     }
 }
 
+// ---------- Trailing Stops (family 09) ----------
+
+#[wasm_bindgen(js_name = HiLoActivator)]
+pub struct WasmHiLoActivator {
+    inner: wc::HiLoActivator,
+}
+
+#[wasm_bindgen(js_class = HiLoActivator)]
+impl WasmHiLoActivator {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmHiLoActivator, JsError> {
+        Ok(Self {
+            inner: wc::HiLoActivator::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = VoltyStop)]
+pub struct WasmVoltyStop {
+    inner: wc::VoltyStop,
+}
+
+#[wasm_bindgen(js_class = VoltyStop)]
+impl WasmVoltyStop {
+    #[wasm_bindgen(constructor)]
+    pub fn new(atr_period: usize, multiplier: f64) -> Result<WasmVoltyStop, JsError> {
+        Ok(Self {
+            inner: wc::VoltyStop::new(atr_period, multiplier).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = YoyoExit)]
+pub struct WasmYoyoExit {
+    inner: wc::YoyoExit,
+}
+
+#[wasm_bindgen(js_class = YoyoExit)]
+impl WasmYoyoExit {
+    #[wasm_bindgen(constructor)]
+    pub fn new(atr_period: usize, multiplier: f64) -> Result<WasmYoyoExit, JsError> {
+        Ok(Self {
+            inner: wc::YoyoExit::new(atr_period, multiplier).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = inTrade)]
+    pub fn in_trade(&self) -> bool {
+        self.inner.in_trade()
+    }
+}
+
+#[wasm_bindgen(js_name = DonchianStop)]
+pub struct WasmDonchianStop {
+    inner: wc::DonchianStop,
+}
+
+#[wasm_bindgen(js_class = DonchianStop)]
+impl WasmDonchianStop {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmDonchianStop, JsError> {
+        Ok(Self {
+            inner: wc::DonchianStop::new(period).map_err(map_err)?,
+        })
+    }
+    /// Returns `{ stopLong, stopShort }` once warm, else `null`.
+    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"stopLong".into(), &o.stop_long.into()).ok();
+                Reflect::set(&obj, &"stopShort".into(), &o.stop_short.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    /// Returns `[long0, short0, long1, short1, ...]`, length `2 * n`. Warmup is NaN.
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], low[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.stop_long;
+                out[i * 2 + 1] = o.stop_short;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = PercentageTrailingStop)]
+pub struct WasmPercentageTrailingStop {
+    inner: wc::PercentageTrailingStop,
+}
+
+#[wasm_bindgen(js_class = PercentageTrailingStop)]
+impl WasmPercentageTrailingStop {
+    #[wasm_bindgen(constructor)]
+    pub fn new(percent: f64) -> Result<WasmPercentageTrailingStop, JsError> {
+        Ok(Self {
+            inner: wc::PercentageTrailingStop::new(percent).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let out = flatten(self.inner.batch(prices));
+        Float64Array::from(out.as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = StepTrailingStop)]
+pub struct WasmStepTrailingStop {
+    inner: wc::StepTrailingStop,
+}
+
+#[wasm_bindgen(js_class = StepTrailingStop)]
+impl WasmStepTrailingStop {
+    #[wasm_bindgen(constructor)]
+    pub fn new(step_size: f64) -> Result<WasmStepTrailingStop, JsError> {
+        Ok(Self {
+            inner: wc::StepTrailingStop::new(step_size).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let out = flatten(self.inner.batch(prices));
+        Float64Array::from(out.as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = RenkoTrailingStop)]
+pub struct WasmRenkoTrailingStop {
+    inner: wc::RenkoTrailingStop,
+}
+
+#[wasm_bindgen(js_class = RenkoTrailingStop)]
+impl WasmRenkoTrailingStop {
+    #[wasm_bindgen(constructor)]
+    pub fn new(block_size: f64) -> Result<WasmRenkoTrailingStop, JsError> {
+        Ok(Self {
+            inner: wc::RenkoTrailingStop::new(block_size).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let out = flatten(self.inner.batch(prices));
+        Float64Array::from(out.as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
 #[wasm_bindgen(js_name = TypicalPrice)]
 pub struct WasmTypicalPrice {
     inner: wc::TypicalPrice,
