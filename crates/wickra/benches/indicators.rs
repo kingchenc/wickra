@@ -19,8 +19,10 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use std::hint::black_box;
 use wickra::{
-    Atr, BatchExt, BollingerBands, Candle, Ema, Indicator, MacdIndicator, Obv, Rsi, Sma,
-    Stochastic, Wma,
+    Atr, Autocorrelation, BatchExt, BollingerBands, Candle, CoefficientOfVariation,
+    DetrendedStdDev, Ema, HurstExponent, Indicator, Kurtosis, MacdIndicator,
+    MedianAbsoluteDeviation, Obv, RSquared, Rsi, Skewness, Sma, StandardError, Stochastic,
+    Variance, Wma,
 };
 use wickra_data::csv::CandleReader;
 
@@ -144,6 +146,30 @@ fn benches(c: &mut Criterion) {
     bench_candle_input(c, "atr", &candles, || Atr::new(14).unwrap());
     bench_candle_input(c, "stochastic", &candles, Stochastic::classic);
     bench_candle_input(c, "obv", &candles, Obv::new);
+
+    // Family 12: Statistik / Regression scalar indicators.
+    bench_scalar(c, "variance", &closes, || Variance::new(20).unwrap());
+    bench_scalar(c, "coefficient_of_variation", &closes, || {
+        CoefficientOfVariation::new(20).unwrap()
+    });
+    bench_scalar(c, "skewness", &closes, || Skewness::new(20).unwrap());
+    bench_scalar(c, "kurtosis", &closes, || Kurtosis::new(20).unwrap());
+    bench_scalar(c, "standard_error", &closes, || {
+        StandardError::new(14).unwrap()
+    });
+    bench_scalar(c, "detrended_std_dev", &closes, || {
+        DetrendedStdDev::new(14).unwrap()
+    });
+    bench_scalar(c, "r_squared", &closes, || RSquared::new(14).unwrap());
+    bench_scalar(c, "median_absolute_deviation", &closes, || {
+        MedianAbsoluteDeviation::new(20).unwrap()
+    });
+    bench_scalar(c, "autocorrelation", &closes, || {
+        Autocorrelation::new(20, 1).unwrap()
+    });
+    bench_scalar(c, "hurst_exponent", &closes, || {
+        HurstExponent::new(100, 4).unwrap()
+    });
 }
 
 criterion_group!(name = wickra_benches; config = Criterion::default(); targets = benches);

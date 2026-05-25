@@ -109,7 +109,7 @@ python -m benchmarks.compare_libraries
 
 ## Indicators
 
-71 streaming-first indicators across eight families. Every one passes the
+84 streaming-first indicators across eight families. Every one passes the
 `batch == streaming` equivalence test, reference-value tests, and reset
 semantics tests.
 
@@ -122,7 +122,7 @@ semantics tests.
 | Volatility & Bands   | ATR, Bollinger Bands, Keltner Channels, Donchian Channels, NATR, StdDev, Ulcer Index, Historical Volatility, Bollinger Bandwidth, %B, True Range, Chaikin Volatility |
 | Trailing Stops       | Parabolic SAR, SuperTrend, Chandelier Exit, Chande Kroll Stop, ATR Trailing Stop |
 | Volume               | OBV, VWAP (cumulative + rolling), ADL, Volume-Price Trend, Chaikin Money Flow, Chaikin Oscillator, Force Index, Ease of Movement |
-| Price Statistics     | Typical Price, Median Price, Weighted Close, Linear Regression, Linear Regression Slope, Z-Score, Linear Regression Angle |
+| Price Statistics     | Typical Price, Median Price, Weighted Close, Linear Regression, Linear Regression Slope, Linear Regression Angle, Z-Score, Variance, Coefficient of Variation, Skewness, Kurtosis, Standard Error, Detrended StdDev, R², Median Absolute Deviation, Autocorrelation, Hurst Exponent, Pearson Correlation, Beta, Spearman Correlation |
 
 Adding a new indicator means implementing one trait in Rust; all four bindings
 inherit it automatically.
@@ -195,7 +195,7 @@ A Python live-trading example using the public `websockets` package lives at
 ```
 wickra/
 ├── crates/
-│   ├── wickra-core/         core engine + all 71 indicators
+│   ├── wickra-core/         core engine + all 84 indicators
 │   ├── wickra/              top-level facade crate (publishes on crates.io) + benches/
 │   └── wickra-data/         CSV reader, tick aggregator, live exchange feeds
 ├── bindings/

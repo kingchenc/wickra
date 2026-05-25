@@ -97,6 +97,75 @@ wasm_scalar_indicator!(WasmLinRegSlope, "LinRegSlope", wc::LinRegSlope, period: 
 wasm_scalar_indicator!(WasmVerticalHorizontalFilter, "VerticalHorizontalFilter", wc::VerticalHorizontalFilter, period: usize);
 wasm_scalar_indicator!(WasmZScore, "ZScore", wc::ZScore, period: usize);
 wasm_scalar_indicator!(WasmLinRegAngle, "LinRegAngle", wc::LinRegAngle, period: usize);
+wasm_scalar_indicator!(WasmVariance, "Variance", wc::Variance, period: usize);
+wasm_scalar_indicator!(WasmCoefficientOfVariation, "CoefficientOfVariation", wc::CoefficientOfVariation, period: usize);
+wasm_scalar_indicator!(WasmSkewness, "Skewness", wc::Skewness, period: usize);
+wasm_scalar_indicator!(WasmKurtosis, "Kurtosis", wc::Kurtosis, period: usize);
+wasm_scalar_indicator!(WasmStandardError, "StandardError", wc::StandardError, period: usize);
+wasm_scalar_indicator!(WasmDetrendedStdDev, "DetrendedStdDev", wc::DetrendedStdDev, period: usize);
+wasm_scalar_indicator!(WasmRSquared, "RSquared", wc::RSquared, period: usize);
+wasm_scalar_indicator!(WasmMedianAbsoluteDeviation, "MedianAbsoluteDeviation", wc::MedianAbsoluteDeviation, period: usize);
+wasm_scalar_indicator!(WasmAutocorrelation, "Autocorrelation", wc::Autocorrelation, period: usize, lag: usize);
+wasm_scalar_indicator!(WasmHurstExponent, "HurstExponent", wc::HurstExponent, period: usize, chunks: usize);
+
+// ---------- Two-series indicators (Pearson / Beta / Spearman) ----------
+
+macro_rules! wasm_pair_indicator {
+    ($name:ident, $js_name:literal, $rust_ty:ty) => {
+        #[wasm_bindgen(js_name = $js_name)]
+        pub struct $name {
+            inner: $rust_ty,
+        }
+
+        #[wasm_bindgen(js_class = $js_name)]
+        impl $name {
+            #[wasm_bindgen(constructor)]
+            pub fn new(period: usize) -> Result<$name, JsError> {
+                Ok($name {
+                    inner: <$rust_ty>::new(period).map_err(map_err)?,
+                })
+            }
+            pub fn update(&mut self, x: f64, y: f64) -> Option<f64> {
+                self.inner.update((x, y))
+            }
+            /// Batch over two equally-sized arrays. Returns one `f64` per
+            /// input position (`NaN` during warmup).
+            pub fn batch(&mut self, x: &[f64], y: &[f64]) -> Result<Float64Array, JsError> {
+                if x.len() != y.len() {
+                    return Err(JsError::new("x and y must be equal length"));
+                }
+                let mut out = Vec::with_capacity(x.len());
+                for i in 0..x.len() {
+                    out.push(self.inner.update((x[i], y[i])).unwrap_or(f64::NAN));
+                }
+                Ok(Float64Array::from(out.as_slice()))
+            }
+            pub fn reset(&mut self) {
+                self.inner.reset();
+            }
+            #[wasm_bindgen(js_name = isReady)]
+            pub fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            #[wasm_bindgen(js_name = warmupPeriod)]
+            pub fn warmup_period(&self) -> usize {
+                self.inner.warmup_period()
+            }
+        }
+    };
+}
+
+wasm_pair_indicator!(
+    WasmPearsonCorrelation,
+    "PearsonCorrelation",
+    wc::PearsonCorrelation
+);
+wasm_pair_indicator!(WasmBeta, "Beta", wc::Beta);
+wasm_pair_indicator!(
+    WasmSpearmanCorrelation,
+    "SpearmanCorrelation",
+    wc::SpearmanCorrelation
+);
 
 // ---------- KAMA (three params) ----------
 

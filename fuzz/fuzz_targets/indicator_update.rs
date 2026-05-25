@@ -15,10 +15,12 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    BatchExt, BollingerBands, Cmo, Coppock, Dema, Dpo, Ema, HistoricalVolatility, Hma, Indicator,
-    Kama, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, Mom, Pmo, Ppo, Roc, Rsi, Sma,
-    Smma, StdDev, StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Wma,
-    ZScore, Zlema,
+    Autocorrelation, BatchExt, Beta, BollingerBands, Cmo, CoefficientOfVariation, Coppock, Dema,
+    DetrendedStdDev, Dpo, Ema, HistoricalVolatility, Hma, HurstExponent, Indicator, Kama, Kurtosis,
+    LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, MedianAbsoluteDeviation, Mom,
+    PearsonCorrelation, Pmo, Ppo, RSquared, Roc, Rsi, Skewness, Sma, Smma, SpearmanCorrelation,
+    StandardError, StdDev, StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex, Variance,
+    VerticalHorizontalFilter, Wma, ZScore, Zlema,
 };
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
@@ -70,6 +72,18 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| LinRegAngle::new(14).unwrap(), &data);
     drive(|| VerticalHorizontalFilter::new(14).unwrap(), &data);
     drive(|| ZScore::new(14).unwrap(), &data);
+    drive(|| Variance::new(14).unwrap(), &data);
+    drive(|| CoefficientOfVariation::new(14).unwrap(), &data);
+    drive(|| Skewness::new(14).unwrap(), &data);
+    drive(|| Kurtosis::new(14).unwrap(), &data);
+    drive(|| StandardError::new(14).unwrap(), &data);
+    drive(|| DetrendedStdDev::new(14).unwrap(), &data);
+    drive(|| RSquared::new(14).unwrap(), &data);
+    drive(|| MedianAbsoluteDeviation::new(14).unwrap(), &data);
+    drive(|| Autocorrelation::new(14, 2).unwrap(), &data);
+    // HurstExponent needs `period >= 2 * chunks`; 16/4 is the cheapest fit
+    // that still exercises every code path.
+    drive(|| HurstExponent::new(16, 4).unwrap(), &data);
 
     // MACD and Bollinger Bands have non-`f64` outputs, so they cannot use the
     // generic `drive` helper above. Streaming + batch are still both exercised.
@@ -86,5 +100,17 @@ fuzz_target!(|data: Vec<f64>| {
             let _ = bb.update(x);
         }
         let _ = BollingerBands::new(20, 2.0).unwrap().batch(&data);
+    }
+    // Two-series indicators: pair adjacent samples of `data` as (x, y).
+    {
+        let mut p = PearsonCorrelation::new(14).unwrap();
+        let mut b = Beta::new(14).unwrap();
+        let mut s = SpearmanCorrelation::new(14).unwrap();
+        for w in data.windows(2) {
+            let pair = (w[0], w[1]);
+            let _ = p.update(pair);
+            let _ = b.update(pair);
+            let _ = s.update(pair);
+        }
     }
 });

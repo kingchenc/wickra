@@ -116,6 +116,161 @@ node_scalar_indicator!(
     wc::VerticalHorizontalFilter
 );
 node_scalar_indicator!(ZScoreNode, "ZScore", wc::ZScore);
+node_scalar_indicator!(VarianceNode, "Variance", wc::Variance);
+node_scalar_indicator!(
+    CoefficientOfVariationNode,
+    "CoefficientOfVariation",
+    wc::CoefficientOfVariation
+);
+node_scalar_indicator!(SkewnessNode, "Skewness", wc::Skewness);
+node_scalar_indicator!(KurtosisNode, "Kurtosis", wc::Kurtosis);
+node_scalar_indicator!(StandardErrorNode, "StandardError", wc::StandardError);
+node_scalar_indicator!(DetrendedStdDevNode, "DetrendedStdDev", wc::DetrendedStdDev);
+node_scalar_indicator!(RSquaredNode, "RSquared", wc::RSquared);
+node_scalar_indicator!(
+    MedianAbsoluteDeviationNode,
+    "MedianAbsoluteDeviation",
+    wc::MedianAbsoluteDeviation
+);
+
+// ============================== Autocorrelation (period + lag) ==============================
+
+#[napi(js_name = "Autocorrelation")]
+pub struct AutocorrelationNode {
+    inner: wc::Autocorrelation,
+}
+
+#[napi]
+impl AutocorrelationNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, lag: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Autocorrelation::new(period as usize, lag as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== HurstExponent (period + chunks) ==============================
+
+#[napi(js_name = "HurstExponent")]
+pub struct HurstExponentNode {
+    inner: wc::HurstExponent,
+}
+
+#[napi]
+impl HurstExponentNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, chunks: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::HurstExponent::new(period as usize, chunks as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Two-series indicators (Pearson / Beta / Spearman) ==============================
+
+macro_rules! node_pair_indicator {
+    ($wrapper:ident, $node_name:literal, $rust_ty:ty) => {
+        #[napi(js_name = $node_name)]
+        pub struct $wrapper {
+            inner: $rust_ty,
+        }
+
+        #[napi]
+        impl $wrapper {
+            #[napi(constructor)]
+            pub fn new(period: u32) -> napi::Result<Self> {
+                Ok(Self {
+                    inner: <$rust_ty>::new(period as usize).map_err(map_err)?,
+                })
+            }
+            #[napi]
+            pub fn update(&mut self, x: f64, y: f64) -> Option<f64> {
+                self.inner.update((x, y))
+            }
+            /// Batch over two equally-sized arrays. Returns a length-`n` array
+            /// with `NaN` for warmup positions.
+            #[napi]
+            pub fn batch(&mut self, x: Vec<f64>, y: Vec<f64>) -> napi::Result<Vec<f64>> {
+                if x.len() != y.len() {
+                    return Err(NapiError::new(
+                        Status::InvalidArg,
+                        "x and y must be equal length".to_string(),
+                    ));
+                }
+                let mut out = Vec::with_capacity(x.len());
+                for i in 0..x.len() {
+                    out.push(self.inner.update((x[i], y[i])).unwrap_or(f64::NAN));
+                }
+                Ok(out)
+            }
+            #[napi]
+            pub fn reset(&mut self) {
+                self.inner.reset();
+            }
+            #[napi(js_name = "isReady")]
+            pub fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            #[napi(js_name = "warmupPeriod")]
+            pub fn warmup_period(&self) -> u32 {
+                self.inner.warmup_period() as u32
+            }
+        }
+    };
+}
+
+node_pair_indicator!(
+    PearsonCorrelationNode,
+    "PearsonCorrelation",
+    wc::PearsonCorrelation
+);
+node_pair_indicator!(BetaNode, "Beta", wc::Beta);
+node_pair_indicator!(
+    SpearmanCorrelationNode,
+    "SpearmanCorrelation",
+    wc::SpearmanCorrelation
+);
 
 // ============================== MACD ==============================
 
