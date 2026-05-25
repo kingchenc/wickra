@@ -261,6 +261,40 @@ mod tests {
     }
 
     #[test]
+    fn pure_downtrend_arms_buy_combo_and_advances() {
+        // Strictly decreasing closes -> buy setup completes at idx 12,
+        // then every subsequent bar satisfies the three buy-combo
+        // strictness conditions, so combo advances by one per bar and
+        // saturates at +13.
+        let candles: Vec<Candle> = (1..=40)
+            .rev()
+            .enumerate()
+            .map(|(k, i)| {
+                c(
+                    f64::from(i) + 0.5,
+                    f64::from(i) - 0.5,
+                    f64::from(i),
+                    i64::try_from(k).unwrap(),
+                )
+            })
+            .collect();
+        let mut combo = TdCombo::classic();
+        let out = combo.batch(&candles);
+        for v in out.iter().take(4) {
+            assert!(v.is_none());
+        }
+        // At idx 12 the setup completes and combo direction is buy; on
+        // the same bar the combo rule fires once because the
+        // monotone-strictness conditions hold for a strictly-falling
+        // series, so combo == +1.
+        let at_12 = out[12].expect("ready");
+        assert_eq!(at_12, 1.0);
+        // By idx 30 the combo has saturated at +13.
+        let later = out[30].expect("ready");
+        assert_eq!(later, 13.0);
+    }
+
+    #[test]
     fn flat_series_never_arms_combo() {
         // All closes equal -> setup never completes -> combo never arms.
         let candles: Vec<Candle> = (0..40).map(|i| c(10.5, 9.5, 10.0, i64::from(i))).collect();

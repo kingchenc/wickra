@@ -187,19 +187,16 @@ impl Indicator for TdSequential {
         }
 
         // --- Countdown rule: compare close to high/low `countdown_lookback`
-        // bars ago. Only the active direction advances.
+        // bars ago. Only the active direction advances. Once a countdown
+        // reaches `countdown_target`, the strict `< countdown_target` guard
+        // keeps it pinned so the caller can detect the "13" signal on this
+        // bar and any subsequent bar until a new setup arms a fresh run.
         let cd_ref_idx = need - self.countdown_lookback;
         let cd_ref = &self.candles[cd_ref_idx];
         match self.countdown_dir {
             Direction::Buy => {
                 if candle.close <= cd_ref.low && self.buy_countdown < self.countdown_target {
                     self.buy_countdown += 1;
-                    if self.buy_countdown == self.countdown_target {
-                        // Countdown completes — keep direction until the next
-                        // setup arms a new run; the count stays pinned at the
-                        // target so the caller can detect the "13" signal on
-                        // this bar and any subsequent bar until reset.
-                    }
                 }
             }
             Direction::Sell => {
@@ -300,6 +297,41 @@ mod tests {
         let later = out[30].expect("ready");
         assert_eq!(later.direction, -1.0);
         assert_eq!(later.countdown, -13.0);
+    }
+
+    #[test]
+    fn pure_downtrend_completes_buy_setup_then_progresses_countdown() {
+        // Strictly decreasing closes -> buy setup increments every bar past
+        // warmup, reaching 9 by index 12. After activation, every subsequent
+        // bar satisfies close <= low[i-2], so the buy countdown advances by
+        // one per bar and pins at +13.
+        let candles: Vec<Candle> = (1..=40)
+            .rev()
+            .enumerate()
+            .map(|(k, i)| {
+                c(
+                    f64::from(i) + 0.5,
+                    f64::from(i) - 0.5,
+                    f64::from(i),
+                    i64::try_from(k).unwrap(),
+                )
+            })
+            .collect();
+        let mut td = TdSequential::classic();
+        let out = td.batch(&candles);
+
+        // Warmup: indices 0..3 yield None.
+        for v in out.iter().take(4) {
+            assert!(v.is_none());
+        }
+        let at_12 = out[12].expect("setup ready");
+        assert_eq!(at_12.setup, 9.0);
+        assert_eq!(at_12.direction, 1.0); // buy direction armed
+
+        // By idx 30 the buy countdown has saturated at +13.
+        let later = out[30].expect("ready");
+        assert_eq!(later.direction, 1.0);
+        assert_eq!(later.countdown, 13.0);
     }
 
     #[test]

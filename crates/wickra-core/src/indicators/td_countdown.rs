@@ -239,6 +239,33 @@ mod tests {
     }
 
     #[test]
+    fn pure_downtrend_completes_setup_then_runs_buy_countdown_to_plus_13() {
+        let candles: Vec<Candle> = (1..=40)
+            .rev()
+            .enumerate()
+            .map(|(k, i)| {
+                c(
+                    f64::from(i) + 0.5,
+                    f64::from(i) - 0.5,
+                    f64::from(i),
+                    i64::try_from(k).unwrap(),
+                )
+            })
+            .collect();
+        let mut td = TdCountdown::classic();
+        let out = td.batch(&candles);
+        for v in out.iter().take(4) {
+            assert!(v.is_none());
+        }
+        // At idx 12 the buy setup completes; on the same bar the
+        // countdown rule fires once because close < low[i-2] for a
+        // strictly-falling series, so countdown == +1.
+        assert_eq!(out[12].expect("ready"), 1.0);
+        // After enough bars the countdown saturates at +13.
+        assert_eq!(out[30].expect("ready"), 13.0);
+    }
+
+    #[test]
     fn flat_series_never_arms_countdown() {
         let candles: Vec<Candle> = (0..30).map(|i| c(10.5, 9.5, 10.0, i64::from(i))).collect();
         let mut td = TdCountdown::classic();
