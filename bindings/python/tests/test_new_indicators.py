@@ -44,6 +44,11 @@ SCALAR = [
     (ta.SMMA, (14,)),
     (ta.TRIMA, (20,)),
     (ta.ZLEMA, (14,)),
+    (ta.ALMA, (9, 0.85, 6.0)),
+    (ta.McGinleyDynamic, (10,)),
+    (ta.FRAMA, (16,)),
+    (ta.VIDYA, (14, 9)),
+    (ta.JMA, (14, 0.0, 2)),
     (ta.T3, (5, 0.7)),
     (ta.MOM, (10,)),
     (ta.CMO, (14,)),
@@ -67,6 +72,8 @@ SCALAR = [
     (ta.VerticalHorizontalFilter, (28,)),
     (ta.ZScore, (20,)),
     (ta.LinRegAngle, (14,)),
+    (ta.LaguerreRSI, (0.5,)),
+    (ta.ConnorsRSI, (3, 2, 100)),
 ]
 
 
@@ -91,6 +98,20 @@ def test_scalar_streaming_matches_batch(cls, args, sine_prices):
 
 CANDLE_SCALAR = {
     "VWMA": (lambda: ta.VWMA(20), lambda ind, h, l, c, v: ind.batch(c, v)),
+    "RVI": (
+        # extract_candle pulls the open price from index 0 of the tuple; the
+        # streaming test below already builds candles with open == close, so
+        # match that here by passing close as the open column.
+        lambda: ta.RVI(10),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Inertia": (
+        lambda: ta.Inertia(14, 20),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "PGO": (lambda: ta.PGO(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
+    "SMI": (lambda: ta.SMI(5, 3, 3), lambda ind, h, l, c, v: ind.batch(h, l, c)),
+    "EVWMA": (lambda: ta.EVWMA(20), lambda ind, h, l, c, v: ind.batch(c, v)),
     "UltimateOscillator": (
         lambda: ta.UltimateOscillator(7, 14, 28),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
@@ -214,6 +235,18 @@ MULTI = {
     ),
 }
 
+# --- Scalar-input, multi-output indicators --------------------------------
+#
+# Same shape contract as MULTI (batch returns (n, 2)) but streaming feeds a
+# single float instead of a candle tuple.
+
+MULTI_SCALAR_INPUT = {
+    "KST": (
+        lambda: ta.KST(10, 15, 20, 30, 10, 10, 10, 15, 9),
+        lambda ind, c: ind.batch(c),
+    ),
+}
+
 
 @pytest.mark.parametrize("name", list(MULTI))
 def test_multi_streaming_matches_batch(name, ohlcv):
@@ -237,6 +270,40 @@ def test_multi_streaming_matches_batch(name, ohlcv):
         v = streamer.update(candle)
         rows.append([math.nan, math.nan] if v is None else list(v))
     assert _eq_nan(batch, np.array(rows, dtype=np.float64)), f"{name} mismatch"
+
+
+@pytest.mark.parametrize("name", list(MULTI_SCALAR_INPUT))
+def test_multi_scalar_streaming_matches_batch(name, ohlcv):
+    _, _, close, _ = ohlcv
+    make, batch_call = MULTI_SCALAR_INPUT[name]
+
+    batch = batch_call(make(), close)
+    assert batch.shape == (close.size, 2)
+
+    streamer = make()
+    rows = []
+    for p in close:
+        v = streamer.update(float(p))
+        rows.append([math.nan, math.nan] if v is None else list(v))
+    assert _eq_nan(batch, np.array(rows, dtype=np.float64)), f"{name} mismatch"
+
+
+# --- Alligator (3-tuple output) -------------------------------------------
+
+
+def test_alligator_streaming_matches_batch(ohlcv):
+    high, low, _, _ = ohlcv
+    alligator = ta.Alligator(13, 8, 5)
+    batch = alligator.batch(high, low)
+    assert batch.shape == (high.size, 3)
+
+    streamer = ta.Alligator(13, 8, 5)
+    rows = []
+    for i in range(high.size):
+        candle = (float(low[i]), float(high[i]), float(low[i]), float(low[i]), 0.0, i)
+        v = streamer.update(candle)
+        rows.append([math.nan, math.nan, math.nan] if v is None else list(v))
+    assert _eq_nan(batch, np.array(rows, dtype=np.float64)), "Alligator mismatch"
 
 
 # --- Reference values -----------------------------------------------------
@@ -309,6 +376,7 @@ def test_new_indicators_expose_lifecycle():
     instances = [make() for make, _ in CANDLE_SCALAR.values()]
     instances += [make() for make, _ in MULTI.values()]
     instances += [cls(*args) for cls, args in SCALAR]
+    instances.append(ta.Alligator(13, 8, 5))
     for ind in instances:
         assert ind.is_ready() is False
         assert ind.warmup_period() >= 1

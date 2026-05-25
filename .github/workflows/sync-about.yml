@@ -1,0 +1,82 @@
+name: Sync indicator count
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.ABOUT_SYNC_TOKEN }}
+
+      - name: Count indicators
+        id: count
+        run: |
+          n=$(grep -c '^mod ' crates/wickra-core/src/indicators/mod.rs)
+          echo "count=$n" >> "$GITHUB_OUTPUT"
+          echo "Indicator count: $n"
+
+      - name: Update GitHub About description
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.ABOUT_SYNC_TOKEN }}
+        run: |
+          n="${{ steps.count.outputs.count }}"
+          desc="Streaming-first technical indicators with a Rust core and Python, Node.js, and WebAssembly bindings. ${n} indicators, O(1) per-tick updates, no system dependencies. Drop-in TA-Lib replacement."
+          current=$(gh repo view --json description -q .description)
+          if [ "$current" = "$desc" ]; then
+            echo "About unchanged."
+          else
+            gh repo edit --description "$desc"
+            echo "About updated."
+          fi
+
+      - name: Patch README counter
+        if: github.event_name != 'pull_request'
+        id: patch
+        run: |
+          n="${{ steps.count.outputs.count }}"
+          sed -i -E "s/[0-9]+ (streaming-first )?indicators/${n} \1indicators/g" README.md
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit & push README
+        if: steps.patch.outputs.changed == 'true' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "wickra-bot"
+          git config user.email "wickra-bot@users.noreply.github.com"
+          git add README.md
+          git commit -m "chore: sync indicator count to ${{ steps.count.outputs.count }} [skip ci]"
+          git push
+
+      - name: Sync Wiki
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.ABOUT_SYNC_TOKEN }}
+        run: |
+          n="${{ steps.count.outputs.count }}"
+          git clone "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.wiki.git" wiki
+          cd wiki
+          sed -i -E "s/[0-9]+ (streaming-first )?indicators/${n} \1indicators/g" Home.md FAQ.md Streaming-vs-Batch.md
+          if git diff --quiet; then
+            echo "Wiki unchanged."
+            exit 0
+          fi
+          git config user.name "wickra-bot"
+          git config user.email "wickra-bot@users.noreply.github.com"
+          git add Home.md FAQ.md Streaming-vs-Batch.md
+          git commit -m "chore: sync indicator count to ${n}"
+          git push
