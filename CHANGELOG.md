@@ -8,6 +8,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Family 05 — Bands & Channels (11 new indicators).** Eleven additional
+  price-envelope overlays organised into the new "Bands & Channels"
+  family, exposed across all four bindings (Rust, Python, Node, WASM):
+  - `MaEnvelope` — SMA centerline with fixed-percent envelope (the oldest
+    band overlay still in use).
+  - `AccelerationBands` — Price Headley's momentum-biased bands that widen
+    with the bar's relative range `(H − L) / (H + L)`.
+  - `StarcBands` — Stoller Average Range Channel: SMA(close) ± k·ATR
+    (Keltner's SMA-centerline sibling).
+  - `AtrBands` — Close-anchored envelope of width `k · ATR`, the standard
+    volatility-targeting stop/target band.
+  - `HurstChannel` — SMA centerline wrapped by the rolling high-low range
+    (Brian Millard / Hurst-cycle channel).
+  - `LinRegChannel` — Linear-regression endpoint ± k·σ of the residuals,
+    measuring dispersion about the *trend* rather than the mean.
+  - `StandardErrorBands` — Linear regression with the OLS standard error
+    (denominator `n − 2`) for prediction-interval bands.
+  - `DoubleBollinger` — Kathy Lien's `±1σ` plus `±2σ` zone-partition setup.
+  - `TtmSqueeze` — John Carter's BB-inside-KC squeeze flag paired with a
+    detrended-close momentum reading.
+  - `FractalChaosBands` — Bill Williams 5-bar fractal high/low envelope.
+  - `VwapStdDevBands` — Cumulative VWAP with volume-weighted standard
+    deviation bands.
+  Indicator count rises from 71 to 82 across nine families; the README
+  family table and the wiki overview/sidebar/warmup pages were updated to
+  match.
 - **Yang-Zhang Volatility.** Yang & Zhang (2000) gold-standard OHLC
   estimator: a convex blend of overnight (close-to-open), open-to-close
   and Rogers-Satchell variances. The blending factor

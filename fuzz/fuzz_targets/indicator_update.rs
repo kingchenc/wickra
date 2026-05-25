@@ -15,11 +15,12 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    Alma, Apo, BatchExt, BollingerBands, Cfo, Cmo, ConnorsRsi, Coppock, Dema, Dpo, ElderImpulse,
-    Ema, Frama, HistoricalVolatility, Hma, Indicator, Jma, Kama, Kst, LaguerreRsi, LinRegAngle,
-    LinRegSlope, LinearRegression, MacdIndicator, McGinleyDynamic, Mom, Pmo, Ppo, Roc, Rsi,
-    RviVolatility, Sma, Smma, Stc, StdDev, StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex,
-    VerticalHorizontalFilter, Vidya, Wma, ZScore, ZeroLagMacd, Zlema,
+    Alma, Apo, BatchExt, BollingerBands, Cfo, Cmo, ConnorsRsi, Coppock, Dema, DoubleBollinger, Dpo,
+    ElderImpulse, Ema, Frama, HistoricalVolatility, Hma, Indicator, Jma, Kama, Kst, LaguerreRsi,
+    LinRegAngle, LinRegChannel, LinRegSlope, LinearRegression, MaEnvelope, MacdIndicator,
+    McGinleyDynamic, Mom, Pmo, Ppo, Roc, Rsi, RviVolatility, Sma, Smma, StandardErrorBands, Stc,
+    StdDev, StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Vidya, Wma,
+    ZScore, ZeroLagMacd, Zlema,
 };
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
@@ -119,5 +120,35 @@ fuzz_target!(|data: Vec<f64>| {
             let _ = bb.update(x);
         }
         let _ = BollingerBands::new(20, 2.0).unwrap().batch(&data);
+    }
+
+    // --- Family 05: scalar-input band/channel indicators (multi-output) ---
+    {
+        let mut env = MaEnvelope::new(20, 0.025).unwrap();
+        for &x in &data {
+            let _ = env.update(x);
+        }
+        let _ = MaEnvelope::new(20, 0.025).unwrap().batch(&data);
+    }
+    {
+        let mut ch = LinRegChannel::new(20, 2.0).unwrap();
+        for &x in &data {
+            let _ = ch.update(x);
+        }
+        let _ = LinRegChannel::new(20, 2.0).unwrap().batch(&data);
+    }
+    {
+        let mut seb = StandardErrorBands::new(21, 2.0).unwrap();
+        for &x in &data {
+            let _ = seb.update(x);
+        }
+        let _ = StandardErrorBands::new(21, 2.0).unwrap().batch(&data);
+    }
+    {
+        let mut db = DoubleBollinger::new(20, 1.0, 2.0).unwrap();
+        for &x in &data {
+            let _ = db.update(x);
+        }
+        let _ = DoubleBollinger::new(20, 1.0, 2.0).unwrap().batch(&data);
     }
 });

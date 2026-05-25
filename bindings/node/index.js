@@ -310,7 +310,7 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, MOM, CMO, DPO, StdDev, UlcerIndex, VerticalHorizontalFilter, ZScore, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, RollingVWAP, AwesomeOscillator, Aroon, KAMA, RVI, PGO, KST, SMI, LaguerreRSI, ConnorsRSI, Inertia, ALMA, McGinleyDynamic, FRAMA, VIDYA, JMA, Alligator, EVWMA, APO, AwesomeOscillatorHistogram, CFO, ZeroLagMACD, ElderImpulse, STC, T3, TSI, PMO, ADL, VolumePriceTrend, ChaikinMoneyFlow, ChaikinOscillator, ForceIndex, EaseOfMovement, SuperTrend, ChandelierExit, ChandeKrollStop, AtrTrailingStop, TypicalPrice, MedianPrice, WeightedClose, LinearRegression, LinRegSlope, AcceleratorOscillator, BalanceOfPower, ChoppinessIndex, TrueRange, ChaikinVolatility, LinRegAngle, BollingerBandwidth, PercentB, NATR, HistoricalVolatility, AroonOscillator, Vortex, MassIndex, StochRSI, UltimateOscillator, PPO, Coppock, VWMA, RVIVolatility, ParkinsonVolatility, GarmanKlassVolatility, RogersSatchellVolatility, YangZhangVolatility } = nativeBinding
+const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, MOM, CMO, DPO, StdDev, UlcerIndex, VerticalHorizontalFilter, ZScore, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, RollingVWAP, AwesomeOscillator, Aroon, KAMA, RVI, PGO, KST, SMI, LaguerreRSI, ConnorsRSI, Inertia, ALMA, McGinleyDynamic, FRAMA, VIDYA, JMA, Alligator, EVWMA, APO, AwesomeOscillatorHistogram, CFO, ZeroLagMACD, ElderImpulse, STC, T3, TSI, PMO, ADL, VolumePriceTrend, ChaikinMoneyFlow, ChaikinOscillator, ForceIndex, EaseOfMovement, SuperTrend, ChandelierExit, ChandeKrollStop, AtrTrailingStop, TypicalPrice, MedianPrice, WeightedClose, LinearRegression, LinRegSlope, AcceleratorOscillator, BalanceOfPower, ChoppinessIndex, TrueRange, ChaikinVolatility, LinRegAngle, BollingerBandwidth, PercentB, NATR, HistoricalVolatility, AroonOscillator, Vortex, MassIndex, StochRSI, UltimateOscillator, PPO, Coppock, VWMA, RVIVolatility, ParkinsonVolatility, GarmanKlassVolatility, RogersSatchellVolatility, YangZhangVolatility, MaEnvelope, AccelerationBands, StarcBands, AtrBands, HurstChannel, LinRegChannel, StandardErrorBands, DoubleBollinger, TtmSqueeze, FractalChaosBands, VwapStdDevBands } = nativeBinding
 
 module.exports.version = version
 module.exports.SMA = SMA
@@ -410,3 +410,14 @@ module.exports.ParkinsonVolatility = ParkinsonVolatility
 module.exports.GarmanKlassVolatility = GarmanKlassVolatility
 module.exports.RogersSatchellVolatility = RogersSatchellVolatility
 module.exports.YangZhangVolatility = YangZhangVolatility
+module.exports.MaEnvelope = MaEnvelope
+module.exports.AccelerationBands = AccelerationBands
+module.exports.StarcBands = StarcBands
+module.exports.AtrBands = AtrBands
+module.exports.HurstChannel = HurstChannel
+module.exports.LinRegChannel = LinRegChannel
+module.exports.StandardErrorBands = StandardErrorBands
+module.exports.DoubleBollinger = DoubleBollinger
+module.exports.TtmSqueeze = TtmSqueeze
+module.exports.FractalChaosBands = FractalChaosBands
+module.exports.VwapStdDevBands = VwapStdDevBands

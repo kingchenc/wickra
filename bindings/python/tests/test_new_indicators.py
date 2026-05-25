@@ -78,6 +78,16 @@ SCALAR = [
 ]
 
 
+# Family 05 band/channel indicators with scalar input and multi-output.
+# `cols` is the expected number of band columns from `batch`.
+SCALAR_MULTI = {
+    "MaEnvelope": (lambda: ta.MaEnvelope(20, 0.025), 3),
+    "LinRegChannel": (lambda: ta.LinRegChannel(20, 2.0), 3),
+    "StandardErrorBands": (lambda: ta.StandardErrorBands(21, 2.0), 3),
+    "DoubleBollinger": (lambda: ta.DoubleBollinger(20, 1.0, 2.0), 5),
+}
+
+
 @pytest.mark.parametrize("cls, args", SCALAR, ids=[c.__name__ for c, _ in SCALAR])
 def test_scalar_streaming_matches_batch(cls, args, sine_prices):
     batch = cls(*args).batch(sine_prices)
@@ -247,6 +257,26 @@ MULTI = {
         lambda: ta.ChandeKrollStop(10, 1.0, 9),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
     ),
+    # Family 05 candle-input bands. Each entry is
+    # `(factory, batch_call, output_arity, streaming_fields)` where
+    # `streaming_fields` is the tuple shape returned by `update(...)`.
+    "TtmSqueeze": (
+        lambda: ta.TtmSqueeze(20, 2.0, 1.5),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
+    "FractalChaosBands": (
+        lambda: ta.FractalChaosBands(2),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+    ),
+}
+
+
+# Bands with 3 outputs upper/middle/lower from a candle (h, l, c).
+HLC_BAND3 = {
+    "AccelerationBands": lambda: ta.AccelerationBands(20, 0.001),
+    "StarcBands": lambda: ta.StarcBands(6, 15, 2.0),
+    "AtrBands": lambda: ta.AtrBands(14, 3.0),
+    "HurstChannel": lambda: ta.HurstChannel(10, 0.5),
 }
 
 # --- Scalar-input, multi-output indicators --------------------------------
@@ -284,6 +314,73 @@ def test_multi_streaming_matches_batch(name, ohlcv):
         v = streamer.update(candle)
         rows.append([math.nan, math.nan] if v is None else list(v))
     assert _eq_nan(batch, np.array(rows, dtype=np.float64)), f"{name} mismatch"
+
+
+# --- Family 05: scalar-input multi-output band/channel indicators ----------
+
+
+@pytest.mark.parametrize("name", list(SCALAR_MULTI))
+def test_scalar_multi_streaming_matches_batch(name, sine_prices):
+    make, cols = SCALAR_MULTI[name]
+    batch = make().batch(sine_prices)
+    assert batch.shape == (sine_prices.size, cols)
+
+    streamer = make()
+    rows = []
+    for p in sine_prices:
+        v = streamer.update(float(p))
+        rows.append([math.nan] * cols if v is None else list(v))
+    assert _eq_nan(batch, np.array(rows, dtype=np.float64)), f"{name} mismatch"
+
+
+# --- Family 05: 3-band candle-input indicators ------------------------------
+
+
+@pytest.mark.parametrize("name", list(HLC_BAND3))
+def test_hlc_band3_streaming_matches_batch(name, ohlcv):
+    high, low, close, _ = ohlcv
+    make = HLC_BAND3[name]
+    batch = make().batch(high, low, close)
+    assert batch.shape == (close.size, 3)
+
+    streamer = make()
+    rows = []
+    for i in range(close.size):
+        candle = (
+            float(close[i]),
+            float(high[i]),
+            float(low[i]),
+            float(close[i]),
+            1.0,
+            i,
+        )
+        v = streamer.update(candle)
+        rows.append([math.nan] * 3 if v is None else list(v))
+    assert _eq_nan(batch, np.array(rows, dtype=np.float64)), f"{name} mismatch"
+
+
+# --- VWAP StdDev Bands (4 outputs, needs volume) ----------------------------
+
+
+def test_vwap_stddev_bands_streaming_matches_batch(ohlcv):
+    high, low, close, volume = ohlcv
+    batch = ta.VwapStdDevBands(2.0).batch(high, low, close, volume)
+    assert batch.shape == (close.size, 4)
+
+    streamer = ta.VwapStdDevBands(2.0)
+    rows = []
+    for i in range(close.size):
+        candle = (
+            float(close[i]),
+            float(high[i]),
+            float(low[i]),
+            float(close[i]),
+            float(volume[i]),
+            i,
+        )
+        v = streamer.update(candle)
+        rows.append([math.nan] * 4 if v is None else list(v))
+    assert _eq_nan(batch, np.array(rows, dtype=np.float64))
 
 
 @pytest.mark.parametrize("name", list(MULTI_SCALAR_INPUT))
@@ -399,6 +496,108 @@ def test_z_score_reference():
     assert out[1] == pytest.approx(1.0)
 
 
+# --- Family 05 reference values ---------------------------------------------
+
+
+def test_ma_envelope_reference():
+    # SMA([10, 20, 30]) = 20; with percent = 0.10: upper = 22, lower = 18.
+    out = ta.MaEnvelope(3, 0.10).batch(np.array([10.0, 20.0, 30.0]))
+    assert math.isnan(out[0, 0]) and math.isnan(out[1, 0])
+    assert out[2, 0] == pytest.approx(22.0)  # upper
+    assert out[2, 1] == pytest.approx(20.0)  # middle
+    assert out[2, 2] == pytest.approx(18.0)  # lower
+
+
+def test_acceleration_bands_reference():
+    # Single bar: high=12, low=8, close=10, factor=0.5, period=1.
+    # ratio = 4/20 = 0.2; raw_up = 12·1.1 = 13.2; raw_lo = 8·0.9 = 7.2.
+    v = ta.AccelerationBands(1, 0.5).update((10.0, 12.0, 8.0, 10.0, 1.0, 0))
+    assert v == pytest.approx((13.2, 10.0, 7.2))
+
+
+def test_atr_bands_reference():
+    # Five identical bars (h=11, l=9, c=10) → ATR=2, close=10, mult=3:
+    # upper=16, middle=10, lower=4.
+    out = ta.AtrBands(5, 3.0).batch(
+        np.array([11.0] * 5), np.array([9.0] * 5), np.array([10.0] * 5)
+    )
+    assert math.isnan(out[3, 0])
+    assert out[4, 0] == pytest.approx(16.0)
+    assert out[4, 1] == pytest.approx(10.0)
+    assert out[4, 2] == pytest.approx(4.0)
+
+
+def test_hurst_channel_reference():
+    # Five identical (h=12, l=8, c=10): SMA(close)=10, range=4, mult=0.5.
+    out = ta.HurstChannel(5, 0.5).batch(
+        np.array([12.0] * 5), np.array([8.0] * 5), np.array([10.0] * 5)
+    )
+    assert out[4, 0] == pytest.approx(12.0)
+    assert out[4, 1] == pytest.approx(10.0)
+    assert out[4, 2] == pytest.approx(8.0)
+
+
+def test_linreg_channel_reference():
+    # period 3 over [1, 2, 9]: line y=4x, endpoint=8, residuals=[1, -2, 1],
+    # population sigma=sqrt(2); mult=2 → upper=8+2√2, lower=8-2√2.
+    out = ta.LinRegChannel(3, 2.0).batch(np.array([1.0, 2.0, 9.0]))
+    s = math.sqrt(2.0)
+    assert out[2, 0] == pytest.approx(8.0 + 2.0 * s)
+    assert out[2, 1] == pytest.approx(8.0)
+    assert out[2, 2] == pytest.approx(8.0 - 2.0 * s)
+
+
+def test_standard_error_bands_reference():
+    # Same [1, 2, 9] with n=3: SSE=6, n-2=1, stderr=sqrt(6); mult=2 →
+    # upper=8+2√6, lower=8-2√6.
+    out = ta.StandardErrorBands(3, 2.0).batch(np.array([1.0, 2.0, 9.0]))
+    s = math.sqrt(6.0)
+    assert out[2, 0] == pytest.approx(8.0 + 2.0 * s)
+    assert out[2, 1] == pytest.approx(8.0)
+    assert out[2, 2] == pytest.approx(8.0 - 2.0 * s)
+
+
+def test_double_bollinger_orders_bands():
+    # On a non-trivial dispersion, outer >= inner >= middle >= -inner >= -outer.
+    out = ta.DoubleBollinger(5, 1.0, 2.0).batch(
+        np.array([1.0, 5.0, 2.0, 4.0, 3.0, 6.0])
+    )
+    v = out[5]
+    assert v[0] >= v[1] >= v[2] >= v[3] >= v[4]
+
+
+def test_vwap_stddev_bands_reference():
+    # Two equal-volume bars with tp=8, tp=12: vwap=10, σ=2, mult=1.5 →
+    # upper=13, lower=7.
+    v = ta.VwapStdDevBands(1.5)
+    v.update((8.0, 8.0, 8.0, 8.0, 1.0, 0))
+    out = v.update((12.0, 12.0, 12.0, 12.0, 1.0, 1))
+    assert out[0] == pytest.approx(13.0)
+    assert out[1] == pytest.approx(10.0)
+    assert out[2] == pytest.approx(7.0)
+    assert out[3] == pytest.approx(2.0)
+
+
+def test_ttm_squeeze_flat_market():
+    # Zero volatility: BB and KC both collapse to a point → squeeze=1.0,
+    # momentum=0.0.
+    candles_h = np.array([10.0] * 25)
+    out = ta.TtmSqueeze(20, 2.0, 1.5).batch(candles_h, candles_h, candles_h)
+    assert out[24, 0] == pytest.approx(1.0)
+    assert out[24, 1] == pytest.approx(0.0)
+
+
+def test_fractal_chaos_bands_detects_peak_and_trough():
+    # Sequence that creates one fractal high (i=2) and one low (i=3).
+    h = np.array([1.0, 2.0, 5.0, 3.0, 2.0, 1.0, 2.0])
+    l = np.array([1.0, 2.0, 3.0, 0.5, 2.0, 1.0, 2.0])
+    out = ta.FractalChaosBands(2).batch(h, l)
+    # First bar with both bands set is index 5.
+    assert math.isnan(out[4, 0])
+    assert out[5, 0] == pytest.approx(5.0)
+    assert out[5, 1] == pytest.approx(0.5)
+
+
 # --- Lifecycle ------------------------------------------------------------
 
 
@@ -407,6 +606,9 @@ def test_new_indicators_expose_lifecycle():
     instances += [make() for make, _ in MULTI.values()]
     instances += [make() for make, _ in MULTI_SCALAR_INPUT.values()]
     instances += [cls(*args) for cls, args in SCALAR]
+    instances += [make() for make, _ in SCALAR_MULTI.values()]
+    instances += [make() for make in HLC_BAND3.values()]
+    instances += [ta.VwapStdDevBands(2.0)]
     instances.append(ta.Alligator(13, 8, 5))
     instances.append(ta.ZeroLagMACD(12, 26, 9))
     for ind in instances:

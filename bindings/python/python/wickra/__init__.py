@@ -127,6 +127,18 @@ from ._wickra import (
     LinRegSlope,
     ZScore,
     LinRegAngle,
+    # Bands & Channels
+    MaEnvelope,
+    AccelerationBands,
+    StarcBands,
+    AtrBands,
+    HurstChannel,
+    LinRegChannel,
+    StandardErrorBands,
+    DoubleBollinger,
+    TtmSqueeze,
+    FractalChaosBands,
+    VwapStdDevBands,
 )
 
 __all__ = [
@@ -233,4 +245,16 @@ __all__ = [
     "LinRegSlope",
     "ZScore",
     "LinRegAngle",
+    # Bands & Channels
+    "MaEnvelope",
+    "AccelerationBands",
+    "StarcBands",
+    "AtrBands",
+    "HurstChannel",
+    "LinRegChannel",
+    "StandardErrorBands",
+    "DoubleBollinger",
+    "TtmSqueeze",
+    "FractalChaosBands",
+    "VwapStdDevBands",
 ]

@@ -158,6 +158,18 @@ const multi = {
   SuperTrend: { make: () => new wickra.SuperTrend(10, 3), fields: ['value', 'direction'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ChandelierExit: { make: () => new wickra.ChandelierExit(22, 3), fields: ['longStop', 'shortStop'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ChandeKrollStop: { make: () => new wickra.ChandeKrollStop(10, 1, 9), fields: ['stopLong', 'stopShort'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  // Family 05: bands & channels
+  MaEnvelope: { make: () => new wickra.MaEnvelope(20, 0.025), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
+  AccelerationBands: { make: () => new wickra.AccelerationBands(20, 0.001), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  StarcBands: { make: () => new wickra.StarcBands(6, 15, 2), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  AtrBands: { make: () => new wickra.AtrBands(14, 3), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  HurstChannel: { make: () => new wickra.HurstChannel(10, 0.5), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  LinRegChannel: { make: () => new wickra.LinRegChannel(20, 2), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
+  StandardErrorBands: { make: () => new wickra.StandardErrorBands(21, 2), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
+  DoubleBollinger: { make: () => new wickra.DoubleBollinger(20, 1, 2), fields: ['upperOuter', 'upperInner', 'middle', 'lowerInner', 'lowerOuter'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
+  TtmSqueeze: { make: () => new wickra.TtmSqueeze(20, 2, 1.5), fields: ['squeeze', 'momentum'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  FractalChaosBands: { make: () => new wickra.FractalChaosBands(2), fields: ['upper', 'lower'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  VwapStdDevBands: { make: () => new wickra.VwapStdDevBands(2), fields: ['upper', 'middle', 'lower', 'stddev'], step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
 };
 
 for (const [name, d] of Object.entries(multi)) {
@@ -282,6 +294,44 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+test('MaEnvelope reference values', () => {
+  // SMA([10, 20, 30]) = 20; with percent 0.10: upper=22, lower=18.
+  const out = new wickra.MaEnvelope(3, 0.10).batch([10, 20, 30]);
+  assert.ok(Number.isNaN(out[0]) && Number.isNaN(out[3]));
+  assert.ok(Math.abs(out[2 * 3 + 0] - 22) < 1e-9); // upper
+  assert.ok(Math.abs(out[2 * 3 + 1] - 20) < 1e-9); // middle
+  assert.ok(Math.abs(out[2 * 3 + 2] - 18) < 1e-9); // lower
+});
+
+test('AccelerationBands single-bar reference', () => {
+  // high=12, low=8, close=10, factor=0.5, period=1.
+  // ratio=0.2, raw_up=13.2, raw_lo=7.2.
+  const v = new wickra.AccelerationBands(1, 0.5).update(12, 8, 10);
+  assert.ok(Math.abs(v.upper - 13.2) < 1e-9);
+  assert.ok(Math.abs(v.middle - 10) < 1e-9);
+  assert.ok(Math.abs(v.lower - 7.2) < 1e-9);
+});
+
+test('LinRegChannel reference values for [1, 2, 9]', () => {
+  // Line y=4x, endpoint=8, residuals=[1,-2,1], sigma=sqrt(2).
+  const out = new wickra.LinRegChannel(3, 2).batch([1, 2, 9]);
+  const s = Math.sqrt(2);
+  const i = 2;
+  assert.ok(Math.abs(out[i * 3 + 0] - (8 + 2 * s)) < 1e-9);
+  assert.ok(Math.abs(out[i * 3 + 1] - 8) < 1e-9);
+  assert.ok(Math.abs(out[i * 3 + 2] - (8 - 2 * s)) < 1e-9);
+});
+
+test('VwapStdDevBands two-bar reference', () => {
+  const v = new wickra.VwapStdDevBands(1.5);
+  v.update(8, 8, 8, 1);
+  const o = v.update(12, 12, 12, 1);
+  assert.ok(Math.abs(o.upper - 13) < 1e-9);
+  assert.ok(Math.abs(o.middle - 10) < 1e-9);
+  assert.ok(Math.abs(o.lower - 7) < 1e-9);
+  assert.ok(Math.abs(o.stddev - 2) < 1e-9);
 });
 
 test('RVIVolatility pure uptrend saturates at 100', () => {
