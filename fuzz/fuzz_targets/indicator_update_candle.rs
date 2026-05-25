@@ -27,10 +27,10 @@ use wickra_core::{
     AwesomeOscillator, AwesomeOscillatorHistogram, BalanceOfPower, BatchExt, Candle, Cci,
     ChaikinMoneyFlow, ChaikinOscillator,
     ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex, Donchian, EaseOfMovement,
-    Evwma, ForceIndex, Indicator, Inertia, Keltner, MassIndex, MedianPrice, Mfi, Natr, Obv, Pgo,
-    Psar, RollingVwap, Rvi, Smi,
+    Evwma, ForceIndex, GarmanKlassVolatility, Indicator, Inertia, Keltner, MassIndex, MedianPrice,
+    Mfi, Natr, Obv, ParkinsonVolatility, Pgo, Psar, RogersSatchellVolatility, RollingVwap, Rvi, Smi,
     Stochastic, SuperTrend, TrueRange, TypicalPrice, UltimateOscillator, VolumePriceTrend, Vortex,
-    Vwap, Vwma, WeightedClose, WilliamsR,
+    Vwap, Vwma, WeightedClose, WilliamsR, YangZhangVolatility,
 };
 
 /// Convert a flat `f64` stream into a `Vec<Candle>` by chunking it into
@@ -75,6 +75,10 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| Natr::new(14).unwrap(), &candles);
     drive(TrueRange::new, &candles);
     drive(|| ChaikinVolatility::new(10, 10).unwrap(), &candles);
+    drive(|| ParkinsonVolatility::new(20, 252).unwrap(), &candles);
+    drive(|| GarmanKlassVolatility::new(20, 252).unwrap(), &candles);
+    drive(|| RogersSatchellVolatility::new(20, 252).unwrap(), &candles);
+    drive(|| YangZhangVolatility::new(20, 252).unwrap(), &candles);
 
     // --- Bands & Channels ---
     drive(|| Keltner::new(20, 10, 2.0).unwrap(), &candles);

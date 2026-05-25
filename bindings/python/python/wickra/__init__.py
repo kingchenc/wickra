@@ -104,6 +104,11 @@ from ._wickra import (
     AtrTrailingStop,
     TrueRange,
     ChaikinVolatility,
+    RVIVolatility,
+    ParkinsonVolatility,
+    GarmanKlassVolatility,
+    RogersSatchellVolatility,
+    YangZhangVolatility,
     # Volume
     OBV,
     VWAP,
@@ -205,6 +210,11 @@ __all__ = [
     "AtrTrailingStop",
     "TrueRange",
     "ChaikinVolatility",
+    "RVIVolatility",
+    "ParkinsonVolatility",
+    "GarmanKlassVolatility",
+    "RogersSatchellVolatility",
+    "YangZhangVolatility",
     # Volume
     "OBV",
     "VWAP",

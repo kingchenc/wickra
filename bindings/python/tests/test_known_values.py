@@ -330,3 +330,60 @@ def test_obv_cumulative_known_sequence():
     volume = np.array([100.0, 20.0, 30.0, 40.0, 10.0])
     out = ta.OBV().batch(close, volume)
     np.testing.assert_allclose(out, [0.0, 20.0, -10.0, -10.0, 0.0])
+
+
+def test_rvi_volatility_pure_uptrend_saturates_at_one_hundred():
+    # Strictly rising closes -> every stddev sample classified as "up" ->
+    # RVIVolatility saturates at 100. Renamed from the original ta.RVI in
+    # PR 42 to disambiguate from Family 02's Relative Vigor Index, which
+    # now owns the short ta.RVI name (candle input).
+    out = ta.RVIVolatility(5).batch(np.arange(1.0, 41.0, dtype=np.float64))
+    ready = out[~np.isnan(out)]
+    assert ready.size > 0
+    np.testing.assert_allclose(ready[-10:], 100.0, atol=1e-9)
+
+
+def test_parkinson_volatility_zero_range_yields_zero():
+    # H == L every bar -> ln(H/L) = 0 -> Parkinson sigma is zero.
+    h = np.full(30, 10.0)
+    l = np.full(30, 10.0)
+    out = ta.ParkinsonVolatility(14, 252).batch(h, l)
+    ready = out[~np.isnan(out)]
+    assert ready.size > 0
+    np.testing.assert_allclose(ready, 0.0, atol=1e-12)
+
+
+def test_garman_klass_zero_movement_yields_zero():
+    # O == H == L == C every bar -> both log terms are zero -> sigma is zero.
+    o = np.full(30, 10.0)
+    h = np.full(30, 10.0)
+    l = np.full(30, 10.0)
+    c = np.full(30, 10.0)
+    out = ta.GarmanKlassVolatility(14, 252).batch(o, h, l, c)
+    ready = out[~np.isnan(out)]
+    assert ready.size > 0
+    np.testing.assert_allclose(ready, 0.0, atol=1e-12)
+
+
+def test_rogers_satchell_zero_movement_yields_zero():
+    o = np.full(30, 10.0)
+    h = np.full(30, 10.0)
+    l = np.full(30, 10.0)
+    c = np.full(30, 10.0)
+    out = ta.RogersSatchellVolatility(14, 252).batch(o, h, l, c)
+    ready = out[~np.isnan(out)]
+    assert ready.size > 0
+    np.testing.assert_allclose(ready, 0.0, atol=1e-12)
+
+
+def test_yang_zhang_zero_movement_yields_zero():
+    # O == H == L == C and constant across bars -> every sub-component is
+    # zero -> Yang-Zhang sigma is zero.
+    o = np.full(30, 10.0)
+    h = np.full(30, 10.0)
+    l = np.full(30, 10.0)
+    c = np.full(30, 10.0)
+    out = ta.YangZhangVolatility(14, 252).batch(o, h, l, c)
+    ready = out[~np.isnan(out)]
+    assert ready.size > 0
+    np.testing.assert_allclose(ready, 0.0, atol=1e-12)

@@ -50,14 +50,15 @@ pub use indicators::{
     BollingerOutput, Cci, Cfo, ChaikinMoneyFlow, ChaikinOscillator, ChaikinVolatility,
     ChandeKrollStop, ChandeKrollStopOutput, ChandelierExit, ChandelierExitOutput, ChoppinessIndex,
     Cmo, ConnorsRsi, Coppock, Dema, Donchian, DonchianOutput, Dpo, EaseOfMovement, ElderImpulse,
-    Ema, Evwma, ForceIndex, Frama, HistoricalVolatility, Hma, Inertia, Jma, Kama, Keltner,
-    KeltnerOutput, Kst, KstOutput, LaguerreRsi, LinRegAngle, LinRegSlope, LinearRegression,
-    MacdIndicator, MacdOutput, MassIndex, McGinleyDynamic, MedianPrice, Mfi, Mom, Natr, Obv,
-    PercentB, Pgo, Pmo, Ppo, Psar, Roc, RollingVwap, Rsi, Rvi, Sma, Smi, Smma, Stc, StdDev,
-    StochRsi, Stochastic, StochasticOutput, SuperTrend, SuperTrendOutput, Tema, Trima, Trix,
-    TrueRange, Tsi, TypicalPrice, UlcerIndex, UltimateOscillator, VerticalHorizontalFilter, Vidya,
-    VolumePriceTrend, Vortex, VortexOutput, Vwap, Vwma, WeightedClose, WilliamsR, Wma, ZScore,
-    ZeroLagMacd, ZeroLagMacdOutput, Zlema, T3,
+    Ema, Evwma, ForceIndex, Frama, GarmanKlassVolatility, HistoricalVolatility, Hma, Inertia, Jma,
+    Kama, Keltner, KeltnerOutput, Kst, KstOutput, LaguerreRsi, LinRegAngle, LinRegSlope,
+    LinearRegression, MacdIndicator, MacdOutput, MassIndex, McGinleyDynamic, MedianPrice, Mfi, Mom,
+    Natr, Obv, ParkinsonVolatility, PercentB, Pgo, Pmo, Ppo, Psar, Roc, RogersSatchellVolatility,
+    RollingVwap, Rsi, Rvi, RviVolatility, Sma, Smi, Smma, Stc, StdDev, StochRsi, Stochastic,
+    StochasticOutput, SuperTrend, SuperTrendOutput, Tema, Trima, Trix, TrueRange, Tsi,
+    TypicalPrice, UlcerIndex, UltimateOscillator, VerticalHorizontalFilter, Vidya,
+    VolumePriceTrend, Vortex, VortexOutput, Vwap, Vwma, WeightedClose, WilliamsR, Wma,
+    YangZhangVolatility, ZScore, ZeroLagMacd, ZeroLagMacdOutput, Zlema, T3,
 };
 pub use ohlcv::{Candle, Tick};
 pub use traits::{BatchExt, Chain, Indicator};

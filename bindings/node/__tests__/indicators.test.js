@@ -70,6 +70,7 @@ const scalarFactories = {
   LinRegAngle: () => new wickra.LinRegAngle(14),
   LaguerreRSI: () => new wickra.LaguerreRSI(0.5),
   ConnorsRSI: () => new wickra.ConnorsRSI(3, 2, 100),
+  RVIVolatility: () => new wickra.RVIVolatility(10),
 };
 
 for (const [name, make] of Object.entries(scalarFactories)) {
@@ -122,6 +123,10 @@ const candleScalar = {
   ChoppinessIndex: { make: () => new wickra.ChoppinessIndex(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   TrueRange: { make: () => new wickra.TrueRange(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ChaikinVolatility: { make: () => new wickra.ChaikinVolatility(10, 10), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  ParkinsonVolatility: { make: () => new wickra.ParkinsonVolatility(20, 252), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  GarmanKlassVolatility: { make: () => new wickra.GarmanKlassVolatility(20, 252), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  RogersSatchellVolatility: { make: () => new wickra.RogersSatchellVolatility(20, 252), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  YangZhangVolatility: { make: () => new wickra.YangZhangVolatility(20, 252), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {
@@ -277,6 +282,51 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+test('RVIVolatility pure uptrend saturates at 100', () => {
+  const prices = Array.from({ length: 40 }, (_, i) => i + 1);
+  const out = new wickra.RVIVolatility(5).batch(prices);
+  for (let i = 9; i < out.length; i++) {
+    assert.ok(Math.abs(out[i] - 100) < 1e-9, `RVIVolatility[${i}] = ${out[i]}`);
+  }
+});
+
+test('ParkinsonVolatility zero-range bars yield zero', () => {
+  const n = 30;
+  const h = Array(n).fill(10);
+  const l = Array(n).fill(10);
+  const out = new wickra.ParkinsonVolatility(14, 252).batch(h, l);
+  for (let i = 13; i < n; i++) {
+    assert.ok(Math.abs(out[i]) < 1e-12, `Parkinson[${i}] = ${out[i]}`);
+  }
+});
+
+test('GarmanKlassVolatility zero-movement bars yield zero', () => {
+  const n = 30;
+  const flat = Array(n).fill(10);
+  const out = new wickra.GarmanKlassVolatility(14, 252).batch(flat, flat, flat, flat);
+  for (let i = 13; i < n; i++) {
+    assert.ok(Math.abs(out[i]) < 1e-12, `GK[${i}] = ${out[i]}`);
+  }
+});
+
+test('RogersSatchellVolatility zero-movement bars yield zero', () => {
+  const n = 30;
+  const flat = Array(n).fill(10);
+  const out = new wickra.RogersSatchellVolatility(14, 252).batch(flat, flat, flat, flat);
+  for (let i = 13; i < n; i++) {
+    assert.ok(Math.abs(out[i]) < 1e-12, `RS[${i}] = ${out[i]}`);
+  }
+});
+
+test('YangZhangVolatility zero-movement bars yield zero', () => {
+  const n = 30;
+  const flat = Array(n).fill(10);
+  const out = new wickra.YangZhangVolatility(14, 252).batch(flat, flat, flat, flat);
+  for (let i = 14; i < n; i++) {
+    assert.ok(Math.abs(out[i]) < 1e-12, `YZ[${i}] = ${out[i]}`);
+  }
 });
 
 test('ZeroLagMACD on a flat series converges to zero', () => {

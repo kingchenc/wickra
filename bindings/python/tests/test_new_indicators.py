@@ -74,6 +74,7 @@ SCALAR = [
     (ta.LinRegAngle, (14,)),
     (ta.LaguerreRSI, (0.5,)),
     (ta.ConnorsRSI, (3, 2, 100)),
+    (ta.RVIVolatility, (10,)),
 ]
 
 
@@ -184,6 +185,24 @@ CANDLE_SCALAR = {
     "ChaikinVolatility": (
         lambda: ta.ChaikinVolatility(10, 10),
         lambda ind, h, l, c, v: ind.batch(h, l),
+    ),
+    "ParkinsonVolatility": (
+        lambda: ta.ParkinsonVolatility(20, 252),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+    ),
+    "GarmanKlassVolatility": (
+        # The streaming 6-tuple feeds open == close, so batch matches with
+        # the close column standing in for open.
+        lambda: ta.GarmanKlassVolatility(20, 252),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "RogersSatchellVolatility": (
+        lambda: ta.RogersSatchellVolatility(20, 252),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "YangZhangVolatility": (
+        lambda: ta.YangZhangVolatility(20, 252),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
     ),
 }
 

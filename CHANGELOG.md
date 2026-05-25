@@ -8,6 +8,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Yang-Zhang Volatility.** Yang & Zhang (2000) gold-standard OHLC
+  estimator: a convex blend of overnight (close-to-open), open-to-close
+  and Rogers-Satchell variances. The blending factor
+  `k = 0.34 / (1.34 + (n+1)/(n-1))` is the one that minimises
+  estimator variance under driftless GBM with overnight gaps. The
+  overnight and open-to-close pieces use sample variance (Bessel's
+  correction, divisor `n−1`), so the indicator needs `period + 1` bars
+  to emit. Output annualised to a percent. Defaults: `period = 20`,
+  `trading_periods = 252`. The recommended OHLC estimator for equities,
+  futures, and any asset with material close-to-open gaps.
+- **Rogers-Satchell Volatility.** Drift-free OHLC realised-volatility
+  estimator from Rogers, Satchell & Yoon (1994). Per-bar sample is
+  `ln(H/C)·ln(H/O) + ln(L/C)·ln(L/O)`; every term is non-negative by
+  construction (high >= open, close; low <= open, close), so the
+  rolling mean is exact, not biased, under arbitrary drift. The
+  algebraic drift-cancellation is what differentiates it from
+  Garman-Klass. Output annualised to a percent. Defaults:
+  `period = 20`, `trading_periods = 252`.
+- **Garman-Klass Volatility.** Garman & Klass (1980) OHLC realised
+  volatility estimator: per-bar sample is
+  `0.5·(ln H/L)² − (2·ln2 − 1)·(ln C/O)²`, then take the annualised
+  square root of the rolling mean. Roughly 7.4× more statistically
+  efficient than close-to-close stddev under driftless GBM. Output
+  annualised to a percent. Defaults: `period = 20`,
+  `trading_periods = 252`.
+- **Parkinson Volatility.** Michael Parkinson's (1980) high-low realised
+  volatility estimator: `sigma² = (1 / (4n·ln2)) · Σ (ln(H/L))²`. Output
+  annualised to a percent in the same style as `HistoricalVolatility`
+  (pass `trading_periods = 1` for the raw per-bar `sigma·100` figure).
+  Roughly 5× more statistically efficient than close-to-close stddev
+  under a driftless-GBM assumption. Defaults: `period = 20`,
+  `trading_periods = 252`.
+- **RVIVolatility (Relative Volatility Index).** Donald Dorsey's
+  RSI-shaped volatility gauge: partition the rolling standard
+  deviation of close into "up" (close rose) and "down" (close fell)
+  samples, Wilder-smooth each side, and compute
+  `100 · AvgUp / (AvgUp + AvgDown)`. Bounded on `[0, 100]`; saturates
+  at `100` in pure uptrends, `0` in pure downtrends, and falls back to
+  `50` on a completely flat series (same undefined-RS convention as
+  `RSI`). Single `period` parameter (default `10`) drives both the
+  stddev window and the Wilder smoothing. Named `RVIVolatility` rather
+  than plain `RVI` to disambiguate from Relative Vigor Index, which
+  ships in Family 02 under the shorter `RVI` name.
 - **Family 03 — MACD & Price Oscillators.** `Stc` (Schaff Trend Cycle,
   Doug Schaff): doubly-`Stochastic`-smoothed MACD producing a bounded
   `[0, 100]` reading that reacts faster than `MACD` itself. Four
