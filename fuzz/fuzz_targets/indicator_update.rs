@@ -15,10 +15,16 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    BatchExt, BollingerBands, Cmo, Coppock, Dema, Dpo, Ema, HistoricalVolatility, Hma, Indicator,
-    Kama, LinRegAngle, LinRegSlope, LinearRegression, MacdIndicator, Mom, Pmo, Ppo, Roc, Rsi, Sma,
-    Smma, StdDev, StochRsi, T3, Tema, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Wma,
-    ZScore, Zlema,
+    AdaptiveCycle, Alma, Apo, BatchExt, BollingerBands, CenterOfGravity, Cfo, Cmo, ConnorsRsi,
+    Coppock, CyberneticCycle, Decycler, DecyclerOscillator, Dema, DoubleBollinger, Dpo,
+    EhlersStochastic, ElderImpulse, Ema, EmpiricalModeDecomposition, Fama, FisherTransform,
+    Frama, HilbertDominantCycle, HistoricalVolatility, Hma, Indicator, InstantaneousTrendline,
+    InverseFisherTransform, Jma, Kama, Kst, LaguerreRsi, LinRegAngle, LinRegChannel,
+    LinRegSlope, LinearRegression, MaEnvelope, MacdIndicator, Mama, McGinleyDynamic, Mom,
+    PercentageTrailingStop, Pmo, Ppo, RenkoTrailingStop, Roc, RoofingFilter, Rsi, RviVolatility,
+    SineWave, Sma, Smma, StandardErrorBands, Stc, StdDev, StepTrailingStop, StochRsi,
+    SuperSmoother, T3, Tema, Tii, Trima, Trix, Tsi, UlcerIndex, VerticalHorizontalFilter, Vidya,
+    Wma, ZScore, ZeroLagMacd, Zlema,
 };
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
@@ -53,14 +59,24 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| Trima::new(14).unwrap(), &data);
     drive(|| Zlema::new(14).unwrap(), &data);
     drive(|| Kama::new(10, 2, 30).unwrap(), &data);
+    drive(|| Alma::new(9, 0.85, 6.0).unwrap(), &data);
+    drive(|| McGinleyDynamic::new(10).unwrap(), &data);
+    drive(|| Frama::new(16).unwrap(), &data);
+    drive(|| Vidya::new(14, 9).unwrap(), &data);
+    drive(|| Jma::new(14, 0.0, 2).unwrap(), &data);
     drive(|| T3::new(14, 0.7).unwrap(), &data);
     drive(|| Mom::new(14).unwrap(), &data);
     drive(|| Cmo::new(14).unwrap(), &data);
     drive(|| Tsi::new(25, 13).unwrap(), &data);
     drive(|| Pmo::new(35, 20).unwrap(), &data);
+    drive(|| Tii::new(60, 30).unwrap(), &data);
     drive(|| StochRsi::new(14, 14).unwrap(), &data);
     drive(|| Dpo::new(14).unwrap(), &data);
     drive(|| Ppo::new(12, 26).unwrap(), &data);
+    drive(|| Apo::new(12, 26).unwrap(), &data);
+    drive(|| Cfo::new(14).unwrap(), &data);
+    drive(|| ElderImpulse::classic(), &data);
+    drive(|| Stc::classic(), &data);
     drive(|| Coppock::new(14, 11, 10).unwrap(), &data);
     drive(|| StdDev::new(14).unwrap(), &data);
     drive(|| UlcerIndex::new(14).unwrap(), &data);
@@ -70,9 +86,55 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| LinRegAngle::new(14).unwrap(), &data);
     drive(|| VerticalHorizontalFilter::new(14).unwrap(), &data);
     drive(|| ZScore::new(14).unwrap(), &data);
+    drive(|| RviVolatility::new(10).unwrap(), &data);
+    drive(|| LaguerreRsi::new(0.5).unwrap(), &data);
+    drive(|| ConnorsRsi::classic(), &data);
 
-    // MACD and Bollinger Bands have non-`f64` outputs, so they cannot use the
-    // generic `drive` helper above. Streaming + batch are still both exercised.
+    // KST is scalar-input but emits `KstOutput`, so it bypasses the generic
+    // `drive` helper. Streaming + batch are still both exercised.
+    {
+        let mut kst = Kst::classic();
+        for &x in &data {
+            let _ = kst.update(x);
+        }
+        let _ = Kst::classic().batch(&data);
+    }
+
+    // Zero-Lag MACD shares MACD's multi-output topology, so it gets the
+    // same hand-rolled streaming + batch drive as classic MACD below.
+    {
+        let mut z = ZeroLagMacd::classic();
+        for &x in &data {
+            let _ = z.update(x);
+        }
+        let _ = ZeroLagMacd::classic().batch(&data);
+    }
+
+    // --- Trailing Stops (scalar) ---
+    drive(|| PercentageTrailingStop::new(5.0).unwrap(), &data);
+    drive(|| StepTrailingStop::new(1.0).unwrap(), &data);
+    drive(|| RenkoTrailingStop::new(1.0).unwrap(), &data);
+
+    // Family 10 — Ehlers / Cycle scalar indicators.
+    drive(|| SuperSmoother::new(10).unwrap(), &data);
+    drive(|| FisherTransform::new(10).unwrap(), &data);
+    drive(|| InverseFisherTransform::new(1.0).unwrap(), &data);
+    drive(|| Decycler::new(20).unwrap(), &data);
+    drive(|| DecyclerOscillator::new(10, 30).unwrap(), &data);
+    drive(|| RoofingFilter::new(10, 48).unwrap(), &data);
+    drive(|| CenterOfGravity::new(10).unwrap(), &data);
+    drive(|| CyberneticCycle::new(10).unwrap(), &data);
+    drive(|| InstantaneousTrendline::new(20).unwrap(), &data);
+    drive(|| EhlersStochastic::new(20).unwrap(), &data);
+    drive(|| EmpiricalModeDecomposition::new(20, 0.5).unwrap(), &data);
+    drive(HilbertDominantCycle::new, &data);
+    drive(AdaptiveCycle::new, &data);
+    drive(SineWave::new, &data);
+    drive(|| Fama::new(0.5, 0.05).unwrap(), &data);
+
+    // MACD, Bollinger Bands and MAMA have non-`f64` outputs, so they cannot
+    // use the generic `drive` helper above. Streaming + batch are still both
+    // exercised.
     {
         let mut macd = MacdIndicator::new(12, 26, 9).unwrap();
         for &x in &data {
@@ -86,5 +148,42 @@ fuzz_target!(|data: Vec<f64>| {
             let _ = bb.update(x);
         }
         let _ = BollingerBands::new(20, 2.0).unwrap().batch(&data);
+    }
+    {
+        let mut mama = Mama::new(0.5, 0.05).unwrap();
+        for &x in &data {
+            let _ = mama.update(x);
+        }
+        let _ = Mama::new(0.5, 0.05).unwrap().batch(&data);
+    }
+
+    // --- Family 05: scalar-input band/channel indicators (multi-output) ---
+    {
+        let mut env = MaEnvelope::new(20, 0.025).unwrap();
+        for &x in &data {
+            let _ = env.update(x);
+        }
+        let _ = MaEnvelope::new(20, 0.025).unwrap().batch(&data);
+    }
+    {
+        let mut ch = LinRegChannel::new(20, 2.0).unwrap();
+        for &x in &data {
+            let _ = ch.update(x);
+        }
+        let _ = LinRegChannel::new(20, 2.0).unwrap().batch(&data);
+    }
+    {
+        let mut seb = StandardErrorBands::new(21, 2.0).unwrap();
+        for &x in &data {
+            let _ = seb.update(x);
+        }
+        let _ = StandardErrorBands::new(21, 2.0).unwrap().batch(&data);
+    }
+    {
+        let mut db = DoubleBollinger::new(20, 1.0, 2.0).unwrap();
+        for &x in &data {
+            let _ = db.update(x);
+        }
+        let _ = DoubleBollinger::new(20, 1.0, 2.0).unwrap().batch(&data);
     }
 });

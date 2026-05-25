@@ -1,4 +1,5 @@
 //! Heikin-Ashi candle transform.
+#![allow(clippy::manual_midpoint)]
 //!
 //! Heikin-Ashi ("average bar" in Japanese) smooths an OHLC candle stream so
 //! trends are easier to read at a glance. The transform is purely local except

@@ -51,3 +51,20 @@ def test_ichimoku_rejects_zero_and_non_increasing_periods():
         ta.Ichimoku(26, 9, 52, 26)
     with pytest.raises(ValueError):
         ta.Ichimoku(9, 52, 52, 26)
+
+
+def test_family_10_ehlers_rejects_invalid_parameters():
+    with pytest.raises(ValueError):
+        ta.SuperSmoother(0)
+    with pytest.raises(ValueError):
+        ta.FisherTransform(0)
+    with pytest.raises(ValueError):
+        ta.InverseFisherTransform(0.0)
+    with pytest.raises(ValueError):
+        ta.DecyclerOscillator(30, 10)
+    with pytest.raises(ValueError):
+        ta.RoofingFilter(48, 10)
+    with pytest.raises(ValueError):
+        ta.MAMA(0.05, 0.5)
+    with pytest.raises(ValueError):
+        ta.EmpiricalModeDecomposition(20, 0.0)

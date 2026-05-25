@@ -68,3 +68,13 @@ def test_heikin_ashi_batch_returns_n_by_4(ohlc_series):
     open_ = (high + low) / 2.0
     out = ta.HeikinAshi().batch(open_, high, low, close)
     assert out.shape == (close.size, 4)
+
+
+def test_ehlers_super_smoother_batch_shape(sine_prices):
+    out = ta.SuperSmoother(10).batch(sine_prices)
+    assert out.shape == sine_prices.shape
+
+
+def test_mama_batch_shape(sine_prices):
+    out = ta.MAMA().batch(sine_prices)
+    assert out.shape == (sine_prices.size, 2)
