@@ -19,8 +19,9 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use std::hint::black_box;
 use wickra::{
-    Atr, BatchExt, BollingerBands, Candle, Ema, Indicator, Kvo, MacdIndicator, Nvi, Obv, Pvi, Rsi,
-    Sma, Stochastic, VolumeOscillator, Wma,
+    AdOscillator, AnchoredVwap, Atr, BatchExt, BollingerBands, Candle, DemandIndex, Ema, Indicator,
+    Kvo, MacdIndicator, MarketFacilitationIndex, Nvi, Obv, Pvi, Rsi, Sma, Stochastic, Tsv,
+    VolumeOscillator, Vzo, Wma,
 };
 use wickra_data::csv::CandleReader;
 
@@ -150,6 +151,19 @@ fn benches(c: &mut Criterion) {
     });
     bench_candle_input(c, "nvi", &candles, Nvi::new);
     bench_candle_input(c, "pvi", &candles, Pvi::new);
+    bench_candle_input(c, "williams_ad", &candles, AdOscillator::new);
+    bench_candle_input(c, "anchored_vwap", &candles, AnchoredVwap::new);
+    bench_candle_input(c, "demand_index", &candles, || {
+        DemandIndex::new(10).unwrap()
+    });
+    bench_candle_input(c, "tsv", &candles, || Tsv::new(18).unwrap());
+    bench_candle_input(c, "vzo", &candles, || Vzo::new(14).unwrap());
+    bench_candle_input(
+        c,
+        "market_facilitation_index",
+        &candles,
+        MarketFacilitationIndex::new,
+    );
 }
 
 criterion_group!(name = wickra_benches; config = Criterion::default(); targets = benches);

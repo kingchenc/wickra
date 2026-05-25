@@ -134,6 +134,30 @@ CANDLE_SCALAR = {
         lambda: ta.PVI(),
         lambda ind, h, l, c, v: ind.batch(c, v),
     ),
+    "WilliamsAD": (
+        lambda: ta.WilliamsAD(),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
+    "AnchoredVWAP": (
+        lambda: ta.AnchoredVWAP(),
+        lambda ind, h, l, c, v: ind.batch(h, l, c, v),
+    ),
+    "DemandIndex": (
+        lambda: ta.DemandIndex(10),
+        lambda ind, h, l, c, v: ind.batch(h, l, c, v),
+    ),
+    "TSV": (
+        lambda: ta.TSV(18),
+        lambda ind, h, l, c, v: ind.batch(c, v),
+    ),
+    "VZO": (
+        lambda: ta.VZO(14),
+        lambda ind, h, l, c, v: ind.batch(c, v),
+    ),
+    "MarketFacilitationIndex": (
+        lambda: ta.MarketFacilitationIndex(),
+        lambda ind, h, l, c, v: ind.batch(h, l, v),
+    ),
     "AtrTrailingStop": (
         lambda: ta.AtrTrailingStop(14, 3.0),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
@@ -298,6 +322,98 @@ def test_kvo_constant_series_is_zero():
     close = np.full(60, 10.0)
     volume = np.full(60, 100.0)
     out = kvo.batch(high, low, close, volume)
+    for v in out[~np.isnan(out)]:
+        assert v == pytest.approx(0.0, abs=1e-12)
+
+
+def test_williams_ad_reference():
+    # bar 0 seeds prev_close = 10.
+    # bar 1: prev=10, today high=13, low=8, close=12 (up day).
+    #   TR_l = min(10, 8) = 8 -> delta = 12 - 8 = 4. AD = 4.
+    # bar 2: prev=12, today high=11, low=7, close=7 (down day).
+    #   TR_h = max(12, 11) = 12 -> delta = 7 - 12 = -5. AD = 4 - 5 = -1.
+    ad = ta.WilliamsAD()
+    high = np.array([11.0, 13.0, 11.0])
+    low = np.array([9.0, 8.0, 7.0])
+    close = np.array([10.0, 12.0, 7.0])
+    out = ad.batch(high, low, close)
+    assert math.isnan(out[0])
+    assert out[1] == pytest.approx(4.0)
+    assert out[2] == pytest.approx(-1.0)
+
+
+def test_anchored_vwap_reference():
+    # Three flat-OHLC bars: typical_price equals price.
+    # 10@1, 20@1, 30@1 -> mean = 20.
+    avwap = ta.AnchoredVWAP()
+    high = np.array([10.0, 20.0, 30.0])
+    low = np.array([10.0, 20.0, 30.0])
+    close = np.array([10.0, 20.0, 30.0])
+    volume = np.array([1.0, 1.0, 1.0])
+    out = avwap.batch(high, low, close, volume)
+    assert out[2] == pytest.approx(20.0)
+
+
+def test_anchored_vwap_set_anchor_clears_window():
+    # Drive a few flat bars, re-anchor, then drive a high-priced bar:
+    # the new running mean must equal the new bar's typical price.
+    avwap = ta.AnchoredVWAP()
+    for _ in range(3):
+        avwap.update((10.0, 10.0, 10.0, 10.0, 1.0, 0))
+    assert avwap.is_ready()
+    avwap.set_anchor()
+    v = avwap.update((100.0, 100.0, 100.0, 100.0, 5.0, 1))
+    assert v == pytest.approx(100.0)
+
+
+def test_tsv_reference():
+    # closes  = [10, 11, 13, 12, 14, 15]
+    # volumes = [50, 100, 200, 150,  50, 200]
+    # flows   = [None, 1*100=100, 2*200=400, -1*150=-150, 2*50=100, 1*200=200]
+    # period=3: first emission at index 3.
+    #   bar 3 window=[100,400,-150] -> 350
+    #   bar 4 window=[400,-150,100] -> 350
+    #   bar 5 window=[-150,100,200] -> 150
+    tsv = ta.TSV(3)
+    close = np.array([10.0, 11.0, 13.0, 12.0, 14.0, 15.0])
+    volume = np.array([50.0, 100.0, 200.0, 150.0, 50.0, 200.0])
+    out = tsv.batch(close, volume)
+    assert math.isnan(out[0]) and math.isnan(out[1]) and math.isnan(out[2])
+    assert out[3] == pytest.approx(350.0)
+    assert out[4] == pytest.approx(350.0)
+    assert out[5] == pytest.approx(150.0)
+
+
+def test_vzo_strictly_rising_saturates_to_plus_100():
+    # Every bar is an up-day with identical volume -> signed_volume == volume,
+    # so the smoothed signed-volume EMA equals the smoothed total-volume EMA,
+    # giving a ratio of 1 -> VZO = +100.
+    vzo = ta.VZO(5)
+    close = np.array([10.0 + i for i in range(60)])
+    volume = np.full(60, 100.0)
+    out = vzo.batch(close, volume)
+    last = out[~np.isnan(out)][-1]
+    assert last == pytest.approx(100.0)
+
+
+def test_market_facilitation_index_reference():
+    # (high - low) / volume = (12 - 8) / 200 = 0.02.
+    mfi_bw = ta.MarketFacilitationIndex()
+    high = np.array([12.0])
+    low = np.array([8.0])
+    volume = np.array([200.0])
+    out = mfi_bw.batch(high, low, volume)
+    assert out[0] == pytest.approx(0.02)
+
+
+def test_demand_index_constant_series_is_zero():
+    # Flat close -> pressure = 0 every bar -> EMA stays at 0.
+    di = ta.DemandIndex(5)
+    high = np.full(60, 10.0)
+    low = np.full(60, 10.0)
+    close = np.full(60, 10.0)
+    volume = np.full(60, 100.0)
+    out = di.batch(high, low, close, volume)
     for v in out[~np.isnan(out)]:
         assert v == pytest.approx(0.0, abs=1e-12)
 

@@ -23,12 +23,13 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    AcceleratorOscillator, Adl, Adx, Aroon, AroonOscillator, Atr, AtrTrailingStop,
-    AwesomeOscillator, BalanceOfPower, BatchExt, Candle, Cci, ChaikinMoneyFlow, ChaikinOscillator,
-    ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex, Donchian, EaseOfMovement,
-    ForceIndex, Indicator, Keltner, Kvo, MassIndex, MedianPrice, Mfi, Natr, Nvi, Obv, Psar, Pvi,
-    RollingVwap, Stochastic, SuperTrend, TrueRange, TypicalPrice, UltimateOscillator,
-    VolumeOscillator, VolumePriceTrend, Vortex, Vwap, Vwma, WeightedClose, WilliamsR,
+    AcceleratorOscillator, AdOscillator, Adl, Adx, AnchoredVwap, Aroon, AroonOscillator, Atr,
+    AtrTrailingStop, AwesomeOscillator, BalanceOfPower, BatchExt, Candle, Cci, ChaikinMoneyFlow,
+    ChaikinOscillator, ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex,
+    DemandIndex, Donchian, EaseOfMovement, ForceIndex, Indicator, Keltner, Kvo,
+    MarketFacilitationIndex, MassIndex, MedianPrice, Mfi, Natr, Nvi, Obv, Psar, Pvi, RollingVwap,
+    Stochastic, SuperTrend, TrueRange, Tsv, TypicalPrice, UltimateOscillator, VolumeOscillator,
+    VolumePriceTrend, Vortex, Vwap, Vwma, Vzo, WeightedClose, WilliamsR,
 };
 
 /// Convert a flat `f64` stream into a `Vec<Candle>` by chunking it into
@@ -117,6 +118,12 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| VolumeOscillator::new(14, 28).unwrap(), &candles);
     drive(Nvi::new, &candles);
     drive(Pvi::new, &candles);
+    drive(AdOscillator::new, &candles);
+    drive(AnchoredVwap::new, &candles);
+    drive(|| DemandIndex::new(10).unwrap(), &candles);
+    drive(|| Tsv::new(18).unwrap(), &candles);
+    drive(|| Vzo::new(14).unwrap(), &candles);
+    drive(MarketFacilitationIndex::new, &candles);
 
     // --- Price transformations ---
     drive(TypicalPrice::new, &candles);

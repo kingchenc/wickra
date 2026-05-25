@@ -21,6 +21,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   baseline `1000.0`, configurable via `Nvi::with_baseline`.
 - **Positive Volume Index (PVI).** The complementary index that
   updates on volume-expansion bars (`volume_t > volume_{t−1}`).
+- **Williams Accumulation/Distribution.** Larry Williams' volume-less
+  cumulative flow that anchors to the previous close (true high/low) and
+  classifies each bar as accumulation, distribution, or neutral by the
+  sign of the close-to-close change.
+- **Anchored VWAP.** A cumulative VWAP whose accumulation begins at a
+  user-chosen anchor bar rather than the session open. Re-anchor at
+  runtime via `AnchoredVwap::set_anchor` for click-to-anchor trader
+  workflows.
+- **Demand Index (Sibbet).** James Sibbet's smoothed buying-vs-selling
+  pressure ratio in the streaming-friendly textbook form
+  `EMA(volume · close-return · (1 + range/close), period)`.
+- **Time Segmented Volume (TSV).** Don Worden's rolling sum of signed
+  volume weighted by the close-to-close move: a window-sum measure of
+  net accumulation/distribution.
+- **Volume Zone Oscillator (VZO).** Walid Khalil's normalised
+  volume-flow oscillator bounded in `[−100, 100]`, defined as
+  `100 · EMA(signed_volume) / EMA(volume)`.
+- **Market Facilitation Index (Bill Williams).** Per-bar
+  `(high − low) / volume` — how much price movement the market produces
+  per unit of volume.
 
 ## [0.2.7] - 2026-05-24
 
