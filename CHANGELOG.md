@@ -8,6 +8,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Family 10 — Ehlers / Cycle (DSP) indicators.** 16 new
+  streaming-first indicators implementing John Ehlers'
+  digital-signal-processing school of cycle analytics — a strong
+  differentiation feature versus TA-Lib and pandas-ta, which only
+  ship fragments of this catalogue:
+  - **MAMA / FAMA** (MESA Adaptive Moving Average + Following
+    Adaptive Moving Average) — phase-rate-adaptive smoothing pair
+    from the 2001 MESA paper, exposed both jointly via `Mama` (multi-
+    output) and as a scalar `Fama` wrapper.
+  - **Fisher Transform** and **Inverse Fisher Transform** — Gaussian
+    normalisation of price (Ehlers 2002) and its tanh-based bounded
+    counterpart for oscillators.
+  - **SuperSmoother**, **Roofing Filter**, **Decycler** and **Decycler
+    Oscillator** — 2-pole Butterworth lowpass, bandpass and
+    high-pass complement building blocks from *Cycle Analytics for
+    Traders* (2013).
+  - **Hilbert Dominant Cycle**, **Sine Wave** and **Adaptive Cycle**
+    — Hilbert-transform-based period estimation from *Rocket Science
+    for Traders* (2001).
+  - **Center of Gravity**, **Cybernetic Cycle Component**,
+    **Instantaneous Trendline**, **Ehlers Stochastic** and
+    **Empirical Mode Decomposition** — EasyLanguage classics from
+    Ehlers' published catalogue.
+  - All sixteen are exposed across Rust, Python, Node.js and WASM
+    bindings, fuzz-tested, benchmarked against real BTCUSDT
+    1-minute data, and pass `batch == streaming` equivalence.
+  - Indicator count rises from 71 to **87** across **nine** families.
 - **DeMark family (family 11) — 12 new indicators.** TD Setup (9-bar
   buy/sell setup counter with parameterised lookback and target), TD
   Sequential (Setup + Countdown phase machine emitting setup count,

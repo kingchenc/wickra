@@ -75,6 +75,22 @@ const scalarFactories = {
   LaguerreRSI: () => new wickra.LaguerreRSI(0.5),
   ConnorsRSI: () => new wickra.ConnorsRSI(3, 2, 100),
   RVIVolatility: () => new wickra.RVIVolatility(10),
+  // Family 10 — Ehlers / Cycle
+  SuperSmoother: () => new wickra.SuperSmoother(10),
+  FisherTransform: () => new wickra.FisherTransform(10),
+  InverseFisherTransform: () => new wickra.InverseFisherTransform(1.0),
+  Decycler: () => new wickra.Decycler(20),
+  DecyclerOscillator: () => new wickra.DecyclerOscillator(10, 30),
+  RoofingFilter: () => new wickra.RoofingFilter(10, 48),
+  CenterOfGravity: () => new wickra.CenterOfGravity(10),
+  CyberneticCycle: () => new wickra.CyberneticCycle(10),
+  InstantaneousTrendline: () => new wickra.InstantaneousTrendline(20),
+  EhlersStochastic: () => new wickra.EhlersStochastic(20),
+  EmpiricalModeDecomposition: () => new wickra.EmpiricalModeDecomposition(20, 0.5),
+  HilbertDominantCycle: () => new wickra.HilbertDominantCycle(),
+  AdaptiveCycle: () => new wickra.AdaptiveCycle(),
+  SineWave: () => new wickra.SineWave(),
+  FAMA: () => new wickra.FAMA(0.5, 0.05),
 };
 
 for (const [name, make] of Object.entries(scalarFactories)) {
@@ -213,6 +229,8 @@ const multi = {
   TDLines: { make: () => new wickra.TDLines(4, 9), fields: ['resistance', 'support'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   TDRangeProjection: { make: () => new wickra.TDRangeProjection(), fields: ['high', 'low'], step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   TDRiskLevel: { make: () => new wickra.TDRiskLevel(4, 9), fields: ['buyRisk', 'sellRisk'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  // Family 10: Ehlers / Cycle (multi-output)
+  MAMA: { make: () => new wickra.MAMA(0.5, 0.05), fields: ['mama', 'fama'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
 };
 
 for (const [name, d] of Object.entries(multi)) {

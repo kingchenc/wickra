@@ -332,6 +332,36 @@ def test_obv_cumulative_known_sequence():
     np.testing.assert_allclose(out, [0.0, 20.0, -10.0, -10.0, 0.0])
 
 
+# --- Family 10 — Ehlers / Cycle reference values ---
+
+
+def test_inverse_fisher_saturates_for_large_input():
+    # tanh(10) ~ 0.99999996; very close to +1 without exceeding.
+    v = ta.InverseFisherTransform(1.0).batch(np.array([10.0]))[0]
+    assert v < 1.0
+    assert v > 0.999
+
+
+def test_super_smoother_constant_input_is_constant():
+    out = ta.SuperSmoother(20).batch(np.full(200, 50.0))
+    # Steady-state gain is 1, so a flat input stays flat.
+    np.testing.assert_allclose(out[-50:], 50.0, atol=1e-9)
+
+
+def test_decycler_oscillator_flat_series_is_zero():
+    out = ta.DecyclerOscillator(10, 30).batch(np.full(80, 42.0))
+    ready = out[~np.isnan(out)]
+    np.testing.assert_allclose(ready, 0.0, atol=1e-9)
+
+
+def test_mama_constant_series_both_lines_converge_to_price():
+    out = ta.MAMA().batch(np.full(200, 100.0))
+    last = out[-1]
+    # MAMA and FAMA both track price closely on a flat series.
+    assert abs(last[0] - 100.0) < 1.0
+    assert abs(last[1] - 100.0) < 1.0
+
+
 # --- DeMark family ---------------------------------------------------------
 
 

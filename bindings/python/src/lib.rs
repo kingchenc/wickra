@@ -9417,6 +9417,513 @@ impl PyTdRiskLevel {
     }
 }
 
+// ============================== Ehlers / Cycle (Family 10) ==============================
+
+macro_rules! py_scalar_one_period {
+    ($wrapper:ident, $py_name:literal, $rust_ty:ty) => {
+        #[pyclass(name = $py_name, module = "wickra._wickra", skip_from_py_object)]
+        #[derive(Clone)]
+        struct $wrapper {
+            inner: $rust_ty,
+        }
+
+        #[pymethods]
+        impl $wrapper {
+            #[new]
+            fn new(period: usize) -> PyResult<Self> {
+                Ok(Self {
+                    inner: <$rust_ty>::new(period).map_err(map_err)?,
+                })
+            }
+            fn update(&mut self, value: f64) -> Option<f64> {
+                self.inner.update(value)
+            }
+            fn batch<'py>(
+                &mut self,
+                py: Python<'py>,
+                prices: PyReadonlyArray1<'py, f64>,
+            ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+                let slice = prices
+                    .as_slice()
+                    .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+                Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+            }
+            #[getter]
+            fn period(&self) -> usize {
+                self.inner.period()
+            }
+            #[getter]
+            fn value(&self) -> Option<f64> {
+                self.inner.value()
+            }
+            fn reset(&mut self) {
+                self.inner.reset();
+            }
+            fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            fn warmup_period(&self) -> usize {
+                self.inner.warmup_period()
+            }
+            fn __repr__(&self) -> String {
+                format!("{}(period={})", $py_name, self.inner.period())
+            }
+        }
+    };
+}
+
+py_scalar_one_period!(PySuperSmoother, "SuperSmoother", wc::SuperSmoother);
+py_scalar_one_period!(PyFisherTransform, "FisherTransform", wc::FisherTransform);
+py_scalar_one_period!(PyDecycler, "Decycler", wc::Decycler);
+py_scalar_one_period!(PyCenterOfGravity, "CenterOfGravity", wc::CenterOfGravity);
+py_scalar_one_period!(PyCyberneticCycle, "CyberneticCycle", wc::CyberneticCycle);
+py_scalar_one_period!(
+    PyInstantaneousTrendline,
+    "InstantaneousTrendline",
+    wc::InstantaneousTrendline
+);
+py_scalar_one_period!(PyEhlersStochastic, "EhlersStochastic", wc::EhlersStochastic);
+
+// --- InverseFisherTransform: single f64 `scale` param ---
+
+#[pyclass(
+    name = "InverseFisherTransform",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyInverseFisherTransform {
+    inner: wc::InverseFisherTransform,
+}
+
+#[pymethods]
+impl PyInverseFisherTransform {
+    #[new]
+    #[pyo3(signature = (scale=1.0))]
+    fn new(scale: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::InverseFisherTransform::new(scale).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn scale(&self) -> f64 {
+        self.inner.scale()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("InverseFisherTransform(scale={})", self.inner.scale())
+    }
+}
+
+// --- DecyclerOscillator: two-period ---
+
+#[pyclass(
+    name = "DecyclerOscillator",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyDecyclerOscillator {
+    inner: wc::DecyclerOscillator,
+}
+
+#[pymethods]
+impl PyDecyclerOscillator {
+    #[new]
+    fn new(fast: usize, slow: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::DecyclerOscillator::new(fast, slow).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn periods(&self) -> (usize, usize) {
+        self.inner.periods()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (f, s) = self.inner.periods();
+        format!("DecyclerOscillator(fast={f}, slow={s})")
+    }
+}
+
+// --- RoofingFilter: two-period (lp, hp) ---
+
+#[pyclass(name = "RoofingFilter", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyRoofingFilter {
+    inner: wc::RoofingFilter,
+}
+
+#[pymethods]
+impl PyRoofingFilter {
+    #[new]
+    #[pyo3(signature = (lp_period=10, hp_period=48))]
+    fn new(lp_period: usize, hp_period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::RoofingFilter::new(lp_period, hp_period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn periods(&self) -> (usize, usize) {
+        self.inner.periods()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (lp, hp) = self.inner.periods();
+        format!("RoofingFilter(lp_period={lp}, hp_period={hp})")
+    }
+}
+
+// --- EmpiricalModeDecomposition: period + fraction ---
+
+#[pyclass(
+    name = "EmpiricalModeDecomposition",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyEmd {
+    inner: wc::EmpiricalModeDecomposition,
+}
+
+#[pymethods]
+impl PyEmd {
+    #[new]
+    #[pyo3(signature = (period=20, fraction=0.5))]
+    fn new(period: usize, fraction: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::EmpiricalModeDecomposition::new(period, fraction).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn fraction(&self) -> f64 {
+        self.inner.fraction()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "EmpiricalModeDecomposition(period={}, fraction={})",
+            self.inner.period(),
+            self.inner.fraction()
+        )
+    }
+}
+
+// --- HilbertDominantCycle / SineWave / AdaptiveCycle: parameterless ---
+
+macro_rules! py_no_params_scalar {
+    ($wrapper:ident, $py_name:literal, $rust_ty:ty) => {
+        #[pyclass(name = $py_name, module = "wickra._wickra", skip_from_py_object)]
+        #[derive(Clone)]
+        struct $wrapper {
+            inner: $rust_ty,
+        }
+
+        #[pymethods]
+        impl $wrapper {
+            #[new]
+            fn new() -> Self {
+                Self {
+                    inner: <$rust_ty>::new(),
+                }
+            }
+            fn update(&mut self, value: f64) -> Option<f64> {
+                self.inner.update(value)
+            }
+            fn batch<'py>(
+                &mut self,
+                py: Python<'py>,
+                prices: PyReadonlyArray1<'py, f64>,
+            ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+                let slice = prices
+                    .as_slice()
+                    .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+                Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+            }
+            #[getter]
+            fn value(&self) -> Option<f64> {
+                self.inner.value()
+            }
+            fn reset(&mut self) {
+                self.inner.reset();
+            }
+            fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            fn warmup_period(&self) -> usize {
+                self.inner.warmup_period()
+            }
+            fn __repr__(&self) -> String {
+                format!("{}()", $py_name)
+            }
+        }
+    };
+}
+
+py_no_params_scalar!(
+    PyHilbertDominantCycle,
+    "HilbertDominantCycle",
+    wc::HilbertDominantCycle
+);
+py_no_params_scalar!(PyAdaptiveCycle, "AdaptiveCycle", wc::AdaptiveCycle);
+
+// SineWave needs a `lead` accessor in addition to scalar value, but otherwise
+// matches the parameterless surface.
+#[pyclass(name = "SineWave", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PySineWave {
+    inner: wc::SineWave,
+}
+
+#[pymethods]
+impl PySineWave {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::SineWave::new(),
+        }
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    #[getter]
+    fn lead(&self) -> f64 {
+        self.inner.lead()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "SineWave()".to_string()
+    }
+}
+
+// --- MAMA: multi-output (mama, fama), shape (n, 2) ---
+
+#[pyclass(name = "MAMA", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyMama {
+    inner: wc::Mama,
+}
+
+#[pymethods]
+impl PyMama {
+    #[new]
+    #[pyo3(signature = (fast_limit=0.5, slow_limit=0.05))]
+    fn new(fast_limit: f64, slow_limit: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Mama::new(fast_limit, slow_limit).map_err(map_err)?,
+        })
+    }
+    /// Returns `(mama, fama)` or `None` during warmup.
+    fn update(&mut self, value: f64) -> Option<(f64, f64)> {
+        self.inner.update(value).map(|o| (o.mama, o.fama))
+    }
+    /// Batch returns shape `(n, 2)` columns `[mama, fama]`. Warmup rows NaN.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let n = slice.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for (i, p) in slice.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 2] = o.mama;
+                out[i * 2 + 1] = o.fama;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn limits(&self) -> (f64, f64) {
+        self.inner.limits()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (f, s) = self.inner.limits();
+        format!("MAMA(fast_limit={f}, slow_limit={s})")
+    }
+}
+
+// --- FAMA: scalar wrapper exposing only the fama line ---
+
+#[pyclass(name = "FAMA", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyFama {
+    inner: wc::Fama,
+}
+
+#[pymethods]
+impl PyFama {
+    #[new]
+    #[pyo3(signature = (fast_limit=0.5, slow_limit=0.05))]
+    fn new(fast_limit: f64, slow_limit: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Fama::new(fast_limit, slow_limit).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn limits(&self) -> (f64, f64) {
+        self.inner.limits()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (f, s) = self.inner.limits();
+        format!("FAMA(fast_limit={f}, slow_limit={s})")
+    }
+}
+
 // ============================== Module ==============================
 
 #[pymodule]
@@ -9572,5 +10079,22 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyTdDifferential>()?;
     m.add_class::<PyTdOpen>()?;
     m.add_class::<PyTdRiskLevel>()?;
+    // Family 10 — Ehlers / Cycle
+    m.add_class::<PySuperSmoother>()?;
+    m.add_class::<PyFisherTransform>()?;
+    m.add_class::<PyInverseFisherTransform>()?;
+    m.add_class::<PyDecycler>()?;
+    m.add_class::<PyDecyclerOscillator>()?;
+    m.add_class::<PyRoofingFilter>()?;
+    m.add_class::<PyCenterOfGravity>()?;
+    m.add_class::<PyCyberneticCycle>()?;
+    m.add_class::<PyInstantaneousTrendline>()?;
+    m.add_class::<PyEhlersStochastic>()?;
+    m.add_class::<PyEmd>()?;
+    m.add_class::<PyHilbertDominantCycle>()?;
+    m.add_class::<PyAdaptiveCycle>()?;
+    m.add_class::<PySineWave>()?;
+    m.add_class::<PyMama>()?;
+    m.add_class::<PyFama>()?;
     Ok(())
 }

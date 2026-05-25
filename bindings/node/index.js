@@ -310,7 +310,7 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, MOM, CMO, DPO, StdDev, UlcerIndex, VerticalHorizontalFilter, ZScore, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, ADXR, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, RollingVWAP, AwesomeOscillator, Aroon, KAMA, RVI, PGO, KST, SMI, LaguerreRSI, ConnorsRSI, Inertia, ALMA, McGinleyDynamic, FRAMA, VIDYA, JMA, Alligator, EVWMA, APO, AwesomeOscillatorHistogram, CFO, ZeroLagMACD, ElderImpulse, STC, T3, TSI, PMO, TII, ADL, VolumePriceTrend, ChaikinMoneyFlow, ChaikinOscillator, ForceIndex, EaseOfMovement, KVO, VolumeOscillator, NVI, PVI, WilliamsAD, AnchoredVWAP, DemandIndex, TSV, VZO, MarketFacilitationIndex, SuperTrend, ChandelierExit, ChandeKrollStop, AtrTrailingStop, HiLoActivator, VoltyStop, YoyoExit, DonchianStop, PercentageTrailingStop, StepTrailingStop, RenkoTrailingStop, TypicalPrice, MedianPrice, WeightedClose, LinearRegression, LinRegSlope, AcceleratorOscillator, BalanceOfPower, ChoppinessIndex, TrueRange, ChaikinVolatility, LinRegAngle, BollingerBandwidth, PercentB, NATR, HistoricalVolatility, AroonOscillator, Vortex, RWI, WaveTrend, MassIndex, StochRSI, UltimateOscillator, PPO, Coppock, VWMA, RVIVolatility, ParkinsonVolatility, GarmanKlassVolatility, RogersSatchellVolatility, YangZhangVolatility, MaEnvelope, AccelerationBands, StarcBands, AtrBands, HurstChannel, LinRegChannel, StandardErrorBands, DoubleBollinger, TtmSqueeze, FractalChaosBands, VwapStdDevBands, ClassicPivots, FibonacciPivots, Camarilla, WoodiePivots, DemarkPivots, WilliamsFractals, ZigZag, TDSetup, TDSequential, TDDeMarker, TDREI, TDPressure, TDCombo, TDCountdown, TDLines, TDRangeProjection, TDDifferential, TDOpen, TDRiskLevel } = nativeBinding
+const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, MOM, CMO, DPO, StdDev, UlcerIndex, VerticalHorizontalFilter, ZScore, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, ADXR, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, RollingVWAP, AwesomeOscillator, Aroon, KAMA, RVI, PGO, KST, SMI, LaguerreRSI, ConnorsRSI, Inertia, ALMA, McGinleyDynamic, FRAMA, VIDYA, JMA, Alligator, EVWMA, APO, AwesomeOscillatorHistogram, CFO, ZeroLagMACD, ElderImpulse, STC, T3, TSI, PMO, TII, ADL, VolumePriceTrend, ChaikinMoneyFlow, ChaikinOscillator, ForceIndex, EaseOfMovement, KVO, VolumeOscillator, NVI, PVI, WilliamsAD, AnchoredVWAP, DemandIndex, TSV, VZO, MarketFacilitationIndex, SuperTrend, ChandelierExit, ChandeKrollStop, AtrTrailingStop, HiLoActivator, VoltyStop, YoyoExit, DonchianStop, PercentageTrailingStop, StepTrailingStop, RenkoTrailingStop, TypicalPrice, MedianPrice, WeightedClose, LinearRegression, LinRegSlope, AcceleratorOscillator, BalanceOfPower, ChoppinessIndex, TrueRange, ChaikinVolatility, LinRegAngle, BollingerBandwidth, PercentB, NATR, HistoricalVolatility, AroonOscillator, Vortex, RWI, WaveTrend, MassIndex, StochRSI, UltimateOscillator, PPO, Coppock, VWMA, RVIVolatility, ParkinsonVolatility, GarmanKlassVolatility, RogersSatchellVolatility, YangZhangVolatility, MaEnvelope, AccelerationBands, StarcBands, AtrBands, HurstChannel, LinRegChannel, StandardErrorBands, DoubleBollinger, TtmSqueeze, FractalChaosBands, VwapStdDevBands, ClassicPivots, FibonacciPivots, Camarilla, WoodiePivots, DemarkPivots, WilliamsFractals, ZigZag, TDSetup, TDSequential, TDDeMarker, TDREI, TDPressure, TDCombo, TDCountdown, TDLines, TDRangeProjection, TDDifferential, TDOpen, TDRiskLevel, SuperSmoother, FisherTransform, InverseFisherTransform, Decycler, DecyclerOscillator, RoofingFilter, CenterOfGravity, CyberneticCycle, InstantaneousTrendline, EhlersStochastic, EmpiricalModeDecomposition, HilbertDominantCycle, AdaptiveCycle, SineWave, MAMA, FAMA } = nativeBinding
 
 module.exports.version = version
 module.exports.SMA = SMA
@@ -461,3 +461,19 @@ module.exports.TDRangeProjection = TDRangeProjection
 module.exports.TDDifferential = TDDifferential
 module.exports.TDOpen = TDOpen
 module.exports.TDRiskLevel = TDRiskLevel
+module.exports.SuperSmoother = SuperSmoother
+module.exports.FisherTransform = FisherTransform
+module.exports.InverseFisherTransform = InverseFisherTransform
+module.exports.Decycler = Decycler
+module.exports.DecyclerOscillator = DecyclerOscillator
+module.exports.RoofingFilter = RoofingFilter
+module.exports.CenterOfGravity = CenterOfGravity
+module.exports.CyberneticCycle = CyberneticCycle
+module.exports.InstantaneousTrendline = InstantaneousTrendline
+module.exports.EhlersStochastic = EhlersStochastic
+module.exports.EmpiricalModeDecomposition = EmpiricalModeDecomposition
+module.exports.HilbertDominantCycle = HilbertDominantCycle
+module.exports.AdaptiveCycle = AdaptiveCycle
+module.exports.SineWave = SineWave
+module.exports.MAMA = MAMA
+module.exports.FAMA = FAMA

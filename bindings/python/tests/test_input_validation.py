@@ -39,3 +39,20 @@ def test_roc_and_trix_have_default_periods():
     # ROC/TRIX gained constructor defaults matching the TA-Lib convention.
     assert ta.ROC().period == 10
     assert ta.TRIX() is not None
+
+
+def test_family_10_ehlers_rejects_invalid_parameters():
+    with pytest.raises(ValueError):
+        ta.SuperSmoother(0)
+    with pytest.raises(ValueError):
+        ta.FisherTransform(0)
+    with pytest.raises(ValueError):
+        ta.InverseFisherTransform(0.0)
+    with pytest.raises(ValueError):
+        ta.DecyclerOscillator(30, 10)
+    with pytest.raises(ValueError):
+        ta.RoofingFilter(48, 10)
+    with pytest.raises(ValueError):
+        ta.MAMA(0.05, 0.5)
+    with pytest.raises(ValueError):
+        ta.EmpiricalModeDecomposition(20, 0.0)

@@ -86,3 +86,20 @@ def test_candle_tuple_input_supported():
     atr.update((10.0, 11.0, 9.0, 10.5, 1.0, 0))
     v = atr.update((10.5, 12.0, 10.0, 11.0, 1.0, 1))
     assert v is not None
+
+
+def test_ehlers_indicators_lifecycle():
+    # Spot-check a few Family-10 entries beyond what test_new_indicators covers.
+    series = np.linspace(1.0, 200.0, 200) + np.sin(np.arange(200) * 0.3) * 5.0
+    for ind in [
+        ta.SuperSmoother(10),
+        ta.FisherTransform(10),
+        ta.MAMA(),
+        ta.HilbertDominantCycle(),
+        ta.SineWave(),
+    ]:
+        assert not ind.is_ready()
+        ind.batch(series)
+        assert ind.is_ready()
+        ind.reset()
+        assert not ind.is_ready()
