@@ -208,4 +208,19 @@ mod tests {
         z.reset();
         assert!(!z.is_ready());
     }
+
+    #[test]
+    fn warmup_period_matches_zlema_chain() {
+        // warmup = zlema_warmup(slow) + zlema_warmup(signal) - 1
+        // zlema_warmup(p) = (p - 1) / 2 + p
+        // (12, 26, 9): zlema_warmup(26) = 12 + 26 = 38;
+        //              zlema_warmup(9)  = 4 + 9 = 13.
+        //              warmup = 38 + 13 - 1 = 50.
+        let z = ZeroLagMacd::new(12, 26, 9).unwrap();
+        assert_eq!(z.warmup_period(), 50);
+        // (3, 5, 3): zlema_warmup(5) = 2 + 5 = 7; zlema_warmup(3) = 1 + 3 = 4.
+        //            warmup = 7 + 4 - 1 = 10.
+        let z = ZeroLagMacd::new(3, 5, 3).unwrap();
+        assert_eq!(z.warmup_period(), 10);
+    }
 }
