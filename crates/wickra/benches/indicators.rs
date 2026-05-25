@@ -19,9 +19,11 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use std::hint::black_box;
 use wickra::{
-    AccelerationBands, Atr, AtrBands, BatchExt, BollingerBands, Candle, DoubleBollinger, Ema,
-    FractalChaosBands, HurstChannel, Indicator, LinRegChannel, MaEnvelope, MacdIndicator, Obv, Rsi,
-    Sma, StandardErrorBands, StarcBands, Stochastic, TtmSqueeze, VwapStdDevBands, Wma,
+    AccelerationBands, Alma, Atr, AtrBands, BatchExt, BollingerBands, Candle, DoubleBollinger, Ema,
+    FractalChaosBands, Frama, GarmanKlassVolatility, HurstChannel, Indicator, Jma, LinRegChannel,
+    MaEnvelope, MacdIndicator, McGinleyDynamic, Obv, ParkinsonVolatility, Pgo,
+    RogersSatchellVolatility, Rsi, Rvi, RviVolatility, Sma, StandardErrorBands, StarcBands,
+    Stochastic, TtmSqueeze, Vidya, VwapStdDevBands, Wma, YangZhangVolatility,
 };
 use wickra_data::csv::CandleReader;
 
@@ -140,11 +142,37 @@ fn benches(c: &mut Criterion) {
     bench_scalar(c, "ema", &closes, || Ema::new(14).unwrap());
     bench_scalar(c, "wma", &closes, || Wma::new(14).unwrap());
     bench_scalar(c, "rsi", &closes, || Rsi::new(14).unwrap());
+    bench_scalar(c, "alma", &closes, || Alma::new(9, 0.85, 6.0).unwrap());
+    bench_scalar(c, "mcginley_dynamic", &closes, || {
+        McGinleyDynamic::new(10).unwrap()
+    });
+    bench_scalar(c, "frama", &closes, || Frama::new(16).unwrap());
+    bench_scalar(c, "vidya", &closes, || Vidya::new(14, 9).unwrap());
+    bench_scalar(c, "jma", &closes, || Jma::new(14, 0.0, 2).unwrap());
     bench_macd(c, &closes);
     bench_bollinger(c, &closes);
     bench_candle_input(c, "atr", &candles, || Atr::new(14).unwrap());
     bench_candle_input(c, "stochastic", &candles, Stochastic::classic);
     bench_candle_input(c, "obv", &candles, Obv::new);
+
+    // --- Family 04: Volatility ---
+    bench_scalar(c, "rvi_volatility", &closes, || {
+        RviVolatility::new(10).unwrap()
+    });
+    bench_candle_input(c, "parkinson", &candles, || {
+        ParkinsonVolatility::new(20, 252).unwrap()
+    });
+    bench_candle_input(c, "garman_klass", &candles, || {
+        GarmanKlassVolatility::new(20, 252).unwrap()
+    });
+    bench_candle_input(c, "rogers_satchell", &candles, || {
+        RogersSatchellVolatility::new(20, 252).unwrap()
+    });
+    bench_candle_input(c, "yang_zhang", &candles, || {
+        YangZhangVolatility::new(20, 252).unwrap()
+    });
+    bench_candle_input(c, "rvi", &candles, || Rvi::new(10).unwrap());
+    bench_candle_input(c, "pgo", &candles, || Pgo::new(14).unwrap());
 
     // --- Family 05: Bands & Channels ---
     bench_candle_input(c, "acceleration_bands", &candles, || {

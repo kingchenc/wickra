@@ -1,0 +1,169 @@
+name: Sync indicator count
+
+# Indicator count appears in four places that must stay in sync with
+# the number of `mod xxx;` lines in crates/wickra-core/src/indicators/mod.rs:
+#
+#   1. README.md prose                       — synced on PR branches (this workflow)
+#   2. GitHub repo "About" description       — synced on push to main / v* tag
+#   3. Wiki: Home.md / FAQ.md / Streaming-vs-Batch.md
+#                                            — synced on push to main / v* tag
+#   4. site/index.md (local-only marketing site, not synced from CI)
+#
+# Design: keep README in sync *before* a PR is merged, by pushing a
+# fix-up commit to the PR head branch. After squash-merge into main
+# the bot commit is folded into the single signed merge commit, so
+# main's history never shows an unsigned "sync indicator count" entry.
+#
+# The push to PR head uses the default `GITHUB_TOKEN`, whose pushes
+# explicitly do NOT trigger downstream workflows (anti-recursion
+# policy). So a counter fix-up does not re-trigger ci.yml on the PR
+# — it does, however, re-trigger sync-about.yml on the next PR
+# `synchronize` event, which is what we want (a no-op if the counter
+# is now correct).
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+# `contents: write` is needed so the workflow can push the counter
+# fix-up commit to the PR head branch via the auto-provided
+# GITHUB_TOKEN. The wider About / Wiki writes still go through the
+# fine-grained PAT (ABOUT_SYNC_TOKEN) because they need
+# `Administration: write` (gh repo edit) which GITHUB_TOKEN lacks.
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      # On PRs from forks the head ref lives in another repo; pushing
+      # back to it from this workflow is blocked by GitHub. We still
+      # want the PR to surface the missing counter, so the check below
+      # falls back to a hard failure when push isn't possible.
+      - name: Determine if push to PR head is possible
+        id: ctx
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            if [ "${{ github.event.pull_request.head.repo.full_name }}" = "${{ github.repository }}" ]; then
+              echo "can_push=true" >> "$GITHUB_OUTPUT"
+              echo "head_ref=${{ github.event.pull_request.head.ref }}" >> "$GITHUB_OUTPUT"
+            else
+              echo "can_push=false" >> "$GITHUB_OUTPUT"
+              echo "head_ref=" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "can_push=false" >> "$GITHUB_OUTPUT"
+            echo "head_ref=" >> "$GITHUB_OUTPUT"
+          fi
+
+      # On PRs we check out the *head* commit (not the merge ref) so
+      # any fix-up commit we make goes onto the PR branch itself. On
+      # push events we check out the default ref. fetch-depth: 0 lets
+      # us push back without "shallow update not allowed".
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref }}
+          repository: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name || github.repository }}
+          # Default GITHUB_TOKEN is fine for the same-repo PR-branch
+          # push; the About / Wiki steps re-authenticate with the PAT
+          # below where needed.
+
+      - name: Count indicators
+        id: count
+        run: |
+          n=$(grep -c '^mod ' crates/wickra-core/src/indicators/mod.rs)
+          echo "count=$n" >> "$GITHUB_OUTPUT"
+          echo "Indicator count: $n"
+
+      # ----- PR flow ---------------------------------------------------
+
+      - name: Check README counter (PR)
+        if: github.event_name == 'pull_request'
+        id: pr_check
+        run: |
+          n="${{ steps.count.outputs.count }}"
+          if grep -qE "^${n} streaming-first indicators" README.md; then
+            echo "matches=true" >> "$GITHUB_OUTPUT"
+            echo "README counter already at ${n}; nothing to do."
+          else
+            echo "matches=false" >> "$GITHUB_OUTPUT"
+            echo "README counter does not match ${n}; will fix up."
+          fi
+
+      - name: Fix counter on fork PR head (read-only, fail loud)
+        if: github.event_name == 'pull_request' && steps.pr_check.outputs.matches == 'false' && steps.ctx.outputs.can_push == 'false'
+        run: |
+          n="${{ steps.count.outputs.count }}"
+          echo "::error::README.md says a different indicator count than mod.rs (${n}). This PR is from a fork, so the workflow cannot push the fix; please update README.md to '${n} streaming-first indicators' and push again."
+          exit 1
+
+      - name: Patch README on PR head
+        if: github.event_name == 'pull_request' && steps.pr_check.outputs.matches == 'false' && steps.ctx.outputs.can_push == 'true'
+        id: pr_patch
+        run: |
+          n="${{ steps.count.outputs.count }}"
+          sed -i -E "s/[0-9]+ (streaming-first )?indicators/${n} \1indicators/g" README.md
+          if git diff --quiet; then
+            echo "No README changes after sed (counter regex did not match anything); skipping push."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit & push counter fix to PR head
+        if: github.event_name == 'pull_request' && steps.pr_patch.outputs.changed == 'true'
+        run: |
+          git config user.name "wickra-bot"
+          git config user.email "wickra-bot@users.noreply.github.com"
+          git add README.md
+          git commit -m "chore: sync indicator count to ${{ steps.count.outputs.count }}"
+          git push origin "HEAD:${{ steps.ctx.outputs.head_ref }}"
+
+      # ----- main / tag flow ------------------------------------------
+      #
+      # After a PR squash-merges, this workflow runs again on the push
+      # to main. README is already correct (it was fixed on the PR
+      # branch before the merge); the only outward syncs left are the
+      # GitHub About description (repo metadata, not a commit) and the
+      # wiki repo (separate repo, no main history pollution). README is
+      # not touched on main any more.
+
+      - name: Update GitHub About description
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.ABOUT_SYNC_TOKEN }}
+        run: |
+          n="${{ steps.count.outputs.count }}"
+          desc="Streaming-first technical indicators with a Rust core and Python, Node.js, and WebAssembly bindings. ${n} indicators, O(1) per-tick updates, no system dependencies. Drop-in TA-Lib replacement."
+          current=$(gh repo view --json description -q .description)
+          if [ "$current" = "$desc" ]; then
+            echo "About unchanged."
+          else
+            gh repo edit --description "$desc"
+            echo "About updated."
+          fi
+
+      - name: Sync Wiki
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.ABOUT_SYNC_TOKEN }}
+        run: |
+          n="${{ steps.count.outputs.count }}"
+          git clone "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.wiki.git" wiki
+          cd wiki
+          sed -i -E "s/[0-9]+ (streaming-first )?indicators/${n} \1indicators/g" Home.md FAQ.md Streaming-vs-Batch.md
+          if git diff --quiet; then
+            echo "Wiki unchanged."
+            exit 0
+          fi
+          git config user.name "wickra-bot"
+          git config user.email "wickra-bot@users.noreply.github.com"
+          git add Home.md FAQ.md Streaming-vs-Batch.md
+          git commit -m "chore: sync indicator count to ${n}"
+          git push
