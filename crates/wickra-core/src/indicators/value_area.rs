@@ -153,37 +153,32 @@ impl ValueArea {
 
         // Expand Value Area outward from POC. At each step take the
         // higher-volume neighbour (up or down). Equal volumes break upward,
-        // matching the CME convention.
+        // matching the CME convention. The loop condition guarantees at
+        // least one of `can_go_up` / `can_go_down` is true on every body
+        // entry, so the inner `else` branch is always reachable.
         let target = total * self.value_area_pct;
         let mut accumulated = poc_vol;
         let mut lo = poc_idx;
         let mut hi = poc_idx;
         while accumulated < target && (lo > 0 || hi + 1 < self.bin_count) {
-            let up = if hi + 1 < self.bin_count {
-                Some(bins[hi + 1])
+            let can_go_up = hi + 1 < self.bin_count;
+            let can_go_down = lo > 0;
+            let up_v = if can_go_up {
+                bins[hi + 1]
             } else {
-                None
+                f64::NEG_INFINITY
             };
-            let down = if lo > 0 { Some(bins[lo - 1]) } else { None };
-            match (up, down) {
-                (Some(u), Some(d)) => {
-                    if u >= d {
-                        hi += 1;
-                        accumulated += u;
-                    } else {
-                        lo -= 1;
-                        accumulated += d;
-                    }
-                }
-                (Some(u), None) => {
-                    hi += 1;
-                    accumulated += u;
-                }
-                (None, Some(d)) => {
-                    lo -= 1;
-                    accumulated += d;
-                }
-                (None, None) => break,
+            let down_v = if can_go_down {
+                bins[lo - 1]
+            } else {
+                f64::NEG_INFINITY
+            };
+            if can_go_up && (up_v >= down_v || !can_go_down) {
+                hi += 1;
+                accumulated += up_v;
+            } else {
+                lo -= 1;
+                accumulated += down_v;
             }
         }
 
@@ -350,6 +345,29 @@ mod tests {
         assert_relative_eq!(out.poc, 100.0, epsilon = 1e-12);
         assert_relative_eq!(out.vah, 100.0, epsilon = 1e-12);
         assert_relative_eq!(out.val, 100.0, epsilon = 1e-12);
+    }
+
+    #[test]
+    fn single_print_bar_in_mixed_window_dumps_volume_into_one_bin() {
+        // Mix of wide-range bars (drive the window's span > 0) and one
+        // single-print bar at price 102 with massive volume. The single-print
+        // bar must dump its entire volume into one bin, making the POC land
+        // exactly on the bin that contains 102.
+        let candles = vec![
+            c(100.0, 100.5, 99.5, 100.0, 1.0, 0),
+            c(100.0, 100.5, 99.5, 100.0, 1.0, 1),
+            c(102.0, 102.0, 102.0, 102.0, 1000.0, 2),
+            c(100.0, 100.5, 99.5, 100.0, 1.0, 3),
+            c(100.0, 100.5, 99.5, 100.0, 1.0, 4),
+        ];
+        let mut v = ValueArea::new(5, 50, 0.70).unwrap();
+        let out = v.batch(&candles).into_iter().flatten().last().unwrap();
+        // POC must sit in the high-volume bin that holds price 102.
+        assert!(
+            (101.9..=102.1).contains(&out.poc),
+            "POC {} not near 102",
+            out.poc
+        );
     }
 
     #[test]

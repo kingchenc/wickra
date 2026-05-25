@@ -170,12 +170,17 @@ mod tests {
 
     #[test]
     fn accessors_and_metadata() {
-        let ib = InitialBalance::new(12).unwrap();
+        let mut ib = InitialBalance::new(12).unwrap();
         assert_eq!(ib.period(), 12);
         assert_eq!(ib.name(), "InitialBalance");
         assert_eq!(ib.warmup_period(), 1);
         assert!(ib.value().is_none());
         assert!(!ib.is_locked());
+        // After the first bar, value() returns Some with that bar's H/L.
+        ib.update(c(102.0, 100.0, 0));
+        let v = ib.value().unwrap();
+        assert_relative_eq!(v.high, 102.0);
+        assert_relative_eq!(v.low, 100.0);
     }
 
     #[test]
