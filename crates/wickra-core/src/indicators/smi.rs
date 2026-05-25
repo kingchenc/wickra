@@ -267,4 +267,19 @@ mod tests {
         smi.reset();
         assert!(!smi.is_ready());
     }
+
+    #[test]
+    fn zero_range_holds_previous_value() {
+        // High == low on every bar -> instantaneous range is zero, the
+        // EMA of (range / 2) settles to zero, so `r2 <= 0.0` after warmup
+        // and the indicator must hold its previous value (None here, since
+        // r2 was zero from the very first warm bar) rather than divide by
+        // zero.
+        let mut smi = Smi::new(3, 2, 2).unwrap();
+        // warmup_period = 3 + 2 + 2 - 2 = 5; feed warmup + 2 extra bars.
+        for i in 0..7 {
+            let v = smi.update(candle(10.0, 10.0, 10.0, i));
+            assert_eq!(v, None, "zero-range SMI must hold None, got {v:?}");
+        }
+    }
 }

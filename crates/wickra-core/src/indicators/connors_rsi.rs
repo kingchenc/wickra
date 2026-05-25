@@ -287,4 +287,21 @@ mod tests {
         assert_eq!(crsi.update(f64::NAN), before);
         assert_eq!(crsi.update(f64::INFINITY), before);
     }
+
+    #[test]
+    fn zero_prev_skips_roc_update() {
+        // A previous price of 0.0 makes the 1-bar return undefined; the
+        // ROC ring buffer must be left unchanged on that step. Feeding
+        // 0.0 as the very first price seeds `prev_price = Some(0.0)`, so
+        // the next bar takes the `prev == 0.0` branch.
+        let mut crsi = ConnorsRsi::new(3, 2, 4).unwrap();
+        // Bar 1 seeds prev_price to 0.0.
+        crsi.update(0.0);
+        // Bar 2 must not push onto the ROC window; we cannot observe the
+        // ring directly but the indicator must not panic and must not
+        // emit until at least period_rank distinct non-zero returns have
+        // accumulated.
+        let after = crsi.update(1.0);
+        assert!(after.is_none(), "CRSI cannot emit on bar 2: {after:?}");
+    }
 }
