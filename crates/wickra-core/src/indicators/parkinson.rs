@@ -229,10 +229,9 @@ mod tests {
         let annual = ParkinsonVolatility::new(10, 252).unwrap().batch(&candles);
         let scale = (252.0_f64).sqrt();
         for (r, a) in raw.iter().zip(annual.iter()) {
-            match (r, a) {
-                (None, None) => {}
-                (Some(r), Some(a)) => assert_relative_eq!(*a, r * scale, epsilon = 1e-9),
-                _ => panic!("warmup mismatch between raw and annualised runs"),
+            assert_eq!(r.is_some(), a.is_some(), "warmup mismatch");
+            if let (Some(r), Some(a)) = (r, a) {
+                assert_relative_eq!(*a, r * scale, epsilon = 1e-9);
             }
         }
     }
