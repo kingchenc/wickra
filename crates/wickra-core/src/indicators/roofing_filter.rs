@@ -1,4 +1,5 @@
 //! Ehlers Roofing Filter (high-pass followed by SuperSmoother).
+#![allow(clippy::doc_markdown)]
 
 use std::f64::consts::PI;
 

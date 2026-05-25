@@ -1,4 +1,5 @@
 //! Ehlers Instantaneous Trendline (ITrend).
+#![allow(clippy::doc_markdown)]
 
 use crate::error::{Error, Result};
 use crate::traits::Indicator;

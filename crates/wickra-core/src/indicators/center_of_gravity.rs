@@ -1,4 +1,5 @@
 //! Ehlers Center of Gravity Oscillator.
+#![allow(clippy::manual_midpoint)]
 
 use std::collections::VecDeque;
 

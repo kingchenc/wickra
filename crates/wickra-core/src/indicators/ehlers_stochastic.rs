@@ -1,4 +1,5 @@
 //! Ehlers Stochastic — Stochastic computed on a Roofing-Filter pre-filtered input.
+#![allow(clippy::doc_markdown)]
 
 use std::collections::VecDeque;
 

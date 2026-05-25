@@ -109,21 +109,24 @@ python -m benchmarks.compare_libraries
 
 ## Indicators
 
-87 streaming-first indicators across nine families. Every one passes the
+163 streaming-first indicators across twelve families. Every one passes the
 `batch == streaming` equivalence test, reference-value tests, and reset
 semantics tests.
 
 | Family | Indicators |
 |--------|-----------|
-| Moving Averages      | SMA, EMA, WMA, DEMA, TEMA, HMA, KAMA, SMMA, TRIMA, ZLEMA, T3, VWMA |
-| Momentum Oscillators | RSI (Wilder), Stochastic, CCI, ROC, Williams %R, MFI, Awesome Oscillator, MOM, CMO, TSI, PMO, StochRSI, Ultimate Oscillator |
-| Trend & Directional  | MACD, ADX (+DI/-DI), Aroon, TRIX, Aroon Oscillator, Vortex, Mass Index, Choppiness Index, Vertical Horizontal Filter |
-| Price Oscillators    | PPO, DPO, Coppock, Accelerator Oscillator, Balance of Power |
-| Volatility & Bands   | ATR, Bollinger Bands, Keltner Channels, Donchian Channels, NATR, StdDev, Ulcer Index, Historical Volatility, Bollinger Bandwidth, %B, True Range, Chaikin Volatility |
-| Trailing Stops       | Parabolic SAR, SuperTrend, Chandelier Exit, Chande Kroll Stop, ATR Trailing Stop |
-| Volume               | OBV, VWAP (cumulative + rolling), ADL, Volume-Price Trend, Chaikin Money Flow, Chaikin Oscillator, Force Index, Ease of Movement |
+| Moving Averages      | SMA, EMA, WMA, DEMA, TEMA, HMA, KAMA, SMMA, TRIMA, ZLEMA, T3, VWMA, ALMA, McGinley Dynamic, FRAMA, VIDYA, JMA, Alligator, EVWMA |
+| Momentum Oscillators | RSI (Wilder), Stochastic, CCI, ROC, Williams %R, MFI, Awesome Oscillator, MOM, CMO, TSI, PMO, StochRSI, Ultimate Oscillator, RVI, PGO, KST, SMI, Laguerre RSI, Connors RSI, Inertia |
+| Trend & Directional  | MACD, ADX (+DI/-DI), ADXR, Aroon, TRIX, Aroon Oscillator, Vortex, Random Walk Index, Trend Intensity Index, Wave Trend Oscillator, Mass Index, Choppiness Index, Vertical Horizontal Filter |
+| Price Oscillators    | PPO, DPO, Coppock, Accelerator Oscillator, Balance of Power, APO, AO Histogram, CFO, Zero-Lag MACD, Elder Impulse, STC |
+| Volatility & Bands   | ATR, Bollinger Bands, Keltner Channels, Donchian Channels, NATR, StdDev, Ulcer Index, Historical Volatility, Bollinger Bandwidth, %B, True Range, Chaikin Volatility, RVI (Relative Volatility Index), Parkinson Volatility, Garman-Klass Volatility, Rogers-Satchell Volatility, Yang-Zhang Volatility |
+| Bands & Channels     | MA Envelope, Acceleration Bands, STARC Bands, ATR Bands, Hurst Channel, LinReg Channel, Standard Error Bands, Double Bollinger Bands, TTM Squeeze, Fractal Chaos Bands, VWAP StdDev Bands |
+| Trailing Stops       | Parabolic SAR, SuperTrend, Chandelier Exit, Chande Kroll Stop, ATR Trailing Stop, HiLo Activator, Volty Stop, Yo-Yo Exit, Donchian Channel Stop, Percentage Trailing Stop, Step Trailing Stop, Renko Trailing Stop |
+| Volume               | OBV, VWAP (cumulative + rolling), ADL, Volume-Price Trend, Chaikin Money Flow, Chaikin Oscillator, Force Index, Ease of Movement, Klinger Volume Oscillator, Volume Oscillator, NVI, PVI, Williams A/D, Anchored VWAP, Demand Index, TSV, VZO, Market Facilitation Index |
 | Price Statistics     | Typical Price, Median Price, Weighted Close, Linear Regression, Linear Regression Slope, Z-Score, Linear Regression Angle |
 | Ehlers / Cycle (DSP) | MAMA, FAMA, Fisher Transform, Inverse Fisher Transform, SuperSmoother, Hilbert Dominant Cycle, Sine Wave, Decycler, Decycler Oscillator, Roofing Filter, Center of Gravity, Cybernetic Cycle, Adaptive Cycle, Empirical Mode Decomposition, Ehlers Stochastic, Instantaneous Trendline |
+| Pivots & S/R         | Classic Pivots, Fibonacci Pivots, Camarilla, Woodie Pivots, DeMark Pivots, Williams Fractals, ZigZag |
+| DeMark               | TD Setup, TD Sequential, TD DeMarker, TD REI, TD Pressure, TD Combo, TD Countdown, TD Lines, TD Range Projection, TD Differential, TD Open, TD Risk Level |
 
 Adding a new indicator means implementing one trait in Rust; all four bindings
 inherit it automatically.
@@ -196,7 +199,7 @@ A Python live-trading example using the public `websockets` package lives at
 ```
 wickra/
 ├── crates/
-│   ├── wickra-core/         core engine + all 71 indicators
+│   ├── wickra-core/         core engine + all 147 indicators
 │   ├── wickra/              top-level facade crate (publishes on crates.io) + benches/
 │   └── wickra-data/         CSV reader, tick aggregator, live exchange feeds
 ├── bindings/

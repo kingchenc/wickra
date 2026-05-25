@@ -1,4 +1,5 @@
 //! Ehlers Hilbert Transform Dominant Cycle period estimator.
+#![allow(clippy::manual_clamp)]
 
 use std::f64::consts::PI;
 

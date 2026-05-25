@@ -1,4 +1,5 @@
 //! Ehlers Cybernetic Cycle Component.
+#![allow(clippy::doc_markdown)]
 
 use crate::error::{Error, Result};
 use crate::traits::Indicator;

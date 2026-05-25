@@ -7,7 +7,8 @@ use crate::traits::Indicator;
 ///
 /// Compresses the input through `(e^{2x} - 1) / (e^{2x} + 1) = tanh(x)`, the
 /// algebraic inverse of the Fisher transform. The output is bounded in
-/// `(-1, +1)`, which makes overbought/oversold thresholds at, say, `±0.5`
+/// `[-1, +1]` (saturating to exactly `±1` for `|scale * input| >= ~19.06`
+/// under IEEE 754 doubles), which makes overbought/oversold thresholds at, say, `±0.5`
 /// universal across markets and timeframes — the classic use described by
 /// Ehlers in *Cybernetic Analysis for Stocks and Futures* (2004).
 ///
@@ -133,11 +134,13 @@ mod tests {
     }
 
     #[test]
-    fn output_bounded_in_open_unit_interval() {
+    fn output_bounded_in_closed_unit_interval() {
+        // tanh saturates to exactly ±1.0 in IEEE 754 once |x| >= ~19.06, so the
+        // output is in the closed interval [-1, +1] rather than strictly open.
         let mut ift = InverseFisherTransform::new(1.0).unwrap();
         for i in -100..=100 {
             let v = ift.update(f64::from(i)).unwrap();
-            assert!(v > -1.0 && v < 1.0, "v={v}");
+            assert!((-1.0..=1.0).contains(&v), "v={v}");
         }
     }
 

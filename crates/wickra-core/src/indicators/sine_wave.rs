@@ -1,4 +1,5 @@
 //! Ehlers Sine Wave indicator.
+#![allow(clippy::manual_clamp)]
 
 use std::f64::consts::PI;
 

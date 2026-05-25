@@ -1,4 +1,5 @@
 //! Ehlers SuperSmoother filter.
+#![allow(clippy::doc_markdown)]
 
 use std::f64::consts::PI;
 

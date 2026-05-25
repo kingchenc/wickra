@@ -1,4 +1,10 @@
 //! Ehlers MESA Adaptive Moving Average (MAMA) and its follower (FAMA).
+#![allow(
+    clippy::doc_markdown,
+    clippy::doc_lazy_continuation,
+    clippy::struct_field_names,
+    clippy::manual_clamp
+)]
 
 use std::f64::consts::PI;
 
