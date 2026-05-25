@@ -57,6 +57,25 @@ def test_obv_batch_shape(ohlc_series):
     assert out.shape == close.shape
 
 
+def test_value_area_batch_shape(ohlc_series):
+    high, low, close = ohlc_series
+    volume = np.ones_like(close)
+    out = ta.ValueArea(20, 50, 0.70).batch(high, low, volume)
+    assert out.shape == (close.size, 3)
+
+
+def test_initial_balance_batch_shape(ohlc_series):
+    high, low, _close = ohlc_series
+    out = ta.InitialBalance(12).batch(high, low)
+    assert out.shape == (high.size, 2)
+
+
+def test_opening_range_batch_shape(ohlc_series):
+    high, low, close = ohlc_series
+    out = ta.OpeningRange(6).batch(high, low, close)
+    assert out.shape == (close.size, 3)
+
+
 def test_ichimoku_batch_returns_n_by_5(ohlc_series):
     high, low, close = ohlc_series
     out = ta.Ichimoku().batch(high, low, close)

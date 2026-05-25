@@ -332,6 +332,45 @@ def test_obv_cumulative_known_sequence():
     np.testing.assert_allclose(out, [0.0, 20.0, -10.0, -10.0, 0.0])
 
 
+def test_value_area_concentrated_volume_locates_poc():
+    # Bars 0..3 sit at price 100 with low volume; bar 4 dumps massive volume
+    # at price 110. POC must fall inside the high-volume bar's [low, high]
+    # range; ties resolve to the lowest-index bin, so the POC may sit on the
+    # left edge of bar 4's range rather than at its midpoint.
+    high = np.array([100.5, 100.5, 100.5, 100.5, 110.5])
+    low = np.array([99.5, 99.5, 99.5, 99.5, 109.5])
+    volume = np.array([1.0, 1.0, 1.0, 1.0, 1000.0])
+    out = ta.ValueArea(5, 50, 0.70).batch(high, low, volume)
+    poc = out[-1, 0]
+    assert 109.5 <= poc <= 110.5
+    # VAH >= POC >= VAL.
+    assert out[-1, 1] >= poc >= out[-1, 2]
+
+
+def test_initial_balance_locks_after_period():
+    # First two bars set IB = [99, 103]. Third bar (extreme) must be ignored.
+    high = np.array([102.0, 103.0, 200.0])
+    low = np.array([100.0, 99.0, 50.0])
+    out = ta.InitialBalance(2).batch(high, low)
+    # Bar 0: IB = [100, 102]; Bar 1: IB locked at [99, 103]; Bar 2: unchanged.
+    np.testing.assert_allclose(out[0], [102.0, 100.0])
+    np.testing.assert_allclose(out[1], [103.0, 99.0])
+    np.testing.assert_allclose(out[2], [103.0, 99.0])
+
+
+def test_opening_range_breakout_distance_signed():
+    # OR locks after 2 bars at high 103 / low 100; mid 101.5. Third bar
+    # closes at 105 -> breakout +3.5; fourth bar closes at 95 -> -6.5.
+    high = np.array([102.0, 103.0, 110.0, 110.0])
+    low = np.array([100.0, 101.0, 102.0, 90.0])
+    close = np.array([101.0, 102.0, 105.0, 95.0])
+    out = ta.OpeningRange(2).batch(high, low, close)
+    assert math.isclose(out[2, 0], 103.0)
+    assert math.isclose(out[2, 1], 100.0)
+    assert math.isclose(out[2, 2], 105.0 - 101.5)
+    assert math.isclose(out[3, 2], 95.0 - 101.5)
+
+
 # --- Family 10 — Ehlers / Cycle reference values ---
 
 

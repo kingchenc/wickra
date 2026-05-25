@@ -10816,6 +10816,244 @@ impl PySpearmanCorrelation {
     }
 }
 
+// ============================== ValueArea ==============================
+
+#[pyclass(name = "ValueArea", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyValueArea {
+    inner: wc::ValueArea,
+}
+
+#[pymethods]
+impl PyValueArea {
+    #[new]
+    #[pyo3(signature = (period=20, bin_count=50, value_area_pct=0.70))]
+    fn new(period: usize, bin_count: usize, value_area_pct: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::ValueArea::new(period, bin_count, value_area_pct).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.poc, o.vah, o.val)))
+    }
+    /// Batch over numpy columns high, low, volume. Returns shape `(n, 3)`
+    /// with columns `[poc, vah, val]`; warmup rows are `NaN`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != v.len() {
+            return Err(PyValueError::new_err(
+                "high, low, volume must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            // open / close pinned to the midpoint so the candle validates.
+            let mid = (h[i] + l[i]) / 2.0;
+            let candle = wc::Candle::new(mid, h[i], l[i], mid, v[i], 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 3] = o.poc;
+                out[i * 3 + 1] = o.vah;
+                out[i * 3 + 2] = o.val;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn params(&self) -> (usize, usize, f64) {
+        self.inner.params()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (period, bin_count, pct) = self.inner.params();
+        format!("ValueArea(period={period}, bin_count={bin_count}, value_area_pct={pct})")
+    }
+}
+
+// ============================== InitialBalance ==============================
+
+#[pyclass(
+    name = "InitialBalance",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyInitialBalance {
+    inner: wc::InitialBalance,
+}
+
+#[pymethods]
+impl PyInitialBalance {
+    #[new]
+    #[pyo3(signature = (period=12))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::InitialBalance::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.high, o.low)))
+    }
+    /// Batch over numpy columns high, low. Returns shape `(n, 2)` with
+    /// columns `[high, low]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let mid = (h[i] + l[i]) / 2.0;
+            let candle = wc::Candle::new(mid, h[i], l[i], mid, 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 2] = o.high;
+                out[i * 2 + 1] = o.low;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn is_locked(&self) -> bool {
+        self.inner.is_locked()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("InitialBalance(period={})", self.inner.period())
+    }
+}
+
+// ============================== OpeningRange ==============================
+
+#[pyclass(name = "OpeningRange", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyOpeningRange {
+    inner: wc::OpeningRange,
+}
+
+#[pymethods]
+impl PyOpeningRange {
+    #[new]
+    #[pyo3(signature = (period=6))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::OpeningRange::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self
+            .inner
+            .update(c)
+            .map(|o| (o.high, o.low, o.breakout_distance)))
+    }
+    /// Batch over numpy columns high, low, close. Returns shape `(n, 3)`
+    /// with columns `[high, low, breakout_distance]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 3] = o.high;
+                out[i * 3 + 1] = o.low;
+                out[i * 3 + 2] = o.breakout_distance;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn is_locked(&self) -> bool {
+        self.inner.is_locked()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("OpeningRange(period={})", self.inner.period())
+    }
+}
+
 // ============================== Module ==============================
 
 #[pymodule]
@@ -11004,5 +11242,8 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyPearsonCorrelation>()?;
     m.add_class::<PyBeta>()?;
     m.add_class::<PySpearmanCorrelation>()?;
+    m.add_class::<PyValueArea>()?;
+    m.add_class::<PyInitialBalance>()?;
+    m.add_class::<PyOpeningRange>()?;
     Ok(())
 }

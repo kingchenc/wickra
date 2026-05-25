@@ -8096,3 +8096,224 @@ impl HeikinAshiNode {
         self.inner.warmup_period() as u32
     }
 }
+
+// ============================== ValueArea ==============================
+
+#[napi(object)]
+pub struct ValueAreaValue {
+    pub poc: f64,
+    pub vah: f64,
+    pub val: f64,
+}
+
+#[napi(js_name = "ValueArea")]
+pub struct ValueAreaNode {
+    inner: wc::ValueArea,
+}
+#[napi]
+impl ValueAreaNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, bin_count: u32, value_area_pct: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::ValueArea::new(period as usize, bin_count as usize, value_area_pct)
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        volume: f64,
+    ) -> napi::Result<Option<ValueAreaValue>> {
+        let mid = (high + low) / 2.0;
+        let candle = wc::Candle::new(mid, high, low, mid, volume, 0).map_err(map_err)?;
+        Ok(self.inner.update(candle).map(|o| ValueAreaValue {
+            poc: o.poc,
+            vah: o.vah,
+            val: o.val,
+        }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        volume: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "high, low, volume must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let mid = (high[i] + low[i]) / 2.0;
+            let candle =
+                wc::Candle::new(mid, high[i], low[i], mid, volume[i], 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 3] = o.poc;
+                out[i * 3 + 1] = o.vah;
+                out[i * 3 + 2] = o.val;
+            }
+        }
+        Ok(out)
+    }
+}
+
+// ============================== InitialBalance ==============================
+
+#[napi(object)]
+pub struct InitialBalanceValue {
+    pub high: f64,
+    pub low: f64,
+}
+
+#[napi(js_name = "InitialBalance")]
+pub struct InitialBalanceNode {
+    inner: wc::InitialBalance,
+}
+#[napi]
+impl InitialBalanceNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::InitialBalance::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "isLocked")]
+    pub fn is_locked(&self) -> bool {
+        self.inner.is_locked()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<InitialBalanceValue>> {
+        let mid = (high + low) / 2.0;
+        let candle = wc::Candle::new(mid, high, low, mid, 0.0, 0).map_err(map_err)?;
+        Ok(self.inner.update(candle).map(|o| InitialBalanceValue {
+            high: o.high,
+            low: o.low,
+        }))
+    }
+    #[napi]
+    pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() {
+            return Err(NapiError::from_reason(
+                "high and low must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let mid = (high[i] + low[i]) / 2.0;
+            let candle = wc::Candle::new(mid, high[i], low[i], mid, 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 2] = o.high;
+                out[i * 2 + 1] = o.low;
+            }
+        }
+        Ok(out)
+    }
+}
+
+// ============================== OpeningRange ==============================
+
+#[napi(object)]
+pub struct OpeningRangeValue {
+    pub high: f64,
+    pub low: f64,
+    pub breakout_distance: f64,
+}
+
+#[napi(js_name = "OpeningRange")]
+pub struct OpeningRangeNode {
+    inner: wc::OpeningRange,
+}
+#[napi]
+impl OpeningRangeNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::OpeningRange::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "isLocked")]
+    pub fn is_locked(&self) -> bool {
+        self.inner.is_locked()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<OpeningRangeValue>> {
+        let candle = wc::Candle::new(close, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(self.inner.update(candle).map(|o| OpeningRangeValue {
+            high: o.high,
+            low: o.low,
+            breakout_distance: o.breakout_distance,
+        }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let candle =
+                wc::Candle::new(close[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 3] = o.high;
+                out[i * 3 + 1] = o.low;
+                out[i * 3 + 2] = o.breakout_distance;
+            }
+        }
+        Ok(out)
+    }
+}

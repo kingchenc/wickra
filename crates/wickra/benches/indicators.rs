@@ -25,16 +25,16 @@ use wickra::{
     DemarkPivots, DetrendedStdDev, DonchianStop, DoubleBollinger, EhlersStochastic, Ema,
     EmpiricalModeDecomposition, Fama, FibonacciPivots, FisherTransform, FractalChaosBands, Frama,
     GarmanKlassVolatility, HeikinAshi, HiLoActivator, HilbertDominantCycle, HurstChannel,
-    HurstExponent, Ichimoku, Indicator, InstantaneousTrendline, InverseFisherTransform, Jma, Kst,
-    Kurtosis, Kvo, LinRegChannel, MaEnvelope, MacdIndicator, Mama, MarketFacilitationIndex,
-    McGinleyDynamic, MedianAbsoluteDeviation, Nvi, Obv, ParkinsonVolatility,
-    PercentageTrailingStop, Pgo, Pvi, RSquared, RenkoTrailingStop, RogersSatchellVolatility,
-    RoofingFilter, Rsi, Rvi, RviVolatility, Rwi, SineWave, Skewness, Sma, StandardError,
-    StandardErrorBands, StarcBands, StepTrailingStop, Stochastic, SuperSmoother, TdCombo,
-    TdCountdown, TdDeMarker, TdDifferential, TdLines, TdOpen, TdPressure, TdRangeProjection, TdRei,
-    TdRiskLevel, TdSequential, TdSetup, Tii, Tsv, TtmSqueeze, Variance, Vidya, VoltyStop,
-    VolumeOscillator, VwapStdDevBands, Vzo, WaveTrend, WilliamsFractals, Wma, WoodiePivots,
-    YangZhangVolatility, YoyoExit, ZigZag,
+    HurstExponent, Ichimoku, Indicator, InitialBalance, InstantaneousTrendline,
+    InverseFisherTransform, Jma, Kst, Kurtosis, Kvo, LinRegChannel, MaEnvelope, MacdIndicator,
+    Mama, MarketFacilitationIndex, McGinleyDynamic, MedianAbsoluteDeviation, Nvi, Obv,
+    OpeningRange, ParkinsonVolatility, PercentageTrailingStop, Pgo, Pvi, RSquared,
+    RenkoTrailingStop, RogersSatchellVolatility, RoofingFilter, Rsi, Rvi, RviVolatility, Rwi,
+    SineWave, Skewness, Sma, StandardError, StandardErrorBands, StarcBands, StepTrailingStop,
+    Stochastic, SuperSmoother, TdCombo, TdCountdown, TdDeMarker, TdDifferential, TdLines, TdOpen,
+    TdPressure, TdRangeProjection, TdRei, TdRiskLevel, TdSequential, TdSetup, Tii, Tsv, TtmSqueeze,
+    ValueArea, Variance, Vidya, VoltyStop, VolumeOscillator, VwapStdDevBands, Vzo, WaveTrend,
+    WilliamsFractals, Wma, WoodiePivots, YangZhangVolatility, YoyoExit, ZigZag,
 };
 use wickra_data::csv::CandleReader;
 
@@ -386,6 +386,17 @@ fn benches(c: &mut Criterion) {
     });
     bench_scalar(c, "hurst_exponent", &closes, || {
         HurstExponent::new(100, 4).unwrap()
+    });
+
+    // --- Family 16: Market Profile ---
+    bench_candle_input(c, "value_area", &candles, || {
+        ValueArea::new(20, 50, 0.70).unwrap()
+    });
+    bench_candle_input(c, "initial_balance", &candles, || {
+        InitialBalance::new(12).unwrap()
+    });
+    bench_candle_input(c, "opening_range", &candles, || {
+        OpeningRange::new(6).unwrap()
     });
 }
 

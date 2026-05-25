@@ -28,15 +28,16 @@ use wickra_core::{
     AwesomeOscillatorHistogram, BalanceOfPower, BatchExt, Camarilla, Candle, Cci,
     ChaikinMoneyFlow, ChaikinOscillator, ChaikinVolatility, ChandeKrollStop, ChandelierExit,
     ChoppinessIndex, ClassicPivots, DemandIndex, DemarkPivots, Donchian, DonchianStop,
-    EaseOfMovement, Evwma, FibonacciPivots, ForceIndex, FractalChaosBands,
-    GarmanKlassVolatility, HeikinAshi, HiLoActivator, HurstChannel, Ichimoku, Indicator,
-    Inertia, Keltner, Kvo, MarketFacilitationIndex, MassIndex, MedianPrice, Mfi, Natr, Nvi,
-    Obv, ParkinsonVolatility, Pgo, Psar, Pvi, RogersSatchellVolatility, RollingVwap, Rvi, Rwi,
-    Smi, StarcBands, Stochastic, SuperTrend, TdCombo, TdCountdown, TdDeMarker, TdDifferential,
+    EaseOfMovement, Evwma, FibonacciPivots, ForceIndex, FractalChaosBands, GarmanKlassVolatility,
+    HeikinAshi, HiLoActivator, HurstChannel, Ichimoku, Indicator, Inertia, InitialBalance,
+    Keltner, Kvo, MarketFacilitationIndex, MassIndex, MedianPrice, Mfi, Natr, Nvi, Obv,
+    OpeningRange, ParkinsonVolatility, Pgo, Psar, Pvi, RogersSatchellVolatility, RollingVwap, Rvi,
+    Rwi, Smi, StarcBands, Stochastic, SuperTrend, TdCombo, TdCountdown, TdDeMarker, TdDifferential,
     TdLines, TdOpen, TdPressure, TdRangeProjection, TdRei, TdRiskLevel, TdSequential, TdSetup,
-    TrueRange, Tsv, TtmSqueeze, TypicalPrice, UltimateOscillator, VoltyStop, VolumeOscillator,
-    VolumePriceTrend, Vortex, Vwap, VwapStdDevBands, Vwma, Vzo, WaveTrend, WeightedClose,
-    WilliamsFractals, WilliamsR, WoodiePivots, YangZhangVolatility, YoyoExit, ZigZag,
+    TrueRange, Tsv, TtmSqueeze, TypicalPrice, UltimateOscillator, ValueArea, VoltyStop,
+    VolumeOscillator, VolumePriceTrend, Vortex, Vwap, VwapStdDevBands, Vwma, Vzo, WaveTrend,
+    WeightedClose, WilliamsFractals, WilliamsR, WoodiePivots, YangZhangVolatility, YoyoExit,
+    ZigZag,
 };
 
 /// Convert a flat `f64` stream into a `Vec<Candle>` by chunking it into
@@ -165,6 +166,11 @@ fuzz_target!(|data: Vec<f64>| {
         }
         let _ = Stochastic::new(14, 3).unwrap().batch(&candles);
     }
+
+    // --- Market Profile (multi-output) ---
+    drive(|| ValueArea::new(20, 50, 0.70).unwrap(), &candles);
+    drive(|| InitialBalance::new(12).unwrap(), &candles);
+    drive(|| OpeningRange::new(6).unwrap(), &candles);
 
     // --- Ichimoku (5 lines, hand-rolled because of multi-Option output) ---
     {

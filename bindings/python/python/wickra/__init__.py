@@ -215,6 +215,10 @@ from ._wickra import (
     # Ichimoku & alternative charts
     Ichimoku,
     HeikinAshi,
+    # Market Profile
+    ValueArea,
+    InitialBalance,
+    OpeningRange,
 )
 
 __all__ = [
@@ -409,4 +413,8 @@ __all__ = [
     # Ichimoku & alternative charts
     "Ichimoku",
     "HeikinAshi",
+    # Market Profile
+    "ValueArea",
+    "InitialBalance",
+    "OpeningRange",
 ]

@@ -88,6 +88,32 @@ def test_candle_tuple_input_supported():
     assert v is not None
 
 
+def test_initial_balance_reset_unlocks():
+    ib = ta.InitialBalance(2)
+    assert not ib.is_ready()
+    ib.update((101.0, 102.0, 100.0, 101.0, 0.0, 0))
+    ib.update((102.0, 103.0, 101.0, 102.0, 0.0, 1))
+    assert ib.is_ready()
+    assert ib.is_locked()
+    ib.reset()
+    assert not ib.is_ready()
+    assert not ib.is_locked()
+
+
+def test_opening_range_reset_unlocks():
+    or_ind = ta.OpeningRange(2)
+    or_ind.update((101.0, 102.0, 100.0, 101.0, 0.0, 0))
+    or_ind.update((102.0, 103.0, 101.0, 102.0, 0.0, 1))
+    assert or_ind.is_locked()
+    or_ind.reset()
+    assert not or_ind.is_locked()
+
+
+def test_value_area_warmup_equals_period():
+    assert ta.ValueArea(20, 50, 0.70).warmup_period() == 20
+    assert ta.ValueArea(10, 30, 0.80).warmup_period() == 10
+
+
 def test_ehlers_indicators_lifecycle():
     # Spot-check a few Family-10 entries beyond what test_new_indicators covers.
     series = np.linspace(1.0, 200.0, 200) + np.sin(np.arange(200) * 0.3) * 5.0

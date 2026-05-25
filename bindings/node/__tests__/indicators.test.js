@@ -214,6 +214,10 @@ const multi = {
   SuperTrend: { make: () => new wickra.SuperTrend(10, 3), fields: ['value', 'direction'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ChandelierExit: { make: () => new wickra.ChandelierExit(22, 3), fields: ['longStop', 'shortStop'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ChandeKrollStop: { make: () => new wickra.ChandeKrollStop(10, 1, 9), fields: ['stopLong', 'stopShort'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  // Family 16: Market Profile
+  ValueArea: { make: () => new wickra.ValueArea(20, 50, 0.70), fields: ['poc', 'vah', 'val'], step: (ind, i) => ind.update(high[i], low[i], volume[i]), batch: (ind) => ind.batch(high, low, volume) },
+  InitialBalance: { make: () => new wickra.InitialBalance(12), fields: ['high', 'low'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  OpeningRange: { make: () => new wickra.OpeningRange(6), fields: ['high', 'low', 'breakoutDistance'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   DonchianStop: { make: () => new wickra.DonchianStop(10), fields: ['stopLong', 'stopShort'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   // Family 05: bands & channels
   MaEnvelope: { make: () => new wickra.MaEnvelope(20, 0.025), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
@@ -369,6 +373,32 @@ test('TrueRange reference values', () => {
 test('LinRegAngle of a unit-slope series is 45 degrees', () => {
   const out = new wickra.LinRegAngle(5).batch([1, 2, 3, 4, 5, 6]);
   assert.ok(Math.abs(out[4] - 45) < 1e-9);
+});
+
+test('InitialBalance(2) locks after period and ignores subsequent bars', () => {
+  const ib = new wickra.InitialBalance(2);
+  let v = ib.update(102, 100);
+  assert.equal(v.high, 102);
+  assert.equal(v.low, 100);
+  v = ib.update(103, 99);
+  assert.equal(v.high, 103);
+  assert.equal(v.low, 99);
+  assert.equal(ib.isLocked(), true);
+  // Extreme bar after lock must not modify the IB.
+  v = ib.update(200, 50);
+  assert.equal(v.high, 103);
+  assert.equal(v.low, 99);
+});
+
+test('OpeningRange(2) breakout distance is signed close minus midpoint', () => {
+  const or = new wickra.OpeningRange(2);
+  or.update(102, 100, 101);
+  or.update(103, 101, 102);
+  // OR locked at high 103 / low 100 / mid 101.5. Close 105 -> +3.5.
+  const v = or.update(110, 102, 105);
+  assert.equal(v.high, 103);
+  assert.equal(v.low, 100);
+  assert.ok(Math.abs(v.breakoutDistance - 3.5) < 1e-9);
 });
 
 // --- Family 12: two-series indicators (Pearson / Beta / Spearman) ---

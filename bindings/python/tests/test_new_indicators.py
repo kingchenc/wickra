@@ -581,6 +581,57 @@ def test_multi_scalar_streaming_matches_batch(name, ohlcv):
     assert _eq_nan(batch, np.array(rows, dtype=np.float64)), f"{name} mismatch"
 
 
+# --- Market Profile (multi-output with variable shapes) ------------------
+
+
+def test_value_area_shape_and_streaming(ohlcv):
+    high, low, _close, volume = ohlcv
+    batch = ta.ValueArea(20, 50, 0.70).batch(high, low, volume)
+    assert batch.shape == (high.size, 3)
+    streamer = ta.ValueArea(20, 50, 0.70)
+    rows = []
+    for i in range(high.size):
+        mid = float((high[i] + low[i]) / 2.0)
+        candle = (mid, float(high[i]), float(low[i]), mid, float(volume[i]), i)
+        v = streamer.update(candle)
+        rows.append([math.nan, math.nan, math.nan] if v is None else list(v))
+    assert _eq_nan(batch, np.array(rows, dtype=np.float64))
+
+
+def test_initial_balance_shape_and_streaming(ohlcv):
+    high, low, _close, _volume = ohlcv
+    batch = ta.InitialBalance(12).batch(high, low)
+    assert batch.shape == (high.size, 2)
+    streamer = ta.InitialBalance(12)
+    rows = []
+    for i in range(high.size):
+        mid = float((high[i] + low[i]) / 2.0)
+        candle = (mid, float(high[i]), float(low[i]), mid, 0.0, i)
+        v = streamer.update(candle)
+        rows.append([math.nan, math.nan] if v is None else list(v))
+    assert _eq_nan(batch, np.array(rows, dtype=np.float64))
+
+
+def test_opening_range_shape_and_streaming(ohlcv):
+    high, low, close, _volume = ohlcv
+    batch = ta.OpeningRange(6).batch(high, low, close)
+    assert batch.shape == (high.size, 3)
+    streamer = ta.OpeningRange(6)
+    rows = []
+    for i in range(high.size):
+        candle = (
+            float(close[i]),
+            float(high[i]),
+            float(low[i]),
+            float(close[i]),
+            0.0,
+            i,
+        )
+        v = streamer.update(candle)
+        rows.append([math.nan, math.nan, math.nan] if v is None else list(v))
+    assert _eq_nan(batch, np.array(rows, dtype=np.float64))
+
+
 # --- TD Pressure (OHLCV-input) -------------------------------------------
 
 
