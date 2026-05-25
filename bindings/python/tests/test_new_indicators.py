@@ -994,15 +994,16 @@ def test_td_open_buy_signal_reference():
 def test_td_risk_level_uptrend_sets_sell_risk():
     # Strictly rising closes -> sell setup completes at idx 12.
     # The highest high is at idx 12 (= 13.5) with true range 1.5 ->
-    # sell_risk = 13.5 + 1.5 = 15.0.
+    # sell_risk = 13.5 + 1.5 = 15.0. Subsequent setups re-ratchet the level
+    # so we check the first emission at idx 12.
     n = 20
     high = np.arange(1.0, 1.0 + n) + 0.5
     low = high - 1.0
     close = high - 0.5
     out = ta.TDRiskLevel().batch(high, low, close)
     # buy_risk is column 0; sell_risk is column 1.
-    assert math.isnan(out[-1, 0])
-    assert out[-1, 1] == pytest.approx(15.0)
+    assert math.isnan(out[12, 0])
+    assert out[12, 1] == pytest.approx(15.0)
 
 
 def test_classic_pivots_reference():

@@ -428,13 +428,15 @@ def test_td_lines_uptrend_support_reference():
 def test_td_risk_level_uptrend_sell_risk_reference():
     # Strictly rising series -> sell setup completes at idx 12 with high
     # 13.5 and true range 1.5 -> sell_risk = 13.5 + 1.5 = 15.0.
+    # Subsequent setups re-ratchet the level, so we check the first emission
+    # at idx 12 rather than the latest value.
     n = 20
     high = np.arange(1.0, 1.0 + n) + 0.5
     low = high - 1.0
     close = high - 0.5
     out = ta.TDRiskLevel().batch(high, low, close)
-    assert math.isnan(out[-1, 0])
-    assert out[-1, 1] == pytest.approx(15.0)
+    assert math.isnan(out[12, 0])
+    assert out[12, 1] == pytest.approx(15.0)
 
 
 def test_percentage_trailing_stop_seed_and_ratchet():
