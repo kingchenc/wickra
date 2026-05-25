@@ -23,14 +23,16 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    AccelerationBands, AcceleratorOscillator, Adl, Adx, Adxr, Alligator, Aroon, AroonOscillator,
-    Atr, AtrBands, AtrTrailingStop, AwesomeOscillator, AwesomeOscillatorHistogram, BalanceOfPower,
-    BatchExt, Candle, Cci, ChaikinMoneyFlow, ChaikinOscillator, ChaikinVolatility, ChandeKrollStop,
-    ChandelierExit, ChoppinessIndex, Donchian, EaseOfMovement, Evwma, ForceIndex, FractalChaosBands,
-    GarmanKlassVolatility, HurstChannel, Indicator, Inertia, Keltner, MassIndex, MedianPrice, Mfi,
-    Natr, Obv, ParkinsonVolatility, Pgo, Psar, RogersSatchellVolatility, RollingVwap, Rvi, Rwi, Smi,
-    StarcBands, Stochastic, SuperTrend, TrueRange, TtmSqueeze, TypicalPrice, UltimateOscillator,
-    VolumePriceTrend, Vortex, Vwap, VwapStdDevBands, Vwma, WaveTrend, WeightedClose, WilliamsR,
+    AccelerationBands, AcceleratorOscillator, AdOscillator, Adl, Adx, Adxr, Alligator,
+    AnchoredVwap, Aroon, AroonOscillator, Atr, AtrBands, AtrTrailingStop, AwesomeOscillator,
+    AwesomeOscillatorHistogram, BalanceOfPower, BatchExt, Candle, Cci, ChaikinMoneyFlow,
+    ChaikinOscillator, ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex,
+    DemandIndex, Donchian, EaseOfMovement, Evwma, ForceIndex, FractalChaosBands,
+    GarmanKlassVolatility, HurstChannel, Indicator, Inertia, Keltner, Kvo, MarketFacilitationIndex,
+    MassIndex, MedianPrice, Mfi, Natr, Nvi, Obv, ParkinsonVolatility, Pgo, Psar, Pvi,
+    RogersSatchellVolatility, RollingVwap, Rvi, Rwi, Smi, StarcBands, Stochastic, SuperTrend,
+    TrueRange, Tsv, TtmSqueeze, TypicalPrice, UltimateOscillator, VolumeOscillator,
+    VolumePriceTrend, Vortex, Vwap, VwapStdDevBands, Vwma, Vzo, WaveTrend, WeightedClose, WilliamsR,
     YangZhangVolatility,
 };
 
@@ -133,6 +135,16 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| ChaikinOscillator::new(3, 10).unwrap(), &candles);
     drive(|| ForceIndex::new(13).unwrap(), &candles);
     drive(|| EaseOfMovement::with_divisor(14, 1e8).unwrap(), &candles);
+    drive(|| Kvo::new(34, 55).unwrap(), &candles);
+    drive(|| VolumeOscillator::new(14, 28).unwrap(), &candles);
+    drive(Nvi::new, &candles);
+    drive(Pvi::new, &candles);
+    drive(AdOscillator::new, &candles);
+    drive(AnchoredVwap::new, &candles);
+    drive(|| DemandIndex::new(10).unwrap(), &candles);
+    drive(|| Tsv::new(18).unwrap(), &candles);
+    drive(|| Vzo::new(14).unwrap(), &candles);
+    drive(MarketFacilitationIndex::new, &candles);
 
     // --- Price transformations ---
     drive(TypicalPrice::new, &candles);

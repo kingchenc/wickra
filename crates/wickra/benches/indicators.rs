@@ -19,12 +19,13 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use std::hint::black_box;
 use wickra::{
-    AccelerationBands, Adxr, Alma, Atr, AtrBands, BatchExt, BollingerBands, Candle,
-    DoubleBollinger, Ema, FractalChaosBands, Frama, GarmanKlassVolatility, HurstChannel, Indicator,
-    Jma, Kst, LinRegChannel, MaEnvelope, MacdIndicator, McGinleyDynamic, Obv, ParkinsonVolatility,
-    Pgo, RogersSatchellVolatility, Rsi, Rvi, RviVolatility, Rwi, Sma, StandardErrorBands,
-    StarcBands, Stochastic, Tii, TtmSqueeze, Vidya, VwapStdDevBands, WaveTrend, Wma,
-    YangZhangVolatility,
+    AccelerationBands, AdOscillator, Adxr, Alma, AnchoredVwap, Atr, AtrBands, BatchExt,
+    BollingerBands, Candle, DemandIndex, DoubleBollinger, Ema, FractalChaosBands, Frama,
+    GarmanKlassVolatility, HurstChannel, Indicator, Jma, Kst, Kvo, LinRegChannel, MaEnvelope,
+    MacdIndicator, MarketFacilitationIndex, McGinleyDynamic, Nvi, Obv, ParkinsonVolatility, Pgo,
+    Pvi, RogersSatchellVolatility, Rsi, Rvi, RviVolatility, Rwi, Sma, StandardErrorBands,
+    StarcBands, Stochastic, Tii, Tsv, TtmSqueeze, Vidya, VolumeOscillator, VwapStdDevBands, Vzo,
+    WaveTrend, Wma, YangZhangVolatility,
 };
 use wickra_data::csv::CandleReader;
 
@@ -178,6 +179,27 @@ fn benches(c: &mut Criterion) {
     bench_candle_input(c, "wave_trend", &candles, || WaveTrend::classic().unwrap());
     bench_candle_input(c, "stochastic", &candles, Stochastic::classic);
     bench_candle_input(c, "obv", &candles, Obv::new);
+
+    // --- Family 07: Volume ---
+    bench_candle_input(c, "kvo", &candles, Kvo::classic);
+    bench_candle_input(c, "volume_oscillator", &candles, || {
+        VolumeOscillator::new(14, 28).unwrap()
+    });
+    bench_candle_input(c, "nvi", &candles, Nvi::new);
+    bench_candle_input(c, "pvi", &candles, Pvi::new);
+    bench_candle_input(c, "williams_ad", &candles, AdOscillator::new);
+    bench_candle_input(c, "anchored_vwap", &candles, AnchoredVwap::new);
+    bench_candle_input(c, "demand_index", &candles, || {
+        DemandIndex::new(10).unwrap()
+    });
+    bench_candle_input(c, "tsv", &candles, || Tsv::new(18).unwrap());
+    bench_candle_input(c, "vzo", &candles, || Vzo::new(14).unwrap());
+    bench_candle_input(
+        c,
+        "market_facilitation_index",
+        &candles,
+        MarketFacilitationIndex::new,
+    );
 
     // --- Family 04: Volatility ---
     bench_scalar(c, "rvi_volatility", &closes, || {

@@ -109,7 +109,7 @@ python -m benchmarks.compare_libraries
 
 ## Indicators
 
-111 streaming-first indicators across nine families. Every one passes the
+121 streaming-first indicators across nine families. Every one passes the
 `batch == streaming` equivalence test, reference-value tests, and reset
 semantics tests.
 
@@ -122,7 +122,7 @@ semantics tests.
 | Volatility & Bands   | ATR, Bollinger Bands, Keltner Channels, Donchian Channels, NATR, StdDev, Ulcer Index, Historical Volatility, Bollinger Bandwidth, %B, True Range, Chaikin Volatility, RVI (Relative Volatility Index), Parkinson Volatility, Garman-Klass Volatility, Rogers-Satchell Volatility, Yang-Zhang Volatility |
 | Bands & Channels     | MA Envelope, Acceleration Bands, STARC Bands, ATR Bands, Hurst Channel, LinReg Channel, Standard Error Bands, Double Bollinger Bands, TTM Squeeze, Fractal Chaos Bands, VWAP StdDev Bands |
 | Trailing Stops       | Parabolic SAR, SuperTrend, Chandelier Exit, Chande Kroll Stop, ATR Trailing Stop |
-| Volume               | OBV, VWAP (cumulative + rolling), ADL, Volume-Price Trend, Chaikin Money Flow, Chaikin Oscillator, Force Index, Ease of Movement |
+| Volume               | OBV, VWAP (cumulative + rolling), ADL, Volume-Price Trend, Chaikin Money Flow, Chaikin Oscillator, Force Index, Ease of Movement, Klinger Volume Oscillator, Volume Oscillator, NVI, PVI, Williams A/D, Anchored VWAP, Demand Index, TSV, VZO, Market Facilitation Index |
 | Price Statistics     | Typical Price, Median Price, Weighted Close, Linear Regression, Linear Regression Slope, Z-Score, Linear Regression Angle |
 
 Adding a new indicator means implementing one trait in Rust; all four bindings
@@ -196,7 +196,7 @@ A Python live-trading example using the public `websockets` package lives at
 ```
 wickra/
 ├── crates/
-│   ├── wickra-core/         core engine + all 111 indicators
+│   ├── wickra-core/         core engine + all 121 indicators
 │   ├── wickra/              top-level facade crate (publishes on crates.io) + benches/
 │   └── wickra-data/         CSV reader, tick aggregator, live exchange feeds
 ├── bindings/

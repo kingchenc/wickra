@@ -2519,6 +2519,554 @@ impl ForceIndexNode {
     }
 }
 
+// ============================== Negative Volume Index ==============================
+
+#[napi(js_name = "NVI")]
+pub struct NviNode {
+    inner: wc::Nvi,
+}
+
+#[napi]
+impl NviNode {
+    #[napi(constructor)]
+    pub fn new(baseline: Option<f64>) -> Self {
+        Self {
+            inner: wc::Nvi::with_baseline(baseline.unwrap_or(1000.0)),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, close: f64, volume: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(close, close, close, volume)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, close: Vec<f64>, volume: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if close.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "close and volume must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            out.push(
+                self.inner
+                    .update(cnd(close[i], close[i], close[i], volume[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Positive Volume Index ==============================
+
+#[napi(js_name = "PVI")]
+pub struct PviNode {
+    inner: wc::Pvi,
+}
+
+#[napi]
+impl PviNode {
+    #[napi(constructor)]
+    pub fn new(baseline: Option<f64>) -> Self {
+        Self {
+            inner: wc::Pvi::with_baseline(baseline.unwrap_or(1000.0)),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, close: f64, volume: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(close, close, close, volume)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, close: Vec<f64>, volume: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if close.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "close and volume must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            out.push(
+                self.inner
+                    .update(cnd(close[i], close[i], close[i], volume[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Volume Oscillator ==============================
+
+#[napi(js_name = "VolumeOscillator")]
+pub struct VolumeOscillatorNode {
+    inner: wc::VolumeOscillator,
+}
+
+#[napi]
+impl VolumeOscillatorNode {
+    #[napi(constructor)]
+    pub fn new(fast: u32, slow: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::VolumeOscillator::new(fast as usize, slow as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, volume: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(10.0, 10.0, 10.0, volume)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, volume: Vec<f64>) -> napi::Result<Vec<f64>> {
+        let mut out = Vec::with_capacity(volume.len());
+        for &v in &volume {
+            out.push(
+                self.inner
+                    .update(cnd(10.0, 10.0, 10.0, v)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Klinger Volume Oscillator ==============================
+
+#[napi(js_name = "KVO")]
+pub struct KvoNode {
+    inner: wc::Kvo,
+}
+
+#[napi]
+impl KvoNode {
+    #[napi(constructor)]
+    pub fn new(fast: u32, slow: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Kvo::new(fast as usize, slow as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, volume)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+        volume: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() || close.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close, volume must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], volume[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Williams A/D ==============================
+
+#[napi(js_name = "WilliamsAD")]
+pub struct AdOscillatorNode {
+    inner: wc::AdOscillator,
+}
+
+#[napi]
+impl AdOscillatorNode {
+    #[napi(constructor)]
+    #[allow(clippy::new_without_default)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::AdOscillator::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, 0.0)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Anchored VWAP ==============================
+
+#[napi(js_name = "AnchoredVWAP")]
+pub struct AnchoredVwapNode {
+    inner: wc::AnchoredVwap,
+}
+
+#[napi]
+impl AnchoredVwapNode {
+    #[napi(constructor)]
+    #[allow(clippy::new_without_default)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::AnchoredVwap::new(),
+        }
+    }
+    #[napi(js_name = "setAnchor")]
+    pub fn set_anchor(&mut self) {
+        self.inner.set_anchor();
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, volume)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+        volume: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() || close.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close, volume must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], volume[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Demand Index ==============================
+
+#[napi(js_name = "DemandIndex")]
+pub struct DemandIndexNode {
+    inner: wc::DemandIndex,
+}
+
+#[napi]
+impl DemandIndexNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::DemandIndex::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, volume)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+        volume: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() || close.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close, volume must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], volume[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Time Segmented Volume ==============================
+
+#[napi(js_name = "TSV")]
+pub struct TsvNode {
+    inner: wc::Tsv,
+}
+
+#[napi]
+impl TsvNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Tsv::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, close: f64, volume: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(close, close, close, volume)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, close: Vec<f64>, volume: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if close.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "close and volume must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            out.push(
+                self.inner
+                    .update(cnd(close[i], close[i], close[i], volume[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Volume Zone Oscillator ==============================
+
+#[napi(js_name = "VZO")]
+pub struct VzoNode {
+    inner: wc::Vzo,
+}
+
+#[napi]
+impl VzoNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Vzo::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, close: f64, volume: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(close, close, close, volume)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, close: Vec<f64>, volume: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if close.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "close and volume must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            out.push(
+                self.inner
+                    .update(cnd(close[i], close[i], close[i], volume[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Market Facilitation Index ==============================
+
+#[napi(js_name = "MarketFacilitationIndex")]
+pub struct MarketFacilitationIndexNode {
+    inner: wc::MarketFacilitationIndex,
+}
+
+#[napi]
+impl MarketFacilitationIndexNode {
+    #[napi(constructor)]
+    #[allow(clippy::new_without_default)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::MarketFacilitationIndex::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64, volume: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, low, volume)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        volume: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "high, low, volume must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], low[i], volume[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== Ease of Movement ==============================
 
 #[napi(js_name = "EaseOfMovement")]
