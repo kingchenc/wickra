@@ -215,4 +215,14 @@ mod tests {
         assert!(!sw.is_ready());
         assert!(sw.value().is_none());
     }
+
+    #[test]
+    fn flat_input_uses_phase_fallback() {
+        // A constant series leaves the detrender chain at zero, so the `i1`
+        // arm is `i1.abs() <= EPSILON` for every bar and the phase calculation
+        // takes the `self.last_phase` fallback rather than `atan(q1/i1)`.
+        let mut sw = SineWave::new();
+        let _ = sw.batch(&[100.0_f64; 120]);
+        assert!(sw.value().is_some());
+    }
 }

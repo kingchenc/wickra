@@ -190,4 +190,15 @@ mod tests {
         assert_eq!(cg.update(3.0), None);
         assert!(cg.update(4.0).is_some());
     }
+
+    #[test]
+    fn zero_window_uses_zero_fallback() {
+        // den == sum(prices) == 0 when the rolling window is all zeros, which
+        // exercises the protective fallback in the divisor guard.
+        let mut cg = CenterOfGravity::new(5).unwrap();
+        let out = cg.batch(&[0.0_f64; 10]);
+        for x in out.iter().skip(5).flatten() {
+            assert_relative_eq!(*x, 0.0, epsilon = 1e-12);
+        }
+    }
 }

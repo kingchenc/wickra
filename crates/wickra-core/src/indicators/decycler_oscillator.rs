@@ -73,9 +73,12 @@ impl Indicator for DecyclerOscillator {
         if !input.is_finite() {
             return self.last_value;
         }
-        let (Some(f), Some(s)) = (self.fast.update(input), self.slow.update(input)) else {
-            return None;
-        };
+        // Both child `Decycler` instances emit `Some` from the first bar
+        // (Ehlers' convention is "output = input" until the recursion warms),
+        // so the pair is always populated and the `?` short-circuit never
+        // fires in practice.
+        let f = self.fast.update(input)?;
+        let s = self.slow.update(input)?;
         let v = f - s;
         self.last_value = Some(v);
         Some(v)

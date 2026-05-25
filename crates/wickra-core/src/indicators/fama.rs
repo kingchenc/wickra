@@ -110,6 +110,19 @@ mod tests {
     }
 
     #[test]
+    fn new_with_valid_limits_constructs_via_mama() {
+        // `classic()` bypasses `new` by going through `Mama::classic`; this
+        // test exercises the happy-path `Ok(Self { inner: Mama::new(..)? })`
+        // arm so the `?` doesn't only collapse to the error path.
+        let mut fama = Fama::new(0.5, 0.05).expect("valid Mama limits");
+        assert_eq!(fama.limits(), (0.5, 0.05));
+        for i in 0..60 {
+            fama.update(100.0 + (f64::from(i) * 0.3).sin() * 5.0);
+        }
+        assert!(fama.value().is_some());
+    }
+
+    #[test]
     fn accessors_and_metadata() {
         let mut fama = Fama::classic();
         assert_eq!(fama.limits(), (0.5, 0.05));

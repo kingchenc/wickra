@@ -226,12 +226,11 @@ impl Indicator for Mama {
         if delta_phase < 1.0 {
             delta_phase = 1.0;
         }
+        // `delta_phase` is clamped to >= 1.0 above, so `fast_limit / delta_phase`
+        // never exceeds `fast_limit`; only the lower bound can bind.
         let mut alpha = self.fast_limit / delta_phase;
         if alpha < self.slow_limit {
             alpha = self.slow_limit;
-        }
-        if alpha > self.fast_limit {
-            alpha = self.fast_limit;
         }
 
         self.prev_mama = alpha * input + (1.0 - alpha) * self.prev_mama;
@@ -366,5 +365,17 @@ mod tests {
         assert!(mama.is_ready());
         mama.reset();
         assert!(!mama.is_ready());
+    }
+
+    #[test]
+    fn flat_input_uses_phase_fallback() {
+        // A perfectly constant series leaves every smooth/detrender slot at
+        // the same value, so `i1` collapses to zero and the phase calc takes
+        // the `self.prev_phase` fallback rather than `atan(q1/i1)`. Stretch
+        // the run long enough to clear the 50-bar warmup with comfortable
+        // margin and confirm the indicator still emits.
+        let mut mama = Mama::classic();
+        let out = mama.batch(&[50.0_f64; 200]);
+        assert!(out.iter().flatten().count() > 100);
     }
 }
