@@ -39,3 +39,64 @@ def test_roc_and_trix_have_default_periods():
     # ROC/TRIX gained constructor defaults matching the TA-Lib convention.
     assert ta.ROC().period == 10
     assert ta.TRIX() is not None
+
+
+def test_value_area_rejects_zero_period():
+    with pytest.raises(ValueError):
+        ta.ValueArea(0, 50, 0.7)
+    with pytest.raises(ValueError):
+        ta.ValueArea(20, 0, 0.7)
+
+
+def test_value_area_rejects_invalid_pct():
+    with pytest.raises(ValueError):
+        ta.ValueArea(20, 50, 0.0)
+    with pytest.raises(ValueError):
+        ta.ValueArea(20, 50, 1.5)
+
+
+def test_initial_balance_rejects_zero_period():
+    with pytest.raises(ValueError):
+        ta.InitialBalance(0)
+
+
+def test_opening_range_rejects_zero_period():
+    with pytest.raises(ValueError):
+        ta.OpeningRange(0)
+
+
+def test_value_area_unequal_length_raises():
+    high = np.array([1.0, 2.0, 3.0])
+    low = np.array([0.5, 1.5])
+    volume = np.array([10.0, 10.0, 10.0])
+    with pytest.raises(ValueError):
+        ta.ValueArea(2, 10, 0.7).batch(high, low, volume)
+
+
+def test_ichimoku_rejects_zero_and_non_increasing_periods():
+    with pytest.raises(ValueError):
+        ta.Ichimoku(0, 26, 52, 26)
+    with pytest.raises(ValueError):
+        ta.Ichimoku(9, 26, 52, 0)
+    # Periods must satisfy tenkan < kijun < senkou_b.
+    with pytest.raises(ValueError):
+        ta.Ichimoku(26, 9, 52, 26)
+    with pytest.raises(ValueError):
+        ta.Ichimoku(9, 52, 52, 26)
+
+
+def test_family_10_ehlers_rejects_invalid_parameters():
+    with pytest.raises(ValueError):
+        ta.SuperSmoother(0)
+    with pytest.raises(ValueError):
+        ta.FisherTransform(0)
+    with pytest.raises(ValueError):
+        ta.InverseFisherTransform(0.0)
+    with pytest.raises(ValueError):
+        ta.DecyclerOscillator(30, 10)
+    with pytest.raises(ValueError):
+        ta.RoofingFilter(48, 10)
+    with pytest.raises(ValueError):
+        ta.MAMA(0.05, 0.5)
+    with pytest.raises(ValueError):
+        ta.EmpiricalModeDecomposition(20, 0.0)

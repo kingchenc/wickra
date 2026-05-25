@@ -79,13 +79,143 @@ wasm_scalar_indicator!(WasmSmma, "SMMA", wc::Smma, period: usize);
 wasm_scalar_indicator!(WasmTrima, "TRIMA", wc::Trima, period: usize);
 wasm_scalar_indicator!(WasmZlema, "ZLEMA", wc::Zlema, period: usize);
 wasm_scalar_indicator!(WasmT3, "T3", wc::T3, period: usize, v: f64);
+wasm_scalar_indicator!(WasmAlma, "ALMA", wc::Alma, period: usize, offset: f64, sigma: f64);
+wasm_scalar_indicator!(WasmMcGinleyDynamic, "McGinleyDynamic", wc::McGinleyDynamic, period: usize);
+wasm_scalar_indicator!(WasmFrama, "FRAMA", wc::Frama, period: usize);
+wasm_scalar_indicator!(WasmVidya, "VIDYA", wc::Vidya, period: usize, cmo_period: usize);
+wasm_scalar_indicator!(WasmJma, "JMA", wc::Jma, period: usize, phase: f64, power: u32);
 wasm_scalar_indicator!(WasmMom, "MOM", wc::Mom, period: usize);
 wasm_scalar_indicator!(WasmCmo, "CMO", wc::Cmo, period: usize);
 wasm_scalar_indicator!(WasmTsi, "TSI", wc::Tsi, long: usize, short: usize);
 wasm_scalar_indicator!(WasmPmo, "PMO", wc::Pmo, smoothing1: usize, smoothing2: usize);
+wasm_scalar_indicator!(WasmTii, "TII", wc::Tii, sma_period: usize, dev_period: usize);
+
+#[wasm_bindgen(js_name = KST)]
+pub struct WasmKst {
+    inner: wc::Kst,
+}
+
+#[wasm_bindgen(js_class = KST)]
+impl WasmKst {
+    #[wasm_bindgen(constructor)]
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        roc1: usize,
+        roc2: usize,
+        roc3: usize,
+        roc4: usize,
+        sma1: usize,
+        sma2: usize,
+        sma3: usize,
+        sma4: usize,
+        signal_period: usize,
+    ) -> Result<WasmKst, JsError> {
+        Ok(Self {
+            inner: wc::Kst::new(
+                roc1,
+                roc2,
+                roc3,
+                roc4,
+                sma1,
+                sma2,
+                sma3,
+                sma4,
+                signal_period,
+            )
+            .map_err(map_err)?,
+        })
+    }
+    pub fn classic() -> WasmKst {
+        Self {
+            inner: wc::Kst::classic(),
+        }
+    }
+    pub fn update(&mut self, value: f64) -> JsValue {
+        match self.inner.update(value) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"kst".into(), &o.kst.into()).ok();
+                Reflect::set(&obj, &"signal".into(), &o.signal.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        }
+    }
+    /// Returns `[kst0, signal0, kst1, signal1, ...]`, length `2 * n`. Warmup is NaN.
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let n = prices.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for (i, &p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(p) {
+                out[i * 2] = o.kst;
+                out[i * 2 + 1] = o.signal;
+            }
+        }
+        Float64Array::from(out.as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
 wasm_scalar_indicator!(WasmStochRsi, "StochRSI", wc::StochRsi, rsi_period: usize, stoch_period: usize);
 wasm_scalar_indicator!(WasmDpo, "DPO", wc::Dpo, period: usize);
 wasm_scalar_indicator!(WasmPpo, "PPO", wc::Ppo, fast: usize, slow: usize);
+wasm_scalar_indicator!(WasmApo, "APO", wc::Apo, fast: usize, slow: usize);
+wasm_scalar_indicator!(WasmCfo, "CFO", wc::Cfo, period: usize);
+wasm_scalar_indicator!(WasmElderImpulse, "ElderImpulse", wc::ElderImpulse, ema_period: usize, macd_fast: usize, macd_slow: usize, macd_signal: usize);
+wasm_scalar_indicator!(WasmStc, "STC", wc::Stc, fast: usize, slow: usize, schaff_period: usize, factor: f64);
+
+#[wasm_bindgen(js_name = ZeroLagMACD)]
+pub struct WasmZeroLagMacd {
+    inner: wc::ZeroLagMacd,
+}
+
+#[wasm_bindgen(js_class = ZeroLagMACD)]
+impl WasmZeroLagMacd {
+    #[wasm_bindgen(constructor)]
+    pub fn new(fast: usize, slow: usize, signal: usize) -> Result<WasmZeroLagMacd, JsError> {
+        Ok(Self {
+            inner: wc::ZeroLagMacd::new(fast, slow, signal).map_err(map_err)?,
+        })
+    }
+    /// Returns `[macd0, signal0, histogram0, ...]`, length `3n`.
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let n = prices.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.macd;
+                out[i * 3 + 1] = o.signal;
+                out[i * 3 + 2] = o.histogram;
+            }
+        }
+        Float64Array::from(out.as_slice())
+    }
+    /// Returns `{ macd, signal, histogram }` once warm, else `null`.
+    pub fn update(&mut self, value: f64) -> JsValue {
+        match self.inner.update(value) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"macd".into(), &o.macd.into()).ok();
+                Reflect::set(&obj, &"signal".into(), &o.signal.into()).ok();
+                Reflect::set(&obj, &"histogram".into(), &o.histogram.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        }
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
 wasm_scalar_indicator!(WasmCoppock, "Coppock", wc::Coppock, roc_long: usize, roc_short: usize, wma_period: usize);
 wasm_scalar_indicator!(WasmStdDev, "StdDev", wc::StdDev, period: usize);
 wasm_scalar_indicator!(WasmUlcerIndex, "UlcerIndex", wc::UlcerIndex, period: usize);
@@ -97,6 +227,309 @@ wasm_scalar_indicator!(WasmLinRegSlope, "LinRegSlope", wc::LinRegSlope, period: 
 wasm_scalar_indicator!(WasmVerticalHorizontalFilter, "VerticalHorizontalFilter", wc::VerticalHorizontalFilter, period: usize);
 wasm_scalar_indicator!(WasmZScore, "ZScore", wc::ZScore, period: usize);
 wasm_scalar_indicator!(WasmLinRegAngle, "LinRegAngle", wc::LinRegAngle, period: usize);
+wasm_scalar_indicator!(WasmVariance, "Variance", wc::Variance, period: usize);
+wasm_scalar_indicator!(WasmCoefficientOfVariation, "CoefficientOfVariation", wc::CoefficientOfVariation, period: usize);
+wasm_scalar_indicator!(WasmSkewness, "Skewness", wc::Skewness, period: usize);
+wasm_scalar_indicator!(WasmKurtosis, "Kurtosis", wc::Kurtosis, period: usize);
+wasm_scalar_indicator!(WasmStandardError, "StandardError", wc::StandardError, period: usize);
+wasm_scalar_indicator!(WasmDetrendedStdDev, "DetrendedStdDev", wc::DetrendedStdDev, period: usize);
+wasm_scalar_indicator!(WasmRSquared, "RSquared", wc::RSquared, period: usize);
+wasm_scalar_indicator!(WasmMedianAbsoluteDeviation, "MedianAbsoluteDeviation", wc::MedianAbsoluteDeviation, period: usize);
+wasm_scalar_indicator!(WasmAutocorrelation, "Autocorrelation", wc::Autocorrelation, period: usize, lag: usize);
+wasm_scalar_indicator!(WasmHurstExponent, "HurstExponent", wc::HurstExponent, period: usize, chunks: usize);
+wasm_scalar_indicator!(WasmRviVolatility, "RVIVolatility", wc::RviVolatility, period: usize);
+wasm_scalar_indicator!(WasmLaguerreRsi, "LaguerreRSI", wc::LaguerreRsi, gamma: f64);
+wasm_scalar_indicator!(WasmConnorsRsi, "ConnorsRSI", wc::ConnorsRsi, period_rsi: usize, period_streak: usize, period_rank: usize);
+
+// ---------- Yang-Zhang Volatility (OHLC candle, 2 params) ----------
+
+#[wasm_bindgen(js_name = YangZhangVolatility)]
+pub struct WasmYangZhangVolatility {
+    inner: wc::YangZhangVolatility,
+}
+
+#[wasm_bindgen(js_class = YangZhangVolatility)]
+impl WasmYangZhangVolatility {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, trading_periods: usize) -> Result<WasmYangZhangVolatility, JsError> {
+        Ok(Self {
+            inner: wc::YangZhangVolatility::new(period, trading_periods).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = open.len();
+        if high.len() != n || low.len() != n || close.len() != n {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let c = wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- Rogers-Satchell Volatility (OHLC candle, 2 params) ----------
+
+#[wasm_bindgen(js_name = RogersSatchellVolatility)]
+pub struct WasmRogersSatchellVolatility {
+    inner: wc::RogersSatchellVolatility,
+}
+
+#[wasm_bindgen(js_class = RogersSatchellVolatility)]
+impl WasmRogersSatchellVolatility {
+    #[wasm_bindgen(constructor)]
+    pub fn new(
+        period: usize,
+        trading_periods: usize,
+    ) -> Result<WasmRogersSatchellVolatility, JsError> {
+        Ok(Self {
+            inner: wc::RogersSatchellVolatility::new(period, trading_periods).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = open.len();
+        if high.len() != n || low.len() != n || close.len() != n {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let c = wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- Garman-Klass Volatility (OHLC candle, 2 params) ----------
+
+#[wasm_bindgen(js_name = GarmanKlassVolatility)]
+pub struct WasmGarmanKlassVolatility {
+    inner: wc::GarmanKlassVolatility,
+}
+
+#[wasm_bindgen(js_class = GarmanKlassVolatility)]
+impl WasmGarmanKlassVolatility {
+    #[wasm_bindgen(constructor)]
+    pub fn new(
+        period: usize,
+        trading_periods: usize,
+    ) -> Result<WasmGarmanKlassVolatility, JsError> {
+        Ok(Self {
+            inner: wc::GarmanKlassVolatility::new(period, trading_periods).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = open.len();
+        if high.len() != n || low.len() != n || close.len() != n {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let c = wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- Parkinson Volatility (high-low candle, 2 params) ----------
+
+#[wasm_bindgen(js_name = ParkinsonVolatility)]
+pub struct WasmParkinsonVolatility {
+    inner: wc::ParkinsonVolatility,
+}
+
+#[wasm_bindgen(js_class = ParkinsonVolatility)]
+impl WasmParkinsonVolatility {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, trading_periods: usize) -> Result<WasmParkinsonVolatility, JsError> {
+        Ok(Self {
+            inner: wc::ParkinsonVolatility::new(period, trading_periods).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let c = make_candle(high[i], low[i], low[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// Family 10 — Ehlers / Cycle scalars
+wasm_scalar_indicator!(WasmSuperSmoother, "SuperSmoother", wc::SuperSmoother, period: usize);
+wasm_scalar_indicator!(WasmFisherTransform, "FisherTransform", wc::FisherTransform, period: usize);
+wasm_scalar_indicator!(WasmInverseFisherTransform, "InverseFisherTransform", wc::InverseFisherTransform, scale: f64);
+wasm_scalar_indicator!(WasmDecycler, "Decycler", wc::Decycler, period: usize);
+wasm_scalar_indicator!(WasmDecyclerOscillator, "DecyclerOscillator", wc::DecyclerOscillator, fast: usize, slow: usize);
+wasm_scalar_indicator!(WasmRoofingFilter, "RoofingFilter", wc::RoofingFilter, lp_period: usize, hp_period: usize);
+wasm_scalar_indicator!(WasmCenterOfGravity, "CenterOfGravity", wc::CenterOfGravity, period: usize);
+wasm_scalar_indicator!(WasmCyberneticCycle, "CyberneticCycle", wc::CyberneticCycle, period: usize);
+wasm_scalar_indicator!(WasmInstantaneousTrendline, "InstantaneousTrendline", wc::InstantaneousTrendline, period: usize);
+wasm_scalar_indicator!(WasmEhlersStochastic, "EhlersStochastic", wc::EhlersStochastic, period: usize);
+wasm_scalar_indicator!(WasmEmpiricalModeDecomposition, "EmpiricalModeDecomposition", wc::EmpiricalModeDecomposition, period: usize, fraction: f64);
+wasm_scalar_indicator!(WasmFama, "FAMA", wc::Fama, fast_limit: f64, slow_limit: f64);
+
+// ---------- Family 12: Two-series indicators (Pearson / Beta / Spearman) ----------
+
+macro_rules! wasm_pair_indicator {
+    ($name:ident, $js_name:literal, $rust_ty:ty) => {
+        #[wasm_bindgen(js_name = $js_name)]
+        pub struct $name {
+            inner: $rust_ty,
+        }
+
+        #[wasm_bindgen(js_class = $js_name)]
+        impl $name {
+            #[wasm_bindgen(constructor)]
+            pub fn new(period: usize) -> Result<$name, JsError> {
+                Ok($name {
+                    inner: <$rust_ty>::new(period).map_err(map_err)?,
+                })
+            }
+            pub fn update(&mut self, x: f64, y: f64) -> Option<f64> {
+                self.inner.update((x, y))
+            }
+            /// Batch over two equally-sized arrays. Returns one `f64` per
+            /// input position (`NaN` during warmup).
+            pub fn batch(&mut self, x: &[f64], y: &[f64]) -> Result<Float64Array, JsError> {
+                if x.len() != y.len() {
+                    return Err(JsError::new("x and y must be equal length"));
+                }
+                let mut out = Vec::with_capacity(x.len());
+                for i in 0..x.len() {
+                    out.push(self.inner.update((x[i], y[i])).unwrap_or(f64::NAN));
+                }
+                Ok(Float64Array::from(out.as_slice()))
+            }
+            pub fn reset(&mut self) {
+                self.inner.reset();
+            }
+            #[wasm_bindgen(js_name = isReady)]
+            pub fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            #[wasm_bindgen(js_name = warmupPeriod)]
+            pub fn warmup_period(&self) -> usize {
+                self.inner.warmup_period()
+            }
+        }
+    };
+}
+
+wasm_pair_indicator!(
+    WasmPearsonCorrelation,
+    "PearsonCorrelation",
+    wc::PearsonCorrelation
+);
+wasm_pair_indicator!(WasmBeta, "Beta", wc::Beta);
+wasm_pair_indicator!(
+    WasmSpearmanCorrelation,
+    "SpearmanCorrelation",
+    wc::SpearmanCorrelation
+);
 
 // ---------- KAMA (three params) ----------
 
@@ -234,6 +667,213 @@ impl WasmBb {
 
 fn make_candle(h: f64, l: f64, c: f64, v: f64) -> Result<wc::Candle, JsError> {
     wc::Candle::new(c, h, l, c, v, 0).map_err(map_err)
+}
+
+/// Helper for OHLC-input indicators where `open` matters (`RVI`, `BalanceOfPower`).
+fn make_candle_ohlc(o: f64, h: f64, l: f64, c: f64) -> Result<wc::Candle, JsError> {
+    wc::Candle::new(o, h, l, c, 0.0, 0).map_err(map_err)
+}
+
+#[wasm_bindgen(js_name = SMI)]
+pub struct WasmSmi {
+    inner: wc::Smi,
+}
+
+#[wasm_bindgen(js_class = SMI)]
+impl WasmSmi {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, d_period: usize, d2_period: usize) -> Result<WasmSmi, JsError> {
+        Ok(Self {
+            inner: wc::Smi::new(period, d_period, d2_period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if !(high.len() == low.len() && low.len() == close.len()) {
+            return Err(JsError::new("high, low and close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = PGO)]
+pub struct WasmPgo {
+    inner: wc::Pgo,
+}
+
+#[wasm_bindgen(js_class = PGO)]
+impl WasmPgo {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmPgo, JsError> {
+        Ok(Self {
+            inner: wc::Pgo::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if !(high.len() == low.len() && low.len() == close.len()) {
+            return Err(JsError::new("high, low and close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = Inertia)]
+pub struct WasmInertia {
+    inner: wc::Inertia,
+}
+
+#[wasm_bindgen(js_class = Inertia)]
+impl WasmInertia {
+    #[wasm_bindgen(constructor)]
+    pub fn new(rvi_period: usize, linreg_period: usize) -> Result<WasmInertia, JsError> {
+        Ok(Self {
+            inner: wc::Inertia::new(rvi_period, linreg_period).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = make_candle_ohlc(open, high, low, close)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if !(open.len() == high.len() && high.len() == low.len() && low.len() == close.len()) {
+            return Err(JsError::new(
+                "open, high, low and close must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            let c = make_candle_ohlc(open[i], high[i], low[i], close[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = RVI)]
+pub struct WasmRvi {
+    inner: wc::Rvi,
+}
+
+#[wasm_bindgen(js_class = RVI)]
+impl WasmRvi {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmRvi, JsError> {
+        Ok(Self {
+            inner: wc::Rvi::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = make_candle_ohlc(open, high, low, close)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if !(open.len() == high.len() && high.len() == low.len() && low.len() == close.len()) {
+            return Err(JsError::new(
+                "open, high, low and close must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            let c = make_candle_ohlc(open[i], high[i], low[i], close[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
 }
 
 #[wasm_bindgen(js_name = ATR)]
@@ -641,6 +1281,397 @@ impl WasmForceIndex {
     }
 }
 
+#[wasm_bindgen(js_name = VolumeOscillator)]
+pub struct WasmVolumeOscillator {
+    inner: wc::VolumeOscillator,
+}
+
+#[wasm_bindgen(js_class = VolumeOscillator)]
+impl WasmVolumeOscillator {
+    #[wasm_bindgen(constructor)]
+    pub fn new(fast: usize, slow: usize) -> Result<WasmVolumeOscillator, JsError> {
+        Ok(Self {
+            inner: wc::VolumeOscillator::new(fast, slow).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, volume: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(10.0, 10.0, 10.0, volume)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(&mut self, volume: &[f64]) -> Result<Float64Array, JsError> {
+        let mut out = Vec::with_capacity(volume.len());
+        for &v in volume {
+            let c = make_candle(10.0, 10.0, 10.0, v)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = NVI)]
+pub struct WasmNvi {
+    inner: wc::Nvi,
+}
+
+#[wasm_bindgen(js_class = NVI)]
+impl WasmNvi {
+    #[wasm_bindgen(constructor)]
+    pub fn new(baseline: Option<f64>) -> WasmNvi {
+        Self {
+            inner: wc::Nvi::with_baseline(baseline.unwrap_or(1000.0)),
+        }
+    }
+    pub fn update(&mut self, close: f64, volume: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(close, close, close, volume)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(&mut self, close: &[f64], volume: &[f64]) -> Result<Float64Array, JsError> {
+        if close.len() != volume.len() {
+            return Err(JsError::new("close and volume must be equal length"));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            let c = make_candle(close[i], close[i], close[i], volume[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = PVI)]
+pub struct WasmPvi {
+    inner: wc::Pvi,
+}
+
+#[wasm_bindgen(js_class = PVI)]
+impl WasmPvi {
+    #[wasm_bindgen(constructor)]
+    pub fn new(baseline: Option<f64>) -> WasmPvi {
+        Self {
+            inner: wc::Pvi::with_baseline(baseline.unwrap_or(1000.0)),
+        }
+    }
+    pub fn update(&mut self, close: f64, volume: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(close, close, close, volume)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(&mut self, close: &[f64], volume: &[f64]) -> Result<Float64Array, JsError> {
+        if close.len() != volume.len() {
+            return Err(JsError::new("close and volume must be equal length"));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            let c = make_candle(close[i], close[i], close[i], volume[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = KVO)]
+pub struct WasmKvo {
+    inner: wc::Kvo,
+}
+
+#[wasm_bindgen(js_class = KVO)]
+impl WasmKvo {
+    #[wasm_bindgen(constructor)]
+    pub fn new(fast: usize, slow: usize) -> Result<WasmKvo, JsError> {
+        Ok(Self {
+            inner: wc::Kvo::new(fast, slow).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, volume)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+        volume: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n || volume.len() != n {
+            return Err(JsError::new(
+                "high, low, close, volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], volume[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = WilliamsAD)]
+pub struct WasmAdOscillator {
+    inner: wc::AdOscillator,
+}
+
+#[wasm_bindgen(js_class = WilliamsAD)]
+impl WasmAdOscillator {
+    #[wasm_bindgen(constructor)]
+    #[allow(clippy::new_without_default)]
+    pub fn new() -> WasmAdOscillator {
+        Self {
+            inner: wc::AdOscillator::new(),
+        }
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = AnchoredVWAP)]
+pub struct WasmAnchoredVwap {
+    inner: wc::AnchoredVwap,
+}
+
+#[wasm_bindgen(js_class = AnchoredVWAP)]
+impl WasmAnchoredVwap {
+    #[wasm_bindgen(constructor)]
+    #[allow(clippy::new_without_default)]
+    pub fn new() -> WasmAnchoredVwap {
+        Self {
+            inner: wc::AnchoredVwap::new(),
+        }
+    }
+    #[wasm_bindgen(js_name = setAnchor)]
+    pub fn set_anchor(&mut self) {
+        self.inner.set_anchor();
+    }
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, volume)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+        volume: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n || volume.len() != n {
+            return Err(JsError::new(
+                "high, low, close, volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], volume[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = DemandIndex)]
+pub struct WasmDemandIndex {
+    inner: wc::DemandIndex,
+}
+
+#[wasm_bindgen(js_class = DemandIndex)]
+impl WasmDemandIndex {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmDemandIndex, JsError> {
+        Ok(Self {
+            inner: wc::DemandIndex::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, volume)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+        volume: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n || volume.len() != n {
+            return Err(JsError::new(
+                "high, low, close, volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], volume[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = TSV)]
+pub struct WasmTsv {
+    inner: wc::Tsv,
+}
+
+#[wasm_bindgen(js_class = TSV)]
+impl WasmTsv {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmTsv, JsError> {
+        Ok(Self {
+            inner: wc::Tsv::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, close: f64, volume: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(close, close, close, volume)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(&mut self, close: &[f64], volume: &[f64]) -> Result<Float64Array, JsError> {
+        if close.len() != volume.len() {
+            return Err(JsError::new("close and volume must be equal length"));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            let c = make_candle(close[i], close[i], close[i], volume[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = VZO)]
+pub struct WasmVzo {
+    inner: wc::Vzo,
+}
+
+#[wasm_bindgen(js_class = VZO)]
+impl WasmVzo {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmVzo, JsError> {
+        Ok(Self {
+            inner: wc::Vzo::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, close: f64, volume: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(close, close, close, volume)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(&mut self, close: &[f64], volume: &[f64]) -> Result<Float64Array, JsError> {
+        if close.len() != volume.len() {
+            return Err(JsError::new("close and volume must be equal length"));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            let c = make_candle(close[i], close[i], close[i], volume[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = MarketFacilitationIndex)]
+pub struct WasmMarketFacilitationIndex {
+    inner: wc::MarketFacilitationIndex,
+}
+
+#[wasm_bindgen(js_class = MarketFacilitationIndex)]
+impl WasmMarketFacilitationIndex {
+    #[wasm_bindgen(constructor)]
+    #[allow(clippy::new_without_default)]
+    pub fn new() -> WasmMarketFacilitationIndex {
+        Self {
+            inner: wc::MarketFacilitationIndex::new(),
+        }
+    }
+    pub fn update(&mut self, high: f64, low: f64, volume: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, low, volume)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        volume: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || volume.len() != n {
+            return Err(JsError::new("high, low, volume must be equal length"));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], low[i], volume[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
 #[wasm_bindgen(js_name = EaseOfMovement)]
 pub struct WasmEaseOfMovement {
     inner: wc::EaseOfMovement,
@@ -875,6 +1906,251 @@ impl WasmAtrTrailingStop {
             out.push(self.inner.update(c).unwrap_or(f64::NAN));
         }
         Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+// ---------- Trailing Stops (family 09) ----------
+
+#[wasm_bindgen(js_name = HiLoActivator)]
+pub struct WasmHiLoActivator {
+    inner: wc::HiLoActivator,
+}
+
+#[wasm_bindgen(js_class = HiLoActivator)]
+impl WasmHiLoActivator {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmHiLoActivator, JsError> {
+        Ok(Self {
+            inner: wc::HiLoActivator::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = VoltyStop)]
+pub struct WasmVoltyStop {
+    inner: wc::VoltyStop,
+}
+
+#[wasm_bindgen(js_class = VoltyStop)]
+impl WasmVoltyStop {
+    #[wasm_bindgen(constructor)]
+    pub fn new(atr_period: usize, multiplier: f64) -> Result<WasmVoltyStop, JsError> {
+        Ok(Self {
+            inner: wc::VoltyStop::new(atr_period, multiplier).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = YoyoExit)]
+pub struct WasmYoyoExit {
+    inner: wc::YoyoExit,
+}
+
+#[wasm_bindgen(js_class = YoyoExit)]
+impl WasmYoyoExit {
+    #[wasm_bindgen(constructor)]
+    pub fn new(atr_period: usize, multiplier: f64) -> Result<WasmYoyoExit, JsError> {
+        Ok(Self {
+            inner: wc::YoyoExit::new(atr_period, multiplier).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(n);
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = inTrade)]
+    pub fn in_trade(&self) -> bool {
+        self.inner.in_trade()
+    }
+}
+
+#[wasm_bindgen(js_name = DonchianStop)]
+pub struct WasmDonchianStop {
+    inner: wc::DonchianStop,
+}
+
+#[wasm_bindgen(js_class = DonchianStop)]
+impl WasmDonchianStop {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmDonchianStop, JsError> {
+        Ok(Self {
+            inner: wc::DonchianStop::new(period).map_err(map_err)?,
+        })
+    }
+    /// Returns `{ stopLong, stopShort }` once warm, else `null`.
+    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"stopLong".into(), &o.stop_long.into()).ok();
+                Reflect::set(&obj, &"stopShort".into(), &o.stop_short.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    /// Returns `[long0, short0, long1, short1, ...]`, length `2 * n`. Warmup is NaN.
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], low[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.stop_long;
+                out[i * 2 + 1] = o.stop_short;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = PercentageTrailingStop)]
+pub struct WasmPercentageTrailingStop {
+    inner: wc::PercentageTrailingStop,
+}
+
+#[wasm_bindgen(js_class = PercentageTrailingStop)]
+impl WasmPercentageTrailingStop {
+    #[wasm_bindgen(constructor)]
+    pub fn new(percent: f64) -> Result<WasmPercentageTrailingStop, JsError> {
+        Ok(Self {
+            inner: wc::PercentageTrailingStop::new(percent).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let out = flatten(self.inner.batch(prices));
+        Float64Array::from(out.as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = StepTrailingStop)]
+pub struct WasmStepTrailingStop {
+    inner: wc::StepTrailingStop,
+}
+
+#[wasm_bindgen(js_class = StepTrailingStop)]
+impl WasmStepTrailingStop {
+    #[wasm_bindgen(constructor)]
+    pub fn new(step_size: f64) -> Result<WasmStepTrailingStop, JsError> {
+        Ok(Self {
+            inner: wc::StepTrailingStop::new(step_size).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let out = flatten(self.inner.batch(prices));
+        Float64Array::from(out.as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = RenkoTrailingStop)]
+pub struct WasmRenkoTrailingStop {
+    inner: wc::RenkoTrailingStop,
+}
+
+#[wasm_bindgen(js_class = RenkoTrailingStop)]
+impl WasmRenkoTrailingStop {
+    #[wasm_bindgen(constructor)]
+    pub fn new(block_size: f64) -> Result<WasmRenkoTrailingStop, JsError> {
+        Ok(Self {
+            inner: wc::RenkoTrailingStop::new(block_size).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let out = flatten(self.inner.batch(prices));
+        Float64Array::from(out.as_slice())
     }
     pub fn reset(&mut self) {
         self.inner.reset();
@@ -1339,6 +2615,117 @@ impl WasmVortex {
     }
 }
 
+#[wasm_bindgen(js_name = WaveTrend)]
+pub struct WasmWaveTrend {
+    inner: wc::WaveTrend,
+}
+
+#[wasm_bindgen(js_class = WaveTrend)]
+impl WasmWaveTrend {
+    #[wasm_bindgen(constructor)]
+    pub fn new(
+        channel_period: usize,
+        average_period: usize,
+        signal_period: usize,
+    ) -> Result<WasmWaveTrend, JsError> {
+        Ok(Self {
+            inner: wc::WaveTrend::new(channel_period, average_period, signal_period)
+                .map_err(map_err)?,
+        })
+    }
+    pub fn classic() -> Result<WasmWaveTrend, JsError> {
+        Ok(Self {
+            inner: wc::WaveTrend::classic().map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"wt1".into(), &o.wt1.into()).ok();
+                Reflect::set(&obj, &"wt2".into(), &o.wt2.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.wt1;
+                out[i * 2 + 1] = o.wt2;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = RWI)]
+pub struct WasmRwi {
+    inner: wc::Rwi,
+}
+
+#[wasm_bindgen(js_class = RWI)]
+impl WasmRwi {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmRwi, JsError> {
+        Ok(Self {
+            inner: wc::Rwi::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"high".into(), &o.high.into()).ok();
+                Reflect::set(&obj, &"low".into(), &o.low.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    /// Returns `[high0, low0, high1, low1, ...]`, length `2 * n`. Warmup is NaN.
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.high;
+                out[i * 2 + 1] = o.low;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
 #[wasm_bindgen(js_name = MassIndex)]
 pub struct WasmMassIndex {
     inner: wc::MassIndex,
@@ -1369,6 +2756,47 @@ impl WasmMassIndex {
     }
     pub fn reset(&mut self) {
         self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = EVWMA)]
+pub struct WasmEvwma {
+    inner: wc::Evwma,
+}
+
+#[wasm_bindgen(js_class = EVWMA)]
+impl WasmEvwma {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmEvwma, JsError> {
+        Ok(Self {
+            inner: wc::Evwma::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, close: f64, volume: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(close, close, close, volume)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(&mut self, close: &[f64], volume: &[f64]) -> Result<Float64Array, JsError> {
+        if close.len() != volume.len() {
+            return Err(JsError::new("close and volume must be equal length"));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            let c = make_candle(close[i], close[i], close[i], volume[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
     }
 }
 
@@ -1453,6 +2881,52 @@ impl WasmAdx {
             }
             None => JsValue::NULL,
         })
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = ADXR)]
+pub struct WasmAdxr {
+    inner: wc::Adxr,
+}
+
+#[wasm_bindgen(js_class = ADXR)]
+impl WasmAdxr {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmAdxr, JsError> {
+        Ok(Self {
+            inner: wc::Adxr::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
     pub fn reset(&mut self) {
         self.inner.reset();
@@ -1901,6 +3375,47 @@ impl WasmRollingVwap {
     }
 }
 
+#[wasm_bindgen(js_name = AwesomeOscillatorHistogram)]
+pub struct WasmAoHist {
+    inner: wc::AwesomeOscillatorHistogram,
+}
+
+#[wasm_bindgen(js_class = AwesomeOscillatorHistogram)]
+impl WasmAoHist {
+    #[wasm_bindgen(constructor)]
+    pub fn new(fast: usize, slow: usize, sma_period: usize) -> Result<WasmAoHist, JsError> {
+        Ok(Self {
+            inner: wc::AwesomeOscillatorHistogram::new(fast, slow, sma_period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let c = make_candle(high[i], low[i], low[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[wasm_bindgen(js_name = AwesomeOscillator)]
 pub struct WasmAo {
     inner: wc::AwesomeOscillator,
@@ -1928,6 +3443,63 @@ impl WasmAo {
     pub fn update(&mut self, high: f64, low: f64) -> Result<Option<f64>, JsError> {
         let c = make_candle(high, low, low, 0.0)?;
         Ok(self.inner.update(c))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = Alligator)]
+pub struct WasmAlligator {
+    inner: wc::Alligator,
+}
+
+#[wasm_bindgen(js_class = Alligator)]
+impl WasmAlligator {
+    #[wasm_bindgen(constructor)]
+    pub fn new(jaw: usize, teeth: usize, lips: usize) -> Result<WasmAlligator, JsError> {
+        Ok(Self {
+            inner: wc::Alligator::new(jaw, teeth, lips).map_err(map_err)?,
+        })
+    }
+    /// Returns `[jaw0, teeth0, lips0, jaw1, teeth1, lips1, ...]`, length `3n`.
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], low[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 3] = o.jaw;
+                out[i * 3 + 1] = o.teeth;
+                out[i * 3 + 2] = o.lips;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    /// Streaming update. Returns `{ jaw, teeth, lips }` once warm, else `null`.
+    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"jaw".into(), &o.jaw.into()).ok();
+                Reflect::set(&obj, &"teeth".into(), &o.teeth.into()).ok();
+                Reflect::set(&obj, &"lips".into(), &o.lips.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
     }
     pub fn reset(&mut self) {
         self.inner.reset();
@@ -1996,6 +3568,2482 @@ impl WasmAroon {
         self.inner.warmup_period()
     }
 }
+
+// ============================== Family 10: parameterless / multi-output ==============================
+
+#[wasm_bindgen(js_name = HilbertDominantCycle)]
+pub struct WasmHilbertDominantCycle {
+    inner: wc::HilbertDominantCycle,
+}
+
+#[wasm_bindgen(js_class = HilbertDominantCycle)]
+impl WasmHilbertDominantCycle {
+    #[wasm_bindgen(constructor)]
+    #[allow(clippy::new_without_default)]
+    pub fn new() -> WasmHilbertDominantCycle {
+        Self {
+            inner: wc::HilbertDominantCycle::new(),
+        }
+    }
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        Float64Array::from(flatten(self.inner.batch(prices)).as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = AdaptiveCycle)]
+pub struct WasmAdaptiveCycle {
+    inner: wc::AdaptiveCycle,
+}
+
+#[wasm_bindgen(js_class = AdaptiveCycle)]
+impl WasmAdaptiveCycle {
+    #[wasm_bindgen(constructor)]
+    #[allow(clippy::new_without_default)]
+    pub fn new() -> WasmAdaptiveCycle {
+        Self {
+            inner: wc::AdaptiveCycle::new(),
+        }
+    }
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        Float64Array::from(flatten(self.inner.batch(prices)).as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = SineWave)]
+pub struct WasmSineWave {
+    inner: wc::SineWave,
+}
+
+#[wasm_bindgen(js_class = SineWave)]
+impl WasmSineWave {
+    #[wasm_bindgen(constructor)]
+    #[allow(clippy::new_without_default)]
+    pub fn new() -> WasmSineWave {
+        Self {
+            inner: wc::SineWave::new(),
+        }
+    }
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        Float64Array::from(flatten(self.inner.batch(prices)).as_slice())
+    }
+    pub fn lead(&self) -> f64 {
+        self.inner.lead()
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = MAMA)]
+pub struct WasmMama {
+    inner: wc::Mama,
+}
+
+#[wasm_bindgen(js_class = MAMA)]
+impl WasmMama {
+    #[wasm_bindgen(constructor)]
+    pub fn new(fast_limit: f64, slow_limit: f64) -> Result<WasmMama, JsError> {
+        Ok(Self {
+            inner: wc::Mama::new(fast_limit, slow_limit).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, value: f64) -> JsValue {
+        match self.inner.update(value) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"mama".into(), &o.mama.into()).ok();
+                Reflect::set(&obj, &"fama".into(), &o.fama.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        }
+    }
+    /// Returns a flat `Float64Array` of length `2 * n`: `[mama0, fama0, mama1, fama1, ...]`.
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let n = prices.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 2] = o.mama;
+                out[i * 2 + 1] = o.fama;
+            }
+        }
+        Float64Array::from(out.as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== Family 05: Bands & Channels ==============================
+
+// Every indicator below is multi-output (2-5 bands), so they bypass the
+// `wasm_scalar_indicator!` macro and follow the hand-rolled pattern used by
+// Bollinger Bands, Keltner Channels, etc. above: `update` returns a JS object
+// via `Object::new` + `Reflect::set`; `batch` returns a flat interleaved
+// `Float64Array`.
+
+// ---------- MA Envelope (scalar input, 3 outputs) ----------
+
+#[wasm_bindgen(js_name = MaEnvelope)]
+pub struct WasmMaEnvelope {
+    inner: wc::MaEnvelope,
+}
+
+#[wasm_bindgen(js_class = MaEnvelope)]
+impl WasmMaEnvelope {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, percent: f64) -> Result<WasmMaEnvelope, JsError> {
+        Ok(Self {
+            inner: wc::MaEnvelope::new(period, percent).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, value: f64) -> JsValue {
+        match self.inner.update(value) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
+                Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
+                Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        }
+    }
+    /// Flat `[upper0, middle0, lower0, upper1, ...]`, length `3 * n`.
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let n = prices.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        Float64Array::from(out.as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- Acceleration Bands ----------
+
+#[wasm_bindgen(js_name = AccelerationBands)]
+pub struct WasmAccelerationBands {
+    inner: wc::AccelerationBands,
+}
+
+#[wasm_bindgen(js_class = AccelerationBands)]
+impl WasmAccelerationBands {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, factor: f64) -> Result<WasmAccelerationBands, JsError> {
+        Ok(Self {
+            inner: wc::AccelerationBands::new(period, factor).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
+                Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
+                Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    /// Returns `[u0, m0, l0, u1, m1, l1, ...]`, length `3 * n`.
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- STARC Bands ----------
+
+#[wasm_bindgen(js_name = StarcBands)]
+pub struct WasmStarcBands {
+    inner: wc::StarcBands,
+}
+
+#[wasm_bindgen(js_class = StarcBands)]
+impl WasmStarcBands {
+    #[wasm_bindgen(constructor)]
+    pub fn new(
+        sma_period: usize,
+        atr_period: usize,
+        multiplier: f64,
+    ) -> Result<WasmStarcBands, JsError> {
+        Ok(Self {
+            inner: wc::StarcBands::new(sma_period, atr_period, multiplier).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
+                Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
+                Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- ATR Bands ----------
+
+#[wasm_bindgen(js_name = AtrBands)]
+pub struct WasmAtrBands {
+    inner: wc::AtrBands,
+}
+
+#[wasm_bindgen(js_class = AtrBands)]
+impl WasmAtrBands {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, multiplier: f64) -> Result<WasmAtrBands, JsError> {
+        Ok(Self {
+            inner: wc::AtrBands::new(period, multiplier).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
+                Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
+                Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- Hurst Channel ----------
+
+#[wasm_bindgen(js_name = HurstChannel)]
+pub struct WasmHurstChannel {
+    inner: wc::HurstChannel,
+}
+
+#[wasm_bindgen(js_class = HurstChannel)]
+impl WasmHurstChannel {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, multiplier: f64) -> Result<WasmHurstChannel, JsError> {
+        Ok(Self {
+            inner: wc::HurstChannel::new(period, multiplier).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
+                Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
+                Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- LinReg Channel (scalar input) ----------
+
+#[wasm_bindgen(js_name = LinRegChannel)]
+pub struct WasmLinRegChannel {
+    inner: wc::LinRegChannel,
+}
+
+#[wasm_bindgen(js_class = LinRegChannel)]
+impl WasmLinRegChannel {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, multiplier: f64) -> Result<WasmLinRegChannel, JsError> {
+        Ok(Self {
+            inner: wc::LinRegChannel::new(period, multiplier).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, value: f64) -> JsValue {
+        match self.inner.update(value) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
+                Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
+                Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        }
+    }
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let n = prices.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        Float64Array::from(out.as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- Standard Error Bands (scalar input) ----------
+
+#[wasm_bindgen(js_name = StandardErrorBands)]
+pub struct WasmStandardErrorBands {
+    inner: wc::StandardErrorBands,
+}
+
+#[wasm_bindgen(js_class = StandardErrorBands)]
+impl WasmStandardErrorBands {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, multiplier: f64) -> Result<WasmStandardErrorBands, JsError> {
+        Ok(Self {
+            inner: wc::StandardErrorBands::new(period, multiplier).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, value: f64) -> JsValue {
+        match self.inner.update(value) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
+                Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
+                Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        }
+    }
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let n = prices.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.upper;
+                out[i * 3 + 1] = o.middle;
+                out[i * 3 + 2] = o.lower;
+            }
+        }
+        Float64Array::from(out.as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- Double Bollinger (scalar input, 5 outputs) ----------
+
+#[wasm_bindgen(js_name = DoubleBollinger)]
+pub struct WasmDoubleBollinger {
+    inner: wc::DoubleBollinger,
+}
+
+#[wasm_bindgen(js_class = DoubleBollinger)]
+impl WasmDoubleBollinger {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, k_inner: f64, k_outer: f64) -> Result<WasmDoubleBollinger, JsError> {
+        Ok(Self {
+            inner: wc::DoubleBollinger::new(period, k_inner, k_outer).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, value: f64) -> JsValue {
+        match self.inner.update(value) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"upperOuter".into(), &o.upper_outer.into()).ok();
+                Reflect::set(&obj, &"upperInner".into(), &o.upper_inner.into()).ok();
+                Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
+                Reflect::set(&obj, &"lowerInner".into(), &o.lower_inner.into()).ok();
+                Reflect::set(&obj, &"lowerOuter".into(), &o.lower_outer.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        }
+    }
+    /// Flat `[u_o, u_i, m, l_i, l_o, ...]`, length `5 * n`.
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let n = prices.len();
+        let mut out = vec![f64::NAN; n * 5];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 5] = o.upper_outer;
+                out[i * 5 + 1] = o.upper_inner;
+                out[i * 5 + 2] = o.middle;
+                out[i * 5 + 3] = o.lower_inner;
+                out[i * 5 + 4] = o.lower_outer;
+            }
+        }
+        Float64Array::from(out.as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- TTM Squeeze ----------
+
+#[wasm_bindgen(js_name = TtmSqueeze)]
+pub struct WasmTtmSqueeze {
+    inner: wc::TtmSqueeze,
+}
+
+#[wasm_bindgen(js_class = TtmSqueeze)]
+impl WasmTtmSqueeze {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, bb_mult: f64, kc_mult: f64) -> Result<WasmTtmSqueeze, JsError> {
+        Ok(Self {
+            inner: wc::TtmSqueeze::new(period, bb_mult, kc_mult).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"squeeze".into(), &o.squeeze.into()).ok();
+                Reflect::set(&obj, &"momentum".into(), &o.momentum.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    /// Flat `[sq0, mom0, sq1, mom1, ...]`, length `2 * n`.
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.squeeze;
+                out[i * 2 + 1] = o.momentum;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- Fractal Chaos Bands ----------
+
+#[wasm_bindgen(js_name = FractalChaosBands)]
+pub struct WasmFractalChaosBands {
+    inner: wc::FractalChaosBands,
+}
+
+#[wasm_bindgen(js_class = FractalChaosBands)]
+impl WasmFractalChaosBands {
+    #[wasm_bindgen(constructor)]
+    pub fn new(k: usize) -> Result<WasmFractalChaosBands, JsError> {
+        Ok(Self {
+            inner: wc::FractalChaosBands::new(k).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
+                Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    /// Flat `[u0, l0, u1, l1, ...]`, length `2 * n`.
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], low[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.upper;
+                out[i * 2 + 1] = o.lower;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- VWAP StdDev Bands ----------
+
+#[wasm_bindgen(js_name = VwapStdDevBands)]
+pub struct WasmVwapStdDevBands {
+    inner: wc::VwapStdDevBands,
+}
+
+#[wasm_bindgen(js_class = VwapStdDevBands)]
+impl WasmVwapStdDevBands {
+    #[wasm_bindgen(constructor)]
+    pub fn new(multiplier: f64) -> Result<WasmVwapStdDevBands, JsError> {
+        Ok(Self {
+            inner: wc::VwapStdDevBands::new(multiplier).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, volume)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
+                Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
+                Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
+                Reflect::set(&obj, &"stddev".into(), &o.stddev.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    /// Flat `[u0, m0, l0, sd0, ...]`, length `4 * n`.
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+        volume: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n || volume.len() != n {
+            return Err(JsError::new(
+                "high, low, close, volume must be equal length",
+            ));
+        }
+        let mut out = vec![f64::NAN; n * 4];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], volume[i])?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 4] = o.upper;
+                out[i * 4 + 1] = o.middle;
+                out[i * 4 + 2] = o.lower;
+                out[i * 4 + 3] = o.stddev;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== Pivots & S/R ==============================
+
+#[wasm_bindgen(js_name = ClassicPivots)]
+pub struct WasmClassicPivots {
+    inner: wc::ClassicPivots,
+}
+
+impl Default for WasmClassicPivots {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = ClassicPivots)]
+impl WasmClassicPivots {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmClassicPivots {
+        Self {
+            inner: wc::ClassicPivots::new(),
+        }
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"pp".into(), &o.pp.into()).ok();
+                Reflect::set(&obj, &"r1".into(), &o.r1.into()).ok();
+                Reflect::set(&obj, &"r2".into(), &o.r2.into()).ok();
+                Reflect::set(&obj, &"r3".into(), &o.r3.into()).ok();
+                Reflect::set(&obj, &"s1".into(), &o.s1.into()).ok();
+                Reflect::set(&obj, &"s2".into(), &o.s2.into()).ok();
+                Reflect::set(&obj, &"s3".into(), &o.s3.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 7];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 7] = o.pp;
+                out[i * 7 + 1] = o.r1;
+                out[i * 7 + 2] = o.r2;
+                out[i * 7 + 3] = o.r3;
+                out[i * 7 + 4] = o.s1;
+                out[i * 7 + 5] = o.s2;
+                out[i * 7 + 6] = o.s3;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = FibonacciPivots)]
+pub struct WasmFibonacciPivots {
+    inner: wc::FibonacciPivots,
+}
+
+impl Default for WasmFibonacciPivots {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = FibonacciPivots)]
+impl WasmFibonacciPivots {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmFibonacciPivots {
+        Self {
+            inner: wc::FibonacciPivots::new(),
+        }
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"pp".into(), &o.pp.into()).ok();
+                Reflect::set(&obj, &"r1".into(), &o.r1.into()).ok();
+                Reflect::set(&obj, &"r2".into(), &o.r2.into()).ok();
+                Reflect::set(&obj, &"r3".into(), &o.r3.into()).ok();
+                Reflect::set(&obj, &"s1".into(), &o.s1.into()).ok();
+                Reflect::set(&obj, &"s2".into(), &o.s2.into()).ok();
+                Reflect::set(&obj, &"s3".into(), &o.s3.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 7];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 7] = o.pp;
+                out[i * 7 + 1] = o.r1;
+                out[i * 7 + 2] = o.r2;
+                out[i * 7 + 3] = o.r3;
+                out[i * 7 + 4] = o.s1;
+                out[i * 7 + 5] = o.s2;
+                out[i * 7 + 6] = o.s3;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = Camarilla)]
+pub struct WasmCamarilla {
+    inner: wc::Camarilla,
+}
+
+impl Default for WasmCamarilla {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = Camarilla)]
+impl WasmCamarilla {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmCamarilla {
+        Self {
+            inner: wc::Camarilla::new(),
+        }
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"pp".into(), &o.pp.into()).ok();
+                Reflect::set(&obj, &"r1".into(), &o.r1.into()).ok();
+                Reflect::set(&obj, &"r2".into(), &o.r2.into()).ok();
+                Reflect::set(&obj, &"r3".into(), &o.r3.into()).ok();
+                Reflect::set(&obj, &"r4".into(), &o.r4.into()).ok();
+                Reflect::set(&obj, &"s1".into(), &o.s1.into()).ok();
+                Reflect::set(&obj, &"s2".into(), &o.s2.into()).ok();
+                Reflect::set(&obj, &"s3".into(), &o.s3.into()).ok();
+                Reflect::set(&obj, &"s4".into(), &o.s4.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 9];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 9] = o.pp;
+                out[i * 9 + 1] = o.r1;
+                out[i * 9 + 2] = o.r2;
+                out[i * 9 + 3] = o.r3;
+                out[i * 9 + 4] = o.r4;
+                out[i * 9 + 5] = o.s1;
+                out[i * 9 + 6] = o.s2;
+                out[i * 9 + 7] = o.s3;
+                out[i * 9 + 8] = o.s4;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = WoodiePivots)]
+pub struct WasmWoodiePivots {
+    inner: wc::WoodiePivots,
+}
+
+impl Default for WasmWoodiePivots {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = WoodiePivots)]
+impl WasmWoodiePivots {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmWoodiePivots {
+        Self {
+            inner: wc::WoodiePivots::new(),
+        }
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"pp".into(), &o.pp.into()).ok();
+                Reflect::set(&obj, &"r1".into(), &o.r1.into()).ok();
+                Reflect::set(&obj, &"r2".into(), &o.r2.into()).ok();
+                Reflect::set(&obj, &"s1".into(), &o.s1.into()).ok();
+                Reflect::set(&obj, &"s2".into(), &o.s2.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 5];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 5] = o.pp;
+                out[i * 5 + 1] = o.r1;
+                out[i * 5 + 2] = o.r2;
+                out[i * 5 + 3] = o.s1;
+                out[i * 5 + 4] = o.s2;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = DemarkPivots)]
+pub struct WasmDemarkPivots {
+    inner: wc::DemarkPivots,
+}
+
+impl Default for WasmDemarkPivots {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = DemarkPivots)]
+impl WasmDemarkPivots {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmDemarkPivots {
+        Self {
+            inner: wc::DemarkPivots::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<JsValue, JsError> {
+        let c = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"pp".into(), &o.pp.into()).ok();
+                Reflect::set(&obj, &"r1".into(), &o.r1.into()).ok();
+                Reflect::set(&obj, &"s1".into(), &o.s1.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let n = open.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let c = wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 3] = o.pp;
+                out[i * 3 + 1] = o.r1;
+                out[i * 3 + 2] = o.s1;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = WilliamsFractals)]
+pub struct WasmWilliamsFractals {
+    inner: wc::WilliamsFractals,
+}
+
+impl Default for WasmWilliamsFractals {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = WilliamsFractals)]
+impl WasmWilliamsFractals {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmWilliamsFractals {
+        Self {
+            inner: wc::WilliamsFractals::new(),
+        }
+    }
+    /// Returns `{ up, down }` where each is the fractal price or `NaN` when no
+    /// fractal was confirmed at the centre of the most recent 5-bar window.
+    /// Returns `null` during the four-bar warmup.
+    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"up".into(), &o.up.unwrap_or(f64::NAN).into()).ok();
+                Reflect::set(&obj, &"down".into(), &o.down.unwrap_or(f64::NAN).into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], low[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                if let Some(v) = o.up {
+                    out[i * 2] = v;
+                }
+                if let Some(v) = o.down {
+                    out[i * 2 + 1] = v;
+                }
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = ZigZag)]
+pub struct WasmZigZag {
+    inner: wc::ZigZag,
+}
+
+#[wasm_bindgen(js_class = ZigZag)]
+impl WasmZigZag {
+    #[wasm_bindgen(constructor)]
+    pub fn new(threshold: f64) -> Result<WasmZigZag, JsError> {
+        Ok(Self {
+            inner: wc::ZigZag::new(threshold).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"swing".into(), &o.swing.into()).ok();
+                Reflect::set(&obj, &"direction".into(), &o.direction.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], low[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.swing;
+                out[i * 2 + 1] = o.direction;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    #[wasm_bindgen(js_name = threshold)]
+    pub fn threshold(&self) -> f64 {
+        self.inner.threshold()
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+// ---------- TD Setup ----------
+
+#[wasm_bindgen(js_name = TDSetup)]
+pub struct WasmTdSetup {
+    inner: wc::TdSetup,
+}
+
+#[wasm_bindgen(js_class = TDSetup)]
+impl WasmTdSetup {
+    #[wasm_bindgen(constructor)]
+    pub fn new(lookback: usize, target: usize) -> Result<WasmTdSetup, JsError> {
+        Ok(Self {
+            inner: wc::TdSetup::new(lookback, target).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- TD Sequential ----------
+
+#[wasm_bindgen(js_name = TDSequential)]
+pub struct WasmTdSequential {
+    inner: wc::TdSequential,
+}
+
+#[wasm_bindgen(js_class = TDSequential)]
+impl WasmTdSequential {
+    #[wasm_bindgen(constructor)]
+    pub fn new(
+        setup_lookback: usize,
+        setup_target: usize,
+        countdown_lookback: usize,
+        countdown_target: usize,
+    ) -> Result<WasmTdSequential, JsError> {
+        Ok(Self {
+            inner: wc::TdSequential::new(
+                setup_lookback,
+                setup_target,
+                countdown_lookback,
+                countdown_target,
+            )
+            .map_err(map_err)?,
+        })
+    }
+    /// Streaming update. Returns `{ setup, countdown, direction }` once warm,
+    /// else `null`.
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"setup".into(), &o.setup.into()).ok();
+                Reflect::set(&obj, &"countdown".into(), &o.countdown.into()).ok();
+                Reflect::set(&obj, &"direction".into(), &o.direction.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    /// Batch returns a flat `Float64Array` `[setup0, countdown0, direction0, ...]`.
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 3] = o.setup;
+                out[i * 3 + 1] = o.countdown;
+                out[i * 3 + 2] = o.direction;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- TD DeMarker ----------
+
+#[wasm_bindgen(js_name = TDDeMarker)]
+pub struct WasmTdDeMarker {
+    inner: wc::TdDeMarker,
+}
+
+#[wasm_bindgen(js_class = TDDeMarker)]
+impl WasmTdDeMarker {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmTdDeMarker, JsError> {
+        Ok(Self {
+            inner: wc::TdDeMarker::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let c = make_candle(high[i], low[i], low[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- TD REI ----------
+
+#[wasm_bindgen(js_name = TDREI)]
+pub struct WasmTdRei {
+    inner: wc::TdRei,
+}
+
+#[wasm_bindgen(js_class = TDREI)]
+impl WasmTdRei {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmTdRei, JsError> {
+        Ok(Self {
+            inner: wc::TdRei::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, low, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let c = make_candle(high[i], low[i], low[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- TD Pressure ----------
+
+#[wasm_bindgen(js_name = TDPressure)]
+pub struct WasmTdPressure {
+    inner: wc::TdPressure,
+}
+
+#[wasm_bindgen(js_class = TDPressure)]
+impl WasmTdPressure {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmTdPressure, JsError> {
+        Ok(Self {
+            inner: wc::TdPressure::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = wc::Candle::new(open, high, low, close, volume, 0).map_err(map_err)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+        volume: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if open.len() != high.len()
+            || high.len() != low.len()
+            || low.len() != close.len()
+            || close.len() != volume.len()
+        {
+            return Err(JsError::new(
+                "open, high, low, close, volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(open.len());
+        for i in 0..open.len() {
+            let c = wc::Candle::new(open[i], high[i], low[i], close[i], volume[i], 0)
+                .map_err(map_err)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- TD Combo ----------
+
+#[wasm_bindgen(js_name = TDCombo)]
+pub struct WasmTdCombo {
+    inner: wc::TdCombo,
+}
+
+#[wasm_bindgen(js_class = TDCombo)]
+impl WasmTdCombo {
+    #[wasm_bindgen(constructor)]
+    pub fn new(
+        setup_lookback: usize,
+        setup_target: usize,
+        countdown_lookback: usize,
+        countdown_target: usize,
+    ) -> Result<WasmTdCombo, JsError> {
+        Ok(Self {
+            inner: wc::TdCombo::new(
+                setup_lookback,
+                setup_target,
+                countdown_lookback,
+                countdown_target,
+            )
+            .map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- TD Countdown ----------
+
+#[wasm_bindgen(js_name = TDCountdown)]
+pub struct WasmTdCountdown {
+    inner: wc::TdCountdown,
+}
+
+#[wasm_bindgen(js_class = TDCountdown)]
+impl WasmTdCountdown {
+    #[wasm_bindgen(constructor)]
+    pub fn new(
+        setup_lookback: usize,
+        setup_target: usize,
+        countdown_lookback: usize,
+        countdown_target: usize,
+    ) -> Result<WasmTdCountdown, JsError> {
+        Ok(Self {
+            inner: wc::TdCountdown::new(
+                setup_lookback,
+                setup_target,
+                countdown_lookback,
+                countdown_target,
+            )
+            .map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- TD Lines ----------
+
+#[wasm_bindgen(js_name = TDLines)]
+pub struct WasmTdLines {
+    inner: wc::TdLines,
+}
+
+#[wasm_bindgen(js_class = TDLines)]
+impl WasmTdLines {
+    #[wasm_bindgen(constructor)]
+    pub fn new(lookback: usize, target: usize) -> Result<WasmTdLines, JsError> {
+        Ok(Self {
+            inner: wc::TdLines::new(lookback, target).map_err(map_err)?,
+        })
+    }
+    /// Streaming update. Returns `{ resistance, support }` once warm, else `null`.
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"resistance".into(), &o.resistance.into()).ok();
+                Reflect::set(&obj, &"support".into(), &o.support.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    /// Batch returns a flat `Float64Array` `[resistance0, support0, ...]`.
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.resistance;
+                out[i * 2 + 1] = o.support;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- TD Range Projection ----------
+
+#[wasm_bindgen(js_name = TDRangeProjection)]
+pub struct WasmTdRangeProjection {
+    inner: wc::TdRangeProjection,
+}
+
+#[wasm_bindgen(js_class = TDRangeProjection)]
+impl WasmTdRangeProjection {
+    #[wasm_bindgen(constructor)]
+    #[allow(clippy::new_without_default)]
+    pub fn new() -> WasmTdRangeProjection {
+        Self {
+            inner: wc::TdRangeProjection::new(),
+        }
+    }
+    /// Streaming update. Returns `{ high, low }` projected for the next bar.
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<JsValue, JsError> {
+        let c = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"high".into(), &o.high.into()).ok();
+                Reflect::set(&obj, &"low".into(), &o.low.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    /// Batch returns a flat `Float64Array` `[projHigh0, projLow0, ...]`.
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let n = open.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let c = wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            if let Some(p) = self.inner.update(c) {
+                out[i * 2] = p.high;
+                out[i * 2 + 1] = p.low;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- TD Differential ----------
+
+#[wasm_bindgen(js_name = TDDifferential)]
+pub struct WasmTdDifferential {
+    inner: wc::TdDifferential,
+}
+
+#[wasm_bindgen(js_class = TDDifferential)]
+impl WasmTdDifferential {
+    #[wasm_bindgen(constructor)]
+    #[allow(clippy::new_without_default)]
+    pub fn new() -> WasmTdDifferential {
+        Self {
+            inner: wc::TdDifferential::new(),
+        }
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- TD Open ----------
+
+#[wasm_bindgen(js_name = TDOpen)]
+pub struct WasmTdOpen {
+    inner: wc::TdOpen,
+}
+
+#[wasm_bindgen(js_class = TDOpen)]
+impl WasmTdOpen {
+    #[wasm_bindgen(constructor)]
+    #[allow(clippy::new_without_default)]
+    pub fn new() -> WasmTdOpen {
+        Self {
+            inner: wc::TdOpen::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(open.len());
+        for i in 0..open.len() {
+            let c = wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- TD Risk Level ----------
+
+#[wasm_bindgen(js_name = TDRiskLevel)]
+pub struct WasmTdRiskLevel {
+    inner: wc::TdRiskLevel,
+}
+
+#[wasm_bindgen(js_class = TDRiskLevel)]
+impl WasmTdRiskLevel {
+    #[wasm_bindgen(constructor)]
+    pub fn new(lookback: usize, target: usize) -> Result<WasmTdRiskLevel, JsError> {
+        Ok(Self {
+            inner: wc::TdRiskLevel::new(lookback, target).map_err(map_err)?,
+        })
+    }
+    /// Streaming update. Returns `{ buyRisk, sellRisk }` once warm, else `null`.
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"buyRisk".into(), &o.buy_risk.into()).ok();
+                Reflect::set(&obj, &"sellRisk".into(), &o.sell_risk.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    /// Batch returns a flat `Float64Array` `[buyRisk0, sellRisk0, ...]`.
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.buy_risk;
+                out[i * 2 + 1] = o.sell_risk;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- Ichimoku ----------
+
+#[wasm_bindgen(js_name = Ichimoku)]
+pub struct WasmIchimoku {
+    inner: wc::Ichimoku,
+}
+
+#[wasm_bindgen(js_class = Ichimoku)]
+impl WasmIchimoku {
+    #[wasm_bindgen(constructor)]
+    pub fn new(
+        tenkan_period: usize,
+        kijun_period: usize,
+        senkou_b_period: usize,
+        displacement: usize,
+    ) -> Result<WasmIchimoku, JsError> {
+        Ok(Self {
+            inner: wc::Ichimoku::new(tenkan_period, kijun_period, senkou_b_period, displacement)
+                .map_err(map_err)?,
+        })
+    }
+    /// Streaming update. Returns `{ tenkan, kijun, senkouA, senkouB, chikou }`
+    /// with `NaN` for any line that is not yet defined.
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"tenkan".into(), &o.tenkan.unwrap_or(f64::NAN).into()).ok();
+                Reflect::set(&obj, &"kijun".into(), &o.kijun.unwrap_or(f64::NAN).into()).ok();
+                Reflect::set(
+                    &obj,
+                    &"senkouA".into(),
+                    &o.senkou_a.unwrap_or(f64::NAN).into(),
+                )
+                .ok();
+                Reflect::set(
+                    &obj,
+                    &"senkouB".into(),
+                    &o.senkou_b.unwrap_or(f64::NAN).into(),
+                )
+                .ok();
+                Reflect::set(&obj, &"chikou".into(), &o.chikou.unwrap_or(f64::NAN).into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    /// Returns `[tenkan0, kijun0, senkouA0, senkouB0, chikou0, tenkan1, ...]`,
+    /// length `5 * n`. Cells without a defined value are `NaN`.
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 5];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                if let Some(v) = o.tenkan {
+                    out[i * 5] = v;
+                }
+                if let Some(v) = o.kijun {
+                    out[i * 5 + 1] = v;
+                }
+                if let Some(v) = o.senkou_a {
+                    out[i * 5 + 2] = v;
+                }
+                if let Some(v) = o.senkou_b {
+                    out[i * 5 + 3] = v;
+                }
+                if let Some(v) = o.chikou {
+                    out[i * 5 + 4] = v;
+                }
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- Heikin-Ashi ----------
+
+#[wasm_bindgen(js_name = HeikinAshi)]
+pub struct WasmHeikinAshi {
+    inner: wc::HeikinAshi,
+}
+
+impl Default for WasmHeikinAshi {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = HeikinAshi)]
+impl WasmHeikinAshi {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmHeikinAshi {
+        Self {
+            inner: wc::HeikinAshi::new(),
+        }
+    }
+    /// Streaming update. Returns `{ open, high, low, close }` of the
+    /// Heikin-Ashi candle.
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<JsValue, JsError> {
+        let c = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"open".into(), &o.open.into()).ok();
+                Reflect::set(&obj, &"high".into(), &o.high.into()).ok();
+                Reflect::set(&obj, &"low".into(), &o.low.into()).ok();
+                Reflect::set(&obj, &"close".into(), &o.close.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    /// Returns `[open0, high0, low0, close0, open1, ...]`, length `4 * n`.
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let n = open.len();
+        let mut out = vec![f64::NAN; n * 4];
+        for i in 0..n {
+            let c = wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 4] = o.open;
+                out[i * 4 + 1] = o.high;
+                out[i * 4 + 2] = o.low;
+                out[i * 4 + 3] = o.close;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = ValueArea)]
+pub struct WasmValueArea {
+    inner: wc::ValueArea,
+}
+
+#[wasm_bindgen(js_class = ValueArea)]
+impl WasmValueArea {
+    #[wasm_bindgen(constructor)]
+    pub fn new(
+        period: usize,
+        bin_count: usize,
+        value_area_pct: f64,
+    ) -> Result<WasmValueArea, JsError> {
+        Ok(Self {
+            inner: wc::ValueArea::new(period, bin_count, value_area_pct).map_err(map_err)?,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        volume: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != volume.len() {
+            return Err(JsError::new("high, low, volume must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let mid = f64::midpoint(high[i], low[i]);
+            let c = wc::Candle::new(mid, high[i], low[i], mid, volume[i], 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 3] = o.poc;
+                out[i * 3 + 1] = o.vah;
+                out[i * 3 + 2] = o.val;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    /// Streaming update. Returns `{ poc, vah, val }` once warm, else `null`.
+    pub fn update(&mut self, high: f64, low: f64, volume: f64) -> Result<JsValue, JsError> {
+        let mid = f64::midpoint(high, low);
+        let c = wc::Candle::new(mid, high, low, mid, volume, 0).map_err(map_err)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"poc".into(), &o.poc.into()).ok();
+                Reflect::set(&obj, &"vah".into(), &o.vah.into()).ok();
+                Reflect::set(&obj, &"val".into(), &o.val.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = InitialBalance)]
+pub struct WasmInitialBalance {
+    inner: wc::InitialBalance,
+}
+
+#[wasm_bindgen(js_class = InitialBalance)]
+impl WasmInitialBalance {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmInitialBalance, JsError> {
+        Ok(Self {
+            inner: wc::InitialBalance::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let mid = f64::midpoint(high[i], low[i]);
+            let c = wc::Candle::new(mid, high[i], low[i], mid, 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.high;
+                out[i * 2 + 1] = o.low;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    /// Streaming update. Returns `{ high, low }`.
+    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+        let mid = f64::midpoint(high, low);
+        let c = wc::Candle::new(mid, high, low, mid, 0.0, 0).map_err(map_err)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"high".into(), &o.high.into()).ok();
+                Reflect::set(&obj, &"low".into(), &o.low.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = isLocked)]
+    pub fn is_locked(&self) -> bool {
+        self.inner.is_locked()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = OpeningRange)]
+pub struct WasmOpeningRange {
+    inner: wc::OpeningRange,
+}
+
+#[wasm_bindgen(js_class = OpeningRange)]
+impl WasmOpeningRange {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmOpeningRange, JsError> {
+        Ok(Self {
+            inner: wc::OpeningRange::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let c =
+                wc::Candle::new(close[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 3] = o.high;
+                out[i * 3 + 1] = o.low;
+                out[i * 3 + 2] = o.breakout_distance;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    /// Streaming update. Returns `{ high, low, breakoutDistance }`.
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = wc::Candle::new(close, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"high".into(), &o.high.into()).ok();
+                Reflect::set(&obj, &"low".into(), &o.low.into()).ok();
+                Reflect::set(
+                    &obj,
+                    &"breakoutDistance".into(),
+                    &o.breakout_distance.into(),
+                )
+                .ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = isLocked)]
+    pub fn is_locked(&self) -> bool {
+        self.inner.is_locked()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== Candlestick Patterns ==============================
+//
+// All 15 patterns take Candles (open, high, low, close) and emit a signed f64
+// signal per bar: +1.0 bullish, -1.0 bearish, 0.0 no pattern. Doji is
+// direction-less and emits 0/+1 only.
+
+macro_rules! wasm_candle_pattern {
+    ($wasm:ident, $inner:ty, $js:ident) => {
+        #[wasm_bindgen(js_name = $js)]
+        pub struct $wasm {
+            inner: $inner,
+        }
+
+        impl Default for $wasm {
+            fn default() -> Self {
+                Self::new()
+            }
+        }
+
+        #[wasm_bindgen(js_class = $js)]
+        impl $wasm {
+            #[wasm_bindgen(constructor)]
+            pub fn new() -> $wasm {
+                Self {
+                    inner: <$inner>::new(),
+                }
+            }
+            pub fn update(
+                &mut self,
+                open: f64,
+                high: f64,
+                low: f64,
+                close: f64,
+            ) -> Result<Option<f64>, JsError> {
+                let c = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+                Ok(self.inner.update(c))
+            }
+            pub fn batch(
+                &mut self,
+                open: &[f64],
+                high: &[f64],
+                low: &[f64],
+                close: &[f64],
+            ) -> Result<Float64Array, JsError> {
+                let n = open.len();
+                if high.len() != n || low.len() != n || close.len() != n {
+                    return Err(JsError::new("open, high, low, close must be equal length"));
+                }
+                let mut out = Vec::with_capacity(n);
+                for i in 0..n {
+                    let c = wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0)
+                        .map_err(map_err)?;
+                    out.push(self.inner.update(c).unwrap_or(f64::NAN));
+                }
+                Ok(Float64Array::from(out.as_slice()))
+            }
+            pub fn reset(&mut self) {
+                self.inner.reset();
+            }
+            #[wasm_bindgen(js_name = isReady)]
+            pub fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            #[wasm_bindgen(js_name = warmupPeriod)]
+            pub fn warmup_period(&self) -> usize {
+                self.inner.warmup_period()
+            }
+        }
+    };
+}
+
+wasm_candle_pattern!(WasmDoji, wc::Doji, Doji);
+wasm_candle_pattern!(WasmHammer, wc::Hammer, Hammer);
+wasm_candle_pattern!(WasmInvertedHammer, wc::InvertedHammer, InvertedHammer);
+wasm_candle_pattern!(WasmHangingMan, wc::HangingMan, HangingMan);
+wasm_candle_pattern!(WasmShootingStar, wc::ShootingStar, ShootingStar);
+wasm_candle_pattern!(WasmEngulfing, wc::Engulfing, Engulfing);
+wasm_candle_pattern!(WasmHarami, wc::Harami, Harami);
+wasm_candle_pattern!(
+    WasmMorningEveningStar,
+    wc::MorningEveningStar,
+    MorningEveningStar
+);
+wasm_candle_pattern!(
+    WasmThreeSoldiersOrCrows,
+    wc::ThreeSoldiersOrCrows,
+    ThreeSoldiersOrCrows
+);
+wasm_candle_pattern!(
+    WasmPiercingDarkCloud,
+    wc::PiercingDarkCloud,
+    PiercingDarkCloud
+);
+wasm_candle_pattern!(WasmMarubozu, wc::Marubozu, Marubozu);
+wasm_candle_pattern!(WasmTweezer, wc::Tweezer, Tweezer);
+wasm_candle_pattern!(WasmSpinningTop, wc::SpinningTop, SpinningTop);
+wasm_candle_pattern!(WasmThreeInside, wc::ThreeInside, ThreeInside);
+wasm_candle_pattern!(WasmThreeOutside, wc::ThreeOutside, ThreeOutside);
 
 #[cfg(test)]
 mod tests {

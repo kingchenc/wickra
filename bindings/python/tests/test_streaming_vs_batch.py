@@ -117,6 +117,30 @@ def test_obv_streaming_matches_batch(ohlc_series):
     assert _equal_with_nan(batch, streamed)
 
 
+def test_mama_streaming_matches_batch(sine_prices):
+    batch = ta.MAMA().batch(sine_prices)
+    streamer = ta.MAMA()
+    rows = []
+    for p in sine_prices:
+        v = streamer.update(float(p))
+        if v is None:
+            rows.append([math.nan, math.nan])
+        else:
+            rows.append(list(v))
+    streamed = np.array(rows, dtype=np.float64)
+    assert _equal_with_nan(batch, streamed)
+
+
+def test_super_smoother_streaming_matches_batch(sine_prices):
+    batch = ta.SuperSmoother(10).batch(sine_prices)
+    streamer = ta.SuperSmoother(10)
+    streamed = np.array(
+        [math.nan if (v := streamer.update(float(p))) is None else float(v) for p in sine_prices],
+        dtype=np.float64,
+    )
+    assert _equal_with_nan(batch, streamed)
+
+
 def test_rolling_vwap_streaming_matches_batch(ohlc_series):
     # RollingVWAP(20) on the shared OHLC series. Provides finite-memory VWAP
     # parity coverage now that the indicator is exposed across all bindings.
@@ -135,3 +159,45 @@ def test_rolling_vwap_streaming_matches_batch(ohlc_series):
     assert streamer.is_ready()
     streamer.reset()
     assert not streamer.is_ready()
+
+
+def test_value_area_streaming_matches_batch(ohlc_series):
+    high, low, close = ohlc_series
+    volume = np.linspace(100.0, 200.0, num=close.size, dtype=np.float64)
+    batch = ta.ValueArea(20, 50, 0.70).batch(high, low, volume)
+
+    streamer = ta.ValueArea(20, 50, 0.70)
+    rows = []
+    for h, l, v in zip(high, low, volume):
+        mid = float((h + l) / 2.0)
+        out = streamer.update((mid, float(h), float(l), mid, float(v), 0))
+        rows.append([math.nan, math.nan, math.nan] if out is None else list(out))
+    streamed = np.array(rows, dtype=np.float64)
+    assert _equal_with_nan(batch, streamed)
+
+
+def test_initial_balance_streaming_matches_batch(ohlc_series):
+    high, low, _close = ohlc_series
+    batch = ta.InitialBalance(12).batch(high, low)
+
+    streamer = ta.InitialBalance(12)
+    rows = []
+    for h, l in zip(high, low):
+        mid = float((h + l) / 2.0)
+        out = streamer.update((mid, float(h), float(l), mid, 0.0, 0))
+        rows.append([math.nan, math.nan] if out is None else list(out))
+    streamed = np.array(rows, dtype=np.float64)
+    assert _equal_with_nan(batch, streamed)
+
+
+def test_opening_range_streaming_matches_batch(ohlc_series):
+    high, low, close = ohlc_series
+    batch = ta.OpeningRange(6).batch(high, low, close)
+
+    streamer = ta.OpeningRange(6)
+    rows = []
+    for h, l, c in zip(high, low, close):
+        out = streamer.update((float(c), float(h), float(l), float(c), 0.0, 0))
+        rows.append([math.nan, math.nan, math.nan] if out is None else list(out))
+    streamed = np.array(rows, dtype=np.float64)
+    assert _equal_with_nan(batch, streamed)
