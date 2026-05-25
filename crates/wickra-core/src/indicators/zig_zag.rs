@@ -234,15 +234,14 @@ mod tests {
     fn small_oscillations_yield_no_swings() {
         let mut zz = ZigZag::new(0.20).unwrap();
         let _ = zz.update(c(100.0, 0));
-        let mut emitted = 0_usize;
         for i in 1..20 {
             // Bounce around 100 ± 5; never crosses the 20% threshold.
-            let p = 100.0 + ((i as f64) * 0.3).sin() * 5.0;
-            if zz.update(c(p, i)).is_some() {
-                emitted += 1;
-            }
+            let p = 100.0 + ((f64::from(i)) * 0.3).sin() * 5.0;
+            assert!(
+                zz.update(c(p, i.into())).is_none(),
+                "unexpected swing at i={i}"
+            );
         }
-        assert_eq!(emitted, 0);
     }
 
     #[test]
