@@ -1,4 +1,4 @@
-//! Rolling Conditional Value-at-Risk (CVaR / Expected Shortfall).
+//! Rolling Conditional Value-at-Risk (`CVaR` / Expected Shortfall).
 
 use std::collections::VecDeque;
 
@@ -8,7 +8,7 @@ use crate::traits::Indicator;
 /// Rolling Conditional Value-at-Risk (Expected Shortfall).
 ///
 /// Where [`crate::ValueAtRisk`] reports the loss at the lower-tail quantile,
-/// CVaR averages **all** returns below that quantile — the expected loss
+/// `CVaR` averages **all** returns below that quantile — the expected loss
 /// conditional on being in the bad tail:
 ///
 /// ```text
@@ -21,8 +21,8 @@ use crate::traits::Indicator;
 /// The tail comprises the `floor(q · n)` smallest returns; if `floor` rounds
 /// down to zero the smallest single return is used so the metric stays
 /// defined for any `period ≥ 2`. Output is the magnitude of the expected
-/// shortfall (sign-flipped to be non-negative). CVaR is by construction
-/// `≥ VaR` because it averages losses *beyond* the VaR threshold.
+/// shortfall (sign-flipped to be non-negative). `CVaR` is by construction
+/// `≥ VaR` because it averages losses *beyond* the `VaR` threshold.
 ///
 /// Each `update` is O(period · log period).
 ///
@@ -46,7 +46,7 @@ pub struct ConditionalValueAtRisk {
 }
 
 impl ConditionalValueAtRisk {
-    /// Construct a new rolling CVaR.
+    /// Construct a new rolling `CVaR`.
     ///
     /// # Errors
     /// Returns [`Error::InvalidPeriod`] if `period < 2`, or if

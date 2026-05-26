@@ -1,4 +1,4 @@
-//! Rolling historical Value-at-Risk (VaR).
+//! Rolling historical Value-at-Risk (`VaR`).
 
 use std::collections::VecDeque;
 
@@ -11,7 +11,7 @@ use crate::traits::Indicator;
 /// returns the indicator reports the empirical lower-tail quantile at the
 /// given `confidence` level (e.g. `0.95` = the 95 %-confident worst-case
 /// loss). The output is the **magnitude** of that loss, sign-flipped to be a
-/// non-negative number (so a 5 % VaR is reported as `0.05`, not `-0.05`):
+/// non-negative number (so a 5 % `VaR` is reported as `0.05`, not `-0.05`):
 ///
 /// ```text
 /// q       = (1 − confidence)
@@ -20,7 +20,7 @@ use crate::traits::Indicator;
 /// ```
 ///
 /// `percentile` uses linear interpolation between the two closest order
-/// statistics ("type 7" in R / NumPy default). If the q-quantile of the
+/// statistics ("type 7" in R / `NumPy` default). If the q-quantile of the
 /// window is itself non-negative (a window where every return was at or above
 /// zero) the indicator returns `0.0` — there is no loss to report.
 ///
@@ -47,7 +47,7 @@ pub struct ValueAtRisk {
 }
 
 impl ValueAtRisk {
-    /// Construct a new rolling historical VaR.
+    /// Construct a new rolling historical `VaR`.
     ///
     /// # Errors
     /// Returns [`Error::InvalidPeriod`] if `period < 2`, or if
@@ -81,7 +81,7 @@ impl ValueAtRisk {
     }
 }
 
-/// Linear-interpolated percentile (type 7 / NumPy default) on a sorted slice.
+/// Linear-interpolated percentile (type 7 / `NumPy` default) on a sorted slice.
 fn percentile_sorted(sorted: &[f64], q: f64) -> f64 {
     let n = sorted.len();
     let pos = q * (n - 1) as f64;

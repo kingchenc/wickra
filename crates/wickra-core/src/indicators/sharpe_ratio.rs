@@ -175,7 +175,7 @@ mod tests {
         // 0.01290994..., Sharpe = 0.025 / 0.01290994 ≈ 1.936491673.
         let mut sr = SharpeRatio::new(4, 0.0).unwrap();
         let out = sr.batch(&[0.01, 0.02, 0.03, 0.04]);
-        let expected = 0.025_f64 / (0.000166_666_666_666_666_67_f64).sqrt();
+        let expected = 0.025_f64 / (0.000_166_666_666_666_666_67_f64).sqrt();
         assert_relative_eq!(out[3].unwrap(), expected, epsilon = 1e-9);
     }
 

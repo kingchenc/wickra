@@ -77,11 +77,7 @@ impl Indicator for RecoveryFactor {
         if !input.is_finite() {
             return self.value();
         }
-        if !self.seen {
-            self.first = input;
-            self.peak = input;
-            self.seen = true;
-        } else {
+        if self.seen {
             if input > self.peak {
                 self.peak = input;
             }
@@ -91,6 +87,10 @@ impl Indicator for RecoveryFactor {
                     self.max_dd = dd;
                 }
             }
+        } else {
+            self.first = input;
+            self.peak = input;
+            self.seen = true;
         }
         self.last = input;
         self.value()
