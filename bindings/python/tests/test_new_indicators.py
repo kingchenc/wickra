@@ -17,13 +17,17 @@ import wickra as ta
 
 
 def _eq_nan(a: np.ndarray, b: np.ndarray, tol: float = 1e-9) -> bool:
-    """Compare two float arrays treating NaN positions as equal."""
+    """Compare two float arrays treating NaN and matching-sign inf positions as equal."""
     a = np.asarray(a, dtype=np.float64)
     b = np.asarray(b, dtype=np.float64)
     if a.shape != b.shape:
         return False
     both_nan = np.isnan(a) & np.isnan(b)
-    return bool(np.all(np.where(both_nan, 0.0, np.abs(a - b)) <= tol))
+    both_inf_same = np.isinf(a) & np.isinf(b) & (np.sign(a) == np.sign(b))
+    skip = both_nan | both_inf_same
+    with np.errstate(invalid="ignore"):
+        diff = np.abs(a - b)
+    return bool(np.all(np.where(skip, 0.0, diff) <= tol))
 
 
 @pytest.fixture

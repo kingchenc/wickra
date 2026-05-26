@@ -119,9 +119,9 @@ const scalarFactories = {
   KellyCriterion: () => new wickra.KellyCriterion(20),
 };
 
-// --- Two-series (asset, benchmark) indicators ---
+// --- Two-series (asset, benchmark) ratio indicators ---
 
-const pairFactories = {
+const ratioPairFactories = {
   TreynorRatio: () => new wickra.TreynorRatio(20, 0),
   InformationRatio: () => new wickra.InformationRatio(20),
   Alpha: () => new wickra.Alpha(20, 0),
@@ -130,7 +130,7 @@ const pairFactories = {
 const asset = Array.from({ length: N }, (_, i) => 0.001 + Math.sin(i * 0.15) * 0.01);
 const bench = Array.from({ length: N }, (_, i) => 0.001 + Math.sin(i * 0.15) * 0.007);
 
-for (const [name, make] of Object.entries(pairFactories)) {
+for (const [name, make] of Object.entries(ratioPairFactories)) {
   test(`${name}: streaming update matches batch (pair)`, () => {
     const batch = make().batch(asset, bench);
     const streaming = make();
