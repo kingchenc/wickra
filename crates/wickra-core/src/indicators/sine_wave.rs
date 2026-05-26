@@ -218,11 +218,13 @@ mod tests {
 
     #[test]
     fn flat_input_uses_phase_fallback() {
-        // A constant series leaves the detrender chain at zero, so the `i1`
-        // arm is `i1.abs() <= EPSILON` for every bar and the phase calculation
-        // takes the `self.last_phase` fallback rather than `atan(q1/i1)`.
+        // Zero inputs make every smooth/detrender term arithmetically exact
+        // zero (no IEEE-754 cancellation residue), so `i1 == 0.0` and the
+        // phase calculation deterministically takes the `self.last_phase`
+        // fallback rather than `atan(q1/i1)`. A non-zero constant like
+        // `100.0` leaves a sub-EPSILON residue that flips the branch back.
         let mut sw = SineWave::new();
-        let _ = sw.batch(&[100.0_f64; 120]);
+        let _ = sw.batch(&[0.0_f64; 120]);
         assert!(sw.value().is_some());
     }
 }
