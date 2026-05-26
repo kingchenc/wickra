@@ -17,13 +17,17 @@ import wickra as ta
 
 
 def _eq_nan(a: np.ndarray, b: np.ndarray, tol: float = 1e-9) -> bool:
-    """Compare two float arrays treating NaN positions as equal."""
+    """Compare two float arrays treating NaN and matching-sign inf positions as equal."""
     a = np.asarray(a, dtype=np.float64)
     b = np.asarray(b, dtype=np.float64)
     if a.shape != b.shape:
         return False
     both_nan = np.isnan(a) & np.isnan(b)
-    return bool(np.all(np.where(both_nan, 0.0, np.abs(a - b)) <= tol))
+    both_inf_same = np.isinf(a) & np.isinf(b) & (np.sign(a) == np.sign(b))
+    skip = both_nan | both_inf_same
+    with np.errstate(invalid="ignore"):
+        diff = np.abs(a - b)
+    return bool(np.all(np.where(skip, 0.0, diff) <= tol))
 
 
 @pytest.fixture
@@ -106,6 +110,22 @@ SCALAR = [
     (ta.MedianAbsoluteDeviation, (20,)),
     (ta.Autocorrelation, (20, 1)),
     (ta.HurstExponent, (40, 4)),
+    # Family 15 — Risk / Performance (scalar f64 input = period return or
+    # equity sample).
+    (ta.SharpeRatio, (20, 0.0)),
+    (ta.SortinoRatio, (20, 0.0)),
+    (ta.CalmarRatio, (20,)),
+    (ta.OmegaRatio, (20, 0.0)),
+    (ta.MaxDrawdown, (20,)),
+    (ta.AverageDrawdown, (20,)),
+    (ta.DrawdownDuration, ()),
+    (ta.PainIndex, (20,)),
+    (ta.ValueAtRisk, (20, 0.95)),
+    (ta.ConditionalValueAtRisk, (20, 0.95)),
+    (ta.ProfitFactor, (20,)),
+    (ta.GainLossRatio, (20,)),
+    (ta.RecoveryFactor, ()),
+    (ta.KellyCriterion, (20,)),
 ]
 
 
@@ -129,6 +149,31 @@ def test_scalar_streaming_matches_batch(cls, args, sine_prices):
     streamed = []
     for p in sine_prices:
         v = streamer.update(float(p))
+        streamed.append(math.nan if v is None else float(v))
+    assert _eq_nan(batch, np.array(streamed, dtype=np.float64))
+
+
+# --- Two-series (asset, benchmark) indicators -----------------------------
+
+PAIR = [
+    (ta.TreynorRatio, (20, 0.0)),
+    (ta.InformationRatio, (20,)),
+    (ta.Alpha, (20, 0.0)),
+]
+
+
+@pytest.mark.parametrize("cls, args", PAIR, ids=[c.__name__ for c, _ in PAIR])
+def test_pair_streaming_matches_batch(cls, args, sine_prices):
+    asset = np.ascontiguousarray(sine_prices.astype(np.float64))
+    bench = np.ascontiguousarray((sine_prices * 0.7 + 0.001).astype(np.float64))
+    batch = cls(*args).batch(asset, bench)
+    assert batch.shape == asset.shape
+    assert batch.dtype == np.float64
+
+    streamer = cls(*args)
+    streamed = []
+    for a, b in zip(asset, bench):
+        v = streamer.update(float(a), float(b))
         streamed.append(math.nan if v is None else float(v))
     assert _eq_nan(batch, np.array(streamed, dtype=np.float64))
 

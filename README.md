@@ -109,7 +109,7 @@ python -m benchmarks.compare_libraries
 
 ## Indicators
 
-196 streaming-first indicators across fifteen families. Every one passes the
+213 streaming-first indicators across sixteen families. Every one passes the
 `batch == streaming` equivalence test, reference-value tests, and reset
 semantics tests.
 
@@ -130,6 +130,7 @@ semantics tests.
 | Ichimoku & Charts    | Ichimoku Kinko Hyo (Tenkan, Kijun, Senkou A/B, Chikou), Heikin-Ashi |
 | Candlestick Patterns | Doji, Hammer, Inverted Hammer, Hanging Man, Shooting Star, Engulfing, Harami, Morning/Evening Star, Three White Soldiers/Black Crows, Piercing Line/Dark Cloud Cover, Marubozu, Tweezer, Spinning Top, Three Inside Up/Down, Three Outside Up/Down |
 | Market Profile       | Value Area (POC / VAH / VAL), Initial Balance, Opening Range |
+| Risk / Performance   | Sharpe Ratio, Sortino Ratio, Calmar Ratio, Omega Ratio, Max Drawdown, Average Drawdown, Drawdown Duration, Pain Index, Value at Risk, Conditional Value at Risk (CVaR), Profit Factor, Gain/Loss Ratio, Recovery Factor, Kelly Criterion, Treynor Ratio, Information Ratio, Alpha (Jensen) |
 
 Adding a new indicator means implementing one trait in Rust; all four bindings
 inherit it automatically.
@@ -202,7 +203,7 @@ A Python live-trading example using the public `websockets` package lives at
 ```
 wickra/
 ├── crates/
-│   ├── wickra-core/         core engine + all 196 indicators
+│   ├── wickra-core/         core engine + all 213 indicators
 │   ├── wickra/              top-level facade crate (publishes on crates.io) + benches/
 │   └── wickra-data/         CSV reader, tick aggregator, live exchange feeds
 ├── bindings/

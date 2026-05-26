@@ -20,22 +20,23 @@ use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Through
 use std::hint::black_box;
 use wickra::{
     AccelerationBands, AdOscillator, AdaptiveCycle, Adxr, Alma, AnchoredVwap, Atr, AtrBands,
-    Autocorrelation, BatchExt, BollingerBands, Camarilla, Candle, CenterOfGravity, ClassicPivots,
-    CoefficientOfVariation, CyberneticCycle, Decycler, DecyclerOscillator, DemandIndex,
-    DemarkPivots, DetrendedStdDev, Doji, DonchianStop, DoubleBollinger, EhlersStochastic, Ema,
-    EmpiricalModeDecomposition, Engulfing, Fama, FibonacciPivots, FisherTransform,
-    FractalChaosBands, Frama, GarmanKlassVolatility, Hammer, HeikinAshi, HiLoActivator,
-    HilbertDominantCycle, HurstChannel, HurstExponent, Ichimoku, Indicator, InitialBalance,
-    InstantaneousTrendline, InverseFisherTransform, Jma, Kst, Kurtosis, Kvo, LinRegChannel,
-    MaEnvelope, MacdIndicator, Mama, MarketFacilitationIndex, McGinleyDynamic,
-    MedianAbsoluteDeviation, MorningEveningStar, Nvi, Obv, OpeningRange, ParkinsonVolatility,
-    PercentageTrailingStop, Pgo, Pvi, RSquared, RenkoTrailingStop, RogersSatchellVolatility,
-    RoofingFilter, Rsi, Rvi, RviVolatility, Rwi, SineWave, Skewness, Sma, StandardError,
-    StandardErrorBands, StarcBands, StepTrailingStop, Stochastic, SuperSmoother, TdCombo,
-    TdCountdown, TdDeMarker, TdDifferential, TdLines, TdOpen, TdPressure, TdRangeProjection, TdRei,
-    TdRiskLevel, TdSequential, TdSetup, ThreeInside, Tii, Tsv, TtmSqueeze, ValueArea, Variance,
-    Vidya, VoltyStop, VolumeOscillator, VwapStdDevBands, Vzo, WaveTrend, WilliamsFractals, Wma,
-    WoodiePivots, YangZhangVolatility, YoyoExit, ZigZag,
+    Autocorrelation, BatchExt, BollingerBands, CalmarRatio, Camarilla, Candle, CenterOfGravity,
+    ClassicPivots, CoefficientOfVariation, CyberneticCycle, Decycler, DecyclerOscillator,
+    DemandIndex, DemarkPivots, DetrendedStdDev, Doji, DonchianStop, DoubleBollinger,
+    EhlersStochastic, Ema, EmpiricalModeDecomposition, Engulfing, Fama, FibonacciPivots,
+    FisherTransform, FractalChaosBands, Frama, GarmanKlassVolatility, Hammer, HeikinAshi,
+    HiLoActivator, HilbertDominantCycle, HurstChannel, HurstExponent, Ichimoku, Indicator,
+    InitialBalance, InstantaneousTrendline, InverseFisherTransform, Jma, Kst, Kurtosis, Kvo,
+    LinRegChannel, MaEnvelope, MacdIndicator, Mama, MarketFacilitationIndex, MaxDrawdown,
+    McGinleyDynamic, MedianAbsoluteDeviation, MorningEveningStar, Nvi, Obv, OpeningRange,
+    ParkinsonVolatility, PercentageTrailingStop, Pgo, ProfitFactor, Pvi, RSquared,
+    RenkoTrailingStop, RogersSatchellVolatility, RoofingFilter, Rsi, Rvi, RviVolatility, Rwi,
+    SharpeRatio, SineWave, Skewness, Sma, StandardError, StandardErrorBands, StarcBands,
+    StepTrailingStop, Stochastic, SuperSmoother, TdCombo, TdCountdown, TdDeMarker, TdDifferential,
+    TdLines, TdOpen, TdPressure, TdRangeProjection, TdRei, TdRiskLevel, TdSequential, TdSetup,
+    ThreeInside, Tii, Tsv, TtmSqueeze, ValueArea, ValueAtRisk, Variance, Vidya, VoltyStop,
+    VolumeOscillator, VwapStdDevBands, Vzo, WaveTrend, WilliamsFractals, Wma, WoodiePivots,
+    YangZhangVolatility, YoyoExit, ZigZag,
 };
 use wickra_data::csv::CandleReader;
 
@@ -407,6 +408,21 @@ fn benches(c: &mut Criterion) {
     });
     bench_candle_input(c, "opening_range", &candles, || {
         OpeningRange::new(6).unwrap()
+    });
+
+    // --- Family 15: Risk / Performance Metrics ---
+    // Close-prices stand in for the equity curve / return stream; absolute
+    // numbers aren't meaningful here — what matters is the per-update cost.
+    bench_scalar(c, "sharpe_ratio", &closes, || {
+        SharpeRatio::new(20, 0.0).unwrap()
+    });
+    bench_scalar(c, "max_drawdown", &closes, || MaxDrawdown::new(20).unwrap());
+    bench_scalar(c, "profit_factor", &closes, || {
+        ProfitFactor::new(20).unwrap()
+    });
+    bench_scalar(c, "calmar_ratio", &closes, || CalmarRatio::new(20).unwrap());
+    bench_scalar(c, "value_at_risk", &closes, || {
+        ValueAtRisk::new(50, 0.95).unwrap()
     });
 }
 

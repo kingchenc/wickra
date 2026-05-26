@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Family 15 — Risk / Performance metrics (17 new indicators).** Implemented
+  pragmatically as standard `Indicator`s rather than a separate
+  `wickra-metrics` crate; the input is a scalar `f64` per bar (period return,
+  equity sample, or trade P&L depending on the metric).
+  - **Scalar `Indicator<f64>` — 14 metrics:** Sharpe Ratio, Sortino Ratio,
+    Calmar Ratio, Omega Ratio, Max Drawdown (rolling), Average Drawdown,
+    Drawdown Duration (time-under-water), Pain Index, Value at Risk
+    (historical, linear-interpolated percentile), Conditional Value at Risk
+    (Expected Shortfall), Profit Factor, Gain/Loss Ratio, Recovery Factor,
+    Kelly Criterion.
+  - **Two-series `Indicator<(f64, f64)>` — 3 metrics on `(asset_return,
+    benchmark_return)` pairs:** Treynor Ratio, Information Ratio,
+    Jensen's Alpha (CAPM).
 - **Candlestick patterns family (15 indicators).** A new "Candlestick
   Patterns" family covers the standard 1- to 3-bar reversal and
   continuation shapes: `Doji`, `Hammer`, `InvertedHammer`, `HangingMan`,

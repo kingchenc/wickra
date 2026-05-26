@@ -15,18 +15,20 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    AdaptiveCycle, Alma, Apo, Autocorrelation, BatchExt, Beta, BollingerBands, CenterOfGravity,
-    Cfo, Cmo, CoefficientOfVariation, ConnorsRsi, Coppock, CyberneticCycle, Decycler,
-    DecyclerOscillator, Dema, DetrendedStdDev, DoubleBollinger, Dpo, EhlersStochastic,
-    ElderImpulse, Ema, EmpiricalModeDecomposition, Fama, FisherTransform, Frama,
-    HilbertDominantCycle, HistoricalVolatility, Hma, HurstExponent, Indicator,
-    InstantaneousTrendline, InverseFisherTransform, Jma, Kama, Kst, Kurtosis, LaguerreRsi,
-    LinRegAngle, LinRegChannel, LinRegSlope, LinearRegression, MaEnvelope, MacdIndicator, Mama,
-    McGinleyDynamic, MedianAbsoluteDeviation, Mom, PearsonCorrelation, PercentageTrailingStop,
-    Pmo, Ppo, RSquared, RenkoTrailingStop, Roc, RoofingFilter, Rsi, RviVolatility, SineWave,
-    Skewness, Sma, Smma, SpearmanCorrelation, StandardError, StandardErrorBands, Stc, StdDev,
-    StepTrailingStop, StochRsi, SuperSmoother, T3, Tema, Tii, Trima, Trix, Tsi, UlcerIndex,
-    Variance, VerticalHorizontalFilter, Vidya, Wma, ZScore, ZeroLagMacd, Zlema,
+    AdaptiveCycle, Alma, Apo, Autocorrelation, AverageDrawdown, BatchExt, Beta, BollingerBands,
+    CalmarRatio, CenterOfGravity, Cfo, Cmo, CoefficientOfVariation, ConditionalValueAtRisk,
+    ConnorsRsi, Coppock, CyberneticCycle, Decycler, DecyclerOscillator, Dema, DetrendedStdDev,
+    DoubleBollinger, Dpo, DrawdownDuration, EhlersStochastic, ElderImpulse, Ema,
+    EmpiricalModeDecomposition, Fama, FisherTransform, Frama, GainLossRatio, HilbertDominantCycle,
+    HistoricalVolatility, Hma, HurstExponent, Indicator, InstantaneousTrendline,
+    InverseFisherTransform, Jma, Kama, KellyCriterion, Kst, Kurtosis, LaguerreRsi, LinRegAngle,
+    LinRegChannel, LinRegSlope, LinearRegression, MaEnvelope, MacdIndicator, Mama, MaxDrawdown,
+    McGinleyDynamic, MedianAbsoluteDeviation, Mom, OmegaRatio, PainIndex, PearsonCorrelation,
+    PercentageTrailingStop, Pmo, Ppo, ProfitFactor, RSquared, RecoveryFactor, RenkoTrailingStop,
+    Roc, RoofingFilter, Rsi, RviVolatility, SharpeRatio, SineWave, Skewness, Sma, Smma,
+    SortinoRatio, SpearmanCorrelation, StandardError, StandardErrorBands, Stc, StdDev,
+    StepTrailingStop, StochRsi, SuperSmoother, Tema, Tii, Trima, Trix, Tsi, UlcerIndex,
+    ValueAtRisk, Variance, VerticalHorizontalFilter, Vidya, Wma, ZScore, ZeroLagMacd, Zlema, T3,
 };
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
@@ -145,6 +147,37 @@ fuzz_target!(|data: Vec<f64>| {
     drive(AdaptiveCycle::new, &data);
     drive(SineWave::new, &data);
     drive(|| Fama::new(0.5, 0.05).unwrap(), &data);
+
+    // Family 15 — Risk / Performance metrics (scalar inputs).
+    drive(|| SharpeRatio::new(20, 0.0).unwrap(), &data);
+    drive(|| SortinoRatio::new(20, 0.0).unwrap(), &data);
+    drive(|| CalmarRatio::new(20).unwrap(), &data);
+    drive(|| OmegaRatio::new(20, 0.0).unwrap(), &data);
+    drive(|| MaxDrawdown::new(20).unwrap(), &data);
+    drive(|| AverageDrawdown::new(20).unwrap(), &data);
+    drive(|| PainIndex::new(20).unwrap(), &data);
+    drive(|| ValueAtRisk::new(20, 0.95).unwrap(), &data);
+    drive(|| ConditionalValueAtRisk::new(20, 0.95).unwrap(), &data);
+    drive(|| ProfitFactor::new(20).unwrap(), &data);
+    drive(|| GainLossRatio::new(20).unwrap(), &data);
+    drive(|| KellyCriterion::new(20).unwrap(), &data);
+
+    // RecoveryFactor and DrawdownDuration produce non-`f64` outputs / have
+    // no `period` knob, so they cannot use the `drive` helper directly.
+    {
+        let mut rf = RecoveryFactor::new();
+        for &x in &data {
+            let _ = rf.update(x);
+        }
+        let _ = RecoveryFactor::new().batch(&data);
+    }
+    {
+        let mut dd = DrawdownDuration::new();
+        for &x in &data {
+            let _ = dd.update(x);
+        }
+        let _ = DrawdownDuration::new().batch(&data);
+    }
 
     // MACD, Bollinger Bands and MAMA have non-`f64` outputs, so they cannot
     // use the generic `drive` helper above. Streaming + batch are still both
