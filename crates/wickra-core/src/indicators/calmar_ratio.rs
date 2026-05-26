@@ -96,11 +96,10 @@ impl Indicator for CalmarRatio {
             if equity > peak {
                 peak = equity;
             }
-            if peak > 0.0 {
-                let dd = (peak - equity) / peak;
-                if dd > mdd {
-                    mdd = dd;
-                }
+            // peak starts at 1.0 and never decreases, so peak > 0 by construction.
+            let dd = (peak - equity) / peak;
+            if dd > mdd {
+                mdd = dd;
             }
         }
         if mdd == 0.0 {

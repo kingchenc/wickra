@@ -214,4 +214,14 @@ mod tests {
         let streamed: Vec<_> = returns.iter().map(|r| s.update(*r)).collect();
         assert_eq!(batch, streamed);
     }
+
+    #[test]
+    fn integer_position_quantile_branch() {
+        // period=5, confidence=0.75 -> q=0.25, n-1=4 -> pos=1.0 (integer),
+        // so the percentile helper takes the `lo == hi` branch.
+        let mut v = ValueAtRisk::new(5, 0.75).unwrap();
+        let out = v.batch(&[-0.05, -0.04, -0.03, -0.02, -0.01]);
+        // sorted = same order; sorted[1] = -0.04, so VaR = 0.04 exactly.
+        assert_relative_eq!(out[4].unwrap(), 0.04, epsilon = 1e-12);
+    }
 }

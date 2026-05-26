@@ -208,4 +208,17 @@ mod tests {
         let streamed: Vec<_> = inputs.iter().map(|x| s.update(*x)).collect();
         assert_eq!(batch, streamed);
     }
+
+    #[test]
+    fn zero_beta_returns_zero() {
+        // Constant asset returns vs varying benchmark force cov(a,b) = 0,
+        // hence beta = 0 — the explicit zero-beta short-circuit.
+        let mut t = TreynorRatio::new(4, 0.0).unwrap();
+        let pairs: [(f64, f64); 4] = [(0.01, 0.005), (0.01, -0.002), (0.01, 0.001), (0.01, 0.003)];
+        let mut last = None;
+        for p in pairs {
+            last = t.update(p);
+        }
+        assert_eq!(last, Some(0.0));
+    }
 }

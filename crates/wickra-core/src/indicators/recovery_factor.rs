@@ -197,4 +197,16 @@ mod tests {
         let streamed: Vec<_> = prices.iter().map(|p| s.update(*p)).collect();
         assert_eq!(batch, streamed);
     }
+
+    #[test]
+    fn non_positive_peak_skips_drawdown_calc() {
+        // All inputs <= 0 keep `peak` non-positive, so the guarded drawdown
+        // computation is skipped on every step. Exercises the `else` branch
+        // of `if self.peak > 0.0`.
+        let mut r = RecoveryFactor::new();
+        assert_eq!(r.update(-1.0), Some(0.0));
+        assert_eq!(r.update(-2.0), Some(0.0));
+        assert_eq!(r.update(-0.5), Some(0.0));
+        assert!(r.is_ready());
+    }
 }
