@@ -230,6 +230,20 @@ mod tests {
         }
     }
 
+    /// Cover the `100.0` branch (line 169) of the test-helper `rsi_naive`:
+    /// strictly increasing prices give `avg_loss == 0` while `avg_gain > 0`,
+    /// the textbook overbought saturation case. Random proptest inputs
+    /// virtually never satisfy `al == 0 && ag != 0`, so this needs an
+    /// explicit monotone series.
+    #[test]
+    fn naive_helper_monotone_up_yields_100() {
+        let prices: Vec<f64> = (1..=20).map(f64::from).collect();
+        let ks = rsi_naive(&prices, 5);
+        for r in ks.into_iter().skip(5) {
+            assert_eq!(r.expect("ready after period+1 inputs"), 100.0);
+        }
+    }
+
     #[test]
     fn warmup_period_is_period_plus_one() {
         let rsi = Rsi::new(14).unwrap();

@@ -369,13 +369,13 @@ mod tests {
 
     #[test]
     fn flat_input_uses_phase_fallback() {
-        // A perfectly constant series leaves every smooth/detrender slot at
-        // the same value, so `i1` collapses to zero and the phase calc takes
-        // the `self.prev_phase` fallback rather than `atan(q1/i1)`. Stretch
-        // the run long enough to clear the 50-bar warmup with comfortable
-        // margin and confirm the indicator still emits.
+        // Zero inputs make every smooth/detrender term arithmetically exact
+        // zero, so `i1 == 0.0` and the phase calculation takes the
+        // `self.prev_phase` fallback rather than `atan(q1/i1)`. A non-zero
+        // constant like `50.0` leaves a sub-EPSILON cancellation residue
+        // that flips the branch back to the `atan` path on real hardware.
         let mut mama = Mama::classic();
-        let out = mama.batch(&[50.0_f64; 200]);
+        let out = mama.batch(&[0.0_f64; 200]);
         assert!(out.iter().flatten().count() > 100);
     }
 }
