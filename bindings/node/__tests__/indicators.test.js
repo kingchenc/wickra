@@ -17,6 +17,7 @@ const open = close.map((c) => c - 0.5);
 
 function eq(a, b) {
   if (Number.isNaN(a)) return Number.isNaN(b);
+  if (!Number.isFinite(a) || !Number.isFinite(b)) return a === b;
   return Math.abs(a - b) < 1e-9;
 }
 
