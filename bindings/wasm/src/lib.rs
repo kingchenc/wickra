@@ -6564,9 +6564,12 @@ mod tests {
 
     #[wasm_bindgen_test]
     fn reset_returns_indicator_to_warmup() {
-        // Sanity across three different indicator shapes: scalar, candle,
-        // multi-output. Each must report `is_ready() == false` immediately
-        // after `reset()`.
+        // Sanity across two macro-generated scalar indicators. Each must
+        // report `is_ready() == false` immediately after `reset()`. The
+        // hand-coded candle wrappers (ATR, Stoch, etc.) do not expose
+        // `is_ready` on the JS surface; their lifecycle is covered by
+        // the bulk `candle_input_streaming_matches_batch_and_lifecycle`
+        // test above instead.
         let mut sma = WasmSma::new(5).expect("valid");
         for i in 1..=10 {
             sma.update(f64::from(i));
@@ -6575,14 +6578,13 @@ mod tests {
         sma.reset();
         assert!(!sma.is_ready());
 
-        let mut atr = WasmAtr::new(14).expect("valid");
+        let mut ema = WasmEma::new(14).expect("valid");
         for i in 1..=20 {
-            let t = f64::from(i);
-            atr.update(t + 1.0, t - 1.0, t).ok();
+            ema.update(f64::from(i));
         }
-        assert!(atr.is_ready());
-        atr.reset();
-        assert!(!atr.is_ready());
+        assert!(ema.is_ready());
+        ema.reset();
+        assert!(!ema.is_ready());
     }
 
     #[wasm_bindgen_test]
