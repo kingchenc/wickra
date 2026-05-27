@@ -6465,11 +6465,14 @@ mod tests {
             .map(|i| 100.0 + (f64::from(i) * 0.3).sin() * 5.0)
             .collect();
         let batch = WasmBb::new(20, 2.0).expect("valid").batch(&prices);
-        // Bollinger batch packs three values per bar; check the first ready bar (index 19).
-        let start = 19 * 3;
+        // Batch layout is `[u0, m0, l0, sd0, u1, m1, l1, sd1, ...]` — four
+        // floats per bar (upper / middle / lower / stddev). First ready bar
+        // with period=20 is index 19.
+        let start = 19 * 4;
         let upper = batch.get_index(start as u32);
         let middle = batch.get_index((start + 1) as u32);
         let lower = batch.get_index((start + 2) as u32);
+        assert!(upper.is_finite() && middle.is_finite() && lower.is_finite());
         assert!(
             upper >= middle,
             "upper {upper} should be >= middle {middle}"
