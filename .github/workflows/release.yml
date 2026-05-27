@@ -384,10 +384,10 @@ jobs:
           node -e "
             const fs = require('fs');
             const pkg = JSON.parse(fs.readFileSync('package.json'));
-            pkg.author = 'kingchenc <kingchencp@gmail.com>';
-            pkg.repository = { type: 'git', url: 'https://github.com/kingchenc/wickra' };
-            pkg.homepage = 'https://github.com/kingchenc/wickra';
-            pkg.bugs = { url: 'https://github.com/kingchenc/wickra/issues' };
+            pkg.author = 'kingchenc <wickra.lib@gmail.com>';
+            pkg.repository = { type: 'git', url: 'https://github.com/wickra-lib/wickra' };
+            pkg.homepage = 'https://github.com/wickra-lib/wickra';
+            pkg.bugs = { url: 'https://github.com/wickra-lib/wickra/issues' };
             pkg.license = 'PolyForm-Noncommercial-1.0.0';
             fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
           "
