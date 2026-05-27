@@ -7,7 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.8] - 2026-05-27
+
+### Changed
+- **GitHub org migrated from `kingchenc` to `wickra-lib`.** All repository URLs
+  in badges, manifests, READMEs, license notice, and CHANGELOG compare links
+  now point at `https://github.com/wickra-lib/wickra`. Maintainer contact
+  email switched to `wickra.lib@gmail.com` (SECURITY.md and
+  CODE_OF_CONDUCT.md). Package names on crates.io / PyPI / npm are
+  unchanged. GitHub's automatic 301-redirects keep the old URLs working,
+  but new references should use the new ones.
+
 ### Added
+- **`wickra_core::FAMILIES` constant.** A machine-readable `&[(&str, &[&str])]`
+  taxonomy that maps each built-in indicator to one of 16 families. Comes
+  with two compile-time guards (`no_duplicates_across_families`,
+  `total_count_matches_expected`) so the table cannot drift silently as
+  new indicators are added.
+- **`repo-metadata.toml` + `.github/workflows/sync-metadata.yml`** — single
+  source of truth for repo identity (org, email, canonical URLs) plus an
+  audit workflow that fails CI if any tracked file drifts back to a
+  pre-migration value.
 - **Family 15 — Risk / Performance metrics (17 new indicators).** Implemented
   pragmatically as standard `Indicator`s rather than a separate
   `wickra-metrics` crate; the input is a scalar `f64` per bar (period return,
@@ -817,7 +837,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/kingchenc/wickra/compare/v0.2.7...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.2.8...HEAD
+[0.2.8]: https://github.com/wickra-lib/wickra/compare/v0.2.7...v0.2.8
 [0.2.7]: https://github.com/kingchenc/wickra/compare/v0.2.6...v0.2.7
 [0.2.6]: https://github.com/kingchenc/wickra/compare/v0.2.5...v0.2.6
 [0.2.5]: https://github.com/kingchenc/wickra/compare/v0.2.1...v0.2.5
