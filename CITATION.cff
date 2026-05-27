@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+title: Wickra
+message: >-
+  If you use Wickra in academic work, please cite it using the metadata
+  below.
+type: software
+authors:
+  - alias: kingchenc
+    email: wickra.lib@gmail.com
+repository-code: "https://github.com/wickra-lib/wickra"
+url: "https://wickra.org"
+abstract: >-
+  Wickra is a streaming-first technical-analysis library implemented in
+  Rust with bindings for Python, Node.js and WebAssembly. Each indicator
+  is a state machine that updates in constant time per new input, so
+  identical code paths serve live-trading workloads and historical
+  back-testing. The library covers 214 indicators across 16 families
+  (moving averages, momentum, volatility, volume, statistics, Ehlers
+  digital-signal-processing cycles, pivots, DeMark, Ichimoku, candlestick
+  patterns, market profile, and risk/performance metrics).
+keywords:
+  - technical-analysis
+  - technical-indicators
+  - streaming
+  - algorithmic-trading
+  - quantitative-finance
+  - rust
+  - time-series
+license: PolyForm-Noncommercial-1.0.0
