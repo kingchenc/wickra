@@ -1,7 +1,7 @@
 //! Built-in indicators. Every indicator implements [`crate::Indicator`].
 //!
-//! Modules are organised internally by category (trend, momentum, volatility,
-//! volume) but every public name is also re-exported flat from this module and
+//! Modules are listed alphabetically; the canonical family taxonomy lives in
+//! [`FAMILIES`]. Every public name is re-exported flat from this module and
 //! from the crate root for convenience.
 
 mod acceleration_bands;
@@ -431,3 +431,326 @@ pub use z_score::ZScore;
 pub use zero_lag_macd::{ZeroLagMacd, ZeroLagMacdOutput};
 pub use zig_zag::{ZigZag, ZigZagOutput};
 pub use zlema::Zlema;
+
+/// Family classification of every built-in indicator. The (family,
+/// indicators) list is the single source of truth used by `family_tests`
+/// below; README and Wiki taxonomy tables should be kept in sync with it.
+///
+/// Each indicator appears in exactly one family. Names are the public
+/// struct identifiers re-exported from this module (and the crate root).
+pub const FAMILIES: &[(&str, &[&str])] = &[
+    (
+        "Moving Averages",
+        &[
+            "Sma",
+            "Ema",
+            "Wma",
+            "Dema",
+            "Tema",
+            "Hma",
+            "Kama",
+            "Smma",
+            "Trima",
+            "Zlema",
+            "T3",
+            "Vwma",
+            "Alma",
+            "McGinleyDynamic",
+            "Frama",
+            "Vidya",
+            "Jma",
+            "Alligator",
+            "Evwma",
+        ],
+    ),
+    (
+        "Momentum Oscillators",
+        &[
+            "Rsi",
+            "Stochastic",
+            "Cci",
+            "Roc",
+            "WilliamsR",
+            "Mfi",
+            "AwesomeOscillator",
+            "Mom",
+            "Cmo",
+            "Tsi",
+            "Pmo",
+            "StochRsi",
+            "UltimateOscillator",
+            "Rvi",
+            "Pgo",
+            "Kst",
+            "Smi",
+            "LaguerreRsi",
+            "ConnorsRsi",
+            "Inertia",
+        ],
+    ),
+    (
+        "Trend & Directional",
+        &[
+            "MacdIndicator",
+            "Adx",
+            "Adxr",
+            "Aroon",
+            "Trix",
+            "AroonOscillator",
+            "Vortex",
+            "Rwi",
+            "Tii",
+            "WaveTrend",
+            "MassIndex",
+            "ChoppinessIndex",
+            "VerticalHorizontalFilter",
+        ],
+    ),
+    (
+        "Price Oscillators",
+        &[
+            "Ppo",
+            "Dpo",
+            "Coppock",
+            "AcceleratorOscillator",
+            "BalanceOfPower",
+            "Apo",
+            "AwesomeOscillatorHistogram",
+            "Cfo",
+            "ZeroLagMacd",
+            "ElderImpulse",
+            "Stc",
+        ],
+    ),
+    (
+        "Volatility & Bands",
+        &[
+            "Atr",
+            "BollingerBands",
+            "Keltner",
+            "Donchian",
+            "Natr",
+            "StdDev",
+            "UlcerIndex",
+            "HistoricalVolatility",
+            "BollingerBandwidth",
+            "PercentB",
+            "TrueRange",
+            "ChaikinVolatility",
+            "RviVolatility",
+            "ParkinsonVolatility",
+            "GarmanKlassVolatility",
+            "RogersSatchellVolatility",
+            "YangZhangVolatility",
+        ],
+    ),
+    (
+        "Bands & Channels",
+        &[
+            "MaEnvelope",
+            "AccelerationBands",
+            "StarcBands",
+            "AtrBands",
+            "HurstChannel",
+            "LinRegChannel",
+            "StandardErrorBands",
+            "DoubleBollinger",
+            "TtmSqueeze",
+            "FractalChaosBands",
+            "VwapStdDevBands",
+        ],
+    ),
+    (
+        "Trailing Stops",
+        &[
+            "Psar",
+            "SuperTrend",
+            "ChandelierExit",
+            "ChandeKrollStop",
+            "AtrTrailingStop",
+            "HiLoActivator",
+            "VoltyStop",
+            "YoyoExit",
+            "DonchianStop",
+            "PercentageTrailingStop",
+            "StepTrailingStop",
+            "RenkoTrailingStop",
+        ],
+    ),
+    (
+        "Volume",
+        &[
+            "Obv",
+            "Vwap",
+            "RollingVwap",
+            "Adl",
+            "VolumePriceTrend",
+            "ChaikinMoneyFlow",
+            "ChaikinOscillator",
+            "ForceIndex",
+            "EaseOfMovement",
+            "Kvo",
+            "VolumeOscillator",
+            "Nvi",
+            "Pvi",
+            "AdOscillator",
+            "AnchoredVwap",
+            "DemandIndex",
+            "Tsv",
+            "Vzo",
+            "MarketFacilitationIndex",
+        ],
+    ),
+    (
+        "Price Statistics",
+        &[
+            "TypicalPrice",
+            "MedianPrice",
+            "WeightedClose",
+            "LinearRegression",
+            "LinRegSlope",
+            "ZScore",
+            "LinRegAngle",
+            "Variance",
+            "CoefficientOfVariation",
+            "Skewness",
+            "Kurtosis",
+            "StandardError",
+            "DetrendedStdDev",
+            "RSquared",
+            "MedianAbsoluteDeviation",
+            "Autocorrelation",
+            "HurstExponent",
+            "PearsonCorrelation",
+            "Beta",
+            "SpearmanCorrelation",
+        ],
+    ),
+    (
+        "Ehlers / Cycle (DSP)",
+        &[
+            "Mama",
+            "Fama",
+            "FisherTransform",
+            "InverseFisherTransform",
+            "SuperSmoother",
+            "HilbertDominantCycle",
+            "SineWave",
+            "Decycler",
+            "DecyclerOscillator",
+            "RoofingFilter",
+            "CenterOfGravity",
+            "CyberneticCycle",
+            "AdaptiveCycle",
+            "EmpiricalModeDecomposition",
+            "EhlersStochastic",
+            "InstantaneousTrendline",
+        ],
+    ),
+    (
+        "Pivots & S/R",
+        &[
+            "ClassicPivots",
+            "FibonacciPivots",
+            "Camarilla",
+            "WoodiePivots",
+            "DemarkPivots",
+            "WilliamsFractals",
+            "ZigZag",
+        ],
+    ),
+    (
+        "DeMark",
+        &[
+            "TdSetup",
+            "TdSequential",
+            "TdDeMarker",
+            "TdRei",
+            "TdPressure",
+            "TdCombo",
+            "TdCountdown",
+            "TdLines",
+            "TdRangeProjection",
+            "TdDifferential",
+            "TdOpen",
+            "TdRiskLevel",
+        ],
+    ),
+    ("Ichimoku & Charts", &["Ichimoku", "HeikinAshi"]),
+    (
+        "Candlestick Patterns",
+        &[
+            "Doji",
+            "Hammer",
+            "InvertedHammer",
+            "HangingMan",
+            "ShootingStar",
+            "Engulfing",
+            "Harami",
+            "MorningEveningStar",
+            "ThreeSoldiersOrCrows",
+            "PiercingDarkCloud",
+            "Marubozu",
+            "Tweezer",
+            "SpinningTop",
+            "ThreeInside",
+            "ThreeOutside",
+        ],
+    ),
+    (
+        "Market Profile",
+        &["ValueArea", "InitialBalance", "OpeningRange"],
+    ),
+    (
+        "Risk / Performance",
+        &[
+            "SharpeRatio",
+            "SortinoRatio",
+            "CalmarRatio",
+            "OmegaRatio",
+            "MaxDrawdown",
+            "AverageDrawdown",
+            "DrawdownDuration",
+            "PainIndex",
+            "ValueAtRisk",
+            "ConditionalValueAtRisk",
+            "ProfitFactor",
+            "GainLossRatio",
+            "RecoveryFactor",
+            "KellyCriterion",
+            "TreynorRatio",
+            "InformationRatio",
+            "Alpha",
+        ],
+    ),
+];
+
+#[cfg(test)]
+mod family_tests {
+    use super::FAMILIES;
+
+    #[test]
+    fn no_duplicates_across_families() {
+        let mut names: Vec<&str> = FAMILIES
+            .iter()
+            .flat_map(|(_, ns)| ns.iter().copied())
+            .collect();
+        let len_before = names.len();
+        names.sort_unstable();
+        names.dedup();
+        assert_eq!(
+            names.len(),
+            len_before,
+            "duplicate indicator across families"
+        );
+    }
+
+    #[test]
+    fn total_count_matches_expected() {
+        // Bump together with new indicators. Drift between this number and
+        // the actual indicator count is the early-warning signal that an
+        // indicator was added without being assigned a family.
+        let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
+        assert_eq!(total, 214, "FAMILIES total drifted from indicator count");
+    }
+}
