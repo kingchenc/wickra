@@ -355,6 +355,30 @@ jobs:
         working-directory: bindings/node
         run: node --test __tests__/
 
+  wasm-test:
+    name: WASM tests (wasm-pack, Node runtime)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable branch, 2026-03-27
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+
+      - name: Install wasm-pack
+        uses: taiki-e/install-action@8fb27f8a4f7eecf8c63a16998e57f9d63eba81f4 # v2
+        with:
+          tool: wasm-pack
+
+      - name: Run wasm-pack tests
+        # `--node` runs the wasm-bindgen-tests inside Node.js without needing
+        # a headless browser. The wasm32 build itself happens transparently.
+        run: wasm-pack test --node bindings/wasm
+
   # The cross-library benchmark has moved to a dedicated scheduled workflow
   # (.github/workflows/bench.yml) — see audit finding R10. It runs nightly
   # at 03:00 UTC and on-demand via `workflow_dispatch`, and is no longer on

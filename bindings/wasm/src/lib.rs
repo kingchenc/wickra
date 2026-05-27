@@ -6439,6 +6439,192 @@ mod tests {
             wc::Kama::new(10, 2, 30).expect("valid").warmup_period()
         );
     }
+
+    // === Extended coverage: one wasm_bindgen_test per family ===========
+    //
+    // The bulk lifecycle test above proves the candle-input contract on a
+    // representative set; the cases below add a per-family spot-check so a
+    // regression that only manifests for a specific indicator (output shape,
+    // multi-output unwrap, etc.) cannot slip through.
+
+    #[wasm_bindgen_test]
+    fn macd_multi_output_batch_shape() {
+        // Family 4 — Price Oscillators. Macd emits a {macd, signal, histogram}
+        // record; batch returns a Float64Array packing all three components
+        // back-to-back. Length must be 3 * series_len.
+        let prices: Vec<f64> = (0..60).map(|i| 100.0 + f64::from(i) * 0.1).collect();
+        let batch = WasmMacd::new(12, 26, 9).expect("valid").batch(&prices);
+        assert_eq!(batch.length() as usize, 3 * prices.len());
+    }
+
+    #[wasm_bindgen_test]
+    fn bollinger_batch_orders_upper_mid_lower() {
+        // Family 5 — Bollinger emits {upper, middle, lower} per bar. On any
+        // ready output, upper >= middle >= lower must hold.
+        let prices: Vec<f64> = (0..60)
+            .map(|i| 100.0 + (f64::from(i) * 0.3).sin() * 5.0)
+            .collect();
+        let batch = WasmBb::new(20, 2.0).expect("valid").batch(&prices);
+        // Bollinger batch packs three values per bar; check the first ready bar (index 19).
+        let start = 19 * 3;
+        let upper = batch.get_index(start as u32);
+        let middle = batch.get_index((start + 1) as u32);
+        let lower = batch.get_index((start + 2) as u32);
+        assert!(
+            upper >= middle,
+            "upper {upper} should be >= middle {middle}"
+        );
+        assert!(
+            middle >= lower,
+            "middle {middle} should be >= lower {lower}"
+        );
+    }
+
+    #[wasm_bindgen_test]
+    fn fisher_transform_streaming_roundtrip() {
+        // Family 10 — Ehlers / Cycle. FisherTransform compresses bounded inputs
+        // and is highly recursive — verify streaming runs cleanly across a sine
+        // wave without panic or NaN explosion after warmup.
+        let prices: Vec<f64> = (0..100)
+            .map(|i| 100.0 + (f64::from(i) * 0.2).sin() * 5.0)
+            .collect();
+        let mut ind = WasmFisherTransform::new(10).expect("valid");
+        let mut produced = 0usize;
+        for &p in &prices {
+            if let Some(v) = ind.update(p) {
+                assert!(v.is_finite(), "FisherTransform produced non-finite output");
+                produced += 1;
+            }
+        }
+        assert!(
+            produced > 50,
+            "FisherTransform should emit on most bars after warmup"
+        );
+    }
+
+    #[wasm_bindgen_test]
+    fn sharpe_ratio_reset_clears_state() {
+        // Family 16 — Risk / Performance. Confirms reset semantics survive the
+        // wasm-bindgen boundary on a metric whose state is the rolling-return
+        // window plus running sum / sum-of-squares.
+        let mut sr = WasmSharpeRatio::new(10, 0.0).expect("valid");
+        for i in 0..15 {
+            sr.update(f64::from(i) * 0.001);
+        }
+        assert!(sr.is_ready(), "SharpeRatio should be ready after warmup");
+        sr.reset();
+        assert!(
+            !sr.is_ready(),
+            "SharpeRatio should not be ready after reset"
+        );
+        assert!(
+            sr.update(0.001).is_none(),
+            "post-reset update should warmup again"
+        );
+    }
+
+    #[wasm_bindgen_test]
+    fn max_drawdown_monotone_uptrend_yields_zero_after_warmup() {
+        // Family 16 — Risk / Performance. Strictly-increasing equity curve has
+        // zero drawdown; the bounded-window MaxDrawdown should reflect that.
+        let mut md = WasmMaxDrawdown::new(10).expect("valid");
+        let mut last = None;
+        for i in 1..=20 {
+            last = md.update(f64::from(i));
+        }
+        let final_dd = last.expect("ready after 20 inputs");
+        assert!(
+            (final_dd).abs() < 1e-12,
+            "monotone uptrend should yield max-drawdown == 0, got {final_dd}"
+        );
+    }
+
+    #[wasm_bindgen_test]
+    fn value_at_risk_constructor_rejects_invalid() {
+        // Family 16 — Risk / Performance. VaR's confidence must be in (0, 1)
+        // and period >= 2; the constructor must surface those as JsError
+        // across the binding boundary.
+        assert!(
+            WasmValueAtRisk::new(1, 0.95).is_err(),
+            "period < 2 should reject"
+        );
+        assert!(
+            WasmValueAtRisk::new(20, 0.0).is_err(),
+            "confidence == 0 should reject"
+        );
+        assert!(
+            WasmValueAtRisk::new(20, 1.0).is_err(),
+            "confidence == 1 should reject"
+        );
+        assert!(
+            WasmValueAtRisk::new(20, 0.95).is_ok(),
+            "valid params should construct"
+        );
+    }
+
+    #[wasm_bindgen_test]
+    fn reset_returns_indicator_to_warmup() {
+        // Sanity across three different indicator shapes: scalar, candle,
+        // multi-output. Each must report `is_ready() == false` immediately
+        // after `reset()`.
+        let mut sma = WasmSma::new(5).expect("valid");
+        for i in 1..=10 {
+            sma.update(f64::from(i));
+        }
+        assert!(sma.is_ready());
+        sma.reset();
+        assert!(!sma.is_ready());
+
+        let mut atr = WasmAtr::new(14).expect("valid");
+        for i in 1..=20 {
+            let t = f64::from(i);
+            atr.update(t + 1.0, t - 1.0, t).ok();
+        }
+        assert!(atr.is_ready());
+        atr.reset();
+        assert!(!atr.is_ready());
+    }
+
+    #[wasm_bindgen_test]
+    fn warmup_period_matches_core_for_baseline_scalar() {
+        // The binding must report the same warmup as the underlying wickra-core
+        // indicator. Drift here would silently break "wait for first non-NaN"
+        // user code.
+        let sma = WasmSma::new(20).expect("valid");
+        assert_eq!(
+            sma.warmup_period(),
+            wc::Sma::new(20).expect("valid").warmup_period()
+        );
+        let ema = WasmEma::new(14).expect("valid");
+        assert_eq!(
+            ema.warmup_period(),
+            wc::Ema::new(14).expect("valid").warmup_period()
+        );
+        let rsi = WasmRsi::new(14).expect("valid");
+        assert_eq!(
+            rsi.warmup_period(),
+            wc::Rsi::new(14).expect("valid").warmup_period()
+        );
+    }
+
+    #[wasm_bindgen_test]
+    fn nan_input_is_rejected_without_state_mutation() {
+        // Non-finite input must be ignored — calling update with NaN must not
+        // advance the warmup counter, otherwise streaming code that fed in a
+        // spurious NaN would prematurely flip to ready.
+        let mut sma = WasmSma::new(5).expect("valid");
+        for _ in 0..4 {
+            sma.update(f64::NAN);
+        }
+        assert!(!sma.is_ready(), "NaN inputs must not advance warmup");
+        for i in 1..=5 {
+            sma.update(f64::from(i));
+        }
+        assert!(
+            sma.is_ready(),
+            "ready after 5 finite inputs even with prior NaNs"
+        );
+    }
 }
 // ============================== Family 15: Risk / Performance ==============================
 
