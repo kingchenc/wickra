@@ -17,6 +17,9 @@ The Rust examples live in the `wickra-examples` workspace member crate.
 | `parallel_assets.rs` | Serial vs `BatchExt::batch_parallel` (rayon) over a synthetic panel, with speedup. | `cargo run --release -p wickra-examples --bin parallel_assets -- --assets 200 --bars 5000` |
 | `fetch_btcusdt.rs` | Download real BTCUSDT klines from the Binance REST API into `examples/data/`. | `cargo run -p wickra-examples --bin fetch_btcusdt` |
 | `live_binance.rs` | Stream live Binance klines through an indicator over a resilient WebSocket. | `cargo run -p wickra-examples --bin live_binance` |
+| `strategy_rsi_mean_reversion.rs` | Hourly BTCUSDT mean-reversion using RSI(14) thresholds, with PnL / Sharpe / max-DD summary. | `cargo run --release -p wickra-examples --bin strategy_rsi_mean_reversion` |
+| `strategy_macd_adx.rs` | Hourly BTCUSDT trend-follower: MACD crossover entries gated by ADX(14) > 20. | `cargo run --release -p wickra-examples --bin strategy_macd_adx` |
+| `strategy_bollinger_squeeze.rs` | Daily BTCUSDT Bollinger-squeeze breakout with ATR(14) trailing stop. | `cargo run --release -p wickra-examples --bin strategy_bollinger_squeeze` |
 
 ## Python — `examples/python/`
 
@@ -28,6 +31,9 @@ The Rust examples live in the `wickra-examples` workspace member crate.
 | `multi_timeframe.py` | Resample a 1-minute CSV to coarser timeframes and compare. | `python -m examples.python.multi_timeframe <1m.csv>` |
 | `parallel_assets.py` | Process many symbols in parallel — the Rust extension releases the GIL during batch computation. | `python -m examples.python.parallel_assets --assets 200 --bars 5000` |
 | `fetch_btcusdt.py` | Download real BTCUSDT klines from the Binance REST API into `examples/data/` (urllib + stdlib only). | `python -m examples.python.fetch_btcusdt` |
+| `strategy_rsi_mean_reversion.py` | Hourly BTCUSDT mean-reversion using RSI(14) thresholds, with PnL / Sharpe / max-DD summary. | `python -m examples.python.strategy_rsi_mean_reversion` |
+| `strategy_macd_adx.py` | Hourly BTCUSDT trend-follower: MACD crossover entries gated by ADX(14) > 20. | `python -m examples.python.strategy_macd_adx` |
+| `strategy_bollinger_squeeze.py` | Daily BTCUSDT Bollinger-squeeze breakout with ATR(14) trailing stop. | `python -m examples.python.strategy_bollinger_squeeze` |
 
 `live_trading.py` additionally needs `pip install websockets`.
 
