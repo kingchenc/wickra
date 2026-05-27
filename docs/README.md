@@ -8,10 +8,12 @@ That includes:
   [Python](https://github.com/kingchenc/wickra/wiki/Quickstart-Python.md),
   [Node](https://github.com/kingchenc/wickra/wiki/Quickstart-Node.md), and
   [WASM](https://github.com/kingchenc/wickra/wiki/Quickstart-WASM.md).
-- A per-indicator deep dive for every one of the **71 indicators** across
-  the eight families (Moving Averages, Momentum Oscillators, Trend &
-  Directional, Price Oscillators, Volatility & Bands, Trailing Stops,
-  Volume, Price Statistics) — see the
+- A per-indicator deep dive for every one of the **214 indicators** across
+  the sixteen families (Moving Averages, Momentum Oscillators, Trend &
+  Directional, Price Oscillators, Volatility & Bands, Bands & Channels,
+  Trailing Stops, Volume, Price Statistics, Ehlers / Cycle (DSP),
+  Pivots & S/R, DeMark, Ichimoku & Charts, Candlestick Patterns,
+  Market Profile, Risk / Performance) — see the
   [indicators overview](https://github.com/kingchenc/wickra/wiki/Indicators-Overview.md).
 - **Reference pages**: [warmup periods](https://github.com/kingchenc/wickra/wiki/Warmup-Periods.md),
   [streaming vs batch](https://github.com/kingchenc/wickra/wiki/Streaming-vs-Batch.md),
