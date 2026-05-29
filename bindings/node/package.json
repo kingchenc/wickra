@@ -63,6 +63,6 @@
     "test": "node --test __tests__/"
   },
   "devDependencies": {
-    "@napi-rs/cli": "^2.18.0"
+    "@napi-rs/cli": "^3.7.0"
   }
 }
