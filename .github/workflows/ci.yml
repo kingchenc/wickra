@@ -110,7 +110,7 @@ jobs:
         uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
 
       - name: Install cargo-llvm-cov
-        uses: taiki-e/install-action@6c1f7cf125e42770ff087ea443901b487cc5471a # v2.79.5
+        uses: taiki-e/install-action@873c7452cadb7c034694a1282227095d93fbdf92 # v2.79.14
         with:
           tool: cargo-llvm-cov
 
@@ -171,7 +171,7 @@ jobs:
         # attributes the modern nightly compiler rejects, so the install
         # never gets off the ground. The prebuilt binary avoids the entire
         # transitive-dep compile.
-        uses: taiki-e/install-action@6c1f7cf125e42770ff087ea443901b487cc5471a # v2.79.5
+        uses: taiki-e/install-action@873c7452cadb7c034694a1282227095d93fbdf92 # v2.79.14
         with:
           tool: cargo-fuzz
 
@@ -282,7 +282,7 @@ jobs:
         # same taiki-e prebuilt-binary installer we already use for
         # cargo-llvm-cov and cargo-fuzz; it tracks the latest wasm-pack
         # release, which has `--features` as a top-level flag (since 0.12).
-        uses: taiki-e/install-action@6c1f7cf125e42770ff087ea443901b487cc5471a # v2.79.5
+        uses: taiki-e/install-action@873c7452cadb7c034694a1282227095d93fbdf92 # v2.79.14
         with:
           tool: wasm-pack
 
