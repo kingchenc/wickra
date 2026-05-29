@@ -25,7 +25,7 @@ workspace = true
 
 [dependencies]
 wickra-core = { workspace = true }
-napi = { version = "2.16", features = ["napi8"] }
+napi = { version = "3.9", features = ["napi8"] }
 napi-derive = "2.16"
 
 [build-dependencies]
