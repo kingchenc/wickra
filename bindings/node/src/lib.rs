@@ -7310,6 +7310,12 @@ pub struct TdRangeProjectionNode {
     inner: wc::TdRangeProjection,
 }
 
+impl Default for TdRangeProjectionNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[napi]
 impl TdRangeProjectionNode {
     #[napi(constructor)]
@@ -7379,6 +7385,12 @@ pub struct TdDifferentialNode {
     inner: wc::TdDifferential,
 }
 
+impl Default for TdDifferentialNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[napi]
 impl TdDifferentialNode {
     #[napi(constructor)]
@@ -7432,6 +7444,12 @@ impl TdDifferentialNode {
 #[napi(js_name = "TDOpen")]
 pub struct TdOpenNode {
     inner: wc::TdOpen,
+}
+
+impl Default for TdOpenNode {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 #[napi]
@@ -7712,6 +7730,12 @@ pub struct HilbertDominantCycleNode {
     inner: wc::HilbertDominantCycle,
 }
 
+impl Default for HilbertDominantCycleNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[napi]
 impl HilbertDominantCycleNode {
     #[napi(constructor)]
@@ -7747,6 +7771,12 @@ pub struct AdaptiveCycleNode {
     inner: wc::AdaptiveCycle,
 }
 
+impl Default for AdaptiveCycleNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[napi]
 impl AdaptiveCycleNode {
     #[napi(constructor)]
@@ -7780,6 +7810,12 @@ impl AdaptiveCycleNode {
 #[napi(js_name = "SineWave")]
 pub struct SineWaveNode {
     inner: wc::SineWave,
+}
+
+impl Default for SineWaveNode {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 #[napi]
@@ -8138,7 +8174,7 @@ impl ValueAreaNode {
         low: f64,
         volume: f64,
     ) -> napi::Result<Option<ValueAreaValue>> {
-        let mid = (high + low) / 2.0;
+        let mid = f64::midpoint(high, low);
         let candle = wc::Candle::new(mid, high, low, mid, volume, 0).map_err(map_err)?;
         Ok(self.inner.update(candle).map(|o| ValueAreaValue {
             poc: o.poc,
@@ -8161,7 +8197,7 @@ impl ValueAreaNode {
         let n = high.len();
         let mut out = vec![f64::NAN; n * 3];
         for i in 0..n {
-            let mid = (high[i] + low[i]) / 2.0;
+            let mid = f64::midpoint(high[i], low[i]);
             let candle =
                 wc::Candle::new(mid, high[i], low[i], mid, volume[i], 0).map_err(map_err)?;
             if let Some(o) = self.inner.update(candle) {
@@ -8212,7 +8248,7 @@ impl InitialBalanceNode {
     }
     #[napi]
     pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<InitialBalanceValue>> {
-        let mid = (high + low) / 2.0;
+        let mid = f64::midpoint(high, low);
         let candle = wc::Candle::new(mid, high, low, mid, 0.0, 0).map_err(map_err)?;
         Ok(self.inner.update(candle).map(|o| InitialBalanceValue {
             high: o.high,
@@ -8229,7 +8265,7 @@ impl InitialBalanceNode {
         let n = high.len();
         let mut out = vec![f64::NAN; n * 2];
         for i in 0..n {
-            let mid = (high[i] + low[i]) / 2.0;
+            let mid = f64::midpoint(high[i], low[i]);
             let candle = wc::Candle::new(mid, high[i], low[i], mid, 0.0, 0).map_err(map_err)?;
             if let Some(o) = self.inner.update(candle) {
                 out[i * 2] = o.high;
