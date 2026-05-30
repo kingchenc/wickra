@@ -8,7 +8,7 @@ version = "0.2.7"
 description = "Streaming-first technical indicators: incremental, fast, install-free."
 readme = "README.md"
 license = { text = "PolyForm-Noncommercial-1.0.0" }
-authors = [{ name = "kingchenc", email = "kingchencp@gmail.com" }]
+authors = [{ name = "kingchenc", email = "wickra.lib@gmail.com" }]
 requires-python = ">=3.9"
 keywords = ["finance", "trading", "indicators", "technical-analysis", "ta-lib"]
 classifiers = [
@@ -47,9 +47,9 @@ bench = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/kingchenc/wickra"
-Repository = "https://github.com/kingchenc/wickra"
-Issues = "https://github.com/kingchenc/wickra/issues"
+Homepage = "https://github.com/wickra-lib/wickra"
+Repository = "https://github.com/wickra-lib/wickra"
+Issues = "https://github.com/wickra-lib/wickra/issues"
 
 [tool.maturin]
 manifest-path = "Cargo.toml"
