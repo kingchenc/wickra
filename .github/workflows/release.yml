@@ -90,11 +90,15 @@ jobs:
 
       - name: Generate CycloneDX SBOMs
         run: |
-          cargo cyclonedx --format json --top-level -p wickra-core
-          cargo cyclonedx --format json --top-level -p wickra-data
-          cargo cyclonedx --format json --top-level -p wickra
+          # cargo-cyclonedx walks the whole workspace in a single pass and
+          # writes a <package>.cdx.json next to each member's Cargo.toml; it
+          # has no -p/--package selector. Collect the three crates.io crates
+          # (the .crate files published by this job) into the upload dir.
+          cargo cyclonedx --format json --top-level
           mkdir -p sboms
-          find . -name "*.cdx.json" -not -path "./target/*" -exec cp {} sboms/ \;
+          cp crates/wickra-core/wickra-core.cdx.json sboms/
+          cp crates/wickra-data/wickra-data.cdx.json sboms/
+          cp crates/wickra/wickra.cdx.json sboms/
           ls -lh sboms/
 
       - name: Upload SBOMs
