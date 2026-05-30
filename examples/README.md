@@ -54,6 +54,9 @@ cd ../../examples/node && npm install        # links wickra + installs `ws`
 | `parallel_assets.js` | Serial vs `worker_threads` pool over a synthetic panel, with speedup. | `node parallel_assets.js --assets 200 --bars 5000` |
 | `live_trading.js` | Live Binance feed → RSI / MACD / Bollinger → signals. | `node live_trading.js --symbol BTCUSDT --interval 1m` |
 | `fetch_btcusdt.js` | Download real BTCUSDT klines from the Binance REST API into `examples/data/` (built-in `fetch`, Node 18+). | `node fetch_btcusdt.js` |
+| `strategy_rsi_mean_reversion.js` | Hourly BTCUSDT mean-reversion using RSI(14) thresholds, with PnL / Sharpe / max-DD summary. | `node strategy_rsi_mean_reversion.js` |
+| `strategy_macd_adx.js` | Hourly BTCUSDT trend-follower: MACD crossover entries gated by ADX(14) > 20. | `node strategy_macd_adx.js` |
+| `strategy_bollinger_squeeze.js` | Daily BTCUSDT Bollinger-squeeze breakout with ATR(14) trailing stop. | `node strategy_bollinger_squeeze.js` |
 
 ## WebAssembly — `examples/wasm/`
 
@@ -73,6 +76,9 @@ Then serve the repository root (`python -m http.server`, `npx http-server`,
 | `live_trading.html` | Opens a browser-native `WebSocket` to Binance, runs RSI / MACD / Bollinger and flags BUY/SELL candidates. |
 | `multi_timeframe.html` | Fetches a 1-minute CSV, rolls it up to 5m / 15m / 1h / 4h / 1d in-page, prints RSI / MACD hist / ADX per timeframe. |
 | `parallel_assets.html` | Spawns a pool of module Workers (each loading its own copy of the WASM module) and reports the speedup over a serial baseline. |
+| `strategy_rsi_mean_reversion.html` | Hourly BTCUSDT RSI(14) mean-reversion (long &lt; 30, exit &gt; 70); prints a PnL / Sharpe / max-DD summary table. |
+| `strategy_macd_adx.html` | Hourly BTCUSDT MACD crossover gated by ADX(14) &gt; 20, with the same summary table. |
+| `strategy_bollinger_squeeze.html` | Daily BTCUSDT Bollinger-squeeze breakout with a 2&times;ATR(14) stop and summary table. |
 
 ## Example datasets
 
