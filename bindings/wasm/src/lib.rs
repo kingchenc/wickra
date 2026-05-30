@@ -6139,6 +6139,12 @@ mod tests {
     fn close_enough(a: f64, b: f64) -> bool {
         if a.is_nan() {
             b.is_nan()
+        } else if a == b {
+            // Exact equality, including matching infinities (e.g. ProfitFactor
+            // with no losing trades is +inf in both the streaming and batch
+            // passes). `(inf - inf).abs()` is NaN, so the tolerance check below
+            // would otherwise reject two equal infinities.
+            true
         } else {
             (a - b).abs() < 1e-9
         }
@@ -6629,6 +6635,146 @@ mod tests {
             sma.is_ready(),
             "ready after 5 finite inputs even with prior NaNs"
         );
+    }
+
+    // Streaming `update` must reproduce `batch` value-for-value for every scalar
+    // indicator — the core O(1) state-machine invariant. Each entry builds a
+    // fresh instance for the batch pass and another for the streaming pass. The
+    // constructor arguments mirror the (CI-passing) Node `indicators.test.js`
+    // factories, so they are known-valid.
+    macro_rules! assert_scalar_stream_eq {
+        ($ctor:expr, $prices:expr) => {{
+            let prices: &[f64] = $prices;
+            let batch = { $ctor }.batch(prices);
+            let mut streaming = { $ctor };
+            for (i, &p) in prices.iter().enumerate() {
+                let b = batch.get_index(i as u32);
+                match streaming.update(p) {
+                    Some(v) => assert!(
+                        close_enough(v, b),
+                        "{} streaming != batch at {i}: {v} vs {b}",
+                        stringify!($ctor)
+                    ),
+                    None => assert!(
+                        b.is_nan(),
+                        "{} expected NaN warmup at {i}",
+                        stringify!($ctor)
+                    ),
+                }
+            }
+        }};
+    }
+
+    #[allow(clippy::too_many_lines)]
+    #[wasm_bindgen_test]
+    fn scalar_streaming_matches_batch_broad() {
+        let prices: Vec<f64> = (0..120)
+            .map(|i| {
+                let t = f64::from(i);
+                100.0 + (t * 0.2).sin() * 10.0 + t * 0.1
+            })
+            .collect();
+        let p = prices.as_slice();
+
+        // Moving averages.
+        assert_scalar_stream_eq!(WasmSma::new(14).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmWma::new(14).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmDema::new(10).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmTema::new(10).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmHma::new(9).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmSmma::new(14).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmTrima::new(20).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmZlema::new(14).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmT3::new(5, 0.7).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmAlma::new(9, 0.85, 6.0).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmMcGinleyDynamic::new(10).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmFrama::new(16).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmVidya::new(14, 9).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmJma::new(14, 0.0, 2).expect("valid"), p);
+
+        // Momentum / oscillators.
+        assert_scalar_stream_eq!(WasmRsi::new(14).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmRoc::new(12).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmTrix::new(9).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmMom::new(10).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmCmo::new(14).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmTsi::new(25, 13).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmPmo::new(35, 20).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmTii::new(20, 10).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmStochRsi::new(14, 14).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmDpo::new(20).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmPpo::new(12, 26).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmApo::new(12, 26).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmCfo::new(14).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmStc::new(23, 50, 10, 0.5).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmCoppock::new(14, 11, 10).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmLaguerreRsi::new(0.5).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmConnorsRsi::new(3, 2, 100).expect("valid"), p);
+
+        // Volatility / statistics / regression.
+        assert_scalar_stream_eq!(WasmStdDev::new(20).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmUlcerIndex::new(14).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmHistoricalVolatility::new(20, 252).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmBollingerBandwidth::new(20, 2.0).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmPercentB::new(20, 2.0).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmLinearRegression::new(14).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmLinRegSlope::new(14).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmLinRegAngle::new(14).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmVerticalHorizontalFilter::new(28).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmZScore::new(20).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmVariance::new(20).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmCoefficientOfVariation::new(20).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmSkewness::new(20).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmKurtosis::new(20).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmStandardError::new(14).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmDetrendedStdDev::new(14).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmRSquared::new(14).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmMedianAbsoluteDeviation::new(20).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmAutocorrelation::new(20, 1).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmHurstExponent::new(40, 4).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmRviVolatility::new(10).expect("valid"), p);
+
+        // Ehlers / cycle.
+        assert_scalar_stream_eq!(WasmSuperSmoother::new(10).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmFisherTransform::new(10).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmInverseFisherTransform::new(1.0).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmDecycler::new(20).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmDecyclerOscillator::new(10, 30).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmRoofingFilter::new(10, 48).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmCenterOfGravity::new(10).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmCyberneticCycle::new(10).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmInstantaneousTrendline::new(20).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmEhlersStochastic::new(20).expect("valid"), p);
+        assert_scalar_stream_eq!(
+            WasmEmpiricalModeDecomposition::new(20, 0.5).expect("valid"),
+            p
+        );
+        assert_scalar_stream_eq!(WasmFama::new(0.5, 0.05).expect("valid"), p);
+
+        // Risk / performance (scalar f64 input).
+        assert_scalar_stream_eq!(WasmCalmarRatio::new(20).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmMaxDrawdown::new(20).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmAverageDrawdown::new(20).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmPainIndex::new(20).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmProfitFactor::new(20).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmGainLossRatio::new(20).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmKellyCriterion::new(20).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmSharpeRatio::new(20, 0.0).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmSortinoRatio::new(20, 0.0).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmOmegaRatio::new(20, 0.0).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmValueAtRisk::new(20, 0.95).expect("valid"), p);
+        assert_scalar_stream_eq!(WasmConditionalValueAtRisk::new(20, 0.95).expect("valid"), p);
+    }
+
+    // Additional invalid-constructor coverage. These wrap the same fallible core
+    // `new` as the Python / Node bindings, where the equivalent calls are
+    // confirmed to error.
+    #[wasm_bindgen_test]
+    fn additional_invalid_constructors_are_rejected() {
+        assert!(WasmDecyclerOscillator::new(30, 10).is_err()); // short cutoff >= long
+        assert!(WasmRoofingFilter::new(48, 10).is_err()); // lowpass >= highpass
+        assert!(WasmInverseFisherTransform::new(0.0).is_err()); // zero scale
+        assert!(WasmEmpiricalModeDecomposition::new(20, 0.0).is_err()); // zero fraction
     }
 }
 // ============================== Family 15: Risk / Performance ==============================
