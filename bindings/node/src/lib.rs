@@ -22,26 +22,6 @@ fn map_err(e: wc::Error) -> NapiError {
     NapiError::new(Status::InvalidArg, e.to_string())
 }
 
-/// Helper for the scalar-indicator macro only. Scalar `new` functions can fail
-/// solely on `period == 0`, which `clamp_period` already rules out, so the
-/// `Result` is provably `Ok` here. Candle indicators and the multi-parameter
-/// indicators have genuinely fallible parameters and instead use fallible
-/// `#[napi(constructor)]`s that return `napi::Result<Self>` and throw a JS error.
-fn must<T>(r: Result<T, wc::Error>) -> T {
-    r.expect("wickra: scalar indicator parameter clamped to a valid range")
-}
-
-/// Clamp a period parameter so the underlying indicator never sees zero. JS
-/// callers who pass `0` get a window of `1` instead of a thrown exception —
-/// effectively a pass-through indicator that still produces valid outputs.
-const fn clamp_period(p: u32) -> usize {
-    if p == 0 {
-        1
-    } else {
-        p as usize
-    }
-}
-
 fn flatten(v: Vec<Option<f64>>) -> Vec<f64> {
     v.into_iter().map(|x| x.unwrap_or(f64::NAN)).collect()
 }
@@ -64,10 +44,10 @@ macro_rules! node_scalar_indicator {
         #[napi]
         impl $wrapper {
             #[napi(constructor)]
-            pub fn new(period: u32) -> Self {
-                Self {
-                    inner: must(<$rust_ty>::new(clamp_period(period))),
-                }
+            pub fn new(period: u32) -> napi::Result<Self> {
+                Ok(Self {
+                    inner: <$rust_ty>::new(period as usize).map_err(map_err)?,
+                })
             }
             #[napi]
             pub fn update(&mut self, value: f64) -> Option<f64> {
@@ -137,11 +117,10 @@ node_scalar_indicator!(
 );
 
 // RviVolatility (Relative Volatility Index, Donald Dorsey). Disambiguated
-// from `RVI` = Relative Vigor Index in Family 02. Takes a single `period`
-// parameter and additionally rejects `period == 1` (a 1-bar standard
-// deviation is always zero), so the `clamp_period`-to-1 strategy from
-// `node_scalar_indicator!` would panic via `must`. Hand-rolled fallible
-// constructor instead, throws a JS error on bad period.
+// from `RVI` = Relative Vigor Index in Family 02. Takes a single `period` and
+// rejects both `period == 0` and `period == 1` (a 1-bar standard deviation is
+// always zero). Hand-rolled, but behaves like `node_scalar_indicator!`: the
+// fallible `new` propagates the core error and throws a JS error on bad period.
 #[napi(js_name = "RVIVolatility")]
 pub struct RviVolatilityNode {
     inner: wc::RviVolatility,
@@ -1351,7 +1330,7 @@ impl InertiaNode {
     #[napi(constructor)]
     pub fn new(rvi_period: u32, linreg_period: u32) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Inertia::new(clamp_period(rvi_period), clamp_period(linreg_period))
+            inner: wc::Inertia::new(rvi_period as usize, linreg_period as usize)
                 .map_err(map_err)?,
         })
     }
@@ -1412,9 +1391,9 @@ impl ConnorsRsiNode {
     pub fn new(period_rsi: u32, period_streak: u32, period_rank: u32) -> napi::Result<Self> {
         Ok(Self {
             inner: wc::ConnorsRsi::new(
-                clamp_period(period_rsi),
-                clamp_period(period_streak),
-                clamp_period(period_rank),
+                period_rsi as usize,
+                period_streak as usize,
+                period_rank as usize,
             )
             .map_err(map_err)?,
         })
@@ -1484,12 +1463,8 @@ impl SmiNode {
     #[napi(constructor)]
     pub fn new(period: u32, d_period: u32, d2_period: u32) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Smi::new(
-                clamp_period(period),
-                clamp_period(d_period),
-                clamp_period(d2_period),
-            )
-            .map_err(map_err)?,
+            inner: wc::Smi::new(period as usize, d_period as usize, d2_period as usize)
+                .map_err(map_err)?,
         })
     }
     #[napi]
@@ -1559,15 +1534,15 @@ impl KstNode {
     ) -> napi::Result<Self> {
         Ok(Self {
             inner: wc::Kst::new(
-                clamp_period(roc1),
-                clamp_period(roc2),
-                clamp_period(roc3),
-                clamp_period(roc4),
-                clamp_period(sma1),
-                clamp_period(sma2),
-                clamp_period(sma3),
-                clamp_period(sma4),
-                clamp_period(signal),
+                roc1 as usize,
+                roc2 as usize,
+                roc3 as usize,
+                roc4 as usize,
+                sma1 as usize,
+                sma2 as usize,
+                sma3 as usize,
+                sma4 as usize,
+                signal as usize,
             )
             .map_err(map_err)?,
         })
@@ -1620,7 +1595,7 @@ impl PgoNode {
     #[napi(constructor)]
     pub fn new(period: u32) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Pgo::new(clamp_period(period)).map_err(map_err)?,
+            inner: wc::Pgo::new(period as usize).map_err(map_err)?,
         })
     }
     #[napi]
@@ -1672,7 +1647,7 @@ impl RviNode {
     #[napi(constructor)]
     pub fn new(period: u32) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Rvi::new(clamp_period(period)).map_err(map_err)?,
+            inner: wc::Rvi::new(period as usize).map_err(map_err)?,
         })
     }
     #[napi]
@@ -1732,9 +1707,9 @@ impl AwesomeOscillatorHistogramNode {
     pub fn new(fast: u32, slow: u32, sma_period: u32) -> napi::Result<Self> {
         Ok(Self {
             inner: wc::AwesomeOscillatorHistogram::new(
-                clamp_period(fast),
-                clamp_period(slow),
-                clamp_period(sma_period),
+                fast as usize,
+                slow as usize,
+                sma_period as usize,
             )
             .map_err(map_err)?,
         })
@@ -1783,13 +1758,8 @@ impl StcNode {
     #[napi(constructor)]
     pub fn new(fast: u32, slow: u32, schaff_period: u32, factor: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Stc::new(
-                clamp_period(fast),
-                clamp_period(slow),
-                clamp_period(schaff_period),
-                factor,
-            )
-            .map_err(map_err)?,
+            inner: wc::Stc::new(fast as usize, slow as usize, schaff_period as usize, factor)
+                .map_err(map_err)?,
         })
     }
     #[napi]
@@ -1829,10 +1799,10 @@ impl ElderImpulseNode {
     ) -> napi::Result<Self> {
         Ok(Self {
             inner: wc::ElderImpulse::new(
-                clamp_period(ema_period),
-                clamp_period(macd_fast),
-                clamp_period(macd_slow),
-                clamp_period(macd_signal),
+                ema_period as usize,
+                macd_fast as usize,
+                macd_slow as usize,
+                macd_signal as usize,
             )
             .map_err(map_err)?,
         })
@@ -1875,12 +1845,8 @@ impl ZeroLagMacdNode {
     #[napi(constructor)]
     pub fn new(fast: u32, slow: u32, signal: u32) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::ZeroLagMacd::new(
-                clamp_period(fast),
-                clamp_period(slow),
-                clamp_period(signal),
-            )
-            .map_err(map_err)?,
+            inner: wc::ZeroLagMacd::new(fast as usize, slow as usize, signal as usize)
+                .map_err(map_err)?,
         })
     }
     #[napi]
@@ -1927,7 +1893,7 @@ impl CfoNode {
     #[napi(constructor)]
     pub fn new(period: u32) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Cfo::new(clamp_period(period)).map_err(map_err)?,
+            inner: wc::Cfo::new(period as usize).map_err(map_err)?,
         })
     }
     #[napi]
@@ -1961,7 +1927,7 @@ impl ApoNode {
     #[napi(constructor)]
     pub fn new(fast: u32, slow: u32) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Apo::new(clamp_period(fast), clamp_period(slow)).map_err(map_err)?,
+            inner: wc::Apo::new(fast as usize, slow as usize).map_err(map_err)?,
         })
     }
     #[napi]
@@ -2032,7 +1998,7 @@ impl EvwmaNode {
     #[napi(constructor)]
     pub fn new(period: u32) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Evwma::new(clamp_period(period)).map_err(map_err)?,
+            inner: wc::Evwma::new(period as usize).map_err(map_err)?,
         })
     }
     #[napi]
@@ -2088,7 +2054,7 @@ impl AlligatorNode {
     #[napi(constructor)]
     pub fn new(jaw: u32, teeth: u32, lips: u32) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Alligator::new(clamp_period(jaw), clamp_period(teeth), clamp_period(lips))
+            inner: wc::Alligator::new(jaw as usize, teeth as usize, lips as usize)
                 .map_err(map_err)?,
         })
     }
@@ -2146,7 +2112,7 @@ impl JmaNode {
     #[napi(constructor)]
     pub fn new(period: u32, phase: f64, power: u32) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Jma::new(clamp_period(period), phase, power).map_err(map_err)?,
+            inner: wc::Jma::new(period as usize, phase, power).map_err(map_err)?,
         })
     }
     #[napi]
@@ -2182,8 +2148,7 @@ impl VidyaNode {
     #[napi(constructor)]
     pub fn new(period: u32, cmo_period: u32) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Vidya::new(clamp_period(period), clamp_period(cmo_period))
-                .map_err(map_err)?,
+            inner: wc::Vidya::new(period as usize, cmo_period as usize).map_err(map_err)?,
         })
     }
     #[napi]
@@ -2219,7 +2184,7 @@ impl AlmaNode {
     #[napi(constructor)]
     pub fn new(period: u32, offset: f64, sigma: f64) -> napi::Result<Self> {
         Ok(Self {
-            inner: wc::Alma::new(clamp_period(period), offset, sigma).map_err(map_err)?,
+            inner: wc::Alma::new(period as usize, offset, sigma).map_err(map_err)?,
         })
     }
     #[napi]
