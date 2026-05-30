@@ -24,8 +24,9 @@ const REQUIRED_COLUMNS: [&str; 6] = ["timestamp", "open", "high", "low", "close"
 
 /// Default OHLCV CSV row layout.
 ///
-/// The timestamp is parsed as an `i64`; if your file ships an RFC3339 / ISO8601
-/// string instead, use [`CandleReader::with_timestamp_parser`].
+/// The timestamp is parsed as an `i64` (for example a Unix epoch). RFC3339 /
+/// ISO8601 string timestamps are not handled by this layout; convert them to
+/// integers before reading.
 #[derive(Debug, Clone, Deserialize)]
 pub struct DefaultRow {
     pub timestamp: i64,
