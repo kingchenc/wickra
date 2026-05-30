@@ -346,7 +346,7 @@ impl TickAggregator {
     ///
     /// # Errors
     /// Returns an error if the open bar's accumulated volume is non-finite
-    /// (see [`OpenBar::into_candle`]).
+    /// (see the internal `OpenBar::into_candle`).
     pub fn flush(&mut self) -> Result<Option<Candle>> {
         self.open_bar.take().map(OpenBar::into_candle).transpose()
     }

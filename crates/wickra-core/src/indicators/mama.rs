@@ -32,7 +32,7 @@ pub struct MamaOutput {
 /// + fama_prev * (1 - 0.5 * fast_limit)`, lagging MAMA so crossovers signal
 /// trend reversals.
 ///
-/// The indicator emits both lines as a [`MamaOutput`]. Use the [`Fama`] wrapper
+/// The indicator emits both lines as a [`MamaOutput`]. Use the [`crate::Fama`] wrapper
 /// in this module to expose just the slow line if needed (e.g. for chaining).
 ///
 /// # Example
