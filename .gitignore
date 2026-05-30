@@ -46,7 +46,8 @@ tarpaulin-report.html
 bindings/node/*.node
 bindings/node/index.d.ts
 bindings/node/npm-debug.log*
-package-lock.json
+# package-lock.json is committed (under bindings/node/) so contributors
+# get reproducible npm installs. Top-level lockfiles still aren't expected.
 
 # WASM build output
 bindings/wasm/pkg/
