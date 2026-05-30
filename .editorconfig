@@ -1,0 +1,34 @@
+# EditorConfig: https://editorconfig.org
+# Keeps indentation and line-endings consistent across IDEs.
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+
+# Rust + Python + most config files use 4-space indents.
+[*.{rs,py,toml}]
+indent_size = 4
+
+# JS / TS / JSON / YAML / Markdown use 2-space indents per ecosystem conventions.
+[*.{js,ts,jsx,tsx,json,yml,yaml,md}]
+indent_size = 2
+
+# Markdown allows trailing whitespace as a hard line break — keep it intact.
+[*.md]
+trim_trailing_whitespace = false
+
+# Makefiles must use tabs.
+[Makefile]
+indent_style = tab
+
+# Generated files are not authored by humans; leave them alone.
+[bindings/node/index.{js,d.ts}]
+indent_style = unset
+indent_size = unset
+trim_trailing_whitespace = unset
+insert_final_newline = unset
