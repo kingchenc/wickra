@@ -109,7 +109,7 @@ python -m benchmarks.compare_libraries
 
 ## Indicators
 
-213 streaming-first indicators across sixteen families. Every one passes the
+214 streaming-first indicators across sixteen families. Every one passes the
 `batch == streaming` equivalence test, reference-value tests, and reset
 semantics tests.
 
@@ -203,7 +203,7 @@ A Python live-trading example using the public `websockets` package lives at
 ```
 wickra/
 ├── crates/
-│   ├── wickra-core/         core engine + all 213 indicators
+│   ├── wickra-core/         core engine + all 214 indicators
 │   ├── wickra/              top-level facade crate (publishes on crates.io) + benches/
 │   └── wickra-data/         CSV reader, tick aggregator, live exchange feeds
 ├── bindings/
