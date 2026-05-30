@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-05-30
+
+### Fixed
+- **Release pipeline — CycloneDX SBOM generation.** `cargo-cyclonedx` has no
+  `-p`/`--package` selector; it walks the whole workspace in a single pass.
+  The `release.yml` SBOM step invoked it as `cargo cyclonedx … -p <crate>` and
+  aborted with `error: unexpected argument '-p' found`, which failed the
+  crates.io publish job *after* the crates were already published and skipped
+  the GitHub Release attach-assets job (no release page, no SBOM artefacts).
+  The step now runs a single workspace pass and collects the three crates.io
+  crate SBOMs. No library changes relative to 0.3.0 — this patch republishes
+  the same code with a working release pipeline.
+
+## [0.3.0] - 2026-05-30
+
 ### Added
 - **Family 15 — Risk / Performance metrics (17 new indicators).** Implemented
   pragmatically as standard `Indicator`s rather than a separate
@@ -817,7 +832,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.2.7...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/wickra-lib/wickra/compare/v0.3.0...v0.3.1
+[0.3.0]: https://github.com/wickra-lib/wickra/compare/v0.2.7...v0.3.0
 [0.2.7]: https://github.com/wickra-lib/wickra/compare/v0.2.6...v0.2.7
 [0.2.6]: https://github.com/wickra-lib/wickra/compare/v0.2.5...v0.2.6
 [0.2.5]: https://github.com/wickra-lib/wickra/compare/v0.2.1...v0.2.5
