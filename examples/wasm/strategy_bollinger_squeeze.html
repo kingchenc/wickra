@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Wickra WASM — Bollinger-squeeze breakout</title>
+  <style>
+    body { font-family: ui-sans-serif, system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; color: #1d1d1d; }
+    h1 { margin-bottom: .25rem; }
+    .meta { color: #666; margin-top: 0; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1rem; font-variant-numeric: tabular-nums; }
+    th, td { border: 1px solid #ddd; padding: .5rem .75rem; text-align: right; }
+    th:first-child, td:first-child { text-align: left; }
+    th { background: #fafafa; }
+    code { background: #f4f4f4; padding: .1rem .25rem; border-radius: .2rem; font-size: .9em; }
+    label { display: inline-block; margin-right: .5rem; }
+    button { padding: .5rem 1rem; }
+    #status { margin-top: 1rem; color: #666; }
+    .note { margin-top: 1rem; color: #888; font-size: .9em; }
+  </style>
+</head>
+<body>
+  <h1>Wickra WASM — Bollinger-squeeze breakout</h1>
+  <p class="meta">
+    Enters long on a fresh 180-bar Bollinger-bandwidth low (the squeeze) with a
+    close above the upper band (the release); exits on a 2&times;ATR(14) stop or
+    an upper-band collapse, 0.1% fees. The browser counterpart of
+    <code>examples/python/strategy_bollinger_squeeze.py</code>,
+    <code>examples/node/strategy_bollinger_squeeze.js</code> and the Rust
+    <code>strategy_bollinger_squeeze.rs</code> — same loop, same summary.
+  </p>
+
+  <p>
+    <label>Dataset: <input type="text" id="path" value="../data/btcusdt-1d.csv" size="40" /></label>
+    <button id="go" disabled>Run strategy</button>
+  </p>
+
+  <p id="status">Loading WASM module…</p>
+
+  <table id="results" hidden>
+    <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <p class="note" id="disclaimer" hidden>
+    NOTE: Educational example — fees, slippage, funding costs and tax effects
+    are simplified or omitted. Past performance is not indicative of future
+    results.
+  </p>
+
+  <script type="module">
+    import init, { version, installPanicHook, BollingerBands, ATR } from "../../bindings/wasm/pkg/wickra_wasm.js";
+
+    const FEE = 0.001;
+    const BB_PERIOD = 20;
+    const BB_K = 2.0;
+    const ATR_PERIOD = 14;
+    const ATR_STOP_MULT = 2.0;
+    const SQUEEZE_LOOKBACK = 180;
+    const REQUIRED = ["timestamp", "open", "high", "low", "close", "volume"];
+
+    function parseCsv(text) {
+      const lines = text.split(/\r?\n/).filter((line) => line.length > 0);
+      if (lines.length === 0) throw new Error("file is empty");
+      const header = lines[0].split(",").map((s) => s.trim());
+      const missing = REQUIRED.filter((c) => !header.includes(c));
+      if (missing.length > 0) {
+        throw new Error(`missing required column(s): ${missing.join(", ")}; found: ${header.join(", ")}`);
+      }
+      if (lines.length === 1) throw new Error("CSV has a header but no data rows");
+      const idx = {};
+      for (const c of REQUIRED) idx[c] = header.indexOf(c);
+      const cols = { open: [], high: [], low: [], close: [], volume: [] };
+      for (let i = 1; i < lines.length; i++) {
+        const cells = lines[i].split(",");
+        for (const c of ["open", "high", "low", "close", "volume"]) {
+          const v = Number(cells[idx[c]]);
+          if (!Number.isFinite(v)) {
+            throw new Error(`row ${i + 1} column '${c}' is not numeric: ${JSON.stringify(cells[idx[c]])}`);
+          }
+          cols[c].push(v);
+        }
+      }
+      return cols;
+    }
+
+    function signed(value, digits) {
+      return (value >= 0 ? "+" : "") + value.toFixed(digits);
+    }
+
+    function runStrategy(cols) {
+      const n = cols.close.length;
+      if (n < SQUEEZE_LOOKBACK + BB_PERIOD) {
+        throw new Error(`dataset has only ${n} bars; need at least ${SQUEEZE_LOOKBACK + BB_PERIOD}`);
+      }
+
+      const bb = new BollingerBands(BB_PERIOD, BB_K);
+      const atr = new ATR(ATR_PERIOD);
+      const bwWindow = [];
+
+      let inPosition = false;
+      let entryPrice = 0.0;
+      let stopLevel = 0.0;
+      const closedTrades = [];
+      let equity = 1.0;
+      const equityCurve = [];
+
+      for (let i = 0; i < n; i++) {
+        const price = cols.close[i];
+        const bbOut = bb.update(price);
+        const atrVal = atr.update(cols.high[i], cols.low[i], price);
+        const mtm = inPosition ? equity * (price / entryPrice) : equity;
+        equityCurve.push(mtm);
+
+        if (bbOut == null || atrVal == null) continue;
+
+        const { upper, middle, lower } = bbOut;
+        const bandwidth = Math.abs(middle) > 1e-12 ? (upper - lower) / middle : NaN;
+        if (Number.isNaN(bandwidth)) continue;
+
+        bwWindow.push(bandwidth);
+        if (bwWindow.length > SQUEEZE_LOOKBACK) bwWindow.shift();
+        if (bwWindow.length < SQUEEZE_LOOKBACK) continue;
+        const minBw = bwWindow.reduce((m, v) => (v < m ? v : m), Infinity);
+
+        if (inPosition) {
+          const stopHit = price < stopLevel;
+          const upperCollapse = upper < entryPrice;
+          if (stopHit || upperCollapse) {
+            const tradeRet = price / entryPrice - 1.0;
+            closedTrades.push(tradeRet);
+            equity *= (1.0 + tradeRet) * (1.0 - FEE);
+            inPosition = false;
+          }
+        } else {
+          const isNewLow = Math.abs(bandwidth - minBw) < 1e-12;
+          const breakout = price > upper;
+          if (isNewLow && breakout) {
+            entryPrice = price;
+            stopLevel = price - ATR_STOP_MULT * atrVal;
+            equity *= 1.0 - FEE;
+            inPosition = true;
+          }
+        }
+      }
+
+      if (inPosition) {
+        const tradeRet = cols.close[n - 1] / entryPrice - 1.0;
+        closedTrades.push(tradeRet);
+        equity *= (1.0 + tradeRet) * (1.0 - FEE);
+      }
+
+      return summarise("Bollinger Squeeze Breakout (1d, BTCUSDT)", cols.close[0], cols.close[n - 1], n, closedTrades, equity, equityCurve);
+    }
+
+    function summarise(name, firstPrice, lastPrice, bars, closedTrades, finalEquity, equityCurve) {
+      const buyHold = lastPrice / firstPrice;
+      const stratReturn = finalEquity - 1.0;
+      const bhReturn = buyHold - 1.0;
+      const wins = closedTrades.filter((r) => r > 0).length;
+      const losses = closedTrades.filter((r) => r < 0).length;
+      const best = closedTrades.length ? Math.max(...closedTrades) : 0.0;
+      const worst = closedTrades.length ? Math.min(...closedTrades) : 0.0;
+      const nT = closedTrades.length;
+      const meanRet = nT ? closedTrades.reduce((a, r) => a + r, 0) / nT : 0.0;
+      const varRet = nT > 1 ? closedTrades.reduce((a, r) => a + (r - meanRet) ** 2, 0) / (nT - 1) : 0.0;
+      const stddev = Math.sqrt(varRet);
+      const sharpe = varRet > 0 ? meanRet / stddev : 0.0;
+      let peak = equityCurve.length ? equityCurve[0] : 1.0;
+      let maxDd = 0.0;
+      for (const eq of equityCurve) {
+        if (eq > peak) peak = eq;
+        const dd = (peak - eq) / peak;
+        if (dd > maxDd) maxDd = dd;
+      }
+      return [
+        ["Strategy", name],
+        ["Bars", String(bars)],
+        ["Trades", `${nT} (W${wins} / L${losses})`],
+        ["Strategy return", `${signed(stratReturn * 100, 2)}%`],
+        ["Buy & Hold return", `${signed(bhReturn * 100, 2)}%`],
+        ["Excess over BH", `${signed((stratReturn - bhReturn) * 100, 2)}%`],
+        ["Max drawdown", `${(maxDd * 100).toFixed(2)}%`],
+        ["Per-trade Sharpe", `${sharpe.toFixed(2)} (mean ${signed(meanRet, 4)}, stddev ${stddev.toFixed(4)})`],
+        ["Best / worst trade", `${signed(best * 100, 2)}% / ${signed(worst * 100, 2)}%`],
+      ];
+    }
+
+    function render(rows) {
+      const tbody = document.querySelector("#results tbody");
+      tbody.innerHTML = "";
+      for (const [k, v] of rows) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${k}</td><td>${v}</td>`;
+        tbody.appendChild(tr);
+      }
+      document.getElementById("results").hidden = false;
+      document.getElementById("disclaimer").hidden = false;
+    }
+
+    async function run() {
+      const path = document.getElementById("path").value;
+      const status = document.getElementById("status");
+      status.textContent = `Fetching ${path}…`;
+      try {
+        const resp = await fetch(path);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status} for ${path}`);
+        const cols = parseCsv(await resp.text());
+        status.textContent = `Running Bollinger squeeze over ${cols.close.length} bars…`;
+        await new Promise((r) => setTimeout(r, 0));
+        render(runStrategy(cols));
+        status.textContent = `Done — ${cols.close.length} bars.`;
+      } catch (err) {
+        status.textContent = `error: ${err.message || err}`;
+      }
+    }
+
+    document.getElementById("go").onclick = run;
+
+    init().then(() => {
+      installPanicHook();
+      document.getElementById("go").disabled = false;
+      document.getElementById("status").textContent = `Ready — wickra ${version()}. Click "Run strategy".`;
+    });
+  </script>
+</body>
+</html>
