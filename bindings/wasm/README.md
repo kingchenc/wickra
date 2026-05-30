@@ -1,7 +1,7 @@
 # Wickra
 
-[![CI](https://github.com/kingchenc/wickra/actions/workflows/ci.yml/badge.svg)](https://github.com/kingchenc/wickra/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/kingchenc/wickra/branch/main/graph/badge.svg)](https://codecov.io/gh/kingchenc/wickra)
+[![CI](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml/badge.svg)](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/wickra-lib/wickra/branch/main/graph/badge.svg)](https://codecov.io/gh/wickra-lib/wickra)
 [![crates.io](https://img.shields.io/crates/v/wickra.svg?logo=rust&color=orange)](https://crates.io/crates/wickra)
 [![PyPI](https://img.shields.io/pypi/v/wickra.svg?logo=pypi&color=blue)](https://pypi.org/project/wickra/)
 [![npm](https://img.shields.io/npm/v/wickra.svg?logo=npm&color=red)](https://www.npmjs.com/package/wickra)
@@ -109,20 +109,28 @@ python -m benchmarks.compare_libraries
 
 ## Indicators
 
-71 streaming-first indicators across eight families. Every one passes the
+214 streaming-first indicators across sixteen families. Every one passes the
 `batch == streaming` equivalence test, reference-value tests, and reset
 semantics tests.
 
 | Family | Indicators |
 |--------|-----------|
-| Moving Averages      | SMA, EMA, WMA, DEMA, TEMA, HMA, KAMA, SMMA, TRIMA, ZLEMA, T3, VWMA |
-| Momentum Oscillators | RSI (Wilder), Stochastic, CCI, ROC, Williams %R, MFI, Awesome Oscillator, MOM, CMO, TSI, PMO, StochRSI, Ultimate Oscillator |
-| Trend & Directional  | MACD, ADX (+DI/-DI), Aroon, TRIX, Aroon Oscillator, Vortex, Mass Index, Choppiness Index, Vertical Horizontal Filter |
-| Price Oscillators    | PPO, DPO, Coppock, Accelerator Oscillator, Balance of Power |
-| Volatility & Bands   | ATR, Bollinger Bands, Keltner Channels, Donchian Channels, NATR, StdDev, Ulcer Index, Historical Volatility, Bollinger Bandwidth, %B, True Range, Chaikin Volatility |
-| Trailing Stops       | Parabolic SAR, SuperTrend, Chandelier Exit, Chande Kroll Stop, ATR Trailing Stop |
-| Volume               | OBV, VWAP (cumulative + rolling), ADL, Volume-Price Trend, Chaikin Money Flow, Chaikin Oscillator, Force Index, Ease of Movement |
-| Price Statistics     | Typical Price, Median Price, Weighted Close, Linear Regression, Linear Regression Slope, Z-Score, Linear Regression Angle |
+| Moving Averages      | SMA, EMA, WMA, DEMA, TEMA, HMA, KAMA, SMMA, TRIMA, ZLEMA, T3, VWMA, ALMA, McGinley Dynamic, FRAMA, VIDYA, JMA, Alligator, EVWMA |
+| Momentum Oscillators | RSI (Wilder), Stochastic, CCI, ROC, Williams %R, MFI, Awesome Oscillator, MOM, CMO, TSI, PMO, StochRSI, Ultimate Oscillator, RVI, PGO, KST, SMI, Laguerre RSI, Connors RSI, Inertia |
+| Trend & Directional  | MACD, ADX (+DI/-DI), ADXR, Aroon, TRIX, Aroon Oscillator, Vortex, Random Walk Index, Trend Intensity Index, Wave Trend Oscillator, Mass Index, Choppiness Index, Vertical Horizontal Filter |
+| Price Oscillators    | PPO, DPO, Coppock, Accelerator Oscillator, Balance of Power, APO, AO Histogram, CFO, Zero-Lag MACD, Elder Impulse, STC |
+| Volatility & Bands   | ATR, Bollinger Bands, Keltner Channels, Donchian Channels, NATR, StdDev, Ulcer Index, Historical Volatility, Bollinger Bandwidth, %B, True Range, Chaikin Volatility, RVI (Relative Volatility Index), Parkinson Volatility, Garman-Klass Volatility, Rogers-Satchell Volatility, Yang-Zhang Volatility, Detrended StdDev |
+| Bands & Channels     | MA Envelope, Acceleration Bands, STARC Bands, ATR Bands, Hurst Channel, LinReg Channel, Standard Error Bands, Double Bollinger Bands, TTM Squeeze, Fractal Chaos Bands, VWAP StdDev Bands |
+| Trailing Stops       | Parabolic SAR, SuperTrend, Chandelier Exit, Chande Kroll Stop, ATR Trailing Stop, HiLo Activator, Volty Stop, Yo-Yo Exit, Donchian Channel Stop, Percentage Trailing Stop, Step Trailing Stop, Renko Trailing Stop |
+| Volume               | OBV, VWAP (cumulative + rolling), ADL, Volume-Price Trend, Chaikin Money Flow, Chaikin Oscillator, Force Index, Ease of Movement, Klinger Volume Oscillator, Volume Oscillator, NVI, PVI, Williams A/D, Anchored VWAP, Demand Index, TSV, VZO, Market Facilitation Index |
+| Price Statistics     | Typical Price, Median Price, Weighted Close, Linear Regression, Linear Regression Slope, Z-Score, Linear Regression Angle, Variance, Coefficient of Variation, Skewness, Kurtosis, Standard Error, R², Median Absolute Deviation, Autocorrelation, Hurst Exponent, Pearson Correlation, Beta, Spearman Correlation |
+| Ehlers / Cycle (DSP) | MAMA, FAMA, Fisher Transform, Inverse Fisher Transform, SuperSmoother, Hilbert Dominant Cycle, Sine Wave, Decycler, Decycler Oscillator, Roofing Filter, Center of Gravity, Cybernetic Cycle, Adaptive Cycle, Empirical Mode Decomposition, Ehlers Stochastic, Instantaneous Trendline |
+| Pivots & S/R         | Classic Pivots, Fibonacci Pivots, Camarilla, Woodie Pivots, DeMark Pivots, Williams Fractals, ZigZag |
+| DeMark               | TD Setup, TD Sequential, TD DeMarker, TD REI, TD Pressure, TD Combo, TD Countdown, TD Lines, TD Range Projection, TD Differential, TD Open, TD Risk Level |
+| Ichimoku & Charts    | Ichimoku Kinko Hyo (Tenkan, Kijun, Senkou A/B, Chikou), Heikin-Ashi |
+| Candlestick Patterns | Doji, Hammer, Inverted Hammer, Hanging Man, Shooting Star, Engulfing, Harami, Morning/Evening Star, Three White Soldiers/Black Crows, Piercing Line/Dark Cloud Cover, Marubozu, Tweezer, Spinning Top, Three Inside Up/Down, Three Outside Up/Down |
+| Market Profile       | Value Area (POC / VAH / VAL), Initial Balance, Opening Range |
+| Risk / Performance   | Sharpe Ratio, Sortino Ratio, Calmar Ratio, Omega Ratio, Max Drawdown, Average Drawdown, Drawdown Duration, Pain Index, Value at Risk, Conditional Value at Risk (CVaR), Profit Factor, Gain/Loss Ratio, Recovery Factor, Kelly Criterion, Treynor Ratio, Information Ratio, Alpha (Jensen) |
 
 Adding a new indicator means implementing one trait in Rust; all four bindings
 inherit it automatically.
@@ -256,7 +264,7 @@ Every layer is covered; run the suites with the commands in
 ## Contributing
 
 Contributions are very welcome — issues, bug reports, ideas, and pull requests
-all land in the same place: <https://github.com/kingchenc/wickra>.
+all land in the same place: <https://github.com/wickra-lib/wickra>.
 
 A short orientation for first-time contributors:
 
@@ -290,14 +298,14 @@ use Wickra commercially, get in touch about a license.
 ---
 
 <p align="center">
-  <a href="https://github.com/kingchenc/wickra/stargazers">
-    <img alt="GitHub stars" src="https://img.shields.io/github/stars/kingchenc/wickra?style=for-the-badge&logo=github&logoColor=white&color=ffd866">
+  <a href="https://github.com/wickra-lib/wickra/stargazers">
+    <img alt="GitHub stars" src="https://img.shields.io/github/stars/wickra-lib/wickra?style=for-the-badge&logo=github&logoColor=white&color=ffd866">
   </a>
-  <a href="https://github.com/kingchenc/wickra/network/members">
-    <img alt="GitHub forks" src="https://img.shields.io/github/forks/kingchenc/wickra?style=for-the-badge&logo=github&logoColor=white&color=78dce8">
+  <a href="https://github.com/wickra-lib/wickra/network/members">
+    <img alt="GitHub forks" src="https://img.shields.io/github/forks/wickra-lib/wickra?style=for-the-badge&logo=github&logoColor=white&color=78dce8">
   </a>
-  <a href="https://github.com/kingchenc/wickra/issues">
-    <img alt="GitHub issues" src="https://img.shields.io/github/issues/kingchenc/wickra?style=for-the-badge&logo=github&logoColor=white&color=ff6188">
+  <a href="https://github.com/wickra-lib/wickra/issues">
+    <img alt="GitHub issues" src="https://img.shields.io/github/issues/wickra-lib/wickra?style=for-the-badge&logo=github&logoColor=white&color=ff6188">
   </a>
 </p>
 

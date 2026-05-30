@@ -79,6 +79,30 @@ jobs:
           name: crate-files
           path: target/package/*.crate
 
+      # CycloneDX SBOM per published crate. Attached to the GitHub Release
+      # alongside the .crate / .whl / .tgz artefacts so downstream
+      # consumers can audit the published dependency tree without
+      # re-resolving Cargo.lock.
+      - name: Install cargo-cyclonedx
+        uses: taiki-e/install-action@0fd46367812ee04360509b4169d9f659d6892bb2 # v2.79.15
+        with:
+          tool: cargo-cyclonedx
+
+      - name: Generate CycloneDX SBOMs
+        run: |
+          cargo cyclonedx --format json --top-level -p wickra-core
+          cargo cyclonedx --format json --top-level -p wickra-data
+          cargo cyclonedx --format json --top-level -p wickra
+          mkdir -p sboms
+          find . -name "*.cdx.json" -not -path "./target/*" -exec cp {} sboms/ \;
+          ls -lh sboms/
+
+      - name: Upload SBOMs
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: sboms
+          path: sboms/*.cdx.json
+
   # --------------------------------------------------------------------------
   # PyPI: cross-platform wheels + sdist
   # --------------------------------------------------------------------------
@@ -208,6 +232,14 @@ jobs:
     needs: node-build
     runs-on: ubuntu-latest
     environment: release
+    # `id-token: write` lets npm publish embed a Sigstore provenance
+    # attestation generated from the GitHub Actions OIDC token. The npm
+    # registry then shows a "Verified provenance" badge and lets
+    # consumers verify the package was built from this exact workflow
+    # run.
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
@@ -266,13 +298,13 @@ jobs:
             # scripts during publish (npm runs prepublishOnly/prepare/etc. from
             # the package being published — a malicious or stray script would
             # execute with the npm token in the environment).
-            (cd "$dir" && npm publish --access public --ignore-scripts)
+            (cd "$dir" && npm publish --access public --ignore-scripts --provenance)
             local rc=$?
             echo "::endgroup::"
             if [ "$rc" -ne 0 ]; then
               echo "::warning::first attempt of $pkgname failed (rc=$rc); retrying after 30s"
               sleep 30
-              (cd "$dir" && npm publish --access public --ignore-scripts)
+              (cd "$dir" && npm publish --access public --ignore-scripts --provenance)
               rc=$?
             fi
             if [ "$rc" -ne 0 ]; then
@@ -313,12 +345,12 @@ jobs:
           # --ignore-scripts so any leftover prepublish hooks (which would
           # otherwise try to republish the already-published platform
           # subpackages) can't sabotage the main publish.
-          npm publish --access public --ignore-scripts
+          npm publish --access public --ignore-scripts --provenance
           rc=$?
           if [ "$rc" -ne 0 ]; then
             echo "::warning::first attempt failed (rc=$rc); retrying after 30s"
             sleep 30
-            npm publish --access public --ignore-scripts
+            npm publish --access public --ignore-scripts --provenance
             rc=$?
           fi
           exit $rc
@@ -346,10 +378,18 @@ jobs:
   # --------------------------------------------------------------------------
   # WASM: wasm-pack build + npm publish (as `wickra-wasm`)
   # --------------------------------------------------------------------------
+  # Note: this job's npm publish call uses `--provenance` (see below),
+  # which requires the `id-token: write` permission set at the job level.
   wasm-publish:
     name: Publish wickra-wasm to npm
     runs-on: ubuntu-latest
     environment: release
+    # `id-token: write` lets npm publish embed a Sigstore provenance
+    # attestation generated from the GitHub Actions OIDC token (same
+    # mechanism as the node-publish job above).
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
@@ -365,7 +405,7 @@ jobs:
       - name: Install wasm-pack (latest, via prebuilt binary)
         # See the matching note in ci.yml: jetli's default installs an old
         # 0.10.x wasm-pack whose build subcommand rejects --features.
-        uses: taiki-e/install-action@6c1f7cf125e42770ff087ea443901b487cc5471a # v2.79.5
+        uses: taiki-e/install-action@0fd46367812ee04360509b4169d9f659d6892bb2 # v2.79.15
         with:
           tool: wasm-pack
 
@@ -384,10 +424,10 @@ jobs:
           node -e "
             const fs = require('fs');
             const pkg = JSON.parse(fs.readFileSync('package.json'));
-            pkg.author = 'kingchenc <kingchencp@gmail.com>';
-            pkg.repository = { type: 'git', url: 'https://github.com/kingchenc/wickra' };
-            pkg.homepage = 'https://github.com/kingchenc/wickra';
-            pkg.bugs = { url: 'https://github.com/kingchenc/wickra/issues' };
+            pkg.author = 'kingchenc <wickra.lib@gmail.com>';
+            pkg.repository = { type: 'git', url: 'https://github.com/wickra-lib/wickra' };
+            pkg.homepage = 'https://github.com/wickra-lib/wickra';
+            pkg.bugs = { url: 'https://github.com/wickra-lib/wickra/issues' };
             pkg.license = 'PolyForm-Noncommercial-1.0.0';
             fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
           "
@@ -405,7 +445,7 @@ jobs:
       - name: Publish wickra-wasm to npm (idempotent)
         working-directory: bindings/wasm/pkg
         run: |
-          out=$(npm publish --access public 2>&1) && echo "$out" \
+          out=$(npm publish --access public --provenance 2>&1) && echo "$out" \
             || (echo "$out" | grep -q "You cannot publish over" && echo "skip: version already on npm" \
                 || (echo "$out"; exit 1))
         env:
@@ -459,6 +499,8 @@ jobs:
           find artifacts -type f -name "wickra-*.tgz" -exec cp {} release-assets/ \;
           # Cargo .crate files (one per workspace member).
           find artifacts -type f -name "*.crate" -exec cp {} release-assets/ \;
+          # CycloneDX SBOMs (one per published crate).
+          find artifacts -type f -name "*.cdx.json" -exec cp {} release-assets/ \;
           ls -lh release-assets/
           echo "asset-count=$(ls release-assets/ | wc -l)"
 

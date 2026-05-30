@@ -16,9 +16,9 @@ version only; please upgrade to the newest release before reporting an issue.
 
 Report it privately through one of:
 
-- GitHub's [private vulnerability reporting](https://github.com/kingchenc/wickra/security/advisories/new)
+- GitHub's [private vulnerability reporting](https://github.com/wickra-lib/wickra/security/advisories/new)
   ("Report a vulnerability" under the repository's *Security* tab), or
-- email to **kingchencp@gmail.com** with a subject line starting with
+- email to **wickra.lib@gmail.com** with a subject line starting with
   `[wickra security]`.
 
 Please include:

@@ -114,7 +114,7 @@ impl Resampler {
     ///
     /// # Errors
     /// Returns an error if the open bar's accumulated volume is non-finite
-    /// (see [`RolledBar::into_candle`]).
+    /// (see the internal `RolledBar::into_candle`).
     pub fn flush(&mut self) -> Result<Option<Candle>> {
         self.open.take().map(RolledBar::into_candle).transpose()
     }

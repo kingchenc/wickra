@@ -8,6 +8,9 @@
 // mandatory even when its body does not read state (e.g. parameterless indicators
 // like `TypicalPrice`). Clippy's `unused_self` triggers on those signatures.
 #![allow(clippy::unused_self)]
+// OHLCV batch helpers bind the conventional single-letter column names
+// (o/h/l/c/v) that match the domain and the NumPy call sites.
+#![allow(clippy::many_single_char_names)]
 
 use numpy::{IntoPyArray, PyArray1, PyArray2, PyReadonlyArray1};
 use pyo3::exceptions::{PyTypeError, PyValueError};
@@ -38,6 +41,19 @@ fn flatten(values: Vec<Option<f64>>) -> Vec<f64> {
 
 /// Raised instead of panicking when a `NumPy` input is not C-contiguous.
 const NON_CONTIGUOUS: &str = "array must be C-contiguous; pass np.ascontiguousarray(arr)";
+
+/// `(pp, r1, r2, r3, s1, s2, s3)` pivot levels returned by Classic/Fibonacci pivots.
+type PivotLevels = (f64, f64, f64, f64, f64, f64, f64);
+/// `(pp, r1, r2, s1, s2)` pivot levels returned by Woodie pivots.
+type WoodieLevels = (f64, f64, f64, f64, f64);
+/// `(tenkan, kijun, senkou_a, senkou_b, chikou)` Ichimoku lines, each optional during warmup.
+type IchimokuLines = (
+    Option<f64>,
+    Option<f64>,
+    Option<f64>,
+    Option<f64>,
+    Option<f64>,
+);
 
 // ============================== SMA ==============================
 
@@ -8064,10 +8080,7 @@ impl PyClassicPivots {
         }
     }
     /// Returns `(pp, r1, r2, r3, s1, s2, s3)` or None during warmup.
-    fn update(
-        &mut self,
-        candle: &Bound<'_, PyAny>,
-    ) -> PyResult<Option<(f64, f64, f64, f64, f64, f64, f64)>> {
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<PivotLevels>> {
         let c = extract_candle(candle)?;
         Ok(self
             .inner
@@ -8146,10 +8159,7 @@ impl PyFibonacciPivots {
             inner: wc::FibonacciPivots::new(),
         }
     }
-    fn update(
-        &mut self,
-        candle: &Bound<'_, PyAny>,
-    ) -> PyResult<Option<(f64, f64, f64, f64, f64, f64, f64)>> {
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<PivotLevels>> {
         let c = extract_candle(candle)?;
         Ok(self
             .inner
@@ -8305,7 +8315,7 @@ impl PyWoodiePivots {
         }
     }
     /// Returns `(pp, r1, r2, s1, s2)` or None during warmup.
-    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64, f64, f64)>> {
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<WoodieLevels>> {
         let c = extract_candle(candle)?;
         Ok(self.inner.update(c).map(|o| (o.pp, o.r1, o.r2, o.s1, o.s2)))
     }
@@ -9949,18 +9959,7 @@ impl PyIchimoku {
     }
     /// Returns `(tenkan, kijun, senkou_a, senkou_b, chikou)` as a 5-tuple
     /// where each element is `float` or `None`.
-    fn update(
-        &mut self,
-        candle: &Bound<'_, PyAny>,
-    ) -> PyResult<
-        Option<(
-            Option<f64>,
-            Option<f64>,
-            Option<f64>,
-            Option<f64>,
-            Option<f64>,
-        )>,
-    > {
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<IchimokuLines>> {
         let c = extract_candle(candle)?;
         Ok(self
             .inner
@@ -10864,7 +10863,7 @@ impl PyValueArea {
         let mut out = vec![f64::NAN; n * 3];
         for i in 0..n {
             // open / close pinned to the midpoint so the candle validates.
-            let mid = (h[i] + l[i]) / 2.0;
+            let mid = f64::midpoint(h[i], l[i]);
             let candle = wc::Candle::new(mid, h[i], l[i], mid, v[i], 0).map_err(map_err)?;
             if let Some(o) = self.inner.update(candle) {
                 out[i * 3] = o.poc;
@@ -10940,7 +10939,7 @@ impl PyInitialBalance {
         let n = h.len();
         let mut out = vec![f64::NAN; n * 2];
         for i in 0..n {
-            let mid = (h[i] + l[i]) / 2.0;
+            let mid = f64::midpoint(h[i], l[i]);
             let candle = wc::Candle::new(mid, h[i], l[i], mid, 0.0, 0).map_err(map_err)?;
             if let Some(o) = self.inner.update(candle) {
                 out[i * 2] = o.high;

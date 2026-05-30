@@ -23,7 +23,7 @@ use crate::traits::Indicator;
 /// This is the textbook **standard error of estimate** of OLS: it measures
 /// the typical distance between the observed prices and the fitted line,
 /// using the residual degrees of freedom `n − 2`. It is the spread that
-/// drives [`crate::Bollinger`]-style bands around a regression instead of
+/// drives [`crate::BollingerBands`]-style bands around a regression instead of
 /// around an SMA — when the price hugs its trend, `StdErr` is small.
 ///
 /// Each `update` is O(1): the `Σx` and `Σxx` terms depend only on `period`
