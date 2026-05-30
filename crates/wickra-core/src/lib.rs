@@ -83,7 +83,7 @@ pub use indicators::{
     VolumeOscillator, VolumePriceTrend, Vortex, VortexOutput, Vwap, VwapStdDevBands,
     VwapStdDevBandsOutput, Vwma, Vzo, WaveTrend, WaveTrendOutput, WeightedClose, WilliamsFractals,
     WilliamsFractalsOutput, WilliamsR, Wma, WoodiePivots, WoodiePivotsOutput, YangZhangVolatility,
-    YoyoExit, ZScore, ZeroLagMacd, ZeroLagMacdOutput, ZigZag, ZigZagOutput, Zlema, T3,
+    YoyoExit, ZScore, ZeroLagMacd, ZeroLagMacdOutput, ZigZag, ZigZagOutput, Zlema, FAMILIES, T3,
 };
 pub use ohlcv::{Candle, Tick};
 pub use traits::{BatchExt, Chain, Indicator};
