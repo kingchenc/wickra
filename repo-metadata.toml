@@ -1,0 +1,54 @@
+# Single source of truth for repo-level identity (org slug, maintainer email,
+# canonical URLs). The audit workflow `.github/workflows/sync-metadata.yml`
+# parses this file and fails CI if any tracked file disagrees.
+#
+# Do NOT edit downstream files by hand for these fields. Edit here, then run
+# the workflow locally to spot drift, fix the downstream files until the
+# audit is green.
+
+[repo]
+org          = "wickra-lib"
+name         = "wickra"
+url          = "https://github.com/wickra-lib/wickra"
+wiki_url     = "https://github.com/wickra-lib/wickra/wiki"
+wiki_git     = "https://github.com/wickra-lib/wickra.wiki.git"
+issues_url   = "https://github.com/wickra-lib/wickra/issues"
+discussions  = "https://github.com/wickra-lib/wickra/discussions"
+security_url = "https://github.com/wickra-lib/wickra/security/advisories/new"
+
+[maintainer]
+# `handle` is the natural-person credit shown in package manifests; it does
+# not move with the GitHub org transfer. `github` is the org @-mention slug
+# used in CODEOWNERS and prose.
+handle = "kingchenc"
+email  = "wickra.lib@gmail.com"
+github = "wickra-lib"
+
+[badges]
+codecov_repo = "wickra-lib/wickra"
+ci_workflow  = "ci.yml"
+
+[audit]
+# Forbidden substrings that must not appear anywhere in the repo outside the
+# allowlist below. These are the pre-migration values; if any one of them
+# resurfaces in source, the audit workflow fails.
+forbidden = [
+    "kingchenc/wickra",
+    "kingchencp@gmail.com",
+]
+
+# Paths that are exempt from the forbidden-substring scan. Historical
+# CHANGELOG sections keep their prose unchanged; auto-generated and ignored
+# folders never reach the repo but are listed for parity with `.git/info/exclude`.
+allowlist = [
+    "target/",
+    "node_modules/",
+    "fuzz/target/",
+    ".venv/",
+    "Cargo.lock",
+    "package-lock.json",
+    "bindings/node/index.js",
+    "bindings/node/index.d.ts",
+    "repo-metadata.toml",
+    ".github/scripts/sync-metadata.py",
+]

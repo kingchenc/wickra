@@ -76,9 +76,9 @@ wasm-pack test --node bindings/wasm
 - **Bindings.** A change to a public indicator API must be mirrored across the
   Python, Node, and WASM bindings, including their type stubs / `.d.ts`.
 - **Docs.** Update the relevant page on the
-  [project Wiki](https://github.com/kingchenc/wickra/wiki) and the
+  [project Wiki](https://github.com/wickra-lib/wickra/wiki) and the
   `README.md` when behaviour or the public API changes. The Wiki lives in
-  a separate git repository: `https://github.com/kingchenc/wickra.wiki.git`.
+  a separate git repository: `https://github.com/wickra-lib/wickra.wiki.git`.
 - **Changelog.** Add an entry under `## [Unreleased]` in `CHANGELOG.md`.
 
 ## Commit and pull-request workflow

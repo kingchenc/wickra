@@ -2,7 +2,7 @@
   "name": "wickra",
   "version": "0.2.7",
   "description": "Streaming-first technical indicators: incremental, fast, install-free. Node bindings powered by Rust.",
-  "author": "kingchenc <kingchencp@gmail.com>",
+  "author": "kingchenc <wickra.lib@gmail.com>",
   "main": "index.js",
   "types": "index.d.ts",
   "license": "PolyForm-Noncommercial-1.0.0",
@@ -17,12 +17,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/kingchenc/wickra"
+    "url": "https://github.com/wickra-lib/wickra"
   },
   "bugs": {
-    "url": "https://github.com/kingchenc/wickra/issues"
+    "url": "https://github.com/wickra-lib/wickra/issues"
   },
-  "homepage": "https://github.com/kingchenc/wickra",
+  "homepage": "https://github.com/wickra-lib/wickra",
   "files": [
     "index.js",
     "index.d.ts",

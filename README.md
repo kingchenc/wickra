@@ -1,7 +1,7 @@
 # Wickra
 
-[![CI](https://github.com/kingchenc/wickra/actions/workflows/ci.yml/badge.svg)](https://github.com/kingchenc/wickra/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/kingchenc/wickra/branch/main/graph/badge.svg)](https://codecov.io/gh/kingchenc/wickra)
+[![CI](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml/badge.svg)](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/wickra-lib/wickra/branch/main/graph/badge.svg)](https://codecov.io/gh/wickra-lib/wickra)
 [![crates.io](https://img.shields.io/crates/v/wickra.svg?logo=rust&color=orange)](https://crates.io/crates/wickra)
 [![PyPI](https://img.shields.io/pypi/v/wickra.svg?logo=pypi&color=blue)](https://pypi.org/project/wickra/)
 [![npm](https://img.shields.io/npm/v/wickra.svg?logo=npm&color=red)](https://www.npmjs.com/package/wickra)
@@ -264,7 +264,7 @@ Every layer is covered; run the suites with the commands in
 ## Contributing
 
 Contributions are very welcome — issues, bug reports, ideas, and pull requests
-all land in the same place: <https://github.com/kingchenc/wickra>.
+all land in the same place: <https://github.com/wickra-lib/wickra>.
 
 A short orientation for first-time contributors:
 
@@ -308,14 +308,14 @@ The library is provided **as is**, without warranty of any kind; see
 ---
 
 <p align="center">
-  <a href="https://github.com/kingchenc/wickra/stargazers">
-    <img alt="GitHub stars" src="https://img.shields.io/github/stars/kingchenc/wickra?style=for-the-badge&logo=github&logoColor=white&color=ffd866">
+  <a href="https://github.com/wickra-lib/wickra/stargazers">
+    <img alt="GitHub stars" src="https://img.shields.io/github/stars/wickra-lib/wickra?style=for-the-badge&logo=github&logoColor=white&color=ffd866">
   </a>
-  <a href="https://github.com/kingchenc/wickra/network/members">
-    <img alt="GitHub forks" src="https://img.shields.io/github/forks/kingchenc/wickra?style=for-the-badge&logo=github&logoColor=white&color=78dce8">
+  <a href="https://github.com/wickra-lib/wickra/network/members">
+    <img alt="GitHub forks" src="https://img.shields.io/github/forks/wickra-lib/wickra?style=for-the-badge&logo=github&logoColor=white&color=78dce8">
   </a>
-  <a href="https://github.com/kingchenc/wickra/issues">
-    <img alt="GitHub issues" src="https://img.shields.io/github/issues/kingchenc/wickra?style=for-the-badge&logo=github&logoColor=white&color=ff6188">
+  <a href="https://github.com/wickra-lib/wickra/issues">
+    <img alt="GitHub issues" src="https://img.shields.io/github/issues/wickra-lib/wickra?style=for-the-badge&logo=github&logoColor=white&color=ff6188">
   </a>
 </p>
 
