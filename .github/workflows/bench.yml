@@ -56,10 +56,16 @@ jobs:
 
       - name: Run cross-library benchmark
         working-directory: bindings/python
+        # workflow_dispatch inputs are untrusted; pass them through the
+        # environment and quote them rather than interpolating into the shell
+        # command (OpenSSF Scorecard: Dangerous-Workflow).
+        env:
+          BENCH_SIZE: ${{ github.event.inputs.size || '20000' }}
+          BENCH_ITERATIONS: ${{ github.event.inputs.iterations || '10' }}
         run: |
           python -m benchmarks.compare_libraries \
-            --size ${{ github.event.inputs.size || '20000' }} \
-            --iterations ${{ github.event.inputs.iterations || '10' }} \
+            --size "$BENCH_SIZE" \
+            --iterations "$BENCH_ITERATIONS" \
             --streaming-window 5000 --streaming-iterations 2 \
             | tee benchmark.txt
 
