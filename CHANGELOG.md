@@ -13,6 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   to `1`; every Node constructor now propagates the core's validation error
   (e.g. `period must be greater than zero`), matching the Python and WASM
   bindings and the Rust core. Constructing with a valid period is unaffected.
+- **Binding package READMEs are now per-ecosystem.** The Python, Node.js, and
+  WebAssembly READMEs were byte-identical 314-line copies of the workspace
+  README and had drifted out of sync (stale indicator count, Python snippets
+  shown on the Node and WASM package pages). Each is now a focused landing page
+  with the correct install command, a language-correct quick-start snippet, and
+  links to the canonical documentation — removing the manual three-way sync
+  burden. No code or API changes.
+- **CONTRIBUTING now states the correct MSRV (1.86 workspace / 1.88
+  `bindings/node`)** and documents that these are the dependency-forced floors,
+  kept minimal on purpose. The previous text claimed 1.75 / 1.77, which the
+  `msrv` CI job has enforced against since the criterion and napi-build bumps.
 
 ## [0.3.1] - 2026-05-30
 
