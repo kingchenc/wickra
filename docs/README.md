@@ -1,30 +1,31 @@
 # Documentation
 
-Wickra's full documentation lives in the **[GitHub Wiki](https://github.com/wickra-lib/wickra/wiki)**.
+Wickra's full documentation lives at **[docs.wickra.org](https://docs.wickra.org)**.
 
 That includes:
 
-- **Quickstarts** for [Rust](https://github.com/wickra-lib/wickra/wiki/Quickstart-Rust.md),
-  [Python](https://github.com/wickra-lib/wickra/wiki/Quickstart-Python.md),
-  [Node](https://github.com/wickra-lib/wickra/wiki/Quickstart-Node.md), and
-  [WASM](https://github.com/wickra-lib/wickra/wiki/Quickstart-WASM.md).
+- **Quickstarts** for [Rust](https://docs.wickra.org/Quickstart-Rust),
+  [Python](https://docs.wickra.org/Quickstart-Python),
+  [Node](https://docs.wickra.org/Quickstart-Node), and
+  [WASM](https://docs.wickra.org/Quickstart-WASM).
 - A per-indicator deep dive for every one of the **214 indicators** across
   the sixteen families (Moving Averages, Momentum Oscillators, Trend &
   Directional, Price Oscillators, Volatility & Bands, Bands & Channels,
   Trailing Stops, Volume, Price Statistics, Ehlers / Cycle DSP, Pivots &
   S/R, DeMark, Ichimoku & Charts, Candlestick Patterns, Market Profile,
   Risk / Performance) — see the
-  [indicators overview](https://github.com/wickra-lib/wickra/wiki/Indicators-Overview.md).
-- **Reference pages**: [warmup periods](https://github.com/wickra-lib/wickra/wiki/Warmup-Periods.md),
-  [streaming vs batch](https://github.com/wickra-lib/wickra/wiki/Streaming-vs-Batch.md),
-  [indicator chaining](https://github.com/wickra-lib/wickra/wiki/Indicator-Chaining.md), and the
-  [data layer](https://github.com/wickra-lib/wickra/wiki/Data-Layer.md).
-- **Guides**: [Cookbook](https://github.com/wickra-lib/wickra/wiki/Cookbook.md),
-  [TA-Lib migration](https://github.com/wickra-lib/wickra/wiki/TA-Lib-Migration.md),
-  [FAQ](https://github.com/wickra-lib/wickra/wiki/FAQ.md).
+  [indicators overview](https://docs.wickra.org/Indicators-Overview).
+- **Reference pages**: [warmup periods](https://docs.wickra.org/Warmup-Periods),
+  [streaming vs batch](https://docs.wickra.org/Streaming-vs-Batch),
+  [indicator chaining](https://docs.wickra.org/Indicator-Chaining), and the
+  [data layer](https://docs.wickra.org/Data-Layer).
+- **Guides**: [Cookbook](https://docs.wickra.org/Cookbook),
+  [TA-Lib migration](https://docs.wickra.org/TA-Lib-Migration),
+  [FAQ](https://docs.wickra.org/FAQ).
 
-## Editing the wiki
+## Editing the docs
 
-The wiki is a separate git repository at `https://github.com/wickra-lib/wickra.wiki.git`.
-Clone it locally if you want to bulk-edit; otherwise the GitHub web UI's "Edit" button on any
-wiki page is fine for one-off changes.
+The documentation site is a separate git repository at
+`https://github.com/wickra-lib/wickra-docs`. Open a pull request there to
+propose changes; the site is built with VitePress and deploys to
+`docs.wickra.org`.

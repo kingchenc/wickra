@@ -58,7 +58,7 @@ indicators tracks those.
 
 ## See also
 
-- [Quickstart: WASM](https://github.com/wickra-lib/wickra/wiki/Quickstart-WASM.md) — module-load
+- [Quickstart: WASM](https://docs.wickra.org/Quickstart-WASM) — module-load
   flow, `wasm-pack` targets, and the streaming API.
 - [examples/README.md](../README.md) — cross-language index, including
   the Rust, Python and Node siblings of every demo above.
