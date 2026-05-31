@@ -325,11 +325,19 @@ jobs:
             echo "::warning::tag '${GITHUB_REF}' is not a plain vMAJOR.MINOR.PATCH release; skipping docs version sync."
             exit 0
           fi
-          if ! git clone "https://x-access-token:${GH_TOKEN}@github.com/wickra-lib/wickra-docs.git" docs 2>/dev/null; then
+          # Clone into `docs-ver`, NOT `docs`: on a tag push this job checks out
+          # the wickra repo at the workspace root, which already contains a
+          # top-level `docs/` directory, so `git clone … docs` fails with
+          # "destination path 'docs' already exists" — silently, because of the
+          # 2>/dev/null below — and the version sync never runs (this is exactly
+          # why v0.4.0 did not bump the docs table). `docs-ver` mirrors the
+          # `docs-count` dir used by the count step above and collides with
+          # nothing in the repo.
+          if ! git clone "https://x-access-token:${GH_TOKEN}@github.com/wickra-lib/wickra-docs.git" docs-ver 2>/dev/null; then
             echo "::warning::cannot clone wickra-lib/wickra-docs — ABOUT_SYNC_TOKEN likely lacks write on that repo (findings P10.0a). Skipping docs version sync."
             exit 0
           fi
-          cd docs
+          cd docs-ver
           # Published-versions table rows (crates.io / PyPI / npm): replace only the
           # version number, leaving the trailing padding + pipe intact. The '.' in
           # the quickstart pattern matches the literal backtick around the version
@@ -397,6 +405,26 @@ jobs:
             echo "::warning::tag '${GITHUB_REF}' is not a plain vMAJOR.MINOR.PATCH release; skipping webpage version sync."
             exit 0
           fi
+          # The webpage pins wickra-wasm to the released version in package.json,
+          # and its Cloudflare Pages build runs `npm clean-install`. release.yml
+          # publishes wickra-wasm to npm in parallel on this same tag and finishes
+          # minutes later, so committing the bump immediately would point the site
+          # at a version npm cannot resolve yet (ETARGET) and break the build —
+          # exactly what happened on v0.4.0. Wait until wickra-wasm@$version is
+          # actually live on npm before committing; if it never appears (the wasm
+          # publish failed), skip rather than push a build-breaking commit.
+          echo "Waiting for wickra-wasm@${version} on npm before bumping the webpage..."
+          attempts=0
+          until npm view "wickra-wasm@${version}" version >/dev/null 2>&1; do
+            attempts=$((attempts + 1))
+            if [ "$attempts" -ge 30 ]; then
+              echo "::warning::wickra-wasm@${version} not on npm after ~15 min; skipping webpage version sync to avoid a broken Cloudflare build."
+              exit 0
+            fi
+            echo "  not on npm yet (attempt ${attempts}/30); waiting 30s..."
+            sleep 30
+          done
+          echo "wickra-wasm@${version} is live on npm; proceeding with the webpage version bump."
           if ! git clone "https://x-access-token:${GH_TOKEN}@github.com/wickra-lib/webpage.git" webpage-ver 2>/dev/null; then
             echo "::warning::cannot clone wickra-lib/webpage — ABOUT_SYNC_TOKEN likely lacks write (findings P10.0a). Skipping webpage version sync."
             exit 0
