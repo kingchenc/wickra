@@ -60,7 +60,8 @@
     "artifacts": "napi artifacts",
     "universal": "napi universal",
     "version": "napi version",
-    "test": "node --test __tests__/"
+    "test": "node --test __tests__/",
+    "bench": "node benchmarks/throughput.js"
   },
   "devDependencies": {
     "@napi-rs/cli": "^2.18.0"

@@ -55,6 +55,63 @@ jobs:
         # streaming.
         run: cargo build -p wickra-examples --bins
 
+  # Syntax/parse smoke for the non-Rust examples. The Rust examples are built
+  # in the `rust` job above (`cargo build -p wickra-examples --bins`); the Node,
+  # browser-WASM and Python examples otherwise have no build gate, so a broken
+  # edit could land unnoticed. This is a parse-only smoke — actually running the
+  # examples needs the built native binding / wasm module / wheel, which the
+  # binding jobs provide separately.
+  examples-smoke:
+    name: Examples (syntax smoke)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: "20"
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Node examples — syntax check
+        run: |
+          shopt -s nullglob
+          count=0
+          for f in examples/node/*.js examples/wasm/*.js; do
+            echo "node --check $f"
+            node --check "$f"
+            count=$((count + 1))
+          done
+          echo "checked $count Node/WASM .js files"
+
+      - name: WASM demo module scripts — syntax check
+        # The .html demos embed an ES module; extract it and parse-check so a
+        # broken edit to the in-page strategy logic fails CI.
+        run: |
+          shopt -s nullglob
+          count=0
+          for f in examples/wasm/*.html; do
+            node -e 'const fs=require("fs");const h=fs.readFileSync(process.argv[1],"utf8");const m=h.match(/<script type="module">([\s\S]*?)<\/script>/);if(!m){console.error("no <script type=module> in "+process.argv[1]);process.exit(1);}fs.writeFileSync("module-check.mjs",m[1]);' "$f"
+            echo "node --check (module of) $f"
+            node --check module-check.mjs
+            count=$((count + 1))
+          done
+          rm -f module-check.mjs
+          echo "checked $count WASM .html module scripts"
+
+      - name: Python examples — byte-compile
+        run: |
+          shopt -s nullglob
+          count=0
+          for f in examples/python/*.py; do
+            echo "py_compile $f"
+            python -m py_compile "$f"
+            count=$((count + 1))
+          done
+          echo "compiled $count Python files"
+
   # Clippy for the Python and Node bindings. These are kept out of the main
   # `rust` job because PyO3 / napi build scripts need a Python interpreter and
   # a Node toolchain on PATH, which the 3-OS matrix job does not provision.

@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- **Node binding: invalid indicator periods now throw instead of being silently
+  clamped.** The scalar-indicator constructors previously clamped `period = 0`
+  to `1`; every Node constructor now propagates the core's validation error
+  (e.g. `period must be greater than zero`), matching the Python and WASM
+  bindings and the Rust core. Constructing with a valid period is unaffected.
 - **Binding package READMEs are now per-ecosystem.** The Python, Node.js, and
   WebAssembly READMEs were byte-identical 314-line copies of the workspace
   README and had drifted out of sync (stale indicator count, Python snippets

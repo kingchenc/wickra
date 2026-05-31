@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Wickra WASM — RSI mean-reversion</title>
+  <style>
+    body { font-family: ui-sans-serif, system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; color: #1d1d1d; }
+    h1 { margin-bottom: .25rem; }
+    .meta { color: #666; margin-top: 0; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1rem; font-variant-numeric: tabular-nums; }
+    th, td { border: 1px solid #ddd; padding: .5rem .75rem; text-align: right; }
+    th:first-child, td:first-child { text-align: left; }
+    th { background: #fafafa; }
+    code { background: #f4f4f4; padding: .1rem .25rem; border-radius: .2rem; font-size: .9em; }
+    label { display: inline-block; margin-right: .5rem; }
+    button { padding: .5rem 1rem; }
+    #status { margin-top: 1rem; color: #666; }
+    .note { margin-top: 1rem; color: #888; font-size: .9em; }
+  </style>
+</head>
+<body>
+  <h1>Wickra WASM — RSI mean-reversion</h1>
+  <p class="meta">
+    Goes long when RSI(14) crosses below 30 and exits above 70, with 0.1% fees
+    and a full-in / full-out position. The browser counterpart of
+    <code>examples/python/strategy_rsi_mean_reversion.py</code>,
+    <code>examples/node/strategy_rsi_mean_reversion.js</code> and the Rust
+    <code>strategy_rsi_mean_reversion.rs</code> — same signal → fill → PnL →
+    equity loop, same summary.
+  </p>
+
+  <p>
+    <label>Dataset: <input type="text" id="path" value="../data/btcusdt-1h.csv" size="40" /></label>
+    <button id="go" disabled>Run strategy</button>
+  </p>
+
+  <p id="status">Loading WASM module…</p>
+
+  <table id="results" hidden>
+    <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <p class="note" id="disclaimer" hidden>
+    NOTE: Educational example — fees, slippage, funding costs and tax effects
+    are simplified or omitted. Past performance is not indicative of future
+    results.
+  </p>
+
+  <script type="module">
+    import init, { version, installPanicHook, RSI } from "../../bindings/wasm/pkg/wickra_wasm.js";
+
+    const FEE = 0.001;
+    const RSI_PERIOD = 14;
+    const OVERSOLD = 30.0;
+    const OVERBOUGHT = 70.0;
+    const REQUIRED = ["timestamp", "open", "high", "low", "close", "volume"];
+
+    // Plain OHLCV CSV — the Wickra layout never quotes values nor embeds commas,
+    // so split-on-comma is a complete parse.
+    function parseCsv(text) {
+      const lines = text.split(/\r?\n/).filter((line) => line.length > 0);
+      if (lines.length === 0) throw new Error("file is empty");
+      const header = lines[0].split(",").map((s) => s.trim());
+      const missing = REQUIRED.filter((c) => !header.includes(c));
+      if (missing.length > 0) {
+        throw new Error(`missing required column(s): ${missing.join(", ")}; found: ${header.join(", ")}`);
+      }
+      if (lines.length === 1) throw new Error("CSV has a header but no data rows");
+      const idx = {};
+      for (const c of REQUIRED) idx[c] = header.indexOf(c);
+      const cols = { open: [], high: [], low: [], close: [], volume: [] };
+      for (let i = 1; i < lines.length; i++) {
+        const cells = lines[i].split(",");
+        for (const c of ["open", "high", "low", "close", "volume"]) {
+          const v = Number(cells[idx[c]]);
+          if (!Number.isFinite(v)) {
+            throw new Error(`row ${i + 1} column '${c}' is not numeric: ${JSON.stringify(cells[idx[c]])}`);
+          }
+          cols[c].push(v);
+        }
+      }
+      return cols;
+    }
+
+    // Forced-sign fixed-point, matching the CLI summaries' `{:+.Nf}`.
+    function signed(value, digits) {
+      return (value >= 0 ? "+" : "") + value.toFixed(digits);
+    }
+
+    function runStrategy(cols) {
+      const n = cols.close.length;
+      if (n < RSI_PERIOD * 4) throw new Error(`dataset too small: ${n}`);
+
+      const rsi = new RSI(RSI_PERIOD);
+      let inPosition = false;
+      let entryPrice = 0.0;
+      const closedTrades = [];
+      let equity = 1.0;
+      const equityCurve = [];
+
+      for (let i = 0; i < n; i++) {
+        const price = cols.close[i];
+        const rsiVal = rsi.update(price);
+        const mtm = inPosition ? equity * (price / entryPrice) : equity;
+        equityCurve.push(mtm);
+
+        if (rsiVal == null) continue;
+
+        if (!inPosition && rsiVal < OVERSOLD) {
+          entryPrice = price;
+          equity *= 1.0 - FEE;
+          inPosition = true;
+        } else if (inPosition && rsiVal > OVERBOUGHT) {
+          const tradeRet = price / entryPrice - 1.0;
+          closedTrades.push(tradeRet);
+          equity *= (1.0 + tradeRet) * (1.0 - FEE);
+          inPosition = false;
+        }
+      }
+
+      if (inPosition) {
+        const tradeRet = cols.close[n - 1] / entryPrice - 1.0;
+        closedTrades.push(tradeRet);
+        equity *= (1.0 + tradeRet) * (1.0 - FEE);
+      }
+
+      return summarise("RSI Mean-Reversion (1h, BTCUSDT)", cols.close[0], cols.close[n - 1], n, closedTrades, equity, equityCurve);
+    }
+
+    function summarise(name, firstPrice, lastPrice, bars, closedTrades, finalEquity, equityCurve) {
+      const buyHold = lastPrice / firstPrice;
+      const stratReturn = finalEquity - 1.0;
+      const bhReturn = buyHold - 1.0;
+      const wins = closedTrades.filter((r) => r > 0).length;
+      const losses = closedTrades.filter((r) => r < 0).length;
+      const best = closedTrades.length ? Math.max(...closedTrades) : 0.0;
+      const worst = closedTrades.length ? Math.min(...closedTrades) : 0.0;
+      const nT = closedTrades.length;
+      const meanRet = nT ? closedTrades.reduce((a, r) => a + r, 0) / nT : 0.0;
+      const varRet = nT > 1 ? closedTrades.reduce((a, r) => a + (r - meanRet) ** 2, 0) / (nT - 1) : 0.0;
+      const stddev = Math.sqrt(varRet);
+      const sharpe = varRet > 0 ? meanRet / stddev : 0.0;
+      let peak = equityCurve.length ? equityCurve[0] : 1.0;
+      let maxDd = 0.0;
+      for (const eq of equityCurve) {
+        if (eq > peak) peak = eq;
+        const dd = (peak - eq) / peak;
+        if (dd > maxDd) maxDd = dd;
+      }
+      return [
+        ["Strategy", name],
+        ["Bars", String(bars)],
+        ["Trades", `${nT} (W${wins} / L${losses})`],
+        ["Strategy return", `${signed(stratReturn * 100, 2)}%`],
+        ["Buy & Hold return", `${signed(bhReturn * 100, 2)}%`],
+        ["Excess over BH", `${signed((stratReturn - bhReturn) * 100, 2)}%`],
+        ["Max drawdown", `${(maxDd * 100).toFixed(2)}%`],
+        ["Per-trade Sharpe", `${sharpe.toFixed(2)} (mean ${signed(meanRet, 4)}, stddev ${stddev.toFixed(4)})`],
+        ["Best / worst trade", `${signed(best * 100, 2)}% / ${signed(worst * 100, 2)}%`],
+      ];
+    }
+
+    function render(rows) {
+      const tbody = document.querySelector("#results tbody");
+      tbody.innerHTML = "";
+      for (const [k, v] of rows) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${k}</td><td>${v}</td>`;
+        tbody.appendChild(tr);
+      }
+      document.getElementById("results").hidden = false;
+      document.getElementById("disclaimer").hidden = false;
+    }
+
+    async function run() {
+      const path = document.getElementById("path").value;
+      const status = document.getElementById("status");
+      status.textContent = `Fetching ${path}…`;
+      try {
+        const resp = await fetch(path);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status} for ${path}`);
+        const cols = parseCsv(await resp.text());
+        status.textContent = `Running RSI mean-reversion over ${cols.close.length} bars…`;
+        await new Promise((r) => setTimeout(r, 0));
+        render(runStrategy(cols));
+        status.textContent = `Done — ${cols.close.length} bars.`;
+      } catch (err) {
+        status.textContent = `error: ${err.message || err}`;
+      }
+    }
+
+    document.getElementById("go").onclick = run;
+
+    init().then(() => {
+      installPanicHook();
+      document.getElementById("go").disabled = false;
+      document.getElementById("status").textContent = `Ready — wickra ${version()}. Click "Run strategy".`;
+    });
+  </script>
+</body>
+</html>

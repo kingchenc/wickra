@@ -73,10 +73,10 @@ test('ATR batch shape', () => {
   }
 });
 
-test('zero period is clamped to a valid window', () => {
-  // Constructors cannot throw from JS (napi-rs 2.16 limitation), so they
-  // clamp pathological values like period=0 to the smallest valid window.
-  const sma = new wickra.SMA(0);
-  assert.equal(sma.warmupPeriod(), 1);
-  assert.equal(sma.update(42), 42);
+test('zero period is rejected at construction', () => {
+  // The core rejects period 0 (Error::PeriodZero); the Node binding propagates
+  // it as a thrown JS error, consistent with the Python and WASM bindings.
+  assert.throws(() => new wickra.SMA(0), /period must be greater than zero/);
+  // A valid period still constructs and runs.
+  assert.equal(new wickra.SMA(1).update(42), 42);
 });
