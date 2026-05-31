@@ -14,12 +14,19 @@ name: Sync indicator count
 #                                            — synced on push to main / v* tag*
 #   6. org description ("… N indicators, install-free.")
 #                                            — synced on push to main / v* tag*
+#   7. docs site published version (wickra-lib/wickra-docs: the
+#      "Published versions" table in overview.md + the Rust quickstart prose)
+#                                            — synced on v* tag only*
 #
 #   *Surfaces 5 + 6 need the ABOUT_SYNC_TOKEN to carry extra scope (write on
-#   wickra-lib/.github, and admin:org for the org-description PATCH). Until that
-#   scope is granted these two steps emit a ::warning:: and soft-skip — they
-#   never fail the run. The repo "About" homepage URL is also enforced in step 2
-#   (constant value, no extra scope) so it can never drift back to the old org.
+#   wickra-lib/.github, and admin:org for the org-description PATCH); surface 7
+#   needs write on wickra-lib/wickra-docs. Until that scope is granted these
+#   steps emit a ::warning:: and soft-skip — they never fail the run. The repo
+#   "About" homepage URL is also enforced in step 2 (constant value, no extra
+#   scope) so it can never drift back to the old org.
+#
+#   Note: surface 7 carries the release *version*, not the indicator count, so
+#   it is driven by the v* tag (which is the version) rather than the count.
 #
 # We count public types (not `mod xxx;` lines) because some modules export
 # more than one indicator — e.g. `vwap.rs` exposes both `Vwap` and
@@ -260,4 +267,52 @@ jobs:
             echo "Org description synced to ${n}."
           else
             echo "::warning::org description PATCH failed — ABOUT_SYNC_TOKEN likely lacks admin:org (findings P10.0b)."
+          fi
+
+      # ----- docs version sync (tag-only, soft-skip until PAT scope lands) -----
+      #
+      # Surface 7: the docs site (wickra-lib/wickra-docs) carries the published
+      # version in the "Published versions" table (overview.md) and the Rust
+      # quickstart prose. Unlike the indicator count these change only on a
+      # release, so this step runs on v* tag pushes only and takes the version
+      # straight from the tag. It needs ABOUT_SYNC_TOKEN to have write on
+      # wickra-lib/wickra-docs (findings P10.0a). Until that scope is granted it
+      # soft-skips with a ::warning:: and never fails the run; once granted, every
+      # release self-heals the docs version with no code change (replaces the old
+      # manual P0.5 post-release wiki bump).
+      - name: Sync docs version (wickra-docs)
+        if: startsWith(github.ref, 'refs/tags/v')
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.ABOUT_SYNC_TOKEN }}
+        run: |
+          version="${GITHUB_REF#refs/tags/v}"
+          if ! printf '%s' "$version" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::warning::tag '${GITHUB_REF}' is not a plain vMAJOR.MINOR.PATCH release; skipping docs version sync."
+            exit 0
+          fi
+          if ! git clone "https://x-access-token:${GH_TOKEN}@github.com/wickra-lib/wickra-docs.git" docs 2>/dev/null; then
+            echo "::warning::cannot clone wickra-lib/wickra-docs — ABOUT_SYNC_TOKEN likely lacks write on that repo (findings P10.0a). Skipping docs version sync."
+            exit 0
+          fi
+          cd docs
+          # Published-versions table rows (crates.io / PyPI / npm): replace only the
+          # version number, leaving the trailing padding + pipe intact. The '.' in
+          # the quickstart pattern matches the literal backtick around the version
+          # without needing a backtick in this shell string. Historical "since
+          # X.Y.Z" references contain no such anchor and are never matched.
+          sed -i -E "s/^(\| (crates\.io|PyPI|npm) .*\| )[0-9]+\.[0-9]+\.[0-9]+/\1${version}/" overview.md
+          sed -i -E "s/(published crate is at version .)[0-9]+\.[0-9]+\.[0-9]+/\1${version}/" Quickstart-Rust.md
+          if git diff --quiet; then
+            echo "Docs version already at ${version}."
+            exit 0
+          fi
+          git config user.name "wickra-bot"
+          git config user.email "wickra-bot@users.noreply.github.com"
+          git add overview.md Quickstart-Rust.md
+          git commit -m "chore: sync published version to ${version}"
+          if ! git push 2>/dev/null; then
+            echo "::warning::push to wickra-lib/wickra-docs failed — ABOUT_SYNC_TOKEN likely lacks write (findings P10.0a)."
+          else
+            echo "Docs version synced to ${version}."
           fi
