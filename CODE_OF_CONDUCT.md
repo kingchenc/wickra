@@ -33,7 +33,7 @@ project in public spaces.
 ## Enforcement
 
 Instances of unacceptable behaviour may be reported to the project maintainer
-at **wickra.lib@gmail.com**. All reports will be reviewed and investigated
+at **support@wickra.org**. All reports will be reviewed and investigated
 promptly and fairly, and the maintainer will respect the privacy and security
 of the reporter.
 

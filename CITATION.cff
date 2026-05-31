@@ -6,7 +6,7 @@ message: >-
 type: software
 authors:
   - alias: kingchenc
-    email: wickra.lib@gmail.com
+    email: support@wickra.org
 repository-code: "https://github.com/wickra-lib/wickra"
 url: "https://wickra.org"
 abstract: >-

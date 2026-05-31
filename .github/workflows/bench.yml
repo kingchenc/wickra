@@ -35,8 +35,25 @@ jobs:
       - uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable branch, 2026-03-27
 
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        continue-on-error: true # cache is an optimisation; never block on a stuck/slow restore
+        timeout-minutes: 6
 
       - name: Set up Python
+        id: setup_python
+        continue-on-error: true
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+
+      - name: Wait before Python retry
+        if: steps.setup_python.outcome == 'failure'
+        shell: bash
+        run: |
+          echo "::warning::setup-python failed (likely CDN flake), waiting 30s before retry..."
+          sleep 30
+
+      - name: Set up Python (retry)
+        if: steps.setup_python.outcome == 'failure'
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: "3.11"
@@ -56,10 +73,16 @@ jobs:
 
       - name: Run cross-library benchmark
         working-directory: bindings/python
+        # workflow_dispatch inputs are untrusted; pass them through the
+        # environment and quote them rather than interpolating into the shell
+        # command (OpenSSF Scorecard: Dangerous-Workflow).
+        env:
+          BENCH_SIZE: ${{ github.event.inputs.size || '20000' }}
+          BENCH_ITERATIONS: ${{ github.event.inputs.iterations || '10' }}
         run: |
           python -m benchmarks.compare_libraries \
-            --size ${{ github.event.inputs.size || '20000' }} \
-            --iterations ${{ github.event.inputs.iterations || '10' }} \
+            --size "$BENCH_SIZE" \
+            --iterations "$BENCH_ITERATIONS" \
             --streaming-window 5000 --streaming-iterations 2 \
             | tee benchmark.txt
 
