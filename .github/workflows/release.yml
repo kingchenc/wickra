@@ -579,3 +579,50 @@ jobs:
             artifacts/crates/*.crate
             artifacts/python/*.whl
             artifacts/python/*.tar.gz
+
+  # --------------------------------------------------------------------------
+  # VirusTotal scan of the published binaries (findings P13.3)
+  # --------------------------------------------------------------------------
+  virustotal:
+    name: Scan release artifacts (VirusTotal)
+    needs: [github-release]
+    runs-on: ubuntu-latest
+    # Uploads the published binary artefacts (wheels, native .node, npm/wasm
+    # tarballs, crates) to VirusTotal and appends the per-file analysis links to
+    # the GitHub Release body. Soft-skips when VT_API_KEY is not configured so a
+    # missing optional key never fails the release.
+    permissions:
+      contents: write # append the VirusTotal links to the release body
+    steps:
+      - name: Check for VT_API_KEY
+        id: vt
+        env:
+          VT_API_KEY: ${{ secrets.VT_API_KEY }}
+        run: |
+          if [ -n "$VT_API_KEY" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::VT_API_KEY not set — skipping VirusTotal scan (findings P13.3)."
+          fi
+
+      - name: Download all release artifacts
+        if: steps.vt.outputs.enabled == 'true'
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          path: vt-assets
+          merge-multiple: true
+
+      - name: Scan with VirusTotal
+        if: steps.vt.outputs.enabled == 'true'
+        uses: crazy-max/ghaction-virustotal@936d8c5c00afe97d3d9a1af26d017cfdf26800a2 # v5.0.0
+        with:
+          vt_api_key: ${{ secrets.VT_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          update_release_body: true
+          files: |
+            vt-assets/**/*.whl
+            vt-assets/**/*.tar.gz
+            vt-assets/**/*.node
+            vt-assets/**/*.tgz
+            vt-assets/**/*.crate

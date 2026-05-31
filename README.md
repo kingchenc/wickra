@@ -8,6 +8,7 @@
 [![License: PolyForm-NC](https://img.shields.io/badge/license-PolyForm--NC--1.0.0-purple)](LICENSE)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/wickra-lib/wickra/badge)](https://scorecard.dev/viewer/?uri=github.com/wickra-lib/wickra)
 [![Build provenance](https://img.shields.io/badge/provenance-attested-brightgreen?logo=github)](https://github.com/wickra-lib/wickra/attestations)
+[![VirusTotal](https://img.shields.io/badge/VirusTotal-scanned-394eff?logo=virustotal&logoColor=white)](https://github.com/wickra-lib/wickra/releases)
 
 **Streaming-first technical indicators. Install with `pip install wickra` — no system dependencies.**
 
