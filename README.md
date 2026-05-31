@@ -1,4 +1,6 @@
-# Wickra
+<p align="center">
+  <a href="https://wickra.org"><img src="https://wickra.org/og-banner.webp" alt="Wickra — streaming-first technical indicators" width="100%"></a>
+</p>
 
 [![CI](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml/badge.svg)](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/wickra-lib/wickra/actions/workflows/codeql.yml/badge.svg)](https://github.com/wickra-lib/wickra/actions/workflows/codeql.yml)
