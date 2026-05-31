@@ -437,13 +437,25 @@ jobs:
           sed -i -E "s/(Latest:\*\* \[.wickra(-wasm)? )[0-9]+\.[0-9]+\.[0-9]+/\1${version}/" api/*.md
           sed -i -E "s/(text: .v)[0-9]+\.[0-9]+\.[0-9]+/\1${version}/" .vitepress/config.ts
           sed -i -E "s/(.wickra-wasm.: .\^)[0-9]+\.[0-9]+\.[0-9]+/\1${version}/" package.json
+          # Keep package-lock.json in sync with the package.json bump. The site's
+          # Cloudflare build runs `npm clean-install` (npm ci), which hard-fails
+          # with EUSAGE if the lockfile still pins the previous wickra-wasm —
+          # editing package.json alone is not enough. The npm-wait above already
+          # proved wickra-wasm@$version is resolvable, so --package-lock-only
+          # regenerates the lock (version + resolved + integrity) without fetching
+          # node_modules. Guard it: if the regen fails, skip the whole commit so we
+          # never push a package.json/lock mismatch that would break the build.
+          if ! npm install --package-lock-only --no-audit --no-fund; then
+            echo "::warning::could not regenerate package-lock.json for wickra-wasm@${version}; skipping webpage version sync to avoid a lockfile-drift build break."
+            exit 0
+          fi
           if git diff --quiet; then
             echo "Webpage version already at ${version}."
             exit 0
           fi
           git config user.name "wickra-bot"
           git config user.email "wickra-bot@users.noreply.github.com"
-          git add api/*.md .vitepress/config.ts package.json
+          git add api/*.md .vitepress/config.ts package.json package-lock.json
           git commit -m "chore: sync published version to ${version}"
           if ! git push 2>/dev/null; then
             echo "::warning::push to wickra-lib/webpage failed — ABOUT_SYNC_TOKEN likely lacks write (findings P10.0a)."
