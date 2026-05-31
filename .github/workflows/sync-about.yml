@@ -23,11 +23,10 @@ name: Sync indicator count
 #
 #   *Surfaces 3 + 7 need the ABOUT_SYNC_TOKEN to have write on
 #   wickra-lib/wickra-docs, surfaces 4 + 8 on wickra-lib/webpage; surfaces 5 + 6
-#   need write on wickra-lib/.github and admin:org for the org-description PATCH. Until that scope is granted these
-#   steps emit a ::warning:: and soft-skip — they never fail the run. The repo
-#   "About" homepage URL is also enforced in step 2 (constant value, no extra
-#   scope); it points at docs.wickra.org, so this is gated on that domain being
-#   live (P8.1) before merge — otherwise the About link would 404.
+#   need write on wickra-lib/.github and admin:org for the org-description PATCH.
+#   Until that scope is granted these steps emit a ::warning:: and soft-skip —
+#   they never fail the run. The repo "About" homepage URL is also enforced in
+#   step 2 (constant value, no extra scope); it points at docs.wickra.org.
 #
 #   Note: surface 7 carries the release *version*, not the indicator count, so
 #   it is driven by the v* tag (which is the version) rather than the count.
