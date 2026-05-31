@@ -2,7 +2,7 @@
   "name": "wickra",
   "version": "0.3.1",
   "description": "Streaming-first technical indicators: incremental, fast, install-free. Node bindings powered by Rust.",
-  "author": "kingchenc <wickra.lib@gmail.com>",
+  "author": "kingchenc <support@wickra.org>",
   "main": "index.js",
   "types": "index.d.ts",
   "license": "PolyForm-Noncommercial-1.0.0",

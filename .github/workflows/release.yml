@@ -428,7 +428,7 @@ jobs:
           node -e "
             const fs = require('fs');
             const pkg = JSON.parse(fs.readFileSync('package.json'));
-            pkg.author = 'kingchenc <wickra.lib@gmail.com>';
+            pkg.author = 'kingchenc <support@wickra.org>';
             pkg.repository = { type: 'git', url: 'https://github.com/wickra-lib/wickra' };
             pkg.homepage = 'https://github.com/wickra-lib/wickra';
             pkg.bugs = { url: 'https://github.com/wickra-lib/wickra/issues' };
