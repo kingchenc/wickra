@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Build-provenance attestations for release artifacts.** The release workflow
+  now emits signed SLSA build-provenance attestations for the published crates
+  and Python wheels/sdist (`actions/attest-build-provenance`); npm packages
+  carry inline Sigstore provenance from `npm publish --provenance`. Every
+  published artifact is cryptographically traceable to this repository's release
+  workflow run.
+
+### Security
+- **CodeQL static analysis and OpenSSF Scorecard run in CI.** CodeQL (Rust,
+  Python, JavaScript) and the OpenSSF Scorecard workflow now run on every push;
+  results appear under Security → Code scanning and a public Scorecard badge is
+  shown in the README.
+- **CI workflows hardened against script injection.** Untrusted event contexts
+  (PR branch names, `workflow_dispatch` inputs) are passed through the step
+  environment instead of being interpolated directly into shell commands.
+
 ### Changed
 - **Node binding: invalid indicator periods now throw instead of being silently
   clamped.** The scalar-indicator constructors previously clamped `period = 0`
