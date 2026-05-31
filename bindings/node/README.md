@@ -49,10 +49,10 @@ identical values — the equivalence is enforced by the test suite.
 ## Documentation
 
 The full indicator catalogue, guides, quickstarts, and API reference live in
-the main repository and wiki:
+the main repository and documentation site:
 
 - **Repository & full indicator list:** <https://github.com/wickra-lib/wickra>
-- **Wiki** (quickstarts, cookbook, TA-Lib migration): <https://github.com/wickra-lib/wickra/wiki>
+- **Docs** (quickstarts, cookbook, TA-Lib migration): <https://docs.wickra.org>
 - **Runnable examples:** [`examples/node/`](https://github.com/wickra-lib/wickra/tree/main/examples/node)
 
 Wickra ships four bindings — Python, Node.js, WebAssembly, and Rust — that all
