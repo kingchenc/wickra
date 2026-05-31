@@ -101,7 +101,7 @@ jobs:
       # any fix-up commit we make goes onto the PR branch itself. On
       # push events we check out the default ref. fetch-depth: 0 lets
       # us push back without "shallow update not allowed".
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
           ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref }}
