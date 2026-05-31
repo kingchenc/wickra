@@ -23,8 +23,7 @@ name: Sync indicator count
 #   admin:org for the org-description PATCH. Until that scope is granted these
 #   steps emit a ::warning:: and soft-skip — they never fail the run. The repo
 #   "About" homepage URL is also enforced in step 2 (constant value, no extra
-#   scope); it points at docs.wickra.org, so this is gated on that domain being
-#   live (P8.1) before merge — otherwise the About link would 404.
+#   scope); it points at docs.wickra.org.
 #
 #   Note: surface 7 carries the release *version*, not the indicator count, so
 #   it is driven by the v* tag (which is the version) rather than the count.
