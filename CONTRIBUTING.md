@@ -35,8 +35,13 @@ cargo test --workspace
 cargo test -p wickra-data --features live-binance
 ```
 
-The minimum supported Rust version is **1.75** for the workspace crates and
-**1.77** for `bindings/node`; the `msrv` CI job enforces both.
+The minimum supported Rust version is **1.86** for the workspace crates and
+**1.88** for `bindings/node`; the `msrv` CI job enforces both. These floors are
+not chosen freely — they are the lowest versions our dependencies allow
+(criterion 0.8.2, the bench dev-dependency, requires 1.86; napi-build 2.3.2
+requires 1.88). We keep the MSRV at that dependency-forced floor on purpose so
+the library builds for the widest possible audience; please don't raise it
+without a dependency that actually requires it.
 
 ### Python
 
