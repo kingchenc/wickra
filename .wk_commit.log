@@ -1,4 +1,0 @@
-=== confirm no conflict markers remain ===
-(empty above = good)
-=== cargo fmt --all ===
-=== git add + status ===
