@@ -1,0 +1,70 @@
+// Completeness contract for the Wickra Node bindings: every exported indicator
+// class must expose the full streaming + batch + lifecycle interface. This
+// catches a new indicator being wired into the binding without the standard
+// methods (or an export silently disappearing) without needing a hand-written
+// test per indicator.
+
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const wickra = require('..');
+
+// An "indicator class" is an exported constructor whose prototype carries the
+// streaming `update` method. This excludes `version` (a plain function) and any
+// non-indicator export.
+function indicatorClasses() {
+  return Object.keys(wickra).filter((name) => {
+    const value = wickra[name];
+    return (
+      typeof value === 'function' &&
+      value.prototype &&
+      typeof value.prototype.update === 'function'
+    );
+  });
+}
+
+test('the binding exports the full indicator catalogue', () => {
+  const names = indicatorClasses();
+  // The published catalogue is 214 indicators. Guard against a regression that
+  // silently drops exported classes (e.g. a stale or partial native build).
+  assert.ok(
+    names.length >= 200,
+    `expected at least 200 indicator classes, got ${names.length}`,
+  );
+});
+
+test('every exported indicator exposes update / batch / reset / isReady / warmupPeriod', () => {
+  const required = ['update', 'batch', 'reset', 'isReady', 'warmupPeriod'];
+  const missing = [];
+  for (const name of indicatorClasses()) {
+    const proto = wickra[name].prototype;
+    for (const method of required) {
+      if (typeof proto[method] !== 'function') {
+        missing.push(`${name}.${method}`);
+      }
+    }
+  }
+  assert.deepEqual(
+    missing,
+    [],
+    `indicator classes missing required methods: ${missing.join(', ')}`,
+  );
+});
+
+test('a freshly constructed indicator reports not-ready with a positive warmup', () => {
+  // Every indicator that takes no constructor arguments must still satisfy the
+  // pre-warmup contract. (Indicators with required parameters are exercised by
+  // the dedicated suites; here we cover the zero-arg ones generically.)
+  let checked = 0;
+  for (const name of indicatorClasses()) {
+    let instance;
+    try {
+      instance = new wickra[name]();
+    } catch {
+      continue; // needs constructor arguments — covered elsewhere
+    }
+    assert.equal(instance.isReady(), false, `${name} should start un-ready`);
+    assert.ok(instance.warmupPeriod() >= 1, `${name} warmup must be >= 1`);
+    checked += 1;
+  }
+  assert.ok(checked > 0, 'expected at least one zero-arg indicator to check');
+});

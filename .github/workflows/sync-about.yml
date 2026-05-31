@@ -10,6 +10,16 @@ name: Sync indicator count
 #   3. Wiki: Home.md / FAQ.md / Streaming-vs-Batch.md
 #                                            — synced on push to main / v* tag
 #   4. site/index.md (local-only marketing site, not synced from CI)
+#   5. org profile README count (wickra-lib/.github, profile/README.md)
+#                                            — synced on push to main / v* tag*
+#   6. org description ("… N indicators, install-free.")
+#                                            — synced on push to main / v* tag*
+#
+#   *Surfaces 5 + 6 need the ABOUT_SYNC_TOKEN to carry extra scope (write on
+#   wickra-lib/.github, and admin:org for the org-description PATCH). Until that
+#   scope is granted these two steps emit a ::warning:: and soft-skip — they
+#   never fail the run. The repo "About" homepage URL is also enforced in step 2
+#   (constant value, no extra scope) so it can never drift back to the old org.
 #
 # We count public types (not `mod xxx;` lines) because some modules export
 # more than one indicator — e.g. `vwap.rs` exposes both `Vwap` and
@@ -150,19 +160,26 @@ jobs:
       # wiki repo (separate repo, no main history pollution). README is
       # not touched on main any more.
 
-      - name: Update GitHub About description
+      - name: Update GitHub About (description + homepage)
         if: github.event_name != 'pull_request'
         env:
           GH_TOKEN: ${{ secrets.ABOUT_SYNC_TOKEN }}
         run: |
           n="${{ steps.count.outputs.count }}"
+          # Canonical homepage. Swap to the docs domain (e.g.
+          # https://docs.wickra.org) here once the docs site is live — one place.
+          homepage="https://github.com/wickra-lib/wickra"
           desc="Streaming-first technical indicators with a Rust core and Python, Node.js, and WebAssembly bindings. ${n} indicators, O(1) per-tick updates, no system dependencies. Drop-in TA-Lib replacement."
+          # Enforce the homepage unconditionally — it is a constant, so this both
+          # corrects the stale kingchenc URL and self-heals any future drift.
+          # Same Administration-write permission as --description (no extra scope).
+          gh repo edit --homepage "$homepage"
           current=$(gh repo view --json description -q .description)
           if [ "$current" = "$desc" ]; then
-            echo "About unchanged."
+            echo "About description unchanged; homepage enforced."
           else
             gh repo edit --description "$desc"
-            echo "About updated."
+            echo "About description + homepage updated."
           fi
 
       - name: Sync Wiki
@@ -183,3 +200,64 @@ jobs:
           git add Home.md FAQ.md Streaming-vs-Batch.md
           git commit -m "chore: sync indicator count to ${n}"
           git push
+
+      # ----- org-profile sync (soft-skip until PAT scope lands) -------
+      #
+      # These two steps keep the org page (github.com/wickra-lib) in sync
+      # with the same count. They need ABOUT_SYNC_TOKEN scope the main-repo
+      # syncs do not: write on wickra-lib/.github, and admin:org for the org
+      # description PATCH. Both are written to soft-skip with a ::warning::
+      # (never fail the run) so this workflow stays green before the scope is
+      # granted — once it is, they start syncing with no further code change.
+
+      - name: Sync org profile README count
+        if: github.event_name != 'pull_request'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.ABOUT_SYNC_TOKEN }}
+        run: |
+          n="${{ steps.count.outputs.count }}"
+          if ! git clone "https://x-access-token:${GH_TOKEN}@github.com/wickra-lib/.github.git" orgprofile 2>/dev/null; then
+            echo "::warning::cannot clone wickra-lib/.github — ABOUT_SYNC_TOKEN likely lacks write on that repo (findings P10.0a). Skipping org profile sync."
+            exit 0
+          fi
+          cd orgprofile
+          sed -i -E "s/[0-9]+ (streaming-first )?indicators/${n} \1indicators/g" profile/README.md
+          if git diff --quiet; then
+            echo "Org profile README count unchanged."
+            exit 0
+          fi
+          git config user.name "wickra-bot"
+          git config user.email "wickra-bot@users.noreply.github.com"
+          git add profile/README.md
+          git commit -m "chore: sync indicator count to ${n}"
+          if ! git push 2>/dev/null; then
+            echo "::warning::push to wickra-lib/.github failed — ABOUT_SYNC_TOKEN likely lacks write (findings P10.0a)."
+          else
+            echo "Org profile README synced to ${n}."
+          fi
+
+      - name: Sync org description
+        if: github.event_name != 'pull_request'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.ABOUT_SYNC_TOKEN }}
+        run: |
+          n="${{ steps.count.outputs.count }}"
+          org="wickra-lib"
+          # Reading the org description is public; the PATCH needs admin:org.
+          current=$(gh api "orgs/${org}" --jq '.description // ""' 2>/dev/null || true)
+          if [ -z "$current" ]; then
+            echo "::warning::could not read org description (network/PAT?). Skipping."
+            exit 0
+          fi
+          updated=$(printf '%s' "$current" | sed -E "s/[0-9]+ indicators/${n} indicators/")
+          if [ "$current" = "$updated" ]; then
+            echo "Org description count unchanged."
+            exit 0
+          fi
+          if gh api -X PATCH "orgs/${org}" -f description="$updated" >/dev/null 2>&1; then
+            echo "Org description synced to ${n}."
+          else
+            echo "::warning::org description PATCH failed — ABOUT_SYNC_TOKEN likely lacks admin:org (findings P10.0b)."
+          fi

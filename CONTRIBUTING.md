@@ -63,6 +63,21 @@ wasm-pack build bindings/wasm --target web --release --features panic-hook
 wasm-pack test --node bindings/wasm
 ```
 
+## Lockfile policy
+
+| Component | Lockfile | Tracked? | Why |
+| --- | --- | --- | --- |
+| Workspace (Rust) | `Cargo.lock` | **yes** | The workspace ships binaries (examples, fuzz harness) and CI builds, so the dependency graph is pinned for reproducible builds. |
+| `bindings/node` | `package-lock.json` | **yes** | Reproducible `npm install` for the native binding. |
+| `examples/node` | `package-lock.json` | **yes** | Same — the runnable Node examples link the binding via a `file:` dependency. |
+| `bindings/python` | — | n/a (no lockfile) | PyO3 convention: the Python package has no Python runtime dependencies of its own, and its native code is already pinned through the workspace `Cargo.lock`. CI installs build/test tooling (`maturin`, `pytest`, `numpy`, `hypothesis`) directly via `pip`. |
+| `fuzz` | `fuzz/Cargo.lock` | **no** (ignored) | `fuzz/` is a detached crate; `cargo-fuzz init` generates `fuzz/.gitignore` which ignores its `Cargo.lock`. The fuzz smoke job resolves dependencies fresh, so the lock is not needed for reproducibility here. |
+| `site` (marketing) | `package-lock.json` | **no** (ghost-ignored) | The VitePress site is a local-only project excluded via `.git/info/exclude`; its lockfile stays local. |
+
+When adding a new committed Node package, commit its `package-lock.json` too and
+remove any matching ignore rule. Do **not** add a top-level `package-lock.json` —
+the repository root is not an npm package.
+
 ## Standards for a change
 
 - **Formatting & lints.** `cargo fmt` must leave the tree unchanged and
