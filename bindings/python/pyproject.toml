@@ -8,7 +8,7 @@ version = "0.3.1"
 description = "Streaming-first technical indicators: incremental, fast, install-free."
 readme = "README.md"
 license = { text = "PolyForm-Noncommercial-1.0.0" }
-authors = [{ name = "kingchenc", email = "wickra.lib@gmail.com" }]
+authors = [{ name = "kingchenc", email = "support@wickra.org" }]
 requires-python = ">=3.9"
 keywords = ["finance", "trading", "indicators", "technical-analysis", "ta-lib"]
 classifiers = [

@@ -18,7 +18,7 @@ Report it privately through one of:
 
 - GitHub's [private vulnerability reporting](https://github.com/wickra-lib/wickra/security/advisories/new)
   ("Report a vulnerability" under the repository's *Security* tab), or
-- email to **wickra.lib@gmail.com** with a subject line starting with
+- email to **support@wickra.org** with a subject line starting with
   `[wickra security]`.
 
 Please include:
