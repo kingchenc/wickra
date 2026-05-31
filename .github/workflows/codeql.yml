@@ -12,6 +12,13 @@ on:
   schedule:
     - cron: '31 3 * * 0' # Sundays 03:31 UTC
 
+# Least-privilege default for the auto-injected GITHUB_TOKEN. The analyze job
+# raises exactly the scopes CodeQL needs (security-events: write to upload
+# results) in its own job-level block below; this top-level read-only default
+# covers any future job (OpenSSF Scorecard: Token-Permissions).
+permissions:
+  contents: read
+
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
