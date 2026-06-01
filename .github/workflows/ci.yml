@@ -288,7 +288,7 @@ jobs:
         timeout-minutes: 6
 
       - name: Install cargo-llvm-cov
-        uses: taiki-e/install-action@0fd46367812ee04360509b4169d9f659d6892bb2 # v2.79.15
+        uses: taiki-e/install-action@e49978b799e49ff429d162b7a30601a569ab6538 # v2.81.1
         timeout-minutes: 10 # fail fast on a stuck download instead of hanging the job
         with:
           tool: cargo-llvm-cov
@@ -352,7 +352,7 @@ jobs:
         # attributes the modern nightly compiler rejects, so the install
         # never gets off the ground. The prebuilt binary avoids the entire
         # transitive-dep compile.
-        uses: taiki-e/install-action@0fd46367812ee04360509b4169d9f659d6892bb2 # v2.79.15
+        uses: taiki-e/install-action@e49978b799e49ff429d162b7a30601a569ab6538 # v2.81.1
         timeout-minutes: 10 # fail fast on a stuck download instead of hanging the job
         with:
           tool: cargo-fuzz
@@ -480,7 +480,7 @@ jobs:
         # same taiki-e prebuilt-binary installer we already use for
         # cargo-llvm-cov and cargo-fuzz; it tracks the latest wasm-pack
         # release, which has `--features` as a top-level flag (since 0.12).
-        uses: taiki-e/install-action@0fd46367812ee04360509b4169d9f659d6892bb2 # v2.79.15
+        uses: taiki-e/install-action@e49978b799e49ff429d162b7a30601a569ab6538 # v2.81.1
         timeout-minutes: 10 # fail fast on a stuck download instead of hanging the job
         with:
           tool: wasm-pack
