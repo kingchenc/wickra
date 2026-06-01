@@ -823,3 +823,27 @@ def test_yang_zhang_zero_movement_yields_zero():
     ready = out[~np.isnan(out)]
     assert ready.size > 0
     np.testing.assert_allclose(ready, 0.0, atol=1e-12)
+
+
+def test_doji_default_is_directionless_flag():
+    # Default Doji is a direction-less detection flag: +1 on a doji, 0 else.
+    d = ta.Doji()
+    assert d.is_signed() is False
+    # body 0, range 2 -> doji.
+    assert d.update((10.0, 11.0, 9.0, 10.0, 1.0, 0)) == pytest.approx(1.0)
+    # body 2 == range -> not a doji.
+    assert d.update((10.0, 12.0, 10.0, 12.0, 1.0, 1)) == pytest.approx(0.0)
+
+
+def test_doji_signed_dragonfly_gravestone_neutral():
+    # Signed Doji classifies by body position within the range.
+    d = ta.Doji(signed=True)
+    assert d.is_signed() is True
+    # Dragonfly: body at the top, long lower shadow -> bullish +1.
+    assert d.update((10.0, 10.05, 6.0, 10.0, 1.0, 0)) == pytest.approx(1.0)
+    # Gravestone: body at the bottom, long upper shadow -> bearish -1.
+    assert d.update((10.0, 14.0, 9.95, 10.0, 1.0, 1)) == pytest.approx(-1.0)
+    # Long-legged: body centred, symmetric shadows -> neutral 0.
+    assert d.update((10.0, 12.0, 8.0, 10.0, 1.0, 2)) == pytest.approx(0.0)
+    # A large body is not a doji at all -> 0 regardless of position.
+    assert d.update((10.0, 12.0, 10.0, 12.0, 1.0, 3)) == pytest.approx(0.0)
