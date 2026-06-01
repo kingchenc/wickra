@@ -144,19 +144,20 @@ jobs:
         id: pr_check
         run: |
           n="${{ steps.count.outputs.count }}"
-          if grep -qE "^${n} streaming-first indicators" README.md; then
+          if grep -qE "^${n} streaming-first indicators" README.md \
+            && grep -qE "\*\*${n} indicators\*\*" docs/README.md; then
             echo "matches=true" >> "$GITHUB_OUTPUT"
-            echo "README counter already at ${n}; nothing to do."
+            echo "README + docs/README counter already at ${n}; nothing to do."
           else
             echo "matches=false" >> "$GITHUB_OUTPUT"
-            echo "README counter does not match ${n}; will fix up."
+            echo "README/docs counter does not match ${n}; will fix up."
           fi
 
       - name: Fix counter on fork PR head (read-only, fail loud)
         if: github.event_name == 'pull_request' && steps.pr_check.outputs.matches == 'false' && steps.ctx.outputs.can_push == 'false'
         run: |
           n="${{ steps.count.outputs.count }}"
-          echo "::error::README.md says a different indicator count than mod.rs (${n}). This PR is from a fork, so the workflow cannot push the fix; please update README.md to '${n} streaming-first indicators' and push again."
+          echo "::error::README.md / docs/README.md say a different indicator count than lib.rs (${n}). This PR is from a fork, so the workflow cannot push the fix; please set README.md to '${n} streaming-first indicators' and docs/README.md to '**${n} indicators**', then push again."
           exit 1
 
       - name: Patch README on PR head
@@ -164,10 +165,12 @@ jobs:
         id: pr_patch
         run: |
           n="${{ steps.count.outputs.count }}"
-          sed -i -E "s/[0-9]+ (streaming-first )?indicators/${n} \1indicators/g" README.md
+          # docs/README.md carries the count in its docs.wickra.org pointer prose
+          # ("**N indicators**"); keep it in sync with README's prose count.
+          sed -i -E "s/[0-9]+ (streaming-first )?indicators/${n} \1indicators/g" README.md docs/README.md
           # Bump the banner cache-buster so GitHub's Camo proxy refetches the org
           # profile image (regenerated with the new count by .github/banner.yml)
-          # instead of serving a stale cached copy.
+          # instead of serving a stale cached copy. (README only — docs has no banner.)
           sed -i -E "s|(wickra-banner\.webp\?v=)[0-9]+|\1${n}|" README.md
           if git diff --quiet; then
             echo "No README changes after sed (counter regex did not match anything); skipping push."
@@ -187,7 +190,7 @@ jobs:
         run: |
           git config user.name "wickra-bot"
           git config user.email "wickra-bot@users.noreply.github.com"
-          git add README.md
+          git add README.md docs/README.md
           git commit -m "chore: sync indicator count to ${COUNT}"
           git push origin "HEAD:${HEAD_REF}"
 
