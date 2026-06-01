@@ -75,13 +75,21 @@ wasm-pack test --node bindings/wasm
 | Workspace (Rust) | `Cargo.lock` | **yes** | The workspace ships binaries (examples, fuzz harness) and CI builds, so the dependency graph is pinned for reproducible builds. |
 | `bindings/node` | `package-lock.json` | **yes** | Reproducible `npm install` for the native binding. |
 | `examples/node` | `package-lock.json` | **yes** | Same — the runnable Node examples link the binding via a `file:` dependency. |
-| `bindings/python` | — | n/a (no lockfile) | PyO3 convention: the Python package has no Python runtime dependencies of its own, and its native code is already pinned through the workspace `Cargo.lock`. CI installs build/test tooling (`maturin`, `pytest`, `numpy`, `hypothesis`) directly via `pip`. |
+| `bindings/python` | — | n/a (no lockfile) | The published package pins only `numpy>=1.22` at runtime; its native code is pinned through the workspace `Cargo.lock`. The CI/bench dev tooling it installs is hash-locked separately — see the `.github/requirements` row. |
+| `.github/requirements` | `*.txt` (hash-pinned) | **yes** | CI/bench Python tooling, locked with `uv pip compile --generate-hashes` (OpenSSF Scorecard PinnedDependencies). `ci-dev` is split per Python version — `ci-dev-py39.txt` and `ci-dev-py3.txt` — because numpy ships no single release with wheels for both cp39 and cp313; `bench.txt` covers the single-version bench job. |
 | `fuzz` | `fuzz/Cargo.lock` | **no** (ignored) | `fuzz/` is a detached crate; `cargo-fuzz init` generates `fuzz/.gitignore` which ignores its `Cargo.lock`. The fuzz smoke job resolves dependencies fresh, so the lock is not needed for reproducibility here. |
 | `site` (marketing) | `package-lock.json` | **no** (ghost-ignored) | The VitePress site is a local-only project excluded via `.git/info/exclude`; its lockfile stays local. |
 
 When adding a new committed Node package, commit its `package-lock.json` too and
 remove any matching ignore rule. Do **not** add a top-level `package-lock.json` —
 the repository root is not an npm package.
+
+To refresh every committed lockfile in the workspace — `Cargo.lock`,
+`fuzz/Cargo.lock`, the Node binding lock, and the hash-pinned Python
+requirements — run `./scripts/update-lockfiles.sh`. It uses `uv` for the Python
+locks (and bootstraps it on Linux/macOS if absent) so each target Python
+version's hashed transitive closure can be regenerated without that interpreter
+installed. Dependabot also keeps the `.github/requirements` pins current.
 
 ## Standards for a change
 
