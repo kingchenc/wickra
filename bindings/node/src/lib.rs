@@ -8754,6 +8754,11 @@ node_candle_pattern!(SpinningTopNode, wc::SpinningTop, "SpinningTop");
 node_candle_pattern!(ThreeInsideNode, wc::ThreeInside, "ThreeInside");
 node_candle_pattern!(ThreeOutsideNode, wc::ThreeOutside, "ThreeOutside");
 node_candle_pattern!(TwoCrowsNode, wc::TwoCrows, "TwoCrows");
+node_candle_pattern!(
+    UpsideGapTwoCrowsNode,
+    wc::UpsideGapTwoCrows,
+    "UpsideGapTwoCrows"
+);
 
 // ============================== Microstructure: Order Book ==============================
 //

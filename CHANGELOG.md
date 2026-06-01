@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Two Crows** — a three-bar bearish reversal (`CDL2CROWS`): a long white
     candle, a black candle whose body gaps up, then a black candle that opens
     inside the second's body and closes inside the first's.
+  - **Upside Gap Two Crows** — a three-bar bearish reversal
+    (`CDLUPSIDEGAP2CROWS`): two black candles gap up over a long white candle,
+    the second engulfing the first crow yet still closing above the white body,
+    leaving the upside gap open.
 - **Derivatives family — funding & open interest (part 1).** A new family of
   indicators that consume a perpetual / futures tick (`DerivativesTick`,
   bundling funding rate, mark / index / futures price, open interest,

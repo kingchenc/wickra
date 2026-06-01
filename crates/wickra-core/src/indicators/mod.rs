@@ -223,6 +223,7 @@ mod two_crows;
 mod typical_price;
 mod ulcer_index;
 mod ultimate_oscillator;
+mod upside_gap_two_crows;
 mod value_area;
 mod value_at_risk;
 mod variance;
@@ -468,6 +469,7 @@ pub use two_crows::TwoCrows;
 pub use typical_price::TypicalPrice;
 pub use ulcer_index::UlcerIndex;
 pub use ultimate_oscillator::UltimateOscillator;
+pub use upside_gap_two_crows::UpsideGapTwoCrows;
 pub use value_area::{ValueArea, ValueAreaOutput};
 pub use value_at_risk::ValueAtRisk;
 pub use variance::Variance;
@@ -758,6 +760,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "ThreeInside",
             "ThreeOutside",
             "TwoCrows",
+            "UpsideGapTwoCrows",
         ],
     ),
     (
@@ -849,6 +852,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 240, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 241, "FAMILIES total drifted from indicator count");
     }
 }

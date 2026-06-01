@@ -89,11 +89,12 @@ pub use indicators::{
     TdSequential, TdSequentialOutput, TdSetup, Tema, TermStructureBasis, ThreeInside, ThreeOutside,
     ThreeSoldiersOrCrows, Tii, TradeImbalance, TreynorRatio, Trima, Trix, TrueRange, Tsi, Tsv,
     TtmSqueeze, TtmSqueezeOutput, Tweezer, TwoCrows, TypicalPrice, UlcerIndex, UltimateOscillator,
-    ValueArea, ValueAreaOutput, ValueAtRisk, Variance, VerticalHorizontalFilter, Vidya, VoltyStop,
-    VolumeOscillator, VolumePriceTrend, Vortex, VortexOutput, Vwap, VwapStdDevBands,
-    VwapStdDevBandsOutput, Vwma, Vzo, WaveTrend, WaveTrendOutput, WeightedClose, WilliamsFractals,
-    WilliamsFractalsOutput, WilliamsR, Wma, WoodiePivots, WoodiePivotsOutput, YangZhangVolatility,
-    YoyoExit, ZScore, ZeroLagMacd, ZeroLagMacdOutput, ZigZag, ZigZagOutput, Zlema, FAMILIES, T3,
+    UpsideGapTwoCrows, ValueArea, ValueAreaOutput, ValueAtRisk, Variance, VerticalHorizontalFilter,
+    Vidya, VoltyStop, VolumeOscillator, VolumePriceTrend, Vortex, VortexOutput, Vwap,
+    VwapStdDevBands, VwapStdDevBandsOutput, Vwma, Vzo, WaveTrend, WaveTrendOutput, WeightedClose,
+    WilliamsFractals, WilliamsFractalsOutput, WilliamsR, Wma, WoodiePivots, WoodiePivotsOutput,
+    YangZhangVolatility, YoyoExit, ZScore, ZeroLagMacd, ZeroLagMacdOutput, ZigZag, ZigZagOutput,
+    Zlema, FAMILIES, T3,
 };
 // `FootprintLevel` is a row element of `FootprintOutput`, re-exported on its own
 // line so the indicator-count tooling (which scans the braced block above and
