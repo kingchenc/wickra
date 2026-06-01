@@ -535,6 +535,10 @@ CANDLE_SCALAR = {
         lambda: ta.IdenticalThreeCrows(),
         lambda ind, h, l, c, v: ind.batch(c, h, l, c),
     ),
+    "ThreeLineStrike": (
+        lambda: ta.ThreeLineStrike(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
 }
 
 
@@ -1882,6 +1886,14 @@ def test_identical_three_crows_reference():
     assert t.update((13.0, 13.1, 11.9, 12.0, 1.0, 0)) == pytest.approx(0.0)
     assert t.update((12.0, 12.1, 10.9, 11.0, 1.0, 1)) == pytest.approx(0.0)
     assert t.update((11.0, 11.1, 9.9, 10.0, 1.0, 2)) == pytest.approx(-1.0)
+
+
+def test_three_line_strike_reference():
+    t = ta.ThreeLineStrike()
+    assert t.update((10.0, 11.1, 9.9, 11.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((10.5, 12.1, 10.4, 12.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((11.5, 13.1, 11.4, 13.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((13.5, 13.6, 9.4, 9.5, 1.0, 3)) == pytest.approx(1.0)
 
 
 # --- Lifecycle ------------------------------------------------------------

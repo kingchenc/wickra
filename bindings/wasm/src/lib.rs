@@ -6341,6 +6341,7 @@ wasm_candle_pattern!(
     wc::IdenticalThreeCrows,
     IdenticalThreeCrows
 );
+wasm_candle_pattern!(WasmThreeLineStrike, wc::ThreeLineStrike, ThreeLineStrike);
 
 // ============================== Microstructure: Order Book ==============================
 //

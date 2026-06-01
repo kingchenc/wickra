@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     (`CDLIDENTICAL3CROWS`): three red candles with steadily lower closes, each
     opening at the prior candle's close so the bodies stack in an identical
     staircase.
+  - **Three Line Strike** — a four-bar pattern (`CDL3LINESTRIKE`): a
+    three-candle advance or decline struck by a fourth opposite-colour candle
+    that engulfs the entire run; bullish `+1`, bearish `−1`.
 - **Derivatives family — funding & open interest (part 1).** A new family of
   indicators that consume a perpetual / futures tick (`DerivativesTick`,
   bundling funding rate, mark / index / futures price, open interest,

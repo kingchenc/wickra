@@ -8764,6 +8764,7 @@ node_candle_pattern!(
     wc::IdenticalThreeCrows,
     "IdenticalThreeCrows"
 );
+node_candle_pattern!(ThreeLineStrikeNode, wc::ThreeLineStrike, "ThreeLineStrike");
 
 // ============================== Microstructure: Order Book ==============================
 //

@@ -208,6 +208,7 @@ mod td_setup;
 mod tema;
 mod term_structure_basis;
 mod three_inside;
+mod three_line_strike;
 mod three_outside;
 mod three_soldiers_or_crows;
 mod tii;
@@ -455,6 +456,7 @@ pub use td_setup::TdSetup;
 pub use tema::Tema;
 pub use term_structure_basis::TermStructureBasis;
 pub use three_inside::ThreeInside;
+pub use three_line_strike::ThreeLineStrike;
 pub use three_outside::ThreeOutside;
 pub use three_soldiers_or_crows::ThreeSoldiersOrCrows;
 pub use tii::Tii;
@@ -764,6 +766,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "TwoCrows",
             "UpsideGapTwoCrows",
             "IdenticalThreeCrows",
+            "ThreeLineStrike",
         ],
     ),
     (
@@ -855,6 +858,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 242, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 243, "FAMILIES total drifted from indicator count");
     }
 }

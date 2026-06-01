@@ -36,7 +36,8 @@ use wickra_core::{
     ParkinsonVolatility, Pgo, PiercingDarkCloud, Psar, Pvi, RogersSatchellVolatility, RollingVwap,
     Rvi, Rwi, ShootingStar, Smi, SpinningTop, StarcBands, Stochastic, SuperTrend, TdCombo,
     TdCountdown, TdDeMarker, TdDifferential, TdLines, TdOpen, TdPressure, TdRangeProjection, TdRei,
-    TdRiskLevel, TdSequential, TdSetup, ThreeInside, ThreeOutside, ThreeSoldiersOrCrows, TrueRange,
+    TdRiskLevel, TdSequential, TdSetup, ThreeInside, ThreeLineStrike, ThreeOutside,
+    ThreeSoldiersOrCrows, TrueRange,
     Tsv, TtmSqueeze, Tweezer, TwoCrows, TypicalPrice, UltimateOscillator, UpsideGapTwoCrows,
     ValueArea, VoltyStop,
     VolumeOscillator, VolumePriceTrend, Vortex, Vwap, VwapStdDevBands, Vwma, Vzo, WaveTrend,
@@ -311,6 +312,7 @@ fuzz_target!(|data: Vec<f64>| {
     drive(Tweezer::new, &candles);
     drive(SpinningTop::new, &candles);
     drive(ThreeInside::new, &candles);
+    drive(ThreeLineStrike::new, &candles);
     drive(ThreeOutside::new, &candles);
     drive(TwoCrows::new, &candles);
     drive(UpsideGapTwoCrows::new, &candles);

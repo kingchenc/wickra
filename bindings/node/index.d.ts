@@ -2237,6 +2237,15 @@ export declare class IdenticalThreeCrows {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type ThreeLineStrikeNode = ThreeLineStrike
+export declare class ThreeLineStrike {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type OrderBookImbalanceTop1Node = OrderBookImbalanceTop1
 export declare class OrderBookImbalanceTop1 {
   constructor()
