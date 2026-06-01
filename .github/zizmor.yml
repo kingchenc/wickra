@@ -1,0 +1,15 @@
+# zizmor configuration — https://docs.zizmor.sh/configuration/
+#
+# cache-poisoning (release.yml):
+#   The release pipeline restores build caches (Swatinem/rust-cache for the Rust
+#   compilation, actions/setup-node) as a deliberate, accepted optimisation.
+#   zizmor flags these under cache-poisoning because release.yml publishes
+#   artifacts to crates.io / PyPI / npm, so a poisoned cache could in theory
+#   reach a released build. Our caches are maintainer-controlled and the
+#   restore speedup is kept on purpose; we accept this risk rather than running
+#   cache-free release builds. (Six of the eight hits are actions/setup-node,
+#   which zizmor reports at "Low" confidence.)
+rules:
+  cache-poisoning:
+    ignore:
+      - release.yml
