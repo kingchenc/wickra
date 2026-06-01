@@ -62,7 +62,7 @@ pub use indicators::{
     DrawdownDuration, EaseOfMovement, EffectiveSpread, EhlersStochastic, ElderImpulse, Ema,
     EmpiricalModeDecomposition, Engulfing, Evwma, Fama, FibonacciPivots, FibonacciPivotsOutput,
     FisherTransform, Footprint, FootprintOutput, ForceIndex, FractalChaosBands,
-    FractalChaosBandsOutput, Frama, FundingRate, FundingRateMean, GainLossRatio,
+    FractalChaosBandsOutput, Frama, FundingRate, FundingRateMean, FundingRateZScore, GainLossRatio,
     GarmanKlassVolatility, Hammer, HangingMan, Harami, HeikinAshi, HeikinAshiOutput, HiLoActivator,
     HilbertDominantCycle, HistoricalVolatility, Hma, HurstChannel, HurstChannelOutput,
     HurstExponent, Ichimoku, IchimokuOutput, Inertia, InformationRatio, InitialBalance,
