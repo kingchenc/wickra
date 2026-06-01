@@ -1,0 +1,10 @@
+# Python dev/test tooling for the ci.yml binding test job.
+# Loose source spec — the pinned, hash-locked outputs are generated from this:
+#   ci-dev-py39.txt  (Python 3.9)      via scripts/update-lockfiles.sh
+#   ci-dev-py3.txt   (Python 3.10+)    via scripts/update-lockfiles.sh
+# Two outputs are required because numpy ships no single release with wheels
+# for both cp39 and cp313 (<=2.0.2 has cp39 only, >=2.1 drops cp39).
+maturin
+pytest
+numpy
+hypothesis

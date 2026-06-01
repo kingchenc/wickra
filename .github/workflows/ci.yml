@@ -422,9 +422,17 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install Python dev dependencies
+        shell: bash
         run: |
           python -m pip install --upgrade pip
-          python -m pip install maturin pytest numpy hypothesis
+          # Hash-locked dev tooling (OpenSSF Scorecard PinnedDependencies).
+          # Split by Python version: numpy ships no single release with wheels
+          # for both cp39 and cp313 (<=2.0.2 has cp39 only, >=2.1 drops cp39).
+          if [ "${{ matrix.python-version }}" = "3.9" ]; then
+            python -m pip install --require-hashes -r .github/requirements/ci-dev-py39.txt
+          else
+            python -m pip install --require-hashes -r .github/requirements/ci-dev-py3.txt
+          fi
 
       - name: Build wheel
         working-directory: bindings/python
