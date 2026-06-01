@@ -431,6 +431,76 @@ impl LeadLagCrossCorrelationNode {
     }
 }
 
+// ============================== Cointegration ==============================
+
+/// Cointegration result: hedge ratio, current spread, and the ADF statistic.
+#[napi(object)]
+pub struct CointegrationValue {
+    /// Engle–Granger hedge ratio (OLS slope of `a` on `b`).
+    pub hedge_ratio: f64,
+    /// Current spread (regression residual) `a - (alpha + beta*b)`.
+    pub spread: f64,
+    /// Augmented Dickey–Fuller statistic on the spread; more negative ⇒ more
+    /// strongly mean-reverting.
+    pub adf_stat: f64,
+}
+
+#[napi(js_name = "Cointegration")]
+pub struct CointegrationNode {
+    inner: wc::Cointegration,
+}
+
+#[napi]
+impl CointegrationNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, adf_lags: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Cointegration::new(period as usize, adf_lags as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, a: f64, b: f64) -> Option<CointegrationValue> {
+        self.inner.update((a, b)).map(|o| CointegrationValue {
+            hedge_ratio: o.hedge_ratio,
+            spread: o.spread,
+            adf_stat: o.adf_stat,
+        })
+    }
+    /// Batch over two equally-sized arrays. Returns a flat array of length
+    /// `3 * n`, interleaved per row as `[hedgeRatio0, spread0, adfStat0, ...]`.
+    /// Read column `j` of row `i` as `result[i * 3 + j]`. Warmup rows are `NaN`.
+    #[napi]
+    pub fn batch(&mut self, a: Vec<f64>, b: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if a.len() != b.len() {
+            return Err(NapiError::new(
+                Status::InvalidArg,
+                "a and b must be equal length".to_string(),
+            ));
+        }
+        let mut out = vec![f64::NAN; a.len() * 3];
+        for i in 0..a.len() {
+            if let Some(o) = self.inner.update((a[i], b[i])) {
+                out[i * 3] = o.hedge_ratio;
+                out[i * 3 + 1] = o.spread;
+                out[i * 3 + 2] = o.adf_stat;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== MACD ==============================
 
 /// MACD triple: macd line, signal line, histogram.

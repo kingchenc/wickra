@@ -9,8 +9,8 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    Alpha, BatchExt, Indicator, InformationRatio, LeadLagCrossCorrelation, PairSpreadZScore,
-    PairwiseBeta, TreynorRatio,
+    Alpha, BatchExt, Cointegration, Indicator, InformationRatio, LeadLagCrossCorrelation,
+    PairSpreadZScore, PairwiseBeta, TreynorRatio,
 };
 
 #[inline(never)]
@@ -49,4 +49,10 @@ fuzz_target!(|data: &[u8]| {
         let _ = ll.update(x);
     }
     let _ = LeadLagCrossCorrelation::new(8, 3).unwrap().batch(&pairs);
+
+    let mut co = Cointegration::new(12, 1).unwrap();
+    for &x in &pairs {
+        let _ = co.update(x);
+    }
+    let _ = Cointegration::new(12, 1).unwrap().batch(&pairs);
 });

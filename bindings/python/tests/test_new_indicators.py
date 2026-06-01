@@ -212,6 +212,34 @@ def test_lead_lag_streaming_matches_batch():
             assert math.isclose(batch[i, 1], corr, rel_tol=1e-12, abs_tol=1e-12)
 
 
+def test_cointegration_detects_mean_reverting_pair():
+    n = 80
+    b = np.array([50.0 + 0.5 * t for t in range(n)])
+    # a tracks 2*b with a small mean-reverting wobble ⇒ cointegrated.
+    a = 2.0 * b + 1.0 + 0.5 * np.sin(np.arange(n) * 0.6)
+    out = ta.Cointegration(40, 1).batch(a, b)
+    assert out.shape == (n, 3)
+    assert abs(out[-1, 0] - 2.0) < 0.1  # hedge ratio
+    assert out[-1, 2] < -2.0  # ADF statistic: strongly mean-reverting
+
+
+def test_cointegration_streaming_matches_batch():
+    n = 70
+    b = np.array([30.0 + 0.7 * t for t in range(n)])
+    a = 1.8 * b + 2.0 + 0.5 * np.sin(np.arange(n) * 0.4)
+    batch = ta.Cointegration(25, 2).batch(a, b)
+    streamer = ta.Cointegration(25, 2)
+    for i in range(n):
+        v = streamer.update(float(a[i]), float(b[i]))
+        if v is None:
+            assert np.all(np.isnan(batch[i]))
+        else:
+            hr, sp, adf = v
+            assert math.isclose(batch[i, 0], hr, rel_tol=1e-12, abs_tol=1e-12)
+            assert math.isclose(batch[i, 1], sp, rel_tol=1e-12, abs_tol=1e-12)
+            assert math.isclose(batch[i, 2], adf, rel_tol=1e-12, abs_tol=1e-12)
+
+
 # --- Candle-input, single-output indicators -------------------------------
 #
 # Each entry is (factory, batch-call). Streaming always feeds the full

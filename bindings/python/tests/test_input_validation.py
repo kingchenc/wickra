@@ -72,6 +72,21 @@ def test_lead_lag_unequal_length_batch_raises(sine_prices):
         ta.LeadLagCrossCorrelation(12, 5).batch(a, b)
 
 
+def test_cointegration_rejects_too_small_period():
+    # period must be >= 2*adf_lags + 4.
+    with pytest.raises(ValueError):
+        ta.Cointegration(3, 0)
+    with pytest.raises(ValueError):
+        ta.Cointegration(5, 1)
+
+
+def test_cointegration_unequal_length_batch_raises(sine_prices):
+    a = np.ascontiguousarray((sine_prices + 100.0).astype(np.float64))
+    b = a[:-1]
+    with pytest.raises(ValueError):
+        ta.Cointegration(20, 1).batch(a, b)
+
+
 def test_roc_and_trix_have_default_periods():
     # ROC/TRIX gained constructor defaults matching the TA-Lib convention.
     assert ta.ROC().period == 10

@@ -26,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     offset `k ∈ [−max_lag, max_lag]` that maximises `|corr(a[t], b[t+k])|`,
     answering which of two assets leads the other and by how many bars. Emits
     `{ lag, correlation }`; a positive lag means `a` leads `b`.
+  - **Cointegration** (`Cointegration`) — the Engle–Granger two-step screen for
+    pairs trading: a rolling OLS hedge ratio `β`, the spread (residual)
+    `a − (α + β·b)`, and an augmented Dickey–Fuller `t`-statistic on the spread
+    (configurable `adf_lags`). A strongly negative statistic flags a
+    mean-reverting, tradeable spread. Emits `{ hedge_ratio, spread, adf_stat }`.
 
 ## [0.4.0] - 2026-06-01
 

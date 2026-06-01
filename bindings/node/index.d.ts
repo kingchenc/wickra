@@ -12,6 +12,18 @@ export interface LeadLagValue {
   /** Signed correlation at that lag, in `[-1, 1]`. */
   correlation: number
 }
+/** Cointegration result: hedge ratio, current spread, and the ADF statistic. */
+export interface CointegrationValue {
+  /** Engle–Granger hedge ratio (OLS slope of `a` on `b`). */
+  hedgeRatio: number
+  /** Current spread (regression residual) `a - (alpha + beta*b)`. */
+  spread: number
+  /**
+   * Augmented Dickey–Fuller statistic on the spread; more negative ⇒ more
+   * strongly mean-reverting.
+   */
+  adfStat: number
+}
 /** MACD triple: macd line, signal line, histogram. */
 export interface MacdValue {
   macd: number
@@ -686,6 +698,20 @@ export declare class LeadLagCrossCorrelation {
    * Batch over two equally-sized arrays. Returns a flat array of length
    * `2 * n`, interleaved per row as `[lag0, corr0, lag1, corr1, ...]`. Read
    * column `j` of row `i` as `result[i * 2 + j]`. Warmup rows are `NaN`.
+   */
+  batch(a: Array<number>, b: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type CointegrationNode = Cointegration
+export declare class Cointegration {
+  constructor(period: number, adfLags: number)
+  update(a: number, b: number): CointegrationValue | null
+  /**
+   * Batch over two equally-sized arrays. Returns a flat array of length
+   * `3 * n`, interleaved per row as `[hedgeRatio0, spread0, adfStat0, ...]`.
+   * Read column `j` of row `i` as `result[i * 3 + j]`. Warmup rows are `NaN`.
    */
   batch(a: Array<number>, b: Array<number>): Array<number>
   reset(): void

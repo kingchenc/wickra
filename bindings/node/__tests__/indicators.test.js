@@ -533,6 +533,27 @@ test('LeadLagCrossCorrelation batch is flat 2*n with last row matching', () => {
   assert.ok(out[2 * (n - 1) + 1] > 0.99);
 });
 
+test('Cointegration detects mean-reverting pair (object output)', () => {
+  const n = 80;
+  const b = Array.from({ length: n }, (_, t) => 50 + 0.5 * t);
+  const a = b.map((v, t) => 2 * v + 1 + 0.5 * Math.sin(t * 0.6));
+  const co = new wickra.Cointegration(40, 1);
+  let last = null;
+  for (let i = 0; i < n; i++) last = co.update(a[i], b[i]);
+  assert.ok(Math.abs(last.hedgeRatio - 2) < 0.1);
+  assert.ok(last.adfStat < -2);
+});
+
+test('Cointegration batch is flat 3*n with last row matching', () => {
+  const n = 80;
+  const b = Array.from({ length: n }, (_, t) => 50 + 0.5 * t);
+  const a = b.map((v, t) => 2 * v + 1 + 0.5 * Math.sin(t * 0.6));
+  const out = new wickra.Cointegration(40, 1).batch(a, b);
+  assert.equal(out.length, 3 * n);
+  assert.ok(Math.abs(out[3 * (n - 1)] - 2) < 0.1);
+  assert.ok(out[3 * (n - 1) + 2] < -2);
+});
+
 test('SpearmanCorrelation monotone non-linear is 1', () => {
   const x = Array.from({ length: 10 }, (_, i) => i + 1);
   const y = x.map((v) => v ** 3);

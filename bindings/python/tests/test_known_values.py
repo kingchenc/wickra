@@ -470,6 +470,16 @@ def test_lead_lag_cross_correlation_negative_lead():
     assert out[-1, 1] > 0.99
 
 
+def test_cointegration_perfect_pair():
+    # a = 2*b + 5 exactly ⇒ hedge ratio 2, zero spread, degenerate ADF ⇒ 0.
+    b = np.array([100.0 + t for t in range(40)])
+    a = 2.0 * b + 5.0
+    out = ta.Cointegration(20, 1).batch(a, b)
+    assert math.isclose(out[-1, 0], 2.0, rel_tol=1e-9)
+    assert math.isclose(out[-1, 1], 0.0, abs_tol=1e-6)
+    assert math.isclose(out[-1, 2], 0.0, abs_tol=1e-12)
+
+
 def test_value_at_risk_known_window():
     # returns -5..4 *0.01; q=0.05*9=0.45 -> -0.0455; VaR = 0.0455.
     returns = np.array([i * 0.01 for i in range(-5, 5)])
