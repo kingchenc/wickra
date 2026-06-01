@@ -912,3 +912,42 @@ test('Doji signed mode encodes dragonfly/gravestone/neutral direction', () => {
   assert.equal(d.update(10, 12, 8, 10), 0); // long-legged -> neutral 0
   assert.equal(d.update(10, 12, 10, 12), 0); // not a doji -> 0
 });
+
+test('order-book indicators reference values', () => {
+  // Top-1: (3 - 1) / (3 + 1) = 0.5.
+  assert.equal(new wickra.OrderBookImbalanceTop1().update([100], [3], [101], [1]), 0.5);
+  // Top-2: bidDepth 3, askDepth 2 -> (3 - 2) / 5 = 0.2.
+  assert.ok(
+    Math.abs(new wickra.OrderBookImbalanceTopN(2).update([100, 99], [2, 1], [101, 102], [1, 1]) - 0.2) < 1e-12,
+  );
+  // Full: bidDepth 1, askDepth 3 -> -0.5.
+  assert.equal(new wickra.OrderBookImbalanceFull().update([100], [1], [101, 102], [2, 1]), -0.5);
+  // Microprice: (100*3 + 101*1) / 4 = 100.25.
+  assert.equal(new wickra.Microprice().update([100], [1], [101], [3]), 100.25);
+  // Quoted spread: 1 / 100.5 * 10000 ≈ 99.5025 bps.
+  assert.ok(Math.abs(new wickra.QuotedSpread().update([100], [1], [101], [1]) - 99.50248756) < 1e-6);
+});
+
+test('order-book streaming update matches batch', () => {
+  const snaps = Array.from({ length: 30 }, (_, i) => ({
+    bidPx: [100, 99],
+    bidSz: [1 + (i % 5), 1],
+    askPx: [101, 102],
+    askSz: [1 + ((i + 1) % 3), 1],
+  }));
+  const batch = new wickra.Microprice().batch(snaps);
+  const streamer = new wickra.Microprice();
+  assert.equal(batch.length, snaps.length);
+  for (let i = 0; i < snaps.length; i++) {
+    const s = streamer.update(snaps[i].bidPx, snaps[i].bidSz, snaps[i].askPx, snaps[i].askSz);
+    assert.ok(Math.abs(s - batch[i]) < 1e-12, `mismatch at ${i}: ${s} vs ${batch[i]}`);
+  }
+});
+
+test('order-book TopN rejects zero levels', () => {
+  assert.throws(() => new wickra.OrderBookImbalanceTopN(0));
+});
+
+test('order-book update rejects a crossed book', () => {
+  assert.throws(() => new wickra.QuotedSpread().update([102], [1], [101], [1]));
+});

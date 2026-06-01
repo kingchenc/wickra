@@ -129,3 +129,24 @@ def test_ehlers_indicators_lifecycle():
         assert ind.is_ready()
         ind.reset()
         assert not ind.is_ready()
+
+
+def test_orderbook_lifecycle():
+    snapshot = ([100.0], [1.0], [101.0], [1.0])
+    for ind in [
+        ta.OrderBookImbalanceTop1(),
+        ta.OrderBookImbalanceTopN(3),
+        ta.OrderBookImbalanceFull(),
+        ta.Microprice(),
+        ta.QuotedSpread(),
+    ]:
+        assert ind.warmup_period() == 1
+        assert not ind.is_ready()
+        ind.update(*snapshot)
+        assert ind.is_ready()
+        ind.reset()
+        assert not ind.is_ready()
+
+
+def test_orderbook_topn_repr():
+    assert repr(ta.OrderBookImbalanceTopN(5)) == "OrderBookImbalanceTopN(levels=5)"

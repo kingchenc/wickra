@@ -1863,3 +1863,38 @@ def test_new_indicators_expose_lifecycle():
         assert ind.warmup_period() >= 1
         ind.reset()
         assert ind.is_ready() is False
+
+
+def _orderbook_snapshots(n: int) -> list:
+    """A deterministic varying sequence of order-book snapshots."""
+    snaps = []
+    for i in range(n):
+        bid_sz = 1.0 + (i % 5)
+        ask_sz = 1.0 + ((i + 2) % 4)
+        snaps.append(
+            (
+                [100.0, 99.0],
+                [bid_sz, 1.0],
+                [101.0, 102.0],
+                [ask_sz, 1.0],
+            )
+        )
+    return snaps
+
+
+def test_orderbook_indicators_streaming_equals_batch():
+    snaps = _orderbook_snapshots(40)
+    for make in (
+        ta.OrderBookImbalanceTop1,
+        lambda: ta.OrderBookImbalanceTopN(2),
+        ta.OrderBookImbalanceFull,
+        ta.Microprice,
+        ta.QuotedSpread,
+    ):
+        batch = make().batch(snaps)
+        streamer = make()
+        streamed = np.array(
+            [streamer.update(*snap) for snap in snaps], dtype=np.float64
+        )
+        assert batch.shape == (len(snaps),)
+        assert _eq_nan(batch, streamed)

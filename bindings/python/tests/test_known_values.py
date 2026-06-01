@@ -847,3 +847,26 @@ def test_doji_signed_dragonfly_gravestone_neutral():
     assert d.update((10.0, 12.0, 8.0, 10.0, 1.0, 2)) == pytest.approx(0.0)
     # A large body is not a doji at all -> 0 regardless of position.
     assert d.update((10.0, 12.0, 10.0, 12.0, 1.0, 3)) == pytest.approx(0.0)
+
+
+def test_orderbook_imbalance_reference_values():
+    # Top-1: (3 - 1) / (3 + 1) = 0.5.
+    assert ta.OrderBookImbalanceTop1().update([100.0], [3.0], [101.0], [1.0]) == pytest.approx(0.5)
+    # Top-2: bidDepth 3, askDepth 2 -> (3 - 2) / 5 = 0.2.
+    topn = ta.OrderBookImbalanceTopN(2)
+    assert topn.update([100.0, 99.0], [2.0, 1.0], [101.0, 102.0], [1.0, 1.0]) == pytest.approx(0.2)
+    # Full: bidDepth 1, askDepth 3 -> (1 - 3) / 4 = -0.5.
+    full = ta.OrderBookImbalanceFull()
+    assert full.update([100.0], [1.0], [101.0, 102.0], [2.0, 1.0]) == pytest.approx(-0.5)
+
+
+def test_microprice_reference_value():
+    # (100*3 + 101*1) / (1 + 3) = 401 / 4 = 100.25 — heavy ask pulls toward bid.
+    mp = ta.Microprice()
+    assert mp.update([100.0], [1.0], [101.0], [3.0]) == pytest.approx(100.25)
+
+
+def test_quoted_spread_reference_value():
+    # spread 1.0, mid 100.5 -> 1 / 100.5 * 10_000 ≈ 99.5025 bps.
+    qs = ta.QuotedSpread()
+    assert qs.update([100.0], [1.0], [101.0], [1.0]) == pytest.approx(99.50248756, abs=1e-6)
