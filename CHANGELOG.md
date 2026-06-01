@@ -8,6 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Microstructure family — order book (part 1).** A new family of indicators
+  that consume an order-book depth snapshot (`OrderBook` of sorted, uncrossed
+  bid/ask `Level`s) rather than OHLCV, exposed in Rust, Python, Node and WASM:
+  - **Order-Book Imbalance** — `OrderBookImbalanceTop1`, `OrderBookImbalanceTopN`
+    (configurable depth) and `OrderBookImbalanceFull` measure signed depth
+    pressure `(bidDepth − askDepth) / (bidDepth + askDepth)` over the top level,
+    the top-N levels, or the full book.
+  - **Microprice** — the size-weighted fair value
+    `(bidPx·askSz + askPx·bidSz) / (bidSz + askSz)`, tilting the mid toward the
+    side more likely to be hit.
+  - **Quoted Spread** — the top-of-book spread in basis points of the mid.
+
+  New public value types `Level`, `OrderBook`, `Side`, `Trade` and `TradeQuote`
+  back this and the upcoming trade-flow and price-impact indicators. Python and
+  Node accept a batch over a list of snapshots; WASM exposes per-snapshot
+  `update`.
 - **Signed Doji encoding.** `Doji` gains an opt-in `.signed()` mode
   (`Doji(signed=True)` in Python, `new Doji(true)` in Node and WASM) that
   classifies a detected Doji by the position of its body within the bar range —
