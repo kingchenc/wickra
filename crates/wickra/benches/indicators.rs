@@ -34,12 +34,12 @@ use std::hint::black_box;
 use wickra::{
     Adx, Atr, Autocorrelation, BatchExt, BollingerBands, BollingerOutput, CalmarRatio, Candle, Cci,
     ClassicPivots, ConnorsRsi, Ema, EmpiricalModeDecomposition, Engulfing, Frama,
-    HilbertDominantCycle, HurstExponent, Ichimoku, IchimokuOutput, Indicator, Jma,
-    LinearRegression, MacdIndicator, MacdOutput, Mama, MamaOutput, MaxDrawdown, Obv,
-    ParkinsonVolatility, Ppo, Psar, RollingVwap, Rsi, SharpeRatio, Sma, Stc, SuperTrend,
-    SuperTrendOutput, TdSequential, TdSequentialOutput, TtmSqueeze, TtmSqueezeOutput, ValueArea,
-    ValueAreaOutput, ValueAtRisk, Vwap, VwapStdDevBands, VwapStdDevBandsOutput, WaveTrend,
-    YangZhangVolatility, T3,
+    HilbertDominantCycle, HurstExponent, Ichimoku, IchimokuOutput, Indicator, Jma, Level,
+    LinearRegression, MacdIndicator, MacdOutput, Mama, MamaOutput, MaxDrawdown, Microprice, Obv,
+    OrderBook, OrderBookImbalanceFull, OrderBookImbalanceTop1, ParkinsonVolatility, Ppo, Psar,
+    RollingVwap, Rsi, SharpeRatio, Sma, Stc, SuperTrend, SuperTrendOutput, TdSequential,
+    TdSequentialOutput, TtmSqueeze, TtmSqueezeOutput, ValueArea, ValueAreaOutput, ValueAtRisk,
+    Vwap, VwapStdDevBands, VwapStdDevBandsOutput, WaveTrend, YangZhangVolatility, T3,
 };
 use wickra_data::csv::CandleReader;
 
@@ -107,6 +107,28 @@ where
                 let mut ind = make();
                 for c in candles {
                     black_box(ind.update(*c));
+                }
+            });
+        });
+    }
+    group.finish();
+}
+
+fn bench_orderbook_input<I, F, O>(c: &mut Criterion, name: &str, books: &[OrderBook], make: F)
+where
+    F: Fn() -> I,
+    I: Indicator<Input = OrderBook, Output = O>,
+{
+    let mut group = c.benchmark_group(name);
+    for &n in SIZES {
+        let n = n.min(books.len());
+        let series = &books[..n];
+        group.throughput(Throughput::Elements(n as u64));
+        group.bench_with_input(BenchmarkId::new("streaming", n), series, |b, books| {
+            b.iter(|| {
+                let mut ind = make();
+                for book in books {
+                    black_box(ind.update(book.clone()));
                 }
             });
         });
@@ -265,6 +287,28 @@ fn benches(c: &mut Criterion) {
     bench_scalar(c, "value_at_risk", &closes, || {
         ValueAtRisk::new(50, 0.95).unwrap()
     });
+
+    // === Family — Microstructure ===
+    // No order-book dataset ships with the repo, so synthesise a five-level
+    // book around each candle close. Benches the cheapest (top-of-book) and the
+    // most-expensive (full-depth sum) representatives of the family.
+    let books: Vec<OrderBook> = candles
+        .iter()
+        .map(|candle| {
+            let mid = candle.close;
+            let tick = (mid * 0.0001).max(0.01);
+            let bids = (0..5u32)
+                .map(|i| Level::new_unchecked(mid - tick * f64::from(i + 1), 1.0 + f64::from(i)))
+                .collect();
+            let asks = (0..5u32)
+                .map(|i| Level::new_unchecked(mid + tick * f64::from(i + 1), 1.0 + f64::from(i)))
+                .collect();
+            OrderBook::new_unchecked(bids, asks)
+        })
+        .collect();
+    bench_orderbook_input(c, "ob_imbalance_top1", &books, OrderBookImbalanceTop1::new);
+    bench_orderbook_input(c, "ob_imbalance_full", &books, OrderBookImbalanceFull::new);
+    bench_orderbook_input(c, "microprice", &books, Microprice::new);
 }
 
 criterion_group!(name = wickra_benches; config = Criterion::default(); targets = benches);
