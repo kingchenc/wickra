@@ -1,0 +1,7 @@
+# Python 3.10+ dev/test tooling for the ci.yml binding test job
+# (covers the 3.11 / 3.12 / 3.13 matrix rows). Locked output: ci-dev-py3.txt
+# Refresh via scripts/update-lockfiles.sh.
+maturin
+pytest
+numpy
+hypothesis

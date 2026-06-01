@@ -1,0 +1,9 @@
+# Python deps + peer TA libraries for the bench.yml cross-library benchmark.
+# Loose source spec — the pinned, hash-locked output is generated from this:
+#   bench.txt  (Python 3.11)  via scripts/update-lockfiles.sh
+# bench.yml runs on a single Python version (3.11), so one output suffices.
+maturin
+numpy
+pandas
+talipp
+finta

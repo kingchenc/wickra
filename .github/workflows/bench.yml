@@ -62,6 +62,8 @@ jobs:
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: "3.11"
+          cache: pip
+          cache-dependency-path: .github/requirements/bench.txt
 
       - name: Wait before Python retry
         if: steps.setup_python.outcome == 'failure'
@@ -75,11 +77,15 @@ jobs:
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: "3.11"
+          cache: pip
+          cache-dependency-path: .github/requirements/bench.txt
 
       - name: Install Python deps + peer libs
         run: |
           python -m pip install --upgrade pip
-          python -m pip install maturin numpy pandas talipp finta
+          # Hash-locked deps (OpenSSF Scorecard PinnedDependencies). bench.yml
+          # runs on a single Python version (3.11), so one lock file suffices.
+          python -m pip install --require-hashes -r .github/requirements/bench.txt
 
       - name: Build Wickra wheel
         working-directory: bindings/python

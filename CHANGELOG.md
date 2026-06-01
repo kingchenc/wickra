@@ -43,6 +43,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   every candlestick pattern, making the family a drop-in machine-learning
   feature where bullish and bearish instances share a single dimension.
 
+### Security
+- **CI dependency installs are pinned by hash.** The Node binding now installs
+  with `npm ci` (strict `package-lock.json`), and the Python CI/bench tooling is
+  installed from hash-locked `--require-hashes` requirements under
+  `.github/requirements/` (OpenSSF Scorecard PinnedDependencies). The `ci-dev`
+  tooling is locked twice — for Python 3.9 and for 3.10+ — because numpy ships no
+  single release with wheels for both cp39 and cp313. A new
+  `scripts/update-lockfiles.sh` regenerates every workspace lockfile (Rust, Node
+  and the hash-pinned Python requirements) via `uv`, and Dependabot keeps the
+  pinned requirements current.
+
 ## [0.4.1] - 2026-06-01
 
 ### Added
