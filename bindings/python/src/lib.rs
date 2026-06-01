@@ -12795,6 +12795,8 @@ impl PyLiquidationFeatures {
             inner: wc::LiquidationFeatures::new(),
         }
     }
+    /// Returns `(long, short, net, total, imbalance)` or None during warmup.
+    #[allow(clippy::type_complexity)]
     fn update(
         &mut self,
         long_liquidation: f64,
