@@ -547,6 +547,10 @@ CANDLE_SCALAR = {
         lambda: ta.AbandonedBaby(),
         lambda ind, h, l, c, v: ind.batch(c, h, l, c),
     ),
+    "AdvanceBlock": (
+        lambda: ta.AdvanceBlock(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
 }
 
 
@@ -1916,6 +1920,13 @@ def test_abandoned_baby_reference():
     assert t.update((20.0, 20.1, 14.9, 15.0, 1.0, 0)) == pytest.approx(0.0)
     assert t.update((13.0, 13.1, 12.9, 13.0, 1.0, 1)) == pytest.approx(0.0)
     assert t.update((16.0, 18.1, 15.9, 18.0, 1.0, 2)) == pytest.approx(1.0)
+
+
+def test_advance_block_reference():
+    t = ta.AdvanceBlock()
+    assert t.update((10.0, 13.1, 9.9, 13.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((12.0, 14.3, 11.9, 14.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((13.5, 15.0, 13.4, 14.5, 1.0, 2)) == pytest.approx(-1.0)
 
 
 # --- Lifecycle ------------------------------------------------------------

@@ -10,6 +10,7 @@ mod accelerator_oscillator;
 mod ad_oscillator;
 mod adaptive_cycle;
 mod adl;
+mod advance_block;
 mod adx;
 mod adxr;
 mod alligator;
@@ -260,6 +261,7 @@ pub use accelerator_oscillator::AcceleratorOscillator;
 pub use ad_oscillator::AdOscillator;
 pub use adaptive_cycle::AdaptiveCycle;
 pub use adl::Adl;
+pub use advance_block::AdvanceBlock;
 pub use adx::{Adx, AdxOutput};
 pub use adxr::Adxr;
 pub use alligator::{Alligator, AlligatorOutput};
@@ -773,6 +775,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "ThreeLineStrike",
             "ThreeStarsInSouth",
             "AbandonedBaby",
+            "AdvanceBlock",
         ],
     ),
     (
@@ -864,6 +867,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 245, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 246, "FAMILIES total drifted from indicator count");
     }
 }

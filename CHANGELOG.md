@@ -31,6 +31,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Abandoned Baby** — a strong three-bar reversal (`CDLABANDONEDBABY`): a doji
     isolated by price gaps on both sides; bullish `+1` after a decline, bearish
     `−1` after an advance.
+  - **Advance Block** — a three-bar bearish warning (`CDLADVANCEBLOCK`): three
+    green candles to higher closes whose bodies shrink as their upper shadows
+    lengthen, signalling the advance is stalling.
 - **Derivatives family — funding & open interest (part 1).** A new family of
   indicators that consume a perpetual / futures tick (`DerivativesTick`,
   bundling funding rate, mark / index / futures price, open interest,
