@@ -266,12 +266,11 @@ fn adf_no_constant(series: &[f64], lags: usize) -> f64 {
     }
     let dof = (num_obs - num_reg) as f64;
     let sigma2 = rss / dof;
-    // (XᵀX)⁻¹₀₀ from solving XᵀX·x = e₀.
+    // (XᵀX)⁻¹₀₀ from solving XᵀX·x = e₀. `xtx` is the same matrix the first
+    // solve already factored successfully, so this one cannot be singular.
     let mut unit = vec![0.0; num_reg];
     unit[0] = 1.0;
-    let Some(inverse) = solve(xtx, unit) else {
-        return 0.0;
-    };
+    let inverse = solve(xtx, unit).expect("xtx is non-singular: the coefficient solve succeeded");
     let var_rho = sigma2 * inverse[0];
     if var_rho <= 0.0 {
         return 0.0;
@@ -301,6 +300,18 @@ mod tests {
         assert_eq!(c.adf_lags(), 2);
         assert_eq!(c.warmup_period(), 30);
         assert_eq!(c.name(), "Cointegration");
+    }
+
+    #[test]
+    fn adf_guards_and_degenerate_spread() {
+        // Series too short for any observation ⇒ 0.
+        assert_eq!(adf_no_constant(&[1.0], 1), 0.0);
+        // Long enough but too few degrees of freedom ⇒ 0.
+        assert_eq!(adf_no_constant(&[1.0, 2.0, 3.0], 1), 0.0);
+        // A perfect deterministic AR(1) spread (eₜ = 0.5·eₜ₋₁) is fit exactly,
+        // so the residual variance — and hence the t-statistic — is 0.
+        let geom: Vec<f64> = (0..8).map(|t| 0.5_f64.powi(t)).collect();
+        assert_eq!(adf_no_constant(&geom, 0), 0.0);
     }
 
     #[test]
