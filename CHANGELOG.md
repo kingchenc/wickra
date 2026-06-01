@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Cross-asset pairwise indicators.** A new two-series family of
+  `Indicator<Input = (f64, f64)>` implementations that relate two distinct
+  assets rather than a single OHLCV stream. Each is exposed in Rust, Python,
+  Node, and WASM:
+  - **Pairwise Beta** (`PairwiseBeta`) — rolling OLS slope of one asset's
+    **log-returns** on another's. Unlike `Beta`, which regresses the raw inputs
+    it is fed, `PairwiseBeta` differences consecutive prices into log-returns
+    internally — the conventional way to measure cross-asset beta, where a beta
+    on price levels would be dominated by the shared trend.
+  - **Pair Spread Z-Score** (`PairSpreadZScore`) — the standardised log-spread
+    `ln(a) − β·ln(b)` of a pair, where `β` is a rolling-OLS hedge ratio and the
+    spread is z-scored over its own look-back. The canonical mean-reversion /
+    statistical-arbitrage entry signal, with independent `beta_period` and
+    `z_period` windows.
+  - **Lead–Lag Cross-Correlation** (`LeadLagCrossCorrelation`) — the integer
+    offset `k ∈ [−max_lag, max_lag]` that maximises `|corr(a[t], b[t+k])|`,
+    answering which of two assets leads the other and by how many bars. Emits
+    `{ lag, correlation }`; a positive lag means `a` leads `b`.
+  - **Cointegration** (`Cointegration`) — the Engle–Granger two-step screen for
+    pairs trading: a rolling OLS hedge ratio `β`, the spread (residual)
+    `a − (α + β·b)`, and an augmented Dickey–Fuller `t`-statistic on the spread
+    (configurable `adf_lags`). A strongly negative statistic flags a
+    mean-reverting, tradeable spread. Emits `{ hedge_ratio, spread, adf_stat }`.
+  - **Relative Strength A-vs-B** (`RelativeStrengthAB`) — the comparative
+    relative strength of two assets: the ratio line `a / b` together with its
+    moving average and its RSI, the classic asset-vs-asset / asset-vs-index
+    rotation screen. Emits `{ ratio, ratio_ma, ratio_rsi }`.
+
 ## [0.4.0] - 2026-06-01
 
 ### Added

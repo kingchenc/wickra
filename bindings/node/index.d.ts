@@ -5,6 +5,34 @@
 
 /** Library version (matches the Rust crate version). */
 export declare function version(): string
+/** Lead/lag result: the offset that maximises correlation, and that correlation. */
+export interface LeadLagValue {
+  /** Offset that maximises `|corr(a, b shifted)|`. Positive ⇒ `a` leads `b`. */
+  lag: number
+  /** Signed correlation at that lag, in `[-1, 1]`. */
+  correlation: number
+}
+/** Cointegration result: hedge ratio, current spread, and the ADF statistic. */
+export interface CointegrationValue {
+  /** Engle–Granger hedge ratio (OLS slope of `a` on `b`). */
+  hedgeRatio: number
+  /** Current spread (regression residual) `a - (alpha + beta*b)`. */
+  spread: number
+  /**
+   * Augmented Dickey–Fuller statistic on the spread; more negative ⇒ more
+   * strongly mean-reverting.
+   */
+  adfStat: number
+}
+/** Relative-strength triple: the a/b ratio, its moving average, and its RSI. */
+export interface RelativeStrengthValue {
+  /** Raw ratio `a / b`. */
+  ratio: number
+  /** Moving average of the ratio. */
+  ratioMa: number
+  /** RSI of the ratio. */
+  ratioRsi: number
+}
 /** MACD triple: macd line, signal line, histogram. */
 export interface MacdValue {
   macd: number
@@ -628,6 +656,19 @@ export declare class Beta {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type PairwiseBetaNode = PairwiseBeta
+export declare class PairwiseBeta {
+  constructor(period: number)
+  update(x: number, y: number): number | null
+  /**
+   * Batch over two equally-sized arrays. Returns a length-`n` array
+   * with `NaN` for warmup positions.
+   */
+  batch(x: Array<number>, y: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type SpearmanCorrelationNode = SpearmanCorrelation
 export declare class SpearmanCorrelation {
   constructor(period: number)
@@ -637,6 +678,65 @@ export declare class SpearmanCorrelation {
    * with `NaN` for warmup positions.
    */
   batch(x: Array<number>, y: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type PairSpreadZScoreNode = PairSpreadZScore
+/**
+ * Pair spread z-score: two ctor params (`betaPeriod`, `zPeriod`), one `(a, b)`
+ * price pair per update, a single z-score out.
+ */
+export declare class PairSpreadZScore {
+  constructor(betaPeriod: number, zPeriod: number)
+  update(a: number, b: number): number | null
+  /**
+   * Batch over two equally-sized arrays of prices. Returns a length-`n`
+   * array with `NaN` for warmup positions.
+   */
+  batch(a: Array<number>, b: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type LeadLagCrossCorrelationNode = LeadLagCrossCorrelation
+export declare class LeadLagCrossCorrelation {
+  constructor(window: number, maxLag: number)
+  update(a: number, b: number): LeadLagValue | null
+  /**
+   * Batch over two equally-sized arrays. Returns a flat array of length
+   * `2 * n`, interleaved per row as `[lag0, corr0, lag1, corr1, ...]`. Read
+   * column `j` of row `i` as `result[i * 2 + j]`. Warmup rows are `NaN`.
+   */
+  batch(a: Array<number>, b: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type CointegrationNode = Cointegration
+export declare class Cointegration {
+  constructor(period: number, adfLags: number)
+  update(a: number, b: number): CointegrationValue | null
+  /**
+   * Batch over two equally-sized arrays. Returns a flat array of length
+   * `3 * n`, interleaved per row as `[hedgeRatio0, spread0, adfStat0, ...]`.
+   * Read column `j` of row `i` as `result[i * 3 + j]`. Warmup rows are `NaN`.
+   */
+  batch(a: Array<number>, b: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RelativeStrengthAbNode = RelativeStrengthAB
+export declare class RelativeStrengthAB {
+  constructor(maPeriod: number, rsiPeriod: number)
+  update(a: number, b: number): RelativeStrengthValue | null
+  /**
+   * Batch over two equally-sized arrays. Returns a flat array of length
+   * `3 * n`, interleaved per row as `[ratio0, ratioMa0, ratioRsi0, ...]`.
+   * Read column `j` of row `i` as `result[i * 3 + j]`. Warmup rows are `NaN`.
+   */
+  batch(a: Array<number>, b: Array<number>): Array<number>
   reset(): void
   isReady(): boolean
   warmupPeriod(): number

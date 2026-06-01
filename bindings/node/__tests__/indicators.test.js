@@ -461,6 +461,8 @@ test('OpeningRange(2) breakout distance is signed close minus midpoint', () => {
 const pairFactories = {
   PearsonCorrelation: () => new wickra.PearsonCorrelation(14),
   Beta: () => new wickra.Beta(14),
+  PairwiseBeta: () => new wickra.PairwiseBeta(14),
+  PairSpreadZScore: () => new wickra.PairSpreadZScore(14, 14),
   SpearmanCorrelation: () => new wickra.SpearmanCorrelation(14),
 };
 
@@ -490,6 +492,85 @@ test('Beta perfect two-to-one', () => {
   const asset = bench.map((v) => 2 * v);
   const out = new wickra.Beta(5).batch(asset, bench);
   assert.ok(Math.abs(out[out.length - 1] - 2) < 1e-9);
+});
+
+test('PairwiseBeta squared price is two', () => {
+  // b needs varying returns; a = b² ⇒ a's log-returns are exactly 2× b's.
+  const bench = Array.from({ length: 20 }, (_, i) => 100 + 10 * Math.sin(i * 0.5));
+  const asset = bench.map((v) => v * v);
+  const out = new wickra.PairwiseBeta(5).batch(asset, bench);
+  assert.ok(Math.abs(out[out.length - 1] - 2) < 1e-9);
+});
+
+test('PairSpreadZScore flat benchmark is sign of last move', () => {
+  // Flat b ⇒ hedge ratio 0 ⇒ spread = ln(a); z_period = 2 ⇒ z = sign of move.
+  const a = [100, 100, 110, 105, 130];
+  const b = [100, 100, 100, 100, 100];
+  const out = new wickra.PairSpreadZScore(2, 2).batch(a, b);
+  assert.ok(Math.abs(out[out.length - 1] - 1) < 1e-9);
+  assert.ok(Math.abs(out[out.length - 2] + 1) < 1e-9);
+});
+
+const llSignal = (t) =>
+  Math.sin(t * 0.4) + 0.4 * Math.sin(t * 1.1) + 0.2 * Math.cos(t * 0.27);
+
+test('LeadLagCrossCorrelation detects positive lead (object output)', () => {
+  const ll = new wickra.LeadLagCrossCorrelation(12, 5);
+  let last = null;
+  // b is a delayed by 3 ⇒ a leads b ⇒ lag = +3.
+  for (let t = 0; t < 60; t++) last = ll.update(llSignal(t), llSignal(t - 3));
+  assert.equal(last.lag, 3);
+  assert.ok(last.correlation > 0.99);
+});
+
+test('LeadLagCrossCorrelation batch is flat 2*n with last row matching', () => {
+  const n = 60;
+  const a = Array.from({ length: n }, (_, t) => llSignal(t));
+  const b = Array.from({ length: n }, (_, t) => llSignal(t - 3));
+  const out = new wickra.LeadLagCrossCorrelation(12, 5).batch(a, b);
+  assert.equal(out.length, 2 * n);
+  assert.equal(out[2 * (n - 1)], 3);
+  assert.ok(out[2 * (n - 1) + 1] > 0.99);
+});
+
+test('Cointegration detects mean-reverting pair (object output)', () => {
+  const n = 80;
+  const b = Array.from({ length: n }, (_, t) => 50 + 0.5 * t);
+  const a = b.map((v, t) => 2 * v + 1 + 0.5 * Math.sin(t * 0.6));
+  const co = new wickra.Cointegration(40, 1);
+  let last = null;
+  for (let i = 0; i < n; i++) last = co.update(a[i], b[i]);
+  assert.ok(Math.abs(last.hedgeRatio - 2) < 0.1);
+  assert.ok(last.adfStat < -2);
+});
+
+test('Cointegration batch is flat 3*n with last row matching', () => {
+  const n = 80;
+  const b = Array.from({ length: n }, (_, t) => 50 + 0.5 * t);
+  const a = b.map((v, t) => 2 * v + 1 + 0.5 * Math.sin(t * 0.6));
+  const out = new wickra.Cointegration(40, 1).batch(a, b);
+  assert.equal(out.length, 3 * n);
+  assert.ok(Math.abs(out[3 * (n - 1)] - 2) < 0.1);
+  assert.ok(out[3 * (n - 1) + 2] < -2);
+});
+
+test('RelativeStrengthAB constant ratio is flat (object output)', () => {
+  const rs = new wickra.RelativeStrengthAB(5, 5);
+  let last = null;
+  for (let i = 0; i < 30; i++) last = rs.update(200, 100); // ratio is a constant 2
+  assert.ok(Math.abs(last.ratio - 2) < 1e-12);
+  assert.ok(Math.abs(last.ratioMa - 2) < 1e-12);
+  assert.ok(Math.abs(last.ratioRsi - 50) < 1e-9);
+});
+
+test('RelativeStrengthAB batch is flat 3*n with last row matching', () => {
+  const n = 30;
+  const a = Array.from({ length: n }, () => 200);
+  const b = Array.from({ length: n }, () => 100);
+  const out = new wickra.RelativeStrengthAB(5, 5).batch(a, b);
+  assert.equal(out.length, 3 * n);
+  assert.ok(Math.abs(out[3 * (n - 1)] - 2) < 1e-12);
+  assert.ok(Math.abs(out[3 * (n - 1) + 2] - 50) < 1e-9);
 });
 
 test('SpearmanCorrelation monotone non-linear is 1', () => {

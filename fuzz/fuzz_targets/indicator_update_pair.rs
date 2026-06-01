@@ -8,7 +8,10 @@
 //! panic.
 
 use libfuzzer_sys::fuzz_target;
-use wickra_core::{Alpha, BatchExt, Indicator, InformationRatio, TreynorRatio};
+use wickra_core::{
+    Alpha, BatchExt, Cointegration, Indicator, InformationRatio, LeadLagCrossCorrelation,
+    PairSpreadZScore, PairwiseBeta, RelativeStrengthAB, TreynorRatio,
+};
 
 #[inline(never)]
 fn drive<I>(make: impl Fn() -> I, data: &[(f64, f64)])
@@ -36,4 +39,26 @@ fuzz_target!(|data: &[u8]| {
     drive(|| TreynorRatio::new(10, 0.0).unwrap(), &pairs);
     drive(|| InformationRatio::new(10).unwrap(), &pairs);
     drive(|| Alpha::new(10, 0.0).unwrap(), &pairs);
+    drive(|| PairwiseBeta::new(10).unwrap(), &pairs);
+    drive(|| PairSpreadZScore::new(10, 10).unwrap(), &pairs);
+
+    // Struct-output pair indicator: drive update + batch directly (the generic
+    // `drive` above only covers `Output = f64`).
+    let mut ll = LeadLagCrossCorrelation::new(8, 3).unwrap();
+    for &x in &pairs {
+        let _ = ll.update(x);
+    }
+    let _ = LeadLagCrossCorrelation::new(8, 3).unwrap().batch(&pairs);
+
+    let mut co = Cointegration::new(12, 1).unwrap();
+    for &x in &pairs {
+        let _ = co.update(x);
+    }
+    let _ = Cointegration::new(12, 1).unwrap().batch(&pairs);
+
+    let mut rs = RelativeStrengthAB::new(10, 14).unwrap();
+    for &x in &pairs {
+        let _ = rs.update(x);
+    }
+    let _ = RelativeStrengthAB::new(10, 14).unwrap().batch(&pairs);
 });

@@ -159,6 +159,8 @@ PAIR = [
     (ta.TreynorRatio, (20, 0.0)),
     (ta.InformationRatio, (20,)),
     (ta.Alpha, (20, 0.0)),
+    (ta.PairwiseBeta, (20,)),
+    (ta.PairSpreadZScore, (20, 20)),
 ]
 
 
@@ -176,6 +178,95 @@ def test_pair_streaming_matches_batch(cls, args, sine_prices):
         v = streamer.update(float(a), float(b))
         streamed.append(math.nan if v is None else float(v))
     assert _eq_nan(batch, np.array(streamed, dtype=np.float64))
+
+
+def _ll_signal(t):
+    return math.sin(t * 0.4) + 0.4 * math.sin(t * 1.1) + 0.2 * math.cos(t * 0.27)
+
+
+def test_lead_lag_detects_lead():
+    n = 60
+    a = np.array([_ll_signal(t) for t in range(n)])
+    # b is a delayed by 3 ⇒ a leads b ⇒ lag = +3, correlation ≈ 1.
+    b = np.array([_ll_signal(t - 3) for t in range(n)])
+    out = ta.LeadLagCrossCorrelation(12, 5).batch(a, b)
+    assert out.shape == (n, 2)
+    assert int(out[-1, 0]) == 3
+    assert out[-1, 1] > 0.99
+
+
+def test_lead_lag_streaming_matches_batch():
+    n = 60
+    a = np.array([_ll_signal(t) for t in range(n)])
+    b = np.array([_ll_signal(t - 2) for t in range(n)])
+    ind = ta.LeadLagCrossCorrelation(12, 5)
+    batch = ind.batch(a, b)
+    streamer = ta.LeadLagCrossCorrelation(12, 5)
+    for i in range(n):
+        v = streamer.update(float(a[i]), float(b[i]))
+        if v is None:
+            assert math.isnan(batch[i, 0]) and math.isnan(batch[i, 1])
+        else:
+            lag, corr = v
+            assert int(batch[i, 0]) == lag
+            assert math.isclose(batch[i, 1], corr, rel_tol=1e-12, abs_tol=1e-12)
+
+
+def test_cointegration_detects_mean_reverting_pair():
+    n = 80
+    b = np.array([50.0 + 0.5 * t for t in range(n)])
+    # a tracks 2*b with a small mean-reverting wobble ⇒ cointegrated.
+    a = 2.0 * b + 1.0 + 0.5 * np.sin(np.arange(n) * 0.6)
+    out = ta.Cointegration(40, 1).batch(a, b)
+    assert out.shape == (n, 3)
+    assert abs(out[-1, 0] - 2.0) < 0.1  # hedge ratio
+    assert out[-1, 2] < -2.0  # ADF statistic: strongly mean-reverting
+
+
+def test_cointegration_streaming_matches_batch():
+    n = 70
+    b = np.array([30.0 + 0.7 * t for t in range(n)])
+    a = 1.8 * b + 2.0 + 0.5 * np.sin(np.arange(n) * 0.4)
+    batch = ta.Cointegration(25, 2).batch(a, b)
+    streamer = ta.Cointegration(25, 2)
+    for i in range(n):
+        v = streamer.update(float(a[i]), float(b[i]))
+        if v is None:
+            assert np.all(np.isnan(batch[i]))
+        else:
+            hr, sp, adf = v
+            assert math.isclose(batch[i, 0], hr, rel_tol=1e-12, abs_tol=1e-12)
+            assert math.isclose(batch[i, 1], sp, rel_tol=1e-12, abs_tol=1e-12)
+            assert math.isclose(batch[i, 2], adf, rel_tol=1e-12, abs_tol=1e-12)
+
+
+def test_relative_strength_constant_ratio():
+    n = 30
+    a = np.full(n, 200.0)
+    b = np.full(n, 100.0)  # ratio is a constant 2
+    out = ta.RelativeStrengthAB(5, 5).batch(a, b)
+    assert out.shape == (n, 3)
+    assert math.isclose(out[-1, 0], 2.0, abs_tol=1e-12)  # ratio
+    assert math.isclose(out[-1, 1], 2.0, abs_tol=1e-12)  # ratio MA
+    assert math.isclose(out[-1, 2], 50.0, abs_tol=1e-9)  # flat ratio ⇒ RSI 50
+
+
+def test_relative_strength_streaming_matches_batch():
+    n = 60
+    tt = np.arange(n)
+    a = 100.0 + 5.0 * np.sin(tt * 0.3)
+    b = 100.0 + 2.0 * np.cos(tt * 0.2)
+    batch = ta.RelativeStrengthAB(10, 14).batch(a, b)
+    streamer = ta.RelativeStrengthAB(10, 14)
+    for i in range(n):
+        v = streamer.update(float(a[i]), float(b[i]))
+        if v is None:
+            assert np.all(np.isnan(batch[i]))
+        else:
+            ratio, ma, rsi = v
+            assert math.isclose(batch[i, 0], ratio, rel_tol=1e-12, abs_tol=1e-12)
+            assert math.isclose(batch[i, 1], ma, rel_tol=1e-12, abs_tol=1e-12)
+            assert math.isclose(batch[i, 2], rsi, rel_tol=1e-12, abs_tol=1e-12)
 
 
 # --- Candle-input, single-output indicators -------------------------------
