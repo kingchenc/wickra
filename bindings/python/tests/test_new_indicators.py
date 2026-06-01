@@ -1952,3 +1952,45 @@ def test_footprint_streaming_equals_batch():
     for i in range(n):
         streamed = streamer.update(price[i], size[i], is_buy[i])
         assert np.array_equal(streamed, batch[i])
+
+
+def test_funding_indicators_streaming_equals_batch():
+    n = 40
+    rate = np.array([0.0001 * math.sin(i * 0.3) for i in range(n)], dtype=np.float64)
+    for make in (
+        ta.FundingRate,
+        lambda: ta.FundingRateMean(5),
+        lambda: ta.FundingRateZScore(5),
+    ):
+        batch = make().batch(rate)
+        streamer = make()
+        streamed = np.array(
+            [streamer.update(rate[i]) for i in range(n)], dtype=np.float64
+        )
+        assert batch.shape == (n,)
+        assert _eq_nan(batch, streamed)
+
+
+def test_funding_basis_streaming_equals_batch():
+    n = 40
+    index = np.array([100.0 + 0.5 * math.sin(i * 0.2) for i in range(n)], dtype=np.float64)
+    mark = np.array(
+        [index[i] + 0.1 * math.cos(i * 0.3) for i in range(n)], dtype=np.float64
+    )
+    batch = ta.FundingBasis().batch(mark, index)
+    streamer = ta.FundingBasis()
+    streamed = np.array(
+        [streamer.update(mark[i], index[i]) for i in range(n)], dtype=np.float64
+    )
+    assert batch.shape == (n,)
+    assert _eq_nan(batch, streamed)
+
+
+def test_open_interest_delta_streaming_equals_batch():
+    n = 40
+    oi = np.array([1000.0 + 50.0 * math.sin(i * 0.25) for i in range(n)], dtype=np.float64)
+    batch = ta.OpenInterestDelta().batch(oi)
+    streamer = ta.OpenInterestDelta()
+    streamed = np.array([streamer.update(oi[i]) for i in range(n)], dtype=np.float64)
+    assert batch.shape == (n,)
+    assert _eq_nan(batch, streamed)
