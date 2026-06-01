@@ -530,7 +530,7 @@ jobs:
 
       - name: Install Node dependencies
         working-directory: bindings/node
-        run: npm install
+        run: npm ci
 
       - name: Build native module
         working-directory: bindings/node
