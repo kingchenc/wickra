@@ -72,7 +72,7 @@ pub use indicators::{
     LinRegAngle, LinRegChannel, LinRegChannelOutput, LinRegSlope, LinearRegression, MaEnvelope,
     MaEnvelopeOutput, MacdIndicator, MacdOutput, Mama, MamaOutput, MarketFacilitationIndex,
     Marubozu, MassIndex, MaxDrawdown, McGinleyDynamic, MedianAbsoluteDeviation, MedianPrice, Mfi,
-    Microprice, Mom, MorningEveningStar, Natr, Nvi, OIPriceDivergence, Obv, OmegaRatio,
+    Microprice, Mom, MorningEveningStar, Natr, Nvi, OIPriceDivergence, OIWeighted, Obv, OmegaRatio,
     OpenInterestDelta, OpeningRange, OpeningRangeOutput, OrderBookImbalanceFull,
     OrderBookImbalanceTop1, OrderBookImbalanceTopN, PainIndex, PairSpreadZScore, PairwiseBeta,
     ParkinsonVolatility, PearsonCorrelation, PercentB, PercentageTrailingStop, Pgo,
