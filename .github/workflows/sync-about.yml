@@ -20,10 +20,15 @@ name: Sync indicator count
 #                                            — synced on v* tag only*
 #   8. Marketing site version (wickra-lib/webpage: api/*.md "Latest" lines, the
 #      nav version label, and the wickra-wasm dep) — synced on v* tag only*
+#   9. Wiki pointer page count (wickra-lib/wickra.wiki, Home.md — the wiki was
+#      collapsed to a single page that points at docs.wickra.org but still names
+#      the count) — synced on push to main / v* tag*
 #
 #   *Surfaces 3 + 7 need the ABOUT_SYNC_TOKEN to have write on
 #   wickra-lib/wickra-docs, surfaces 4 + 8 on wickra-lib/webpage; surfaces 5 + 6
-#   need write on wickra-lib/.github and admin:org for the org-description PATCH.
+#   need write on wickra-lib/.github and admin:org for the org-description PATCH;
+#   surface 9 needs write on wickra-lib/wickra (the wiki rides on the parent
+#   repo's permission).
 #   Until that scope is granted these steps emit a ::warning:: and soft-skip —
 #   they never fail the run. The repo "About" homepage URL is also enforced in
 #   step 2 (constant value, no extra scope); it points at docs.wickra.org.
@@ -246,6 +251,40 @@ jobs:
             echo "::warning::push to wickra-lib/wickra-docs failed — ABOUT_SYNC_TOKEN likely lacks write (findings P10.0a)."
           else
             echo "Docs indicator count synced to ${n}."
+          fi
+
+      # The GitHub wiki (wickra-lib/wickra.wiki) was collapsed to a single
+      # Home.md pointer page that sends visitors to docs.wickra.org, but that
+      # page still names the count ("… for all N indicators"), so keep it in
+      # sync here too. Mirrors the docs/webpage count steps: own clone dir
+      # (wiki-count) and the same soft-skip contract. Wiki write rides on the
+      # parent repo's permission, so the PAT needs write on wickra-lib/wickra;
+      # the wiki has no signing gate, so a plain wickra-bot commit is fine.
+      - name: Sync wiki pointer indicator count (wickra.wiki)
+        if: github.event_name != 'pull_request'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.ABOUT_SYNC_TOKEN }}
+        run: |
+          n="${{ steps.count.outputs.count }}"
+          if ! git clone "https://x-access-token:${GH_TOKEN}@github.com/wickra-lib/wickra.wiki.git" wiki-count 2>/dev/null; then
+            echo "::warning::cannot clone wickra-lib/wickra.wiki — ABOUT_SYNC_TOKEN likely lacks write on the wiki. Skipping wiki count sync."
+            exit 0
+          fi
+          cd wiki-count
+          sed -i -E "s/[0-9]+ (streaming-first )?indicators/${n} \1indicators/g" Home.md
+          if git diff --quiet; then
+            echo "Wiki pointer indicator count unchanged."
+            exit 0
+          fi
+          git config user.name "wickra-bot"
+          git config user.email "wickra-bot@users.noreply.github.com"
+          git add Home.md
+          git commit -m "chore: sync indicator count to ${n}"
+          if ! git push 2>/dev/null; then
+            echo "::warning::push to wickra-lib/wickra.wiki failed — ABOUT_SYNC_TOKEN likely lacks write on the wiki."
+          else
+            echo "Wiki pointer indicator count synced to ${n}."
           fi
 
       # ----- org-profile sync (soft-skip until PAT scope lands) -------
