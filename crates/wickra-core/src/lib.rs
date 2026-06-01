@@ -86,7 +86,7 @@ pub use indicators::{
     StochasticOutput, SuperSmoother, SuperTrend, SuperTrendOutput, TakerBuySellRatio, TdCombo,
     TdCountdown, TdDeMarker, TdDifferential, TdLines, TdLinesOutput, TdOpen, TdPressure,
     TdRangeProjection, TdRangeProjectionOutput, TdRei, TdRiskLevel, TdRiskLevelOutput,
-    TdSequential, TdSequentialOutput, TdSetup, Tema, ThreeInside, ThreeOutside,
+    TdSequential, TdSequentialOutput, TdSetup, Tema, TermStructureBasis, ThreeInside, ThreeOutside,
     ThreeSoldiersOrCrows, Tii, TradeImbalance, TreynorRatio, Trima, Trix, TrueRange, Tsi, Tsv,
     TtmSqueeze, TtmSqueezeOutput, Tweezer, TypicalPrice, UlcerIndex, UltimateOscillator, ValueArea,
     ValueAreaOutput, ValueAtRisk, Variance, VerticalHorizontalFilter, Vidya, VoltyStop,
