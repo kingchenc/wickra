@@ -101,6 +101,7 @@ mod keltner;
 mod kst;
 mod kurtosis;
 mod kvo;
+mod kyles_lambda;
 mod laguerre_rsi;
 mod lead_lag_cross_correlation;
 mod linreg;
@@ -330,6 +331,7 @@ pub use keltner::{Keltner, KeltnerOutput};
 pub use kst::{Kst, KstOutput};
 pub use kurtosis::Kurtosis;
 pub use kvo::Kvo;
+pub use kyles_lambda::KylesLambda;
 pub use laguerre_rsi::LaguerreRsi;
 pub use lead_lag_cross_correlation::{LeadLagCrossCorrelation, LeadLagCrossCorrelationOutput};
 pub use linreg::LinearRegression;
@@ -740,6 +742,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "TradeImbalance",
             "EffectiveSpread",
             "RealizedSpread",
+            "KylesLambda",
         ],
     ),
     (
@@ -796,6 +799,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 224, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 225, "FAMILIES total drifted from indicator count");
     }
 }

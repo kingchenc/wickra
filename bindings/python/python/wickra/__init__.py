@@ -253,6 +253,7 @@ from ._wickra import (
     # Microstructure: price impact
     EffectiveSpread,
     RealizedSpread,
+    KylesLambda,
     # Risk / Performance
     SharpeRatio,
     SortinoRatio,
@@ -503,6 +504,7 @@ __all__ = [
     # Microstructure: price impact
     "EffectiveSpread",
     "RealizedSpread",
+    "KylesLambda",
     # Risk / Performance
     "SharpeRatio",
     "SortinoRatio",

@@ -12040,6 +12040,60 @@ impl PyRealizedSpread {
     }
 }
 
+// Kyle's lambda carries a `window` parameter, so it is hand-written.
+#[pyclass(name = "KylesLambda", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyKylesLambda {
+    inner: wc::KylesLambda,
+}
+
+#[pymethods]
+impl PyKylesLambda {
+    #[new]
+    fn new(window: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::KylesLambda::new(window).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, price: f64, size: f64, is_buy: bool, mid: f64) -> PyResult<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_trade_quote(price, size, is_buy, mid)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        price: Vec<f64>,
+        size: Vec<f64>,
+        is_buy: Vec<bool>,
+        mid: Vec<f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if price.len() != size.len() || size.len() != is_buy.len() || is_buy.len() != mid.len() {
+            return Err(PyValueError::new_err(
+                "price, size, is_buy, mid must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            let quote = build_trade_quote(price[i], size[i], is_buy[i], mid[i])?;
+            out.push(self.inner.update(quote).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("KylesLambda(window={})", self.inner.window())
+    }
+}
+
 // ============================== Family 15: Risk / Performance ==============================
 
 #[pyclass(name = "SharpeRatio", module = "wickra._wickra", skip_from_py_object)]
@@ -13158,6 +13212,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     // Microstructure: price impact.
     m.add_class::<PyEffectiveSpread>()?;
     m.add_class::<PyRealizedSpread>()?;
+    m.add_class::<PyKylesLambda>()?;
     // Family 15: Risk / Performance metrics.
     m.add_class::<PySharpeRatio>()?;
     m.add_class::<PySortinoRatio>()?;

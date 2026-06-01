@@ -34,9 +34,9 @@ use std::hint::black_box;
 use wickra::{
     Adx, Atr, Autocorrelation, BatchExt, BollingerBands, BollingerOutput, CalmarRatio, Candle, Cci,
     ClassicPivots, ConnorsRsi, EffectiveSpread, Ema, EmpiricalModeDecomposition, Engulfing, Frama,
-    HilbertDominantCycle, HurstExponent, Ichimoku, IchimokuOutput, Indicator, Jma, Level,
-    LinearRegression, MacdIndicator, MacdOutput, Mama, MamaOutput, MaxDrawdown, Microprice, Obv,
-    OrderBook, OrderBookImbalanceFull, OrderBookImbalanceTop1, ParkinsonVolatility, Ppo, Psar,
+    HilbertDominantCycle, HurstExponent, Ichimoku, IchimokuOutput, Indicator, Jma, KylesLambda,
+    Level, LinearRegression, MacdIndicator, MacdOutput, Mama, MamaOutput, MaxDrawdown, Microprice,
+    Obv, OrderBook, OrderBookImbalanceFull, OrderBookImbalanceTop1, ParkinsonVolatility, Ppo, Psar,
     RollingVwap, Rsi, SharpeRatio, Side, SignedVolume, Sma, Stc, SuperTrend, SuperTrendOutput,
     TdSequential, TdSequentialOutput, Trade, TradeImbalance, TradeQuote, TtmSqueeze,
     TtmSqueezeOutput, ValueArea, ValueAreaOutput, ValueAtRisk, Vwap, VwapStdDevBands,
@@ -382,6 +382,7 @@ fn benches(c: &mut Criterion) {
         .map(|trade| TradeQuote::new_unchecked(*trade, trade.price))
         .collect();
     bench_tradequote_input(c, "effective_spread", &quotes, EffectiveSpread::new);
+    bench_tradequote_input(c, "kyles_lambda", &quotes, || KylesLambda::new(50).unwrap());
 }
 
 criterion_group!(name = wickra_benches; config = Criterion::default(); targets = benches);

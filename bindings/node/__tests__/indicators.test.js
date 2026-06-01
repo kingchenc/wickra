@@ -1032,7 +1032,30 @@ test('realized spread streaming update matches batch', () => {
   }
 });
 
+test("kyle's lambda recovers a constant price-impact slope", () => {
+  // Each trade moves the mid by exactly 0.5 per unit of signed volume.
+  const impact = 0.5;
+  let mid = 100;
+  const price = [];
+  const size = [];
+  const isBuy = [];
+  const mids = [];
+  for (let i = 0; i < 20; i++) {
+    const buy = i % 2 === 0;
+    const sz = 1 + (i % 3);
+    const signed = buy ? sz : -sz;
+    mid += impact * signed;
+    price.push(mid);
+    size.push(sz);
+    isBuy.push(buy);
+    mids.push(mid);
+  }
+  const out = new wickra.KylesLambda(6).batch(price, size, isBuy, mids);
+  assert.ok(Math.abs(out[out.length - 1] - 0.5) < 1e-9);
+});
+
 test('price-impact rejects bad input', () => {
   assert.throws(() => new wickra.EffectiveSpread().update(100, 1, true, 0));
   assert.throws(() => new wickra.RealizedSpread(0));
+  assert.throws(() => new wickra.KylesLambda(1));
 });

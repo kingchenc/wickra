@@ -149,7 +149,7 @@ def test_price_impact_batch_returns_one_value_per_trade():
     size = np.array([1.0, 2.0, 1.0, 2.0])
     is_buy = [True, False, True, False]
     mid = np.full(4, 100.0)
-    for ind in (ta.EffectiveSpread(), ta.RealizedSpread(2)):
+    for ind in (ta.EffectiveSpread(), ta.RealizedSpread(2), ta.KylesLambda(2)):
         out = ind.batch(price, size, is_buy, mid)
         assert out.shape == (4,)
         assert out.dtype == np.float64

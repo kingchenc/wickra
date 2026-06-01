@@ -194,3 +194,15 @@ def test_realized_spread_lifecycle_and_repr():
     rs.reset()
     assert not rs.is_ready()
     assert repr(ta.RealizedSpread(5)) == "RealizedSpread(horizon=5)"
+
+
+def test_kyles_lambda_lifecycle_and_repr():
+    kl = ta.KylesLambda(3)
+    assert kl.warmup_period() == 4
+    assert not kl.is_ready()
+    for i in range(4):
+        kl.update(100.0 + i, 1.0 + (i % 2), i % 2 == 0, 100.0 + i)
+    assert kl.is_ready()
+    kl.reset()
+    assert not kl.is_ready()
+    assert repr(ta.KylesLambda(7)) == "KylesLambda(window=7)"

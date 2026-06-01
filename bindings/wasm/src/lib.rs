@@ -6660,6 +6660,44 @@ impl WasmRealizedSpread {
     }
 }
 
+// Kyle's lambda carries a `window` parameter, so it is hand-written.
+#[wasm_bindgen(js_name = KylesLambda)]
+pub struct WasmKylesLambda {
+    inner: wc::KylesLambda,
+}
+
+#[wasm_bindgen(js_class = KylesLambda)]
+impl WasmKylesLambda {
+    #[wasm_bindgen(constructor)]
+    pub fn new(window: usize) -> Result<WasmKylesLambda, JsError> {
+        Ok(Self {
+            inner: wc::KylesLambda::new(window).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        price: f64,
+        size: f64,
+        is_buy: bool,
+        mid: f64,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(build_trade_quote(price, size, is_buy, mid)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

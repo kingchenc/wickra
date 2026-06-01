@@ -2286,6 +2286,15 @@ export declare class RealizedSpread {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type KylesLambdaNode = KylesLambda
+export declare class KylesLambda {
+  constructor(window: number)
+  update(price: number, size: number, isBuy: boolean, mid: number): number | null
+  batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>, mid: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type SharpeRatioNode = SharpeRatio
 export declare class SharpeRatio {
   constructor(period: number, riskFree: number)

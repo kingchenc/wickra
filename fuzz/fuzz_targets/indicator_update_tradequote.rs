@@ -12,7 +12,7 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    BatchExt, EffectiveSpread, Indicator, RealizedSpread, Side, Trade, TradeQuote,
+    BatchExt, EffectiveSpread, Indicator, KylesLambda, RealizedSpread, Side, Trade, TradeQuote,
 };
 
 #[inline(never)]
@@ -43,4 +43,5 @@ fuzz_target!(|data: &[u8]| {
 
     drive(EffectiveSpread::new, &quotes);
     drive(|| RealizedSpread::new(5).unwrap(), &quotes);
+    drive(|| KylesLambda::new(5).unwrap(), &quotes);
 });

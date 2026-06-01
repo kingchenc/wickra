@@ -906,3 +906,22 @@ def test_realized_spread_reference_value():
     # Resolved against mid 100.20 one trade later:
     # 2 * (+1) * (100.10 - 100.20) / 100.0 * 10000 = -20 bps (adverse selection).
     assert rs.update(99.90, 1.0, False, 100.20) == pytest.approx(-20.0)
+
+
+def test_kyles_lambda_recovers_constant_impact():
+    # Build a tape where each trade moves the mid by exactly 0.5 per unit of
+    # signed volume -> the rolling OLS slope is 0.5.
+    impact = 0.5
+    mid = 100.0
+    price, size, is_buy, mids = [], [], [], []
+    for i in range(20):
+        buy = i % 2 == 0
+        sz = 1.0 + (i % 3)
+        signed = sz if buy else -sz
+        mid += impact * signed
+        price.append(mid)
+        size.append(sz)
+        is_buy.append(buy)
+        mids.append(mid)
+    out = ta.KylesLambda(6).batch(price, size, is_buy, mids)
+    assert out[-1] == pytest.approx(0.5, abs=1e-9)

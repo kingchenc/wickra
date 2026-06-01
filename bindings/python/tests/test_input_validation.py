@@ -226,3 +226,8 @@ def test_effective_spread_batch_unequal_lengths_raise():
 def test_realized_spread_zero_horizon_raises():
     with pytest.raises(ValueError):
         ta.RealizedSpread(0)
+
+
+def test_kyles_lambda_window_below_two_raises():
+    with pytest.raises(ValueError):
+        ta.KylesLambda(1)
