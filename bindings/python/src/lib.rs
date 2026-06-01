@@ -11636,6 +11636,8 @@ candle_pattern_no_param!(PyAbandonedBaby, wc::AbandonedBaby, "AbandonedBaby");
 candle_pattern_no_param!(PyAdvanceBlock, wc::AdvanceBlock, "AdvanceBlock");
 
 candle_pattern_no_param!(PyBeltHold, wc::BeltHold, "BeltHold");
+candle_pattern_no_param!(PyBreakaway, wc::Breakaway, "Breakaway");
+candle_pattern_no_param!(PyCounterattack, wc::Counterattack, "Counterattack");
 // ============================== Microstructure: Order Book ==============================
 //
 // Order-book indicators consume a depth snapshot rather than OHLCV. Streaming
@@ -14140,6 +14142,8 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyAbandonedBaby>()?;
     m.add_class::<PyAdvanceBlock>()?;
     m.add_class::<PyBeltHold>()?;
+    m.add_class::<PyBreakaway>()?;
+    m.add_class::<PyCounterattack>()?;
     // Microstructure: order book.
     m.add_class::<PyOrderBookImbalanceTop1>()?;
     m.add_class::<PyOrderBookImbalanceTopN>()?;

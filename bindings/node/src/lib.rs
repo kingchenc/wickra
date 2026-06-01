@@ -8773,6 +8773,8 @@ node_candle_pattern!(
 node_candle_pattern!(AbandonedBabyNode, wc::AbandonedBaby, "AbandonedBaby");
 node_candle_pattern!(AdvanceBlockNode, wc::AdvanceBlock, "AdvanceBlock");
 node_candle_pattern!(BeltHoldNode, wc::BeltHold, "BeltHold");
+node_candle_pattern!(BreakawayNode, wc::Breakaway, "Breakaway");
+node_candle_pattern!(CounterattackNode, wc::Counterattack, "Counterattack");
 
 // ============================== Microstructure: Order Book ==============================
 //

@@ -555,6 +555,14 @@ CANDLE_SCALAR = {
         lambda: ta.BeltHold(),
         lambda ind, h, l, c, v: ind.batch(c, h, l, c),
     ),
+    "Breakaway": (
+        lambda: ta.Breakaway(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Counterattack": (
+        lambda: ta.Counterattack(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
 }
 
 
@@ -1661,6 +1669,21 @@ def test_belt_hold_reference():
     t = ta.BeltHold()
     assert t.update((10.0, 12.0, 10.0, 11.5, 1.0, 0)) == pytest.approx(1.0)
     assert t.update((12.0, 12.0, 10.0, 10.5, 1.0, 1)) == pytest.approx(-1.0)
+
+
+def test_breakaway_reference():
+    t = ta.Breakaway()
+    assert t.update((20.0, 20.2, 14.8, 15.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((14.0, 14.1, 11.9, 12.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((12.5, 13.0, 10.5, 11.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((11.0, 11.5, 9.0, 9.5, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((9.5, 14.7, 9.4, 14.5, 1.0, 4)) == pytest.approx(1.0)
+
+
+def test_counterattack_reference():
+    t = ta.Counterattack()
+    assert t.update((20.0, 20.1, 14.9, 15.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((10.0, 15.1, 9.9, 15.0, 1.0, 1)) == pytest.approx(1.0)
 
 # --- Lifecycle ------------------------------------------------------------
 

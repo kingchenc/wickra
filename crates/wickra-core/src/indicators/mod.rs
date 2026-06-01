@@ -32,6 +32,7 @@ mod belt_hold;
 mod beta;
 mod bollinger;
 mod bollinger_bandwidth;
+mod breakaway;
 mod calendar_spread;
 mod calmar_ratio;
 mod camarilla_pivots;
@@ -51,6 +52,7 @@ mod cointegration;
 mod conditional_value_at_risk;
 mod connors_rsi;
 mod coppock;
+mod counterattack;
 mod cvd;
 mod cybernetic_cycle;
 mod decycler;
@@ -284,6 +286,7 @@ pub use belt_hold::BeltHold;
 pub use beta::Beta;
 pub use bollinger::{BollingerBands, BollingerOutput};
 pub use bollinger_bandwidth::BollingerBandwidth;
+pub use breakaway::Breakaway;
 pub use calendar_spread::CalendarSpread;
 pub use calmar_ratio::CalmarRatio;
 pub use camarilla_pivots::{Camarilla, CamarillaPivotsOutput};
@@ -303,6 +306,7 @@ pub use cointegration::{Cointegration, CointegrationOutput};
 pub use conditional_value_at_risk::ConditionalValueAtRisk;
 pub use connors_rsi::ConnorsRsi;
 pub use coppock::Coppock;
+pub use counterattack::Counterattack;
 pub use cvd::CumulativeVolumeDelta;
 pub use cybernetic_cycle::CyberneticCycle;
 pub use decycler::Decycler;
@@ -779,6 +783,8 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "AbandonedBaby",
             "AdvanceBlock",
             "BeltHold",
+            "Breakaway",
+            "Counterattack",
         ],
     ),
     (
@@ -870,6 +876,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 247, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 249, "FAMILIES total drifted from indicator count");
     }
 }
