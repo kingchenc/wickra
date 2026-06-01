@@ -6972,6 +6972,262 @@ impl WasmOpenInterestDelta {
     }
 }
 
+fn deriv_oi_mark(open_interest: f64, mark_price: f64) -> Result<wc::DerivativesTick, JsError> {
+    wc::DerivativesTick::new(
+        0.0,
+        mark_price,
+        1.0,
+        1.0,
+        open_interest,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_long_short(long_size: f64, short_size: f64) -> Result<wc::DerivativesTick, JsError> {
+    wc::DerivativesTick::new(
+        0.0, 1.0, 1.0, 1.0, 0.0, long_size, short_size, 0.0, 0.0, 0.0, 0.0, 0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_taker(
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+) -> Result<wc::DerivativesTick, JsError> {
+    wc::DerivativesTick::new(
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        taker_buy_volume,
+        taker_sell_volume,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_liquidation(
+    long_liquidation: f64,
+    short_liquidation: f64,
+) -> Result<wc::DerivativesTick, JsError> {
+    wc::DerivativesTick::new(
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        long_liquidation,
+        short_liquidation,
+        0,
+    )
+    .map_err(map_err)
+}
+
+#[wasm_bindgen(js_name = OIPriceDivergence)]
+pub struct WasmOIPriceDivergence {
+    inner: wc::OIPriceDivergence,
+}
+
+#[wasm_bindgen(js_class = OIPriceDivergence)]
+impl WasmOIPriceDivergence {
+    #[wasm_bindgen(constructor)]
+    pub fn new(window: usize) -> Result<WasmOIPriceDivergence, JsError> {
+        Ok(Self {
+            inner: wc::OIPriceDivergence::new(window).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, open_interest: f64, mark_price: f64) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(deriv_oi_mark(open_interest, mark_price)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = OIWeighted)]
+pub struct WasmOIWeighted {
+    inner: wc::OIWeighted,
+}
+
+impl Default for WasmOIWeighted {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = OIWeighted)]
+impl WasmOIWeighted {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmOIWeighted {
+        Self {
+            inner: wc::OIWeighted::new(),
+        }
+    }
+    pub fn update(&mut self, mark_price: f64, open_interest: f64) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(deriv_oi_mark(open_interest, mark_price)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = LongShortRatio)]
+pub struct WasmLongShortRatio {
+    inner: wc::LongShortRatio,
+}
+
+impl Default for WasmLongShortRatio {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = LongShortRatio)]
+impl WasmLongShortRatio {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmLongShortRatio {
+        Self {
+            inner: wc::LongShortRatio::new(),
+        }
+    }
+    pub fn update(&mut self, long_size: f64, short_size: f64) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(deriv_long_short(long_size, short_size)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = TakerBuySellRatio)]
+pub struct WasmTakerBuySellRatio {
+    inner: wc::TakerBuySellRatio,
+}
+
+impl Default for WasmTakerBuySellRatio {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = TakerBuySellRatio)]
+impl WasmTakerBuySellRatio {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmTakerBuySellRatio {
+        Self {
+            inner: wc::TakerBuySellRatio::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        taker_buy_volume: f64,
+        taker_sell_volume: f64,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(deriv_taker(taker_buy_volume, taker_sell_volume)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = LiquidationFeatures)]
+pub struct WasmLiquidationFeatures {
+    inner: wc::LiquidationFeatures,
+}
+
+impl Default for WasmLiquidationFeatures {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = LiquidationFeatures)]
+impl WasmLiquidationFeatures {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmLiquidationFeatures {
+        Self {
+            inner: wc::LiquidationFeatures::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        long_liquidation: f64,
+        short_liquidation: f64,
+    ) -> Result<JsValue, JsError> {
+        let out = self
+            .inner
+            .update(deriv_liquidation(long_liquidation, short_liquidation)?)
+            .expect("liquidation features emit on every tick");
+        let obj = Object::new();
+        Reflect::set(&obj, &"long".into(), &out.long.into()).ok();
+        Reflect::set(&obj, &"short".into(), &out.short.into()).ok();
+        Reflect::set(&obj, &"net".into(), &out.net.into()).ok();
+        Reflect::set(&obj, &"total".into(), &out.total.into()).ok();
+        Reflect::set(&obj, &"imbalance".into(), &out.imbalance.into()).ok();
+        Ok(obj.into())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

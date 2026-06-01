@@ -9413,6 +9413,70 @@ fn deriv_oi(open_interest: f64) -> napi::Result<wc::DerivativesTick> {
     .map_err(map_err)
 }
 
+fn deriv_oi_mark(open_interest: f64, mark_price: f64) -> napi::Result<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        0.0,
+        mark_price,
+        1.0,
+        1.0,
+        open_interest,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_long_short(long_size: f64, short_size: f64) -> napi::Result<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        0.0, 1.0, 1.0, 1.0, 0.0, long_size, short_size, 0.0, 0.0, 0.0, 0.0, 0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_taker(taker_buy_volume: f64, taker_sell_volume: f64) -> napi::Result<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        taker_buy_volume,
+        taker_sell_volume,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_liquidation(
+    long_liquidation: f64,
+    short_liquidation: f64,
+) -> napi::Result<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        long_liquidation,
+        short_liquidation,
+        0,
+    )
+    .map_err(map_err)
+}
+
 #[napi(js_name = "FundingRate")]
 pub struct FundingRateNode {
     inner: wc::FundingRate,
@@ -9618,6 +9682,322 @@ impl OpenInterestDeltaNode {
         let mut out = Vec::with_capacity(open_interest.len());
         for oi in open_interest {
             out.push(self.inner.update(deriv_oi(oi)?).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "OIPriceDivergence")]
+pub struct OIPriceDivergenceNode {
+    inner: wc::OIPriceDivergence,
+}
+
+#[napi]
+impl OIPriceDivergenceNode {
+    #[napi(constructor)]
+    pub fn new(window: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::OIPriceDivergence::new(window as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, open_interest: f64, mark_price: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(deriv_oi_mark(open_interest, mark_price)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open_interest: Vec<f64>,
+        mark_price: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if open_interest.len() != mark_price.len() {
+            return Err(NapiError::from_reason(
+                "open_interest and mark_price must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(open_interest.len());
+        for i in 0..open_interest.len() {
+            out.push(
+                self.inner
+                    .update(deriv_oi_mark(open_interest[i], mark_price[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "OIWeighted")]
+pub struct OIWeightedNode {
+    inner: wc::OIWeighted,
+}
+
+impl Default for OIWeightedNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl OIWeightedNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::OIWeighted::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, mark_price: f64, open_interest: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(deriv_oi_mark(open_interest, mark_price)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        mark_price: Vec<f64>,
+        open_interest: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if mark_price.len() != open_interest.len() {
+            return Err(NapiError::from_reason(
+                "mark_price and open_interest must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(mark_price.len());
+        for i in 0..mark_price.len() {
+            out.push(
+                self.inner
+                    .update(deriv_oi_mark(open_interest[i], mark_price[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "LongShortRatio")]
+pub struct LongShortRatioNode {
+    inner: wc::LongShortRatio,
+}
+
+impl Default for LongShortRatioNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl LongShortRatioNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::LongShortRatio::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, long_size: f64, short_size: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(deriv_long_short(long_size, short_size)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, long_size: Vec<f64>, short_size: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if long_size.len() != short_size.len() {
+            return Err(NapiError::from_reason(
+                "long_size and short_size must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(long_size.len());
+        for i in 0..long_size.len() {
+            out.push(
+                self.inner
+                    .update(deriv_long_short(long_size[i], short_size[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "TakerBuySellRatio")]
+pub struct TakerBuySellRatioNode {
+    inner: wc::TakerBuySellRatio,
+}
+
+impl Default for TakerBuySellRatioNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl TakerBuySellRatioNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::TakerBuySellRatio::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        taker_buy_volume: f64,
+        taker_sell_volume: f64,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self
+            .inner
+            .update(deriv_taker(taker_buy_volume, taker_sell_volume)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        taker_buy_volume: Vec<f64>,
+        taker_sell_volume: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if taker_buy_volume.len() != taker_sell_volume.len() {
+            return Err(NapiError::from_reason(
+                "taker_buy_volume and taker_sell_volume must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(taker_buy_volume.len());
+        for i in 0..taker_buy_volume.len() {
+            out.push(
+                self.inner
+                    .update(deriv_taker(taker_buy_volume[i], taker_sell_volume[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+/// The liquidation feature vector for one tick.
+#[napi(object)]
+pub struct LiquidationFeaturesValue {
+    pub long: f64,
+    pub short: f64,
+    pub net: f64,
+    pub total: f64,
+    pub imbalance: f64,
+}
+
+#[napi(js_name = "LiquidationFeatures")]
+pub struct LiquidationFeaturesNode {
+    inner: wc::LiquidationFeatures,
+}
+
+impl Default for LiquidationFeaturesNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl LiquidationFeaturesNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::LiquidationFeatures::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        long_liquidation: f64,
+        short_liquidation: f64,
+    ) -> napi::Result<Option<LiquidationFeaturesValue>> {
+        Ok(self
+            .inner
+            .update(deriv_liquidation(long_liquidation, short_liquidation)?)
+            .map(|o| LiquidationFeaturesValue {
+                long: o.long,
+                short: o.short,
+                net: o.net,
+                total: o.total,
+                imbalance: o.imbalance,
+            }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        long_liquidation: Vec<f64>,
+        short_liquidation: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if long_liquidation.len() != short_liquidation.len() {
+            return Err(NapiError::from_reason(
+                "long_liquidation and short_liquidation must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(long_liquidation.len() * 5);
+        for i in 0..long_liquidation.len() {
+            let o = self
+                .inner
+                .update(deriv_liquidation(
+                    long_liquidation[i],
+                    short_liquidation[i],
+                )?)
+                .expect("liquidation features emit on every tick");
+            out.push(o.long);
+            out.push(o.short);
+            out.push(o.net);
+            out.push(o.total);
+            out.push(o.imbalance);
         }
         Ok(out)
     }

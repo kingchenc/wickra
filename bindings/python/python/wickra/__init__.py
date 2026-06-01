@@ -263,6 +263,11 @@ from ._wickra import (
     FundingRateZScore,
     FundingBasis,
     OpenInterestDelta,
+    OIPriceDivergence,
+    OIWeighted,
+    LongShortRatio,
+    TakerBuySellRatio,
+    LiquidationFeatures,
     # Risk / Performance
     SharpeRatio,
     SortinoRatio,
@@ -523,6 +528,11 @@ __all__ = [
     "FundingRateZScore",
     "FundingBasis",
     "OpenInterestDelta",
+    "OIPriceDivergence",
+    "OIWeighted",
+    "LongShortRatio",
+    "TakerBuySellRatio",
+    "LiquidationFeatures",
     # Risk / Performance
     "SharpeRatio",
     "SortinoRatio",
