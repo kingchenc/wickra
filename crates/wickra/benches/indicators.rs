@@ -33,14 +33,15 @@ use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Through
 use std::hint::black_box;
 use wickra::{
     Adx, Atr, Autocorrelation, BatchExt, BollingerBands, BollingerOutput, CalmarRatio, Candle, Cci,
-    ClassicPivots, ConnorsRsi, DepthSlope, EffectiveSpread, Ema, EmpiricalModeDecomposition,
-    Engulfing, Frama, HilbertDominantCycle, HurstExponent, Ichimoku, IchimokuOutput, Indicator,
-    Jma, KylesLambda, Level, LinearRegression, MacdIndicator, MacdOutput, Mama, MamaOutput,
-    MaxDrawdown, Microprice, Obv, OrderBook, OrderBookImbalanceFull, OrderBookImbalanceTop1,
-    ParkinsonVolatility, Ppo, Psar, RollingVwap, Rsi, SharpeRatio, Side, SignedVolume, Sma, Stc,
-    SuperTrend, SuperTrendOutput, TdSequential, TdSequentialOutput, Trade, TradeImbalance,
-    TradeQuote, TtmSqueeze, TtmSqueezeOutput, ValueArea, ValueAreaOutput, ValueAtRisk, Vwap,
-    VwapStdDevBands, VwapStdDevBandsOutput, WaveTrend, YangZhangVolatility, T3,
+    ClassicPivots, ConnorsRsi, DepthSlope, DerivativesTick, EffectiveSpread, Ema,
+    EmpiricalModeDecomposition, Engulfing, Frama, FundingRate, FundingRateZScore,
+    HilbertDominantCycle, HurstExponent, Ichimoku, IchimokuOutput, Indicator, Jma, KylesLambda,
+    Level, LinearRegression, MacdIndicator, MacdOutput, Mama, MamaOutput, MaxDrawdown, Microprice,
+    Obv, OrderBook, OrderBookImbalanceFull, OrderBookImbalanceTop1, ParkinsonVolatility, Ppo, Psar,
+    RollingVwap, Rsi, SharpeRatio, Side, SignedVolume, Sma, Stc, SuperTrend, SuperTrendOutput,
+    TdSequential, TdSequentialOutput, Trade, TradeImbalance, TradeQuote, TtmSqueeze,
+    TtmSqueezeOutput, ValueArea, ValueAreaOutput, ValueAtRisk, Vwap, VwapStdDevBands,
+    VwapStdDevBandsOutput, WaveTrend, YangZhangVolatility, T3,
 };
 use wickra_data::csv::CandleReader;
 
@@ -174,6 +175,32 @@ where
                 let mut ind = make();
                 for q in quotes {
                     black_box(ind.update(*q));
+                }
+            });
+        });
+    }
+    group.finish();
+}
+
+fn bench_derivatives_input<I, F, O>(
+    c: &mut Criterion,
+    name: &str,
+    ticks: &[DerivativesTick],
+    make: F,
+) where
+    F: Fn() -> I,
+    I: Indicator<Input = DerivativesTick, Output = O>,
+{
+    let mut group = c.benchmark_group(name);
+    for &n in SIZES {
+        let n = n.min(ticks.len());
+        let series = &ticks[..n];
+        group.throughput(Throughput::Elements(n as u64));
+        group.bench_with_input(BenchmarkId::new("streaming", n), series, |b, ticks| {
+            b.iter(|| {
+                let mut ind = make();
+                for tick in ticks {
+                    black_box(ind.update(*tick));
                 }
             });
         });
@@ -384,6 +411,36 @@ fn benches(c: &mut Criterion) {
         .collect();
     bench_tradequote_input(c, "effective_spread", &quotes, EffectiveSpread::new);
     bench_tradequote_input(c, "kyles_lambda", &quotes, || KylesLambda::new(50).unwrap());
+
+    // === Family — Derivatives ===
+    // No derivatives feed ships with the repo, so synthesise a tick per candle:
+    // the close drives the mark price, funding tracks the candle's body, and
+    // open interest follows volume. FundingRate is the cheapest (passthrough);
+    // FundingRateZScore carries a rolling window and is the most expensive.
+    let ticks: Vec<DerivativesTick> = candles
+        .iter()
+        .map(|candle| {
+            let funding = (candle.close - candle.open) / candle.open * 0.01;
+            DerivativesTick::new_unchecked(
+                funding,
+                candle.close,
+                candle.close * 0.999,
+                candle.close * 1.001,
+                candle.volume * 100.0,
+                candle.volume * 0.6,
+                candle.volume * 0.4,
+                candle.volume * 0.5,
+                candle.volume * 0.5,
+                0.0,
+                0.0,
+                candle.timestamp,
+            )
+        })
+        .collect();
+    bench_derivatives_input(c, "funding_rate", &ticks, FundingRate::new);
+    bench_derivatives_input(c, "funding_rate_zscore", &ticks, || {
+        FundingRateZScore::new(50).unwrap()
+    });
 }
 
 criterion_group!(name = wickra_benches; config = Criterion::default(); targets = benches);
