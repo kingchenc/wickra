@@ -279,6 +279,13 @@ export interface OpeningRangeValue {
   low: number
   breakoutDistance: number
 }
+/** One order-book depth snapshot for batch evaluation. */
+export interface ObSnapshot {
+  bidPx: Array<number>
+  bidSz: Array<number>
+  askPx: Array<number>
+  askSz: Array<number>
+}
 export type SmaNode = SMA
 export declare class SMA {
   constructor(period: number)
@@ -2185,6 +2192,51 @@ export declare class ThreeOutside {
   constructor()
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type OrderBookImbalanceTop1Node = OrderBookImbalanceTop1
+export declare class OrderBookImbalanceTop1 {
+  constructor()
+  update(bidPx: Array<number>, bidSz: Array<number>, askPx: Array<number>, askSz: Array<number>): number | null
+  batch(snapshots: Array<ObSnapshot>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type OrderBookImbalanceFullNode = OrderBookImbalanceFull
+export declare class OrderBookImbalanceFull {
+  constructor()
+  update(bidPx: Array<number>, bidSz: Array<number>, askPx: Array<number>, askSz: Array<number>): number | null
+  batch(snapshots: Array<ObSnapshot>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type MicropriceNode = Microprice
+export declare class Microprice {
+  constructor()
+  update(bidPx: Array<number>, bidSz: Array<number>, askPx: Array<number>, askSz: Array<number>): number | null
+  batch(snapshots: Array<ObSnapshot>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type QuotedSpreadNode = QuotedSpread
+export declare class QuotedSpread {
+  constructor()
+  update(bidPx: Array<number>, bidSz: Array<number>, askPx: Array<number>, askSz: Array<number>): number | null
+  batch(snapshots: Array<ObSnapshot>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type OrderBookImbalanceTopNNode = OrderBookImbalanceTopN
+export declare class OrderBookImbalanceTopN {
+  constructor(levels: number)
+  update(bidPx: Array<number>, bidSz: Array<number>, askPx: Array<number>, askSz: Array<number>): number | null
+  batch(snapshots: Array<ObSnapshot>): Array<number>
   reset(): void
   isReady(): boolean
   warmupPeriod(): number

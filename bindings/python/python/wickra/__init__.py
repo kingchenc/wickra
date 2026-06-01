@@ -240,6 +240,12 @@ from ._wickra import (
     SpinningTop,
     ThreeInside,
     ThreeOutside,
+    # Microstructure: order book
+    OrderBookImbalanceTop1,
+    OrderBookImbalanceTopN,
+    OrderBookImbalanceFull,
+    Microprice,
+    QuotedSpread,
     # Risk / Performance
     SharpeRatio,
     SortinoRatio,
@@ -477,6 +483,12 @@ __all__ = [
     "SpinningTop",
     "ThreeInside",
     "ThreeOutside",
+    # Microstructure: order book
+    "OrderBookImbalanceTop1",
+    "OrderBookImbalanceTopN",
+    "OrderBookImbalanceFull",
+    "Microprice",
+    "QuotedSpread",
     # Risk / Performance
     "SharpeRatio",
     "SortinoRatio",
