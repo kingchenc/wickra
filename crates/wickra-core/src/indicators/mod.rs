@@ -189,6 +189,7 @@ mod stochastic;
 mod super_smoother;
 mod super_trend;
 mod t3;
+mod taker_buy_sell_ratio;
 mod td_combo;
 mod td_countdown;
 mod td_demarker;
@@ -429,6 +430,7 @@ pub use stochastic::{Stochastic, StochasticOutput};
 pub use super_smoother::SuperSmoother;
 pub use super_trend::{SuperTrend, SuperTrendOutput};
 pub use t3::T3;
+pub use taker_buy_sell_ratio::TakerBuySellRatio;
 pub use td_combo::TdCombo;
 pub use td_countdown::TdCountdown;
 pub use td_demarker::TdDeMarker;
@@ -778,6 +780,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "OIPriceDivergence",
             "OIWeighted",
             "LongShortRatio",
+            "TakerBuySellRatio",
         ],
     ),
     (
@@ -834,6 +837,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 235, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 236, "FAMILIES total drifted from indicator count");
     }
 }
