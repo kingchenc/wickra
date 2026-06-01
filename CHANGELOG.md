@@ -19,6 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     `(bidPx·askSz + askPx·bidSz) / (bidSz + askSz)`, tilting the mid toward the
     side more likely to be hit.
   - **Quoted Spread** — the top-of-book spread in basis points of the mid.
+- **Microstructure family — trade flow (part 2).** Indicators over a trade tape
+  (`Trade` with an aggressor `Side`), exposed in Rust, Python, Node and WASM:
+  - **Signed Volume** — per-trade size signed by aggressor side (`+size` buy,
+    `−size` sell).
+  - **Cumulative Volume Delta** — the running total of signed volume; reset to
+    re-anchor per session.
+  - **Trade Imbalance** — the rolling `(buyVol − sellVol)/(buyVol + sellVol)`
+    over a configurable window of trades.
 
   New public value types `Level`, `OrderBook`, `Side`, `Trade` and `TradeQuote`
   back this and the upcoming trade-flow and price-impact indicators. Python and
