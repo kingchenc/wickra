@@ -131,6 +131,31 @@ software under these terms.
 **Use** means anything you do with the software requiring one
 of your licenses.
 
+## Additional Permissions Granted by the Licensor
+
+These additional permissions supplement the PolyForm Noncommercial
+License 1.0.0 above. They only broaden, and never narrow, the
+licenses granted to you. The text of the PolyForm Noncommercial
+License 1.0.0 above is unmodified.
+
+Use by a natural person, acting for their own personal account and
+not on behalf of any third party, is use for a permitted purpose.
+This includes operating an automated trading bot or trading strategy
+on that person's own capital, whether or not it earns that person
+money.
+
+For the avoidance of doubt, the licenses above already let you use,
+fork, modify, and redistribute the software, and file issues and
+contribute changes, for any permitted purpose. Personal projects,
+research, education, nonprofit organizations, government use, and
+hobby trading bots are permitted purposes.
+
+Any other commercial use — in particular the commercial sale of the
+software itself, or the commercial sale of services built around it —
+requires a separate commercial license from the licensor. If you want
+to use Wickra commercially, get in touch about a license at
+<https://github.com/wickra-lib/wickra>.
+
 ---
 
 Required Notice: Copyright 2026 kingchenc (https://github.com/wickra-lib/wickra)
