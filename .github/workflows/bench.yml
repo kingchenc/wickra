@@ -79,7 +79,9 @@ jobs:
       - name: Install Python deps + peer libs
         run: |
           python -m pip install --upgrade pip
-          python -m pip install maturin numpy pandas talipp finta
+          # Hash-locked deps (OpenSSF Scorecard PinnedDependencies). bench.yml
+          # runs on a single Python version (3.11), so one lock file suffices.
+          python -m pip install --require-hashes -r .github/requirements/bench.txt
 
       - name: Build Wickra wheel
         working-directory: bindings/python
