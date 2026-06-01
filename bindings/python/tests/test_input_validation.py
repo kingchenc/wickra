@@ -268,3 +268,13 @@ def test_oi_price_divergence_zero_window_raises():
 def test_oi_weighted_non_positive_mark_raises():
     with pytest.raises(ValueError):
         ta.OIWeighted().update(0.0, 100.0)
+
+
+def test_term_structure_basis_non_positive_index_raises():
+    with pytest.raises(ValueError):
+        ta.TermStructureBasis().update(100.0, 0.0)
+
+
+def test_calendar_spread_non_positive_mark_raises():
+    with pytest.raises(ValueError):
+        ta.CalendarSpread().update(100.0, 0.0)

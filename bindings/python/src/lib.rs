@@ -12308,6 +12308,42 @@ fn deriv_liquidation(
     .map_err(map_err)
 }
 
+fn deriv_futures_index(futures_price: f64, index_price: f64) -> PyResult<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        0.0,
+        1.0,
+        index_price,
+        futures_price,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_futures_mark(futures_price: f64, mark_price: f64) -> PyResult<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        0.0,
+        mark_price,
+        1.0,
+        futures_price,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
 // FundingRate takes no parameters; streaming `update(funding_rate)`, `batch`
 // over one funding-rate array.
 #[pyclass(name = "FundingRate", module = "wickra._wickra", skip_from_py_object)]
@@ -12849,6 +12885,125 @@ impl PyLiquidationFeatures {
     }
     fn __repr__(&self) -> String {
         "LiquidationFeatures()".to_string()
+    }
+}
+
+// TermStructureBasis takes no parameters; streaming
+// `update(futures_price, index_price)`.
+#[pyclass(
+    name = "TermStructureBasis",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyTermStructureBasis {
+    inner: wc::TermStructureBasis,
+}
+
+#[pymethods]
+impl PyTermStructureBasis {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::TermStructureBasis::new(),
+        }
+    }
+    fn update(&mut self, futures_price: f64, index_price: f64) -> PyResult<Option<f64>> {
+        Ok(self
+            .inner
+            .update(deriv_futures_index(futures_price, index_price)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        futures_price: Vec<f64>,
+        index_price: Vec<f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if futures_price.len() != index_price.len() {
+            return Err(PyValueError::new_err(
+                "futures_price and index_price must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(futures_price.len());
+        for i in 0..futures_price.len() {
+            out.push(
+                self.inner
+                    .update(deriv_futures_index(futures_price[i], index_price[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "TermStructureBasis()".to_string()
+    }
+}
+
+// CalendarSpread takes no parameters; streaming `update(futures_price, mark_price)`.
+#[pyclass(
+    name = "CalendarSpread",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyCalendarSpread {
+    inner: wc::CalendarSpread,
+}
+
+#[pymethods]
+impl PyCalendarSpread {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::CalendarSpread::new(),
+        }
+    }
+    fn update(&mut self, futures_price: f64, mark_price: f64) -> PyResult<Option<f64>> {
+        Ok(self
+            .inner
+            .update(deriv_futures_mark(futures_price, mark_price)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        futures_price: Vec<f64>,
+        mark_price: Vec<f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if futures_price.len() != mark_price.len() {
+            return Err(PyValueError::new_err(
+                "futures_price and mark_price must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(futures_price.len());
+        for i in 0..futures_price.len() {
+            out.push(
+                self.inner
+                    .update(deriv_futures_mark(futures_price[i], mark_price[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "CalendarSpread()".to_string()
     }
 }
 
@@ -13985,6 +14140,8 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyLongShortRatio>()?;
     m.add_class::<PyTakerBuySellRatio>()?;
     m.add_class::<PyLiquidationFeatures>()?;
+    m.add_class::<PyTermStructureBasis>()?;
+    m.add_class::<PyCalendarSpread>()?;
     // Family 15: Risk / Performance metrics.
     m.add_class::<PySharpeRatio>()?;
     m.add_class::<PySortinoRatio>()?;

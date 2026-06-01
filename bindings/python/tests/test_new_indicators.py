@@ -2047,3 +2047,29 @@ def test_liquidation_features_streaming_equals_batch():
     for i in range(n):
         row = streamer.update(long_liq[i], short_liq[i])
         assert tuple(batch[i]) == pytest.approx(row)
+
+
+def test_basis_indicators_streaming_equals_batch():
+    n = 40
+    index = np.array([100.0 + math.sin(i * 0.2) for i in range(n)], dtype=np.float64)
+    mark = np.array([index[i] + 0.05 * math.cos(i * 0.3) for i in range(n)], dtype=np.float64)
+    futures = np.array(
+        [index[i] + 0.5 + 0.1 * math.sin(i * 0.25) for i in range(n)], dtype=np.float64
+    )
+
+    # TermStructureBasis; update(futures_price, index_price).
+    batch = ta.TermStructureBasis().batch(futures, index)
+    streamer = ta.TermStructureBasis()
+    streamed = np.array(
+        [streamer.update(futures[i], index[i]) for i in range(n)], dtype=np.float64
+    )
+    assert batch.shape == (n,)
+    assert _eq_nan(batch, streamed)
+
+    # CalendarSpread; update(futures_price, mark_price).
+    batch = ta.CalendarSpread().batch(futures, mark)
+    streamer = ta.CalendarSpread()
+    streamed = np.array(
+        [streamer.update(futures[i], mark[i]) for i in range(n)], dtype=np.float64
+    )
+    assert _eq_nan(batch, streamed)

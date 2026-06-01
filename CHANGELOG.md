@@ -29,6 +29,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Taker Buy/Sell Ratio** — taker buy volume over taker sell volume.
   - **Liquidation Features** — a multi-output breakdown of long/short
     liquidation notional into net, total and a bounded imbalance.
+- **Derivatives family — basis & term structure (part 3).** The final
+  perpetual-vs-futures basis indicators over the `DerivativesTick` feed:
+  - **Term-Structure Basis** — the dated future's relative premium to spot,
+    `(futuresPrice − indexPrice) / indexPrice`.
+  - **Calendar Spread** — the dated future's relative premium to the perpetual,
+    `(futuresPrice − markPrice) / markPrice`.
 
 ## [0.4.3] - 2026-06-01
 

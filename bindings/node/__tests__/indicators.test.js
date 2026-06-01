@@ -1175,3 +1175,28 @@ test('OI flow rejects bad input', () => {
   assert.throws(() => new wickra.OIPriceDivergence(0));
   assert.throws(() => new wickra.OIWeighted().update(0, 100));
 });
+
+test('basis & calendar-spread reference values', () => {
+  // futures 102 vs index 100 -> 0.02 contango.
+  assert.ok(Math.abs(new wickra.TermStructureBasis().update(102, 100) - 0.02) < 1e-12);
+  assert.ok(Math.abs(new wickra.TermStructureBasis().update(98, 100) + 0.02) < 1e-12);
+  // futures 101 vs perpetual mark 100 -> 0.01.
+  assert.ok(Math.abs(new wickra.CalendarSpread().update(101, 100) - 0.01) < 1e-12);
+});
+
+test('basis streaming update matches batch', () => {
+  const n = 20;
+  const index = Array.from({ length: n }, (_, i) => 100 + Math.sin(i * 0.2));
+  const futures = Array.from({ length: n }, (_, i) => index[i] + 0.5);
+  const batch = new wickra.TermStructureBasis().batch(futures, index);
+  const streamer = new wickra.TermStructureBasis();
+  assert.equal(batch.length, n);
+  for (let i = 0; i < n; i++) {
+    assert.ok(Math.abs(streamer.update(futures[i], index[i]) - batch[i]) < 1e-12);
+  }
+});
+
+test('basis rejects bad input', () => {
+  assert.throws(() => new wickra.TermStructureBasis().update(100, 0));
+  assert.throws(() => new wickra.CalendarSpread().update(100, 0));
+});

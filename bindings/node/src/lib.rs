@@ -9477,6 +9477,42 @@ fn deriv_liquidation(
     .map_err(map_err)
 }
 
+fn deriv_futures_index(futures_price: f64, index_price: f64) -> napi::Result<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        0.0,
+        1.0,
+        index_price,
+        futures_price,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_futures_mark(futures_price: f64, mark_price: f64) -> napi::Result<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        0.0,
+        mark_price,
+        1.0,
+        futures_price,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
 #[napi(js_name = "FundingRate")]
 pub struct FundingRateNode {
     inner: wc::FundingRate,
@@ -9998,6 +10034,126 @@ impl LiquidationFeaturesNode {
             out.push(o.net);
             out.push(o.total);
             out.push(o.imbalance);
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "TermStructureBasis")]
+pub struct TermStructureBasisNode {
+    inner: wc::TermStructureBasis,
+}
+
+impl Default for TermStructureBasisNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl TermStructureBasisNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::TermStructureBasis::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, futures_price: f64, index_price: f64) -> napi::Result<Option<f64>> {
+        Ok(self
+            .inner
+            .update(deriv_futures_index(futures_price, index_price)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        futures_price: Vec<f64>,
+        index_price: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if futures_price.len() != index_price.len() {
+            return Err(NapiError::from_reason(
+                "futures_price and index_price must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(futures_price.len());
+        for i in 0..futures_price.len() {
+            out.push(
+                self.inner
+                    .update(deriv_futures_index(futures_price[i], index_price[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "CalendarSpread")]
+pub struct CalendarSpreadNode {
+    inner: wc::CalendarSpread,
+}
+
+impl Default for CalendarSpreadNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl CalendarSpreadNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::CalendarSpread::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, futures_price: f64, mark_price: f64) -> napi::Result<Option<f64>> {
+        Ok(self
+            .inner
+            .update(deriv_futures_mark(futures_price, mark_price)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        futures_price: Vec<f64>,
+        mark_price: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if futures_price.len() != mark_price.len() {
+            return Err(NapiError::from_reason(
+                "futures_price and mark_price must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(futures_price.len());
+        for i in 0..futures_price.len() {
+            out.push(
+                self.inner
+                    .update(deriv_futures_mark(futures_price[i], mark_price[i])?)
+                    .unwrap_or(f64::NAN),
+            );
         }
         Ok(out)
     }

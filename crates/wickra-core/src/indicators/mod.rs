@@ -29,6 +29,7 @@ mod balance_of_power;
 mod beta;
 mod bollinger;
 mod bollinger_bandwidth;
+mod calendar_spread;
 mod calmar_ratio;
 mod camarilla_pivots;
 mod cci;
@@ -204,6 +205,7 @@ mod td_risk_level;
 mod td_sequential;
 mod td_setup;
 mod tema;
+mod term_structure_basis;
 mod three_inside;
 mod three_outside;
 mod three_soldiers_or_crows;
@@ -271,6 +273,7 @@ pub use balance_of_power::BalanceOfPower;
 pub use beta::Beta;
 pub use bollinger::{BollingerBands, BollingerOutput};
 pub use bollinger_bandwidth::BollingerBandwidth;
+pub use calendar_spread::CalendarSpread;
 pub use calmar_ratio::CalmarRatio;
 pub use camarilla_pivots::{Camarilla, CamarillaPivotsOutput};
 pub use cci::Cci;
@@ -446,6 +449,7 @@ pub use td_risk_level::{TdRiskLevel, TdRiskLevelOutput};
 pub use td_sequential::{TdSequential, TdSequentialOutput};
 pub use td_setup::TdSetup;
 pub use tema::Tema;
+pub use term_structure_basis::TermStructureBasis;
 pub use three_inside::ThreeInside;
 pub use three_outside::ThreeOutside;
 pub use three_soldiers_or_crows::ThreeSoldiersOrCrows;
@@ -784,6 +788,8 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "LongShortRatio",
             "TakerBuySellRatio",
             "LiquidationFeatures",
+            "TermStructureBasis",
+            "CalendarSpread",
         ],
     ),
     (
@@ -840,6 +846,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 237, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 239, "FAMILIES total drifted from indicator count");
     }
 }

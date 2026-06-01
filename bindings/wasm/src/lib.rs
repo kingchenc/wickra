@@ -7228,6 +7228,119 @@ impl WasmLiquidationFeatures {
     }
 }
 
+fn deriv_futures_index(
+    futures_price: f64,
+    index_price: f64,
+) -> Result<wc::DerivativesTick, JsError> {
+    wc::DerivativesTick::new(
+        0.0,
+        1.0,
+        index_price,
+        futures_price,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_futures_mark(futures_price: f64, mark_price: f64) -> Result<wc::DerivativesTick, JsError> {
+    wc::DerivativesTick::new(
+        0.0,
+        mark_price,
+        1.0,
+        futures_price,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+#[wasm_bindgen(js_name = TermStructureBasis)]
+pub struct WasmTermStructureBasis {
+    inner: wc::TermStructureBasis,
+}
+
+impl Default for WasmTermStructureBasis {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = TermStructureBasis)]
+impl WasmTermStructureBasis {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmTermStructureBasis {
+        Self {
+            inner: wc::TermStructureBasis::new(),
+        }
+    }
+    pub fn update(&mut self, futures_price: f64, index_price: f64) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(deriv_futures_index(futures_price, index_price)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = CalendarSpread)]
+pub struct WasmCalendarSpread {
+    inner: wc::CalendarSpread,
+}
+
+impl Default for WasmCalendarSpread {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = CalendarSpread)]
+impl WasmCalendarSpread {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmCalendarSpread {
+        Self {
+            inner: wc::CalendarSpread::new(),
+        }
+    }
+    pub fn update(&mut self, futures_price: f64, mark_price: f64) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(deriv_futures_mark(futures_price, mark_price)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
