@@ -1,0 +1,40 @@
+name: zizmor
+
+# Static analysis of the GitHub Actions workflows themselves — the surface the
+# CodeQL pass does not cover. zizmor flags template injection, overly broad
+# GITHUB_TOKEN permissions, unpinned actions, cache poisoning, and dangerous
+# triggers. Findings appear under Security -> Code scanning alongside CodeQL.
+#
+# Report-only: with `advanced-security: true` the action runs zizmor in SARIF
+# mode, which exits 0 regardless of findings, so this job never blocks CI —
+# triage happens in the Security tab. Switch to gating later (e.g. a
+# `min-severity` input) once the existing findings are triaged.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '17 4 * * 1' # Mondays 04:17 UTC
+
+# Least-privilege default for the auto-injected GITHUB_TOKEN; the job raises
+# exactly the scopes it needs below (matches codeql.yml's pattern).
+permissions:
+  contents: read
+
+jobs:
+  zizmor:
+    name: Audit workflows
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write # upload SARIF to code-scanning
+      contents: read # checkout
+      actions: read # online audits resolve referenced actions
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Run zizmor
+        uses: zizmorcore/zizmor-action@5f14fd08f7cf1cb1609c1e344975f152c7ee938d # v0.5.6
