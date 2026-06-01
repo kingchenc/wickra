@@ -36,6 +36,7 @@
 
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
+mod derivatives;
 mod error;
 mod microstructure;
 mod ohlcv;
@@ -43,6 +44,7 @@ mod traits;
 
 pub mod indicators;
 
+pub use derivatives::DerivativesTick;
 pub use error::{Error, Result};
 pub use indicators::{
     AccelerationBands, AccelerationBandsOutput, AcceleratorOscillator, AdOscillator, AdaptiveCycle,

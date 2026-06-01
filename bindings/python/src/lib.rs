@@ -28,7 +28,8 @@ fn map_err(e: wc::Error) -> PyErr {
         | wc::Error::InvalidCandle { .. }
         | wc::Error::InvalidTick { .. }
         | wc::Error::InvalidOrderBook { .. }
-        | wc::Error::InvalidTrade { .. } => PyValueError::new_err(e.to_string()),
+        | wc::Error::InvalidTrade { .. }
+        | wc::Error::InvalidDerivatives { .. } => PyValueError::new_err(e.to_string()),
     }
 }
 

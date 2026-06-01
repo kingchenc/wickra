@@ -43,6 +43,15 @@ pub enum Error {
     /// non-finite price or negative size) was provided.
     #[error("invalid trade: {message}")]
     InvalidTrade { message: &'static str },
+
+    /// A derivatives tick whose components do not satisfy the tick invariants
+    /// (e.g. a non-positive price, a non-finite funding rate, or a negative
+    /// size/volume/liquidation) was provided. Derivatives ticks (funding /
+    /// open-interest / liquidation feeds) are a perpetual-futures input
+    /// distinct from candles, order books and trades, so they surface as their
+    /// own variant.
+    #[error("invalid derivatives tick: {message}")]
+    InvalidDerivatives { message: &'static str },
 }
 
 /// Convenience alias for `Result<T, wickra_core::Error>`.
