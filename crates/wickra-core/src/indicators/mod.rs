@@ -29,6 +29,7 @@ mod balance_of_power;
 mod beta;
 mod bollinger;
 mod bollinger_bandwidth;
+mod calendar_spread;
 mod calmar_ratio;
 mod camarilla_pivots;
 mod cci;
@@ -272,6 +273,7 @@ pub use balance_of_power::BalanceOfPower;
 pub use beta::Beta;
 pub use bollinger::{BollingerBands, BollingerOutput};
 pub use bollinger_bandwidth::BollingerBandwidth;
+pub use calendar_spread::CalendarSpread;
 pub use calmar_ratio::CalmarRatio;
 pub use camarilla_pivots::{Camarilla, CamarillaPivotsOutput};
 pub use cci::Cci;
@@ -787,6 +789,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "TakerBuySellRatio",
             "LiquidationFeatures",
             "TermStructureBasis",
+            "CalendarSpread",
         ],
     ),
     (
@@ -843,6 +846,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 238, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 239, "FAMILIES total drifted from indicator count");
     }
 }

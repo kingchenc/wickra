@@ -51,7 +51,7 @@ pub use indicators::{
     Adl, Adx, AdxOutput, Adxr, Alligator, AlligatorOutput, Alma, Alpha, AnchoredVwap, Apo, Aroon,
     AroonOscillator, AroonOutput, Atr, AtrBands, AtrBandsOutput, AtrTrailingStop, Autocorrelation,
     AverageDrawdown, AwesomeOscillator, AwesomeOscillatorHistogram, BalanceOfPower, Beta,
-    BollingerBands, BollingerBandwidth, BollingerOutput, CalmarRatio, Camarilla,
+    BollingerBands, BollingerBandwidth, BollingerOutput, CalendarSpread, CalmarRatio, Camarilla,
     CamarillaPivotsOutput, Cci, CenterOfGravity, Cfo, ChaikinMoneyFlow, ChaikinOscillator,
     ChaikinVolatility, ChandeKrollStop, ChandeKrollStopOutput, ChandelierExit,
     ChandelierExitOutput, ChoppinessIndex, ClassicPivots, ClassicPivotsOutput, Cmo,
