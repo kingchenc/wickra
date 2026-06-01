@@ -18,6 +18,17 @@ permissions:
 
 env:
   CARGO_TERM_COLOR: always
+  # Network-flake resilience: retry transient registry/DNS failures at the tool
+  # level so a blip fetching crates.io / npm inside any build or publish step
+  # (cargo, napi, maturin, wasm-pack, npm) retries automatically instead of
+  # failing the job. Cargo treats "couldn't resolve host" / connect / timeout as
+  # spurious and retries with backoff; 10 attempts ride out a transient DNS blip.
+  CARGO_NET_RETRY: "10"
+  CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+  npm_config_fetch_retries: "5"
+  npm_config_fetch_retry_maxtimeout: "120000"
+  PIP_RETRIES: "5"
+  PIP_DEFAULT_TIMEOUT: "120"
 
 jobs:
   # --------------------------------------------------------------------------
