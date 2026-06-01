@@ -39,8 +39,8 @@ fi
 
 req=".github/requirements"
 cc="./scripts/update-lockfiles.sh"
-uv pip compile --quiet --python-version 3.9  --generate-hashes --custom-compile-command "$cc" "$req/ci-dev.in" -o "$req/ci-dev-py39.txt"
-uv pip compile --quiet --python-version 3.11 --generate-hashes --custom-compile-command "$cc" "$req/ci-dev.in" -o "$req/ci-dev-py3.txt"
-uv pip compile --quiet --python-version 3.11 --generate-hashes --custom-compile-command "$cc" "$req/bench.in"  -o "$req/bench.txt"
+uv pip compile --quiet --python-version 3.9  --generate-hashes --custom-compile-command "$cc" "$req/ci-dev-py39.in" -o "$req/ci-dev-py39.txt"
+uv pip compile --quiet --python-version 3.11 --generate-hashes --custom-compile-command "$cc" "$req/ci-dev-py3.in"  -o "$req/ci-dev-py3.txt"
+uv pip compile --quiet --python-version 3.11 --generate-hashes --custom-compile-command "$cc" "$req/bench.in"       -o "$req/bench.txt"
 
 echo "==> Done. Review 'git diff' before committing."

@@ -1,0 +1,8 @@
+# Python 3.9 dev/test tooling for the ci.yml binding test job.
+# numpy is capped <2.1 because that is the last series shipping cp39 wheels
+# (>=2.1 dropped Python 3.9). Locked output: ci-dev-py39.txt
+# Refresh via scripts/update-lockfiles.sh.
+maturin
+pytest
+numpy<2.1
+hypothesis
