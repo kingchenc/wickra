@@ -37,7 +37,7 @@ use wickra_core::{
     Rvi, Rwi, ShootingStar, Smi, SpinningTop, StarcBands, Stochastic, SuperTrend, TdCombo,
     TdCountdown, TdDeMarker, TdDifferential, TdLines, TdOpen, TdPressure, TdRangeProjection, TdRei,
     TdRiskLevel, TdSequential, TdSetup, ThreeInside, ThreeLineStrike, ThreeOutside,
-    ThreeSoldiersOrCrows, TrueRange,
+    ThreeSoldiersOrCrows, ThreeStarsInSouth, TrueRange,
     Tsv, TtmSqueeze, Tweezer, TwoCrows, TypicalPrice, UltimateOscillator, UpsideGapTwoCrows,
     ValueArea, VoltyStop,
     VolumeOscillator, VolumePriceTrend, Vortex, Vwap, VwapStdDevBands, Vwma, Vzo, WaveTrend,
@@ -307,6 +307,7 @@ fuzz_target!(|data: Vec<f64>| {
     drive(Harami::new, &candles);
     drive(MorningEveningStar::new, &candles);
     drive(ThreeSoldiersOrCrows::new, &candles);
+    drive(ThreeStarsInSouth::new, &candles);
     drive(PiercingDarkCloud::new, &candles);
     drive(Marubozu::new, &candles);
     drive(Tweezer::new, &candles);

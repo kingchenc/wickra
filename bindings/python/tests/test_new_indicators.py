@@ -539,6 +539,10 @@ CANDLE_SCALAR = {
         lambda: ta.ThreeLineStrike(),
         lambda ind, h, l, c, v: ind.batch(c, h, l, c),
     ),
+    "ThreeStarsInSouth": (
+        lambda: ta.ThreeStarsInSouth(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
 }
 
 
@@ -1894,6 +1898,13 @@ def test_three_line_strike_reference():
     assert t.update((10.5, 12.1, 10.4, 12.0, 1.0, 1)) == pytest.approx(0.0)
     assert t.update((11.5, 13.1, 11.4, 13.0, 1.0, 2)) == pytest.approx(0.0)
     assert t.update((13.5, 13.6, 9.4, 9.5, 1.0, 3)) == pytest.approx(1.0)
+
+
+def test_three_stars_in_south_reference():
+    t = ta.ThreeStarsInSouth()
+    assert t.update((20.0, 20.1, 8.0, 15.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((18.0, 18.1, 12.0, 16.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((15.0, 15.0, 14.0, 14.0, 1.0, 2)) == pytest.approx(1.0)
 
 
 # --- Lifecycle ------------------------------------------------------------

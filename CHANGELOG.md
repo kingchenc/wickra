@@ -25,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Three Line Strike** — a four-bar pattern (`CDL3LINESTRIKE`): a
     three-candle advance or decline struck by a fourth opposite-colour candle
     that engulfs the entire run; bullish `+1`, bearish `−1`.
+  - **Three Stars in the South** — a rare three-bar bullish reversal
+    (`CDL3STARSINSOUTH`): three shrinking red candles each carving a higher low
+    and contracting toward a tiny black marubozu as selling exhausts.
 - **Derivatives family — funding & open interest (part 1).** A new family of
   indicators that consume a perpetual / futures tick (`DerivativesTick`,
   bundling funding rate, mark / index / futures price, open interest,

@@ -211,6 +211,7 @@ mod three_inside;
 mod three_line_strike;
 mod three_outside;
 mod three_soldiers_or_crows;
+mod three_stars_in_south;
 mod tii;
 mod trade_imbalance;
 mod treynor_ratio;
@@ -459,6 +460,7 @@ pub use three_inside::ThreeInside;
 pub use three_line_strike::ThreeLineStrike;
 pub use three_outside::ThreeOutside;
 pub use three_soldiers_or_crows::ThreeSoldiersOrCrows;
+pub use three_stars_in_south::ThreeStarsInSouth;
 pub use tii::Tii;
 pub use trade_imbalance::TradeImbalance;
 pub use treynor_ratio::TreynorRatio;
@@ -767,6 +769,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "UpsideGapTwoCrows",
             "IdenticalThreeCrows",
             "ThreeLineStrike",
+            "ThreeStarsInSouth",
         ],
     ),
     (
@@ -858,6 +861,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 243, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 244, "FAMILIES total drifted from indicator count");
     }
 }

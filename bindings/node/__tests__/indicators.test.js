@@ -239,6 +239,7 @@ const candleScalar = {
   UpsideGapTwoCrows: { make: () => new wickra.UpsideGapTwoCrows(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   IdenticalThreeCrows: { make: () => new wickra.IdenticalThreeCrows(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   ThreeLineStrike: { make: () => new wickra.ThreeLineStrike(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  ThreeStarsInSouth: { make: () => new wickra.ThreeStarsInSouth(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {
