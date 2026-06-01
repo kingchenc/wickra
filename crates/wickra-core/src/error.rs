@@ -31,6 +31,18 @@ pub enum Error {
     /// A multiplier or factor must be strictly positive.
     #[error("multiplier must be greater than zero")]
     NonPositiveMultiplier,
+
+    /// An order-book snapshot whose levels do not satisfy the book invariants
+    /// (e.g. a crossed book, non-finite price, negative size, or mis-sorted
+    /// levels) was provided. Order books are a microstructure input distinct
+    /// from candles and ticks, so they surface as their own variant.
+    #[error("invalid order book: {message}")]
+    InvalidOrderBook { message: &'static str },
+
+    /// A trade whose components do not satisfy the trade invariants (e.g.
+    /// non-finite price or negative size) was provided.
+    #[error("invalid trade: {message}")]
+    InvalidTrade { message: &'static str },
 }
 
 /// Convenience alias for `Result<T, wickra_core::Error>`.

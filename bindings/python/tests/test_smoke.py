@@ -97,3 +97,25 @@ def test_ehlers_super_smoother_batch_shape(sine_prices):
 def test_mama_batch_shape(sine_prices):
     out = ta.MAMA().batch(sine_prices)
     assert out.shape == (sine_prices.size, 2)
+
+
+def test_orderbook_indicators_construct_and_emit():
+    # All five order-book indicators accept a four-array snapshot and emit a float.
+    snapshot = ([100.0, 99.0], [2.0, 1.0], [101.0, 102.0], [1.0, 1.0])
+    indicators = [
+        ta.OrderBookImbalanceTop1(),
+        ta.OrderBookImbalanceTopN(2),
+        ta.OrderBookImbalanceFull(),
+        ta.Microprice(),
+        ta.QuotedSpread(),
+    ]
+    for ind in indicators:
+        out = ind.update(*snapshot)
+        assert isinstance(out, float)
+
+
+def test_orderbook_batch_returns_one_value_per_snapshot():
+    snapshots = [([100.0], [3.0], [101.0], [1.0])] * 5
+    out = ta.OrderBookImbalanceTop1().batch(snapshots)
+    assert out.shape == (5,)
+    assert out.dtype == np.float64

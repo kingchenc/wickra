@@ -6331,6 +6331,134 @@ wasm_candle_pattern!(WasmSpinningTop, wc::SpinningTop, SpinningTop);
 wasm_candle_pattern!(WasmThreeInside, wc::ThreeInside, ThreeInside);
 wasm_candle_pattern!(WasmThreeOutside, wc::ThreeOutside, ThreeOutside);
 
+// ============================== Microstructure: Order Book ==============================
+//
+// Order-book indicators consume a depth snapshot rather than OHLCV. Each
+// `update(bidPx, bidSz, askPx, askSz)` takes four equal-length typed arrays for
+// one snapshot (bids best-first = descending price, asks best-first = ascending
+// price) — the streaming model that fits a live browser book feed. Batch over a
+// ragged depth history is provided by the Python and Node bindings.
+
+fn build_order_book(
+    bid_px: &[f64],
+    bid_sz: &[f64],
+    ask_px: &[f64],
+    ask_sz: &[f64],
+) -> Result<wc::OrderBook, JsError> {
+    if bid_px.len() != bid_sz.len() || ask_px.len() != ask_sz.len() {
+        return Err(JsError::new(
+            "bid/ask price and size arrays must be equal length",
+        ));
+    }
+    let bids = bid_px
+        .iter()
+        .zip(bid_sz)
+        .map(|(&p, &s)| wc::Level::new_unchecked(p, s))
+        .collect();
+    let asks = ask_px
+        .iter()
+        .zip(ask_sz)
+        .map(|(&p, &s)| wc::Level::new_unchecked(p, s))
+        .collect();
+    wc::OrderBook::new(bids, asks).map_err(map_err)
+}
+
+macro_rules! wasm_ob_indicator {
+    ($wasm:ident, $inner:ty, $js:ident) => {
+        #[wasm_bindgen(js_name = $js)]
+        pub struct $wasm {
+            inner: $inner,
+        }
+
+        impl Default for $wasm {
+            fn default() -> Self {
+                Self::new()
+            }
+        }
+
+        #[wasm_bindgen(js_class = $js)]
+        impl $wasm {
+            #[wasm_bindgen(constructor)]
+            pub fn new() -> $wasm {
+                Self {
+                    inner: <$inner>::new(),
+                }
+            }
+            pub fn update(
+                &mut self,
+                bid_px: &[f64],
+                bid_sz: &[f64],
+                ask_px: &[f64],
+                ask_sz: &[f64],
+            ) -> Result<Option<f64>, JsError> {
+                let book = build_order_book(bid_px, bid_sz, ask_px, ask_sz)?;
+                Ok(self.inner.update(book))
+            }
+            pub fn reset(&mut self) {
+                self.inner.reset();
+            }
+            #[wasm_bindgen(js_name = isReady)]
+            pub fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            #[wasm_bindgen(js_name = warmupPeriod)]
+            pub fn warmup_period(&self) -> usize {
+                self.inner.warmup_period()
+            }
+        }
+    };
+}
+
+wasm_ob_indicator!(
+    WasmOrderBookImbalanceTop1,
+    wc::OrderBookImbalanceTop1,
+    OrderBookImbalanceTop1
+);
+wasm_ob_indicator!(
+    WasmOrderBookImbalanceFull,
+    wc::OrderBookImbalanceFull,
+    OrderBookImbalanceFull
+);
+wasm_ob_indicator!(WasmMicroprice, wc::Microprice, Microprice);
+wasm_ob_indicator!(WasmQuotedSpread, wc::QuotedSpread, QuotedSpread);
+
+// Top-N imbalance carries a `levels` parameter, so it is hand-written.
+#[wasm_bindgen(js_name = OrderBookImbalanceTopN)]
+pub struct WasmOrderBookImbalanceTopN {
+    inner: wc::OrderBookImbalanceTopN,
+}
+
+#[wasm_bindgen(js_class = OrderBookImbalanceTopN)]
+impl WasmOrderBookImbalanceTopN {
+    #[wasm_bindgen(constructor)]
+    pub fn new(levels: usize) -> Result<WasmOrderBookImbalanceTopN, JsError> {
+        Ok(Self {
+            inner: wc::OrderBookImbalanceTopN::new(levels).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        bid_px: &[f64],
+        bid_sz: &[f64],
+        ask_px: &[f64],
+        ask_sz: &[f64],
+    ) -> Result<Option<f64>, JsError> {
+        let book = build_order_book(bid_px, bid_sz, ask_px, ask_sz)?;
+        Ok(self.inner.update(book))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

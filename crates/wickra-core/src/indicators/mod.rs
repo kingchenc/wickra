@@ -116,10 +116,14 @@ mod mcginley_dynamic;
 mod median_absolute_deviation;
 mod median_price;
 mod mfi;
+mod microprice;
 mod mom;
 mod morning_evening_star;
 mod natr;
 mod nvi;
+mod ob_imbalance_full;
+mod ob_imbalance_top1;
+mod ob_imbalance_topn;
 mod obv;
 mod omega_ratio;
 mod opening_range;
@@ -137,6 +141,7 @@ mod ppo;
 mod profit_factor;
 mod psar;
 mod pvi;
+mod quoted_spread;
 mod r_squared;
 mod recovery_factor;
 mod relative_strength_ab;
@@ -335,10 +340,14 @@ pub use mcginley_dynamic::McGinleyDynamic;
 pub use median_absolute_deviation::MedianAbsoluteDeviation;
 pub use median_price::MedianPrice;
 pub use mfi::Mfi;
+pub use microprice::Microprice;
 pub use mom::Mom;
 pub use morning_evening_star::MorningEveningStar;
 pub use natr::Natr;
 pub use nvi::Nvi;
+pub use ob_imbalance_full::OrderBookImbalanceFull;
+pub use ob_imbalance_top1::OrderBookImbalanceTop1;
+pub use ob_imbalance_topn::OrderBookImbalanceTopN;
 pub use obv::Obv;
 pub use omega_ratio::OmegaRatio;
 pub use opening_range::{OpeningRange, OpeningRangeOutput};
@@ -356,6 +365,7 @@ pub use ppo::Ppo;
 pub use profit_factor::ProfitFactor;
 pub use psar::Psar;
 pub use pvi::Pvi;
+pub use quoted_spread::QuotedSpread;
 pub use r_squared::RSquared;
 pub use recovery_factor::RecoveryFactor;
 pub use relative_strength_ab::{RelativeStrengthAB, RelativeStrengthOutput};
@@ -708,6 +718,16 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
         ],
     ),
     (
+        "Microstructure",
+        &[
+            "OrderBookImbalanceTop1",
+            "OrderBookImbalanceTopN",
+            "OrderBookImbalanceFull",
+            "Microprice",
+            "QuotedSpread",
+        ],
+    ),
+    (
         "Market Profile",
         &["ValueArea", "InitialBalance", "OpeningRange"],
     ),
@@ -761,6 +781,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 214, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 219, "FAMILIES total drifted from indicator count");
     }
 }

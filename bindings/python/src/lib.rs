@@ -26,7 +26,9 @@ fn map_err(e: wc::Error) -> PyErr {
         | wc::Error::NonPositiveMultiplier
         | wc::Error::NonFiniteInput
         | wc::Error::InvalidCandle { .. }
-        | wc::Error::InvalidTick { .. } => PyValueError::new_err(e.to_string()),
+        | wc::Error::InvalidTick { .. }
+        | wc::Error::InvalidOrderBook { .. }
+        | wc::Error::InvalidTrade { .. } => PyValueError::new_err(e.to_string()),
     }
 }
 
@@ -11613,6 +11615,162 @@ candle_pattern_no_param!(PySpinningTop, wc::SpinningTop, "SpinningTop");
 candle_pattern_no_param!(PyThreeInside, wc::ThreeInside, "ThreeInside");
 candle_pattern_no_param!(PyThreeOutside, wc::ThreeOutside, "ThreeOutside");
 
+// ============================== Microstructure: Order Book ==============================
+//
+// Order-book indicators consume a depth snapshot rather than OHLCV. Streaming
+// `update(bid_px, bid_sz, ask_px, ask_sz)` takes four equal-length sequences
+// describing one snapshot (bids best-first = descending price, asks best-first
+// = ascending price); `batch` takes a list of such `(bid_px, bid_sz, ask_px,
+// ask_sz)` tuples and returns one value per snapshot.
+
+fn build_order_book(
+    bid_px: &[f64],
+    bid_sz: &[f64],
+    ask_px: &[f64],
+    ask_sz: &[f64],
+) -> PyResult<wc::OrderBook> {
+    if bid_px.len() != bid_sz.len() || ask_px.len() != ask_sz.len() {
+        return Err(PyValueError::new_err(
+            "bid/ask price and size arrays must be equal length",
+        ));
+    }
+    let bids = bid_px
+        .iter()
+        .zip(bid_sz)
+        .map(|(&p, &s)| wc::Level::new_unchecked(p, s))
+        .collect();
+    let asks = ask_px
+        .iter()
+        .zip(ask_sz)
+        .map(|(&p, &s)| wc::Level::new_unchecked(p, s))
+        .collect();
+    wc::OrderBook::new(bids, asks).map_err(map_err)
+}
+
+macro_rules! py_ob_indicator {
+    ($name:ident, $inner:ty, $repr:expr) => {
+        #[pyclass(name = $repr, module = "wickra._wickra", skip_from_py_object)]
+        #[derive(Clone)]
+        struct $name {
+            inner: $inner,
+        }
+
+        #[pymethods]
+        impl $name {
+            #[new]
+            fn new() -> Self {
+                Self {
+                    inner: <$inner>::new(),
+                }
+            }
+            fn update(
+                &mut self,
+                bid_px: Vec<f64>,
+                bid_sz: Vec<f64>,
+                ask_px: Vec<f64>,
+                ask_sz: Vec<f64>,
+            ) -> PyResult<Option<f64>> {
+                let book = build_order_book(&bid_px, &bid_sz, &ask_px, &ask_sz)?;
+                Ok(self.inner.update(book))
+            }
+            #[allow(clippy::type_complexity)]
+            fn batch<'py>(
+                &mut self,
+                py: Python<'py>,
+                snapshots: Vec<(Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>)>,
+            ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+                let mut out = Vec::with_capacity(snapshots.len());
+                for (bid_px, bid_sz, ask_px, ask_sz) in &snapshots {
+                    let book = build_order_book(bid_px, bid_sz, ask_px, ask_sz)?;
+                    out.push(self.inner.update(book).unwrap_or(f64::NAN));
+                }
+                Ok(out.into_pyarray(py))
+            }
+            fn reset(&mut self) {
+                self.inner.reset();
+            }
+            fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            fn warmup_period(&self) -> usize {
+                self.inner.warmup_period()
+            }
+            fn __repr__(&self) -> String {
+                format!("{}()", $repr)
+            }
+        }
+    };
+}
+
+py_ob_indicator!(
+    PyOrderBookImbalanceTop1,
+    wc::OrderBookImbalanceTop1,
+    "OrderBookImbalanceTop1"
+);
+py_ob_indicator!(
+    PyOrderBookImbalanceFull,
+    wc::OrderBookImbalanceFull,
+    "OrderBookImbalanceFull"
+);
+py_ob_indicator!(PyMicroprice, wc::Microprice, "Microprice");
+py_ob_indicator!(PyQuotedSpread, wc::QuotedSpread, "QuotedSpread");
+
+// Top-N imbalance carries a `levels` parameter, so it is hand-written.
+#[pyclass(
+    name = "OrderBookImbalanceTopN",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyOrderBookImbalanceTopN {
+    inner: wc::OrderBookImbalanceTopN,
+}
+
+#[pymethods]
+impl PyOrderBookImbalanceTopN {
+    #[new]
+    fn new(levels: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::OrderBookImbalanceTopN::new(levels).map_err(map_err)?,
+        })
+    }
+    fn update(
+        &mut self,
+        bid_px: Vec<f64>,
+        bid_sz: Vec<f64>,
+        ask_px: Vec<f64>,
+        ask_sz: Vec<f64>,
+    ) -> PyResult<Option<f64>> {
+        let book = build_order_book(&bid_px, &bid_sz, &ask_px, &ask_sz)?;
+        Ok(self.inner.update(book))
+    }
+    #[allow(clippy::type_complexity)]
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        snapshots: Vec<(Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>)>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let mut out = Vec::with_capacity(snapshots.len());
+        for (bid_px, bid_sz, ask_px, ask_sz) in &snapshots {
+            let book = build_order_book(bid_px, bid_sz, ask_px, ask_sz)?;
+            out.push(self.inner.update(book).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("OrderBookImbalanceTopN(levels={})", self.inner.levels())
+    }
+}
+
 // ============================== Family 15: Risk / Performance ==============================
 
 #[pyclass(name = "SharpeRatio", module = "wickra._wickra", skip_from_py_object)]
@@ -12718,6 +12876,12 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PySpinningTop>()?;
     m.add_class::<PyThreeInside>()?;
     m.add_class::<PyThreeOutside>()?;
+    // Microstructure: order book.
+    m.add_class::<PyOrderBookImbalanceTop1>()?;
+    m.add_class::<PyOrderBookImbalanceTopN>()?;
+    m.add_class::<PyOrderBookImbalanceFull>()?;
+    m.add_class::<PyMicroprice>()?;
+    m.add_class::<PyQuotedSpread>()?;
     // Family 15: Risk / Performance metrics.
     m.add_class::<PySharpeRatio>()?;
     m.add_class::<PySortinoRatio>()?;

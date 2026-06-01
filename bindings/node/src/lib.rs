@@ -8754,6 +8754,166 @@ node_candle_pattern!(SpinningTopNode, wc::SpinningTop, "SpinningTop");
 node_candle_pattern!(ThreeInsideNode, wc::ThreeInside, "ThreeInside");
 node_candle_pattern!(ThreeOutsideNode, wc::ThreeOutside, "ThreeOutside");
 
+// ============================== Microstructure: Order Book ==============================
+//
+// Order-book indicators consume a depth snapshot rather than OHLCV. Streaming
+// `update(bidPx, bidSz, askPx, askSz)` takes four equal-length arrays for one
+// snapshot (bids best-first = descending price, asks best-first = ascending
+// price); `batch` takes an array of `{ bidPx, bidSz, askPx, askSz }` snapshots
+// and returns one value per snapshot.
+
+/// One order-book depth snapshot for batch evaluation.
+#[napi(object)]
+pub struct ObSnapshot {
+    pub bid_px: Vec<f64>,
+    pub bid_sz: Vec<f64>,
+    pub ask_px: Vec<f64>,
+    pub ask_sz: Vec<f64>,
+}
+
+fn build_order_book(
+    bid_px: &[f64],
+    bid_sz: &[f64],
+    ask_px: &[f64],
+    ask_sz: &[f64],
+) -> napi::Result<wc::OrderBook> {
+    if bid_px.len() != bid_sz.len() || ask_px.len() != ask_sz.len() {
+        return Err(NapiError::from_reason(
+            "bid/ask price and size arrays must be equal length".to_string(),
+        ));
+    }
+    let bids = bid_px
+        .iter()
+        .zip(bid_sz)
+        .map(|(&p, &s)| wc::Level::new_unchecked(p, s))
+        .collect();
+    let asks = ask_px
+        .iter()
+        .zip(ask_sz)
+        .map(|(&p, &s)| wc::Level::new_unchecked(p, s))
+        .collect();
+    wc::OrderBook::new(bids, asks).map_err(map_err)
+}
+
+macro_rules! node_ob_indicator {
+    ($node:ident, $inner:ty, $js:literal) => {
+        #[napi(js_name = $js)]
+        pub struct $node {
+            inner: $inner,
+        }
+
+        impl Default for $node {
+            fn default() -> Self {
+                Self::new()
+            }
+        }
+
+        #[napi]
+        impl $node {
+            #[napi(constructor)]
+            pub fn new() -> Self {
+                Self {
+                    inner: <$inner>::new(),
+                }
+            }
+            #[napi]
+            pub fn update(
+                &mut self,
+                bid_px: Vec<f64>,
+                bid_sz: Vec<f64>,
+                ask_px: Vec<f64>,
+                ask_sz: Vec<f64>,
+            ) -> napi::Result<Option<f64>> {
+                let book = build_order_book(&bid_px, &bid_sz, &ask_px, &ask_sz)?;
+                Ok(self.inner.update(book))
+            }
+            #[napi]
+            pub fn batch(&mut self, snapshots: Vec<ObSnapshot>) -> napi::Result<Vec<f64>> {
+                let mut out = Vec::with_capacity(snapshots.len());
+                for snap in &snapshots {
+                    let book =
+                        build_order_book(&snap.bid_px, &snap.bid_sz, &snap.ask_px, &snap.ask_sz)?;
+                    out.push(self.inner.update(book).unwrap_or(f64::NAN));
+                }
+                Ok(out)
+            }
+            #[napi]
+            pub fn reset(&mut self) {
+                self.inner.reset();
+            }
+            #[napi(js_name = "isReady")]
+            pub fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            #[napi(js_name = "warmupPeriod")]
+            pub fn warmup_period(&self) -> u32 {
+                self.inner.warmup_period() as u32
+            }
+        }
+    };
+}
+
+node_ob_indicator!(
+    OrderBookImbalanceTop1Node,
+    wc::OrderBookImbalanceTop1,
+    "OrderBookImbalanceTop1"
+);
+node_ob_indicator!(
+    OrderBookImbalanceFullNode,
+    wc::OrderBookImbalanceFull,
+    "OrderBookImbalanceFull"
+);
+node_ob_indicator!(MicropriceNode, wc::Microprice, "Microprice");
+node_ob_indicator!(QuotedSpreadNode, wc::QuotedSpread, "QuotedSpread");
+
+// Top-N imbalance carries a `levels` parameter, so it is hand-written.
+#[napi(js_name = "OrderBookImbalanceTopN")]
+pub struct OrderBookImbalanceTopNNode {
+    inner: wc::OrderBookImbalanceTopN,
+}
+
+#[napi]
+impl OrderBookImbalanceTopNNode {
+    #[napi(constructor)]
+    pub fn new(levels: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::OrderBookImbalanceTopN::new(levels as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        bid_px: Vec<f64>,
+        bid_sz: Vec<f64>,
+        ask_px: Vec<f64>,
+        ask_sz: Vec<f64>,
+    ) -> napi::Result<Option<f64>> {
+        let book = build_order_book(&bid_px, &bid_sz, &ask_px, &ask_sz)?;
+        Ok(self.inner.update(book))
+    }
+    #[napi]
+    pub fn batch(&mut self, snapshots: Vec<ObSnapshot>) -> napi::Result<Vec<f64>> {
+        let mut out = Vec::with_capacity(snapshots.len());
+        for snap in &snapshots {
+            let book = build_order_book(&snap.bid_px, &snap.bid_sz, &snap.ask_px, &snap.ask_sz)?;
+            out.push(self.inner.update(book).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== Family 15: Risk / Performance ==============================
 
 // Risk metrics with fallible `new` (most need `period >= 2`), so each wrapper

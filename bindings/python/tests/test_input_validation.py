@@ -166,3 +166,28 @@ def test_family_10_ehlers_rejects_invalid_parameters():
         ta.MAMA(0.05, 0.5)
     with pytest.raises(ValueError):
         ta.EmpiricalModeDecomposition(20, 0.0)
+
+
+def test_orderbook_topn_zero_levels_raises():
+    with pytest.raises(ValueError):
+        ta.OrderBookImbalanceTopN(0)
+
+
+def test_orderbook_unequal_price_size_lengths_raise():
+    # bid_px has 2 entries but bid_sz has 1 -> mismatched -> ValueError.
+    with pytest.raises(ValueError):
+        ta.OrderBookImbalanceTop1().update([100.0, 99.0], [1.0], [101.0], [1.0])
+    with pytest.raises(ValueError):
+        ta.Microprice().update([100.0], [1.0], [101.0, 102.0], [1.0])
+
+
+def test_orderbook_crossed_book_raises():
+    # best_bid (102) >= best_ask (101) is a crossed book -> rejected.
+    with pytest.raises(ValueError):
+        ta.QuotedSpread().update([102.0], [1.0], [101.0], [1.0])
+
+
+def test_orderbook_misordered_levels_raise():
+    # Bids must be strictly descending in price.
+    with pytest.raises(ValueError):
+        ta.OrderBookImbalanceFull().update([99.0, 100.0], [1.0, 1.0], [101.0], [1.0])

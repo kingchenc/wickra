@@ -201,3 +201,19 @@ def test_opening_range_streaming_matches_batch(ohlc_series):
         rows.append([math.nan, math.nan, math.nan] if out is None else list(out))
     streamed = np.array(rows, dtype=np.float64)
     assert _equal_with_nan(batch, streamed)
+
+
+def test_orderbook_streaming_matches_batch():
+    snaps = [
+        (
+            [100.0, 99.0],
+            [1.0 + (i % 5), 1.0],
+            [101.0, 102.0],
+            [1.0 + ((i + 1) % 3), 1.0],
+        )
+        for i in range(30)
+    ]
+    batch = ta.Microprice().batch(snaps)
+    streamer = ta.Microprice()
+    streamed = np.array([streamer.update(*snap) for snap in snaps], dtype=np.float64)
+    assert _equal_with_nan(batch, streamed)
