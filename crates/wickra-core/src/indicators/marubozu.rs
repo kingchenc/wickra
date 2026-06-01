@@ -22,6 +22,13 @@ use crate::traits::Indicator;
 /// `shadow_tolerance` defaults to `0.05` (5 % of the bar range allowed on each
 /// side) and must lie in `[0, 1)`.
 ///
+/// # Signed ±1 encoding
+///
+/// This detector already emits the uniform candlestick sign convention shared
+/// across the pattern family — `+1.0` bullish, `−1.0` bearish, `0.0` no
+/// pattern — so it drops straight into a machine-learning feature matrix where
+/// the bullish and bearish variants of the pattern occupy a single dimension.
+///
 /// # Example
 ///
 /// ```
