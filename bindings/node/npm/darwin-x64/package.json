@@ -6,7 +6,7 @@
   "files": [
     "wickra.darwin-x64.node"
   ],
-  "license": "PolyForm-Noncommercial-1.0.0",
+  "license": "LicenseRef-Wickra-Noncommercial-1.0.0",
   "engines": {
     "node": ">= 18"
   },
