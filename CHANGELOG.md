@@ -43,6 +43,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   every candlestick pattern, making the family a drop-in machine-learning
   feature where bullish and bearish instances share a single dimension.
 
+### Fixed
+- **README banner now self-updates.** The top README banner points at the org
+  profile image that `.github/banner.yml` regenerates from the indicator count,
+  and `sync-about.yml` bumps a `?v=<count>` cache-buster so GitHub's Camo proxy
+  refetches it immediately. Also fixes the webpage indicator-count sync, which
+  silently crashed on a removed `public/hero.svg` and left the marketing site's
+  count (and its OG banner) stale.
+
 ### Security
 - **CI dependency installs are pinned by hash.** The Node binding now installs
   with `npm ci` (strict `package-lock.json`), and the Python CI/bench tooling is
