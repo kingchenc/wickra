@@ -37,6 +37,7 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
 mod error;
+mod microstructure;
 mod ohlcv;
 mod traits;
 
@@ -87,5 +88,6 @@ pub use indicators::{
     WilliamsFractalsOutput, WilliamsR, Wma, WoodiePivots, WoodiePivotsOutput, YangZhangVolatility,
     YoyoExit, ZScore, ZeroLagMacd, ZeroLagMacdOutput, ZigZag, ZigZagOutput, Zlema, FAMILIES, T3,
 };
+pub use microstructure::{Level, OrderBook, Side, Trade, TradeQuote};
 pub use ohlcv::{Candle, Tick};
 pub use traits::{BatchExt, Chain, Indicator};
