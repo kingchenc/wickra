@@ -2319,6 +2319,51 @@ export declare class Footprint {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type FundingRateNode = FundingRate
+export declare class FundingRate {
+  constructor()
+  update(fundingRate: number): number | null
+  batch(fundingRate: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type FundingRateMeanNode = FundingRateMean
+export declare class FundingRateMean {
+  constructor(window: number)
+  update(fundingRate: number): number | null
+  batch(fundingRate: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type FundingRateZScoreNode = FundingRateZScore
+export declare class FundingRateZScore {
+  constructor(window: number)
+  update(fundingRate: number): number | null
+  batch(fundingRate: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type FundingBasisNode = FundingBasis
+export declare class FundingBasis {
+  constructor()
+  update(markPrice: number, indexPrice: number): number | null
+  batch(markPrice: Array<number>, indexPrice: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type OpenInterestDeltaNode = OpenInterestDelta
+export declare class OpenInterestDelta {
+  constructor()
+  update(openInterest: number): number | null
+  batch(openInterest: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type SharpeRatioNode = SharpeRatio
 export declare class SharpeRatio {
   constructor(period: number, riskFree: number)

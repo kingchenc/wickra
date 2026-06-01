@@ -6747,6 +6747,231 @@ impl WasmFootprint {
     }
 }
 
+// ============================== Derivatives ==============================
+//
+// Derivatives indicators consume a perpetual / futures tick rather than OHLCV.
+// Each `update(...)` takes only the tick fields its indicator reads — the
+// streaming model for a live browser derivatives feed. Batch over a tape is
+// provided by the Python and Node bindings. The helpers build a fully-valid
+// `DerivativesTick`, filling unused fields with neutral defaults.
+
+fn deriv_funding(funding_rate: f64) -> Result<wc::DerivativesTick, JsError> {
+    wc::DerivativesTick::new(
+        funding_rate,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_basis(mark_price: f64, index_price: f64) -> Result<wc::DerivativesTick, JsError> {
+    wc::DerivativesTick::new(
+        0.0,
+        mark_price,
+        index_price,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_oi(open_interest: f64) -> Result<wc::DerivativesTick, JsError> {
+    wc::DerivativesTick::new(
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        open_interest,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+#[wasm_bindgen(js_name = FundingRate)]
+pub struct WasmFundingRate {
+    inner: wc::FundingRate,
+}
+
+impl Default for WasmFundingRate {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = FundingRate)]
+impl WasmFundingRate {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmFundingRate {
+        Self {
+            inner: wc::FundingRate::new(),
+        }
+    }
+    pub fn update(&mut self, funding_rate: f64) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(deriv_funding(funding_rate)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = FundingRateMean)]
+pub struct WasmFundingRateMean {
+    inner: wc::FundingRateMean,
+}
+
+#[wasm_bindgen(js_class = FundingRateMean)]
+impl WasmFundingRateMean {
+    #[wasm_bindgen(constructor)]
+    pub fn new(window: usize) -> Result<WasmFundingRateMean, JsError> {
+        Ok(Self {
+            inner: wc::FundingRateMean::new(window).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, funding_rate: f64) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(deriv_funding(funding_rate)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = FundingRateZScore)]
+pub struct WasmFundingRateZScore {
+    inner: wc::FundingRateZScore,
+}
+
+#[wasm_bindgen(js_class = FundingRateZScore)]
+impl WasmFundingRateZScore {
+    #[wasm_bindgen(constructor)]
+    pub fn new(window: usize) -> Result<WasmFundingRateZScore, JsError> {
+        Ok(Self {
+            inner: wc::FundingRateZScore::new(window).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, funding_rate: f64) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(deriv_funding(funding_rate)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = FundingBasis)]
+pub struct WasmFundingBasis {
+    inner: wc::FundingBasis,
+}
+
+impl Default for WasmFundingBasis {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = FundingBasis)]
+impl WasmFundingBasis {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmFundingBasis {
+        Self {
+            inner: wc::FundingBasis::new(),
+        }
+    }
+    pub fn update(&mut self, mark_price: f64, index_price: f64) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(deriv_basis(mark_price, index_price)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = OpenInterestDelta)]
+pub struct WasmOpenInterestDelta {
+    inner: wc::OpenInterestDelta,
+}
+
+impl Default for WasmOpenInterestDelta {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = OpenInterestDelta)]
+impl WasmOpenInterestDelta {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmOpenInterestDelta {
+        Self {
+            inner: wc::OpenInterestDelta::new(),
+        }
+    }
+    pub fn update(&mut self, open_interest: f64) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(deriv_oi(open_interest)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

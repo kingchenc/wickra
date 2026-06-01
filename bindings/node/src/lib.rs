@@ -9352,6 +9352,289 @@ impl FootprintNode {
     }
 }
 
+// ============================== Derivatives ==============================
+//
+// Derivatives indicators consume a perpetual / futures tick rather than OHLCV.
+// Each wrapper exposes only the tick fields its indicator reads; the helpers
+// below build a fully-valid `DerivativesTick`, filling the unused fields with
+// neutral defaults (prices `1.0`, sizes / rates `0.0`).
+
+fn deriv_funding(funding_rate: f64) -> napi::Result<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        funding_rate,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_basis(mark_price: f64, index_price: f64) -> napi::Result<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        0.0,
+        mark_price,
+        index_price,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_oi(open_interest: f64) -> napi::Result<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        open_interest,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+#[napi(js_name = "FundingRate")]
+pub struct FundingRateNode {
+    inner: wc::FundingRate,
+}
+
+impl Default for FundingRateNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl FundingRateNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::FundingRate::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, funding_rate: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(deriv_funding(funding_rate)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, funding_rate: Vec<f64>) -> napi::Result<Vec<f64>> {
+        let mut out = Vec::with_capacity(funding_rate.len());
+        for rate in funding_rate {
+            out.push(self.inner.update(deriv_funding(rate)?).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "FundingRateMean")]
+pub struct FundingRateMeanNode {
+    inner: wc::FundingRateMean,
+}
+
+#[napi]
+impl FundingRateMeanNode {
+    #[napi(constructor)]
+    pub fn new(window: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::FundingRateMean::new(window as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, funding_rate: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(deriv_funding(funding_rate)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, funding_rate: Vec<f64>) -> napi::Result<Vec<f64>> {
+        let mut out = Vec::with_capacity(funding_rate.len());
+        for rate in funding_rate {
+            out.push(self.inner.update(deriv_funding(rate)?).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "FundingRateZScore")]
+pub struct FundingRateZScoreNode {
+    inner: wc::FundingRateZScore,
+}
+
+#[napi]
+impl FundingRateZScoreNode {
+    #[napi(constructor)]
+    pub fn new(window: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::FundingRateZScore::new(window as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, funding_rate: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(deriv_funding(funding_rate)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, funding_rate: Vec<f64>) -> napi::Result<Vec<f64>> {
+        let mut out = Vec::with_capacity(funding_rate.len());
+        for rate in funding_rate {
+            out.push(self.inner.update(deriv_funding(rate)?).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "FundingBasis")]
+pub struct FundingBasisNode {
+    inner: wc::FundingBasis,
+}
+
+impl Default for FundingBasisNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl FundingBasisNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::FundingBasis::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, mark_price: f64, index_price: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(deriv_basis(mark_price, index_price)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, mark_price: Vec<f64>, index_price: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if mark_price.len() != index_price.len() {
+            return Err(NapiError::from_reason(
+                "mark_price and index_price must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(mark_price.len());
+        for i in 0..mark_price.len() {
+            out.push(
+                self.inner
+                    .update(deriv_basis(mark_price[i], index_price[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "OpenInterestDelta")]
+pub struct OpenInterestDeltaNode {
+    inner: wc::OpenInterestDelta,
+}
+
+impl Default for OpenInterestDeltaNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl OpenInterestDeltaNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::OpenInterestDelta::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, open_interest: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(deriv_oi(open_interest)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, open_interest: Vec<f64>) -> napi::Result<Vec<f64>> {
+        let mut out = Vec::with_capacity(open_interest.len());
+        for oi in open_interest {
+            out.push(self.inner.update(deriv_oi(oi)?).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== Family 15: Risk / Performance ==============================
 
 // Risk metrics with fallible `new` (most need `period >= 2`), so each wrapper
