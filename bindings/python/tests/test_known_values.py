@@ -979,3 +979,37 @@ def test_open_interest_delta_reference_value():
     assert oid.update(1000.0) is None  # seeds the previous OI
     assert oid.update(1250.0) == pytest.approx(250.0)
     assert oid.update(1100.0) == pytest.approx(-150.0)
+
+
+def test_oi_price_divergence_reference_value():
+    div = ta.OIPriceDivergence(1)
+    assert div.update(1000.0, 100.0) is None  # warming up
+    # OI +10% while price flat -> divergence +0.1.
+    assert div.update(1100.0, 100.0) == pytest.approx(0.1)
+
+
+def test_oi_weighted_reference_value():
+    oiw = ta.OIWeighted()
+    assert oiw.update(100.0, 10.0) == pytest.approx(100.0)
+    # (100·10 + 110·30) / 40 = 107.5.
+    assert oiw.update(110.0, 30.0) == pytest.approx(107.5)
+
+
+def test_long_short_ratio_reference_value():
+    # 600 longs vs 400 shorts -> 1.5.
+    assert ta.LongShortRatio().update(600.0, 400.0) == pytest.approx(1.5)
+    # No short side -> 0.0.
+    assert ta.LongShortRatio().update(600.0, 0.0) == pytest.approx(0.0)
+
+
+def test_taker_buy_sell_ratio_reference_value():
+    # 60 taker buys vs 40 taker sells -> 1.5.
+    assert ta.TakerBuySellRatio().update(60.0, 40.0) == pytest.approx(1.5)
+    # No taker sell volume -> 0.0.
+    assert ta.TakerBuySellRatio().update(60.0, 0.0) == pytest.approx(0.0)
+
+
+def test_liquidation_features_reference_value():
+    # 30 long vs 10 short: (long, short, net, total, imbalance).
+    out = ta.LiquidationFeatures().update(30.0, 10.0)
+    assert out == pytest.approx((30.0, 10.0, 20.0, 40.0, 0.5))

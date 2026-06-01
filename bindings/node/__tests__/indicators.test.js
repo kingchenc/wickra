@@ -1136,3 +1136,42 @@ test('derivatives reject bad input', () => {
   assert.throws(() => new wickra.FundingRateZScore(0));
   assert.throws(() => new wickra.FundingBasis().update(100, 0));
 });
+
+test('OI / flow / liquidation indicators reference values', () => {
+  // OI +10% while price flat -> divergence +0.1.
+  const div = new wickra.OIPriceDivergence(1);
+  assert.equal(div.update(1000, 100), null); // warming up
+  assert.ok(Math.abs(div.update(1100, 100) - 0.1) < 1e-12);
+  // OI-weighted: (100·10 + 110·30) / 40 = 107.5.
+  const oiw = new wickra.OIWeighted();
+  assert.equal(oiw.update(100, 10), 100);
+  assert.ok(Math.abs(oiw.update(110, 30) - 107.5) < 1e-12);
+  // Long/short ratio.
+  assert.ok(Math.abs(new wickra.LongShortRatio().update(600, 400) - 1.5) < 1e-12);
+  assert.equal(new wickra.LongShortRatio().update(600, 0), 0);
+  // Taker buy/sell ratio.
+  assert.ok(Math.abs(new wickra.TakerBuySellRatio().update(60, 40) - 1.5) < 1e-12);
+  assert.equal(new wickra.TakerBuySellRatio().update(60, 0), 0);
+  // Liquidation features object.
+  const liq = new wickra.LiquidationFeatures().update(30, 10);
+  assert.equal(liq.net, 20);
+  assert.equal(liq.total, 40);
+  assert.equal(liq.imbalance, 0.5);
+});
+
+test('liquidation features batch is flat n*5', () => {
+  const longLiq = [10, 0, 30];
+  const shortLiq = [5, 20, 0];
+  const batch = new wickra.LiquidationFeatures().batch(longLiq, shortLiq);
+  assert.equal(batch.length, 15);
+  // Row 0: long 10, short 5, net 5, total 15.
+  assert.equal(batch[0], 10);
+  assert.equal(batch[1], 5);
+  assert.equal(batch[2], 5);
+  assert.equal(batch[3], 15);
+});
+
+test('OI flow rejects bad input', () => {
+  assert.throws(() => new wickra.OIPriceDivergence(0));
+  assert.throws(() => new wickra.OIWeighted().update(0, 100));
+});
