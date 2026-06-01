@@ -255,6 +255,8 @@ from ._wickra import (
     EffectiveSpread,
     RealizedSpread,
     KylesLambda,
+    # Microstructure: footprint
+    Footprint,
     # Risk / Performance
     SharpeRatio,
     SortinoRatio,
@@ -507,6 +509,8 @@ __all__ = [
     "EffectiveSpread",
     "RealizedSpread",
     "KylesLambda",
+    # Microstructure: footprint
+    "Footprint",
     # Risk / Performance
     "SharpeRatio",
     "SortinoRatio",

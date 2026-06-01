@@ -1063,3 +1063,34 @@ test('price-impact rejects bad input', () => {
   assert.throws(() => new wickra.RealizedSpread(0));
   assert.throws(() => new wickra.KylesLambda(1));
 });
+
+test('footprint buckets buy and sell volume per price level', () => {
+  const fp = new wickra.Footprint(1.0);
+  fp.update(100.2, 2, true); // bucket 100 -> ask 2
+  fp.update(100.7, 3, false); // bucket 101 -> bid 3
+  const out = fp.update(100.1, 1, true); // bucket 100 -> ask 3
+  assert.equal(out.length, 2);
+  assert.deepEqual(
+    { price: out[0].price, bidVol: out[0].bidVol, askVol: out[0].askVol },
+    { price: 100.0, bidVol: 0.0, askVol: 3.0 },
+  );
+  assert.deepEqual(
+    { price: out[1].price, bidVol: out[1].bidVol, askVol: out[1].askVol },
+    { price: 101.0, bidVol: 3.0, askVol: 0.0 },
+  );
+});
+
+test('footprint streaming update matches batch and rejects bad tick', () => {
+  const n = 12;
+  const price = Array.from({ length: n }, (_, i) => 100 + (i % 5) * 0.3);
+  const size = Array.from({ length: n }, (_, i) => 1 + (i % 3));
+  const isBuy = Array.from({ length: n }, (_, i) => i % 2 === 0);
+  const batch = new wickra.Footprint(1.0).batch(price, size, isBuy);
+  const streamer = new wickra.Footprint(1.0);
+  assert.equal(batch.length, n);
+  for (let i = 0; i < n; i++) {
+    const s = streamer.update(price[i], size[i], isBuy[i]);
+    assert.deepEqual(s, batch[i], `mismatch at ${i}`);
+  }
+  assert.throws(() => new wickra.Footprint(0));
+});

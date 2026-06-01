@@ -9264,6 +9264,94 @@ impl KylesLambdaNode {
     }
 }
 
+// ============================== Microstructure: Footprint ==============================
+//
+// Footprint is a multi-output, variable-length indicator. Each `update(price,
+// size, isBuy)` returns the full bar footprint accumulated since the last
+// `reset()` as an array of `{ price, bidVol, askVol }` rows (sorted ascending
+// by price); `batch` returns an array of such arrays, one per trade.
+
+/// One price bucket of a footprint.
+#[napi(object)]
+pub struct FootprintLevelValue {
+    pub price: f64,
+    pub bid_vol: f64,
+    pub ask_vol: f64,
+}
+
+fn footprint_levels(out: &wc::FootprintOutput) -> Vec<FootprintLevelValue> {
+    out.levels
+        .iter()
+        .map(|level| FootprintLevelValue {
+            price: level.price,
+            bid_vol: level.bid_vol,
+            ask_vol: level.ask_vol,
+        })
+        .collect()
+}
+
+#[napi(js_name = "Footprint")]
+pub struct FootprintNode {
+    inner: wc::Footprint,
+}
+
+#[napi]
+impl FootprintNode {
+    #[napi(constructor)]
+    pub fn new(tick_size: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Footprint::new(tick_size).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        price: f64,
+        size: f64,
+        is_buy: bool,
+    ) -> napi::Result<Vec<FootprintLevelValue>> {
+        let out = self
+            .inner
+            .update(build_trade(price, size, is_buy)?)
+            .expect("footprint emits on every trade");
+        Ok(footprint_levels(&out))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        price: Vec<f64>,
+        size: Vec<f64>,
+        is_buy: Vec<bool>,
+    ) -> napi::Result<Vec<Vec<FootprintLevelValue>>> {
+        if price.len() != size.len() || size.len() != is_buy.len() {
+            return Err(NapiError::from_reason(
+                "price, size, is_buy must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            let snapshot = self
+                .inner
+                .update(build_trade(price[i], size[i], is_buy[i])?)
+                .expect("footprint emits on every trade");
+            out.push(footprint_levels(&snapshot));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== Family 15: Risk / Performance ==============================
 
 // Risk metrics with fallible `new` (most need `period >= 2`), so each wrapper

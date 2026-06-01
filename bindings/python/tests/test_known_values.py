@@ -882,6 +882,17 @@ def test_depth_slope_reference_value():
     assert ta.DepthSlope().update([100.0], [1.0], [101.0], [1.0]) == pytest.approx(0.0)
 
 
+def test_footprint_buckets_buy_and_sell_volume():
+    fp = ta.Footprint(1.0)
+    fp.update(100.2, 2.0, True)  # bucket 100 -> ask 2
+    fp.update(100.7, 3.0, False)  # bucket 101 -> bid 3
+    out = fp.update(100.1, 1.0, True)  # bucket 100 -> ask 3
+    # Columns are [price, bid_vol, ask_vol], rows sorted ascending by price.
+    assert out.shape == (2, 3)
+    assert list(out[0]) == [100.0, 0.0, 3.0]
+    assert list(out[1]) == [101.0, 3.0, 0.0]
+
+
 def test_signed_volume_reference_values():
     assert ta.SignedVolume().update(100.0, 2.0, True) == pytest.approx(2.0)
     assert ta.SignedVolume().update(100.0, 3.0, False) == pytest.approx(-3.0)

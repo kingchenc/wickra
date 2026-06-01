@@ -11,7 +11,8 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    BatchExt, CumulativeVolumeDelta, Indicator, Side, SignedVolume, Trade, TradeImbalance,
+    BatchExt, CumulativeVolumeDelta, Footprint, Indicator, Side, SignedVolume, Trade,
+    TradeImbalance,
 };
 
 #[inline(never)]
@@ -42,4 +43,13 @@ fuzz_target!(|data: &[u8]| {
     drive(SignedVolume::new, &trades);
     drive(CumulativeVolumeDelta::new, &trades);
     drive(|| TradeImbalance::new(5).unwrap(), &trades);
+
+    // Footprint emits a variable-length `FootprintOutput` rather than an `f64`,
+    // so it is driven directly rather than through the scalar-output helper.
+    let mut footprint = Footprint::new(0.5).unwrap();
+    for &trade in &trades {
+        let _ = footprint.update(trade);
+    }
+    footprint.reset();
+    let _ = Footprint::new(0.5).unwrap().batch(&trades);
 });

@@ -73,6 +73,7 @@ mod evwma;
 mod fama;
 mod fibonacci_pivots;
 mod fisher_transform;
+mod footprint;
 mod force_index;
 mod fractal_chaos_bands;
 mod frama;
@@ -304,6 +305,7 @@ pub use evwma::Evwma;
 pub use fama::Fama;
 pub use fibonacci_pivots::{FibonacciPivots, FibonacciPivotsOutput};
 pub use fisher_transform::FisherTransform;
+pub use footprint::{Footprint, FootprintLevel, FootprintOutput};
 pub use force_index::ForceIndex;
 pub use fractal_chaos_bands::{FractalChaosBands, FractalChaosBandsOutput};
 pub use frama::Frama;
@@ -746,6 +748,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "EffectiveSpread",
             "RealizedSpread",
             "KylesLambda",
+            "Footprint",
         ],
     ),
     (
@@ -802,6 +805,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 226, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 227, "FAMILIES total drifted from indicator count");
     }
 }

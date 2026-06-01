@@ -59,19 +59,20 @@ pub use indicators::{
     DonchianOutput, DonchianStop, DonchianStopOutput, DoubleBollinger, DoubleBollingerOutput, Dpo,
     DrawdownDuration, EaseOfMovement, EffectiveSpread, EhlersStochastic, ElderImpulse, Ema,
     EmpiricalModeDecomposition, Engulfing, Evwma, Fama, FibonacciPivots, FibonacciPivotsOutput,
-    FisherTransform, ForceIndex, FractalChaosBands, FractalChaosBandsOutput, Frama, GainLossRatio,
-    GarmanKlassVolatility, Hammer, HangingMan, Harami, HeikinAshi, HeikinAshiOutput, HiLoActivator,
-    HilbertDominantCycle, HistoricalVolatility, Hma, HurstChannel, HurstChannelOutput,
-    HurstExponent, Ichimoku, IchimokuOutput, Inertia, InformationRatio, InitialBalance,
-    InitialBalanceOutput, InstantaneousTrendline, InverseFisherTransform, InvertedHammer, Jma,
-    Kama, KellyCriterion, Keltner, KeltnerOutput, Kst, KstOutput, Kurtosis, Kvo, KylesLambda,
-    LaguerreRsi, LeadLagCrossCorrelation, LeadLagCrossCorrelationOutput, LinRegAngle,
-    LinRegChannel, LinRegChannelOutput, LinRegSlope, LinearRegression, MaEnvelope,
-    MaEnvelopeOutput, MacdIndicator, MacdOutput, Mama, MamaOutput, MarketFacilitationIndex,
-    Marubozu, MassIndex, MaxDrawdown, McGinleyDynamic, MedianAbsoluteDeviation, MedianPrice, Mfi,
-    Microprice, Mom, MorningEveningStar, Natr, Nvi, Obv, OmegaRatio, OpeningRange,
-    OpeningRangeOutput, OrderBookImbalanceFull, OrderBookImbalanceTop1, OrderBookImbalanceTopN,
-    PainIndex, PairSpreadZScore, PairwiseBeta, ParkinsonVolatility, PearsonCorrelation, PercentB,
+    FisherTransform, Footprint, FootprintOutput, ForceIndex, FractalChaosBands,
+    FractalChaosBandsOutput, Frama, GainLossRatio, GarmanKlassVolatility, Hammer, HangingMan,
+    Harami, HeikinAshi, HeikinAshiOutput, HiLoActivator, HilbertDominantCycle,
+    HistoricalVolatility, Hma, HurstChannel, HurstChannelOutput, HurstExponent, Ichimoku,
+    IchimokuOutput, Inertia, InformationRatio, InitialBalance, InitialBalanceOutput,
+    InstantaneousTrendline, InverseFisherTransform, InvertedHammer, Jma, Kama, KellyCriterion,
+    Keltner, KeltnerOutput, Kst, KstOutput, Kurtosis, Kvo, KylesLambda, LaguerreRsi,
+    LeadLagCrossCorrelation, LeadLagCrossCorrelationOutput, LinRegAngle, LinRegChannel,
+    LinRegChannelOutput, LinRegSlope, LinearRegression, MaEnvelope, MaEnvelopeOutput,
+    MacdIndicator, MacdOutput, Mama, MamaOutput, MarketFacilitationIndex, Marubozu, MassIndex,
+    MaxDrawdown, McGinleyDynamic, MedianAbsoluteDeviation, MedianPrice, Mfi, Microprice, Mom,
+    MorningEveningStar, Natr, Nvi, Obv, OmegaRatio, OpeningRange, OpeningRangeOutput,
+    OrderBookImbalanceFull, OrderBookImbalanceTop1, OrderBookImbalanceTopN, PainIndex,
+    PairSpreadZScore, PairwiseBeta, ParkinsonVolatility, PearsonCorrelation, PercentB,
     PercentageTrailingStop, Pgo, PiercingDarkCloud, Pmo, Ppo, ProfitFactor, Psar, Pvi,
     QuotedSpread, RSquared, RealizedSpread, RecoveryFactor, RelativeStrengthAB,
     RelativeStrengthOutput, RenkoTrailingStop, Roc, RogersSatchellVolatility, RollingVwap,
@@ -90,6 +91,10 @@ pub use indicators::{
     WilliamsFractalsOutput, WilliamsR, Wma, WoodiePivots, WoodiePivotsOutput, YangZhangVolatility,
     YoyoExit, ZScore, ZeroLagMacd, ZeroLagMacdOutput, ZigZag, ZigZagOutput, Zlema, FAMILIES, T3,
 };
+// `FootprintLevel` is a row element of `FootprintOutput`, re-exported on its own
+// line so the indicator-count tooling (which scans the braced block above and
+// strips only `*Output` companions) does not count it as a separate indicator.
+pub use indicators::FootprintLevel;
 pub use microstructure::{Level, OrderBook, Side, Trade, TradeQuote};
 pub use ohlcv::{Candle, Tick};
 pub use traits::{BatchExt, Chain, Indicator};
