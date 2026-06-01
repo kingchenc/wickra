@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Derivatives family — funding & open interest (part 1).** A new family of
+  indicators that consume a perpetual / futures tick (`DerivativesTick`,
+  bundling funding rate, mark / index / futures price, open interest,
+  positioning, taker flow and liquidations) rather than OHLCV, exposed in Rust,
+  Python, Node and WASM:
+  - **Funding Rate** — the current perpetual funding rate.
+  - **Funding Rate Mean** — the rolling mean funding rate over a window.
+  - **Funding Rate Z-Score** — the latest funding rate in standard deviations
+    from its rolling mean.
+  - **Funding Basis** — the perpetual's relative premium to spot,
+    `(markPrice − indexPrice) / indexPrice`.
+  - **Open-Interest Delta** — the tick-over-tick change in open interest.
+
 ## [0.4.3] - 2026-06-01
 
 ### Added
