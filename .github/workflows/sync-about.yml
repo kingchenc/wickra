@@ -165,6 +165,10 @@ jobs:
         run: |
           n="${{ steps.count.outputs.count }}"
           sed -i -E "s/[0-9]+ (streaming-first )?indicators/${n} \1indicators/g" README.md
+          # Bump the banner cache-buster so GitHub's Camo proxy refetches the org
+          # profile image (regenerated with the new count by .github/banner.yml)
+          # instead of serving a stale cached copy.
+          sed -i -E "s|(wickra-banner\.webp\?v=)[0-9]+|\1${n}|" README.md
           if git diff --quiet; then
             echo "No README changes after sed (counter regex did not match anything); skipping push."
             echo "changed=false" >> "$GITHUB_OUTPUT"
