@@ -22,7 +22,7 @@ when proposing features or depending on Wickra elsewhere.
 | `bindings/node` | napi-rs bindings (`wickra` on npm). |
 | `bindings/wasm` | wasm-bindgen bindings (`wickra-wasm` on npm). |
 | `examples/` | Runnable examples. |
-| `docs/` | Pointer to the project Wiki, which holds all documentation. |
+| `docs/` | Pointer to the documentation site (docs.wickra.org); the docs live in the `wickra-lib/wickra-docs` repo. |
 
 ## Building and testing
 
