@@ -12,7 +12,8 @@
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
     BatchExt, DerivativesTick, FundingBasis, FundingRate, FundingRateMean, FundingRateZScore,
-    Indicator, OpenInterestDelta,
+    Indicator, LiquidationFeatures, LongShortRatio, OIPriceDivergence, OIWeighted,
+    OpenInterestDelta, TakerBuySellRatio,
 };
 
 #[inline(never)]
@@ -46,4 +47,15 @@ fuzz_target!(|data: &[u8]| {
     drive(|| FundingRateZScore::new(5).unwrap(), &ticks);
     drive(FundingBasis::new, &ticks);
     drive(OpenInterestDelta::new, &ticks);
+    drive(|| OIPriceDivergence::new(5).unwrap(), &ticks);
+    drive(OIWeighted::new, &ticks);
+    drive(LongShortRatio::new, &ticks);
+    drive(TakerBuySellRatio::new, &ticks);
+
+    // LiquidationFeatures emits a struct, not an f64, so drive it directly.
+    let mut liq = LiquidationFeatures::new();
+    for &tick in &ticks {
+        let _ = liq.update(tick);
+    }
+    let _ = LiquidationFeatures::new().batch(&ticks);
 });
