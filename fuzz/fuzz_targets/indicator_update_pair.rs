@@ -8,7 +8,7 @@
 //! panic.
 
 use libfuzzer_sys::fuzz_target;
-use wickra_core::{Alpha, BatchExt, Indicator, InformationRatio, TreynorRatio};
+use wickra_core::{Alpha, BatchExt, Indicator, InformationRatio, PairwiseBeta, TreynorRatio};
 
 #[inline(never)]
 fn drive<I>(make: impl Fn() -> I, data: &[(f64, f64)])
@@ -36,4 +36,5 @@ fuzz_target!(|data: &[u8]| {
     drive(|| TreynorRatio::new(10, 0.0).unwrap(), &pairs);
     drive(|| InformationRatio::new(10).unwrap(), &pairs);
     drive(|| Alpha::new(10, 0.0).unwrap(), &pairs);
+    drive(|| PairwiseBeta::new(10).unwrap(), &pairs);
 });

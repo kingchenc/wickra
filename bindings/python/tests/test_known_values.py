@@ -429,6 +429,24 @@ def test_information_ratio_known_window():
     assert math.isclose(out[-1], expected, rel_tol=1e-9)
 
 
+def test_pairwise_beta_squared_price_is_two():
+    # a = b² ⇒ a's log-returns are exactly 2× b's ⇒ pairwise beta = 2.
+    # b must have *varying* returns (a constant-return path has zero variance
+    # and an undefined slope, which the indicator reports as 0).
+    b = np.array([100.0 + 10.0 * math.sin(i * 0.5) for i in range(20)])
+    a = b**2
+    out = ta.PairwiseBeta(5).batch(a, b)
+    assert math.isclose(out[-1], 2.0, rel_tol=1e-9)
+
+
+def test_pairwise_beta_inverse_price_is_minus_one():
+    # a = 1/b ⇒ a's log-returns are −1× b's ⇒ pairwise beta = −1.
+    b = np.array([100.0 + 10.0 * math.sin(i * 0.5) for i in range(20)])
+    a = 1.0 / b
+    out = ta.PairwiseBeta(5).batch(a, b)
+    assert math.isclose(out[-1], -1.0, rel_tol=1e-9)
+
+
 def test_value_at_risk_known_window():
     # returns -5..4 *0.01; q=0.05*9=0.45 -> -0.0455; VaR = 0.0455.
     returns = np.array([i * 0.01 for i in range(-5, 5)])

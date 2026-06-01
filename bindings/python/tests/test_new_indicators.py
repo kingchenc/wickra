@@ -159,6 +159,7 @@ PAIR = [
     (ta.TreynorRatio, (20, 0.0)),
     (ta.InformationRatio, (20,)),
     (ta.Alpha, (20, 0.0)),
+    (ta.PairwiseBeta, (20,)),
 ]
 
 

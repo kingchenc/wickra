@@ -628,6 +628,19 @@ export declare class Beta {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type PairwiseBetaNode = PairwiseBeta
+export declare class PairwiseBeta {
+  constructor(period: number)
+  update(x: number, y: number): number | null
+  /**
+   * Batch over two equally-sized arrays. Returns a length-`n` array
+   * with `NaN` for warmup positions.
+   */
+  batch(x: Array<number>, y: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type SpearmanCorrelationNode = SpearmanCorrelation
 export declare class SpearmanCorrelation {
   constructor(period: number)

@@ -161,6 +161,7 @@ from ._wickra import (
     HurstExponent,
     PearsonCorrelation,
     Beta,
+    PairwiseBeta,
     SpearmanCorrelation,
     # Ehlers / Cycle
     SuperSmoother,
@@ -393,6 +394,7 @@ __all__ = [
     "HurstExponent",
     "PearsonCorrelation",
     "Beta",
+    "PairwiseBeta",
     "SpearmanCorrelation",
     # Ehlers / Cycle
     "SuperSmoother",

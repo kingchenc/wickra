@@ -306,6 +306,7 @@ node_pair_indicator!(
     wc::PearsonCorrelation
 );
 node_pair_indicator!(BetaNode, "Beta", wc::Beta);
+node_pair_indicator!(PairwiseBetaNode, "PairwiseBeta", wc::PairwiseBeta);
 node_pair_indicator!(
     SpearmanCorrelationNode,
     "SpearmanCorrelation",

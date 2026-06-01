@@ -525,6 +525,7 @@ wasm_pair_indicator!(
     wc::PearsonCorrelation
 );
 wasm_pair_indicator!(WasmBeta, "Beta", wc::Beta);
+wasm_pair_indicator!(WasmPairwiseBeta, "PairwiseBeta", wc::PairwiseBeta);
 wasm_pair_indicator!(
     WasmSpearmanCorrelation,
     "SpearmanCorrelation",

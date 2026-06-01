@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Cross-asset pairwise indicators.** A new two-series family of
+  `Indicator<Input = (f64, f64)>` implementations that relate two distinct
+  assets rather than a single OHLCV stream. Each is exposed in Rust, Python,
+  Node, and WASM:
+  - **Pairwise Beta** (`PairwiseBeta`) — rolling OLS slope of one asset's
+    **log-returns** on another's. Unlike `Beta`, which regresses the raw inputs
+    it is fed, `PairwiseBeta` differences consecutive prices into log-returns
+    internally — the conventional way to measure cross-asset beta, where a beta
+    on price levels would be dominated by the shared trend.
+
 ## [0.4.0] - 2026-06-01
 
 ### Added

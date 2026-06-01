@@ -35,6 +35,20 @@ def test_unequal_length_candle_batch_raises(ohlc_series):
         ta.Aroon(14).batch(high, short)
 
 
+def test_pairwise_beta_rejects_bad_period():
+    with pytest.raises(ValueError):
+        ta.PairwiseBeta(0)
+    with pytest.raises(ValueError):
+        ta.PairwiseBeta(1)
+
+
+def test_unequal_length_pair_batch_raises(sine_prices):
+    a = np.ascontiguousarray((sine_prices + 100.0).astype(np.float64))
+    b = a[:-1]
+    with pytest.raises(ValueError):
+        ta.PairwiseBeta(20).batch(a, b)
+
+
 def test_roc_and_trix_have_default_periods():
     # ROC/TRIX gained constructor defaults matching the TA-Lib convention.
     assert ta.ROC().period == 10

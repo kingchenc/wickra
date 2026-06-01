@@ -461,6 +461,7 @@ test('OpeningRange(2) breakout distance is signed close minus midpoint', () => {
 const pairFactories = {
   PearsonCorrelation: () => new wickra.PearsonCorrelation(14),
   Beta: () => new wickra.Beta(14),
+  PairwiseBeta: () => new wickra.PairwiseBeta(14),
   SpearmanCorrelation: () => new wickra.SpearmanCorrelation(14),
 };
 
@@ -489,6 +490,14 @@ test('Beta perfect two-to-one', () => {
   const bench = Array.from({ length: 10 }, (_, i) => i);
   const asset = bench.map((v) => 2 * v);
   const out = new wickra.Beta(5).batch(asset, bench);
+  assert.ok(Math.abs(out[out.length - 1] - 2) < 1e-9);
+});
+
+test('PairwiseBeta squared price is two', () => {
+  // b needs varying returns; a = b² ⇒ a's log-returns are exactly 2× b's.
+  const bench = Array.from({ length: 20 }, (_, i) => 100 + 10 * Math.sin(i * 0.5));
+  const asset = bench.map((v) => v * v);
+  const out = new wickra.PairwiseBeta(5).batch(asset, bench);
   assert.ok(Math.abs(out[out.length - 1] - 2) < 1e-9);
 });
 
