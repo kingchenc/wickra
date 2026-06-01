@@ -1013,3 +1013,16 @@ def test_liquidation_features_reference_value():
     # 30 long vs 10 short: (long, short, net, total, imbalance).
     out = ta.LiquidationFeatures().update(30.0, 10.0)
     assert out == pytest.approx((30.0, 10.0, 20.0, 40.0, 0.5))
+
+
+def test_term_structure_basis_reference_value():
+    # futures 102 vs index 100 -> 0.02 (contango).
+    assert ta.TermStructureBasis().update(102.0, 100.0) == pytest.approx(0.02)
+    # Backwardation reads negative.
+    assert ta.TermStructureBasis().update(98.0, 100.0) == pytest.approx(-0.02)
+
+
+def test_calendar_spread_reference_value():
+    # futures 101 vs perpetual mark 100 -> 0.01.
+    assert ta.CalendarSpread().update(101.0, 100.0) == pytest.approx(0.01)
+    assert ta.CalendarSpread().update(99.0, 100.0) == pytest.approx(-0.01)
