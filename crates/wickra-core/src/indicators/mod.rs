@@ -114,6 +114,7 @@ mod linreg;
 mod linreg_angle;
 mod linreg_channel;
 mod linreg_slope;
+mod long_short_ratio;
 mod ma_envelope;
 mod macd;
 mod mama;
@@ -353,6 +354,7 @@ pub use linreg::LinearRegression;
 pub use linreg_angle::LinRegAngle;
 pub use linreg_channel::{LinRegChannel, LinRegChannelOutput};
 pub use linreg_slope::LinRegSlope;
+pub use long_short_ratio::LongShortRatio;
 pub use ma_envelope::{MaEnvelope, MaEnvelopeOutput};
 pub use macd::{MacdIndicator, MacdOutput};
 pub use mama::{Mama, MamaOutput};
@@ -775,6 +777,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "OpenInterestDelta",
             "OIPriceDivergence",
             "OIWeighted",
+            "LongShortRatio",
         ],
     ),
     (
@@ -831,6 +834,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 234, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 235, "FAMILIES total drifted from indicator count");
     }
 }
