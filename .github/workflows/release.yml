@@ -574,9 +574,17 @@ jobs:
 
       - name: Resolve target tag
         id: tag
+        # Pass the (potentially attacker-influenceable on a tag push) ref context
+        # through the environment instead of interpolating it into the shell
+        # script, so a crafted tag name cannot inject commands (zizmor:
+        # template-injection).
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
-          if [ "${{ github.event_name }}" = "push" ] && [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            tag="${{ github.ref_name }}"
+          if [ "$EVENT_NAME" = "push" ] && [[ "$REF" == refs/tags/* ]]; then
+            tag="$REF_NAME"
           else
             # workflow_dispatch / non-tag push: attach to the latest v* tag.
             tag=$(git tag --list 'v*' --sort=-v:refname | head -n1)
