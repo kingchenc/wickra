@@ -501,6 +501,76 @@ impl CointegrationNode {
     }
 }
 
+// ============================== RelativeStrengthAB ==============================
+
+/// Relative-strength triple: the a/b ratio, its moving average, and its RSI.
+#[napi(object)]
+pub struct RelativeStrengthValue {
+    /// Raw ratio `a / b`.
+    pub ratio: f64,
+    /// Moving average of the ratio.
+    pub ratio_ma: f64,
+    /// RSI of the ratio.
+    pub ratio_rsi: f64,
+}
+
+#[napi(js_name = "RelativeStrengthAB")]
+pub struct RelativeStrengthAbNode {
+    inner: wc::RelativeStrengthAB,
+}
+
+#[napi]
+impl RelativeStrengthAbNode {
+    #[napi(constructor)]
+    pub fn new(ma_period: u32, rsi_period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::RelativeStrengthAB::new(ma_period as usize, rsi_period as usize)
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, a: f64, b: f64) -> Option<RelativeStrengthValue> {
+        self.inner.update((a, b)).map(|o| RelativeStrengthValue {
+            ratio: o.ratio,
+            ratio_ma: o.ratio_ma,
+            ratio_rsi: o.ratio_rsi,
+        })
+    }
+    /// Batch over two equally-sized arrays. Returns a flat array of length
+    /// `3 * n`, interleaved per row as `[ratio0, ratioMa0, ratioRsi0, ...]`.
+    /// Read column `j` of row `i` as `result[i * 3 + j]`. Warmup rows are `NaN`.
+    #[napi]
+    pub fn batch(&mut self, a: Vec<f64>, b: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if a.len() != b.len() {
+            return Err(NapiError::new(
+                Status::InvalidArg,
+                "a and b must be equal length".to_string(),
+            ));
+        }
+        let mut out = vec![f64::NAN; a.len() * 3];
+        for i in 0..a.len() {
+            if let Some(o) = self.inner.update((a[i], b[i])) {
+                out[i * 3] = o.ratio;
+                out[i * 3 + 1] = o.ratio_ma;
+                out[i * 3 + 2] = o.ratio_rsi;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== MACD ==============================
 
 /// MACD triple: macd line, signal line, histogram.

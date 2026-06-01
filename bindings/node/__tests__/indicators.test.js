@@ -554,6 +554,25 @@ test('Cointegration batch is flat 3*n with last row matching', () => {
   assert.ok(out[3 * (n - 1) + 2] < -2);
 });
 
+test('RelativeStrengthAB constant ratio is flat (object output)', () => {
+  const rs = new wickra.RelativeStrengthAB(5, 5);
+  let last = null;
+  for (let i = 0; i < 30; i++) last = rs.update(200, 100); // ratio is a constant 2
+  assert.ok(Math.abs(last.ratio - 2) < 1e-12);
+  assert.ok(Math.abs(last.ratioMa - 2) < 1e-12);
+  assert.ok(Math.abs(last.ratioRsi - 50) < 1e-9);
+});
+
+test('RelativeStrengthAB batch is flat 3*n with last row matching', () => {
+  const n = 30;
+  const a = Array.from({ length: n }, () => 200);
+  const b = Array.from({ length: n }, () => 100);
+  const out = new wickra.RelativeStrengthAB(5, 5).batch(a, b);
+  assert.equal(out.length, 3 * n);
+  assert.ok(Math.abs(out[3 * (n - 1)] - 2) < 1e-12);
+  assert.ok(Math.abs(out[3 * (n - 1) + 2] - 50) < 1e-9);
+});
+
 test('SpearmanCorrelation monotone non-linear is 1', () => {
   const x = Array.from({ length: 10 }, (_, i) => i + 1);
   const y = x.map((v) => v ** 3);

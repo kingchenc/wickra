@@ -24,6 +24,15 @@ export interface CointegrationValue {
    */
   adfStat: number
 }
+/** Relative-strength triple: the a/b ratio, its moving average, and its RSI. */
+export interface RelativeStrengthValue {
+  /** Raw ratio `a / b`. */
+  ratio: number
+  /** Moving average of the ratio. */
+  ratioMa: number
+  /** RSI of the ratio. */
+  ratioRsi: number
+}
 /** MACD triple: macd line, signal line, histogram. */
 export interface MacdValue {
   macd: number
@@ -711,6 +720,20 @@ export declare class Cointegration {
   /**
    * Batch over two equally-sized arrays. Returns a flat array of length
    * `3 * n`, interleaved per row as `[hedgeRatio0, spread0, adfStat0, ...]`.
+   * Read column `j` of row `i` as `result[i * 3 + j]`. Warmup rows are `NaN`.
+   */
+  batch(a: Array<number>, b: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RelativeStrengthAbNode = RelativeStrengthAB
+export declare class RelativeStrengthAB {
+  constructor(maPeriod: number, rsiPeriod: number)
+  update(a: number, b: number): RelativeStrengthValue | null
+  /**
+   * Batch over two equally-sized arrays. Returns a flat array of length
+   * `3 * n`, interleaved per row as `[ratio0, ratioMa0, ratioRsi0, ...]`.
    * Read column `j` of row `i` as `result[i * 3 + j]`. Warmup rows are `NaN`.
    */
   batch(a: Array<number>, b: Array<number>): Array<number>

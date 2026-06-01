@@ -11044,6 +11044,90 @@ impl PyCointegration {
     }
 }
 
+// ============================== RelativeStrengthAB ==============================
+
+#[pyclass(
+    name = "RelativeStrengthAB",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyRelativeStrengthAB {
+    inner: wc::RelativeStrengthAB,
+}
+
+#[pymethods]
+impl PyRelativeStrengthAB {
+    #[new]
+    #[pyo3(signature = (ma_period=20, rsi_period=14))]
+    fn new(ma_period: usize, rsi_period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::RelativeStrengthAB::new(ma_period, rsi_period).map_err(map_err)?,
+        })
+    }
+    /// Returns `(ratio, ratio_ma, ratio_rsi)` or `None` during warmup.
+    fn update(&mut self, a: f64, b: f64) -> Option<(f64, f64, f64)> {
+        self.inner
+            .update((a, b))
+            .map(|o| (o.ratio, o.ratio_ma, o.ratio_rsi))
+    }
+    /// Batch over two equally-sized numpy arrays. Returns a 2D array of shape
+    /// `(n, 3)` with columns `[ratio, ratio_ma, ratio_rsi]`. Warmup rows are
+    /// NaN.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        a: PyReadonlyArray1<'py, f64>,
+        b: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let xs = a
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let ys = b
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if xs.len() != ys.len() {
+            return Err(PyValueError::new_err("a and b must be equal length"));
+        }
+        let n = xs.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            if let Some(o) = self.inner.update((xs[i], ys[i])) {
+                out[i * 3] = o.ratio;
+                out[i * 3 + 1] = o.ratio_ma;
+                out[i * 3 + 2] = o.ratio_rsi;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn ma_period(&self) -> usize {
+        self.inner.ma_period()
+    }
+    #[getter]
+    fn rsi_period(&self) -> usize {
+        self.inner.rsi_period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "RelativeStrengthAB(ma_period={}, rsi_period={})",
+            self.inner.ma_period(),
+            self.inner.rsi_period()
+        )
+    }
+}
+
 // ============================== SpearmanCorrelation ==============================
 
 #[pyclass(
@@ -12533,6 +12617,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyPairSpreadZScore>()?;
     m.add_class::<PyLeadLagCrossCorrelation>()?;
     m.add_class::<PyCointegration>()?;
+    m.add_class::<PyRelativeStrengthAB>()?;
     m.add_class::<PySpearmanCorrelation>()?;
     m.add_class::<PyValueArea>()?;
     m.add_class::<PyInitialBalance>()?;

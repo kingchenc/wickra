@@ -165,6 +165,7 @@ from ._wickra import (
     PairSpreadZScore,
     LeadLagCrossCorrelation,
     Cointegration,
+    RelativeStrengthAB,
     SpearmanCorrelation,
     # Ehlers / Cycle
     SuperSmoother,
@@ -401,6 +402,7 @@ __all__ = [
     "PairSpreadZScore",
     "LeadLagCrossCorrelation",
     "Cointegration",
+    "RelativeStrengthAB",
     "SpearmanCorrelation",
     # Ehlers / Cycle
     "SuperSmoother",

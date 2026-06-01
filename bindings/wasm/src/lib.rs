@@ -690,6 +690,64 @@ impl WasmCointegration {
     }
 }
 
+// ---------- RelativeStrengthAB (two params, object output) ----------
+
+#[wasm_bindgen(js_name = "RelativeStrengthAB")]
+pub struct WasmRelativeStrengthAb {
+    inner: wc::RelativeStrengthAB,
+}
+
+#[wasm_bindgen(js_class = "RelativeStrengthAB")]
+impl WasmRelativeStrengthAb {
+    #[wasm_bindgen(constructor)]
+    pub fn new(ma_period: usize, rsi_period: usize) -> Result<WasmRelativeStrengthAb, JsError> {
+        Ok(Self {
+            inner: wc::RelativeStrengthAB::new(ma_period, rsi_period).map_err(map_err)?,
+        })
+    }
+    /// Returns `{ ratio, ratioMa, ratioRsi }`, or `null` during warmup.
+    pub fn update(&mut self, a: f64, b: f64) -> JsValue {
+        match self.inner.update((a, b)) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"ratio".into(), &o.ratio.into()).ok();
+                Reflect::set(&obj, &"ratioMa".into(), &o.ratio_ma.into()).ok();
+                Reflect::set(&obj, &"ratioRsi".into(), &o.ratio_rsi.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        }
+    }
+    /// Flat `Float64Array` of length `3 * n`:
+    /// `[ratio0, ratioMa0, ratioRsi0, ratio1, ...]`. Warmup rows are NaN.
+    pub fn batch(&mut self, a: &[f64], b: &[f64]) -> Result<Float64Array, JsError> {
+        if a.len() != b.len() {
+            return Err(JsError::new("a and b must be equal length"));
+        }
+        let n = a.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            if let Some(o) = self.inner.update((a[i], b[i])) {
+                out[i * 3] = o.ratio;
+                out[i * 3 + 1] = o.ratio_ma;
+                out[i * 3 + 2] = o.ratio_rsi;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 // ---------- KAMA (three params) ----------
 
 #[wasm_bindgen(js_name = KAMA)]

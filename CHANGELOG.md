@@ -31,6 +31,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     `a − (α + β·b)`, and an augmented Dickey–Fuller `t`-statistic on the spread
     (configurable `adf_lags`). A strongly negative statistic flags a
     mean-reverting, tradeable spread. Emits `{ hedge_ratio, spread, adf_stat }`.
+  - **Relative Strength A-vs-B** (`RelativeStrengthAB`) — the comparative
+    relative strength of two assets: the ratio line `a / b` together with its
+    moving average and its RSI, the classic asset-vs-asset / asset-vs-index
+    rotation screen. Emits `{ ratio, ratio_ma, ratio_rsi }`.
 
 ## [0.4.0] - 2026-06-01
 

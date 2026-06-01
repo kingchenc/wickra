@@ -480,6 +480,16 @@ def test_cointegration_perfect_pair():
     assert math.isclose(out[-1, 2], 0.0, abs_tol=1e-12)
 
 
+def test_relative_strength_rising_ratio_is_overbought():
+    # a rises while b is flat ⇒ ratio strictly increases ⇒ RSI saturates at 100.
+    n = 20
+    a = np.array([100.0 + 2.0 * t for t in range(n)])
+    b = np.full(n, 100.0)
+    out = ta.RelativeStrengthAB(5, 5).batch(a, b)
+    assert out[-1, 0] > 1.0
+    assert math.isclose(out[-1, 2], 100.0, abs_tol=1e-9)
+
+
 def test_value_at_risk_known_window():
     # returns -5..4 *0.01; q=0.05*9=0.45 -> -0.0455; VaR = 0.0455.
     returns = np.array([i * 0.01 for i in range(-5, 5)])

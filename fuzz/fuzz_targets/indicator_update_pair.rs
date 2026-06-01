@@ -10,7 +10,7 @@
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
     Alpha, BatchExt, Cointegration, Indicator, InformationRatio, LeadLagCrossCorrelation,
-    PairSpreadZScore, PairwiseBeta, TreynorRatio,
+    PairSpreadZScore, PairwiseBeta, RelativeStrengthAB, TreynorRatio,
 };
 
 #[inline(never)]
@@ -55,4 +55,10 @@ fuzz_target!(|data: &[u8]| {
         let _ = co.update(x);
     }
     let _ = Cointegration::new(12, 1).unwrap().batch(&pairs);
+
+    let mut rs = RelativeStrengthAB::new(10, 14).unwrap();
+    for &x in &pairs {
+        let _ = rs.update(x);
+    }
+    let _ = RelativeStrengthAB::new(10, 14).unwrap().batch(&pairs);
 });

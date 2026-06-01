@@ -240,6 +240,35 @@ def test_cointegration_streaming_matches_batch():
             assert math.isclose(batch[i, 2], adf, rel_tol=1e-12, abs_tol=1e-12)
 
 
+def test_relative_strength_constant_ratio():
+    n = 30
+    a = np.full(n, 200.0)
+    b = np.full(n, 100.0)  # ratio is a constant 2
+    out = ta.RelativeStrengthAB(5, 5).batch(a, b)
+    assert out.shape == (n, 3)
+    assert math.isclose(out[-1, 0], 2.0, abs_tol=1e-12)  # ratio
+    assert math.isclose(out[-1, 1], 2.0, abs_tol=1e-12)  # ratio MA
+    assert math.isclose(out[-1, 2], 50.0, abs_tol=1e-9)  # flat ratio ⇒ RSI 50
+
+
+def test_relative_strength_streaming_matches_batch():
+    n = 60
+    tt = np.arange(n)
+    a = 100.0 + 5.0 * np.sin(tt * 0.3)
+    b = 100.0 + 2.0 * np.cos(tt * 0.2)
+    batch = ta.RelativeStrengthAB(10, 14).batch(a, b)
+    streamer = ta.RelativeStrengthAB(10, 14)
+    for i in range(n):
+        v = streamer.update(float(a[i]), float(b[i]))
+        if v is None:
+            assert np.all(np.isnan(batch[i]))
+        else:
+            ratio, ma, rsi = v
+            assert math.isclose(batch[i, 0], ratio, rel_tol=1e-12, abs_tol=1e-12)
+            assert math.isclose(batch[i, 1], ma, rel_tol=1e-12, abs_tol=1e-12)
+            assert math.isclose(batch[i, 2], rsi, rel_tol=1e-12, abs_tol=1e-12)
+
+
 # --- Candle-input, single-output indicators -------------------------------
 #
 # Each entry is (factory, batch-call). Streaming always feeds the full

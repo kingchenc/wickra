@@ -87,6 +87,20 @@ def test_cointegration_unequal_length_batch_raises(sine_prices):
         ta.Cointegration(20, 1).batch(a, b)
 
 
+def test_relative_strength_rejects_zero_periods():
+    with pytest.raises(ValueError):
+        ta.RelativeStrengthAB(0, 14)
+    with pytest.raises(ValueError):
+        ta.RelativeStrengthAB(20, 0)
+
+
+def test_relative_strength_unequal_length_batch_raises(sine_prices):
+    a = np.ascontiguousarray((sine_prices + 100.0).astype(np.float64))
+    b = a[:-1]
+    with pytest.raises(ValueError):
+        ta.RelativeStrengthAB(10, 14).batch(a, b)
+
+
 def test_roc_and_trix_have_default_periods():
     # ROC/TRIX gained constructor defaults matching the TA-Lib convention.
     assert ta.ROC().period == 10
