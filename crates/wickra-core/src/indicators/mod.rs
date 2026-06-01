@@ -78,6 +78,7 @@ mod force_index;
 mod fractal_chaos_bands;
 mod frama;
 mod funding_rate;
+mod funding_rate_mean;
 mod gain_loss_ratio;
 mod garman_klass;
 mod hammer;
@@ -311,6 +312,7 @@ pub use force_index::ForceIndex;
 pub use fractal_chaos_bands::{FractalChaosBands, FractalChaosBandsOutput};
 pub use frama::Frama;
 pub use funding_rate::FundingRate;
+pub use funding_rate_mean::FundingRateMean;
 pub use gain_loss_ratio::GainLossRatio;
 pub use garman_klass::GarmanKlassVolatility;
 pub use hammer::Hammer;
@@ -753,7 +755,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "Footprint",
         ],
     ),
-    ("Derivatives", &["FundingRate"]),
+    ("Derivatives", &["FundingRate", "FundingRateMean"]),
     (
         "Market Profile",
         &["ValueArea", "InitialBalance", "OpeningRange"],
@@ -808,6 +810,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 228, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 229, "FAMILIES total drifted from indicator count");
     }
 }
