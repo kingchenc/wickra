@@ -11714,6 +11714,7 @@ py_ob_indicator!(
 );
 py_ob_indicator!(PyMicroprice, wc::Microprice, "Microprice");
 py_ob_indicator!(PyQuotedSpread, wc::QuotedSpread, "QuotedSpread");
+py_ob_indicator!(PyDepthSlope, wc::DepthSlope, "DepthSlope");
 
 // Top-N imbalance carries a `levels` parameter, so it is hand-written.
 #[pyclass(
@@ -11899,6 +11900,198 @@ impl PyTradeImbalance {
     }
     fn __repr__(&self) -> String {
         format!("TradeImbalance(window={})", self.inner.window())
+    }
+}
+
+// ============================== Microstructure: Price Impact ==============================
+//
+// Price-impact indicators consume a trade paired with the mid prevailing at
+// execution. Streaming `update(price, size, is_buy, mid)` takes one such
+// trade-quote (`is_buy=True` for a buyer-initiated trade); `batch` takes four
+// equal-length arrays.
+
+fn build_trade_quote(price: f64, size: f64, is_buy: bool, mid: f64) -> PyResult<wc::TradeQuote> {
+    let trade = build_trade(price, size, is_buy)?;
+    wc::TradeQuote::new(trade, mid).map_err(map_err)
+}
+
+macro_rules! py_trade_quote_indicator {
+    ($name:ident, $inner:ty, $repr:expr) => {
+        #[pyclass(name = $repr, module = "wickra._wickra", skip_from_py_object)]
+        #[derive(Clone)]
+        struct $name {
+            inner: $inner,
+        }
+
+        #[pymethods]
+        impl $name {
+            #[new]
+            fn new() -> Self {
+                Self {
+                    inner: <$inner>::new(),
+                }
+            }
+            fn update(
+                &mut self,
+                price: f64,
+                size: f64,
+                is_buy: bool,
+                mid: f64,
+            ) -> PyResult<Option<f64>> {
+                Ok(self
+                    .inner
+                    .update(build_trade_quote(price, size, is_buy, mid)?))
+            }
+            fn batch<'py>(
+                &mut self,
+                py: Python<'py>,
+                price: Vec<f64>,
+                size: Vec<f64>,
+                is_buy: Vec<bool>,
+                mid: Vec<f64>,
+            ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+                if price.len() != size.len()
+                    || size.len() != is_buy.len()
+                    || is_buy.len() != mid.len()
+                {
+                    return Err(PyValueError::new_err(
+                        "price, size, is_buy, mid must be equal length",
+                    ));
+                }
+                let mut out = Vec::with_capacity(price.len());
+                for i in 0..price.len() {
+                    let quote = build_trade_quote(price[i], size[i], is_buy[i], mid[i])?;
+                    out.push(self.inner.update(quote).unwrap_or(f64::NAN));
+                }
+                Ok(out.into_pyarray(py))
+            }
+            fn reset(&mut self) {
+                self.inner.reset();
+            }
+            fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            fn warmup_period(&self) -> usize {
+                self.inner.warmup_period()
+            }
+            fn __repr__(&self) -> String {
+                format!("{}()", $repr)
+            }
+        }
+    };
+}
+
+py_trade_quote_indicator!(PyEffectiveSpread, wc::EffectiveSpread, "EffectiveSpread");
+
+// Realized spread carries a `horizon` parameter, so it is hand-written.
+#[pyclass(
+    name = "RealizedSpread",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyRealizedSpread {
+    inner: wc::RealizedSpread,
+}
+
+#[pymethods]
+impl PyRealizedSpread {
+    #[new]
+    fn new(horizon: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::RealizedSpread::new(horizon).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, price: f64, size: f64, is_buy: bool, mid: f64) -> PyResult<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_trade_quote(price, size, is_buy, mid)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        price: Vec<f64>,
+        size: Vec<f64>,
+        is_buy: Vec<bool>,
+        mid: Vec<f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if price.len() != size.len() || size.len() != is_buy.len() || is_buy.len() != mid.len() {
+            return Err(PyValueError::new_err(
+                "price, size, is_buy, mid must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            let quote = build_trade_quote(price[i], size[i], is_buy[i], mid[i])?;
+            out.push(self.inner.update(quote).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("RealizedSpread(horizon={})", self.inner.horizon())
+    }
+}
+
+// Kyle's lambda carries a `window` parameter, so it is hand-written.
+#[pyclass(name = "KylesLambda", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyKylesLambda {
+    inner: wc::KylesLambda,
+}
+
+#[pymethods]
+impl PyKylesLambda {
+    #[new]
+    fn new(window: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::KylesLambda::new(window).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, price: f64, size: f64, is_buy: bool, mid: f64) -> PyResult<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_trade_quote(price, size, is_buy, mid)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        price: Vec<f64>,
+        size: Vec<f64>,
+        is_buy: Vec<bool>,
+        mid: Vec<f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if price.len() != size.len() || size.len() != is_buy.len() || is_buy.len() != mid.len() {
+            return Err(PyValueError::new_err(
+                "price, size, is_buy, mid must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            let quote = build_trade_quote(price[i], size[i], is_buy[i], mid[i])?;
+            out.push(self.inner.update(quote).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("KylesLambda(window={})", self.inner.window())
     }
 }
 
@@ -13013,10 +13206,15 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyOrderBookImbalanceFull>()?;
     m.add_class::<PyMicroprice>()?;
     m.add_class::<PyQuotedSpread>()?;
+    m.add_class::<PyDepthSlope>()?;
     // Microstructure: trade flow.
     m.add_class::<PySignedVolume>()?;
     m.add_class::<PyCumulativeVolumeDelta>()?;
     m.add_class::<PyTradeImbalance>()?;
+    // Microstructure: price impact.
+    m.add_class::<PyEffectiveSpread>()?;
+    m.add_class::<PyRealizedSpread>()?;
+    m.add_class::<PyKylesLambda>()?;
     // Family 15: Risk / Performance metrics.
     m.add_class::<PySharpeRatio>()?;
     m.add_class::<PySortinoRatio>()?;

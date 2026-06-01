@@ -108,6 +108,7 @@ def test_orderbook_indicators_construct_and_emit():
         ta.OrderBookImbalanceFull(),
         ta.Microprice(),
         ta.QuotedSpread(),
+        ta.DepthSlope(),
     ]
     for ind in indicators:
         out = ind.update(*snapshot)
@@ -135,3 +136,21 @@ def test_tradeflow_batch_returns_one_value_per_trade():
     out = ta.CumulativeVolumeDelta().batch(price, size, is_buy)
     assert out.shape == (6,)
     assert out.dtype == np.float64
+
+
+def test_price_impact_indicators_construct_and_emit():
+    # Price-impact indicators take a trade paired with the prevailing mid.
+    assert isinstance(ta.EffectiveSpread().update(100.05, 1.0, True, 100.0), float)
+    # RealizedSpread buffers until its horizon elapses.
+    assert ta.RealizedSpread(1).update(100.05, 1.0, True, 100.0) is None
+
+
+def test_price_impact_batch_returns_one_value_per_trade():
+    price = np.array([100.05, 99.95, 100.10, 99.90])
+    size = np.array([1.0, 2.0, 1.0, 2.0])
+    is_buy = [True, False, True, False]
+    mid = np.full(4, 100.0)
+    for ind in (ta.EffectiveSpread(), ta.RealizedSpread(2), ta.KylesLambda(2)):
+        out = ind.batch(price, size, is_buy, mid)
+        assert out.shape == (4,)
+        assert out.dtype == np.float64

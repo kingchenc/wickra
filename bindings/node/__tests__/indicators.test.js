@@ -926,6 +926,10 @@ test('order-book indicators reference values', () => {
   assert.equal(new wickra.Microprice().update([100], [1], [101], [3]), 100.25);
   // Quoted spread: 1 / 100.5 * 10000 ≈ 99.5025 bps.
   assert.ok(Math.abs(new wickra.QuotedSpread().update([100], [1], [101], [1]) - 99.50248756) < 1e-6);
+  // Depth slope: each side distances 1,2 -> cumulative 1,3 -> OLS slope 2.
+  assert.ok(Math.abs(new wickra.DepthSlope().update([99, 98], [1, 2], [101, 102], [1, 2]) - 2.0) < 1e-9);
+  // Single level per side -> no slope -> 0.
+  assert.equal(new wickra.DepthSlope().update([100], [1], [101], [1]), 0.0);
 });
 
 test('order-book streaming update matches batch', () => {
@@ -980,4 +984,82 @@ test('trade-flow streaming update matches batch', () => {
 test('trade-flow rejects bad input', () => {
   assert.throws(() => new wickra.TradeImbalance(0));
   assert.throws(() => new wickra.SignedVolume().update(100, -1, true));
+});
+
+test('price-impact indicators reference values', () => {
+  // Buy at 100.05 vs mid 100.0: 2 * (100.05 - 100) / 100 * 10000 = 10 bps.
+  assert.ok(Math.abs(new wickra.EffectiveSpread().update(100.05, 1, true, 100.0) - 10.0) < 1e-9);
+  // Sell at 99.95 vs mid 100.0: 2 * -1 * (99.95 - 100) / 100 * 10000 = 10 bps.
+  assert.ok(Math.abs(new wickra.EffectiveSpread().update(99.95, 1, false, 100.0) - 10.0) < 1e-9);
+  // A buy filled below the mid is price improvement -> negative.
+  assert.ok(new wickra.EffectiveSpread().update(99.95, 1, true, 100.0) < 0.0);
+});
+
+test('price-impact streaming update matches batch', () => {
+  const n = 30;
+  const mid = Array.from({ length: n }, (_, i) => 100 + 0.25 * Math.sin(i * 0.5));
+  const isBuy = Array.from({ length: n }, (_, i) => i % 3 !== 0);
+  const price = Array.from({ length: n }, (_, i) => mid[i] + (isBuy[i] ? 0.03 : -0.03));
+  const size = Array.from({ length: n }, (_, i) => 1 + (i % 4));
+  const batch = new wickra.EffectiveSpread().batch(price, size, isBuy, mid);
+  const streamer = new wickra.EffectiveSpread();
+  assert.equal(batch.length, n);
+  for (let i = 0; i < n; i++) {
+    const s = streamer.update(price[i], size[i], isBuy[i], mid[i]);
+    assert.ok(Math.abs(s - batch[i]) < 1e-9, `mismatch at ${i}: ${s} vs ${batch[i]}`);
+  }
+});
+
+test('realized spread resolves against the future mid', () => {
+  const rs = new wickra.RealizedSpread(1);
+  assert.equal(rs.update(100.10, 1, true, 100.0), null); // buffered
+  // 2 * (+1) * (100.10 - 100.20) / 100.0 * 10000 = -20 bps.
+  assert.ok(Math.abs(rs.update(99.90, 1, false, 100.20) - -20.0) < 1e-9);
+});
+
+test('realized spread streaming update matches batch', () => {
+  const n = 30;
+  const mid = Array.from({ length: n }, (_, i) => 100 + 0.25 * Math.sin(i * 0.5));
+  const isBuy = Array.from({ length: n }, (_, i) => i % 3 !== 0);
+  const price = Array.from({ length: n }, (_, i) => mid[i] + (isBuy[i] ? 0.03 : -0.03));
+  const size = Array.from({ length: n }, (_, i) => 1 + (i % 4));
+  const batch = new wickra.RealizedSpread(4).batch(price, size, isBuy, mid);
+  const streamer = new wickra.RealizedSpread(4);
+  assert.equal(batch.length, n);
+  for (let i = 0; i < n; i++) {
+    const s = streamer.update(price[i], size[i], isBuy[i], mid[i]);
+    const got = s === null ? NaN : s;
+    assert.ok(
+      (Number.isNaN(got) && Number.isNaN(batch[i])) || Math.abs(got - batch[i]) < 1e-9,
+      `mismatch at ${i}: ${got} vs ${batch[i]}`,
+    );
+  }
+});
+
+test("kyle's lambda recovers a constant price-impact slope", () => {
+  // Each trade moves the mid by exactly 0.5 per unit of signed volume.
+  const impact = 0.5;
+  let mid = 100;
+  const price = [];
+  const size = [];
+  const isBuy = [];
+  const mids = [];
+  for (let i = 0; i < 20; i++) {
+    const buy = i % 2 === 0;
+    const sz = 1 + (i % 3);
+    const signed = buy ? sz : -sz;
+    mid += impact * signed;
+    price.push(mid);
+    size.push(sz);
+    isBuy.push(buy);
+    mids.push(mid);
+  }
+  const out = new wickra.KylesLambda(6).batch(price, size, isBuy, mids);
+  assert.ok(Math.abs(out[out.length - 1] - 0.5) < 1e-9);
+});
+
+test('price-impact rejects bad input', () => {
+  assert.throws(() => new wickra.EffectiveSpread().update(100, 1, true, 0));
+  assert.throws(() => new wickra.RealizedSpread(0));
+  assert.throws(() => new wickra.KylesLambda(1));
 });

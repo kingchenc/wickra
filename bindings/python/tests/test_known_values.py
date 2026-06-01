@@ -872,6 +872,16 @@ def test_quoted_spread_reference_value():
     assert qs.update([100.0], [1.0], [101.0], [1.0]) == pytest.approx(99.50248756, abs=1e-6)
 
 
+def test_depth_slope_reference_value():
+    # Symmetric book, each side distances 1, 2 with cumulative sizes 1, 3.
+    # OLS slope of (1->1, 2->3) = 2; mean of two equal sides = 2.
+    ds = ta.DepthSlope()
+    out = ds.update([99.0, 98.0], [1.0, 2.0], [101.0, 102.0], [1.0, 2.0])
+    assert out == pytest.approx(2.0, abs=1e-9)
+    # A book with a single level per side has no slope -> 0.
+    assert ta.DepthSlope().update([100.0], [1.0], [101.0], [1.0]) == pytest.approx(0.0)
+
+
 def test_signed_volume_reference_values():
     assert ta.SignedVolume().update(100.0, 2.0, True) == pytest.approx(2.0)
     assert ta.SignedVolume().update(100.0, 3.0, False) == pytest.approx(-3.0)
@@ -889,3 +899,39 @@ def test_trade_imbalance_reference_value():
     assert ti.update(100.0, 3.0, True) is None  # warming up
     # Window full: buyVol 3, sellVol 1 -> (3 - 1) / 4 = 0.5.
     assert ti.update(100.0, 1.0, False) == pytest.approx(0.5)
+
+
+def test_effective_spread_reference_values():
+    # Buy at 100.05 vs mid 100.0: 2 * (100.05 - 100) / 100 * 10000 = 10 bps.
+    assert ta.EffectiveSpread().update(100.05, 1.0, True, 100.0) == pytest.approx(10.0)
+    # Sell at 99.95 vs mid 100.0: 2 * -1 * (99.95 - 100) / 100 * 10000 = 10 bps.
+    assert ta.EffectiveSpread().update(99.95, 1.0, False, 100.0) == pytest.approx(10.0)
+    # A buy filled below the mid is price improvement -> negative.
+    assert ta.EffectiveSpread().update(99.95, 1.0, True, 100.0) < 0.0
+
+
+def test_realized_spread_reference_value():
+    rs = ta.RealizedSpread(1)
+    assert rs.update(100.10, 1.0, True, 100.0) is None  # buffered
+    # Resolved against mid 100.20 one trade later:
+    # 2 * (+1) * (100.10 - 100.20) / 100.0 * 10000 = -20 bps (adverse selection).
+    assert rs.update(99.90, 1.0, False, 100.20) == pytest.approx(-20.0)
+
+
+def test_kyles_lambda_recovers_constant_impact():
+    # Build a tape where each trade moves the mid by exactly 0.5 per unit of
+    # signed volume -> the rolling OLS slope is 0.5.
+    impact = 0.5
+    mid = 100.0
+    price, size, is_buy, mids = [], [], [], []
+    for i in range(20):
+        buy = i % 2 == 0
+        sz = 1.0 + (i % 3)
+        signed = sz if buy else -sz
+        mid += impact * signed
+        price.append(mid)
+        size.append(sz)
+        is_buy.append(buy)
+        mids.append(mid)
+    out = ta.KylesLambda(6).batch(price, size, is_buy, mids)
+    assert out[-1] == pytest.approx(0.5, abs=1e-9)

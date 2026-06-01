@@ -1890,6 +1890,7 @@ def test_orderbook_indicators_streaming_equals_batch():
         ta.OrderBookImbalanceFull,
         ta.Microprice,
         ta.QuotedSpread,
+        ta.DepthSlope,
     ):
         batch = make().batch(snaps)
         streamer = make()
@@ -1914,6 +1915,26 @@ def test_tradeflow_indicators_streaming_equals_batch():
         streamer = make()
         streamed = np.array(
             [streamer.update(price[i], size[i], is_buy[i]) for i in range(n)],
+            dtype=np.float64,
+        )
+        assert batch.shape == (n,)
+        assert _eq_nan(batch, streamed)
+
+
+def test_price_impact_indicators_streaming_equals_batch():
+    n = 40
+    mid = np.array([100.0 + 0.5 * math.sin(i * 0.4) for i in range(n)], dtype=np.float64)
+    is_buy = [i % 2 == 0 for i in range(n)]
+    # Aggressive trades print across the mid in the aggressor's direction.
+    price = np.array(
+        [mid[i] + (0.02 if is_buy[i] else -0.02) for i in range(n)], dtype=np.float64
+    )
+    size = np.array([1.0 + (i % 5) for i in range(n)], dtype=np.float64)
+    for make in (ta.EffectiveSpread, lambda: ta.RealizedSpread(4), lambda: ta.KylesLambda(5)):
+        batch = make().batch(price, size, is_buy, mid)
+        streamer = make()
+        streamed = np.array(
+            [streamer.update(price[i], size[i], is_buy[i], mid[i]) for i in range(n)],
             dtype=np.float64,
         )
         assert batch.shape == (n,)

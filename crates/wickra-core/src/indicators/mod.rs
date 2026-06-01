@@ -54,6 +54,7 @@ mod decycler_oscillator;
 mod dema;
 mod demand_index;
 mod demark_pivots;
+mod depth_slope;
 mod detrended_std_dev;
 mod doji;
 mod donchian;
@@ -62,6 +63,7 @@ mod double_bollinger;
 mod dpo;
 mod drawdown_duration;
 mod ease_of_movement;
+mod effective_spread;
 mod ehlers_stochastic;
 mod elder_impulse;
 mod ema;
@@ -100,6 +102,7 @@ mod keltner;
 mod kst;
 mod kurtosis;
 mod kvo;
+mod kyles_lambda;
 mod laguerre_rsi;
 mod lead_lag_cross_correlation;
 mod linreg;
@@ -144,6 +147,7 @@ mod psar;
 mod pvi;
 mod quoted_spread;
 mod r_squared;
+mod realized_spread;
 mod recovery_factor;
 mod relative_strength_ab;
 mod renko_trailing_stop;
@@ -281,6 +285,7 @@ pub use decycler_oscillator::DecyclerOscillator;
 pub use dema::Dema;
 pub use demand_index::DemandIndex;
 pub use demark_pivots::{DemarkPivots, DemarkPivotsOutput};
+pub use depth_slope::DepthSlope;
 pub use detrended_std_dev::DetrendedStdDev;
 pub use doji::Doji;
 pub use donchian::{Donchian, DonchianOutput};
@@ -289,6 +294,7 @@ pub use double_bollinger::{DoubleBollinger, DoubleBollingerOutput};
 pub use dpo::Dpo;
 pub use drawdown_duration::DrawdownDuration;
 pub use ease_of_movement::EaseOfMovement;
+pub use effective_spread::EffectiveSpread;
 pub use ehlers_stochastic::EhlersStochastic;
 pub use elder_impulse::ElderImpulse;
 pub use ema::Ema;
@@ -327,6 +333,7 @@ pub use keltner::{Keltner, KeltnerOutput};
 pub use kst::{Kst, KstOutput};
 pub use kurtosis::Kurtosis;
 pub use kvo::Kvo;
+pub use kyles_lambda::KylesLambda;
 pub use laguerre_rsi::LaguerreRsi;
 pub use lead_lag_cross_correlation::{LeadLagCrossCorrelation, LeadLagCrossCorrelationOutput};
 pub use linreg::LinearRegression;
@@ -371,6 +378,7 @@ pub use psar::Psar;
 pub use pvi::Pvi;
 pub use quoted_spread::QuotedSpread;
 pub use r_squared::RSquared;
+pub use realized_spread::RealizedSpread;
 pub use recovery_factor::RecoveryFactor;
 pub use relative_strength_ab::{RelativeStrengthAB, RelativeStrengthOutput};
 pub use renko_trailing_stop::RenkoTrailingStop;
@@ -731,9 +739,13 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "OrderBookImbalanceFull",
             "Microprice",
             "QuotedSpread",
+            "DepthSlope",
             "SignedVolume",
             "CumulativeVolumeDelta",
             "TradeImbalance",
+            "EffectiveSpread",
+            "RealizedSpread",
+            "KylesLambda",
         ],
     ),
     (
@@ -790,6 +802,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 222, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 226, "FAMILIES total drifted from indicator count");
     }
 }

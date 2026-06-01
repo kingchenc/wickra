@@ -12,7 +12,7 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    BatchExt, Indicator, Level, Microprice, OrderBook, OrderBookImbalanceFull,
+    BatchExt, DepthSlope, Indicator, Level, Microprice, OrderBook, OrderBookImbalanceFull,
     OrderBookImbalanceTop1, OrderBookImbalanceTopN, QuotedSpread,
 };
 
@@ -51,4 +51,5 @@ fuzz_target!(|data: &[u8]| {
     drive(OrderBookImbalanceFull::new, &books);
     drive(Microprice::new, &books);
     drive(QuotedSpread::new, &books);
+    drive(DepthSlope::new, &books);
 });

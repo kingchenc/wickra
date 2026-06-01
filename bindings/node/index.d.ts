@@ -2232,6 +2232,15 @@ export declare class QuotedSpread {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type DepthSlopeNode = DepthSlope
+export declare class DepthSlope {
+  constructor()
+  update(bidPx: Array<number>, bidSz: Array<number>, askPx: Array<number>, askSz: Array<number>): number | null
+  batch(snapshots: Array<ObSnapshot>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type OrderBookImbalanceTopNNode = OrderBookImbalanceTopN
 export declare class OrderBookImbalanceTopN {
   constructor(levels: number)
@@ -2264,6 +2273,33 @@ export declare class TradeImbalance {
   constructor(window: number)
   update(price: number, size: number, isBuy: boolean): number | null
   batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type EffectiveSpreadNode = EffectiveSpread
+export declare class EffectiveSpread {
+  constructor()
+  update(price: number, size: number, isBuy: boolean, mid: number): number | null
+  batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>, mid: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RealizedSpreadNode = RealizedSpread
+export declare class RealizedSpread {
+  constructor(horizon: number)
+  update(price: number, size: number, isBuy: boolean, mid: number): number | null
+  batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>, mid: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type KylesLambdaNode = KylesLambda
+export declare class KylesLambda {
+  constructor(window: number)
+  update(price: number, size: number, isBuy: boolean, mid: number): number | null
+  batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>, mid: Array<number>): Array<number>
   reset(): void
   isReady(): boolean
   warmupPeriod(): number

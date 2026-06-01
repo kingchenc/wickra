@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Microstructure family — price impact & depth (part 3).** Indicators over a
+  trade paired with the prevailing mid (`TradeQuote`) and over the order-book
+  depth profile, exposed in Rust, Python, Node and WASM:
+  - **Effective Spread** — `2 · D · (tradePrice − mid) / mid · 10_000` bps, the
+    realised round-trip cost of a single trade against the mid.
+  - **Realized Spread** — `2 · D · (tradePrice − mid_{t+horizon}) / mid_t ·
+    10_000` bps, the share of the effective spread a liquidity provider keeps
+    once the mid has moved over a configurable horizon.
+  - **Kyle's Lambda** — the rolling OLS slope of mid changes on signed volume
+    (`cov(Δmid, q) / var(q)`), the canonical price-impact / market-depth proxy.
+  - **Depth Slope** — the mean per-side OLS slope of cumulative resting size
+    against distance from the mid, measuring how fast the book thickens away
+    from the touch.
+
 ## [0.4.2] - 2026-06-01
 
 ### Added

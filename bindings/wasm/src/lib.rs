@@ -6421,6 +6421,7 @@ wasm_ob_indicator!(
 );
 wasm_ob_indicator!(WasmMicroprice, wc::Microprice, Microprice);
 wasm_ob_indicator!(WasmQuotedSpread, wc::QuotedSpread, QuotedSpread);
+wasm_ob_indicator!(WasmDepthSlope, wc::DepthSlope, DepthSlope);
 
 // Top-N imbalance carries a `levels` parameter, so it is hand-written.
 #[wasm_bindgen(js_name = OrderBookImbalanceTopN)]
@@ -6541,6 +6542,149 @@ impl WasmTradeImbalance {
     }
     pub fn update(&mut self, price: f64, size: f64, is_buy: bool) -> Result<Option<f64>, JsError> {
         Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== Microstructure: Price Impact ==============================
+//
+// Price-impact indicators consume a trade paired with the mid prevailing at
+// execution. Each `update(price, size, isBuy, mid)` takes one such trade-quote
+// (`isBuy=true` for a buyer-initiated trade) — the streaming model for a live
+// browser trade feed. Batch over a tape is provided by the Python and Node
+// bindings.
+
+fn build_trade_quote(
+    price: f64,
+    size: f64,
+    is_buy: bool,
+    mid: f64,
+) -> Result<wc::TradeQuote, JsError> {
+    let trade = build_trade(price, size, is_buy)?;
+    wc::TradeQuote::new(trade, mid).map_err(map_err)
+}
+
+macro_rules! wasm_trade_quote_indicator {
+    ($wasm:ident, $inner:ty, $js:ident) => {
+        #[wasm_bindgen(js_name = $js)]
+        pub struct $wasm {
+            inner: $inner,
+        }
+
+        impl Default for $wasm {
+            fn default() -> Self {
+                Self::new()
+            }
+        }
+
+        #[wasm_bindgen(js_class = $js)]
+        impl $wasm {
+            #[wasm_bindgen(constructor)]
+            pub fn new() -> $wasm {
+                Self {
+                    inner: <$inner>::new(),
+                }
+            }
+            pub fn update(
+                &mut self,
+                price: f64,
+                size: f64,
+                is_buy: bool,
+                mid: f64,
+            ) -> Result<Option<f64>, JsError> {
+                Ok(self
+                    .inner
+                    .update(build_trade_quote(price, size, is_buy, mid)?))
+            }
+            pub fn reset(&mut self) {
+                self.inner.reset();
+            }
+            #[wasm_bindgen(js_name = isReady)]
+            pub fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            #[wasm_bindgen(js_name = warmupPeriod)]
+            pub fn warmup_period(&self) -> usize {
+                self.inner.warmup_period()
+            }
+        }
+    };
+}
+
+wasm_trade_quote_indicator!(WasmEffectiveSpread, wc::EffectiveSpread, EffectiveSpread);
+
+// Realized spread carries a `horizon` parameter, so it is hand-written.
+#[wasm_bindgen(js_name = RealizedSpread)]
+pub struct WasmRealizedSpread {
+    inner: wc::RealizedSpread,
+}
+
+#[wasm_bindgen(js_class = RealizedSpread)]
+impl WasmRealizedSpread {
+    #[wasm_bindgen(constructor)]
+    pub fn new(horizon: usize) -> Result<WasmRealizedSpread, JsError> {
+        Ok(Self {
+            inner: wc::RealizedSpread::new(horizon).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        price: f64,
+        size: f64,
+        is_buy: bool,
+        mid: f64,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(build_trade_quote(price, size, is_buy, mid)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// Kyle's lambda carries a `window` parameter, so it is hand-written.
+#[wasm_bindgen(js_name = KylesLambda)]
+pub struct WasmKylesLambda {
+    inner: wc::KylesLambda,
+}
+
+#[wasm_bindgen(js_class = KylesLambda)]
+impl WasmKylesLambda {
+    #[wasm_bindgen(constructor)]
+    pub fn new(window: usize) -> Result<WasmKylesLambda, JsError> {
+        Ok(Self {
+            inner: wc::KylesLambda::new(window).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        price: f64,
+        size: f64,
+        is_buy: bool,
+        mid: f64,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(build_trade_quote(price, size, is_buy, mid)?))
     }
     pub fn reset(&mut self) {
         self.inner.reset();

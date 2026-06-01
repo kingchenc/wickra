@@ -139,6 +139,7 @@ def test_orderbook_lifecycle():
         ta.OrderBookImbalanceFull(),
         ta.Microprice(),
         ta.QuotedSpread(),
+        ta.DepthSlope(),
     ]:
         assert ind.warmup_period() == 1
         assert not ind.is_ready()
@@ -172,3 +173,37 @@ def test_trade_imbalance_lifecycle_and_repr():
     ti.reset()
     assert not ti.is_ready()
     assert repr(ta.TradeImbalance(4)) == "TradeImbalance(window=4)"
+
+
+def test_effective_spread_lifecycle():
+    es = ta.EffectiveSpread()
+    assert es.warmup_period() == 1
+    assert not es.is_ready()
+    es.update(100.05, 1.0, True, 100.0)
+    assert es.is_ready()
+    es.reset()
+    assert not es.is_ready()
+
+
+def test_realized_spread_lifecycle_and_repr():
+    rs = ta.RealizedSpread(3)
+    assert rs.warmup_period() == 4
+    assert not rs.is_ready()
+    for _ in range(4):
+        rs.update(100.0, 1.0, True, 100.0)
+    assert rs.is_ready()
+    rs.reset()
+    assert not rs.is_ready()
+    assert repr(ta.RealizedSpread(5)) == "RealizedSpread(horizon=5)"
+
+
+def test_kyles_lambda_lifecycle_and_repr():
+    kl = ta.KylesLambda(3)
+    assert kl.warmup_period() == 4
+    assert not kl.is_ready()
+    for i in range(4):
+        kl.update(100.0 + i, 1.0 + (i % 2), i % 2 == 0, 100.0 + i)
+    assert kl.is_ready()
+    kl.reset()
+    assert not kl.is_ready()
+    assert repr(ta.KylesLambda(7)) == "KylesLambda(window=7)"
