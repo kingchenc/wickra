@@ -12,6 +12,7 @@
 [![License: PolyForm-NC](https://img.shields.io/badge/license-PolyForm--NC--1.0.0-purple)](LICENSE)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/wickra-lib/wickra/badge)](https://scorecard.dev/viewer/?uri=github.com/wickra-lib/wickra)
 [![Build provenance](https://img.shields.io/badge/provenance-attested-brightgreen?logo=github)](https://github.com/wickra-lib/wickra/attestations)
+[![Docs](https://img.shields.io/badge/docs-docs.wickra.org-0ea5e9?logo=readthedocs&logoColor=white)](https://docs.wickra.org)
 
 **Streaming-first technical indicators. Install with `pip install wickra` — no system dependencies.**
 
@@ -36,6 +37,25 @@ for price in live_feed:
     if value is not None and value > 70:
         print("overbought")
 ```
+
+## Documentation
+
+Full documentation lives at **[docs.wickra.org](https://docs.wickra.org)**:
+
+- **Quickstarts** — [Rust](https://docs.wickra.org/Quickstart-Rust),
+  [Python](https://docs.wickra.org/Quickstart-Python),
+  [Node](https://docs.wickra.org/Quickstart-Node),
+  [WASM](https://docs.wickra.org/Quickstart-WASM).
+- **Indicators** — a per-indicator deep dive (formula, parameters, warmup) for
+  every one of the 214 indicators; start at the
+  [indicators overview](https://docs.wickra.org/Indicators-Overview).
+- **Reference** — [warmup periods](https://docs.wickra.org/Warmup-Periods),
+  [streaming vs batch](https://docs.wickra.org/Streaming-vs-Batch),
+  [indicator chaining](https://docs.wickra.org/Indicator-Chaining), the
+  [data layer](https://docs.wickra.org/Data-Layer).
+- **Guides** — [Cookbook](https://docs.wickra.org/Cookbook),
+  [TA-Lib migration](https://docs.wickra.org/TA-Lib-Migration),
+  [FAQ](https://docs.wickra.org/FAQ).
 
 ## Why Wickra exists
 
@@ -117,7 +137,8 @@ python -m benchmarks.compare_libraries
 
 214 streaming-first indicators across sixteen families. Every one passes the
 `batch == streaming` equivalence test, reference-value tests, and reset
-semantics tests.
+semantics tests. Each has a per-indicator deep dive (formula, parameters,
+warmup) at [docs.wickra.org](https://docs.wickra.org/Indicators-Overview).
 
 | Family | Indicators |
 |--------|-----------|
