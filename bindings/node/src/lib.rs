@@ -313,6 +313,58 @@ node_pair_indicator!(
     wc::SpearmanCorrelation
 );
 
+// ============================== PairSpreadZScore ==============================
+
+/// Pair spread z-score: two ctor params (`betaPeriod`, `zPeriod`), one `(a, b)`
+/// price pair per update, a single z-score out.
+#[napi(js_name = "PairSpreadZScore")]
+pub struct PairSpreadZScoreNode {
+    inner: wc::PairSpreadZScore,
+}
+
+#[napi]
+impl PairSpreadZScoreNode {
+    #[napi(constructor)]
+    pub fn new(beta_period: u32, z_period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::PairSpreadZScore::new(beta_period as usize, z_period as usize)
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, a: f64, b: f64) -> Option<f64> {
+        self.inner.update((a, b))
+    }
+    /// Batch over two equally-sized arrays of prices. Returns a length-`n`
+    /// array with `NaN` for warmup positions.
+    #[napi]
+    pub fn batch(&mut self, a: Vec<f64>, b: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if a.len() != b.len() {
+            return Err(NapiError::new(
+                Status::InvalidArg,
+                "a and b must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(a.len());
+        for i in 0..a.len() {
+            out.push(self.inner.update((a[i], b[i])).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== MACD ==============================
 
 /// MACD triple: macd line, signal line, histogram.

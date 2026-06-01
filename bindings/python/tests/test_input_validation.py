@@ -47,6 +47,15 @@ def test_unequal_length_pair_batch_raises(sine_prices):
     b = a[:-1]
     with pytest.raises(ValueError):
         ta.PairwiseBeta(20).batch(a, b)
+    with pytest.raises(ValueError):
+        ta.PairSpreadZScore(20, 20).batch(a, b)
+
+
+def test_pair_spread_zscore_rejects_bad_periods():
+    with pytest.raises(ValueError):
+        ta.PairSpreadZScore(1, 20)
+    with pytest.raises(ValueError):
+        ta.PairSpreadZScore(20, 1)
 
 
 def test_roc_and_trix_have_default_periods():

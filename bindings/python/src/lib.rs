@@ -10811,6 +10811,78 @@ impl PyPairwiseBeta {
     }
 }
 
+// ============================== PairSpreadZScore ==============================
+
+#[pyclass(
+    name = "PairSpreadZScore",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyPairSpreadZScore {
+    inner: wc::PairSpreadZScore,
+}
+
+#[pymethods]
+impl PyPairSpreadZScore {
+    #[new]
+    #[pyo3(signature = (beta_period=20, z_period=20))]
+    fn new(beta_period: usize, z_period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::PairSpreadZScore::new(beta_period, z_period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, a: f64, b: f64) -> Option<f64> {
+        self.inner.update((a, b))
+    }
+    /// Batch over two equally-sized numpy arrays of prices: `a` and `b`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        a: PyReadonlyArray1<'py, f64>,
+        b: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let xs = a
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let ys = b
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if xs.len() != ys.len() {
+            return Err(PyValueError::new_err("a and b must be equal length"));
+        }
+        let mut out = Vec::with_capacity(xs.len());
+        for i in 0..xs.len() {
+            out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn beta_period(&self) -> usize {
+        self.inner.beta_period()
+    }
+    #[getter]
+    fn z_period(&self) -> usize {
+        self.inner.z_period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "PairSpreadZScore(beta_period={}, z_period={})",
+            self.inner.beta_period(),
+            self.inner.z_period()
+        )
+    }
+}
+
 // ============================== SpearmanCorrelation ==============================
 
 #[pyclass(
@@ -12297,6 +12369,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyPearsonCorrelation>()?;
     m.add_class::<PyBeta>()?;
     m.add_class::<PyPairwiseBeta>()?;
+    m.add_class::<PyPairSpreadZScore>()?;
     m.add_class::<PySpearmanCorrelation>()?;
     m.add_class::<PyValueArea>()?;
     m.add_class::<PyInitialBalance>()?;

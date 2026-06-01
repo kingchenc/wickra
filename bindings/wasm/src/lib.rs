@@ -532,6 +532,49 @@ wasm_pair_indicator!(
     wc::SpearmanCorrelation
 );
 
+// ---------- PairSpreadZScore (two params) ----------
+
+#[wasm_bindgen(js_name = "PairSpreadZScore")]
+pub struct WasmPairSpreadZScore {
+    inner: wc::PairSpreadZScore,
+}
+
+#[wasm_bindgen(js_class = "PairSpreadZScore")]
+impl WasmPairSpreadZScore {
+    #[wasm_bindgen(constructor)]
+    pub fn new(beta_period: usize, z_period: usize) -> Result<WasmPairSpreadZScore, JsError> {
+        Ok(Self {
+            inner: wc::PairSpreadZScore::new(beta_period, z_period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, a: f64, b: f64) -> Option<f64> {
+        self.inner.update((a, b))
+    }
+    /// Batch over two equally-sized arrays of prices. Returns one `f64` per
+    /// input position (`NaN` during warmup).
+    pub fn batch(&mut self, a: &[f64], b: &[f64]) -> Result<Float64Array, JsError> {
+        if a.len() != b.len() {
+            return Err(JsError::new("a and b must be equal length"));
+        }
+        let mut out = Vec::with_capacity(a.len());
+        for i in 0..a.len() {
+            out.push(self.inner.update((a[i], b[i])).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 // ---------- KAMA (three params) ----------
 
 #[wasm_bindgen(js_name = KAMA)]

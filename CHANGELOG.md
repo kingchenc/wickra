@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     it is fed, `PairwiseBeta` differences consecutive prices into log-returns
     internally — the conventional way to measure cross-asset beta, where a beta
     on price levels would be dominated by the shared trend.
+  - **Pair Spread Z-Score** (`PairSpreadZScore`) — the standardised log-spread
+    `ln(a) − β·ln(b)` of a pair, where `β` is a rolling-OLS hedge ratio and the
+    spread is z-scored over its own look-back. The canonical mean-reversion /
+    statistical-arbitrage entry signal, with independent `beta_period` and
+    `z_period` windows.
 
 ## [0.4.0] - 2026-06-01
 

@@ -654,6 +654,23 @@ export declare class SpearmanCorrelation {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type PairSpreadZScoreNode = PairSpreadZScore
+/**
+ * Pair spread z-score: two ctor params (`betaPeriod`, `zPeriod`), one `(a, b)`
+ * price pair per update, a single z-score out.
+ */
+export declare class PairSpreadZScore {
+  constructor(betaPeriod: number, zPeriod: number)
+  update(a: number, b: number): number | null
+  /**
+   * Batch over two equally-sized arrays of prices. Returns a length-`n`
+   * array with `NaN` for warmup positions.
+   */
+  batch(a: Array<number>, b: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type MacdNode = MACD
 export declare class MACD {
   constructor(fast: number, slow: number, signal: number)

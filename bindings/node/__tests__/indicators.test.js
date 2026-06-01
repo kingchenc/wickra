@@ -462,6 +462,7 @@ const pairFactories = {
   PearsonCorrelation: () => new wickra.PearsonCorrelation(14),
   Beta: () => new wickra.Beta(14),
   PairwiseBeta: () => new wickra.PairwiseBeta(14),
+  PairSpreadZScore: () => new wickra.PairSpreadZScore(14, 14),
   SpearmanCorrelation: () => new wickra.SpearmanCorrelation(14),
 };
 
@@ -499,6 +500,15 @@ test('PairwiseBeta squared price is two', () => {
   const asset = bench.map((v) => v * v);
   const out = new wickra.PairwiseBeta(5).batch(asset, bench);
   assert.ok(Math.abs(out[out.length - 1] - 2) < 1e-9);
+});
+
+test('PairSpreadZScore flat benchmark is sign of last move', () => {
+  // Flat b ⇒ hedge ratio 0 ⇒ spread = ln(a); z_period = 2 ⇒ z = sign of move.
+  const a = [100, 100, 110, 105, 130];
+  const b = [100, 100, 100, 100, 100];
+  const out = new wickra.PairSpreadZScore(2, 2).batch(a, b);
+  assert.ok(Math.abs(out[out.length - 1] - 1) < 1e-9);
+  assert.ok(Math.abs(out[out.length - 2] + 1) < 1e-9);
 });
 
 test('SpearmanCorrelation monotone non-linear is 1', () => {

@@ -160,6 +160,7 @@ PAIR = [
     (ta.InformationRatio, (20,)),
     (ta.Alpha, (20, 0.0)),
     (ta.PairwiseBeta, (20,)),
+    (ta.PairSpreadZScore, (20, 20)),
 ]
 
 

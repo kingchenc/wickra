@@ -447,6 +447,16 @@ def test_pairwise_beta_inverse_price_is_minus_one():
     assert math.isclose(out[-1], -1.0, rel_tol=1e-9)
 
 
+def test_pair_spread_zscore_flat_benchmark_sign():
+    # Flat b ⇒ hedge ratio 0 ⇒ spread = ln(a). With z_period = 2 the z-score
+    # collapses to the sign of the last move: rising a ⇒ +1, falling a ⇒ −1.
+    a = np.array([100.0, 100.0, 110.0, 105.0, 130.0])
+    b = np.full_like(a, 100.0)
+    out = ta.PairSpreadZScore(2, 2).batch(a, b)
+    assert math.isclose(out[-1], 1.0, abs_tol=1e-9)
+    assert math.isclose(out[-2], -1.0, abs_tol=1e-9)
+
+
 def test_value_at_risk_known_window():
     # returns -5..4 *0.01; q=0.05*9=0.45 -> -0.0455; VaR = 0.0455.
     returns = np.array([i * 0.01 for i in range(-5, 5)])
