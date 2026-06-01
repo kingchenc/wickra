@@ -2241,6 +2241,33 @@ export declare class OrderBookImbalanceTopN {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type SignedVolumeNode = SignedVolume
+export declare class SignedVolume {
+  constructor()
+  update(price: number, size: number, isBuy: boolean): number | null
+  batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type CumulativeVolumeDeltaNode = CumulativeVolumeDelta
+export declare class CumulativeVolumeDelta {
+  constructor()
+  update(price: number, size: number, isBuy: boolean): number | null
+  batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TradeImbalanceNode = TradeImbalance
+export declare class TradeImbalance {
+  constructor(window: number)
+  update(price: number, size: number, isBuy: boolean): number | null
+  batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type SharpeRatioNode = SharpeRatio
 export declare class SharpeRatio {
   constructor(period: number, riskFree: number)
