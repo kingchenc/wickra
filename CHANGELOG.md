@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-06-01
+
 ### Added
 - **Cross-asset pairwise indicators.** A new two-series family of
   `Indicator<Input = (f64, f64)>` implementations that relate two distinct
@@ -898,7 +900,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/wickra-lib/wickra/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/wickra-lib/wickra/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/wickra-lib/wickra/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/wickra-lib/wickra/compare/v0.2.7...v0.3.0
