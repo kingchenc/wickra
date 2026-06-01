@@ -1898,3 +1898,23 @@ def test_orderbook_indicators_streaming_equals_batch():
         )
         assert batch.shape == (len(snaps),)
         assert _eq_nan(batch, streamed)
+
+
+def test_tradeflow_indicators_streaming_equals_batch():
+    n = 40
+    price = np.full(n, 100.0)
+    size = np.array([1.0 + (i % 5) for i in range(n)], dtype=np.float64)
+    is_buy = [i % 2 == 0 for i in range(n)]
+    for make in (
+        ta.SignedVolume,
+        ta.CumulativeVolumeDelta,
+        lambda: ta.TradeImbalance(5),
+    ):
+        batch = make().batch(price, size, is_buy)
+        streamer = make()
+        streamed = np.array(
+            [streamer.update(price[i], size[i], is_buy[i]) for i in range(n)],
+            dtype=np.float64,
+        )
+        assert batch.shape == (n,)
+        assert _eq_nan(batch, streamed)

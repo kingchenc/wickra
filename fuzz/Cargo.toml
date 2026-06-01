@@ -60,6 +60,13 @@ doc = false
 bench = false
 
 [[bin]]
+name = "indicator_update_trade"
+path = "fuzz_targets/indicator_update_trade.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
 name = "tick_aggregator"
 path = "fuzz_targets/tick_aggregator.rs"
 test = false
