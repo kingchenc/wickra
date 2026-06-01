@@ -6336,6 +6336,11 @@ wasm_candle_pattern!(
     wc::UpsideGapTwoCrows,
     UpsideGapTwoCrows
 );
+wasm_candle_pattern!(
+    WasmIdenticalThreeCrows,
+    wc::IdenticalThreeCrows,
+    IdenticalThreeCrows
+);
 
 // ============================== Microstructure: Order Book ==============================
 //

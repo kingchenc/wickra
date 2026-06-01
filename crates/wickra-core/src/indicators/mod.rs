@@ -95,6 +95,7 @@ mod hma;
 mod hurst_channel;
 mod hurst_exponent;
 mod ichimoku;
+mod identical_three_crows;
 mod inertia;
 mod information_ratio;
 mod initial_balance;
@@ -341,6 +342,7 @@ pub use hma::Hma;
 pub use hurst_channel::{HurstChannel, HurstChannelOutput};
 pub use hurst_exponent::HurstExponent;
 pub use ichimoku::{Ichimoku, IchimokuOutput};
+pub use identical_three_crows::IdenticalThreeCrows;
 pub use inertia::Inertia;
 pub use information_ratio::InformationRatio;
 pub use initial_balance::{InitialBalance, InitialBalanceOutput};
@@ -761,6 +763,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "ThreeOutside",
             "TwoCrows",
             "UpsideGapTwoCrows",
+            "IdenticalThreeCrows",
         ],
     ),
     (
@@ -852,6 +855,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 241, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 242, "FAMILIES total drifted from indicator count");
     }
 }

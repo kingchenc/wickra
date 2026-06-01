@@ -531,6 +531,10 @@ CANDLE_SCALAR = {
         lambda: ta.UpsideGapTwoCrows(),
         lambda ind, h, l, c, v: ind.batch(c, h, l, c),
     ),
+    "IdenticalThreeCrows": (
+        lambda: ta.IdenticalThreeCrows(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
 }
 
 
@@ -1871,6 +1875,13 @@ def test_upside_gap_two_crows_reference():
     assert t.update((10.0, 12.2, 9.9, 12.0, 1.0, 0)) == pytest.approx(0.0)
     assert t.update((14.0, 14.2, 12.9, 13.0, 1.0, 1)) == pytest.approx(0.0)
     assert t.update((15.0, 15.2, 12.4, 12.5, 1.0, 2)) == pytest.approx(-1.0)
+
+
+def test_identical_three_crows_reference():
+    t = ta.IdenticalThreeCrows()
+    assert t.update((13.0, 13.1, 11.9, 12.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((12.0, 12.1, 10.9, 11.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((11.0, 11.1, 9.9, 10.0, 1.0, 2)) == pytest.approx(-1.0)
 
 
 # --- Lifecycle ------------------------------------------------------------

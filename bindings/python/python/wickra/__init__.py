@@ -242,6 +242,7 @@ from ._wickra import (
     ThreeOutside,
     TwoCrows,
     UpsideGapTwoCrows,
+    IdenticalThreeCrows,
     # Microstructure: order book
     OrderBookImbalanceTop1,
     OrderBookImbalanceTopN,
@@ -511,6 +512,7 @@ __all__ = [
     "ThreeOutside",
     "TwoCrows",
     "UpsideGapTwoCrows",
+    "IdenticalThreeCrows",
     # Microstructure: order book
     "OrderBookImbalanceTop1",
     "OrderBookImbalanceTopN",

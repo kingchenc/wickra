@@ -8759,6 +8759,11 @@ node_candle_pattern!(
     wc::UpsideGapTwoCrows,
     "UpsideGapTwoCrows"
 );
+node_candle_pattern!(
+    IdenticalThreeCrowsNode,
+    wc::IdenticalThreeCrows,
+    "IdenticalThreeCrows"
+);
 
 // ============================== Microstructure: Order Book ==============================
 //

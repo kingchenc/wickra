@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     (`CDLUPSIDEGAP2CROWS`): two black candles gap up over a long white candle,
     the second engulfing the first crow yet still closing above the white body,
     leaving the upside gap open.
+  - **Identical Three Crows** — a three-bar bearish reversal
+    (`CDLIDENTICAL3CROWS`): three red candles with steadily lower closes, each
+    opening at the prior candle's close so the bodies stack in an identical
+    staircase.
 - **Derivatives family — funding & open interest (part 1).** A new family of
   indicators that consume a perpetual / futures tick (`DerivativesTick`,
   bundling funding rate, mark / index / futures price, open interest,
