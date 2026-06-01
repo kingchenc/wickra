@@ -135,6 +135,7 @@ mod ob_imbalance_top1;
 mod ob_imbalance_topn;
 mod obv;
 mod oi_delta;
+mod oi_price_divergence;
 mod omega_ratio;
 mod opening_range;
 mod pain_index;
@@ -372,6 +373,7 @@ pub use ob_imbalance_top1::OrderBookImbalanceTop1;
 pub use ob_imbalance_topn::OrderBookImbalanceTopN;
 pub use obv::Obv;
 pub use oi_delta::OpenInterestDelta;
+pub use oi_price_divergence::OIPriceDivergence;
 pub use omega_ratio::OmegaRatio;
 pub use opening_range::{OpeningRange, OpeningRangeOutput};
 pub use pain_index::PainIndex;
@@ -769,6 +771,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "FundingRateZScore",
             "FundingBasis",
             "OpenInterestDelta",
+            "OIPriceDivergence",
         ],
     ),
     (
@@ -825,6 +828,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 232, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 233, "FAMILIES total drifted from indicator count");
     }
 }
