@@ -6,6 +6,13 @@ on:
   pull_request:
     branches: [main]
 
+# Least-privilege default for the auto-injected GITHUB_TOKEN. None of the CI
+# jobs write back to the repo — coverage uploads via CODECOV_TOKEN, everything
+# else is build/test/lint — so a read-only token is sufficient (OpenSSF
+# Scorecard: Token-Permissions).
+permissions:
+  contents: read
+
 env:
   CARGO_TERM_COLOR: always
   RUSTFLAGS: "-D warnings"

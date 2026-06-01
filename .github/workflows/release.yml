@@ -5,6 +5,17 @@ on:
     tags: ["v*"]
   workflow_dispatch:
 
+# Least-privilege default for the auto-injected GITHUB_TOKEN. The publish jobs
+# (cargo/python/node) push to external registries via their own secrets
+# (CARGO_REGISTRY_TOKEN / PYPI_API_TOKEN / NPM_TOKEN), not the GITHUB_TOKEN, so
+# they need no repo write. The jobs that genuinely write through the
+# GITHUB_TOKEN — github-release (contents: write), node-/wasm-publish and
+# attestations (id-token / attestations: write) — declare those rights in their
+# own job-level permissions blocks, which override this default (OpenSSF
+# Scorecard: Token-Permissions).
+permissions:
+  contents: read
+
 env:
   CARGO_TERM_COLOR: always
 

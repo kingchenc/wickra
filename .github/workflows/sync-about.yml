@@ -55,18 +55,24 @@ on:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
 
-# `contents: write` is needed so the workflow can push the counter
-# fix-up commit to the PR head branch via the auto-provided
-# GITHUB_TOKEN. The wider About / Wiki writes still go through the
-# fine-grained PAT (ABOUT_SYNC_TOKEN) because they need
-# `Administration: write` (gh repo edit) which GITHUB_TOKEN lacks.
+# Least-privilege default for the auto-injected GITHUB_TOKEN. The `contents:
+# write` the workflow needs — to push the counter fix-up commit to the PR head
+# branch — is raised at the job level below, not here, so the top-level default
+# stays read-only (OpenSSF Scorecard: Token-Permissions). The wider About /
+# docs / webpage / org writes still go through the fine-grained PAT
+# (ABOUT_SYNC_TOKEN), which the `permissions:` key does not govern at all.
 permissions:
-  contents: write
+  contents: read
   pull-requests: read
 
 jobs:
   sync:
     runs-on: ubuntu-latest
+    # The only GITHUB_TOKEN write in this workflow: pushing the counter fix-up
+    # commit onto a same-repo PR head branch (git push origin HEAD:<ref>).
+    permissions:
+      contents: write
+      pull-requests: read
     steps:
       # On PRs from forks the head ref lives in another repo; pushing
       # back to it from this workflow is blocked by GitHub. We still
