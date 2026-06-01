@@ -231,3 +231,20 @@ def test_tradeflow_streaming_matches_batch():
         dtype=np.float64,
     )
     assert _equal_with_nan(batch, streamed)
+
+
+def test_price_impact_streaming_matches_batch():
+    n = 30
+    mid = np.array([100.0 + 0.25 * math.sin(i * 0.5) for i in range(n)], dtype=np.float64)
+    is_buy = [i % 3 != 0 for i in range(n)]
+    price = np.array(
+        [mid[i] + (0.03 if is_buy[i] else -0.03) for i in range(n)], dtype=np.float64
+    )
+    size = np.array([1.0 + (i % 4) for i in range(n)], dtype=np.float64)
+    batch = ta.EffectiveSpread().batch(price, size, is_buy, mid)
+    streamer = ta.EffectiveSpread()
+    streamed = np.array(
+        [streamer.update(price[i], size[i], is_buy[i], mid[i]) for i in range(n)],
+        dtype=np.float64,
+    )
+    assert _equal_with_nan(batch, streamed)

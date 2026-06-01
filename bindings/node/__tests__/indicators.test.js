@@ -981,3 +981,31 @@ test('trade-flow rejects bad input', () => {
   assert.throws(() => new wickra.TradeImbalance(0));
   assert.throws(() => new wickra.SignedVolume().update(100, -1, true));
 });
+
+test('price-impact indicators reference values', () => {
+  // Buy at 100.05 vs mid 100.0: 2 * (100.05 - 100) / 100 * 10000 = 10 bps.
+  assert.ok(Math.abs(new wickra.EffectiveSpread().update(100.05, 1, true, 100.0) - 10.0) < 1e-9);
+  // Sell at 99.95 vs mid 100.0: 2 * -1 * (99.95 - 100) / 100 * 10000 = 10 bps.
+  assert.ok(Math.abs(new wickra.EffectiveSpread().update(99.95, 1, false, 100.0) - 10.0) < 1e-9);
+  // A buy filled below the mid is price improvement -> negative.
+  assert.ok(new wickra.EffectiveSpread().update(99.95, 1, true, 100.0) < 0.0);
+});
+
+test('price-impact streaming update matches batch', () => {
+  const n = 30;
+  const mid = Array.from({ length: n }, (_, i) => 100 + 0.25 * Math.sin(i * 0.5));
+  const isBuy = Array.from({ length: n }, (_, i) => i % 3 !== 0);
+  const price = Array.from({ length: n }, (_, i) => mid[i] + (isBuy[i] ? 0.03 : -0.03));
+  const size = Array.from({ length: n }, (_, i) => 1 + (i % 4));
+  const batch = new wickra.EffectiveSpread().batch(price, size, isBuy, mid);
+  const streamer = new wickra.EffectiveSpread();
+  assert.equal(batch.length, n);
+  for (let i = 0; i < n; i++) {
+    const s = streamer.update(price[i], size[i], isBuy[i], mid[i]);
+    assert.ok(Math.abs(s - batch[i]) < 1e-9, `mismatch at ${i}: ${s} vs ${batch[i]}`);
+  }
+});
+
+test('price-impact rejects bad input', () => {
+  assert.throws(() => new wickra.EffectiveSpread().update(100, 1, true, 0));
+});

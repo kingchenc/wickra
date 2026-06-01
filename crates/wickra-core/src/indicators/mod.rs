@@ -62,6 +62,7 @@ mod double_bollinger;
 mod dpo;
 mod drawdown_duration;
 mod ease_of_movement;
+mod effective_spread;
 mod ehlers_stochastic;
 mod elder_impulse;
 mod ema;
@@ -289,6 +290,7 @@ pub use double_bollinger::{DoubleBollinger, DoubleBollingerOutput};
 pub use dpo::Dpo;
 pub use drawdown_duration::DrawdownDuration;
 pub use ease_of_movement::EaseOfMovement;
+pub use effective_spread::EffectiveSpread;
 pub use ehlers_stochastic::EhlersStochastic;
 pub use elder_impulse::ElderImpulse;
 pub use ema::Ema;
@@ -734,6 +736,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "SignedVolume",
             "CumulativeVolumeDelta",
             "TradeImbalance",
+            "EffectiveSpread",
         ],
     ),
     (
@@ -790,6 +793,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 222, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 223, "FAMILIES total drifted from indicator count");
     }
 }

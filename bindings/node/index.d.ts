@@ -2268,6 +2268,15 @@ export declare class TradeImbalance {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type EffectiveSpreadNode = EffectiveSpread
+export declare class EffectiveSpread {
+  constructor()
+  update(price: number, size: number, isBuy: boolean, mid: number): number | null
+  batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>, mid: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type SharpeRatioNode = SharpeRatio
 export declare class SharpeRatio {
   constructor(period: number, riskFree: number)

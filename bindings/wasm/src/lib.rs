@@ -6555,6 +6555,73 @@ impl WasmTradeImbalance {
     }
 }
 
+// ============================== Microstructure: Price Impact ==============================
+//
+// Price-impact indicators consume a trade paired with the mid prevailing at
+// execution. Each `update(price, size, isBuy, mid)` takes one such trade-quote
+// (`isBuy=true` for a buyer-initiated trade) — the streaming model for a live
+// browser trade feed. Batch over a tape is provided by the Python and Node
+// bindings.
+
+fn build_trade_quote(
+    price: f64,
+    size: f64,
+    is_buy: bool,
+    mid: f64,
+) -> Result<wc::TradeQuote, JsError> {
+    let trade = build_trade(price, size, is_buy)?;
+    wc::TradeQuote::new(trade, mid).map_err(map_err)
+}
+
+macro_rules! wasm_trade_quote_indicator {
+    ($wasm:ident, $inner:ty, $js:ident) => {
+        #[wasm_bindgen(js_name = $js)]
+        pub struct $wasm {
+            inner: $inner,
+        }
+
+        impl Default for $wasm {
+            fn default() -> Self {
+                Self::new()
+            }
+        }
+
+        #[wasm_bindgen(js_class = $js)]
+        impl $wasm {
+            #[wasm_bindgen(constructor)]
+            pub fn new() -> $wasm {
+                Self {
+                    inner: <$inner>::new(),
+                }
+            }
+            pub fn update(
+                &mut self,
+                price: f64,
+                size: f64,
+                is_buy: bool,
+                mid: f64,
+            ) -> Result<Option<f64>, JsError> {
+                Ok(self
+                    .inner
+                    .update(build_trade_quote(price, size, is_buy, mid)?))
+            }
+            pub fn reset(&mut self) {
+                self.inner.reset();
+            }
+            #[wasm_bindgen(js_name = isReady)]
+            pub fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            #[wasm_bindgen(js_name = warmupPeriod)]
+            pub fn warmup_period(&self) -> usize {
+                self.inner.warmup_period()
+            }
+        }
+    };
+}
+
+wasm_trade_quote_indicator!(WasmEffectiveSpread, wc::EffectiveSpread, EffectiveSpread);
+
 #[cfg(test)]
 mod tests {
     use super::*;

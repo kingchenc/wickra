@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Microstructure family — price impact & depth (part 3).** Indicators over a
+  trade paired with the prevailing mid (`TradeQuote`) and over the order-book
+  depth profile, exposed in Rust, Python, Node and WASM:
+  - **Effective Spread** — `2 · D · (tradePrice − mid) / mid · 10_000` bps, the
+    realised round-trip cost of a single trade against the mid.
+
 ## [0.4.2] - 2026-06-01
 
 ### Added

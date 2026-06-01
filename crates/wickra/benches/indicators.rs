@@ -33,14 +33,14 @@ use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Through
 use std::hint::black_box;
 use wickra::{
     Adx, Atr, Autocorrelation, BatchExt, BollingerBands, BollingerOutput, CalmarRatio, Candle, Cci,
-    ClassicPivots, ConnorsRsi, Ema, EmpiricalModeDecomposition, Engulfing, Frama,
+    ClassicPivots, ConnorsRsi, EffectiveSpread, Ema, EmpiricalModeDecomposition, Engulfing, Frama,
     HilbertDominantCycle, HurstExponent, Ichimoku, IchimokuOutput, Indicator, Jma, Level,
     LinearRegression, MacdIndicator, MacdOutput, Mama, MamaOutput, MaxDrawdown, Microprice, Obv,
     OrderBook, OrderBookImbalanceFull, OrderBookImbalanceTop1, ParkinsonVolatility, Ppo, Psar,
     RollingVwap, Rsi, SharpeRatio, Side, SignedVolume, Sma, Stc, SuperTrend, SuperTrendOutput,
-    TdSequential, TdSequentialOutput, Trade, TradeImbalance, TtmSqueeze, TtmSqueezeOutput,
-    ValueArea, ValueAreaOutput, ValueAtRisk, Vwap, VwapStdDevBands, VwapStdDevBandsOutput,
-    WaveTrend, YangZhangVolatility, T3,
+    TdSequential, TdSequentialOutput, Trade, TradeImbalance, TradeQuote, TtmSqueeze,
+    TtmSqueezeOutput, ValueArea, ValueAreaOutput, ValueAtRisk, Vwap, VwapStdDevBands,
+    VwapStdDevBandsOutput, WaveTrend, YangZhangVolatility, T3,
 };
 use wickra_data::csv::CandleReader;
 
@@ -152,6 +152,28 @@ where
                 let mut ind = make();
                 for t in trades {
                     black_box(ind.update(*t));
+                }
+            });
+        });
+    }
+    group.finish();
+}
+
+fn bench_tradequote_input<I, F, O>(c: &mut Criterion, name: &str, quotes: &[TradeQuote], make: F)
+where
+    F: Fn() -> I,
+    I: Indicator<Input = TradeQuote, Output = O>,
+{
+    let mut group = c.benchmark_group(name);
+    for &n in SIZES {
+        let n = n.min(quotes.len());
+        let series = &quotes[..n];
+        group.throughput(Throughput::Elements(n as u64));
+        group.bench_with_input(BenchmarkId::new("streaming", n), series, |b, quotes| {
+            b.iter(|| {
+                let mut ind = make();
+                for q in quotes {
+                    black_box(ind.update(*q));
                 }
             });
         });
@@ -351,6 +373,15 @@ fn benches(c: &mut Criterion) {
     bench_trade_input(c, "trade_imbalance", &trades, || {
         TradeImbalance::new(50).unwrap()
     });
+
+    // Pair each synthetic trade with the candle close as the prevailing mid to
+    // exercise the price-impact family. EffectiveSpread is the stateless
+    // representative.
+    let quotes: Vec<TradeQuote> = trades
+        .iter()
+        .map(|trade| TradeQuote::new_unchecked(*trade, trade.price))
+        .collect();
+    bench_tradequote_input(c, "effective_spread", &quotes, EffectiveSpread::new);
 }
 
 criterion_group!(name = wickra_benches; config = Criterion::default(); targets = benches);

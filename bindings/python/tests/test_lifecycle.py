@@ -172,3 +172,13 @@ def test_trade_imbalance_lifecycle_and_repr():
     ti.reset()
     assert not ti.is_ready()
     assert repr(ta.TradeImbalance(4)) == "TradeImbalance(window=4)"
+
+
+def test_effective_spread_lifecycle():
+    es = ta.EffectiveSpread()
+    assert es.warmup_period() == 1
+    assert not es.is_ready()
+    es.update(100.05, 1.0, True, 100.0)
+    assert es.is_ready()
+    es.reset()
+    assert not es.is_ready()

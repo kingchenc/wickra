@@ -57,7 +57,7 @@ pub use indicators::{
     Coppock, CumulativeVolumeDelta, CyberneticCycle, Decycler, DecyclerOscillator, Dema,
     DemandIndex, DemarkPivots, DemarkPivotsOutput, DetrendedStdDev, Doji, Donchian, DonchianOutput,
     DonchianStop, DonchianStopOutput, DoubleBollinger, DoubleBollingerOutput, Dpo,
-    DrawdownDuration, EaseOfMovement, EhlersStochastic, ElderImpulse, Ema,
+    DrawdownDuration, EaseOfMovement, EffectiveSpread, EhlersStochastic, ElderImpulse, Ema,
     EmpiricalModeDecomposition, Engulfing, Evwma, Fama, FibonacciPivots, FibonacciPivotsOutput,
     FisherTransform, ForceIndex, FractalChaosBands, FractalChaosBandsOutput, Frama, GainLossRatio,
     GarmanKlassVolatility, Hammer, HangingMan, Harami, HeikinAshi, HeikinAshiOutput, HiLoActivator,

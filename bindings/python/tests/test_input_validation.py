@@ -211,3 +211,13 @@ def test_trade_non_positive_price_raises():
 def test_trade_batch_unequal_lengths_raise():
     with pytest.raises(ValueError):
         ta.SignedVolume().batch([100.0, 100.0], [1.0], [True, False])
+
+
+def test_effective_spread_non_positive_mid_raises():
+    with pytest.raises(ValueError):
+        ta.EffectiveSpread().update(100.0, 1.0, True, 0.0)
+
+
+def test_effective_spread_batch_unequal_lengths_raise():
+    with pytest.raises(ValueError):
+        ta.EffectiveSpread().batch([100.0, 100.0], [1.0, 1.0], [True, False], [100.0])

@@ -889,3 +889,12 @@ def test_trade_imbalance_reference_value():
     assert ti.update(100.0, 3.0, True) is None  # warming up
     # Window full: buyVol 3, sellVol 1 -> (3 - 1) / 4 = 0.5.
     assert ti.update(100.0, 1.0, False) == pytest.approx(0.5)
+
+
+def test_effective_spread_reference_values():
+    # Buy at 100.05 vs mid 100.0: 2 * (100.05 - 100) / 100 * 10000 = 10 bps.
+    assert ta.EffectiveSpread().update(100.05, 1.0, True, 100.0) == pytest.approx(10.0)
+    # Sell at 99.95 vs mid 100.0: 2 * -1 * (99.95 - 100) / 100 * 10000 = 10 bps.
+    assert ta.EffectiveSpread().update(99.95, 1.0, False, 100.0) == pytest.approx(10.0)
+    # A buy filled below the mid is price improvement -> negative.
+    assert ta.EffectiveSpread().update(99.95, 1.0, True, 100.0) < 0.0
