@@ -28,6 +28,7 @@ mod average_drawdown;
 mod awesome_oscillator;
 mod awesome_oscillator_histogram;
 mod balance_of_power;
+mod belt_hold;
 mod beta;
 mod bollinger;
 mod bollinger_bandwidth;
@@ -279,6 +280,7 @@ pub use average_drawdown::AverageDrawdown;
 pub use awesome_oscillator::AwesomeOscillator;
 pub use awesome_oscillator_histogram::AwesomeOscillatorHistogram;
 pub use balance_of_power::BalanceOfPower;
+pub use belt_hold::BeltHold;
 pub use beta::Beta;
 pub use bollinger::{BollingerBands, BollingerOutput};
 pub use bollinger_bandwidth::BollingerBandwidth;
@@ -776,6 +778,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "ThreeStarsInSouth",
             "AbandonedBaby",
             "AdvanceBlock",
+            "BeltHold",
         ],
     ),
     (
@@ -867,6 +870,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 246, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 247, "FAMILIES total drifted from indicator count");
     }
 }

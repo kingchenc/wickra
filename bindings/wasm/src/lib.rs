@@ -6349,6 +6349,7 @@ wasm_candle_pattern!(
 );
 wasm_candle_pattern!(WasmAbandonedBaby, wc::AbandonedBaby, AbandonedBaby);
 wasm_candle_pattern!(WasmAdvanceBlock, wc::AdvanceBlock, AdvanceBlock);
+wasm_candle_pattern!(WasmBeltHold, wc::BeltHold, BeltHold);
 
 // ============================== Microstructure: Order Book ==============================
 //

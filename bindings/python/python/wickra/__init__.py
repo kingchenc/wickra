@@ -247,6 +247,7 @@ from ._wickra import (
     ThreeStarsInSouth,
     AbandonedBaby,
     AdvanceBlock,
+    BeltHold,
     # Microstructure: order book
     OrderBookImbalanceTop1,
     OrderBookImbalanceTopN,
@@ -521,6 +522,7 @@ __all__ = [
     "ThreeStarsInSouth",
     "AbandonedBaby",
     "AdvanceBlock",
+    "BeltHold",
     # Microstructure: order book
     "OrderBookImbalanceTop1",
     "OrderBookImbalanceTopN",

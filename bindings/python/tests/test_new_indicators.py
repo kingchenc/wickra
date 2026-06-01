@@ -551,6 +551,10 @@ CANDLE_SCALAR = {
         lambda: ta.AdvanceBlock(),
         lambda ind, h, l, c, v: ind.batch(c, h, l, c),
     ),
+    "BeltHold": (
+        lambda: ta.BeltHold(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
 }
 
 
@@ -1651,6 +1655,12 @@ def test_fractal_chaos_bands_detects_peak_and_trough():
     assert out[5, 0] == pytest.approx(5.0)
     assert out[5, 1] == pytest.approx(0.5)
 
+
+
+def test_belt_hold_reference():
+    t = ta.BeltHold()
+    assert t.update((10.0, 12.0, 10.0, 11.5, 1.0, 0)) == pytest.approx(1.0)
+    assert t.update((12.0, 12.0, 10.0, 10.5, 1.0, 1)) == pytest.approx(-1.0)
 
 # --- Lifecycle ------------------------------------------------------------
 

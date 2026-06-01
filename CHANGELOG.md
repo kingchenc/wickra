@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Advance Block** — a three-bar bearish warning (`CDLADVANCEBLOCK`): three
     green candles to higher closes whose bodies shrink as their upper shadows
     lengthen, signalling the advance is stalling.
+  - **Belt-hold** — a single-bar reversal that opens at one extreme of its range and runs the other way; bullish +1, bearish -1 (`CDLBELTHOLD`).
 - **Derivatives family — funding & open interest (part 1).** A new family of
   indicators that consume a perpetual / futures tick (`DerivativesTick`,
   bundling funding rate, mark / index / futures price, open interest,

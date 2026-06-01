@@ -23,26 +23,7 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    AbandonedBaby, AccelerationBands, AcceleratorOscillator, AdOscillator, Adl, AdvanceBlock, Adx, Adxr, Alligator,
-    AnchoredVwap, Aroon, AroonOscillator, Atr, AtrBands, AtrTrailingStop, AwesomeOscillator,
-    AwesomeOscillatorHistogram, BalanceOfPower, BatchExt, Camarilla, Candle, Cci, ChaikinMoneyFlow,
-    ChaikinOscillator, ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex,
-    ClassicPivots, DemandIndex, DemarkPivots, Doji, Donchian, DonchianStop, EaseOfMovement,
-    Engulfing, Evwma, FibonacciPivots, ForceIndex, FractalChaosBands, GarmanKlassVolatility,
-    Hammer, HangingMan, Harami, HeikinAshi, HiLoActivator, HurstChannel, Ichimoku,
-    IdenticalThreeCrows, Indicator,
-    Inertia, InitialBalance, InvertedHammer, Keltner, Kvo, MarketFacilitationIndex, Marubozu,
-    MassIndex, MedianPrice, Mfi, MorningEveningStar, Natr, Nvi, Obv, OpeningRange,
-    ParkinsonVolatility, Pgo, PiercingDarkCloud, Psar, Pvi, RogersSatchellVolatility, RollingVwap,
-    Rvi, Rwi, ShootingStar, Smi, SpinningTop, StarcBands, Stochastic, SuperTrend, TdCombo,
-    TdCountdown, TdDeMarker, TdDifferential, TdLines, TdOpen, TdPressure, TdRangeProjection, TdRei,
-    TdRiskLevel, TdSequential, TdSetup, ThreeInside, ThreeLineStrike, ThreeOutside,
-    ThreeSoldiersOrCrows, ThreeStarsInSouth, TrueRange,
-    Tsv, TtmSqueeze, Tweezer, TwoCrows, TypicalPrice, UltimateOscillator, UpsideGapTwoCrows,
-    ValueArea, VoltyStop,
-    VolumeOscillator, VolumePriceTrend, Vortex, Vwap, VwapStdDevBands, Vwma, Vzo, WaveTrend,
-    WeightedClose, WilliamsFractals, WilliamsR, WoodiePivots, YangZhangVolatility, YoyoExit,
-    ZigZag,
+AbandonedBaby, AccelerationBands, AcceleratorOscillator, AdOscillator, Adl, AdvanceBlock, Adx, Adxr, Alligator, AnchoredVwap, Aroon, AroonOscillator, Atr, AtrBands, AtrTrailingStop, AwesomeOscillator, AwesomeOscillatorHistogram, BalanceOfPower, BatchExt, BeltHold, Camarilla, Candle, Cci, ChaikinMoneyFlow, ChaikinOscillator, ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex, ClassicPivots, DemandIndex, DemarkPivots, Doji, Donchian, DonchianStop, EaseOfMovement, Engulfing, Evwma, FibonacciPivots, ForceIndex, FractalChaosBands, GarmanKlassVolatility, Hammer, HangingMan, Harami, HeikinAshi, HiLoActivator, HurstChannel, Ichimoku, IdenticalThreeCrows, Indicator, Inertia, InitialBalance, InvertedHammer, Keltner, Kvo, MarketFacilitationIndex, Marubozu, MassIndex, MedianPrice, Mfi, MorningEveningStar, Natr, Nvi, Obv, OpeningRange, ParkinsonVolatility, Pgo, PiercingDarkCloud, Psar, Pvi, RogersSatchellVolatility, RollingVwap, Rvi, Rwi, ShootingStar, Smi, SpinningTop, StarcBands, Stochastic, SuperTrend, TdCombo, TdCountdown, TdDeMarker, TdDifferential, TdLines, TdOpen, TdPressure, TdRangeProjection, TdRei, TdRiskLevel, TdSequential, TdSetup, ThreeInside, ThreeLineStrike, ThreeOutside, ThreeSoldiersOrCrows, ThreeStarsInSouth, TrueRange, Tsv, TtmSqueeze, Tweezer, TwoCrows, TypicalPrice, UltimateOscillator, UpsideGapTwoCrows, ValueArea, VoltyStop, VolumeOscillator, VolumePriceTrend, Vortex, Vwap, VwapStdDevBands, Vwma, Vzo, WaveTrend, WeightedClose, WilliamsFractals, WilliamsR, WoodiePivots, YangZhangVolatility, YoyoExit, ZigZag
 };
 
 /// Convert a flat `f64` stream into a `Vec<Candle>` by chunking it into
@@ -297,6 +278,7 @@ fuzz_target!(|data: Vec<f64>| {
     }
 
     // --- Candlestick Patterns (family 14) ---
+    drive(BeltHold::new, &candles);
     drive(AbandonedBaby::new, &candles);
     drive(AdvanceBlock::new, &candles);
     drive(Doji::new, &candles);
