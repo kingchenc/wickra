@@ -22,6 +22,14 @@ use crate::traits::Indicator;
 /// check only — no trend filter is applied; combine with a trend indicator
 /// for actionable signals.
 ///
+/// # Signed ±1 encoding
+///
+/// A Shooting Star is bearish by definition, so under the uniform candlestick
+/// sign convention (`+1.0` bullish, `−1.0` bearish, `0.0` none) it emits
+/// `−1.0` when the shape matches and `0.0` otherwise — it never emits `+1.0`.
+/// The same geometry read at the bottom of a downtrend is the bullish
+/// `InvertedHammer`, which carries the opposite sign.
+///
 /// # Example
 ///
 /// ```

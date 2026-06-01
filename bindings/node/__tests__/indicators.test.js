@@ -896,3 +896,19 @@ test('ALMA(3, 0.85, 6) reference value on [10, 20, 30]', () => {
   // simple mean of 20.
   assert.ok(out[2] > 20);
 });
+
+test('Doji signed mode encodes dragonfly/gravestone/neutral direction', () => {
+  // Default: direction-less detection flag (+1 doji / 0 otherwise).
+  const flag = new wickra.Doji();
+  assert.equal(flag.isSigned(), false);
+  assert.equal(flag.update(10, 11, 9, 10), 1); // body 0, range 2 -> doji
+  assert.equal(flag.update(10, 12, 10, 12), 0); // body == range -> not a doji
+
+  // Signed: classify a detected doji by its body position within the range.
+  const d = new wickra.Doji(true);
+  assert.equal(d.isSigned(), true);
+  assert.equal(d.update(10, 10.05, 6, 10), 1); // dragonfly -> bullish +1
+  assert.equal(d.update(10, 14, 9.95, 10), -1); // gravestone -> bearish -1
+  assert.equal(d.update(10, 12, 8, 10), 0); // long-legged -> neutral 0
+  assert.equal(d.update(10, 12, 10, 12), 0); // not a doji -> 0
+});

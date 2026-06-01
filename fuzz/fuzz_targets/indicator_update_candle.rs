@@ -295,6 +295,7 @@ fuzz_target!(|data: Vec<f64>| {
 
     // --- Candlestick Patterns (family 14) ---
     drive(Doji::new, &candles);
+    drive(|| Doji::new().signed(), &candles);
     drive(Hammer::new, &candles);
     drive(InvertedHammer::new, &candles);
     drive(HangingMan::new, &candles);

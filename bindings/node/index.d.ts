@@ -2055,12 +2055,13 @@ export declare class OpeningRange {
 }
 export type DojiNode = Doji
 export declare class Doji {
-  constructor()
+  constructor(signed?: boolean | undefined | null)
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
   isReady(): boolean
   warmupPeriod(): number
+  isSigned(): boolean
 }
 export type HammerNode = Hammer
 export declare class Hammer {

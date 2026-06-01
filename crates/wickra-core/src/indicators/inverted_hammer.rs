@@ -22,6 +22,14 @@ use crate::traits::Indicator;
 /// check only — no trend filter is applied; combine with a trend indicator
 /// for actionable signals.
 ///
+/// # Signed ±1 encoding
+///
+/// An Inverted Hammer is bullish by definition, so under the uniform
+/// candlestick sign convention (`+1.0` bullish, `−1.0` bearish, `0.0` none) it
+/// emits `+1.0` when the shape matches and `0.0` otherwise — it never emits
+/// `−1.0`. The same geometry read at the top of an uptrend is the bearish
+/// `ShootingStar`, which carries the opposite sign.
+///
 /// # Example
 ///
 /// ```
