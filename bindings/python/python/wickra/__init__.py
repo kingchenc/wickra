@@ -163,6 +163,7 @@ from ._wickra import (
     Beta,
     PairwiseBeta,
     PairSpreadZScore,
+    LeadLagCrossCorrelation,
     SpearmanCorrelation,
     # Ehlers / Cycle
     SuperSmoother,
@@ -397,6 +398,7 @@ __all__ = [
     "Beta",
     "PairwiseBeta",
     "PairSpreadZScore",
+    "LeadLagCrossCorrelation",
     "SpearmanCorrelation",
     # Ehlers / Cycle
     "SuperSmoother",

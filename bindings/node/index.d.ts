@@ -5,6 +5,13 @@
 
 /** Library version (matches the Rust crate version). */
 export declare function version(): string
+/** Lead/lag result: the offset that maximises correlation, and that correlation. */
+export interface LeadLagValue {
+  /** Offset that maximises `|corr(a, b shifted)|`. Positive ⇒ `a` leads `b`. */
+  lag: number
+  /** Signed correlation at that lag, in `[-1, 1]`. */
+  correlation: number
+}
 /** MACD triple: macd line, signal line, histogram. */
 export interface MacdValue {
   macd: number
@@ -665,6 +672,20 @@ export declare class PairSpreadZScore {
   /**
    * Batch over two equally-sized arrays of prices. Returns a length-`n`
    * array with `NaN` for warmup positions.
+   */
+  batch(a: Array<number>, b: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type LeadLagCrossCorrelationNode = LeadLagCrossCorrelation
+export declare class LeadLagCrossCorrelation {
+  constructor(window: number, maxLag: number)
+  update(a: number, b: number): LeadLagValue | null
+  /**
+   * Batch over two equally-sized arrays. Returns a flat array of length
+   * `2 * n`, interleaved per row as `[lag0, corr0, lag1, corr1, ...]`. Read
+   * column `j` of row `i` as `result[i * 2 + j]`. Warmup rows are `NaN`.
    */
   batch(a: Array<number>, b: Array<number>): Array<number>
   reset(): void

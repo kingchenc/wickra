@@ -9,7 +9,8 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    Alpha, BatchExt, Indicator, InformationRatio, PairSpreadZScore, PairwiseBeta, TreynorRatio,
+    Alpha, BatchExt, Indicator, InformationRatio, LeadLagCrossCorrelation, PairSpreadZScore,
+    PairwiseBeta, TreynorRatio,
 };
 
 #[inline(never)]
@@ -40,4 +41,12 @@ fuzz_target!(|data: &[u8]| {
     drive(|| Alpha::new(10, 0.0).unwrap(), &pairs);
     drive(|| PairwiseBeta::new(10).unwrap(), &pairs);
     drive(|| PairSpreadZScore::new(10, 10).unwrap(), &pairs);
+
+    // Struct-output pair indicator: drive update + batch directly (the generic
+    // `drive` above only covers `Output = f64`).
+    let mut ll = LeadLagCrossCorrelation::new(8, 3).unwrap();
+    for &x in &pairs {
+        let _ = ll.update(x);
+    }
+    let _ = LeadLagCrossCorrelation::new(8, 3).unwrap().batch(&pairs);
 });

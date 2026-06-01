@@ -180,6 +180,38 @@ def test_pair_streaming_matches_batch(cls, args, sine_prices):
     assert _eq_nan(batch, np.array(streamed, dtype=np.float64))
 
 
+def _ll_signal(t):
+    return math.sin(t * 0.4) + 0.4 * math.sin(t * 1.1) + 0.2 * math.cos(t * 0.27)
+
+
+def test_lead_lag_detects_lead():
+    n = 60
+    a = np.array([_ll_signal(t) for t in range(n)])
+    # b is a delayed by 3 ⇒ a leads b ⇒ lag = +3, correlation ≈ 1.
+    b = np.array([_ll_signal(t - 3) for t in range(n)])
+    out = ta.LeadLagCrossCorrelation(12, 5).batch(a, b)
+    assert out.shape == (n, 2)
+    assert int(out[-1, 0]) == 3
+    assert out[-1, 1] > 0.99
+
+
+def test_lead_lag_streaming_matches_batch():
+    n = 60
+    a = np.array([_ll_signal(t) for t in range(n)])
+    b = np.array([_ll_signal(t - 2) for t in range(n)])
+    ind = ta.LeadLagCrossCorrelation(12, 5)
+    batch = ind.batch(a, b)
+    streamer = ta.LeadLagCrossCorrelation(12, 5)
+    for i in range(n):
+        v = streamer.update(float(a[i]), float(b[i]))
+        if v is None:
+            assert math.isnan(batch[i, 0]) and math.isnan(batch[i, 1])
+        else:
+            lag, corr = v
+            assert int(batch[i, 0]) == lag
+            assert math.isclose(batch[i, 1], corr, rel_tol=1e-12, abs_tol=1e-12)
+
+
 # --- Candle-input, single-output indicators -------------------------------
 #
 # Each entry is (factory, batch-call). Streaming always feeds the full

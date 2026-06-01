@@ -575,6 +575,63 @@ impl WasmPairSpreadZScore {
     }
 }
 
+// ---------- LeadLagCrossCorrelation (two params, object output) ----------
+
+#[wasm_bindgen(js_name = "LeadLagCrossCorrelation")]
+pub struct WasmLeadLagCrossCorrelation {
+    inner: wc::LeadLagCrossCorrelation,
+}
+
+#[wasm_bindgen(js_class = "LeadLagCrossCorrelation")]
+impl WasmLeadLagCrossCorrelation {
+    #[wasm_bindgen(constructor)]
+    pub fn new(window: usize, max_lag: usize) -> Result<WasmLeadLagCrossCorrelation, JsError> {
+        Ok(Self {
+            inner: wc::LeadLagCrossCorrelation::new(window, max_lag).map_err(map_err)?,
+        })
+    }
+    /// Returns `{ lag, correlation }`, or `null` during warmup. Positive lag
+    /// means `a` leads `b`.
+    pub fn update(&mut self, a: f64, b: f64) -> JsValue {
+        match self.inner.update((a, b)) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"lag".into(), &(o.lag as f64).into()).ok();
+                Reflect::set(&obj, &"correlation".into(), &o.correlation.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        }
+    }
+    /// Flat `Float64Array` of length `2 * n`: `[lag0, corr0, lag1, corr1, ...]`.
+    /// Warmup positions are NaN.
+    pub fn batch(&mut self, a: &[f64], b: &[f64]) -> Result<Float64Array, JsError> {
+        if a.len() != b.len() {
+            return Err(JsError::new("a and b must be equal length"));
+        }
+        let n = a.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self.inner.update((a[i], b[i])) {
+                out[i * 2] = o.lag as f64;
+                out[i * 2 + 1] = o.correlation;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 // ---------- KAMA (three params) ----------
 
 #[wasm_bindgen(js_name = KAMA)]

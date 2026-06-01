@@ -511,6 +511,28 @@ test('PairSpreadZScore flat benchmark is sign of last move', () => {
   assert.ok(Math.abs(out[out.length - 2] + 1) < 1e-9);
 });
 
+const llSignal = (t) =>
+  Math.sin(t * 0.4) + 0.4 * Math.sin(t * 1.1) + 0.2 * Math.cos(t * 0.27);
+
+test('LeadLagCrossCorrelation detects positive lead (object output)', () => {
+  const ll = new wickra.LeadLagCrossCorrelation(12, 5);
+  let last = null;
+  // b is a delayed by 3 ⇒ a leads b ⇒ lag = +3.
+  for (let t = 0; t < 60; t++) last = ll.update(llSignal(t), llSignal(t - 3));
+  assert.equal(last.lag, 3);
+  assert.ok(last.correlation > 0.99);
+});
+
+test('LeadLagCrossCorrelation batch is flat 2*n with last row matching', () => {
+  const n = 60;
+  const a = Array.from({ length: n }, (_, t) => llSignal(t));
+  const b = Array.from({ length: n }, (_, t) => llSignal(t - 3));
+  const out = new wickra.LeadLagCrossCorrelation(12, 5).batch(a, b);
+  assert.equal(out.length, 2 * n);
+  assert.equal(out[2 * (n - 1)], 3);
+  assert.ok(out[2 * (n - 1) + 1] > 0.99);
+});
+
 test('SpearmanCorrelation monotone non-linear is 1', () => {
   const x = Array.from({ length: 10 }, (_, i) => i + 1);
   const y = x.map((v) => v ** 3);

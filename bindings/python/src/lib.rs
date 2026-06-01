@@ -10883,6 +10883,87 @@ impl PyPairSpreadZScore {
     }
 }
 
+// ============================== LeadLagCrossCorrelation ==============================
+
+#[pyclass(
+    name = "LeadLagCrossCorrelation",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyLeadLagCrossCorrelation {
+    inner: wc::LeadLagCrossCorrelation,
+}
+
+#[pymethods]
+impl PyLeadLagCrossCorrelation {
+    #[new]
+    #[pyo3(signature = (window=20, max_lag=10))]
+    fn new(window: usize, max_lag: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::LeadLagCrossCorrelation::new(window, max_lag).map_err(map_err)?,
+        })
+    }
+    /// Returns `(lag, correlation)` or `None` during warmup. A positive lag
+    /// means `a` leads `b`.
+    fn update(&mut self, a: f64, b: f64) -> Option<(i64, f64)> {
+        self.inner.update((a, b)).map(|o| (o.lag, o.correlation))
+    }
+    /// Batch over two equally-sized numpy arrays. Returns a 2D array of shape
+    /// `(n, 2)` with columns `[lag, correlation]`. Warmup rows are NaN.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        a: PyReadonlyArray1<'py, f64>,
+        b: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let xs = a
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let ys = b
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if xs.len() != ys.len() {
+            return Err(PyValueError::new_err("a and b must be equal length"));
+        }
+        let n = xs.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self.inner.update((xs[i], ys[i])) {
+                out[i * 2] = o.lag as f64;
+                out[i * 2 + 1] = o.correlation;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn window(&self) -> usize {
+        self.inner.window()
+    }
+    #[getter]
+    fn max_lag(&self) -> usize {
+        self.inner.max_lag()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "LeadLagCrossCorrelation(window={}, max_lag={})",
+            self.inner.window(),
+            self.inner.max_lag()
+        )
+    }
+}
+
 // ============================== SpearmanCorrelation ==============================
 
 #[pyclass(
@@ -12370,6 +12451,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyBeta>()?;
     m.add_class::<PyPairwiseBeta>()?;
     m.add_class::<PyPairSpreadZScore>()?;
+    m.add_class::<PyLeadLagCrossCorrelation>()?;
     m.add_class::<PySpearmanCorrelation>()?;
     m.add_class::<PyValueArea>()?;
     m.add_class::<PyInitialBalance>()?;

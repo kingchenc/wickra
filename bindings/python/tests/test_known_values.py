@@ -457,6 +457,19 @@ def test_pair_spread_zscore_flat_benchmark_sign():
     assert math.isclose(out[-2], -1.0, abs_tol=1e-9)
 
 
+def test_lead_lag_cross_correlation_negative_lead():
+    # a is a delayed copy of b ⇒ b leads a ⇒ lag = −2, correlation ≈ 1.
+    def sig(t):
+        return math.sin(t * 0.4) + 0.4 * math.sin(t * 1.1) + 0.2 * math.cos(t * 0.27)
+
+    n = 60
+    a = np.array([sig(t - 2) for t in range(n)])
+    b = np.array([sig(t) for t in range(n)])
+    out = ta.LeadLagCrossCorrelation(12, 5).batch(a, b)
+    assert int(out[-1, 0]) == -2
+    assert out[-1, 1] > 0.99
+
+
 def test_value_at_risk_known_window():
     # returns -5..4 *0.01; q=0.05*9=0.45 -> -0.0455; VaR = 0.0455.
     returns = np.array([i * 0.01 for i in range(-5, 5)])

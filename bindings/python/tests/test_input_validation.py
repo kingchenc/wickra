@@ -58,6 +58,20 @@ def test_pair_spread_zscore_rejects_bad_periods():
         ta.PairSpreadZScore(20, 1)
 
 
+def test_lead_lag_rejects_bad_params():
+    with pytest.raises(ValueError):
+        ta.LeadLagCrossCorrelation(1, 5)
+    with pytest.raises(ValueError):
+        ta.LeadLagCrossCorrelation(10, 0)
+
+
+def test_lead_lag_unequal_length_batch_raises(sine_prices):
+    a = np.ascontiguousarray((sine_prices + 100.0).astype(np.float64))
+    b = a[:-1]
+    with pytest.raises(ValueError):
+        ta.LeadLagCrossCorrelation(12, 5).batch(a, b)
+
+
 def test_roc_and_trix_have_default_periods():
     # ROC/TRIX gained constructor defaults matching the TA-Lib convention.
     assert ta.ROC().period == 10

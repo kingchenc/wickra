@@ -365,6 +365,72 @@ impl PairSpreadZScoreNode {
     }
 }
 
+// ============================== LeadLagCrossCorrelation ==============================
+
+/// Lead/lag result: the offset that maximises correlation, and that correlation.
+#[napi(object)]
+pub struct LeadLagValue {
+    /// Offset that maximises `|corr(a, b shifted)|`. Positive ⇒ `a` leads `b`.
+    pub lag: i32,
+    /// Signed correlation at that lag, in `[-1, 1]`.
+    pub correlation: f64,
+}
+
+#[napi(js_name = "LeadLagCrossCorrelation")]
+pub struct LeadLagCrossCorrelationNode {
+    inner: wc::LeadLagCrossCorrelation,
+}
+
+#[napi]
+impl LeadLagCrossCorrelationNode {
+    #[napi(constructor)]
+    pub fn new(window: u32, max_lag: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::LeadLagCrossCorrelation::new(window as usize, max_lag as usize)
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, a: f64, b: f64) -> Option<LeadLagValue> {
+        self.inner.update((a, b)).map(|o| LeadLagValue {
+            lag: o.lag as i32,
+            correlation: o.correlation,
+        })
+    }
+    /// Batch over two equally-sized arrays. Returns a flat array of length
+    /// `2 * n`, interleaved per row as `[lag0, corr0, lag1, corr1, ...]`. Read
+    /// column `j` of row `i` as `result[i * 2 + j]`. Warmup rows are `NaN`.
+    #[napi]
+    pub fn batch(&mut self, a: Vec<f64>, b: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if a.len() != b.len() {
+            return Err(NapiError::new(
+                Status::InvalidArg,
+                "a and b must be equal length".to_string(),
+            ));
+        }
+        let mut out = vec![f64::NAN; a.len() * 2];
+        for i in 0..a.len() {
+            if let Some(o) = self.inner.update((a[i], b[i])) {
+                out[i * 2] = o.lag as f64;
+                out[i * 2 + 1] = o.correlation;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== MACD ==============================
 
 /// MACD triple: macd line, signal line, histogram.
