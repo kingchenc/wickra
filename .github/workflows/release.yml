@@ -545,6 +545,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    # Expose the resolved tag so the attestations job can attach the provenance
+    # bundle to this same release without re-resolving it.
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -629,18 +633,25 @@ jobs:
   # --------------------------------------------------------------------------
   attestations:
     name: Attest build provenance
-    needs: [cargo-publish, python-wheels, python-sdist]
+    needs: [cargo-publish, python-wheels, python-sdist, github-release]
     runs-on: ubuntu-latest
     # Signed SLSA build-provenance attestations for the published crates and
     # Python wheels/sdist. npm tarballs already carry inline Sigstore provenance
-    # from `npm publish --provenance`, so they are covered there. This job is
-    # isolated and runs *after* the publishes on the exact uploaded bytes, so a
-    # failure here can never block or corrupt a publish (same isolation that the
-    # SBOM step lacked before #79).
+    # from `npm publish --provenance`, so they are covered there.
+    #
+    # The job stays isolated from the *publishes*: cargo/PyPI/npm all run upstream
+    # of github-release, so a Sigstore hiccup here can never block or corrupt a
+    # publish (the isolation the SBOM step lacked before #79). It additionally
+    # `needs: github-release` so the GitHub Release already exists when it attaches
+    # the provenance bundle as a release asset (P21.1e) — OpenSSF Scorecard's
+    # Signed-Releases check scans release *assets* (*.intoto.jsonl), not GitHub's
+    # separate attestations store, so the bundle has to live on the release. A
+    # failure here still only costs the provenance asset; the release is already
+    # complete.
     permissions:
       id-token: write # OIDC for keyless Sigstore signing
       attestations: write # write the attestations to this repo
-      contents: read
+      contents: write # upload the provenance bundle as a release asset
     steps:
       - name: Download crate files
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -654,9 +665,35 @@ jobs:
           path: artifacts/python
           merge-multiple: true
       - name: Attest build provenance
+        id: attest
         uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # v4.1.0
         with:
           subject-path: |
             artifacts/crates/*.crate
             artifacts/python/*.whl
             artifacts/python/*.tar.gz
+
+      # Attach the Sigstore provenance bundle to the GitHub Release as a
+      # `*.intoto.jsonl` asset so OpenSSF Scorecard's Signed-Releases check finds
+      # signed provenance on the release itself (P21.1e). attest-build-provenance
+      # writes a single JSONL bundle covering every subject above; copy it to a
+      # `.intoto.jsonl`-suffixed name and upload with --clobber so re-runs are
+      # idempotent. github.token has contents: write here, which is all gh needs.
+      - name: Attach provenance bundle to the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.github-release.outputs.tag }}
+          BUNDLE: ${{ steps.attest.outputs.bundle-path }}
+        run: |
+          if [ -z "$TAG" ]; then
+            echo "::error::no tag resolved from github-release; cannot attach provenance."
+            exit 1
+          fi
+          if [ -z "$BUNDLE" ] || [ ! -f "$BUNDLE" ]; then
+            echo "::error::attestation bundle not found at '$BUNDLE'."
+            exit 1
+          fi
+          dest="wickra-${TAG}.provenance.intoto.jsonl"
+          cp "$BUNDLE" "$dest"
+          echo "Uploading $dest to release $TAG"
+          gh release upload "$TAG" "$dest" --clobber --repo "${{ github.repository }}"
