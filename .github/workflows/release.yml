@@ -549,9 +549,16 @@ jobs:
 
   # --------------------------------------------------------------------------
   # GitHub Release: attach every built artefact to the tag's release page.
+  #
+  # The release is created as a DRAFT here and only flipped to published by the
+  # downstream publish-release job, after the provenance bundle is attached. That
+  # ordering (draft -> attach everything -> publish) makes the pipeline compatible
+  # with GitHub release immutability, which locks assets at publish time (P24):
+  # the old "publish, then upload provenance" order would have the provenance
+  # upload rejected once immutability is enabled.
   # --------------------------------------------------------------------------
   github-release:
-    name: Attach assets to the GitHub Release
+    name: Attach assets to the draft GitHub Release
     needs: [cargo-publish, python-publish, node-publish, wasm-publish]
     runs-on: ubuntu-latest
     permissions:
@@ -604,7 +611,7 @@ jobs:
           ls -lh release-assets/
           echo "asset-count=$(ls release-assets/ | wc -l)"
 
-      - name: Create / update GitHub Release with assets
+      - name: Create / update the draft GitHub Release with assets
         uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
@@ -612,6 +619,9 @@ jobs:
           files: release-assets/*
           generate_release_notes: true
           fail_on_unmatched_files: false
+          # Created as a draft; publish-release flips it to published + latest once
+          # the provenance bundle is attached (P24, immutability-ready).
+          draft: true
           body: |
             Wickra ${{ github.ref_name }} — streaming-first technical indicators across 4 language registries.
 
@@ -653,12 +663,13 @@ jobs:
     # The job stays isolated from the *publishes*: cargo/PyPI/npm all run upstream
     # of github-release, so a Sigstore hiccup here can never block or corrupt a
     # publish (the isolation the SBOM step lacked before #79). It additionally
-    # `needs: github-release` so the GitHub Release already exists when it attaches
-    # the provenance bundle as a release asset (P21.1e) — OpenSSF Scorecard's
-    # Signed-Releases check scans release *assets* (*.intoto.jsonl), not GitHub's
-    # separate attestations store, so the bundle has to live on the release. A
-    # failure here still only costs the provenance asset; the release is already
-    # complete.
+    # `needs: github-release` so the (still-draft) GitHub Release already exists
+    # when it attaches the provenance bundle as a release asset (P21.1e) — OpenSSF
+    # Scorecard's Signed-Releases check scans release *assets* (*.intoto.jsonl),
+    # not GitHub's separate attestations store, so the bundle has to live on the
+    # release. The release is published afterwards by the publish-release job
+    # whether or not this attestation succeeds (P24), so a failure here still only
+    # costs the provenance asset, never the release.
     permissions:
       id-token: write # OIDC for keyless Sigstore signing
       attestations: write # write the attestations to this repo
@@ -708,3 +719,38 @@ jobs:
           cp "$BUNDLE" "$dest"
           echo "Uploading $dest to release $TAG"
           gh release upload "$TAG" "$dest" --clobber --repo "${{ github.repository }}"
+
+  # --------------------------------------------------------------------------
+  # Publish the drafted release LAST (P24 — immutability-ready).
+  #
+  # github-release creates the release as a draft and attestations attaches the
+  # provenance bundle to it; only now, with every asset in place, is it flipped to
+  # published + latest. With GitHub release immutability enabled, assets lock at
+  # this publish step — so the provenance bundle and every build artefact are
+  # already present and never need a (rejected) post-publish upload.
+  #
+  # `if: always() && needs.github-release.result == 'success'` preserves the old
+  # robustness: the release is published whenever the draft was created, even if
+  # the attestations job hit a Sigstore hiccup — that only costs the provenance
+  # asset, exactly as before. If github-release was skipped (a publish job failed)
+  # there is no draft, so this is skipped too and no release is published.
+  # --------------------------------------------------------------------------
+  publish-release:
+    name: Publish the GitHub Release
+    needs: [github-release, attestations]
+    if: always() && needs.github-release.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # flip the draft release to published
+    steps:
+      - name: Flip the draft release to published (latest)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.github-release.outputs.tag }}
+        run: |
+          if [ -z "$TAG" ]; then
+            echo "::error::no tag resolved from github-release; cannot publish."
+            exit 1
+          fi
+          echo "::notice::publishing release $TAG (draft -> published, latest)"
+          gh release edit "$TAG" --draft=false --latest=true --repo "${{ github.repository }}"
