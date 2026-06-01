@@ -240,6 +240,11 @@ from ._wickra import (
     SpinningTop,
     ThreeInside,
     ThreeOutside,
+    TwoCrows,
+    UpsideGapTwoCrows,
+    IdenticalThreeCrows,
+    ThreeLineStrike,
+    ThreeStarsInSouth,
     # Microstructure: order book
     OrderBookImbalanceTop1,
     OrderBookImbalanceTopN,
@@ -507,6 +512,11 @@ __all__ = [
     "SpinningTop",
     "ThreeInside",
     "ThreeOutside",
+    "TwoCrows",
+    "UpsideGapTwoCrows",
+    "IdenticalThreeCrows",
+    "ThreeLineStrike",
+    "ThreeStarsInSouth",
     # Microstructure: order book
     "OrderBookImbalanceTop1",
     "OrderBookImbalanceTopN",

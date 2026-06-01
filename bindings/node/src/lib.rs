@@ -8753,6 +8753,23 @@ node_candle_pattern!(TweezerNode, wc::Tweezer, "Tweezer");
 node_candle_pattern!(SpinningTopNode, wc::SpinningTop, "SpinningTop");
 node_candle_pattern!(ThreeInsideNode, wc::ThreeInside, "ThreeInside");
 node_candle_pattern!(ThreeOutsideNode, wc::ThreeOutside, "ThreeOutside");
+node_candle_pattern!(TwoCrowsNode, wc::TwoCrows, "TwoCrows");
+node_candle_pattern!(
+    UpsideGapTwoCrowsNode,
+    wc::UpsideGapTwoCrows,
+    "UpsideGapTwoCrows"
+);
+node_candle_pattern!(
+    IdenticalThreeCrowsNode,
+    wc::IdenticalThreeCrows,
+    "IdenticalThreeCrows"
+);
+node_candle_pattern!(ThreeLineStrikeNode, wc::ThreeLineStrike, "ThreeLineStrike");
+node_candle_pattern!(
+    ThreeStarsInSouthNode,
+    wc::ThreeStarsInSouth,
+    "ThreeStarsInSouth"
+);
 
 // ============================== Microstructure: Order Book ==============================
 //

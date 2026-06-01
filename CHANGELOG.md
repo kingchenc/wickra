@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **TA-Lib candlestick patterns (part 1).** New candlestick pattern detectors
+  matching TA-Lib `CDL*`, emitting the family's signed `+1 / 0 / −1` convention
+  over OHLCV candles in Rust, Python, Node and WASM:
+  - **Two Crows** — a three-bar bearish reversal (`CDL2CROWS`): a long white
+    candle, a black candle whose body gaps up, then a black candle that opens
+    inside the second's body and closes inside the first's.
+  - **Upside Gap Two Crows** — a three-bar bearish reversal
+    (`CDLUPSIDEGAP2CROWS`): two black candles gap up over a long white candle,
+    the second engulfing the first crow yet still closing above the white body,
+    leaving the upside gap open.
+  - **Identical Three Crows** — a three-bar bearish reversal
+    (`CDLIDENTICAL3CROWS`): three red candles with steadily lower closes, each
+    opening at the prior candle's close so the bodies stack in an identical
+    staircase.
+  - **Three Line Strike** — a four-bar pattern (`CDL3LINESTRIKE`): a
+    three-candle advance or decline struck by a fourth opposite-colour candle
+    that engulfs the entire run; bullish `+1`, bearish `−1`.
+  - **Three Stars in the South** — a rare three-bar bullish reversal
+    (`CDL3STARSINSOUTH`): three shrinking red candles each carving a higher low
+    and contracting toward a tiny black marubozu as selling exhausts.
 - **Derivatives family — funding & open interest (part 1).** A new family of
   indicators that consume a perpetual / futures tick (`DerivativesTick`,
   bundling funding rate, mark / index / futures price, open interest,

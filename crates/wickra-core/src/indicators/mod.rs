@@ -95,6 +95,7 @@ mod hma;
 mod hurst_channel;
 mod hurst_exponent;
 mod ichimoku;
+mod identical_three_crows;
 mod inertia;
 mod information_ratio;
 mod initial_balance;
@@ -207,8 +208,10 @@ mod td_setup;
 mod tema;
 mod term_structure_basis;
 mod three_inside;
+mod three_line_strike;
 mod three_outside;
 mod three_soldiers_or_crows;
+mod three_stars_in_south;
 mod tii;
 mod trade_imbalance;
 mod treynor_ratio;
@@ -219,9 +222,11 @@ mod tsi;
 mod tsv;
 mod ttm_squeeze;
 mod tweezer;
+mod two_crows;
 mod typical_price;
 mod ulcer_index;
 mod ultimate_oscillator;
+mod upside_gap_two_crows;
 mod value_area;
 mod value_at_risk;
 mod variance;
@@ -339,6 +344,7 @@ pub use hma::Hma;
 pub use hurst_channel::{HurstChannel, HurstChannelOutput};
 pub use hurst_exponent::HurstExponent;
 pub use ichimoku::{Ichimoku, IchimokuOutput};
+pub use identical_three_crows::IdenticalThreeCrows;
 pub use inertia::Inertia;
 pub use information_ratio::InformationRatio;
 pub use initial_balance::{InitialBalance, InitialBalanceOutput};
@@ -451,8 +457,10 @@ pub use td_setup::TdSetup;
 pub use tema::Tema;
 pub use term_structure_basis::TermStructureBasis;
 pub use three_inside::ThreeInside;
+pub use three_line_strike::ThreeLineStrike;
 pub use three_outside::ThreeOutside;
 pub use three_soldiers_or_crows::ThreeSoldiersOrCrows;
+pub use three_stars_in_south::ThreeStarsInSouth;
 pub use tii::Tii;
 pub use trade_imbalance::TradeImbalance;
 pub use treynor_ratio::TreynorRatio;
@@ -463,9 +471,11 @@ pub use tsi::Tsi;
 pub use tsv::Tsv;
 pub use ttm_squeeze::{TtmSqueeze, TtmSqueezeOutput};
 pub use tweezer::Tweezer;
+pub use two_crows::TwoCrows;
 pub use typical_price::TypicalPrice;
 pub use ulcer_index::UlcerIndex;
 pub use ultimate_oscillator::UltimateOscillator;
+pub use upside_gap_two_crows::UpsideGapTwoCrows;
 pub use value_area::{ValueArea, ValueAreaOutput};
 pub use value_at_risk::ValueAtRisk;
 pub use variance::Variance;
@@ -755,6 +765,11 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "SpinningTop",
             "ThreeInside",
             "ThreeOutside",
+            "TwoCrows",
+            "UpsideGapTwoCrows",
+            "IdenticalThreeCrows",
+            "ThreeLineStrike",
+            "ThreeStarsInSouth",
         ],
     ),
     (
@@ -846,6 +861,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 239, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 244, "FAMILIES total drifted from indicator count");
     }
 }

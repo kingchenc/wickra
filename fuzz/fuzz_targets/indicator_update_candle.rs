@@ -29,14 +29,17 @@ use wickra_core::{
     ChaikinOscillator, ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex,
     ClassicPivots, DemandIndex, DemarkPivots, Doji, Donchian, DonchianStop, EaseOfMovement,
     Engulfing, Evwma, FibonacciPivots, ForceIndex, FractalChaosBands, GarmanKlassVolatility,
-    Hammer, HangingMan, Harami, HeikinAshi, HiLoActivator, HurstChannel, Ichimoku, Indicator,
+    Hammer, HangingMan, Harami, HeikinAshi, HiLoActivator, HurstChannel, Ichimoku,
+    IdenticalThreeCrows, Indicator,
     Inertia, InitialBalance, InvertedHammer, Keltner, Kvo, MarketFacilitationIndex, Marubozu,
     MassIndex, MedianPrice, Mfi, MorningEveningStar, Natr, Nvi, Obv, OpeningRange,
     ParkinsonVolatility, Pgo, PiercingDarkCloud, Psar, Pvi, RogersSatchellVolatility, RollingVwap,
     Rvi, Rwi, ShootingStar, Smi, SpinningTop, StarcBands, Stochastic, SuperTrend, TdCombo,
     TdCountdown, TdDeMarker, TdDifferential, TdLines, TdOpen, TdPressure, TdRangeProjection, TdRei,
-    TdRiskLevel, TdSequential, TdSetup, ThreeInside, ThreeOutside, ThreeSoldiersOrCrows, TrueRange,
-    Tsv, TtmSqueeze, Tweezer, TypicalPrice, UltimateOscillator, ValueArea, VoltyStop,
+    TdRiskLevel, TdSequential, TdSetup, ThreeInside, ThreeLineStrike, ThreeOutside,
+    ThreeSoldiersOrCrows, ThreeStarsInSouth, TrueRange,
+    Tsv, TtmSqueeze, Tweezer, TwoCrows, TypicalPrice, UltimateOscillator, UpsideGapTwoCrows,
+    ValueArea, VoltyStop,
     VolumeOscillator, VolumePriceTrend, Vortex, Vwap, VwapStdDevBands, Vwma, Vzo, WaveTrend,
     WeightedClose, WilliamsFractals, WilliamsR, WoodiePivots, YangZhangVolatility, YoyoExit,
     ZigZag,
@@ -304,10 +307,15 @@ fuzz_target!(|data: Vec<f64>| {
     drive(Harami::new, &candles);
     drive(MorningEveningStar::new, &candles);
     drive(ThreeSoldiersOrCrows::new, &candles);
+    drive(ThreeStarsInSouth::new, &candles);
     drive(PiercingDarkCloud::new, &candles);
     drive(Marubozu::new, &candles);
     drive(Tweezer::new, &candles);
     drive(SpinningTop::new, &candles);
     drive(ThreeInside::new, &candles);
+    drive(ThreeLineStrike::new, &candles);
     drive(ThreeOutside::new, &candles);
+    drive(TwoCrows::new, &candles);
+    drive(UpsideGapTwoCrows::new, &candles);
+    drive(IdenticalThreeCrows::new, &candles);
 });

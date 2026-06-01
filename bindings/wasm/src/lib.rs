@@ -6330,6 +6330,23 @@ wasm_candle_pattern!(WasmTweezer, wc::Tweezer, Tweezer);
 wasm_candle_pattern!(WasmSpinningTop, wc::SpinningTop, SpinningTop);
 wasm_candle_pattern!(WasmThreeInside, wc::ThreeInside, ThreeInside);
 wasm_candle_pattern!(WasmThreeOutside, wc::ThreeOutside, ThreeOutside);
+wasm_candle_pattern!(WasmTwoCrows, wc::TwoCrows, TwoCrows);
+wasm_candle_pattern!(
+    WasmUpsideGapTwoCrows,
+    wc::UpsideGapTwoCrows,
+    UpsideGapTwoCrows
+);
+wasm_candle_pattern!(
+    WasmIdenticalThreeCrows,
+    wc::IdenticalThreeCrows,
+    IdenticalThreeCrows
+);
+wasm_candle_pattern!(WasmThreeLineStrike, wc::ThreeLineStrike, ThreeLineStrike);
+wasm_candle_pattern!(
+    WasmThreeStarsInSouth,
+    wc::ThreeStarsInSouth,
+    ThreeStarsInSouth
+);
 
 // ============================== Microstructure: Order Book ==============================
 //

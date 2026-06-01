@@ -11615,6 +11615,23 @@ candle_pattern_no_param!(PyTweezer, wc::Tweezer, "Tweezer");
 candle_pattern_no_param!(PySpinningTop, wc::SpinningTop, "SpinningTop");
 candle_pattern_no_param!(PyThreeInside, wc::ThreeInside, "ThreeInside");
 candle_pattern_no_param!(PyThreeOutside, wc::ThreeOutside, "ThreeOutside");
+candle_pattern_no_param!(PyTwoCrows, wc::TwoCrows, "TwoCrows");
+candle_pattern_no_param!(
+    PyUpsideGapTwoCrows,
+    wc::UpsideGapTwoCrows,
+    "UpsideGapTwoCrows"
+);
+candle_pattern_no_param!(
+    PyIdenticalThreeCrows,
+    wc::IdenticalThreeCrows,
+    "IdenticalThreeCrows"
+);
+candle_pattern_no_param!(PyThreeLineStrike, wc::ThreeLineStrike, "ThreeLineStrike");
+candle_pattern_no_param!(
+    PyThreeStarsInSouth,
+    wc::ThreeStarsInSouth,
+    "ThreeStarsInSouth"
+);
 
 // ============================== Microstructure: Order Book ==============================
 //
@@ -14112,6 +14129,11 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PySpinningTop>()?;
     m.add_class::<PyThreeInside>()?;
     m.add_class::<PyThreeOutside>()?;
+    m.add_class::<PyTwoCrows>()?;
+    m.add_class::<PyUpsideGapTwoCrows>()?;
+    m.add_class::<PyIdenticalThreeCrows>()?;
+    m.add_class::<PyThreeLineStrike>()?;
+    m.add_class::<PyThreeStarsInSouth>()?;
     // Microstructure: order book.
     m.add_class::<PyOrderBookImbalanceTop1>()?;
     m.add_class::<PyOrderBookImbalanceTopN>()?;
