@@ -523,6 +523,10 @@ CANDLE_SCALAR = {
         lambda: ta.ThreeOutside(),
         lambda ind, h, l, c, v: ind.batch(c, h, l, c),
     ),
+    "TwoCrows": (
+        lambda: ta.TwoCrows(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
 }
 
 
@@ -1849,6 +1853,13 @@ def test_three_outside_reference():
     assert t.update((11.0, 11.2, 9.8, 10.0, 1.0, 0)) == pytest.approx(0.0)
     assert t.update((9.5, 12.0, 9.5, 11.5, 1.0, 1)) == pytest.approx(0.0)
     assert t.update((11.5, 13.0, 11.4, 12.5, 1.0, 2)) == pytest.approx(1.0)
+
+
+def test_two_crows_reference():
+    t = ta.TwoCrows()
+    assert t.update((10.0, 12.2, 9.9, 12.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((14.0, 14.2, 12.9, 13.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((13.5, 13.6, 10.9, 11.0, 1.0, 2)) == pytest.approx(-1.0)
 
 
 # --- Lifecycle ------------------------------------------------------------

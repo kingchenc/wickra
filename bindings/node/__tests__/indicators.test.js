@@ -235,6 +235,7 @@ const candleScalar = {
   SpinningTop: { make: () => new wickra.SpinningTop(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   ThreeInside: { make: () => new wickra.ThreeInside(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   ThreeOutside: { make: () => new wickra.ThreeOutside(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  TwoCrows: { make: () => new wickra.TwoCrows(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {

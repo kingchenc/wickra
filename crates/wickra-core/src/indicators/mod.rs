@@ -219,6 +219,7 @@ mod tsi;
 mod tsv;
 mod ttm_squeeze;
 mod tweezer;
+mod two_crows;
 mod typical_price;
 mod ulcer_index;
 mod ultimate_oscillator;
@@ -463,6 +464,7 @@ pub use tsi::Tsi;
 pub use tsv::Tsv;
 pub use ttm_squeeze::{TtmSqueeze, TtmSqueezeOutput};
 pub use tweezer::Tweezer;
+pub use two_crows::TwoCrows;
 pub use typical_price::TypicalPrice;
 pub use ulcer_index::UlcerIndex;
 pub use ultimate_oscillator::UltimateOscillator;
@@ -755,6 +757,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "SpinningTop",
             "ThreeInside",
             "ThreeOutside",
+            "TwoCrows",
         ],
     ),
     (
@@ -846,6 +849,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 239, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 240, "FAMILIES total drifted from indicator count");
     }
 }

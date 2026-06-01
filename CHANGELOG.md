@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **TA-Lib candlestick patterns (part 1).** New candlestick pattern detectors
+  matching TA-Lib `CDL*`, emitting the family's signed `+1 / 0 / −1` convention
+  over OHLCV candles in Rust, Python, Node and WASM:
+  - **Two Crows** — a three-bar bearish reversal (`CDL2CROWS`): a long white
+    candle, a black candle whose body gaps up, then a black candle that opens
+    inside the second's body and closes inside the first's.
 - **Derivatives family — funding & open interest (part 1).** A new family of
   indicators that consume a perpetual / futures tick (`DerivativesTick`,
   bundling funding rate, mark / index / futures price, open interest,
