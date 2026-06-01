@@ -2417,6 +2417,24 @@ export declare class LiquidationFeatures {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type TermStructureBasisNode = TermStructureBasis
+export declare class TermStructureBasis {
+  constructor()
+  update(futuresPrice: number, indexPrice: number): number | null
+  batch(futuresPrice: Array<number>, indexPrice: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type CalendarSpreadNode = CalendarSpread
+export declare class CalendarSpread {
+  constructor()
+  update(futuresPrice: number, markPrice: number): number | null
+  batch(futuresPrice: Array<number>, markPrice: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type SharpeRatioNode = SharpeRatio
 export declare class SharpeRatio {
   constructor(period: number, riskFree: number)

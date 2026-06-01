@@ -268,6 +268,8 @@ from ._wickra import (
     LongShortRatio,
     TakerBuySellRatio,
     LiquidationFeatures,
+    TermStructureBasis,
+    CalendarSpread,
     # Risk / Performance
     SharpeRatio,
     SortinoRatio,
@@ -533,6 +535,8 @@ __all__ = [
     "LongShortRatio",
     "TakerBuySellRatio",
     "LiquidationFeatures",
+    "TermStructureBasis",
+    "CalendarSpread",
     # Risk / Performance
     "SharpeRatio",
     "SortinoRatio",
