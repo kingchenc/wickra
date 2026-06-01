@@ -4,6 +4,7 @@
 //! [`FAMILIES`]. Every public name is re-exported flat from this module and
 //! from the crate root for convenience.
 
+mod abandoned_baby;
 mod acceleration_bands;
 mod accelerator_oscillator;
 mod ad_oscillator;
@@ -253,6 +254,7 @@ mod zero_lag_macd;
 mod zig_zag;
 mod zlema;
 
+pub use abandoned_baby::AbandonedBaby;
 pub use acceleration_bands::{AccelerationBands, AccelerationBandsOutput};
 pub use accelerator_oscillator::AcceleratorOscillator;
 pub use ad_oscillator::AdOscillator;
@@ -770,6 +772,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "IdenticalThreeCrows",
             "ThreeLineStrike",
             "ThreeStarsInSouth",
+            "AbandonedBaby",
         ],
     ),
     (
@@ -861,6 +864,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 244, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 245, "FAMILIES total drifted from indicator count");
     }
 }

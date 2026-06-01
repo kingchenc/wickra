@@ -23,7 +23,7 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    AccelerationBands, AcceleratorOscillator, AdOscillator, Adl, Adx, Adxr, Alligator,
+    AbandonedBaby, AccelerationBands, AcceleratorOscillator, AdOscillator, Adl, Adx, Adxr, Alligator,
     AnchoredVwap, Aroon, AroonOscillator, Atr, AtrBands, AtrTrailingStop, AwesomeOscillator,
     AwesomeOscillatorHistogram, BalanceOfPower, BatchExt, Camarilla, Candle, Cci, ChaikinMoneyFlow,
     ChaikinOscillator, ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex,
@@ -297,6 +297,7 @@ fuzz_target!(|data: Vec<f64>| {
     }
 
     // --- Candlestick Patterns (family 14) ---
+    drive(AbandonedBaby::new, &candles);
     drive(Doji::new, &candles);
     drive(|| Doji::new().signed(), &candles);
     drive(Hammer::new, &candles);

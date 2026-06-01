@@ -8770,6 +8770,7 @@ node_candle_pattern!(
     wc::ThreeStarsInSouth,
     "ThreeStarsInSouth"
 );
+node_candle_pattern!(AbandonedBabyNode, wc::AbandonedBaby, "AbandonedBaby");
 
 // ============================== Microstructure: Order Book ==============================
 //

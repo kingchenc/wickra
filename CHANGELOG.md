@@ -28,6 +28,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Three Stars in the South** — a rare three-bar bullish reversal
     (`CDL3STARSINSOUTH`): three shrinking red candles each carving a higher low
     and contracting toward a tiny black marubozu as selling exhausts.
+  - **Abandoned Baby** — a strong three-bar reversal (`CDLABANDONEDBABY`): a doji
+    isolated by price gaps on both sides; bullish `+1` after a decline, bearish
+    `−1` after an advance.
 - **Derivatives family — funding & open interest (part 1).** A new family of
   indicators that consume a perpetual / futures tick (`DerivativesTick`,
   bundling funding rate, mark / index / futures price, open interest,

@@ -6347,6 +6347,7 @@ wasm_candle_pattern!(
     wc::ThreeStarsInSouth,
     ThreeStarsInSouth
 );
+wasm_candle_pattern!(WasmAbandonedBaby, wc::AbandonedBaby, AbandonedBaby);
 
 // ============================== Microstructure: Order Book ==============================
 //

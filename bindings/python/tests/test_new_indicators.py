@@ -543,6 +543,10 @@ CANDLE_SCALAR = {
         lambda: ta.ThreeStarsInSouth(),
         lambda ind, h, l, c, v: ind.batch(c, h, l, c),
     ),
+    "AbandonedBaby": (
+        lambda: ta.AbandonedBaby(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
 }
 
 
@@ -1905,6 +1909,13 @@ def test_three_stars_in_south_reference():
     assert t.update((20.0, 20.1, 8.0, 15.0, 1.0, 0)) == pytest.approx(0.0)
     assert t.update((18.0, 18.1, 12.0, 16.0, 1.0, 1)) == pytest.approx(0.0)
     assert t.update((15.0, 15.0, 14.0, 14.0, 1.0, 2)) == pytest.approx(1.0)
+
+
+def test_abandoned_baby_reference():
+    t = ta.AbandonedBaby()
+    assert t.update((20.0, 20.1, 14.9, 15.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((13.0, 13.1, 12.9, 13.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((16.0, 18.1, 15.9, 18.0, 1.0, 2)) == pytest.approx(1.0)
 
 
 # --- Lifecycle ------------------------------------------------------------
