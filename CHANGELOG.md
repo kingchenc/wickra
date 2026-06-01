@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Signed Doji encoding.** `Doji` gains an opt-in `.signed()` mode
+  (`Doji(signed=True)` in Python, `new Doji(true)` in Node and WASM) that
+  classifies a detected Doji by the position of its body within the bar range —
+  a dragonfly (long lower shadow) emits `+1.0` (bullish), a gravestone (long
+  upper shadow) emits `−1.0` (bearish), and a long-legged / standard Doji emits
+  `0.0` (neutral). The default construction is unchanged — a direction-less
+  `+1.0` / `0.0` detection flag — so existing callers are unaffected. This
+  completes the uniform `+1` bull / `−1` bear / `0` none sign convention across
+  every candlestick pattern, making the family a drop-in machine-learning
+  feature where bullish and bearish instances share a single dimension.
+
 ## [0.4.1] - 2026-06-01
 
 ### Added

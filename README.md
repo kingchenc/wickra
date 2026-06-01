@@ -159,6 +159,12 @@ warmup) at [docs.wickra.org](https://docs.wickra.org/Indicators-Overview).
 | Market Profile       | Value Area (POC / VAH / VAL), Initial Balance, Opening Range |
 | Risk / Performance   | Sharpe Ratio, Sortino Ratio, Calmar Ratio, Omega Ratio, Max Drawdown, Average Drawdown, Drawdown Duration, Pain Index, Value at Risk, Conditional Value at Risk (CVaR), Profit Factor, Gain/Loss Ratio, Recovery Factor, Kelly Criterion, Treynor Ratio, Information Ratio, Alpha (Jensen) |
 
+Every candlestick pattern emits a signed per-bar value — `+1.0` bullish,
+`−1.0` bearish, `0.0` none — so the family drops straight into a feature matrix
+as one column each. `Doji` is direction-less by default (`+1.0` / `0.0`);
+construct it in signed mode (`Doji::new().signed()`, `Doji(signed=True)`,
+`new Doji(true)`) for a dragonfly / gravestone `±1` reading.
+
 Adding a new indicator means implementing one trait in Rust; all four bindings
 inherit it automatically.
 
