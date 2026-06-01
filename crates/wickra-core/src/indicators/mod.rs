@@ -77,6 +77,7 @@ mod footprint;
 mod force_index;
 mod fractal_chaos_bands;
 mod frama;
+mod funding_basis;
 mod funding_rate;
 mod funding_rate_mean;
 mod funding_rate_zscore;
@@ -312,6 +313,7 @@ pub use footprint::{Footprint, FootprintLevel, FootprintOutput};
 pub use force_index::ForceIndex;
 pub use fractal_chaos_bands::{FractalChaosBands, FractalChaosBandsOutput};
 pub use frama::Frama;
+pub use funding_basis::FundingBasis;
 pub use funding_rate::FundingRate;
 pub use funding_rate_mean::FundingRateMean;
 pub use funding_rate_zscore::FundingRateZScore;
@@ -759,7 +761,12 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
     ),
     (
         "Derivatives",
-        &["FundingRate", "FundingRateMean", "FundingRateZScore"],
+        &[
+            "FundingRate",
+            "FundingRateMean",
+            "FundingRateZScore",
+            "FundingBasis",
+        ],
     ),
     (
         "Market Profile",
@@ -815,6 +822,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 230, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 231, "FAMILIES total drifted from indicator count");
     }
 }
