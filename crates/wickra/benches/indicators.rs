@@ -37,9 +37,10 @@ use wickra::{
     HilbertDominantCycle, HurstExponent, Ichimoku, IchimokuOutput, Indicator, Jma, Level,
     LinearRegression, MacdIndicator, MacdOutput, Mama, MamaOutput, MaxDrawdown, Microprice, Obv,
     OrderBook, OrderBookImbalanceFull, OrderBookImbalanceTop1, ParkinsonVolatility, Ppo, Psar,
-    RollingVwap, Rsi, SharpeRatio, Sma, Stc, SuperTrend, SuperTrendOutput, TdSequential,
-    TdSequentialOutput, TtmSqueeze, TtmSqueezeOutput, ValueArea, ValueAreaOutput, ValueAtRisk,
-    Vwap, VwapStdDevBands, VwapStdDevBandsOutput, WaveTrend, YangZhangVolatility, T3,
+    RollingVwap, Rsi, SharpeRatio, Side, SignedVolume, Sma, Stc, SuperTrend, SuperTrendOutput,
+    TdSequential, TdSequentialOutput, Trade, TradeImbalance, TtmSqueeze, TtmSqueezeOutput,
+    ValueArea, ValueAreaOutput, ValueAtRisk, Vwap, VwapStdDevBands, VwapStdDevBandsOutput,
+    WaveTrend, YangZhangVolatility, T3,
 };
 use wickra_data::csv::CandleReader;
 
@@ -129,6 +130,28 @@ where
                 let mut ind = make();
                 for book in books {
                     black_box(ind.update(book.clone()));
+                }
+            });
+        });
+    }
+    group.finish();
+}
+
+fn bench_trade_input<I, F, O>(c: &mut Criterion, name: &str, trades: &[Trade], make: F)
+where
+    F: Fn() -> I,
+    I: Indicator<Input = Trade, Output = O>,
+{
+    let mut group = c.benchmark_group(name);
+    for &n in SIZES {
+        let n = n.min(trades.len());
+        let series = &trades[..n];
+        group.throughput(Throughput::Elements(n as u64));
+        group.bench_with_input(BenchmarkId::new("streaming", n), series, |b, trades| {
+            b.iter(|| {
+                let mut ind = make();
+                for t in trades {
+                    black_box(ind.update(*t));
                 }
             });
         });
@@ -309,6 +332,25 @@ fn benches(c: &mut Criterion) {
     bench_orderbook_input(c, "ob_imbalance_top1", &books, OrderBookImbalanceTop1::new);
     bench_orderbook_input(c, "ob_imbalance_full", &books, OrderBookImbalanceFull::new);
     bench_orderbook_input(c, "microprice", &books, Microprice::new);
+
+    // Synthesise a trade tape from candles: one trade per bar, sided by the
+    // candle's direction. SignedVolume is the cheapest; TradeImbalance carries
+    // a rolling window and is the most expensive.
+    let trades: Vec<Trade> = candles
+        .iter()
+        .map(|candle| {
+            let side = if candle.close >= candle.open {
+                Side::Buy
+            } else {
+                Side::Sell
+            };
+            Trade::new_unchecked(candle.close, candle.volume, side, candle.timestamp)
+        })
+        .collect();
+    bench_trade_input(c, "signed_volume", &trades, SignedVolume::new);
+    bench_trade_input(c, "trade_imbalance", &trades, || {
+        TradeImbalance::new(50).unwrap()
+    });
 }
 
 criterion_group!(name = wickra_benches; config = Criterion::default(); targets = benches);

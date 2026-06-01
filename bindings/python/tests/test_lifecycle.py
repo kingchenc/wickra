@@ -150,3 +150,25 @@ def test_orderbook_lifecycle():
 
 def test_orderbook_topn_repr():
     assert repr(ta.OrderBookImbalanceTopN(5)) == "OrderBookImbalanceTopN(levels=5)"
+
+
+def test_tradeflow_lifecycle():
+    for ind in [ta.SignedVolume(), ta.CumulativeVolumeDelta()]:
+        assert ind.warmup_period() == 1
+        assert not ind.is_ready()
+        ind.update(100.0, 1.0, True)
+        assert ind.is_ready()
+        ind.reset()
+        assert not ind.is_ready()
+
+
+def test_trade_imbalance_lifecycle_and_repr():
+    ti = ta.TradeImbalance(3)
+    assert ti.warmup_period() == 3
+    assert not ti.is_ready()
+    for _ in range(3):
+        ti.update(100.0, 1.0, True)
+    assert ti.is_ready()
+    ti.reset()
+    assert not ti.is_ready()
+    assert repr(ta.TradeImbalance(4)) == "TradeImbalance(window=4)"

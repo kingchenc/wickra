@@ -951,3 +951,33 @@ test('order-book TopN rejects zero levels', () => {
 test('order-book update rejects a crossed book', () => {
   assert.throws(() => new wickra.QuotedSpread().update([102], [1], [101], [1]));
 });
+
+test('trade-flow indicators reference values', () => {
+  assert.equal(new wickra.SignedVolume().update(100, 2, true), 2);
+  assert.equal(new wickra.SignedVolume().update(100, 3, false), -3);
+  const cvd = new wickra.CumulativeVolumeDelta();
+  assert.equal(cvd.update(100, 5, true), 5);
+  assert.equal(cvd.update(100, 2, false), 3);
+  const ti = new wickra.TradeImbalance(2);
+  assert.equal(ti.update(100, 3, true), null); // warming up
+  assert.equal(ti.update(100, 1, false), 0.5); // (3 - 1) / 4
+});
+
+test('trade-flow streaming update matches batch', () => {
+  const n = 30;
+  const price = Array.from({ length: n }, () => 100);
+  const size = Array.from({ length: n }, (_, i) => 1 + (i % 4));
+  const isBuy = Array.from({ length: n }, (_, i) => i % 3 !== 0);
+  const batch = new wickra.CumulativeVolumeDelta().batch(price, size, isBuy);
+  const streamer = new wickra.CumulativeVolumeDelta();
+  assert.equal(batch.length, n);
+  for (let i = 0; i < n; i++) {
+    const s = streamer.update(price[i], size[i], isBuy[i]);
+    assert.ok(Math.abs(s - batch[i]) < 1e-12, `mismatch at ${i}: ${s} vs ${batch[i]}`);
+  }
+});
+
+test('trade-flow rejects bad input', () => {
+  assert.throws(() => new wickra.TradeImbalance(0));
+  assert.throws(() => new wickra.SignedVolume().update(100, -1, true));
+});

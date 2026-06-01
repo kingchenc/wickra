@@ -217,3 +217,17 @@ def test_orderbook_streaming_matches_batch():
     streamer = ta.Microprice()
     streamed = np.array([streamer.update(*snap) for snap in snaps], dtype=np.float64)
     assert _equal_with_nan(batch, streamed)
+
+
+def test_tradeflow_streaming_matches_batch():
+    n = 30
+    price = np.full(n, 100.0)
+    size = np.array([1.0 + (i % 4) for i in range(n)], dtype=np.float64)
+    is_buy = [i % 3 != 0 for i in range(n)]
+    batch = ta.CumulativeVolumeDelta().batch(price, size, is_buy)
+    streamer = ta.CumulativeVolumeDelta()
+    streamed = np.array(
+        [streamer.update(price[i], size[i], is_buy[i]) for i in range(n)],
+        dtype=np.float64,
+    )
+    assert _equal_with_nan(batch, streamed)

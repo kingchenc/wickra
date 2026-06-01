@@ -11771,6 +11771,137 @@ impl PyOrderBookImbalanceTopN {
     }
 }
 
+// ============================== Microstructure: Trade Flow ==============================
+//
+// Trade-flow indicators consume a trade tape rather than OHLCV. Streaming
+// `update(price, size, is_buy)` takes one trade (`is_buy=True` for a
+// buyer-initiated trade); `batch` takes three equal-length arrays.
+
+fn build_trade(price: f64, size: f64, is_buy: bool) -> PyResult<wc::Trade> {
+    let side = if is_buy {
+        wc::Side::Buy
+    } else {
+        wc::Side::Sell
+    };
+    wc::Trade::new(price, size, side, 0).map_err(map_err)
+}
+
+macro_rules! py_trade_indicator {
+    ($name:ident, $inner:ty, $repr:expr) => {
+        #[pyclass(name = $repr, module = "wickra._wickra", skip_from_py_object)]
+        #[derive(Clone)]
+        struct $name {
+            inner: $inner,
+        }
+
+        #[pymethods]
+        impl $name {
+            #[new]
+            fn new() -> Self {
+                Self {
+                    inner: <$inner>::new(),
+                }
+            }
+            fn update(&mut self, price: f64, size: f64, is_buy: bool) -> PyResult<Option<f64>> {
+                Ok(self.inner.update(build_trade(price, size, is_buy)?))
+            }
+            fn batch<'py>(
+                &mut self,
+                py: Python<'py>,
+                price: Vec<f64>,
+                size: Vec<f64>,
+                is_buy: Vec<bool>,
+            ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+                if price.len() != size.len() || size.len() != is_buy.len() {
+                    return Err(PyValueError::new_err(
+                        "price, size, is_buy must be equal length",
+                    ));
+                }
+                let mut out = Vec::with_capacity(price.len());
+                for i in 0..price.len() {
+                    let trade = build_trade(price[i], size[i], is_buy[i])?;
+                    out.push(self.inner.update(trade).unwrap_or(f64::NAN));
+                }
+                Ok(out.into_pyarray(py))
+            }
+            fn reset(&mut self) {
+                self.inner.reset();
+            }
+            fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            fn warmup_period(&self) -> usize {
+                self.inner.warmup_period()
+            }
+            fn __repr__(&self) -> String {
+                format!("{}()", $repr)
+            }
+        }
+    };
+}
+
+py_trade_indicator!(PySignedVolume, wc::SignedVolume, "SignedVolume");
+py_trade_indicator!(
+    PyCumulativeVolumeDelta,
+    wc::CumulativeVolumeDelta,
+    "CumulativeVolumeDelta"
+);
+
+// Trade imbalance carries a `window` parameter, so it is hand-written.
+#[pyclass(
+    name = "TradeImbalance",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyTradeImbalance {
+    inner: wc::TradeImbalance,
+}
+
+#[pymethods]
+impl PyTradeImbalance {
+    #[new]
+    fn new(window: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::TradeImbalance::new(window).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, price: f64, size: f64, is_buy: bool) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        price: Vec<f64>,
+        size: Vec<f64>,
+        is_buy: Vec<bool>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if price.len() != size.len() || size.len() != is_buy.len() {
+            return Err(PyValueError::new_err(
+                "price, size, is_buy must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            let trade = build_trade(price[i], size[i], is_buy[i])?;
+            out.push(self.inner.update(trade).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("TradeImbalance(window={})", self.inner.window())
+    }
+}
+
 // ============================== Family 15: Risk / Performance ==============================
 
 #[pyclass(name = "SharpeRatio", module = "wickra._wickra", skip_from_py_object)]
@@ -12882,6 +13013,10 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyOrderBookImbalanceFull>()?;
     m.add_class::<PyMicroprice>()?;
     m.add_class::<PyQuotedSpread>()?;
+    // Microstructure: trade flow.
+    m.add_class::<PySignedVolume>()?;
+    m.add_class::<PyCumulativeVolumeDelta>()?;
+    m.add_class::<PyTradeImbalance>()?;
     // Family 15: Risk / Performance metrics.
     m.add_class::<PySharpeRatio>()?;
     m.add_class::<PySortinoRatio>()?;

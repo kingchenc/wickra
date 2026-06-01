@@ -870,3 +870,22 @@ def test_quoted_spread_reference_value():
     # spread 1.0, mid 100.5 -> 1 / 100.5 * 10_000 ≈ 99.5025 bps.
     qs = ta.QuotedSpread()
     assert qs.update([100.0], [1.0], [101.0], [1.0]) == pytest.approx(99.50248756, abs=1e-6)
+
+
+def test_signed_volume_reference_values():
+    assert ta.SignedVolume().update(100.0, 2.0, True) == pytest.approx(2.0)
+    assert ta.SignedVolume().update(100.0, 3.0, False) == pytest.approx(-3.0)
+
+
+def test_cumulative_volume_delta_reference_values():
+    cvd = ta.CumulativeVolumeDelta()
+    assert cvd.update(100.0, 5.0, True) == pytest.approx(5.0)
+    assert cvd.update(100.0, 2.0, False) == pytest.approx(3.0)
+    assert cvd.update(100.0, 4.0, False) == pytest.approx(-1.0)
+
+
+def test_trade_imbalance_reference_value():
+    ti = ta.TradeImbalance(2)
+    assert ti.update(100.0, 3.0, True) is None  # warming up
+    # Window full: buyVol 3, sellVol 1 -> (3 - 1) / 4 = 0.5.
+    assert ti.update(100.0, 1.0, False) == pytest.approx(0.5)

@@ -6459,6 +6459,102 @@ impl WasmOrderBookImbalanceTopN {
     }
 }
 
+// ============================== Microstructure: Trade Flow ==============================
+//
+// Trade-flow indicators consume a trade tape rather than OHLCV. Each
+// `update(price, size, isBuy)` takes one trade (`isBuy=true` for a
+// buyer-initiated trade) — the streaming model for a live browser trade feed.
+
+fn build_trade(price: f64, size: f64, is_buy: bool) -> Result<wc::Trade, JsError> {
+    let side = if is_buy {
+        wc::Side::Buy
+    } else {
+        wc::Side::Sell
+    };
+    wc::Trade::new(price, size, side, 0).map_err(map_err)
+}
+
+macro_rules! wasm_trade_indicator {
+    ($wasm:ident, $inner:ty, $js:ident) => {
+        #[wasm_bindgen(js_name = $js)]
+        pub struct $wasm {
+            inner: $inner,
+        }
+
+        impl Default for $wasm {
+            fn default() -> Self {
+                Self::new()
+            }
+        }
+
+        #[wasm_bindgen(js_class = $js)]
+        impl $wasm {
+            #[wasm_bindgen(constructor)]
+            pub fn new() -> $wasm {
+                Self {
+                    inner: <$inner>::new(),
+                }
+            }
+            pub fn update(
+                &mut self,
+                price: f64,
+                size: f64,
+                is_buy: bool,
+            ) -> Result<Option<f64>, JsError> {
+                Ok(self.inner.update(build_trade(price, size, is_buy)?))
+            }
+            pub fn reset(&mut self) {
+                self.inner.reset();
+            }
+            #[wasm_bindgen(js_name = isReady)]
+            pub fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            #[wasm_bindgen(js_name = warmupPeriod)]
+            pub fn warmup_period(&self) -> usize {
+                self.inner.warmup_period()
+            }
+        }
+    };
+}
+
+wasm_trade_indicator!(WasmSignedVolume, wc::SignedVolume, SignedVolume);
+wasm_trade_indicator!(
+    WasmCumulativeVolumeDelta,
+    wc::CumulativeVolumeDelta,
+    CumulativeVolumeDelta
+);
+
+// Trade imbalance carries a `window` parameter, so it is hand-written.
+#[wasm_bindgen(js_name = TradeImbalance)]
+pub struct WasmTradeImbalance {
+    inner: wc::TradeImbalance,
+}
+
+#[wasm_bindgen(js_class = TradeImbalance)]
+impl WasmTradeImbalance {
+    #[wasm_bindgen(constructor)]
+    pub fn new(window: usize) -> Result<WasmTradeImbalance, JsError> {
+        Ok(Self {
+            inner: wc::TradeImbalance::new(window).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, price: f64, size: f64, is_buy: bool) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -119,3 +119,19 @@ def test_orderbook_batch_returns_one_value_per_snapshot():
     out = ta.OrderBookImbalanceTop1().batch(snapshots)
     assert out.shape == (5,)
     assert out.dtype == np.float64
+
+
+def test_tradeflow_indicators_construct_and_emit():
+    # SignedVolume and CVD emit from the first trade; TradeImbalance(1) too.
+    assert isinstance(ta.SignedVolume().update(100.0, 2.0, True), float)
+    assert isinstance(ta.CumulativeVolumeDelta().update(100.0, 2.0, True), float)
+    assert isinstance(ta.TradeImbalance(1).update(100.0, 2.0, True), float)
+
+
+def test_tradeflow_batch_returns_one_value_per_trade():
+    price = np.full(6, 100.0)
+    size = np.array([1.0, 2.0, 3.0, 1.0, 2.0, 3.0])
+    is_buy = [True, False, True, False, True, False]
+    out = ta.CumulativeVolumeDelta().batch(price, size, is_buy)
+    assert out.shape == (6,)
+    assert out.dtype == np.float64

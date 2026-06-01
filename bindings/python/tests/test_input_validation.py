@@ -191,3 +191,23 @@ def test_orderbook_misordered_levels_raise():
     # Bids must be strictly descending in price.
     with pytest.raises(ValueError):
         ta.OrderBookImbalanceFull().update([99.0, 100.0], [1.0, 1.0], [101.0], [1.0])
+
+
+def test_trade_imbalance_zero_window_raises():
+    with pytest.raises(ValueError):
+        ta.TradeImbalance(0)
+
+
+def test_trade_negative_size_raises():
+    with pytest.raises(ValueError):
+        ta.SignedVolume().update(100.0, -1.0, True)
+
+
+def test_trade_non_positive_price_raises():
+    with pytest.raises(ValueError):
+        ta.CumulativeVolumeDelta().update(0.0, 1.0, True)
+
+
+def test_trade_batch_unequal_lengths_raise():
+    with pytest.raises(ValueError):
+        ta.SignedVolume().batch([100.0, 100.0], [1.0], [True, False])

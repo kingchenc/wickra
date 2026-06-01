@@ -47,6 +47,7 @@ mod cointegration;
 mod conditional_value_at_risk;
 mod connors_rsi;
 mod coppock;
+mod cvd;
 mod cybernetic_cycle;
 mod decycler;
 mod decycler_oscillator;
@@ -155,6 +156,7 @@ mod rvi_volatility;
 mod rwi;
 mod sharpe_ratio;
 mod shooting_star;
+mod signed_volume;
 mod sine_wave;
 mod skewness;
 mod sma;
@@ -191,6 +193,7 @@ mod three_inside;
 mod three_outside;
 mod three_soldiers_or_crows;
 mod tii;
+mod trade_imbalance;
 mod treynor_ratio;
 mod trima;
 mod trix;
@@ -271,6 +274,7 @@ pub use cointegration::{Cointegration, CointegrationOutput};
 pub use conditional_value_at_risk::ConditionalValueAtRisk;
 pub use connors_rsi::ConnorsRsi;
 pub use coppock::Coppock;
+pub use cvd::CumulativeVolumeDelta;
 pub use cybernetic_cycle::CyberneticCycle;
 pub use decycler::Decycler;
 pub use decycler_oscillator::DecyclerOscillator;
@@ -379,6 +383,7 @@ pub use rvi_volatility::RviVolatility;
 pub use rwi::{Rwi, RwiOutput};
 pub use sharpe_ratio::SharpeRatio;
 pub use shooting_star::ShootingStar;
+pub use signed_volume::SignedVolume;
 pub use sine_wave::SineWave;
 pub use skewness::Skewness;
 pub use sma::Sma;
@@ -415,6 +420,7 @@ pub use three_inside::ThreeInside;
 pub use three_outside::ThreeOutside;
 pub use three_soldiers_or_crows::ThreeSoldiersOrCrows;
 pub use tii::Tii;
+pub use trade_imbalance::TradeImbalance;
 pub use treynor_ratio::TreynorRatio;
 pub use trima::Trima;
 pub use trix::Trix;
@@ -725,6 +731,9 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "OrderBookImbalanceFull",
             "Microprice",
             "QuotedSpread",
+            "SignedVolume",
+            "CumulativeVolumeDelta",
+            "TradeImbalance",
         ],
     ),
     (
@@ -781,6 +790,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 219, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 222, "FAMILIES total drifted from indicator count");
     }
 }

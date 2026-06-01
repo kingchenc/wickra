@@ -8914,6 +8914,144 @@ impl OrderBookImbalanceTopNNode {
     }
 }
 
+// ============================== Microstructure: Trade Flow ==============================
+//
+// Trade-flow indicators consume a trade tape rather than OHLCV. Streaming
+// `update(price, size, isBuy)` takes one trade (`isBuy=true` for a
+// buyer-initiated trade); `batch` takes three equal-length arrays.
+
+fn build_trade(price: f64, size: f64, is_buy: bool) -> napi::Result<wc::Trade> {
+    let side = if is_buy {
+        wc::Side::Buy
+    } else {
+        wc::Side::Sell
+    };
+    wc::Trade::new(price, size, side, 0).map_err(map_err)
+}
+
+macro_rules! node_trade_indicator {
+    ($node:ident, $inner:ty, $js:literal) => {
+        #[napi(js_name = $js)]
+        pub struct $node {
+            inner: $inner,
+        }
+
+        impl Default for $node {
+            fn default() -> Self {
+                Self::new()
+            }
+        }
+
+        #[napi]
+        impl $node {
+            #[napi(constructor)]
+            pub fn new() -> Self {
+                Self {
+                    inner: <$inner>::new(),
+                }
+            }
+            #[napi]
+            pub fn update(
+                &mut self,
+                price: f64,
+                size: f64,
+                is_buy: bool,
+            ) -> napi::Result<Option<f64>> {
+                Ok(self.inner.update(build_trade(price, size, is_buy)?))
+            }
+            #[napi]
+            pub fn batch(
+                &mut self,
+                price: Vec<f64>,
+                size: Vec<f64>,
+                is_buy: Vec<bool>,
+            ) -> napi::Result<Vec<f64>> {
+                if price.len() != size.len() || size.len() != is_buy.len() {
+                    return Err(NapiError::from_reason(
+                        "price, size, is_buy must be equal length".to_string(),
+                    ));
+                }
+                let mut out = Vec::with_capacity(price.len());
+                for i in 0..price.len() {
+                    let trade = build_trade(price[i], size[i], is_buy[i])?;
+                    out.push(self.inner.update(trade).unwrap_or(f64::NAN));
+                }
+                Ok(out)
+            }
+            #[napi]
+            pub fn reset(&mut self) {
+                self.inner.reset();
+            }
+            #[napi(js_name = "isReady")]
+            pub fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            #[napi(js_name = "warmupPeriod")]
+            pub fn warmup_period(&self) -> u32 {
+                self.inner.warmup_period() as u32
+            }
+        }
+    };
+}
+
+node_trade_indicator!(SignedVolumeNode, wc::SignedVolume, "SignedVolume");
+node_trade_indicator!(
+    CumulativeVolumeDeltaNode,
+    wc::CumulativeVolumeDelta,
+    "CumulativeVolumeDelta"
+);
+
+// Trade imbalance carries a `window` parameter, so it is hand-written.
+#[napi(js_name = "TradeImbalance")]
+pub struct TradeImbalanceNode {
+    inner: wc::TradeImbalance,
+}
+
+#[napi]
+impl TradeImbalanceNode {
+    #[napi(constructor)]
+    pub fn new(window: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::TradeImbalance::new(window as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, price: f64, size: f64, is_buy: bool) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        price: Vec<f64>,
+        size: Vec<f64>,
+        is_buy: Vec<bool>,
+    ) -> napi::Result<Vec<f64>> {
+        if price.len() != size.len() || size.len() != is_buy.len() {
+            return Err(NapiError::from_reason(
+                "price, size, is_buy must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            let trade = build_trade(price[i], size[i], is_buy[i])?;
+            out.push(self.inner.update(trade).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== Family 15: Risk / Performance ==============================
 
 // Risk metrics with fallible `new` (most need `period >= 2`), so each wrapper
