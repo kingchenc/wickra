@@ -12244,6 +12244,70 @@ fn deriv_oi(open_interest: f64) -> PyResult<wc::DerivativesTick> {
     .map_err(map_err)
 }
 
+fn deriv_oi_mark(open_interest: f64, mark_price: f64) -> PyResult<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        0.0,
+        mark_price,
+        1.0,
+        1.0,
+        open_interest,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_long_short(long_size: f64, short_size: f64) -> PyResult<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        0.0, 1.0, 1.0, 1.0, 0.0, long_size, short_size, 0.0, 0.0, 0.0, 0.0, 0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_taker(taker_buy_volume: f64, taker_sell_volume: f64) -> PyResult<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        taker_buy_volume,
+        taker_sell_volume,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_liquidation(
+    long_liquidation: f64,
+    short_liquidation: f64,
+) -> PyResult<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        long_liquidation,
+        short_liquidation,
+        0,
+    )
+    .map_err(map_err)
+}
+
 // FundingRate takes no parameters; streaming `update(funding_rate)`, `batch`
 // over one funding-rate array.
 #[pyclass(name = "FundingRate", module = "wickra._wickra", skip_from_py_object)]
@@ -12479,6 +12543,312 @@ impl PyOpenInterestDelta {
     }
     fn __repr__(&self) -> String {
         "OpenInterestDelta()".to_string()
+    }
+}
+
+// OIPriceDivergence carries a `window` parameter; streaming
+// `update(open_interest, mark_price)`.
+#[pyclass(
+    name = "OIPriceDivergence",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyOIPriceDivergence {
+    inner: wc::OIPriceDivergence,
+}
+
+#[pymethods]
+impl PyOIPriceDivergence {
+    #[new]
+    fn new(window: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::OIPriceDivergence::new(window).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, open_interest: f64, mark_price: f64) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(deriv_oi_mark(open_interest, mark_price)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        open_interest: Vec<f64>,
+        mark_price: Vec<f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if open_interest.len() != mark_price.len() {
+            return Err(PyValueError::new_err(
+                "open_interest and mark_price must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(open_interest.len());
+        for i in 0..open_interest.len() {
+            out.push(
+                self.inner
+                    .update(deriv_oi_mark(open_interest[i], mark_price[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("OIPriceDivergence(window={})", self.inner.window())
+    }
+}
+
+// OIWeighted takes no parameters; streaming `update(mark_price, open_interest)`.
+#[pyclass(name = "OIWeighted", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyOIWeighted {
+    inner: wc::OIWeighted,
+}
+
+#[pymethods]
+impl PyOIWeighted {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::OIWeighted::new(),
+        }
+    }
+    fn update(&mut self, mark_price: f64, open_interest: f64) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(deriv_oi_mark(open_interest, mark_price)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        mark_price: Vec<f64>,
+        open_interest: Vec<f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if mark_price.len() != open_interest.len() {
+            return Err(PyValueError::new_err(
+                "mark_price and open_interest must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(mark_price.len());
+        for i in 0..mark_price.len() {
+            out.push(
+                self.inner
+                    .update(deriv_oi_mark(open_interest[i], mark_price[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "OIWeighted()".to_string()
+    }
+}
+
+// LongShortRatio takes no parameters; streaming `update(long_size, short_size)`.
+#[pyclass(
+    name = "LongShortRatio",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyLongShortRatio {
+    inner: wc::LongShortRatio,
+}
+
+#[pymethods]
+impl PyLongShortRatio {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::LongShortRatio::new(),
+        }
+    }
+    fn update(&mut self, long_size: f64, short_size: f64) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(deriv_long_short(long_size, short_size)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        long_size: Vec<f64>,
+        short_size: Vec<f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if long_size.len() != short_size.len() {
+            return Err(PyValueError::new_err(
+                "long_size and short_size must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(long_size.len());
+        for i in 0..long_size.len() {
+            out.push(
+                self.inner
+                    .update(deriv_long_short(long_size[i], short_size[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "LongShortRatio()".to_string()
+    }
+}
+
+// TakerBuySellRatio takes no parameters; streaming
+// `update(taker_buy_volume, taker_sell_volume)`.
+#[pyclass(
+    name = "TakerBuySellRatio",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyTakerBuySellRatio {
+    inner: wc::TakerBuySellRatio,
+}
+
+#[pymethods]
+impl PyTakerBuySellRatio {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::TakerBuySellRatio::new(),
+        }
+    }
+    fn update(&mut self, taker_buy_volume: f64, taker_sell_volume: f64) -> PyResult<Option<f64>> {
+        Ok(self
+            .inner
+            .update(deriv_taker(taker_buy_volume, taker_sell_volume)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        taker_buy_volume: Vec<f64>,
+        taker_sell_volume: Vec<f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if taker_buy_volume.len() != taker_sell_volume.len() {
+            return Err(PyValueError::new_err(
+                "taker_buy_volume and taker_sell_volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(taker_buy_volume.len());
+        for i in 0..taker_buy_volume.len() {
+            out.push(
+                self.inner
+                    .update(deriv_taker(taker_buy_volume[i], taker_sell_volume[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "TakerBuySellRatio()".to_string()
+    }
+}
+
+// LiquidationFeatures is a multi-output indicator: streaming
+// `update(long_liquidation, short_liquidation)` returns a 5-tuple
+// `(long, short, net, total, imbalance)`; `batch` returns an `(n, 5)` array.
+#[pyclass(
+    name = "LiquidationFeatures",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyLiquidationFeatures {
+    inner: wc::LiquidationFeatures,
+}
+
+#[pymethods]
+impl PyLiquidationFeatures {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::LiquidationFeatures::new(),
+        }
+    }
+    /// Returns `(long, short, net, total, imbalance)` or None during warmup.
+    #[allow(clippy::type_complexity)]
+    fn update(
+        &mut self,
+        long_liquidation: f64,
+        short_liquidation: f64,
+    ) -> PyResult<Option<(f64, f64, f64, f64, f64)>> {
+        Ok(self
+            .inner
+            .update(deriv_liquidation(long_liquidation, short_liquidation)?)
+            .map(|o| (o.long, o.short, o.net, o.total, o.imbalance)))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        long_liquidation: Vec<f64>,
+        short_liquidation: Vec<f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        if long_liquidation.len() != short_liquidation.len() {
+            return Err(PyValueError::new_err(
+                "long_liquidation and short_liquidation must be equal length",
+            ));
+        }
+        let rows = long_liquidation.len();
+        let mut data = Vec::with_capacity(rows * 5);
+        for i in 0..rows {
+            let out = self
+                .inner
+                .update(deriv_liquidation(
+                    long_liquidation[i],
+                    short_liquidation[i],
+                )?)
+                .expect("liquidation features emit on every tick");
+            data.push(out.long);
+            data.push(out.short);
+            data.push(out.net);
+            data.push(out.total);
+            data.push(out.imbalance);
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((rows, 5), data)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "LiquidationFeatures()".to_string()
     }
 }
 
@@ -13610,6 +13980,11 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyFundingRateZScore>()?;
     m.add_class::<PyFundingBasis>()?;
     m.add_class::<PyOpenInterestDelta>()?;
+    m.add_class::<PyOIPriceDivergence>()?;
+    m.add_class::<PyOIWeighted>()?;
+    m.add_class::<PyLongShortRatio>()?;
+    m.add_class::<PyTakerBuySellRatio>()?;
+    m.add_class::<PyLiquidationFeatures>()?;
     // Family 15: Risk / Performance metrics.
     m.add_class::<PySharpeRatio>()?;
     m.add_class::<PySortinoRatio>()?;

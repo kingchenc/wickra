@@ -258,3 +258,13 @@ def test_funding_basis_non_positive_index_raises():
 def test_funding_rate_non_finite_raises():
     with pytest.raises(ValueError):
         ta.FundingRate().update(float("nan"))
+
+
+def test_oi_price_divergence_zero_window_raises():
+    with pytest.raises(ValueError):
+        ta.OIPriceDivergence(0)
+
+
+def test_oi_weighted_non_positive_mark_raises():
+    with pytest.raises(ValueError):
+        ta.OIWeighted().update(0.0, 100.0)

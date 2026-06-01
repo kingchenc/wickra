@@ -1994,3 +1994,56 @@ def test_open_interest_delta_streaming_equals_batch():
     streamed = np.array([streamer.update(oi[i]) for i in range(n)], dtype=np.float64)
     assert batch.shape == (n,)
     assert _eq_nan(batch, streamed)
+
+
+def test_oi_flow_indicators_streaming_equals_batch():
+    n = 40
+    oi = np.array([1000.0 + 50.0 * math.sin(i * 0.2) for i in range(n)], dtype=np.float64)
+    mark = np.array([100.0 + math.cos(i * 0.3) for i in range(n)], dtype=np.float64)
+    long_sz = np.array([500.0 + 20.0 * math.sin(i * 0.25) for i in range(n)], dtype=np.float64)
+    short_sz = np.array([400.0 + 20.0 * math.cos(i * 0.25) for i in range(n)], dtype=np.float64)
+
+    # OIPriceDivergence carries a window; update(open_interest, mark_price).
+    batch = ta.OIPriceDivergence(5).batch(oi, mark)
+    streamer = ta.OIPriceDivergence(5)
+    streamed = np.array(
+        [streamer.update(oi[i], mark[i]) for i in range(n)], dtype=np.float64
+    )
+    assert batch.shape == (n,)
+    assert _eq_nan(batch, streamed)
+
+    # OIWeighted; update(mark_price, open_interest).
+    batch = ta.OIWeighted().batch(mark, oi)
+    streamer = ta.OIWeighted()
+    streamed = np.array(
+        [streamer.update(mark[i], oi[i]) for i in range(n)], dtype=np.float64
+    )
+    assert _eq_nan(batch, streamed)
+
+    # LongShortRatio; update(long_size, short_size).
+    batch = ta.LongShortRatio().batch(long_sz, short_sz)
+    streamer = ta.LongShortRatio()
+    streamed = np.array(
+        [streamer.update(long_sz[i], short_sz[i]) for i in range(n)], dtype=np.float64
+    )
+    assert _eq_nan(batch, streamed)
+
+    # TakerBuySellRatio; update(taker_buy_volume, taker_sell_volume).
+    batch = ta.TakerBuySellRatio().batch(long_sz, short_sz)
+    streamer = ta.TakerBuySellRatio()
+    streamed = np.array(
+        [streamer.update(long_sz[i], short_sz[i]) for i in range(n)], dtype=np.float64
+    )
+    assert _eq_nan(batch, streamed)
+
+
+def test_liquidation_features_streaming_equals_batch():
+    n = 30
+    long_liq = np.array([abs(50.0 * math.sin(i * 0.4)) for i in range(n)], dtype=np.float64)
+    short_liq = np.array([abs(40.0 * math.cos(i * 0.3)) for i in range(n)], dtype=np.float64)
+    batch = ta.LiquidationFeatures().batch(long_liq, short_liq)
+    streamer = ta.LiquidationFeatures()
+    assert batch.shape == (n, 5)
+    for i in range(n):
+        row = streamer.update(long_liq[i], short_liq[i])
+        assert tuple(batch[i]) == pytest.approx(row)

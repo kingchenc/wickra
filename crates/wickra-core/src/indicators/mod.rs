@@ -114,6 +114,8 @@ mod linreg;
 mod linreg_angle;
 mod linreg_channel;
 mod linreg_slope;
+mod liquidation_features;
+mod long_short_ratio;
 mod ma_envelope;
 mod macd;
 mod mama;
@@ -135,6 +137,8 @@ mod ob_imbalance_top1;
 mod ob_imbalance_topn;
 mod obv;
 mod oi_delta;
+mod oi_price_divergence;
+mod oi_weighted;
 mod omega_ratio;
 mod opening_range;
 mod pain_index;
@@ -186,6 +190,7 @@ mod stochastic;
 mod super_smoother;
 mod super_trend;
 mod t3;
+mod taker_buy_sell_ratio;
 mod td_combo;
 mod td_countdown;
 mod td_demarker;
@@ -351,6 +356,8 @@ pub use linreg::LinearRegression;
 pub use linreg_angle::LinRegAngle;
 pub use linreg_channel::{LinRegChannel, LinRegChannelOutput};
 pub use linreg_slope::LinRegSlope;
+pub use liquidation_features::{LiquidationFeatures, LiquidationFeaturesOutput};
+pub use long_short_ratio::LongShortRatio;
 pub use ma_envelope::{MaEnvelope, MaEnvelopeOutput};
 pub use macd::{MacdIndicator, MacdOutput};
 pub use mama::{Mama, MamaOutput};
@@ -372,6 +379,8 @@ pub use ob_imbalance_top1::OrderBookImbalanceTop1;
 pub use ob_imbalance_topn::OrderBookImbalanceTopN;
 pub use obv::Obv;
 pub use oi_delta::OpenInterestDelta;
+pub use oi_price_divergence::OIPriceDivergence;
+pub use oi_weighted::OIWeighted;
 pub use omega_ratio::OmegaRatio;
 pub use opening_range::{OpeningRange, OpeningRangeOutput};
 pub use pain_index::PainIndex;
@@ -423,6 +432,7 @@ pub use stochastic::{Stochastic, StochasticOutput};
 pub use super_smoother::SuperSmoother;
 pub use super_trend::{SuperTrend, SuperTrendOutput};
 pub use t3::T3;
+pub use taker_buy_sell_ratio::TakerBuySellRatio;
 pub use td_combo::TdCombo;
 pub use td_countdown::TdCountdown;
 pub use td_demarker::TdDeMarker;
@@ -769,6 +779,11 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "FundingRateZScore",
             "FundingBasis",
             "OpenInterestDelta",
+            "OIPriceDivergence",
+            "OIWeighted",
+            "LongShortRatio",
+            "TakerBuySellRatio",
+            "LiquidationFeatures",
         ],
     ),
     (
@@ -825,6 +840,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 232, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 237, "FAMILIES total drifted from indicator count");
     }
 }

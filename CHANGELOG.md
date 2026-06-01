@@ -20,6 +20,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Funding Basis** — the perpetual's relative premium to spot,
     `(markPrice − indexPrice) / indexPrice`.
   - **Open-Interest Delta** — the tick-over-tick change in open interest.
+- **Derivatives family — open interest, flow & liquidations (part 2).** More
+  indicators over the same `DerivativesTick` feed:
+  - **OI / Price Divergence** — relative open-interest change minus relative
+    price change over a window, the positioning-vs-price gap.
+  - **OI-Weighted Price** — the cumulative mark price weighted by open interest.
+  - **Long/Short Ratio** — aggregate long size over short size.
+  - **Taker Buy/Sell Ratio** — taker buy volume over taker sell volume.
+  - **Liquidation Features** — a multi-output breakdown of long/short
+    liquidation notional into net, total and a bounded imbalance.
 
 ## [0.4.3] - 2026-06-01
 

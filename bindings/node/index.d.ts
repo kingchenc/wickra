@@ -292,6 +292,14 @@ export interface FootprintLevelValue {
   bidVol: number
   askVol: number
 }
+/** The liquidation feature vector for one tick. */
+export interface LiquidationFeaturesValue {
+  long: number
+  short: number
+  net: number
+  total: number
+  imbalance: number
+}
 export type SmaNode = SMA
 export declare class SMA {
   constructor(period: number)
@@ -2360,6 +2368,51 @@ export declare class OpenInterestDelta {
   constructor()
   update(openInterest: number): number | null
   batch(openInterest: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type OIPriceDivergenceNode = OIPriceDivergence
+export declare class OIPriceDivergence {
+  constructor(window: number)
+  update(openInterest: number, markPrice: number): number | null
+  batch(openInterest: Array<number>, markPrice: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type OIWeightedNode = OIWeighted
+export declare class OIWeighted {
+  constructor()
+  update(markPrice: number, openInterest: number): number | null
+  batch(markPrice: Array<number>, openInterest: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type LongShortRatioNode = LongShortRatio
+export declare class LongShortRatio {
+  constructor()
+  update(longSize: number, shortSize: number): number | null
+  batch(longSize: Array<number>, shortSize: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TakerBuySellRatioNode = TakerBuySellRatio
+export declare class TakerBuySellRatio {
+  constructor()
+  update(takerBuyVolume: number, takerSellVolume: number): number | null
+  batch(takerBuyVolume: Array<number>, takerSellVolume: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type LiquidationFeaturesNode = LiquidationFeatures
+export declare class LiquidationFeatures {
+  constructor()
+  update(longLiquidation: number, shortLiquidation: number): LiquidationFeaturesValue | null
+  batch(longLiquidation: Array<number>, shortLiquidation: Array<number>): Array<number>
   reset(): void
   isReady(): boolean
   warmupPeriod(): number
