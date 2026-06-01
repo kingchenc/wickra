@@ -238,3 +238,23 @@ def test_footprint_non_positive_tick_raises():
         ta.Footprint(0.0)
     with pytest.raises(ValueError):
         ta.Footprint(-1.0)
+
+
+def test_funding_rate_mean_zero_window_raises():
+    with pytest.raises(ValueError):
+        ta.FundingRateMean(0)
+
+
+def test_funding_rate_zscore_zero_window_raises():
+    with pytest.raises(ValueError):
+        ta.FundingRateZScore(0)
+
+
+def test_funding_basis_non_positive_index_raises():
+    with pytest.raises(ValueError):
+        ta.FundingBasis().update(100.0, 0.0)
+
+
+def test_funding_rate_non_finite_raises():
+    with pytest.raises(ValueError):
+        ta.FundingRate().update(float("nan"))

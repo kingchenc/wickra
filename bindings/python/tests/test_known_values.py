@@ -946,3 +946,36 @@ def test_kyles_lambda_recovers_constant_impact():
         mids.append(mid)
     out = ta.KylesLambda(6).batch(price, size, is_buy, mids)
     assert out[-1] == pytest.approx(0.5, abs=1e-9)
+
+
+def test_funding_rate_reference_values():
+    assert ta.FundingRate().update(0.0001) == pytest.approx(0.0001)
+    assert ta.FundingRate().update(-0.0003) == pytest.approx(-0.0003)
+
+
+def test_funding_rate_mean_reference_value():
+    frm = ta.FundingRateMean(2)
+    assert frm.update(0.001) is None  # warming up
+    # Window [0.001, 0.003] -> mean 0.002.
+    assert frm.update(0.003) == pytest.approx(0.002)
+
+
+def test_funding_rate_zscore_reference_value():
+    z = ta.FundingRateZScore(2)
+    assert z.update(0.001) is None  # warming up
+    # Window [0.001, 0.003]: mean 0.002, population stddev 0.001 -> +1.
+    assert z.update(0.003) == pytest.approx(1.0, abs=1e-9)
+
+
+def test_funding_basis_reference_value():
+    # mark 100.5 vs index 100.0 -> (100.5 - 100.0) / 100.0 = 0.005.
+    assert ta.FundingBasis().update(100.5, 100.0) == pytest.approx(0.005)
+    # A discount reads negative.
+    assert ta.FundingBasis().update(99.5, 100.0) == pytest.approx(-0.005)
+
+
+def test_open_interest_delta_reference_value():
+    oid = ta.OpenInterestDelta()
+    assert oid.update(1000.0) is None  # seeds the previous OI
+    assert oid.update(1250.0) == pytest.approx(250.0)
+    assert oid.update(1100.0) == pytest.approx(-150.0)

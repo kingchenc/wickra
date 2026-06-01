@@ -36,6 +36,7 @@
 
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
+mod derivatives;
 mod error;
 mod microstructure;
 mod ohlcv;
@@ -43,6 +44,7 @@ mod traits;
 
 pub mod indicators;
 
+pub use derivatives::DerivativesTick;
 pub use error::{Error, Result};
 pub use indicators::{
     AccelerationBands, AccelerationBandsOutput, AcceleratorOscillator, AdOscillator, AdaptiveCycle,
@@ -60,23 +62,23 @@ pub use indicators::{
     DrawdownDuration, EaseOfMovement, EffectiveSpread, EhlersStochastic, ElderImpulse, Ema,
     EmpiricalModeDecomposition, Engulfing, Evwma, Fama, FibonacciPivots, FibonacciPivotsOutput,
     FisherTransform, Footprint, FootprintOutput, ForceIndex, FractalChaosBands,
-    FractalChaosBandsOutput, Frama, GainLossRatio, GarmanKlassVolatility, Hammer, HangingMan,
-    Harami, HeikinAshi, HeikinAshiOutput, HiLoActivator, HilbertDominantCycle,
-    HistoricalVolatility, Hma, HurstChannel, HurstChannelOutput, HurstExponent, Ichimoku,
-    IchimokuOutput, Inertia, InformationRatio, InitialBalance, InitialBalanceOutput,
-    InstantaneousTrendline, InverseFisherTransform, InvertedHammer, Jma, Kama, KellyCriterion,
-    Keltner, KeltnerOutput, Kst, KstOutput, Kurtosis, Kvo, KylesLambda, LaguerreRsi,
-    LeadLagCrossCorrelation, LeadLagCrossCorrelationOutput, LinRegAngle, LinRegChannel,
-    LinRegChannelOutput, LinRegSlope, LinearRegression, MaEnvelope, MaEnvelopeOutput,
-    MacdIndicator, MacdOutput, Mama, MamaOutput, MarketFacilitationIndex, Marubozu, MassIndex,
-    MaxDrawdown, McGinleyDynamic, MedianAbsoluteDeviation, MedianPrice, Mfi, Microprice, Mom,
-    MorningEveningStar, Natr, Nvi, Obv, OmegaRatio, OpeningRange, OpeningRangeOutput,
-    OrderBookImbalanceFull, OrderBookImbalanceTop1, OrderBookImbalanceTopN, PainIndex,
-    PairSpreadZScore, PairwiseBeta, ParkinsonVolatility, PearsonCorrelation, PercentB,
-    PercentageTrailingStop, Pgo, PiercingDarkCloud, Pmo, Ppo, ProfitFactor, Psar, Pvi,
-    QuotedSpread, RSquared, RealizedSpread, RecoveryFactor, RelativeStrengthAB,
-    RelativeStrengthOutput, RenkoTrailingStop, Roc, RogersSatchellVolatility, RollingVwap,
-    RoofingFilter, Rsi, Rvi, RviVolatility, Rwi, RwiOutput, SharpeRatio, ShootingStar,
+    FractalChaosBandsOutput, Frama, FundingBasis, FundingRate, FundingRateMean, FundingRateZScore,
+    GainLossRatio, GarmanKlassVolatility, Hammer, HangingMan, Harami, HeikinAshi, HeikinAshiOutput,
+    HiLoActivator, HilbertDominantCycle, HistoricalVolatility, Hma, HurstChannel,
+    HurstChannelOutput, HurstExponent, Ichimoku, IchimokuOutput, Inertia, InformationRatio,
+    InitialBalance, InitialBalanceOutput, InstantaneousTrendline, InverseFisherTransform,
+    InvertedHammer, Jma, Kama, KellyCriterion, Keltner, KeltnerOutput, Kst, KstOutput, Kurtosis,
+    Kvo, KylesLambda, LaguerreRsi, LeadLagCrossCorrelation, LeadLagCrossCorrelationOutput,
+    LinRegAngle, LinRegChannel, LinRegChannelOutput, LinRegSlope, LinearRegression, MaEnvelope,
+    MaEnvelopeOutput, MacdIndicator, MacdOutput, Mama, MamaOutput, MarketFacilitationIndex,
+    Marubozu, MassIndex, MaxDrawdown, McGinleyDynamic, MedianAbsoluteDeviation, MedianPrice, Mfi,
+    Microprice, Mom, MorningEveningStar, Natr, Nvi, Obv, OmegaRatio, OpenInterestDelta,
+    OpeningRange, OpeningRangeOutput, OrderBookImbalanceFull, OrderBookImbalanceTop1,
+    OrderBookImbalanceTopN, PainIndex, PairSpreadZScore, PairwiseBeta, ParkinsonVolatility,
+    PearsonCorrelation, PercentB, PercentageTrailingStop, Pgo, PiercingDarkCloud, Pmo, Ppo,
+    ProfitFactor, Psar, Pvi, QuotedSpread, RSquared, RealizedSpread, RecoveryFactor,
+    RelativeStrengthAB, RelativeStrengthOutput, RenkoTrailingStop, Roc, RogersSatchellVolatility,
+    RollingVwap, RoofingFilter, Rsi, Rvi, RviVolatility, Rwi, RwiOutput, SharpeRatio, ShootingStar,
     SignedVolume, SineWave, Skewness, Sma, Smi, Smma, SortinoRatio, SpearmanCorrelation,
     SpinningTop, StandardError, StandardErrorBands, StandardErrorBandsOutput, StarcBands,
     StarcBandsOutput, Stc, StdDev, StepTrailingStop, StochRsi, Stochastic, StochasticOutput,

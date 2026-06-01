@@ -257,6 +257,12 @@ from ._wickra import (
     KylesLambda,
     # Microstructure: footprint
     Footprint,
+    # Derivatives
+    FundingRate,
+    FundingRateMean,
+    FundingRateZScore,
+    FundingBasis,
+    OpenInterestDelta,
     # Risk / Performance
     SharpeRatio,
     SortinoRatio,
@@ -511,6 +517,12 @@ __all__ = [
     "KylesLambda",
     # Microstructure: footprint
     "Footprint",
+    # Derivatives
+    "FundingRate",
+    "FundingRateMean",
+    "FundingRateZScore",
+    "FundingBasis",
+    "OpenInterestDelta",
     # Risk / Performance
     "SharpeRatio",
     "SortinoRatio",

@@ -77,6 +77,10 @@ mod footprint;
 mod force_index;
 mod fractal_chaos_bands;
 mod frama;
+mod funding_basis;
+mod funding_rate;
+mod funding_rate_mean;
+mod funding_rate_zscore;
 mod gain_loss_ratio;
 mod garman_klass;
 mod hammer;
@@ -130,6 +134,7 @@ mod ob_imbalance_full;
 mod ob_imbalance_top1;
 mod ob_imbalance_topn;
 mod obv;
+mod oi_delta;
 mod omega_ratio;
 mod opening_range;
 mod pain_index;
@@ -309,6 +314,10 @@ pub use footprint::{Footprint, FootprintLevel, FootprintOutput};
 pub use force_index::ForceIndex;
 pub use fractal_chaos_bands::{FractalChaosBands, FractalChaosBandsOutput};
 pub use frama::Frama;
+pub use funding_basis::FundingBasis;
+pub use funding_rate::FundingRate;
+pub use funding_rate_mean::FundingRateMean;
+pub use funding_rate_zscore::FundingRateZScore;
 pub use gain_loss_ratio::GainLossRatio;
 pub use garman_klass::GarmanKlassVolatility;
 pub use hammer::Hammer;
@@ -362,6 +371,7 @@ pub use ob_imbalance_full::OrderBookImbalanceFull;
 pub use ob_imbalance_top1::OrderBookImbalanceTop1;
 pub use ob_imbalance_topn::OrderBookImbalanceTopN;
 pub use obv::Obv;
+pub use oi_delta::OpenInterestDelta;
 pub use omega_ratio::OmegaRatio;
 pub use opening_range::{OpeningRange, OpeningRangeOutput};
 pub use pain_index::PainIndex;
@@ -752,6 +762,16 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
         ],
     ),
     (
+        "Derivatives",
+        &[
+            "FundingRate",
+            "FundingRateMean",
+            "FundingRateZScore",
+            "FundingBasis",
+            "OpenInterestDelta",
+        ],
+    ),
+    (
         "Market Profile",
         &["ValueArea", "InitialBalance", "OpeningRange"],
     ),
@@ -805,6 +825,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 227, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 232, "FAMILIES total drifted from indicator count");
     }
 }

@@ -28,7 +28,8 @@ fn map_err(e: wc::Error) -> PyErr {
         | wc::Error::InvalidCandle { .. }
         | wc::Error::InvalidTick { .. }
         | wc::Error::InvalidOrderBook { .. }
-        | wc::Error::InvalidTrade { .. } => PyValueError::new_err(e.to_string()),
+        | wc::Error::InvalidTrade { .. }
+        | wc::Error::InvalidDerivatives { .. } => PyValueError::new_err(e.to_string()),
     }
 }
 
@@ -12182,6 +12183,305 @@ impl PyFootprint {
     }
 }
 
+// ============================== Derivatives ==============================
+//
+// Derivatives indicators consume a perpetual / futures tick rather than OHLCV.
+// Each wrapper exposes only the tick fields its indicator reads; the helpers
+// below build a fully-valid `DerivativesTick`, filling the unused fields with
+// neutral defaults (prices `1.0`, sizes / rates `0.0`).
+
+fn deriv_funding(funding_rate: f64) -> PyResult<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        funding_rate,
+        1.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_basis(mark_price: f64, index_price: f64) -> PyResult<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        0.0,
+        mark_price,
+        index_price,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_oi(open_interest: f64) -> PyResult<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        open_interest,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+// FundingRate takes no parameters; streaming `update(funding_rate)`, `batch`
+// over one funding-rate array.
+#[pyclass(name = "FundingRate", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyFundingRate {
+    inner: wc::FundingRate,
+}
+
+#[pymethods]
+impl PyFundingRate {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::FundingRate::new(),
+        }
+    }
+    fn update(&mut self, funding_rate: f64) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(deriv_funding(funding_rate)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        funding_rate: Vec<f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let mut out = Vec::with_capacity(funding_rate.len());
+        for rate in funding_rate {
+            out.push(self.inner.update(deriv_funding(rate)?).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "FundingRate()".to_string()
+    }
+}
+
+// FundingRateMean carries a `window` parameter.
+#[pyclass(
+    name = "FundingRateMean",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyFundingRateMean {
+    inner: wc::FundingRateMean,
+}
+
+#[pymethods]
+impl PyFundingRateMean {
+    #[new]
+    fn new(window: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::FundingRateMean::new(window).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, funding_rate: f64) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(deriv_funding(funding_rate)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        funding_rate: Vec<f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let mut out = Vec::with_capacity(funding_rate.len());
+        for rate in funding_rate {
+            out.push(self.inner.update(deriv_funding(rate)?).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("FundingRateMean(window={})", self.inner.window())
+    }
+}
+
+// FundingRateZScore carries a `window` parameter.
+#[pyclass(
+    name = "FundingRateZScore",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyFundingRateZScore {
+    inner: wc::FundingRateZScore,
+}
+
+#[pymethods]
+impl PyFundingRateZScore {
+    #[new]
+    fn new(window: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::FundingRateZScore::new(window).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, funding_rate: f64) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(deriv_funding(funding_rate)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        funding_rate: Vec<f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let mut out = Vec::with_capacity(funding_rate.len());
+        for rate in funding_rate {
+            out.push(self.inner.update(deriv_funding(rate)?).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("FundingRateZScore(window={})", self.inner.window())
+    }
+}
+
+// FundingBasis takes no parameters; streaming `update(mark_price, index_price)`.
+#[pyclass(name = "FundingBasis", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyFundingBasis {
+    inner: wc::FundingBasis,
+}
+
+#[pymethods]
+impl PyFundingBasis {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::FundingBasis::new(),
+        }
+    }
+    fn update(&mut self, mark_price: f64, index_price: f64) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(deriv_basis(mark_price, index_price)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        mark_price: Vec<f64>,
+        index_price: Vec<f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if mark_price.len() != index_price.len() {
+            return Err(PyValueError::new_err(
+                "mark_price and index_price must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(mark_price.len());
+        for i in 0..mark_price.len() {
+            out.push(
+                self.inner
+                    .update(deriv_basis(mark_price[i], index_price[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "FundingBasis()".to_string()
+    }
+}
+
+// OpenInterestDelta takes no parameters; streaming `update(open_interest)`.
+#[pyclass(
+    name = "OpenInterestDelta",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyOpenInterestDelta {
+    inner: wc::OpenInterestDelta,
+}
+
+#[pymethods]
+impl PyOpenInterestDelta {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::OpenInterestDelta::new(),
+        }
+    }
+    fn update(&mut self, open_interest: f64) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(deriv_oi(open_interest)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        open_interest: Vec<f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let mut out = Vec::with_capacity(open_interest.len());
+        for oi in open_interest {
+            out.push(self.inner.update(deriv_oi(oi)?).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "OpenInterestDelta()".to_string()
+    }
+}
+
 // ============================== Family 15: Risk / Performance ==============================
 
 #[pyclass(name = "SharpeRatio", module = "wickra._wickra", skip_from_py_object)]
@@ -13304,6 +13604,12 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyKylesLambda>()?;
     // Microstructure: footprint.
     m.add_class::<PyFootprint>()?;
+    // Derivatives.
+    m.add_class::<PyFundingRate>()?;
+    m.add_class::<PyFundingRateMean>()?;
+    m.add_class::<PyFundingRateZScore>()?;
+    m.add_class::<PyFundingBasis>()?;
+    m.add_class::<PyOpenInterestDelta>()?;
     // Family 15: Risk / Performance metrics.
     m.add_class::<PySharpeRatio>()?;
     m.add_class::<PySortinoRatio>()?;

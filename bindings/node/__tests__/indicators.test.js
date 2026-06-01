@@ -1094,3 +1094,45 @@ test('footprint streaming update matches batch and rejects bad tick', () => {
   }
   assert.throws(() => new wickra.Footprint(0));
 });
+
+test('derivatives indicators reference values', () => {
+  // Funding rate passes through (and may be negative).
+  assert.equal(new wickra.FundingRate().update(0.0001), 0.0001);
+  assert.equal(new wickra.FundingRate().update(-0.0003), -0.0003);
+  // Rolling mean: window [0.001, 0.003] -> 0.002.
+  const frm = new wickra.FundingRateMean(2);
+  assert.equal(frm.update(0.001), null); // warming up
+  assert.ok(Math.abs(frm.update(0.003) - 0.002) < 1e-12);
+  // Z-score: window [0.001, 0.003] -> +1.
+  const z = new wickra.FundingRateZScore(2);
+  assert.equal(z.update(0.001), null); // warming up
+  assert.ok(Math.abs(z.update(0.003) - 1.0) < 1e-9);
+  // Basis: mark 100.5 vs index 100.0 -> 0.005.
+  assert.ok(Math.abs(new wickra.FundingBasis().update(100.5, 100.0) - 0.005) < 1e-12);
+  // OI delta: seeds then emits the change.
+  const oid = new wickra.OpenInterestDelta();
+  assert.equal(oid.update(1000), null);
+  assert.equal(oid.update(1250), 250);
+  assert.equal(oid.update(1100), -150);
+});
+
+test('derivatives streaming update matches batch', () => {
+  const n = 30;
+  const rate = Array.from({ length: n }, (_, i) => 0.0001 * Math.sin(i * 0.3));
+  const batch = new wickra.FundingRateMean(5).batch(rate);
+  const streamer = new wickra.FundingRateMean(5);
+  assert.equal(batch.length, n);
+  for (let i = 0; i < n; i++) {
+    const s = streamer.update(rate[i]);
+    assert.ok(
+      (s === null && Number.isNaN(batch[i])) || Math.abs(s - batch[i]) < 1e-12,
+      `mismatch at ${i}: ${s} vs ${batch[i]}`,
+    );
+  }
+});
+
+test('derivatives reject bad input', () => {
+  assert.throws(() => new wickra.FundingRateMean(0));
+  assert.throws(() => new wickra.FundingRateZScore(0));
+  assert.throws(() => new wickra.FundingBasis().update(100, 0));
+});
