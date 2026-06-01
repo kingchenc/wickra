@@ -1929,7 +1929,7 @@ def test_price_impact_indicators_streaming_equals_batch():
         [mid[i] + (0.02 if is_buy[i] else -0.02) for i in range(n)], dtype=np.float64
     )
     size = np.array([1.0 + (i % 5) for i in range(n)], dtype=np.float64)
-    for make in (ta.EffectiveSpread,):
+    for make in (ta.EffectiveSpread, lambda: ta.RealizedSpread(4)):
         batch = make().batch(price, size, is_buy, mid)
         streamer = make()
         streamed = np.array(

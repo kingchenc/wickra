@@ -252,6 +252,7 @@ from ._wickra import (
     TradeImbalance,
     # Microstructure: price impact
     EffectiveSpread,
+    RealizedSpread,
     # Risk / Performance
     SharpeRatio,
     SortinoRatio,
@@ -501,6 +502,7 @@ __all__ = [
     "TradeImbalance",
     # Microstructure: price impact
     "EffectiveSpread",
+    "RealizedSpread",
     # Risk / Performance
     "SharpeRatio",
     "SortinoRatio",

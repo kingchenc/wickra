@@ -145,6 +145,7 @@ mod psar;
 mod pvi;
 mod quoted_spread;
 mod r_squared;
+mod realized_spread;
 mod recovery_factor;
 mod relative_strength_ab;
 mod renko_trailing_stop;
@@ -373,6 +374,7 @@ pub use psar::Psar;
 pub use pvi::Pvi;
 pub use quoted_spread::QuotedSpread;
 pub use r_squared::RSquared;
+pub use realized_spread::RealizedSpread;
 pub use recovery_factor::RecoveryFactor;
 pub use relative_strength_ab::{RelativeStrengthAB, RelativeStrengthOutput};
 pub use renko_trailing_stop::RenkoTrailingStop;
@@ -737,6 +739,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "CumulativeVolumeDelta",
             "TradeImbalance",
             "EffectiveSpread",
+            "RealizedSpread",
         ],
     ),
     (
@@ -793,6 +796,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 223, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 224, "FAMILIES total drifted from indicator count");
     }
 }

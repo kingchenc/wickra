@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   depth profile, exposed in Rust, Python, Node and WASM:
   - **Effective Spread** — `2 · D · (tradePrice − mid) / mid · 10_000` bps, the
     realised round-trip cost of a single trade against the mid.
+  - **Realized Spread** — `2 · D · (tradePrice − mid_{t+horizon}) / mid_t ·
+    10_000` bps, the share of the effective spread a liquidity provider keeps
+    once the mid has moved over a configurable horizon.
 
 ## [0.4.2] - 2026-06-01
 

@@ -221,3 +221,8 @@ def test_effective_spread_non_positive_mid_raises():
 def test_effective_spread_batch_unequal_lengths_raise():
     with pytest.raises(ValueError):
         ta.EffectiveSpread().batch([100.0, 100.0], [1.0, 1.0], [True, False], [100.0])
+
+
+def test_realized_spread_zero_horizon_raises():
+    with pytest.raises(ValueError):
+        ta.RealizedSpread(0)

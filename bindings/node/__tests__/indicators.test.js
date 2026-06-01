@@ -1006,6 +1006,33 @@ test('price-impact streaming update matches batch', () => {
   }
 });
 
+test('realized spread resolves against the future mid', () => {
+  const rs = new wickra.RealizedSpread(1);
+  assert.equal(rs.update(100.10, 1, true, 100.0), null); // buffered
+  // 2 * (+1) * (100.10 - 100.20) / 100.0 * 10000 = -20 bps.
+  assert.ok(Math.abs(rs.update(99.90, 1, false, 100.20) - -20.0) < 1e-9);
+});
+
+test('realized spread streaming update matches batch', () => {
+  const n = 30;
+  const mid = Array.from({ length: n }, (_, i) => 100 + 0.25 * Math.sin(i * 0.5));
+  const isBuy = Array.from({ length: n }, (_, i) => i % 3 !== 0);
+  const price = Array.from({ length: n }, (_, i) => mid[i] + (isBuy[i] ? 0.03 : -0.03));
+  const size = Array.from({ length: n }, (_, i) => 1 + (i % 4));
+  const batch = new wickra.RealizedSpread(4).batch(price, size, isBuy, mid);
+  const streamer = new wickra.RealizedSpread(4);
+  assert.equal(batch.length, n);
+  for (let i = 0; i < n; i++) {
+    const s = streamer.update(price[i], size[i], isBuy[i], mid[i]);
+    const got = s === null ? NaN : s;
+    assert.ok(
+      (Number.isNaN(got) && Number.isNaN(batch[i])) || Math.abs(got - batch[i]) < 1e-9,
+      `mismatch at ${i}: ${got} vs ${batch[i]}`,
+    );
+  }
+});
+
 test('price-impact rejects bad input', () => {
   assert.throws(() => new wickra.EffectiveSpread().update(100, 1, true, 0));
+  assert.throws(() => new wickra.RealizedSpread(0));
 });

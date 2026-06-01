@@ -9143,6 +9143,66 @@ macro_rules! node_trade_quote_indicator {
 
 node_trade_quote_indicator!(EffectiveSpreadNode, wc::EffectiveSpread, "EffectiveSpread");
 
+// Realized spread carries a `horizon` parameter, so it is hand-written.
+#[napi(js_name = "RealizedSpread")]
+pub struct RealizedSpreadNode {
+    inner: wc::RealizedSpread,
+}
+
+#[napi]
+impl RealizedSpreadNode {
+    #[napi(constructor)]
+    pub fn new(horizon: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::RealizedSpread::new(horizon as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        price: f64,
+        size: f64,
+        is_buy: bool,
+        mid: f64,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_trade_quote(price, size, is_buy, mid)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        price: Vec<f64>,
+        size: Vec<f64>,
+        is_buy: Vec<bool>,
+        mid: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if price.len() != size.len() || size.len() != is_buy.len() || is_buy.len() != mid.len() {
+            return Err(NapiError::from_reason(
+                "price, size, is_buy, mid must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            let quote = build_trade_quote(price[i], size[i], is_buy[i], mid[i])?;
+            out.push(self.inner.update(quote).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== Family 15: Risk / Performance ==============================
 
 // Risk metrics with fallible `new` (most need `period >= 2`), so each wrapper

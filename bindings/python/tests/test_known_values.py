@@ -898,3 +898,11 @@ def test_effective_spread_reference_values():
     assert ta.EffectiveSpread().update(99.95, 1.0, False, 100.0) == pytest.approx(10.0)
     # A buy filled below the mid is price improvement -> negative.
     assert ta.EffectiveSpread().update(99.95, 1.0, True, 100.0) < 0.0
+
+
+def test_realized_spread_reference_value():
+    rs = ta.RealizedSpread(1)
+    assert rs.update(100.10, 1.0, True, 100.0) is None  # buffered
+    # Resolved against mid 100.20 one trade later:
+    # 2 * (+1) * (100.10 - 100.20) / 100.0 * 10000 = -20 bps (adverse selection).
+    assert rs.update(99.90, 1.0, False, 100.20) == pytest.approx(-20.0)

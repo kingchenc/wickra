@@ -2277,6 +2277,15 @@ export declare class EffectiveSpread {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type RealizedSpreadNode = RealizedSpread
+export declare class RealizedSpread {
+  constructor(horizon: number)
+  update(price: number, size: number, isBuy: boolean, mid: number): number | null
+  batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>, mid: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type SharpeRatioNode = SharpeRatio
 export declare class SharpeRatio {
   constructor(period: number, riskFree: number)
