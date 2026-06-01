@@ -926,6 +926,10 @@ test('order-book indicators reference values', () => {
   assert.equal(new wickra.Microprice().update([100], [1], [101], [3]), 100.25);
   // Quoted spread: 1 / 100.5 * 10000 ≈ 99.5025 bps.
   assert.ok(Math.abs(new wickra.QuotedSpread().update([100], [1], [101], [1]) - 99.50248756) < 1e-6);
+  // Depth slope: each side distances 1,2 -> cumulative 1,3 -> OLS slope 2.
+  assert.ok(Math.abs(new wickra.DepthSlope().update([99, 98], [1, 2], [101, 102], [1, 2]) - 2.0) < 1e-9);
+  // Single level per side -> no slope -> 0.
+  assert.equal(new wickra.DepthSlope().update([100], [1], [101], [1]), 0.0);
 });
 
 test('order-book streaming update matches batch', () => {

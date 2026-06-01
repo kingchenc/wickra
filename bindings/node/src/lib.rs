@@ -8865,6 +8865,7 @@ node_ob_indicator!(
 );
 node_ob_indicator!(MicropriceNode, wc::Microprice, "Microprice");
 node_ob_indicator!(QuotedSpreadNode, wc::QuotedSpread, "QuotedSpread");
+node_ob_indicator!(DepthSlopeNode, wc::DepthSlope, "DepthSlope");
 
 // Top-N imbalance carries a `levels` parameter, so it is hand-written.
 #[napi(js_name = "OrderBookImbalanceTopN")]

@@ -139,6 +139,7 @@ def test_orderbook_lifecycle():
         ta.OrderBookImbalanceFull(),
         ta.Microprice(),
         ta.QuotedSpread(),
+        ta.DepthSlope(),
     ]:
         assert ind.warmup_period() == 1
         assert not ind.is_ready()

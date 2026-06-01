@@ -54,6 +54,7 @@ mod decycler_oscillator;
 mod dema;
 mod demand_index;
 mod demark_pivots;
+mod depth_slope;
 mod detrended_std_dev;
 mod doji;
 mod donchian;
@@ -284,6 +285,7 @@ pub use decycler_oscillator::DecyclerOscillator;
 pub use dema::Dema;
 pub use demand_index::DemandIndex;
 pub use demark_pivots::{DemarkPivots, DemarkPivotsOutput};
+pub use depth_slope::DepthSlope;
 pub use detrended_std_dev::DetrendedStdDev;
 pub use doji::Doji;
 pub use donchian::{Donchian, DonchianOutput};
@@ -737,6 +739,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "OrderBookImbalanceFull",
             "Microprice",
             "QuotedSpread",
+            "DepthSlope",
             "SignedVolume",
             "CumulativeVolumeDelta",
             "TradeImbalance",
@@ -799,6 +802,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 225, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 226, "FAMILIES total drifted from indicator count");
     }
 }

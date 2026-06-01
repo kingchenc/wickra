@@ -2232,6 +2232,15 @@ export declare class QuotedSpread {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type DepthSlopeNode = DepthSlope
+export declare class DepthSlope {
+  constructor()
+  update(bidPx: Array<number>, bidSz: Array<number>, askPx: Array<number>, askSz: Array<number>): number | null
+  batch(snapshots: Array<ObSnapshot>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type OrderBookImbalanceTopNNode = OrderBookImbalanceTopN
 export declare class OrderBookImbalanceTopN {
   constructor(levels: number)

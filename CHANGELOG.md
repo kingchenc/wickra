@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     once the mid has moved over a configurable horizon.
   - **Kyle's Lambda** — the rolling OLS slope of mid changes on signed volume
     (`cov(Δmid, q) / var(q)`), the canonical price-impact / market-depth proxy.
+  - **Depth Slope** — the mean per-side OLS slope of cumulative resting size
+    against distance from the mid, measuring how fast the book thickens away
+    from the touch.
 
 ## [0.4.2] - 2026-06-01
 

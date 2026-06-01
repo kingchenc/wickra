@@ -246,6 +246,7 @@ from ._wickra import (
     OrderBookImbalanceFull,
     Microprice,
     QuotedSpread,
+    DepthSlope,
     # Microstructure: trade flow
     SignedVolume,
     CumulativeVolumeDelta,
@@ -497,6 +498,7 @@ __all__ = [
     "OrderBookImbalanceFull",
     "Microprice",
     "QuotedSpread",
+    "DepthSlope",
     # Microstructure: trade flow
     "SignedVolume",
     "CumulativeVolumeDelta",

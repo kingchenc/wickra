@@ -6421,6 +6421,7 @@ wasm_ob_indicator!(
 );
 wasm_ob_indicator!(WasmMicroprice, wc::Microprice, Microprice);
 wasm_ob_indicator!(WasmQuotedSpread, wc::QuotedSpread, QuotedSpread);
+wasm_ob_indicator!(WasmDepthSlope, wc::DepthSlope, DepthSlope);
 
 // Top-N imbalance carries a `levels` parameter, so it is hand-written.
 #[wasm_bindgen(js_name = OrderBookImbalanceTopN)]

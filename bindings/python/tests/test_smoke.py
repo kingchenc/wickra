@@ -108,6 +108,7 @@ def test_orderbook_indicators_construct_and_emit():
         ta.OrderBookImbalanceFull(),
         ta.Microprice(),
         ta.QuotedSpread(),
+        ta.DepthSlope(),
     ]
     for ind in indicators:
         out = ind.update(*snapshot)

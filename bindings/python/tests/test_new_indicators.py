@@ -1890,6 +1890,7 @@ def test_orderbook_indicators_streaming_equals_batch():
         ta.OrderBookImbalanceFull,
         ta.Microprice,
         ta.QuotedSpread,
+        ta.DepthSlope,
     ):
         batch = make().batch(snaps)
         streamer = make()

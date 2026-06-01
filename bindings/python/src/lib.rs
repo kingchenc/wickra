@@ -11714,6 +11714,7 @@ py_ob_indicator!(
 );
 py_ob_indicator!(PyMicroprice, wc::Microprice, "Microprice");
 py_ob_indicator!(PyQuotedSpread, wc::QuotedSpread, "QuotedSpread");
+py_ob_indicator!(PyDepthSlope, wc::DepthSlope, "DepthSlope");
 
 // Top-N imbalance carries a `levels` parameter, so it is hand-written.
 #[pyclass(
@@ -13205,6 +13206,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyOrderBookImbalanceFull>()?;
     m.add_class::<PyMicroprice>()?;
     m.add_class::<PyQuotedSpread>()?;
+    m.add_class::<PyDepthSlope>()?;
     // Microstructure: trade flow.
     m.add_class::<PySignedVolume>()?;
     m.add_class::<PyCumulativeVolumeDelta>()?;

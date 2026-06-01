@@ -33,14 +33,14 @@ use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Through
 use std::hint::black_box;
 use wickra::{
     Adx, Atr, Autocorrelation, BatchExt, BollingerBands, BollingerOutput, CalmarRatio, Candle, Cci,
-    ClassicPivots, ConnorsRsi, EffectiveSpread, Ema, EmpiricalModeDecomposition, Engulfing, Frama,
-    HilbertDominantCycle, HurstExponent, Ichimoku, IchimokuOutput, Indicator, Jma, KylesLambda,
-    Level, LinearRegression, MacdIndicator, MacdOutput, Mama, MamaOutput, MaxDrawdown, Microprice,
-    Obv, OrderBook, OrderBookImbalanceFull, OrderBookImbalanceTop1, ParkinsonVolatility, Ppo, Psar,
-    RollingVwap, Rsi, SharpeRatio, Side, SignedVolume, Sma, Stc, SuperTrend, SuperTrendOutput,
-    TdSequential, TdSequentialOutput, Trade, TradeImbalance, TradeQuote, TtmSqueeze,
-    TtmSqueezeOutput, ValueArea, ValueAreaOutput, ValueAtRisk, Vwap, VwapStdDevBands,
-    VwapStdDevBandsOutput, WaveTrend, YangZhangVolatility, T3,
+    ClassicPivots, ConnorsRsi, DepthSlope, EffectiveSpread, Ema, EmpiricalModeDecomposition,
+    Engulfing, Frama, HilbertDominantCycle, HurstExponent, Ichimoku, IchimokuOutput, Indicator,
+    Jma, KylesLambda, Level, LinearRegression, MacdIndicator, MacdOutput, Mama, MamaOutput,
+    MaxDrawdown, Microprice, Obv, OrderBook, OrderBookImbalanceFull, OrderBookImbalanceTop1,
+    ParkinsonVolatility, Ppo, Psar, RollingVwap, Rsi, SharpeRatio, Side, SignedVolume, Sma, Stc,
+    SuperTrend, SuperTrendOutput, TdSequential, TdSequentialOutput, Trade, TradeImbalance,
+    TradeQuote, TtmSqueeze, TtmSqueezeOutput, ValueArea, ValueAreaOutput, ValueAtRisk, Vwap,
+    VwapStdDevBands, VwapStdDevBandsOutput, WaveTrend, YangZhangVolatility, T3,
 };
 use wickra_data::csv::CandleReader;
 
@@ -354,6 +354,7 @@ fn benches(c: &mut Criterion) {
     bench_orderbook_input(c, "ob_imbalance_top1", &books, OrderBookImbalanceTop1::new);
     bench_orderbook_input(c, "ob_imbalance_full", &books, OrderBookImbalanceFull::new);
     bench_orderbook_input(c, "microprice", &books, Microprice::new);
+    bench_orderbook_input(c, "depth_slope", &books, DepthSlope::new);
 
     // Synthesise a trade tape from candles: one trade per bar, sided by the
     // candle's direction. SignedVolume is the cheapest; TradeImbalance carries

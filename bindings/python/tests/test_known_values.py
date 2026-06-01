@@ -872,6 +872,16 @@ def test_quoted_spread_reference_value():
     assert qs.update([100.0], [1.0], [101.0], [1.0]) == pytest.approx(99.50248756, abs=1e-6)
 
 
+def test_depth_slope_reference_value():
+    # Symmetric book, each side distances 1, 2 with cumulative sizes 1, 3.
+    # OLS slope of (1->1, 2->3) = 2; mean of two equal sides = 2.
+    ds = ta.DepthSlope()
+    out = ds.update([99.0, 98.0], [1.0, 2.0], [101.0, 102.0], [1.0, 2.0])
+    assert out == pytest.approx(2.0, abs=1e-9)
+    # A book with a single level per side has no slope -> 0.
+    assert ta.DepthSlope().update([100.0], [1.0], [101.0], [1.0]) == pytest.approx(0.0)
+
+
 def test_signed_volume_reference_values():
     assert ta.SignedVolume().update(100.0, 2.0, True) == pytest.approx(2.0)
     assert ta.SignedVolume().update(100.0, 3.0, False) == pytest.approx(-3.0)
