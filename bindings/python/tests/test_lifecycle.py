@@ -207,3 +207,14 @@ def test_kyles_lambda_lifecycle_and_repr():
     kl.reset()
     assert not kl.is_ready()
     assert repr(ta.KylesLambda(7)) == "KylesLambda(window=7)"
+
+
+def test_footprint_lifecycle_and_repr():
+    fp = ta.Footprint(0.5)
+    assert fp.warmup_period() == 1
+    assert not fp.is_ready()
+    fp.update(100.0, 1.0, True)
+    assert fp.is_ready()
+    fp.reset()
+    assert not fp.is_ready()
+    assert repr(ta.Footprint(0.25)) == "Footprint(tick_size=0.25)"

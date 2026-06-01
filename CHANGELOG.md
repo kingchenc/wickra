@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Depth Slope** — the mean per-side OLS slope of cumulative resting size
     against distance from the mid, measuring how fast the book thickens away
     from the touch.
+- **Microstructure family — footprint (part 4).** **Footprint** decomposes the
+  volume traded in a bar across price buckets (`round(price / tick_size)`),
+  splitting each bucket into buy-initiated (ask) and sell-initiated (bid)
+  volume. A multi-output, variable-length indicator: every `update` returns the
+  full footprint accumulated since the last `reset`, exposed in Rust, Python
+  (`(k, 3)` arrays), Node (`{ price, bidVol, askVol }` rows) and WASM.
 
 ## [0.4.2] - 2026-06-01
 

@@ -154,3 +154,16 @@ def test_price_impact_batch_returns_one_value_per_trade():
         out = ind.batch(price, size, is_buy, mid)
         assert out.shape == (4,)
         assert out.dtype == np.float64
+
+
+def test_footprint_constructs_and_emits():
+    out = ta.Footprint(1.0).update(100.2, 2.0, True)
+    assert out.shape == (1, 3)
+    assert out.dtype == np.float64
+
+
+def test_footprint_batch_returns_list_of_arrays():
+    res = ta.Footprint(1.0).batch([100.2, 100.7], [2.0, 3.0], [True, False])
+    assert isinstance(res, list)
+    assert len(res) == 2
+    assert res[-1].shape[1] == 3

@@ -286,6 +286,12 @@ export interface ObSnapshot {
   askPx: Array<number>
   askSz: Array<number>
 }
+/** One price bucket of a footprint. */
+export interface FootprintLevelValue {
+  price: number
+  bidVol: number
+  askVol: number
+}
 export type SmaNode = SMA
 export declare class SMA {
   constructor(period: number)
@@ -2300,6 +2306,15 @@ export declare class KylesLambda {
   constructor(window: number)
   update(price: number, size: number, isBuy: boolean, mid: number): number | null
   batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>, mid: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type FootprintNode = Footprint
+export declare class Footprint {
+  constructor(tickSize: number)
+  update(price: number, size: number, isBuy: boolean): Array<FootprintLevelValue>
+  batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<Array<FootprintLevelValue>>
   reset(): void
   isReady(): boolean
   warmupPeriod(): number

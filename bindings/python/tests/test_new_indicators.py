@@ -1939,3 +1939,16 @@ def test_price_impact_indicators_streaming_equals_batch():
         )
         assert batch.shape == (n,)
         assert _eq_nan(batch, streamed)
+
+
+def test_footprint_streaming_equals_batch():
+    n = 20
+    price = [100.0 + (i % 5) * 0.3 for i in range(n)]
+    size = [1.0 + (i % 3) for i in range(n)]
+    is_buy = [i % 2 == 0 for i in range(n)]
+    batch = ta.Footprint(1.0).batch(price, size, is_buy)
+    streamer = ta.Footprint(1.0)
+    assert len(batch) == n
+    for i in range(n):
+        streamed = streamer.update(price[i], size[i], is_buy[i])
+        assert np.array_equal(streamed, batch[i])

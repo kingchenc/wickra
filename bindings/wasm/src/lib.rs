@@ -9,7 +9,7 @@
 #![allow(clippy::needless_pass_by_value)]
 #![allow(missing_debug_implementations)] // wasm_bindgen wrappers expose JS objects, no need for Debug
 
-use js_sys::{Float64Array, Object, Reflect};
+use js_sys::{Array, Float64Array, Object, Reflect};
 use wasm_bindgen::prelude::*;
 use wickra_core as wc;
 use wickra_core::{BatchExt, Indicator};
@@ -6685,6 +6685,54 @@ impl WasmKylesLambda {
         Ok(self
             .inner
             .update(build_trade_quote(price, size, is_buy, mid)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== Microstructure: Footprint ==============================
+//
+// Footprint is a multi-output, variable-length indicator. Each `update(price,
+// size, isBuy)` returns the full bar footprint accumulated since the last
+// `reset()` as an array of `{ price, bidVol, askVol }` objects (sorted ascending
+// by price) — the streaming model for a live browser trade feed.
+
+#[wasm_bindgen(js_name = Footprint)]
+pub struct WasmFootprint {
+    inner: wc::Footprint,
+}
+
+#[wasm_bindgen(js_class = Footprint)]
+impl WasmFootprint {
+    #[wasm_bindgen(constructor)]
+    pub fn new(tick_size: f64) -> Result<WasmFootprint, JsError> {
+        Ok(Self {
+            inner: wc::Footprint::new(tick_size).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, price: f64, size: f64, is_buy: bool) -> Result<JsValue, JsError> {
+        let out = self
+            .inner
+            .update(build_trade(price, size, is_buy)?)
+            .expect("footprint emits on every trade");
+        let levels = Array::new();
+        for level in &out.levels {
+            let obj = Object::new();
+            Reflect::set(&obj, &"price".into(), &level.price.into()).ok();
+            Reflect::set(&obj, &"bidVol".into(), &level.bid_vol.into()).ok();
+            Reflect::set(&obj, &"askVol".into(), &level.ask_vol.into()).ok();
+            levels.push(&obj);
+        }
+        Ok(levels.into())
     }
     pub fn reset(&mut self) {
         self.inner.reset();

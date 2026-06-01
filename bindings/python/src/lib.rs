@@ -12095,6 +12095,93 @@ impl PyKylesLambda {
     }
 }
 
+// ============================== Microstructure: Footprint ==============================
+//
+// Footprint is a multi-output, variable-length indicator: each `update(price,
+// size, is_buy)` returns the full bar footprint accumulated since the last
+// `reset()` as a `(k, 3)` array with columns `[price, bid_vol, ask_vol]`, one
+// row per touched price bucket (sorted ascending by price). `batch` returns a
+// list of such arrays, one per trade.
+
+fn footprint_to_array<'py>(
+    py: Python<'py>,
+    out: &wc::FootprintOutput,
+) -> Bound<'py, PyArray2<f64>> {
+    let rows = out.levels.len();
+    let mut data = Vec::with_capacity(rows * 3);
+    for level in &out.levels {
+        data.push(level.price);
+        data.push(level.bid_vol);
+        data.push(level.ask_vol);
+    }
+    numpy::ndarray::Array2::from_shape_vec((rows, 3), data)
+        .expect("shape consistent")
+        .into_pyarray(py)
+}
+
+#[pyclass(name = "Footprint", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyFootprint {
+    inner: wc::Footprint,
+}
+
+#[pymethods]
+impl PyFootprint {
+    #[new]
+    fn new(tick_size: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Footprint::new(tick_size).map_err(map_err)?,
+        })
+    }
+    fn update<'py>(
+        &mut self,
+        py: Python<'py>,
+        price: f64,
+        size: f64,
+        is_buy: bool,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let out = self
+            .inner
+            .update(build_trade(price, size, is_buy)?)
+            .expect("footprint emits on every trade");
+        Ok(footprint_to_array(py, &out))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        price: Vec<f64>,
+        size: Vec<f64>,
+        is_buy: Vec<bool>,
+    ) -> PyResult<Vec<Bound<'py, PyArray2<f64>>>> {
+        if price.len() != size.len() || size.len() != is_buy.len() {
+            return Err(PyValueError::new_err(
+                "price, size, is_buy must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            let snapshot = self
+                .inner
+                .update(build_trade(price[i], size[i], is_buy[i])?)
+                .expect("footprint emits on every trade");
+            out.push(footprint_to_array(py, &snapshot));
+        }
+        Ok(out)
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("Footprint(tick_size={})", self.inner.tick_size())
+    }
+}
+
 // ============================== Family 15: Risk / Performance ==============================
 
 #[pyclass(name = "SharpeRatio", module = "wickra._wickra", skip_from_py_object)]
@@ -13215,6 +13302,8 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyEffectiveSpread>()?;
     m.add_class::<PyRealizedSpread>()?;
     m.add_class::<PyKylesLambda>()?;
+    // Microstructure: footprint.
+    m.add_class::<PyFootprint>()?;
     // Family 15: Risk / Performance metrics.
     m.add_class::<PySharpeRatio>()?;
     m.add_class::<PySortinoRatio>()?;

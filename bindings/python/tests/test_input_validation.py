@@ -231,3 +231,10 @@ def test_realized_spread_zero_horizon_raises():
 def test_kyles_lambda_window_below_two_raises():
     with pytest.raises(ValueError):
         ta.KylesLambda(1)
+
+
+def test_footprint_non_positive_tick_raises():
+    with pytest.raises(ValueError):
+        ta.Footprint(0.0)
+    with pytest.raises(ValueError):
+        ta.Footprint(-1.0)
