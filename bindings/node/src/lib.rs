@@ -8812,6 +8812,19 @@ node_candle_pattern!(
     wc::FallingThreeMethods,
     "FallingThreeMethods"
 );
+node_candle_pattern!(
+    UpsideGapThreeMethodsNode,
+    wc::UpsideGapThreeMethods,
+    "UpsideGapThreeMethods"
+);
+node_candle_pattern!(
+    DownsideGapThreeMethodsNode,
+    wc::DownsideGapThreeMethods,
+    "DownsideGapThreeMethods"
+);
+node_candle_pattern!(StalledPatternNode, wc::StalledPattern, "StalledPattern");
+node_candle_pattern!(StickSandwichNode, wc::StickSandwich, "StickSandwich");
+node_candle_pattern!(TakuriNode, wc::Takuri, "Takuri");
 
 // ============================== Microstructure: Order Book ==============================
 //

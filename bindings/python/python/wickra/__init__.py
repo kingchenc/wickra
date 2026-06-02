@@ -275,6 +275,11 @@ from ._wickra import (
     ShortLine,
     RisingThreeMethods,
     FallingThreeMethods,
+    UpsideGapThreeMethods,
+    DownsideGapThreeMethods,
+    StalledPattern,
+    StickSandwich,
+    Takuri,
     # Microstructure: order book
     OrderBookImbalanceTop1,
     OrderBookImbalanceTopN,
@@ -577,6 +582,11 @@ __all__ = [
     "ShortLine",
     "RisingThreeMethods",
     "FallingThreeMethods",
+    "UpsideGapThreeMethods",
+    "DownsideGapThreeMethods",
+    "StalledPattern",
+    "StickSandwich",
+    "Takuri",
     # Microstructure: order book
     "OrderBookImbalanceTop1",
     "OrderBookImbalanceTopN",

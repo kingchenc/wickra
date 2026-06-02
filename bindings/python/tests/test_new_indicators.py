@@ -663,6 +663,26 @@ CANDLE_SCALAR = {
         lambda: ta.FallingThreeMethods(),
         lambda ind, h, l, c, v: ind.batch(c, h, l, c),
     ),
+    "UpsideGapThreeMethods": (
+        lambda: ta.UpsideGapThreeMethods(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "DownsideGapThreeMethods": (
+        lambda: ta.DownsideGapThreeMethods(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "StalledPattern": (
+        lambda: ta.StalledPattern(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "StickSandwich": (
+        lambda: ta.StickSandwich(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Takuri": (
+        lambda: ta.Takuri(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
 }
 
 
@@ -1950,6 +1970,39 @@ def test_falling_three_methods_reference():
     assert t.update((11.5, 12.6, 11.4, 12.5, 1.0, 2)) == pytest.approx(0.0)
     assert t.update((12.0, 13.1, 11.9, 13.0, 1.0, 3)) == pytest.approx(0.0)
     assert t.update((12.5, 12.6, 8.9, 9.0, 1.0, 4)) == pytest.approx(-1.0)
+
+
+def test_upside_gap_three_methods_reference():
+    t = ta.UpsideGapThreeMethods()
+    assert t.update((10.0, 11.2, 9.8, 11.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((12.0, 13.2, 11.9, 13.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((12.5, 12.6, 10.4, 10.5, 1.0, 2)) == pytest.approx(1.0)
+
+
+def test_downside_gap_three_methods_reference():
+    t = ta.DownsideGapThreeMethods()
+    assert t.update((13.0, 13.2, 11.8, 12.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((11.0, 11.1, 9.8, 10.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((10.5, 12.6, 10.4, 12.5, 1.0, 2)) == pytest.approx(-1.0)
+
+
+def test_stalled_pattern_reference():
+    t = ta.StalledPattern()
+    assert t.update((10.0, 12.05, 9.9, 12.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((11.0, 14.05, 10.9, 14.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((14.0, 14.6, 13.95, 14.15, 1.0, 2)) == pytest.approx(-1.0)
+
+
+def test_stick_sandwich_reference():
+    t = ta.StickSandwich()
+    assert t.update((12.0, 12.1, 9.9, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((10.5, 11.6, 10.4, 11.5, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((11.5, 11.6, 9.9, 10.0, 1.0, 2)) == pytest.approx(1.0)
+
+
+def test_takuri_reference():
+    t = ta.Takuri()
+    assert t.update((10.0, 10.05, 7.0, 10.0, 1.0, 0)) == pytest.approx(1.0)
 
 # --- Lifecycle ------------------------------------------------------------
 
