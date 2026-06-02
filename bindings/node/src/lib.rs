@@ -8794,6 +8794,11 @@ node_candle_pattern!(HomingPigeonNode, wc::HomingPigeon, "HomingPigeon");
 node_candle_pattern!(OnNeckNode, wc::OnNeck, "OnNeck");
 node_candle_pattern!(InNeckNode, wc::InNeck, "InNeck");
 node_candle_pattern!(ThrustingNode, wc::Thrusting, "Thrusting");
+node_candle_pattern!(SeparatingLinesNode, wc::SeparatingLines, "SeparatingLines");
+node_candle_pattern!(KickingNode, wc::Kicking, "Kicking");
+node_candle_pattern!(KickingByLengthNode, wc::KickingByLength, "KickingByLength");
+node_candle_pattern!(LadderBottomNode, wc::LadderBottom, "LadderBottom");
+node_candle_pattern!(MatHoldNode, wc::MatHold, "MatHold");
 
 // ============================== Microstructure: Order Book ==============================
 //

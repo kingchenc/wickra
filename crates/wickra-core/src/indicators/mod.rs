@@ -121,10 +121,13 @@ mod jma;
 mod kama;
 mod kelly_criterion;
 mod keltner;
+mod kicking;
+mod kicking_by_length;
 mod kst;
 mod kurtosis;
 mod kvo;
 mod kyles_lambda;
+mod ladder_bottom;
 mod laguerre_rsi;
 mod lead_lag_cross_correlation;
 mod linreg;
@@ -140,6 +143,7 @@ mod mama;
 mod market_facilitation_index;
 mod marubozu;
 mod mass_index;
+mod mat_hold;
 mod max_drawdown;
 mod mcginley_dynamic;
 mod median_absolute_deviation;
@@ -189,6 +193,7 @@ mod rsi;
 mod rvi;
 mod rvi_volatility;
 mod rwi;
+mod separating_lines;
 mod sharpe_ratio;
 mod shooting_star;
 mod signed_volume;
@@ -390,10 +395,13 @@ pub use jma::Jma;
 pub use kama::Kama;
 pub use kelly_criterion::KellyCriterion;
 pub use keltner::{Keltner, KeltnerOutput};
+pub use kicking::Kicking;
+pub use kicking_by_length::KickingByLength;
 pub use kst::{Kst, KstOutput};
 pub use kurtosis::Kurtosis;
 pub use kvo::Kvo;
 pub use kyles_lambda::KylesLambda;
+pub use ladder_bottom::LadderBottom;
 pub use laguerre_rsi::LaguerreRsi;
 pub use lead_lag_cross_correlation::{LeadLagCrossCorrelation, LeadLagCrossCorrelationOutput};
 pub use linreg::LinearRegression;
@@ -409,6 +417,7 @@ pub use mama::{Mama, MamaOutput};
 pub use market_facilitation_index::MarketFacilitationIndex;
 pub use marubozu::Marubozu;
 pub use mass_index::MassIndex;
+pub use mat_hold::MatHold;
 pub use max_drawdown::MaxDrawdown;
 pub use mcginley_dynamic::McGinleyDynamic;
 pub use median_absolute_deviation::MedianAbsoluteDeviation;
@@ -458,6 +467,7 @@ pub use rsi::Rsi;
 pub use rvi::Rvi;
 pub use rvi_volatility::RviVolatility;
 pub use rwi::{Rwi, RwiOutput};
+pub use separating_lines::SeparatingLines;
 pub use sharpe_ratio::SharpeRatio;
 pub use shooting_star::ShootingStar;
 pub use signed_volume::SignedVolume;
@@ -830,6 +840,11 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "OnNeck",
             "InNeck",
             "Thrusting",
+            "SeparatingLines",
+            "Kicking",
+            "KickingByLength",
+            "LadderBottom",
+            "MatHold",
         ],
     ),
     (
@@ -921,6 +936,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 264, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 269, "FAMILIES total drifted from indicator count");
     }
 }
