@@ -8789,6 +8789,11 @@ node_candle_pattern!(
 );
 node_candle_pattern!(HighWaveNode, wc::HighWave, "HighWave");
 node_candle_pattern!(HikkakeNode, wc::Hikkake, "Hikkake");
+node_candle_pattern!(HikkakeModifiedNode, wc::HikkakeModified, "HikkakeModified");
+node_candle_pattern!(HomingPigeonNode, wc::HomingPigeon, "HomingPigeon");
+node_candle_pattern!(OnNeckNode, wc::OnNeck, "OnNeck");
+node_candle_pattern!(InNeckNode, wc::InNeck, "InNeck");
+node_candle_pattern!(ThrustingNode, wc::Thrusting, "Thrusting");
 
 // ============================== Microstructure: Order Book ==============================
 //

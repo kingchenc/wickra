@@ -11652,6 +11652,11 @@ candle_pattern_no_param!(
 );
 candle_pattern_no_param!(PyHighWave, wc::HighWave, "HighWave");
 candle_pattern_no_param!(PyHikkake, wc::Hikkake, "Hikkake");
+candle_pattern_no_param!(PyHikkakeModified, wc::HikkakeModified, "HikkakeModified");
+candle_pattern_no_param!(PyHomingPigeon, wc::HomingPigeon, "HomingPigeon");
+candle_pattern_no_param!(PyOnNeck, wc::OnNeck, "OnNeck");
+candle_pattern_no_param!(PyInNeck, wc::InNeck, "InNeck");
+candle_pattern_no_param!(PyThrusting, wc::Thrusting, "Thrusting");
 // ============================== Microstructure: Order Book ==============================
 //
 // Order-book indicators consume a depth snapshot rather than OHLCV. Streaming
@@ -14168,6 +14173,11 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyGapSideBySideWhite>()?;
     m.add_class::<PyHighWave>()?;
     m.add_class::<PyHikkake>()?;
+    m.add_class::<PyHikkakeModified>()?;
+    m.add_class::<PyHomingPigeon>()?;
+    m.add_class::<PyOnNeck>()?;
+    m.add_class::<PyInNeck>()?;
+    m.add_class::<PyThrusting>()?;
     // Microstructure: order book.
     m.add_class::<PyOrderBookImbalanceTop1>()?;
     m.add_class::<PyOrderBookImbalanceTopN>()?;

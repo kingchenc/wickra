@@ -47,6 +47,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Gap Side-by-Side White** — two similar white candles opening side by side after a gap, a continuation; gap up +1, gap down -1 (`CDLGAPSIDESIDEWHITE`).
   - **High-Wave** — a small body with very long shadows on both sides, an extreme indecision signal; +1 detection (`CDLHIGHWAVE`).
   - **Hikkake** — an inside bar followed by a failed breakout, a trap; bullish +1, bearish -1 (`CDLHIKKAKE`).
+  - **Modified Hikkake** — a close-confirmed Hikkake: an inside bar then a failed breakout closing back inside; bullish +1, bearish -1 (`CDLHIKKAKEMOD`).
+  - **Homing Pigeon** — two black candles, the second a small body inside the first, a bullish reversal; +1 (`CDLHOMINGPIGEON`).
+  - **On-Neck** — a long black candle then a white candle closing at its low (the neckline), a bearish continuation; -1 (`CDLONNECK`).
+  - **In-Neck** — a long black candle then a white candle closing just into its body, a bearish continuation; -1 (`CDLINNECK`).
+  - **Thrusting** — a long black candle then a white candle closing well into but below the midpoint of its body, a bearish continuation; -1 (`CDLTHRUSTING`).
 - **Derivatives family — funding & open interest (part 1).** A new family of
   indicators that consume a perpetual / futures tick (`DerivativesTick`,
   bundling funding rate, mark / index / futures price, open interest,

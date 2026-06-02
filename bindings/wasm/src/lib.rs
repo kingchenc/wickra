@@ -6366,6 +6366,11 @@ wasm_candle_pattern!(
 );
 wasm_candle_pattern!(WasmHighWave, wc::HighWave, HighWave);
 wasm_candle_pattern!(WasmHikkake, wc::Hikkake, Hikkake);
+wasm_candle_pattern!(WasmHikkakeModified, wc::HikkakeModified, HikkakeModified);
+wasm_candle_pattern!(WasmHomingPigeon, wc::HomingPigeon, HomingPigeon);
+wasm_candle_pattern!(WasmOnNeck, wc::OnNeck, OnNeck);
+wasm_candle_pattern!(WasmInNeck, wc::InNeck, InNeck);
+wasm_candle_pattern!(WasmThrusting, wc::Thrusting, Thrusting);
 
 // ============================== Microstructure: Order Book ==============================
 //

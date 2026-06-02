@@ -100,14 +100,17 @@ mod harami;
 mod heikin_ashi;
 mod high_wave;
 mod hikkake;
+mod hikkake_modified;
 mod hilbert_dominant_cycle;
 mod hilo_activator;
 mod historical_volatility;
 mod hma;
+mod homing_pigeon;
 mod hurst_channel;
 mod hurst_exponent;
 mod ichimoku;
 mod identical_three_crows;
+mod in_neck;
 mod inertia;
 mod information_ratio;
 mod initial_balance;
@@ -156,6 +159,7 @@ mod oi_delta;
 mod oi_price_divergence;
 mod oi_weighted;
 mod omega_ratio;
+mod on_neck;
 mod opening_range;
 mod pain_index;
 mod pair_spread_zscore;
@@ -227,6 +231,7 @@ mod three_line_strike;
 mod three_outside;
 mod three_soldiers_or_crows;
 mod three_stars_in_south;
+mod thrusting;
 mod tii;
 mod trade_imbalance;
 mod treynor_ratio;
@@ -364,14 +369,17 @@ pub use harami::Harami;
 pub use heikin_ashi::{HeikinAshi, HeikinAshiOutput};
 pub use high_wave::HighWave;
 pub use hikkake::Hikkake;
+pub use hikkake_modified::HikkakeModified;
 pub use hilbert_dominant_cycle::HilbertDominantCycle;
 pub use hilo_activator::HiLoActivator;
 pub use historical_volatility::HistoricalVolatility;
 pub use hma::Hma;
+pub use homing_pigeon::HomingPigeon;
 pub use hurst_channel::{HurstChannel, HurstChannelOutput};
 pub use hurst_exponent::HurstExponent;
 pub use ichimoku::{Ichimoku, IchimokuOutput};
 pub use identical_three_crows::IdenticalThreeCrows;
+pub use in_neck::InNeck;
 pub use inertia::Inertia;
 pub use information_ratio::InformationRatio;
 pub use initial_balance::{InitialBalance, InitialBalanceOutput};
@@ -420,6 +428,7 @@ pub use oi_delta::OpenInterestDelta;
 pub use oi_price_divergence::OIPriceDivergence;
 pub use oi_weighted::OIWeighted;
 pub use omega_ratio::OmegaRatio;
+pub use on_neck::OnNeck;
 pub use opening_range::{OpeningRange, OpeningRangeOutput};
 pub use pain_index::PainIndex;
 pub use pair_spread_zscore::PairSpreadZScore;
@@ -491,6 +500,7 @@ pub use three_line_strike::ThreeLineStrike;
 pub use three_outside::ThreeOutside;
 pub use three_soldiers_or_crows::ThreeSoldiersOrCrows;
 pub use three_stars_in_south::ThreeStarsInSouth;
+pub use thrusting::Thrusting;
 pub use tii::Tii;
 pub use trade_imbalance::TradeImbalance;
 pub use treynor_ratio::TreynorRatio;
@@ -815,6 +825,11 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "GapSideBySideWhite",
             "HighWave",
             "Hikkake",
+            "HikkakeModified",
+            "HomingPigeon",
+            "OnNeck",
+            "InNeck",
+            "Thrusting",
         ],
     ),
     (
@@ -906,6 +921,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 259, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 264, "FAMILIES total drifted from indicator count");
     }
 }
