@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **TA-Lib parity — price transforms** — window and per-bar price aggregates:
   - `MidPrice` (`MIDPRICE`) — `(highest high + lowest low) / 2` over a window.
   - `MidPoint` (`MIDPOINT`) — `(max + min) / 2` of a scalar series over a window.
+  - `AvgPrice` (`AVGPRICE`) — per-bar `(open + high + low + close) / 4`.
 
 ## [0.4.5] - 2026-06-02
 

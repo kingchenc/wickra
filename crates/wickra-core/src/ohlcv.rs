@@ -119,6 +119,12 @@ impl Candle {
         (self.high + self.low + 2.0 * self.close) / 4.0
     }
 
+    /// The average price `(open + high + low + close) / 4`.
+    #[inline]
+    pub fn avg_price(&self) -> f64 {
+        (self.open + self.high + self.low + self.close) / 4.0
+    }
+
     /// True range of this candle relative to a previous close: `max(H-L, |H-prev|, |L-prev|)`.
     /// If no previous close is supplied, falls back to `high - low`.
     #[inline]

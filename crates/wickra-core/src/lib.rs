@@ -56,7 +56,7 @@ pub use indicators::{
     AbandonedBaby, AccelerationBands, AccelerationBandsOutput, AcceleratorOscillator, AdOscillator,
     AdaptiveCycle, Adl, AdvanceBlock, Adx, AdxOutput, Adxr, Alligator, AlligatorOutput, Alma,
     Alpha, AnchoredRsi, AnchoredVwap, Apo, Aroon, AroonOscillator, AroonOutput, Atr, AtrBands,
-    AtrBandsOutput, AtrTrailingStop, Autocorrelation, AverageDrawdown, AwesomeOscillator,
+    AtrBandsOutput, AtrTrailingStop, Autocorrelation, AverageDrawdown, AvgPrice, AwesomeOscillator,
     AwesomeOscillatorHistogram, BalanceOfPower, BeltHold, Beta, BollingerBands, BollingerBandwidth,
     BollingerOutput, Breakaway, CalendarSpread, CalmarRatio, Camarilla, CamarillaPivotsOutput, Cci,
     CenterOfGravity, Cfo, ChaikinMoneyFlow, ChaikinOscillator, ChaikinVolatility, ChandeKrollStop,

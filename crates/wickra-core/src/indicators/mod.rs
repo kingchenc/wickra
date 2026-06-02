@@ -26,6 +26,7 @@ mod atr_bands;
 mod atr_trailing_stop;
 mod autocorrelation;
 mod average_drawdown;
+mod avg_price;
 mod awesome_oscillator;
 mod awesome_oscillator_histogram;
 mod balance_of_power;
@@ -328,6 +329,7 @@ pub use atr_bands::{AtrBands, AtrBandsOutput};
 pub use atr_trailing_stop::AtrTrailingStop;
 pub use autocorrelation::Autocorrelation;
 pub use average_drawdown::AverageDrawdown;
+pub use avg_price::AvgPrice;
 pub use awesome_oscillator::AwesomeOscillator;
 pub use awesome_oscillator_histogram::AwesomeOscillatorHistogram;
 pub use balance_of_power::BalanceOfPower;
@@ -808,6 +810,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "SpearmanCorrelation",
             "MidPrice",
             "MidPoint",
+            "AvgPrice",
         ],
     ),
     (
@@ -1025,6 +1028,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 297, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 298, "FAMILIES total drifted from indicator count");
     }
 }

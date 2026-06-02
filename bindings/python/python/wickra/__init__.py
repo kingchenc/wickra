@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from ._wickra import (
     __version__,
+    AVGPRICE,
     MIDPOINT,
     MIDPRICE,
     DX,
@@ -350,6 +351,7 @@ from ._wickra import (
 )
 
 __all__ = [
+    "AVGPRICE",
     "MIDPOINT",
     "MIDPRICE",
     "DX",

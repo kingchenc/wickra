@@ -277,6 +277,7 @@ def test_relative_strength_streaming_matches_batch():
 
 CANDLE_SCALAR = {
     "MIDPRICE": (lambda: ta.MIDPRICE(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
+    "AVGPRICE": (lambda: ta.AVGPRICE(), lambda ind, h, l, c, v: ind.batch(c, h, l, c)),
     "DX": (lambda: ta.DX(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "MINUS_DI": (lambda: ta.MINUS_DI(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "PLUS_DI": (lambda: ta.PLUS_DI(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
@@ -1242,6 +1243,11 @@ def test_mid_point_reference():
     # Window {8, 12, 10}: (12 + 8) / 2 = 10.
     out = ta.MIDPOINT(3).batch(np.array([8.0, 12.0, 10.0]))
     assert out[-1] == pytest.approx(10.0)
+
+
+def test_avg_price_reference():
+    # (open + high + low + close) / 4 = (10 + 14 + 6 + 12) / 4 = 10.5.
+    assert ta.AVGPRICE().update((10.0, 14.0, 6.0, 12.0, 1.0, 0)) == pytest.approx(10.5)
 
 
 def test_nvi_reference():

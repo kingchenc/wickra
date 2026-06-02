@@ -887,6 +887,15 @@ export declare class MIDPRICE {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type AvgPriceNode = AVGPRICE
+export declare class AVGPRICE {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type StochNode = Stochastic
 export declare class Stochastic {
   constructor(kPeriod: number, dPeriod: number)
