@@ -8,7 +8,7 @@ That includes:
   [Python](https://docs.wickra.org/Quickstart-Python),
   [Node](https://docs.wickra.org/Quickstart-Node), and
   [WASM](https://docs.wickra.org/Quickstart-WASM).
-- A per-indicator deep dive for every one of the **214 indicators** across
+- A per-indicator deep dive for every one of the **254 indicators** across
   the sixteen families (Moving Averages, Momentum Oscillators, Trend &
   Directional, Price Oscillators, Volatility & Bands, Bands & Channels,
   Trailing Stops, Volume, Price Statistics, Ehlers / Cycle DSP, Pivots &
