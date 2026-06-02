@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `PlusDi` (`PLUS_DI`) — plus directional indicator, `100 · smoothed(+DM) / ATR`.
   - `MinusDi` (`MINUS_DI`) — minus directional indicator, `100 · smoothed(-DM) / ATR`.
   - `Dx` (`DX`) — directional movement index, `100 · |+DI − −DI| / (+DI + −DI)`.
+- **TA-Lib parity — price transforms** — window and per-bar price aggregates:
+  - `MidPrice` (`MIDPRICE`) — `(highest high + lowest low) / 2` over a window.
+  - `MidPoint` (`MIDPOINT`) — `(max + min) / 2` of a scalar series over a window.
 
 ## [0.4.5] - 2026-06-02
 

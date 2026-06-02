@@ -159,6 +159,8 @@ mod median_absolute_deviation;
 mod median_price;
 mod mfi;
 mod microprice;
+mod mid_point;
+mod mid_price;
 mod minus_di;
 mod minus_dm;
 mod mom;
@@ -459,6 +461,8 @@ pub use median_absolute_deviation::MedianAbsoluteDeviation;
 pub use median_price::MedianPrice;
 pub use mfi::Mfi;
 pub use microprice::Microprice;
+pub use mid_point::MidPoint;
+pub use mid_price::MidPrice;
 pub use minus_di::MinusDi;
 pub use minus_dm::MinusDm;
 pub use mom::Mom;
@@ -802,6 +806,8 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "PearsonCorrelation",
             "Beta",
             "SpearmanCorrelation",
+            "MidPrice",
+            "MidPoint",
         ],
     ),
     (
@@ -1019,6 +1025,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 295, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 297, "FAMILIES total drifted from indicator count");
     }
 }

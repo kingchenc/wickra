@@ -45,6 +45,7 @@ def ohlcv() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 # --- Scalar (f64 -> f64) indicators ---------------------------------------
 
 SCALAR = [
+    (ta.MIDPOINT, (14,)),
     (ta.SMMA, (14,)),
     (ta.TRIMA, (20,)),
     (ta.ZLEMA, (14,)),
@@ -275,6 +276,7 @@ def test_relative_strength_streaming_matches_batch():
 # 6-tuple candle; the batch helper takes only the columns it needs.
 
 CANDLE_SCALAR = {
+    "MIDPRICE": (lambda: ta.MIDPRICE(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "DX": (lambda: ta.DX(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "MINUS_DI": (lambda: ta.MINUS_DI(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "PLUS_DI": (lambda: ta.PLUS_DI(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
@@ -1225,6 +1227,21 @@ def test_dx_reference():
     close = np.array([100.5, 102.5, 104.5, 106.5, 108.5, 110.5])
     out = ta.DX(3).batch(high, low, close)
     assert 50.0 < out[-1] <= 100.0
+
+
+def test_mid_price_reference():
+    # Window highs {12, 14, 16}, lows {8, 9, 10}: (16 + 8) / 2 = 12.
+    high = np.array([12.0, 14.0, 16.0])
+    low = np.array([8.0, 9.0, 10.0])
+    close = np.array([10.0, 11.0, 12.0])
+    out = ta.MIDPRICE(3).batch(high, low, close)
+    assert out[-1] == pytest.approx(12.0)
+
+
+def test_mid_point_reference():
+    # Window {8, 12, 10}: (12 + 8) / 2 = 10.
+    out = ta.MIDPOINT(3).batch(np.array([8.0, 12.0, 10.0]))
+    assert out[-1] == pytest.approx(10.0)
 
 
 def test_nvi_reference():

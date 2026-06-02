@@ -28,6 +28,7 @@ function num(v) {
 // --- Scalar indicators: update(value) vs batch(prices) ---
 
 const scalarFactories = {
+  MIDPOINT: () => new wickra.MIDPOINT(14),
   SMA: () => new wickra.SMA(14),
   EMA: () => new wickra.EMA(14),
   WMA: () => new wickra.WMA(14),
@@ -159,6 +160,7 @@ for (const [name, make] of Object.entries(scalarFactories)) {
 // --- Scalar-output candle indicators: update(...) vs batch(...) ---
 
 const candleScalar = {
+  MIDPRICE: { make: () => new wickra.MIDPRICE(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   DX: { make: () => new wickra.DX(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   MINUS_DI: { make: () => new wickra.MINUS_DI(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   PLUS_DI: { make: () => new wickra.PLUS_DI(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },

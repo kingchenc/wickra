@@ -658,6 +658,15 @@ export declare class MedianAbsoluteDeviation {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type MidPointNode = MIDPOINT
+export declare class MIDPOINT {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type AutocorrelationNode = Autocorrelation
 export declare class Autocorrelation {
   constructor(period: number, lag: number)
@@ -862,6 +871,15 @@ export declare class MINUS_DI {
 }
 export type DxNode = DX
 export declare class DX {
+  constructor(period: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type MidPriceNode = MIDPRICE
+export declare class MIDPRICE {
   constructor(period: number)
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
