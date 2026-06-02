@@ -46,6 +46,8 @@ jobs:
     environment: release
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable branch, 2026-03-27
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
         continue-on-error: true # cache is an optimisation; never block on a stuck/slow restore
@@ -156,6 +158,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - name: Set up Python
         id: setup_python
         continue-on-error: true
@@ -194,6 +198,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - name: Sync root README into bindings/python so it ships in the sdist
         run: cp README.md bindings/python/README.md
       - uses: PyO3/maturin-action@e83996d129638aa358a18fbd1dfb82f0b0fb5d3b # v1.51.0
@@ -244,6 +250,8 @@ jobs:
     runs-on: ${{ matrix.host }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       - name: Set up Node
         id: setup_node
@@ -303,6 +311,8 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       - name: Set up Node
         id: setup_node
@@ -470,6 +480,8 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       - name: Set up Node
         id: setup_node
@@ -570,13 +582,22 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
+          persist-credentials: false
           fetch-depth: 0
 
       - name: Resolve target tag
         id: tag
+        # Pass the (potentially attacker-influenceable on a tag push) ref context
+        # through the environment instead of interpolating it into the shell
+        # script, so a crafted tag name cannot inject commands (zizmor:
+        # template-injection).
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
-          if [ "${{ github.event_name }}" = "push" ] && [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            tag="${{ github.ref_name }}"
+          if [ "$EVENT_NAME" = "push" ] && [[ "$REF" == refs/tags/* ]]; then
+            tag="$REF_NAME"
           else
             # workflow_dispatch / non-tag push: attach to the latest v* tag.
             tag=$(git tag --list 'v*' --sort=-v:refname | head -n1)
