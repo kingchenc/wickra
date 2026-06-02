@@ -954,6 +954,15 @@ export declare class AVGPRICE {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type SarExtNode = SAREXT
+export declare class SAREXT {
+  constructor(startValue: number, offsetOnReverse: number, accelInitLong: number, accelLong: number, accelMaxLong: number, accelInitShort: number, accelShort: number, accelMaxShort: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type StochNode = Stochastic
 export declare class Stochastic {
   constructor(kPeriod: number, dPeriod: number)

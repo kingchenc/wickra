@@ -1339,6 +1339,99 @@ impl PyMacdFix {
     }
 }
 
+// ============================== SAR Extended ==============================
+
+#[pyclass(name = "SAREXT", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PySarExt {
+    inner: wc::SarExt,
+}
+
+#[pymethods]
+impl PySarExt {
+    #[new]
+    #[pyo3(signature = (
+        start_value=0.0,
+        offset_on_reverse=0.0,
+        accel_init_long=0.02,
+        accel_long=0.02,
+        accel_max_long=0.2,
+        accel_init_short=0.02,
+        accel_short=0.02,
+        accel_max_short=0.2,
+    ))]
+    #[allow(clippy::too_many_arguments)]
+    fn new(
+        start_value: f64,
+        offset_on_reverse: f64,
+        accel_init_long: f64,
+        accel_long: f64,
+        accel_max_long: f64,
+        accel_init_short: f64,
+        accel_short: f64,
+        accel_max_short: f64,
+    ) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::SarExt::new(
+                start_value,
+                offset_on_reverse,
+                accel_init_long,
+                accel_long,
+                accel_max_long,
+                accel_init_short,
+                accel_short,
+                accel_max_short,
+            )
+            .map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "SAREXT()".to_string()
+    }
+}
+
 // ============================== Stochastic ==============================
 
 #[pyclass(name = "Stochastic", module = "wickra._wickra", skip_from_py_object)]
@@ -15277,6 +15370,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyMfi>()?;
     m.add_class::<PyTrix>()?;
     m.add_class::<PyPsar>()?;
+    m.add_class::<PySarExt>()?;
     m.add_class::<PyKeltner>()?;
     m.add_class::<PyDonchian>()?;
     m.add_class::<PyVwap>()?;

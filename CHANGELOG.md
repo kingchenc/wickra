@@ -31,6 +31,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **TA-Lib parity — `MacdFix` (`MACDFIX`)** — MACD with fast/slow fixed at 12/26
   and only the signal period configurable; output is the usual `{macd, signal,
   histogram}` triple.
+- **TA-Lib parity — `SarExt` (`SAREXT`)** — Parabolic SAR with a start value,
+  reversal offset, independent long/short acceleration, and a signed output
+  (positive in long phases, negative in short phases).
 
 ## [0.4.5] - 2026-06-02
 

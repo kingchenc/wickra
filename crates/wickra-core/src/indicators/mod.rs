@@ -218,6 +218,7 @@ mod rsi;
 mod rvi;
 mod rvi_volatility;
 mod rwi;
+mod sar_ext;
 mod separating_lines;
 mod sharpe_ratio;
 mod shooting_star;
@@ -527,6 +528,7 @@ pub use rsi::Rsi;
 pub use rvi::Rvi;
 pub use rvi_volatility::RviVolatility;
 pub use rwi::{Rwi, RwiOutput};
+pub use sar_ext::SarExt;
 pub use separating_lines::SeparatingLines;
 pub use sharpe_ratio::SharpeRatio;
 pub use shooting_star::ShootingStar;
@@ -775,6 +777,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "PercentageTrailingStop",
             "StepTrailingStop",
             "RenkoTrailingStop",
+            "SarExt",
         ],
     ),
     (
@@ -1046,6 +1049,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 304, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 305, "FAMILIES total drifted from indicator count");
     }
 }

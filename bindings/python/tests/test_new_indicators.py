@@ -288,6 +288,7 @@ CANDLE_SCALAR = {
     "MINUS_DI": (lambda: ta.MINUS_DI(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "PLUS_DI": (lambda: ta.PLUS_DI(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "VWMA": (lambda: ta.VWMA(20), lambda ind, h, l, c, v: ind.batch(c, v)),
+    "SAREXT": (lambda: ta.SAREXT(), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "PLUS_DM": (lambda: ta.PLUS_DM(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "MINUS_DM": (lambda: ta.MINUS_DM(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "RVI": (

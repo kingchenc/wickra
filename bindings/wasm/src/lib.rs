@@ -1455,6 +1455,64 @@ impl WasmMacdFix {
     }
 }
 
+#[wasm_bindgen(js_name = SAREXT)]
+pub struct WasmSarExt {
+    inner: wc::SarExt,
+}
+
+#[wasm_bindgen(js_class = SAREXT)]
+impl WasmSarExt {
+    #[wasm_bindgen(constructor)]
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        start_value: f64,
+        offset_on_reverse: f64,
+        accel_init_long: f64,
+        accel_long: f64,
+        accel_max_long: f64,
+        accel_init_short: f64,
+        accel_short: f64,
+        accel_max_short: f64,
+    ) -> Result<WasmSarExt, JsError> {
+        Ok(Self {
+            inner: wc::SarExt::new(
+                start_value,
+                offset_on_reverse,
+                accel_init_long,
+                accel_long,
+                accel_max_long,
+                accel_init_short,
+                accel_short,
+                accel_max_short,
+            )
+            .map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
 #[wasm_bindgen(js_name = Stochastic)]
 pub struct WasmStoch {
     inner: wc::Stochastic,

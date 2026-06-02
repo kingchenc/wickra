@@ -175,6 +175,7 @@ const candleScalar = {
   CCI: { make: () => new wickra.CCI(20), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   WilliamsR: { make: () => new wickra.WilliamsR(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   PSAR: { make: () => new wickra.PSAR(0.02, 0.02, 0.2), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  SAREXT: { make: () => new wickra.SAREXT(0, 0, 0.02, 0.02, 0.2, 0.02, 0.02, 0.2), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   MFI: { make: () => new wickra.MFI(14), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
   VWAP: { make: () => new wickra.VWAP(), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
   RollingVWAP: { make: () => new wickra.RollingVWAP(20), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },

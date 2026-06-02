@@ -93,7 +93,7 @@ pub use indicators::{
     QuotedSpread, RSquared, RealizedSpread, RecoveryFactor, RelativeStrengthAB,
     RelativeStrengthOutput, RenkoBars, RenkoTrailingStop, RickshawMan, RisingThreeMethods, Roc,
     Rocp, Rocr, Rocr100, RogersSatchellVolatility, RollingVwap, RoofingFilter, Rsi, Rvi,
-    RviVolatility, Rwi, RwiOutput, SeparatingLines, SharpeRatio, ShootingStar, ShortLine,
+    RviVolatility, Rwi, RwiOutput, SarExt, SeparatingLines, SharpeRatio, ShootingStar, ShortLine,
     SignedVolume, SineWave, Skewness, Sma, Smi, Smma, SortinoRatio, SpearmanCorrelation,
     SpinningTop, StalledPattern, StandardError, StandardErrorBands, StandardErrorBandsOutput,
     StarcBands, StarcBandsOutput, Stc, StdDev, StepTrailingStop, StickSandwich, StochRsi,
