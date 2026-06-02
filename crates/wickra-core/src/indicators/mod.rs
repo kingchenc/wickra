@@ -45,10 +45,12 @@ mod chande_kroll_stop;
 mod chandelier_exit;
 mod choppiness_index;
 mod classic_pivots;
+mod closing_marubozu;
 mod cmf;
 mod cmo;
 mod coefficient_of_variation;
 mod cointegration;
+mod concealing_baby_swallow;
 mod conditional_value_at_risk;
 mod connors_rsi;
 mod coppock;
@@ -168,6 +170,7 @@ mod oi_price_divergence;
 mod oi_weighted;
 mod omega_ratio;
 mod on_neck;
+mod opening_marubozu;
 mod opening_range;
 mod pain_index;
 mod pair_spread_zscore;
@@ -226,6 +229,7 @@ mod super_trend;
 mod t3;
 mod taker_buy_sell_ratio;
 mod takuri;
+mod tasuki_gap;
 mod td_combo;
 mod td_countdown;
 mod td_demarker;
@@ -260,6 +264,7 @@ mod two_crows;
 mod typical_price;
 mod ulcer_index;
 mod ultimate_oscillator;
+mod unique_three_river;
 mod upside_gap_three_methods;
 mod upside_gap_two_crows;
 mod value_area;
@@ -329,10 +334,12 @@ pub use chande_kroll_stop::{ChandeKrollStop, ChandeKrollStopOutput};
 pub use chandelier_exit::{ChandelierExit, ChandelierExitOutput};
 pub use choppiness_index::ChoppinessIndex;
 pub use classic_pivots::{ClassicPivots, ClassicPivotsOutput};
+pub use closing_marubozu::ClosingMarubozu;
 pub use cmf::ChaikinMoneyFlow;
 pub use cmo::Cmo;
 pub use coefficient_of_variation::CoefficientOfVariation;
 pub use cointegration::{Cointegration, CointegrationOutput};
+pub use concealing_baby_swallow::ConcealingBabySwallow;
 pub use conditional_value_at_risk::ConditionalValueAtRisk;
 pub use connors_rsi::ConnorsRsi;
 pub use coppock::Coppock;
@@ -452,6 +459,7 @@ pub use oi_price_divergence::OIPriceDivergence;
 pub use oi_weighted::OIWeighted;
 pub use omega_ratio::OmegaRatio;
 pub use on_neck::OnNeck;
+pub use opening_marubozu::OpeningMarubozu;
 pub use opening_range::{OpeningRange, OpeningRangeOutput};
 pub use pain_index::PainIndex;
 pub use pair_spread_zscore::PairSpreadZScore;
@@ -510,6 +518,7 @@ pub use super_trend::{SuperTrend, SuperTrendOutput};
 pub use t3::T3;
 pub use taker_buy_sell_ratio::TakerBuySellRatio;
 pub use takuri::Takuri;
+pub use tasuki_gap::TasukiGap;
 pub use td_combo::TdCombo;
 pub use td_countdown::TdCountdown;
 pub use td_demarker::TdDeMarker;
@@ -544,6 +553,7 @@ pub use two_crows::TwoCrows;
 pub use typical_price::TypicalPrice;
 pub use ulcer_index::UlcerIndex;
 pub use ultimate_oscillator::UltimateOscillator;
+pub use unique_three_river::UniqueThreeRiver;
 pub use upside_gap_three_methods::UpsideGapThreeMethods;
 pub use upside_gap_two_crows::UpsideGapTwoCrows;
 pub use value_area::{ValueArea, ValueAreaOutput};
@@ -875,6 +885,11 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "StalledPattern",
             "StickSandwich",
             "Takuri",
+            "ClosingMarubozu",
+            "OpeningMarubozu",
+            "TasukiGap",
+            "UniqueThreeRiver",
+            "ConcealingBabySwallow",
         ],
     ),
     (
@@ -966,6 +981,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 279, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 284, "FAMILIES total drifted from indicator count");
     }
 }

@@ -683,6 +683,26 @@ CANDLE_SCALAR = {
         lambda: ta.Takuri(),
         lambda ind, h, l, c, v: ind.batch(c, h, l, c),
     ),
+    "ClosingMarubozu": (
+        lambda: ta.ClosingMarubozu(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "OpeningMarubozu": (
+        lambda: ta.OpeningMarubozu(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "TasukiGap": (
+        lambda: ta.TasukiGap(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "UniqueThreeRiver": (
+        lambda: ta.UniqueThreeRiver(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "ConcealingBabySwallow": (
+        lambda: ta.ConcealingBabySwallow(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
 }
 
 
@@ -2003,6 +2023,38 @@ def test_stick_sandwich_reference():
 def test_takuri_reference():
     t = ta.Takuri()
     assert t.update((10.0, 10.05, 7.0, 10.0, 1.0, 0)) == pytest.approx(1.0)
+
+
+def test_closing_marubozu_reference():
+    t = ta.ClosingMarubozu()
+    assert t.update((10.5, 15.0, 10.0, 15.0, 1.0, 0)) == pytest.approx(1.0)
+
+
+def test_opening_marubozu_reference():
+    t = ta.OpeningMarubozu()
+    assert t.update((10.0, 15.0, 10.0, 14.5, 1.0, 0)) == pytest.approx(1.0)
+
+
+def test_tasuki_gap_reference():
+    t = ta.TasukiGap()
+    assert t.update((10.0, 11.2, 9.8, 11.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((12.0, 14.0, 11.9, 13.5, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((13.0, 13.1, 11.4, 11.5, 1.0, 2)) == pytest.approx(1.0)
+
+
+def test_unique_three_river_reference():
+    t = ta.UniqueThreeRiver()
+    assert t.update((15.0, 15.1, 10.0, 10.5, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((14.0, 14.1, 9.0, 11.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((10.2, 10.9, 9.5, 10.4, 1.0, 2)) == pytest.approx(1.0)
+
+
+def test_concealing_baby_swallow_reference():
+    t = ta.ConcealingBabySwallow()
+    assert t.update((20.0, 20.1, 14.9, 15.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((16.0, 16.1, 11.9, 12.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((11.0, 13.0, 9.9, 10.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((14.0, 14.1, 8.9, 9.0, 1.0, 3)) == pytest.approx(1.0)
 
 # --- Lifecycle ------------------------------------------------------------
 

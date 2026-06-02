@@ -67,6 +67,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Stalled Pattern** — a 3-bar bearish reversal warning: two long white candles then a small white candle riding the shoulder, signalling the rally is stalling; bearish -1 (`CDLSTALLEDPATTERN`).
   - **Stick Sandwich** — a 3-bar bullish reversal: two black candles closing at the same level sandwich a white candle, marking a support floor; bullish +1 (`CDLSTICKSANDWICH`).
   - **Takuri** — a single-bar bullish reversal, a strict Dragonfly Doji with a negligible upper shadow and very long lower shadow; bullish +1 (`CDLTAKURI`).
+  - **Closing Marubozu** — a single long-bodied candle with no shadow on the close end; bullish +1 (white, closes at the high) or bearish -1 (black, closes at the low) (`CDLCLOSINGMARUBOZU`).
+  - **Opening Marubozu** — a single long-bodied candle with no shadow on the open end; bullish +1 (white, opens at the low) or bearish -1 (black, opens at the high). No direct TA-Lib equivalent — completes the pair with the closing marubozu.
+  - **Tasuki Gap** — a 3-bar continuation: two same-coloured candles gap in the trend direction, then an opposite candle opens within the second body and closes back into the gap without filling it; upside +1, downside -1 (`CDLTASUKIGAP`).
+  - **Unique Three River** — a 3-bar bullish reversal: a long black candle, a black candle probing a new low with its body inside the first, then a small white candle held below it; bullish +1 (`CDLUNIQUE3RIVER`).
+  - **Concealing Baby Swallow** — a rare 4-bar bullish capitulation: two black marubozu, a black candle gapping down with an upper shadow into the second, then a large black candle engulfing it entirely; bullish +1 (`CDLCONCEALBABYSWALL`).
 - **Derivatives family — funding & open interest (part 1).** A new family of
   indicators that consume a perpetual / futures tick (`DerivativesTick`,
   bundling funding rate, mark / index / futures price, open interest,

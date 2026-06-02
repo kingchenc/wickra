@@ -280,6 +280,11 @@ from ._wickra import (
     StalledPattern,
     StickSandwich,
     Takuri,
+    ClosingMarubozu,
+    OpeningMarubozu,
+    TasukiGap,
+    UniqueThreeRiver,
+    ConcealingBabySwallow,
     # Microstructure: order book
     OrderBookImbalanceTop1,
     OrderBookImbalanceTopN,
@@ -587,6 +592,11 @@ __all__ = [
     "StalledPattern",
     "StickSandwich",
     "Takuri",
+    "ClosingMarubozu",
+    "OpeningMarubozu",
+    "TasukiGap",
+    "UniqueThreeRiver",
+    "ConcealingBabySwallow",
     # Microstructure: order book
     "OrderBookImbalanceTop1",
     "OrderBookImbalanceTopN",
