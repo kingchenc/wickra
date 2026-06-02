@@ -276,6 +276,7 @@ def test_relative_strength_streaming_matches_batch():
 
 CANDLE_SCALAR = {
     "VWMA": (lambda: ta.VWMA(20), lambda ind, h, l, c, v: ind.batch(c, v)),
+    "PLUS_DM": (lambda: ta.PLUS_DM(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "RVI": (
         # extract_candle pulls the open price from index 0 of the tuple; the
         # streaming test below already builds candles with open == close, so
@@ -1169,6 +1170,18 @@ def test_weighted_close_reference():
     assert ta.WeightedClose().update((10.0, 12.0, 8.0, 11.0, 1.0, 0)) == pytest.approx(
         10.5
     )
+
+
+def test_plus_dm_reference():
+    # Highs rise by 1 (up = +1) while lows rise by 0.5, so every raw +DM equals
+    # the up-move (1.0). Period 3: seed = 3 * 1 = 3.0, then the Wilder step holds it.
+    high = np.array([11.0, 12.0, 13.0, 14.0, 15.0])
+    low = np.array([9.0, 9.5, 10.0, 10.5, 11.0])
+    close = np.array([10.0, 11.0, 12.0, 13.0, 14.0])
+    out = ta.PLUS_DM(3).batch(high, low, close)
+    assert math.isnan(out[0]) and math.isnan(out[2])
+    assert out[3] == pytest.approx(3.0)
+    assert out[4] == pytest.approx(3.0)
 
 
 def test_nvi_reference():

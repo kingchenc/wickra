@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **TA-Lib parity — Directional Movement components** — the ADX building blocks,
+  previously available only bundled inside `Adx`, as standalone single-output
+  indicators:
+  - `PlusDm` (`PLUS_DM`) — Wilder-smoothed plus directional movement.
+
 ## [0.4.5] - 2026-06-02
 
 ### Added

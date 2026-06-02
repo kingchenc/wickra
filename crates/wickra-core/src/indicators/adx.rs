@@ -91,7 +91,7 @@ impl Adx {
     }
 }
 
-fn directional_movement(prev: &Candle, current: &Candle) -> (f64, f64) {
+pub(crate) fn directional_movement(prev: &Candle, current: &Candle) -> (f64, f64) {
     let up = current.high - prev.high;
     let down = prev.low - current.low;
     let plus_dm = if up > down && up > 0.0 { up } else { 0.0 };
