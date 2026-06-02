@@ -3179,6 +3179,48 @@ impl AdOscillatorNode {
     }
 }
 
+// ============================== Anchored RSI ==============================
+
+#[napi(js_name = "AnchoredRSI")]
+pub struct AnchoredRsiNode {
+    inner: wc::AnchoredRsi,
+}
+
+#[napi]
+impl AnchoredRsiNode {
+    #[napi(constructor)]
+    #[allow(clippy::new_without_default)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::AnchoredRsi::new(),
+        }
+    }
+    #[napi(js_name = "setAnchor")]
+    pub fn set_anchor(&mut self) {
+        self.inner.set_anchor();
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== Anchored VWAP ==============================
 
 #[napi(js_name = "AnchoredVWAP")]

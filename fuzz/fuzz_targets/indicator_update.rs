@@ -15,7 +15,8 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    AdaptiveCycle, Alma, Apo, Autocorrelation, AverageDrawdown, BatchExt, Beta, BollingerBands,
+    AdaptiveCycle, Alma, AnchoredRsi, Apo, Autocorrelation, AverageDrawdown, BatchExt, Beta,
+    BollingerBands,
     CalmarRatio, CenterOfGravity, Cfo, Cmo, CoefficientOfVariation, ConditionalValueAtRisk,
     ConnorsRsi, Coppock, CyberneticCycle, Decycler, DecyclerOscillator, Dema, DetrendedStdDev,
     DoubleBollinger, Dpo, DrawdownDuration, EhlersStochastic, ElderImpulse, Ema,
@@ -54,6 +55,7 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| Ema::new(20).unwrap(), &data);
     drive(|| Wma::new(14).unwrap(), &data);
     drive(|| Rsi::new(14).unwrap(), &data);
+    drive(AnchoredRsi::new, &data);
     drive(|| Dema::new(14).unwrap(), &data);
     drive(|| Tema::new(14).unwrap(), &data);
     drive(|| Hma::new(14).unwrap(), &data);

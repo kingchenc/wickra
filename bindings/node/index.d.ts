@@ -1224,6 +1224,16 @@ export declare class WilliamsAD {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type AnchoredRsiNode = AnchoredRSI
+export declare class AnchoredRSI {
+  constructor()
+  setAnchor(): void
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type AnchoredVwapNode = AnchoredVWAP
 export declare class AnchoredVWAP {
   constructor()

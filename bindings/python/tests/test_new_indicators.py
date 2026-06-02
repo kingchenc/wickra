@@ -1193,6 +1193,42 @@ def test_anchored_vwap_set_anchor_clears_window():
     assert v == pytest.approx(100.0)
 
 
+def test_anchored_rsi_reference():
+    # prices 10 -> 11 (+1) -> 9 (-2) -> 12 (+3); cumulative anchored RSI.
+    # bar2: sum_gain=1, sum_loss=2 -> rs=0.5 -> 100 - 100/1.5 = 33.3333
+    # bar3: sum_gain=4, sum_loss=2 -> rs=2.0 -> 100 - 100/3   = 66.6667
+    rsi = ta.AnchoredRSI()
+    out = rsi.batch(np.array([10.0, 11.0, 9.0, 12.0]))
+    assert np.isnan(out[0])
+    assert out[1] == pytest.approx(100.0)
+    assert out[2] == pytest.approx(33.333333, abs=1e-4)
+    assert out[3] == pytest.approx(66.666666, abs=1e-4)
+
+
+def test_anchored_rsi_set_anchor_clears_window():
+    # Downtrend reads 0; after re-anchor an uptrend must read a fresh 100.
+    rsi = ta.AnchoredRSI()
+    for p in (20.0, 19.0, 18.0, 17.0):
+        rsi.update(p)
+    assert rsi.is_ready()
+    assert rsi.value == pytest.approx(0.0)
+    rsi.set_anchor()
+    assert rsi.update(50.0) is None
+    assert rsi.update(51.0) == pytest.approx(100.0)
+
+
+def test_anchored_rsi_streaming_matches_batch():
+    prices = np.array([100.0 + np.sin(i * 0.4) * 8.0 for i in range(60)])
+    batched = ta.AnchoredRSI().batch(prices)
+    streamer = ta.AnchoredRSI()
+    streamed = [streamer.update(float(p)) for p in prices]
+    for b, s in zip(batched, streamed):
+        if np.isnan(b):
+            assert s is None
+        else:
+            assert s == pytest.approx(b)
+
+
 def test_tsv_reference():
     # closes  = [10, 11, 13, 12, 14, 15]
     # volumes = [50, 100, 200, 150,  50, 200]

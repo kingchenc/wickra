@@ -32,8 +32,8 @@
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use std::hint::black_box;
 use wickra::{
-    Adx, Atr, Autocorrelation, BatchExt, BollingerBands, BollingerOutput, CalmarRatio, Candle, Cci,
-    ClassicPivots, ConnorsRsi, DepthSlope, DerivativesTick, EffectiveSpread, Ema,
+    Adx, AnchoredRsi, Atr, Autocorrelation, BatchExt, BollingerBands, BollingerOutput, CalmarRatio,
+    Candle, Cci, ClassicPivots, ConnorsRsi, DepthSlope, DerivativesTick, EffectiveSpread, Ema,
     EmpiricalModeDecomposition, Engulfing, Frama, FundingRate, FundingRateZScore,
     HilbertDominantCycle, HurstExponent, Ichimoku, IchimokuOutput, Indicator, Jma, KylesLambda,
     Level, LinearRegression, MacdIndicator, MacdOutput, Mama, MamaOutput, MaxDrawdown, Microprice,
@@ -246,6 +246,7 @@ fn benches(c: &mut Criterion) {
     // === Family 02 — Momentum Oscillators ===
     // Rsi: textbook baseline; ConnorsRsi: three-component composite.
     bench_scalar(c, "rsi", &closes, || Rsi::new(14).unwrap());
+    bench_scalar(c, "anchored_rsi", &closes, AnchoredRsi::new);
     bench_candle_input(c, "cci", &candles, || Cci::new(20).unwrap());
     bench_scalar(c, "connors_rsi", &closes, ConnorsRsi::classic);
 

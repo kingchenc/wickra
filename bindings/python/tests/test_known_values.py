@@ -66,6 +66,14 @@ def test_rsi_wilder_textbook_first_value():
     assert math.isclose(out[14], 70.464, abs_tol=0.05)
 
 
+def test_anchored_rsi_cumulative_reference():
+    """Cumulative anchored RSI: 10 -> 11 (+1) -> 9 (-2) -> 12 (+3)."""
+    out = ta.AnchoredRSI().batch(np.array([10.0, 11.0, 9.0, 12.0]))
+    assert math.isclose(out[1], 100.0, abs_tol=1e-9)
+    assert math.isclose(out[2], 100.0 - 100.0 / 1.5, abs_tol=1e-6)
+    assert math.isclose(out[3], 100.0 - 100.0 / 3.0, abs_tol=1e-6)
+
+
 def test_inertia_constant_rvi_passes_through_linreg():
     # Every bar identical (open, high, low, close) = (10, 11, 9, 10.5):
     # RVI = (c-o) / (h-l) = 0.5 / 2 = 0.25 every bar. LinReg of a constant

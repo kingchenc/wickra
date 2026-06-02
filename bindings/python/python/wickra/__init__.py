@@ -47,6 +47,7 @@ from ._wickra import (
     EVWMA,
     # Momentum
     RSI,
+    AnchoredRSI,
     MACD,
     Stochastic,
     CCI,
@@ -359,6 +360,7 @@ __all__ = [
     "EVWMA",
     # Momentum
     "RSI",
+    "AnchoredRSI",
     "MACD",
     "Stochastic",
     "CCI",

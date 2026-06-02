@@ -16,6 +16,7 @@ mod adxr;
 mod alligator;
 mod alma;
 mod alpha;
+mod anchored_rsi;
 mod anchored_vwap;
 mod apo;
 mod aroon;
@@ -305,6 +306,7 @@ pub use adxr::Adxr;
 pub use alligator::{Alligator, AlligatorOutput};
 pub use alma::Alma;
 pub use alpha::Alpha;
+pub use anchored_rsi::AnchoredRsi;
 pub use anchored_vwap::AnchoredVwap;
 pub use apo::Apo;
 pub use aroon::{Aroon, AroonOutput};
@@ -617,6 +619,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
         "Momentum Oscillators",
         &[
             "Rsi",
+            "AnchoredRsi",
             "Stochastic",
             "Cci",
             "Roc",
@@ -981,6 +984,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 284, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 285, "FAMILIES total drifted from indicator count");
     }
 }
