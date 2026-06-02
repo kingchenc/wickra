@@ -15,6 +15,22 @@
 #   pushes the indicator-count fix-up back to the PR head branch (git commit +
 #   git push), which needs the token in the runner's git config. It uploads no
 #   artifacts, so the persisted token is never packaged or leaked; accept it.
+#
+# template-injection (sync-about.yml):
+#   False positive. Every flagged expansion is steps.count.outputs.count, the
+#   indicator count produced by an internal `grep -c` over lib.rs. It is not
+#   attacker-controllable, so there is nothing to inject.
+#
+# use-trusted-publishing (release.yml):
+#   Informational suggestion to use OIDC trusted publishing for PyPI / npm
+#   instead of long-lived tokens. A worthwhile migration, but it reconfigures
+#   the live publish pipeline on the registry side; tracked separately rather
+#   than blocking on it here.
+#
+# superfluous-actions (release.yml):
+#   The GitHub release step uses softprops/action-gh-release. The runner ships
+#   `gh`, so this is replaceable by a script step, but the action is stable and
+#   battle-tested; we keep it deliberately.
 rules:
   cache-poisoning:
     ignore:
@@ -22,3 +38,12 @@ rules:
   artipacked:
     ignore:
       - sync-about.yml
+  template-injection:
+    ignore:
+      - sync-about.yml
+  use-trusted-publishing:
+    ignore:
+      - release.yml
+  superfluous-actions:
+    ignore:
+      - release.yml
