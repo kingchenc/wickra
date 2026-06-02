@@ -260,6 +260,11 @@ from ._wickra import (
     GapSideBySideWhite,
     HighWave,
     Hikkake,
+    HikkakeModified,
+    HomingPigeon,
+    OnNeck,
+    InNeck,
+    Thrusting,
     # Microstructure: order book
     OrderBookImbalanceTop1,
     OrderBookImbalanceTopN,
@@ -547,6 +552,11 @@ __all__ = [
     "GapSideBySideWhite",
     "HighWave",
     "Hikkake",
+    "HikkakeModified",
+    "HomingPigeon",
+    "OnNeck",
+    "InNeck",
+    "Thrusting",
     # Microstructure: order book
     "OrderBookImbalanceTop1",
     "OrderBookImbalanceTopN",

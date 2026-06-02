@@ -603,6 +603,26 @@ CANDLE_SCALAR = {
         lambda: ta.Hikkake(),
         lambda ind, h, l, c, v: ind.batch(c, h, l, c),
     ),
+    "HikkakeModified": (
+        lambda: ta.HikkakeModified(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "HomingPigeon": (
+        lambda: ta.HomingPigeon(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "OnNeck": (
+        lambda: ta.OnNeck(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "InNeck": (
+        lambda: ta.InNeck(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Thrusting": (
+        lambda: ta.Thrusting(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
 }
 
 
@@ -1783,6 +1803,37 @@ def test_hikkake_reference():
     assert t.update((10.0, 15.0, 5.0, 12.0, 1.0, 0)) == pytest.approx(0.0)
     assert t.update((11.0, 13.0, 8.0, 12.0, 1.0, 1)) == pytest.approx(0.0)
     assert t.update((9.0, 12.0, 6.0, 7.0, 1.0, 2)) == pytest.approx(1.0)
+
+
+def test_hikkake_modified_reference():
+    t = ta.HikkakeModified()
+    assert t.update((10.0, 15.0, 5.0, 12.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((11.0, 13.0, 8.0, 12.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((9.0, 12.0, 6.0, 9.0, 1.0, 2)) == pytest.approx(1.0)
+
+
+def test_homing_pigeon_reference():
+    t = ta.HomingPigeon()
+    assert t.update((15.0, 15.1, 9.9, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((14.0, 14.1, 10.9, 11.0, 1.0, 1)) == pytest.approx(1.0)
+
+
+def test_on_neck_reference():
+    t = ta.OnNeck()
+    assert t.update((15.0, 15.1, 9.0, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((7.0, 9.1, 6.9, 9.0, 1.0, 1)) == pytest.approx(-1.0)
+
+
+def test_in_neck_reference():
+    t = ta.InNeck()
+    assert t.update((15.0, 15.1, 9.0, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((7.0, 10.3, 6.9, 10.2, 1.0, 1)) == pytest.approx(-1.0)
+
+
+def test_thrusting_reference():
+    t = ta.Thrusting()
+    assert t.update((15.0, 15.1, 9.0, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((7.0, 11.6, 6.9, 11.5, 1.0, 1)) == pytest.approx(-1.0)
 
 # --- Lifecycle ------------------------------------------------------------
 
