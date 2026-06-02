@@ -217,4 +217,22 @@ mod tests {
         assert!(!t.is_ready());
         assert_eq!(t.update(c(10.0, 11.1, 9.9, 11.0, 0)), Some(0.0));
     }
+
+    #[test]
+    fn zero_range_yields_zero() {
+        let mut t = GapSideBySideWhite::new();
+        t.update(c(10.0, 11.1, 9.9, 11.0, 0));
+        // Flat second bar (range2 == 0) -> rejected.
+        t.update(c(13.0, 13.0, 13.0, 13.0, 1));
+        assert_eq!(t.update(c(13.0, 14.1, 12.9, 14.0, 2)), Some(0.0));
+    }
+
+    #[test]
+    fn body_size_mismatch_yields_zero() {
+        let mut t = GapSideBySideWhite::new();
+        t.update(c(10.0, 11.1, 9.9, 11.0, 0));
+        t.update(c(13.0, 16.0, 12.9, 15.0, 1)); // white, body 2.0
+                                                // Level open, white, but its body is more than 2x smaller -> rejected.
+        assert_eq!(t.update(c(13.0, 13.7, 12.9, 13.5, 2)), Some(0.0)); // body 0.5
+    }
 }

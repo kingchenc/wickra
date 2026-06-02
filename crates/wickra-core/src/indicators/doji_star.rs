@@ -202,4 +202,12 @@ mod tests {
         assert!(!t.is_ready());
         assert_eq!(t.update(c(20.0, 20.2, 14.8, 15.0, 0)), Some(0.0));
     }
+
+    #[test]
+    fn zero_range_yields_zero() {
+        let mut t = DojiStar::new();
+        t.update(c(20.0, 20.2, 14.8, 15.0, 0));
+        // Flat second bar (high == low) -> zero-range guard.
+        assert_eq!(t.update(c(13.0, 13.0, 13.0, 13.0, 1)), Some(0.0));
+    }
 }

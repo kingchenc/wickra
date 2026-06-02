@@ -226,4 +226,9 @@ mod tests {
         assert!(!t.is_ready());
         assert_eq!(t.update(c(10.0, 13.0, 9.9, 12.9, 0)), Some(0.0));
     }
+
+    #[test]
+    fn default_matches_new() {
+        assert_eq!(LongLine::default().period(), LongLine::new().period());
+    }
 }

@@ -271,4 +271,38 @@ mod tests {
         assert!(!t.is_ready());
         assert_eq!(t.update(c(10.0, 15.1, 9.9, 15.0, 0)), Some(0.0));
     }
+
+    #[test]
+    fn zero_range_first_bar_yields_zero() {
+        let mut t = MatHold::new();
+        // Flat first bar (range1 == 0) -> rejected.
+        t.update(c(10.0, 10.0, 10.0, 10.0, 0));
+        t.update(c(16.0, 16.1, 15.4, 15.5, 1));
+        t.update(c(15.5, 15.6, 14.9, 15.0, 2));
+        t.update(c(15.0, 15.1, 14.4, 14.5, 3));
+        assert_eq!(t.update(c(14.5, 17.1, 14.4, 17.0, 4)), Some(0.0));
+    }
+
+    #[test]
+    fn short_first_body_yields_zero() {
+        let mut t = MatHold::new();
+        // bar1 has a wide range but a tiny body -> not a long white body.
+        t.update(c(10.0, 16.0, 9.0, 10.5, 0));
+        t.update(c(16.0, 16.1, 15.4, 15.5, 1));
+        t.update(c(15.5, 15.6, 14.9, 15.0, 2));
+        t.update(c(15.0, 15.1, 14.4, 14.5, 3));
+        assert_eq!(t.update(c(14.5, 17.1, 14.4, 17.0, 4)), Some(0.0));
+    }
+
+    #[test]
+    fn no_gap_up_yields_zero() {
+        let mut t = MatHold::new();
+        // Long white bar1 with small pullbacks, but bar2 fails to gap up above
+        // bar1's close.
+        t.update(c(10.0, 15.1, 9.9, 15.0, 0));
+        t.update(c(14.5, 14.7, 14.3, 14.5, 1));
+        t.update(c(14.5, 14.7, 14.3, 14.6, 2));
+        t.update(c(14.6, 14.8, 14.4, 14.7, 3));
+        assert_eq!(t.update(c(14.7, 17.1, 14.6, 17.0, 4)), Some(0.0));
+    }
 }
