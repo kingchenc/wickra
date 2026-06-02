@@ -694,6 +694,24 @@ export declare class ROCR100 {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type LinRegInterceptNode = LINEARREG_INTERCEPT
+export declare class LINEARREG_INTERCEPT {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TsfNode = TSF
+export declare class TSF {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type AutocorrelationNode = Autocorrelation
 export declare class Autocorrelation {
   constructor(period: number, lag: number)

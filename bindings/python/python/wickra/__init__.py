@@ -25,6 +25,8 @@ from __future__ import annotations
 
 from ._wickra import (
     __version__,
+    TSF,
+    LINEARREG_INTERCEPT,
     ROCR100,
     ROCR,
     ROCP,
@@ -354,6 +356,8 @@ from ._wickra import (
 )
 
 __all__ = [
+    "TSF",
+    "LINEARREG_INTERCEPT",
     "ROCR100",
     "ROCR",
     "ROCP",

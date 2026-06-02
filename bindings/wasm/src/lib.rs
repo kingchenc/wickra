@@ -8624,6 +8624,8 @@ wasm_scalar_indicator!(WasmMidPoint, "MIDPOINT", wc::MidPoint, period: usize);
 wasm_scalar_indicator!(WasmRocp, "ROCP", wc::Rocp, period: usize);
 wasm_scalar_indicator!(WasmRocr, "ROCR", wc::Rocr, period: usize);
 wasm_scalar_indicator!(WasmRocr100, "ROCR100", wc::Rocr100, period: usize);
+wasm_scalar_indicator!(WasmLinRegIntercept, "LINEARREG_INTERCEPT", wc::LinRegIntercept, period: usize);
+wasm_scalar_indicator!(WasmTsf, "TSF", wc::Tsf, period: usize);
 
 // --- DrawdownDuration: u32 output, no constructor args ---
 

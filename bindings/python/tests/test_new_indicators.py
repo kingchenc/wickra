@@ -45,6 +45,8 @@ def ohlcv() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 # --- Scalar (f64 -> f64) indicators ---------------------------------------
 
 SCALAR = [
+    (ta.TSF, (14,)),
+    (ta.LINEARREG_INTERCEPT, (14,)),
     (ta.ROCR100, (10,)),
     (ta.ROCR, (10,)),
     (ta.ROCP, (10,)),
@@ -1258,6 +1260,13 @@ def test_roc_ratio_variants_reference():
     assert ta.ROCP(1).batch(np.array([10.0, 11.0]))[-1] == pytest.approx(0.1)
     assert ta.ROCR(1).batch(np.array([10.0, 11.0]))[-1] == pytest.approx(1.1)
     assert ta.ROCR100(1).batch(np.array([10.0, 11.0]))[-1] == pytest.approx(110.0)
+
+
+def test_linreg_intercept_and_tsf_reference():
+    # period 3 over [1, 2, 9]: fit y = 0 + 4x. intercept = 0; forecast at x=3 = 12.
+    data = np.array([1.0, 2.0, 9.0])
+    assert ta.LINEARREG_INTERCEPT(3).batch(data)[-1] == pytest.approx(0.0, abs=1e-9)
+    assert ta.TSF(3).batch(data)[-1] == pytest.approx(12.0)
 
 
 def test_nvi_reference():

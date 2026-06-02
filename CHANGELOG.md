@@ -25,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `Rocp` (`ROCP`) — `(close − close[period]) / close[period]` (fraction).
   - `Rocr` (`ROCR`) — `close / close[period]` (ratio).
   - `Rocr100` (`ROCR100`) — `close / close[period] · 100`.
+- **TA-Lib parity — linear-regression outputs** — the remaining OLS endpoints:
+  - `LinRegIntercept` (`LINEARREG_INTERCEPT`) — the OLS intercept `a`.
+  - `Tsf` (`TSF`) — time series forecast, `a + b·period` (one bar ahead).
 
 ## [0.4.5] - 2026-06-02
 

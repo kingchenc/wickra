@@ -141,6 +141,7 @@ mod lead_lag_cross_correlation;
 mod linreg;
 mod linreg_angle;
 mod linreg_channel;
+mod linreg_intercept;
 mod linreg_slope;
 mod liquidation_features;
 mod long_legged_doji;
@@ -272,6 +273,7 @@ mod treynor_ratio;
 mod trima;
 mod trix;
 mod true_range;
+mod tsf;
 mod tsi;
 mod tsv;
 mod ttm_squeeze;
@@ -447,6 +449,7 @@ pub use lead_lag_cross_correlation::{LeadLagCrossCorrelation, LeadLagCrossCorrel
 pub use linreg::LinearRegression;
 pub use linreg_angle::LinRegAngle;
 pub use linreg_channel::{LinRegChannel, LinRegChannelOutput};
+pub use linreg_intercept::LinRegIntercept;
 pub use linreg_slope::LinRegSlope;
 pub use liquidation_features::{LiquidationFeatures, LiquidationFeaturesOutput};
 pub use long_legged_doji::LongLeggedDoji;
@@ -578,6 +581,7 @@ pub use treynor_ratio::TreynorRatio;
 pub use trima::Trima;
 pub use trix::Trix;
 pub use true_range::TrueRange;
+pub use tsf::Tsf;
 pub use tsi::Tsi;
 pub use tsv::Tsv;
 pub use ttm_squeeze::{TtmSqueeze, TtmSqueezeOutput};
@@ -820,6 +824,8 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "MidPrice",
             "MidPoint",
             "AvgPrice",
+            "LinRegIntercept",
+            "Tsf",
         ],
     ),
     (
@@ -1037,6 +1043,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 301, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 303, "FAMILIES total drifted from indicator count");
     }
 }

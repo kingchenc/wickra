@@ -28,6 +28,8 @@ function num(v) {
 // --- Scalar indicators: update(value) vs batch(prices) ---
 
 const scalarFactories = {
+  TSF: () => new wickra.TSF(14),
+  LINEARREG_INTERCEPT: () => new wickra.LINEARREG_INTERCEPT(14),
   ROCR100: () => new wickra.ROCR100(10),
   ROCR: () => new wickra.ROCR(10),
   ROCP: () => new wickra.ROCP(10),
