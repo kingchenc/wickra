@@ -35,6 +35,12 @@
 //! ```
 
 #![cfg_attr(docsrs, feature(doc_cfg))]
+// The libtest harness collects every `#[test]` into a compiler-generated array
+// of test references. With 2000+ unit tests that array exceeds clippy's 16 KB
+// `large_stack_arrays` threshold; the diagnostic is spanless libtest scaffolding,
+// not our code, so it cannot be silenced at a call site. Suppress it only in test
+// builds — library code is still linted for genuinely large stack arrays.
+#![cfg_attr(test, allow(clippy::large_stack_arrays))]
 
 mod derivatives;
 mod error;
@@ -47,19 +53,20 @@ pub mod indicators;
 pub use derivatives::DerivativesTick;
 pub use error::{Error, Result};
 pub use indicators::{
-    AccelerationBands, AccelerationBandsOutput, AcceleratorOscillator, AdOscillator, AdaptiveCycle,
-    Adl, Adx, AdxOutput, Adxr, Alligator, AlligatorOutput, Alma, Alpha, AnchoredVwap, Apo, Aroon,
-    AroonOscillator, AroonOutput, Atr, AtrBands, AtrBandsOutput, AtrTrailingStop, Autocorrelation,
-    AverageDrawdown, AwesomeOscillator, AwesomeOscillatorHistogram, BalanceOfPower, Beta,
-    BollingerBands, BollingerBandwidth, BollingerOutput, CalendarSpread, CalmarRatio, Camarilla,
-    CamarillaPivotsOutput, Cci, CenterOfGravity, Cfo, ChaikinMoneyFlow, ChaikinOscillator,
-    ChaikinVolatility, ChandeKrollStop, ChandeKrollStopOutput, ChandelierExit,
-    ChandelierExitOutput, ChoppinessIndex, ClassicPivots, ClassicPivotsOutput, Cmo,
-    CoefficientOfVariation, Cointegration, CointegrationOutput, ConditionalValueAtRisk, ConnorsRsi,
-    Coppock, CumulativeVolumeDelta, CyberneticCycle, Decycler, DecyclerOscillator, Dema,
-    DemandIndex, DemarkPivots, DemarkPivotsOutput, DepthSlope, DetrendedStdDev, Doji, Donchian,
-    DonchianOutput, DonchianStop, DonchianStopOutput, DoubleBollinger, DoubleBollingerOutput, Dpo,
-    DrawdownDuration, EaseOfMovement, EffectiveSpread, EhlersStochastic, ElderImpulse, Ema,
+    AbandonedBaby, AccelerationBands, AccelerationBandsOutput, AcceleratorOscillator, AdOscillator,
+    AdaptiveCycle, Adl, AdvanceBlock, Adx, AdxOutput, Adxr, Alligator, AlligatorOutput, Alma,
+    Alpha, AnchoredVwap, Apo, Aroon, AroonOscillator, AroonOutput, Atr, AtrBands, AtrBandsOutput,
+    AtrTrailingStop, Autocorrelation, AverageDrawdown, AwesomeOscillator,
+    AwesomeOscillatorHistogram, BalanceOfPower, BeltHold, Beta, BollingerBands, BollingerBandwidth,
+    BollingerOutput, Breakaway, CalendarSpread, CalmarRatio, Camarilla, CamarillaPivotsOutput, Cci,
+    CenterOfGravity, Cfo, ChaikinMoneyFlow, ChaikinOscillator, ChaikinVolatility, ChandeKrollStop,
+    ChandeKrollStopOutput, ChandelierExit, ChandelierExitOutput, ChoppinessIndex, ClassicPivots,
+    ClassicPivotsOutput, Cmo, CoefficientOfVariation, Cointegration, CointegrationOutput,
+    ConditionalValueAtRisk, ConnorsRsi, Coppock, Counterattack, CumulativeVolumeDelta,
+    CyberneticCycle, Decycler, DecyclerOscillator, Dema, DemandIndex, DemarkPivots,
+    DemarkPivotsOutput, DepthSlope, DetrendedStdDev, Doji, Donchian, DonchianOutput, DonchianStop,
+    DonchianStopOutput, DoubleBollinger, DoubleBollingerOutput, Dpo, DrawdownDuration,
+    EaseOfMovement, EffectiveSpread, EhlersStochastic, ElderImpulse, Ema,
     EmpiricalModeDecomposition, Engulfing, Evwma, Fama, FibonacciPivots, FibonacciPivotsOutput,
     FisherTransform, Footprint, FootprintOutput, ForceIndex, FractalChaosBands,
     FractalChaosBandsOutput, Frama, FundingBasis, FundingRate, FundingRateMean, FundingRateZScore,

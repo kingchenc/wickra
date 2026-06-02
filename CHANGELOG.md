@@ -28,6 +28,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Three Stars in the South** — a rare three-bar bullish reversal
     (`CDL3STARSINSOUTH`): three shrinking red candles each carving a higher low
     and contracting toward a tiny black marubozu as selling exhausts.
+  - **Abandoned Baby** — a strong three-bar reversal (`CDLABANDONEDBABY`): a doji
+    isolated by price gaps on both sides; bullish `+1` after a decline, bearish
+    `−1` after an advance.
+  - **Advance Block** — a three-bar bearish warning (`CDLADVANCEBLOCK`): three
+    green candles to higher closes whose bodies shrink as their upper shadows
+    lengthen, signalling the advance is stalling.
+  - **Belt-hold** — a single-bar reversal that opens at one extreme of its range and runs the other way; bullish +1, bearish -1 (`CDLBELTHOLD`).
+  - **Breakaway** — a 5-bar reversal that gaps with the trend, drifts two more bars, then snaps back into the bar1/bar2 body gap; bullish +1, bearish -1 (`CDLBREAKAWAY`).
+  - **Counterattack** — a 2-bar reversal where an opposite-coloured second bar closes level with the first (the counterattack line); bullish +1, bearish -1 (`CDLCOUNTERATTACK`).
 - **Derivatives family — funding & open interest (part 1).** A new family of
   indicators that consume a perpetual / futures tick (`DerivativesTick`,
   bundling funding rate, mark / index / futures price, open interest,

@@ -4,11 +4,13 @@
 //! [`FAMILIES`]. Every public name is re-exported flat from this module and
 //! from the crate root for convenience.
 
+mod abandoned_baby;
 mod acceleration_bands;
 mod accelerator_oscillator;
 mod ad_oscillator;
 mod adaptive_cycle;
 mod adl;
+mod advance_block;
 mod adx;
 mod adxr;
 mod alligator;
@@ -26,9 +28,11 @@ mod average_drawdown;
 mod awesome_oscillator;
 mod awesome_oscillator_histogram;
 mod balance_of_power;
+mod belt_hold;
 mod beta;
 mod bollinger;
 mod bollinger_bandwidth;
+mod breakaway;
 mod calendar_spread;
 mod calmar_ratio;
 mod camarilla_pivots;
@@ -48,6 +52,7 @@ mod cointegration;
 mod conditional_value_at_risk;
 mod connors_rsi;
 mod coppock;
+mod counterattack;
 mod cvd;
 mod cybernetic_cycle;
 mod decycler;
@@ -253,11 +258,13 @@ mod zero_lag_macd;
 mod zig_zag;
 mod zlema;
 
+pub use abandoned_baby::AbandonedBaby;
 pub use acceleration_bands::{AccelerationBands, AccelerationBandsOutput};
 pub use accelerator_oscillator::AcceleratorOscillator;
 pub use ad_oscillator::AdOscillator;
 pub use adaptive_cycle::AdaptiveCycle;
 pub use adl::Adl;
+pub use advance_block::AdvanceBlock;
 pub use adx::{Adx, AdxOutput};
 pub use adxr::Adxr;
 pub use alligator::{Alligator, AlligatorOutput};
@@ -275,9 +282,11 @@ pub use average_drawdown::AverageDrawdown;
 pub use awesome_oscillator::AwesomeOscillator;
 pub use awesome_oscillator_histogram::AwesomeOscillatorHistogram;
 pub use balance_of_power::BalanceOfPower;
+pub use belt_hold::BeltHold;
 pub use beta::Beta;
 pub use bollinger::{BollingerBands, BollingerOutput};
 pub use bollinger_bandwidth::BollingerBandwidth;
+pub use breakaway::Breakaway;
 pub use calendar_spread::CalendarSpread;
 pub use calmar_ratio::CalmarRatio;
 pub use camarilla_pivots::{Camarilla, CamarillaPivotsOutput};
@@ -297,6 +306,7 @@ pub use cointegration::{Cointegration, CointegrationOutput};
 pub use conditional_value_at_risk::ConditionalValueAtRisk;
 pub use connors_rsi::ConnorsRsi;
 pub use coppock::Coppock;
+pub use counterattack::Counterattack;
 pub use cvd::CumulativeVolumeDelta;
 pub use cybernetic_cycle::CyberneticCycle;
 pub use decycler::Decycler;
@@ -770,6 +780,11 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "IdenticalThreeCrows",
             "ThreeLineStrike",
             "ThreeStarsInSouth",
+            "AbandonedBaby",
+            "AdvanceBlock",
+            "BeltHold",
+            "Breakaway",
+            "Counterattack",
         ],
     ),
     (
@@ -861,6 +876,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 244, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 249, "FAMILIES total drifted from indicator count");
     }
 }

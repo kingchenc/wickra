@@ -2255,6 +2255,51 @@ export declare class ThreeStarsInSouth {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type AbandonedBabyNode = AbandonedBaby
+export declare class AbandonedBaby {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type AdvanceBlockNode = AdvanceBlock
+export declare class AdvanceBlock {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type BeltHoldNode = BeltHold
+export declare class BeltHold {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type BreakawayNode = Breakaway
+export declare class Breakaway {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type CounterattackNode = Counterattack
+export declare class Counterattack {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type OrderBookImbalanceTop1Node = OrderBookImbalanceTop1
 export declare class OrderBookImbalanceTop1 {
   constructor()

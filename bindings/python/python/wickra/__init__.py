@@ -245,6 +245,11 @@ from ._wickra import (
     IdenticalThreeCrows,
     ThreeLineStrike,
     ThreeStarsInSouth,
+    AbandonedBaby,
+    AdvanceBlock,
+    BeltHold,
+    Breakaway,
+    Counterattack,
     # Microstructure: order book
     OrderBookImbalanceTop1,
     OrderBookImbalanceTopN,
@@ -517,6 +522,11 @@ __all__ = [
     "IdenticalThreeCrows",
     "ThreeLineStrike",
     "ThreeStarsInSouth",
+    "AbandonedBaby",
+    "AdvanceBlock",
+    "BeltHold",
+    "Breakaway",
+    "Counterattack",
     # Microstructure: order book
     "OrderBookImbalanceTop1",
     "OrderBookImbalanceTopN",
