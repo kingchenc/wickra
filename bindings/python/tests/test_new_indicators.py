@@ -275,6 +275,7 @@ def test_relative_strength_streaming_matches_batch():
 # 6-tuple candle; the batch helper takes only the columns it needs.
 
 CANDLE_SCALAR = {
+    "PLUS_DI": (lambda: ta.PLUS_DI(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "VWMA": (lambda: ta.VWMA(20), lambda ind, h, l, c, v: ind.batch(c, v)),
     "PLUS_DM": (lambda: ta.PLUS_DM(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "MINUS_DM": (lambda: ta.MINUS_DM(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
@@ -1195,6 +1196,15 @@ def test_minus_dm_reference():
     assert math.isnan(out[0]) and math.isnan(out[2])
     assert out[3] == pytest.approx(3.0)
     assert out[4] == pytest.approx(3.0)
+
+
+def test_plus_di_reference():
+    # Strict uptrend -> +DI dominates and stays within (0, 100].
+    high = np.array([101.0, 103.0, 105.0, 107.0, 109.0, 111.0])
+    low = np.array([99.5, 101.5, 103.5, 105.5, 107.5, 109.5])
+    close = np.array([100.5, 102.5, 104.5, 106.5, 108.5, 110.5])
+    out = ta.PLUS_DI(3).batch(high, low, close)
+    assert 0.0 < out[-1] <= 100.0
 
 
 def test_nvi_reference():

@@ -184,6 +184,7 @@ mod percent_b;
 mod percentage_trailing_stop;
 mod pgo;
 mod piercing_dark_cloud;
+mod plus_di;
 mod plus_dm;
 mod pmo;
 mod point_and_figure_bars;
@@ -481,6 +482,7 @@ pub use percent_b::PercentB;
 pub use percentage_trailing_stop::PercentageTrailingStop;
 pub use pgo::Pgo;
 pub use piercing_dark_cloud::PiercingDarkCloud;
+pub use plus_di::PlusDi;
 pub use plus_dm::PlusDm;
 pub use pmo::Pmo;
 pub use point_and_figure_bars::{PnfColumn, PointAndFigureBars};
@@ -673,6 +675,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "VerticalHorizontalFilter",
             "PlusDm",
             "MinusDm",
+            "PlusDi",
         ],
     ),
     (
@@ -1010,6 +1013,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 292, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 293, "FAMILIES total drifted from indicator count");
     }
 }

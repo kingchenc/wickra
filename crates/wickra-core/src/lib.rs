@@ -88,7 +88,7 @@ pub use indicators::{
     OnNeck, OpenInterestDelta, OpeningMarubozu, OpeningRange, OpeningRangeOutput,
     OrderBookImbalanceFull, OrderBookImbalanceTop1, OrderBookImbalanceTopN, PainIndex,
     PairSpreadZScore, PairwiseBeta, ParkinsonVolatility, PearsonCorrelation, PercentB,
-    PercentageTrailingStop, Pgo, PiercingDarkCloud, PlusDm, Pmo, PointAndFigureBars, Ppo,
+    PercentageTrailingStop, Pgo, PiercingDarkCloud, PlusDi, PlusDm, Pmo, PointAndFigureBars, Ppo,
     ProfitFactor, Psar, Pvi, QuotedSpread, RSquared, RealizedSpread, RecoveryFactor,
     RelativeStrengthAB, RelativeStrengthOutput, RenkoBars, RenkoTrailingStop, RickshawMan,
     RisingThreeMethods, Roc, RogersSatchellVolatility, RollingVwap, RoofingFilter, Rsi, Rvi,
