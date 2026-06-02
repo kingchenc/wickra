@@ -159,6 +159,8 @@ for (const [name, make] of Object.entries(scalarFactories)) {
 // --- Scalar-output candle indicators: update(...) vs batch(...) ---
 
 const candleScalar = {
+  DX: { make: () => new wickra.DX(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  MINUS_DI: { make: () => new wickra.MINUS_DI(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   PLUS_DI: { make: () => new wickra.PLUS_DI(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ATR: { make: () => new wickra.ATR(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   PLUS_DM: { make: () => new wickra.PLUS_DM(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },

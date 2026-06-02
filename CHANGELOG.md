@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `PlusDm` (`PLUS_DM`) — Wilder-smoothed plus directional movement.
   - `MinusDm` (`MINUS_DM`) — Wilder-smoothed minus directional movement.
   - `PlusDi` (`PLUS_DI`) — plus directional indicator, `100 · smoothed(+DM) / ATR`.
+  - `MinusDi` (`MINUS_DI`) — minus directional indicator, `100 · smoothed(-DM) / ATR`.
+  - `Dx` (`DX`) — directional movement index, `100 · |+DI − −DI| / (+DI + −DI)`.
 
 ## [0.4.5] - 2026-06-02
 

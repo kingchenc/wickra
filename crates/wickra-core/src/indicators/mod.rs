@@ -74,6 +74,7 @@ mod downside_gap_three_methods;
 mod dpo;
 mod dragonfly_doji;
 mod drawdown_duration;
+mod dx;
 mod ease_of_movement;
 mod effective_spread;
 mod ehlers_stochastic;
@@ -158,6 +159,7 @@ mod median_absolute_deviation;
 mod median_price;
 mod mfi;
 mod microprice;
+mod minus_di;
 mod minus_dm;
 mod mom;
 mod morning_doji_star;
@@ -372,6 +374,7 @@ pub use downside_gap_three_methods::DownsideGapThreeMethods;
 pub use dpo::Dpo;
 pub use dragonfly_doji::DragonflyDoji;
 pub use drawdown_duration::DrawdownDuration;
+pub use dx::Dx;
 pub use ease_of_movement::EaseOfMovement;
 pub use effective_spread::EffectiveSpread;
 pub use ehlers_stochastic::EhlersStochastic;
@@ -456,6 +459,7 @@ pub use median_absolute_deviation::MedianAbsoluteDeviation;
 pub use median_price::MedianPrice;
 pub use mfi::Mfi;
 pub use microprice::Microprice;
+pub use minus_di::MinusDi;
 pub use minus_dm::MinusDm;
 pub use mom::Mom;
 pub use morning_doji_star::MorningDojiStar;
@@ -676,6 +680,8 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "PlusDm",
             "MinusDm",
             "PlusDi",
+            "MinusDi",
+            "Dx",
         ],
     ),
     (
@@ -1013,6 +1019,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 293, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 295, "FAMILIES total drifted from indicator count");
     }
 }

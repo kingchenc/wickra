@@ -25,6 +25,8 @@ from __future__ import annotations
 
 from ._wickra import (
     __version__,
+    DX,
+    MINUS_DI,
     PLUS_DI,
     # Trend
     SMA,
@@ -346,6 +348,8 @@ from ._wickra import (
 )
 
 __all__ = [
+    "DX",
+    "MINUS_DI",
     "PLUS_DI",
     "__version__",
     # Trend
