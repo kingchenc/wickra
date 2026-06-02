@@ -623,6 +623,26 @@ CANDLE_SCALAR = {
         lambda: ta.Thrusting(),
         lambda ind, h, l, c, v: ind.batch(c, h, l, c),
     ),
+    "SeparatingLines": (
+        lambda: ta.SeparatingLines(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Kicking": (
+        lambda: ta.Kicking(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "KickingByLength": (
+        lambda: ta.KickingByLength(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "LadderBottom": (
+        lambda: ta.LadderBottom(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "MatHold": (
+        lambda: ta.MatHold(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
 }
 
 
@@ -1834,6 +1854,42 @@ def test_thrusting_reference():
     t = ta.Thrusting()
     assert t.update((15.0, 15.1, 9.0, 10.0, 1.0, 0)) == pytest.approx(0.0)
     assert t.update((7.0, 11.6, 6.9, 11.5, 1.0, 1)) == pytest.approx(-1.0)
+
+
+def test_separating_lines_reference():
+    t = ta.SeparatingLines()
+    assert t.update((12.0, 12.1, 9.9, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((12.0, 14.1, 12.0, 14.0, 1.0, 1)) == pytest.approx(1.0)
+
+
+def test_kicking_reference():
+    t = ta.Kicking()
+    assert t.update((12.0, 12.0, 10.0, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((14.0, 16.0, 14.0, 16.0, 1.0, 1)) == pytest.approx(1.0)
+
+
+def test_kicking_by_length_reference():
+    t = ta.KickingByLength()
+    assert t.update((12.0, 12.0, 10.0, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((14.0, 20.0, 14.0, 20.0, 1.0, 1)) == pytest.approx(1.0)
+
+
+def test_ladder_bottom_reference():
+    t = ta.LadderBottom()
+    assert t.update((20.0, 20.1, 17.9, 18.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((18.0, 18.1, 15.9, 16.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((16.0, 16.1, 13.9, 14.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((14.0, 15.0, 12.4, 12.5, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((15.0, 17.1, 14.9, 17.0, 1.0, 4)) == pytest.approx(1.0)
+
+
+def test_mat_hold_reference():
+    t = ta.MatHold()
+    assert t.update((10.0, 15.1, 9.9, 15.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((16.0, 16.1, 15.4, 15.5, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((15.5, 15.6, 14.9, 15.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((15.0, 15.1, 14.4, 14.5, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((14.5, 17.1, 14.4, 17.0, 1.0, 4)) == pytest.approx(1.0)
 
 # --- Lifecycle ------------------------------------------------------------
 

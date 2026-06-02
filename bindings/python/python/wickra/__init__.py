@@ -265,6 +265,11 @@ from ._wickra import (
     OnNeck,
     InNeck,
     Thrusting,
+    SeparatingLines,
+    Kicking,
+    KickingByLength,
+    LadderBottom,
+    MatHold,
     # Microstructure: order book
     OrderBookImbalanceTop1,
     OrderBookImbalanceTopN,
@@ -557,6 +562,11 @@ __all__ = [
     "OnNeck",
     "InNeck",
     "Thrusting",
+    "SeparatingLines",
+    "Kicking",
+    "KickingByLength",
+    "LadderBottom",
+    "MatHold",
     # Microstructure: order book
     "OrderBookImbalanceTop1",
     "OrderBookImbalanceTopN",

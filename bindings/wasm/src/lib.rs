@@ -6371,6 +6371,11 @@ wasm_candle_pattern!(WasmHomingPigeon, wc::HomingPigeon, HomingPigeon);
 wasm_candle_pattern!(WasmOnNeck, wc::OnNeck, OnNeck);
 wasm_candle_pattern!(WasmInNeck, wc::InNeck, InNeck);
 wasm_candle_pattern!(WasmThrusting, wc::Thrusting, Thrusting);
+wasm_candle_pattern!(WasmSeparatingLines, wc::SeparatingLines, SeparatingLines);
+wasm_candle_pattern!(WasmKicking, wc::Kicking, Kicking);
+wasm_candle_pattern!(WasmKickingByLength, wc::KickingByLength, KickingByLength);
+wasm_candle_pattern!(WasmLadderBottom, wc::LadderBottom, LadderBottom);
+wasm_candle_pattern!(WasmMatHold, wc::MatHold, MatHold);
 
 // ============================== Microstructure: Order Book ==============================
 //

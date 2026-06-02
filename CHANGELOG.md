@@ -52,6 +52,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **On-Neck** — a long black candle then a white candle closing at its low (the neckline), a bearish continuation; -1 (`CDLONNECK`).
   - **In-Neck** — a long black candle then a white candle closing just into its body, a bearish continuation; -1 (`CDLINNECK`).
   - **Thrusting** — a long black candle then a white candle closing well into but below the midpoint of its body, a bearish continuation; -1 (`CDLTHRUSTING`).
+  - **Separating Lines** — opposite-coloured candles sharing the same open, the second an opening marubozu resuming the trend; bullish +1, bearish -1 (`CDLSEPARATINGLINES`).
+  - **Kicking** — two opposite-coloured marubozu separated by a gap; bullish +1, bearish -1 (`CDLKICKING`).
+  - **Kicking by Length** — a kicking pattern signalled by the colour of the longer marubozu; +1 / -1 (`CDLKICKINGBYLENGTH`).
+  - **Ladder Bottom** — three descending black candles, a fourth with an upper shadow, then a white candle gapping up, a bullish reversal; +1 (`CDLLADDERBOTTOM`).
+  - **Mat Hold** — a long white candle, a holding three-bar pullback, then a new-high white candle, a bullish continuation; +1 (`CDLMATHOLD`).
 - **Derivatives family — funding & open interest (part 1).** A new family of
   indicators that consume a perpetual / futures tick (`DerivativesTick`,
   bundling funding rate, mark / index / futures price, open interest,
