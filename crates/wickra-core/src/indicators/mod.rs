@@ -77,6 +77,7 @@ mod elder_impulse;
 mod ema;
 mod empirical_mode_decomposition;
 mod engulfing;
+mod evening_doji_star;
 mod evwma;
 mod fama;
 mod fibonacci_pivots;
@@ -90,12 +91,15 @@ mod funding_rate;
 mod funding_rate_mean;
 mod funding_rate_zscore;
 mod gain_loss_ratio;
+mod gap_side_by_side_white;
 mod garman_klass;
 mod gravestone_doji;
 mod hammer;
 mod hanging_man;
 mod harami;
 mod heikin_ashi;
+mod high_wave;
+mod hikkake;
 mod hilbert_dominant_cycle;
 mod hilo_activator;
 mod historical_volatility;
@@ -140,6 +144,7 @@ mod median_price;
 mod mfi;
 mod microprice;
 mod mom;
+mod morning_doji_star;
 mod morning_evening_star;
 mod natr;
 mod nvi;
@@ -336,6 +341,7 @@ pub use elder_impulse::ElderImpulse;
 pub use ema::Ema;
 pub use empirical_mode_decomposition::EmpiricalModeDecomposition;
 pub use engulfing::Engulfing;
+pub use evening_doji_star::EveningDojiStar;
 pub use evwma::Evwma;
 pub use fama::Fama;
 pub use fibonacci_pivots::{FibonacciPivots, FibonacciPivotsOutput};
@@ -349,12 +355,15 @@ pub use funding_rate::FundingRate;
 pub use funding_rate_mean::FundingRateMean;
 pub use funding_rate_zscore::FundingRateZScore;
 pub use gain_loss_ratio::GainLossRatio;
+pub use gap_side_by_side_white::GapSideBySideWhite;
 pub use garman_klass::GarmanKlassVolatility;
 pub use gravestone_doji::GravestoneDoji;
 pub use hammer::Hammer;
 pub use hanging_man::HangingMan;
 pub use harami::Harami;
 pub use heikin_ashi::{HeikinAshi, HeikinAshiOutput};
+pub use high_wave::HighWave;
+pub use hikkake::Hikkake;
 pub use hilbert_dominant_cycle::HilbertDominantCycle;
 pub use hilo_activator::HiLoActivator;
 pub use historical_volatility::HistoricalVolatility;
@@ -399,6 +408,7 @@ pub use median_price::MedianPrice;
 pub use mfi::Mfi;
 pub use microprice::Microprice;
 pub use mom::Mom;
+pub use morning_doji_star::MorningDojiStar;
 pub use morning_evening_star::MorningEveningStar;
 pub use natr::Natr;
 pub use nvi::Nvi;
@@ -800,6 +810,11 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "GravestoneDoji",
             "LongLeggedDoji",
             "RickshawMan",
+            "EveningDojiStar",
+            "MorningDojiStar",
+            "GapSideBySideWhite",
+            "HighWave",
+            "Hikkake",
         ],
     ),
     (
@@ -891,6 +906,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 254, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 259, "FAMILIES total drifted from indicator count");
     }
 }

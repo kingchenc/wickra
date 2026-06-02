@@ -6357,6 +6357,15 @@ wasm_candle_pattern!(WasmDragonflyDoji, wc::DragonflyDoji, DragonflyDoji);
 wasm_candle_pattern!(WasmGravestoneDoji, wc::GravestoneDoji, GravestoneDoji);
 wasm_candle_pattern!(WasmLongLeggedDoji, wc::LongLeggedDoji, LongLeggedDoji);
 wasm_candle_pattern!(WasmRickshawMan, wc::RickshawMan, RickshawMan);
+wasm_candle_pattern!(WasmEveningDojiStar, wc::EveningDojiStar, EveningDojiStar);
+wasm_candle_pattern!(WasmMorningDojiStar, wc::MorningDojiStar, MorningDojiStar);
+wasm_candle_pattern!(
+    WasmGapSideBySideWhite,
+    wc::GapSideBySideWhite,
+    GapSideBySideWhite
+);
+wasm_candle_pattern!(WasmHighWave, wc::HighWave, HighWave);
+wasm_candle_pattern!(WasmHikkake, wc::Hikkake, Hikkake);
 
 // ============================== Microstructure: Order Book ==============================
 //

@@ -250,6 +250,11 @@ const candleScalar = {
   GravestoneDoji: { make: () => new wickra.GravestoneDoji(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   LongLeggedDoji: { make: () => new wickra.LongLeggedDoji(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   RickshawMan: { make: () => new wickra.RickshawMan(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  EveningDojiStar: { make: () => new wickra.EveningDojiStar(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  MorningDojiStar: { make: () => new wickra.MorningDojiStar(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  GapSideBySideWhite: { make: () => new wickra.GapSideBySideWhite(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  HighWave: { make: () => new wickra.HighWave(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Hikkake: { make: () => new wickra.Hikkake(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {

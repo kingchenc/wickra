@@ -2345,6 +2345,51 @@ export declare class RickshawMan {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type EveningDojiStarNode = EveningDojiStar
+export declare class EveningDojiStar {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type MorningDojiStarNode = MorningDojiStar
+export declare class MorningDojiStar {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type GapSideBySideWhiteNode = GapSideBySideWhite
+export declare class GapSideBySideWhite {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type HighWaveNode = HighWave
+export declare class HighWave {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type HikkakeNode = Hikkake
+export declare class Hikkake {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type OrderBookImbalanceTop1Node = OrderBookImbalanceTop1
 export declare class OrderBookImbalanceTop1 {
   constructor()

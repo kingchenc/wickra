@@ -583,6 +583,26 @@ CANDLE_SCALAR = {
         lambda: ta.RickshawMan(),
         lambda ind, h, l, c, v: ind.batch(c, h, l, c),
     ),
+    "EveningDojiStar": (
+        lambda: ta.EveningDojiStar(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "MorningDojiStar": (
+        lambda: ta.MorningDojiStar(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "GapSideBySideWhite": (
+        lambda: ta.GapSideBySideWhite(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "HighWave": (
+        lambda: ta.HighWave(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Hikkake": (
+        lambda: ta.Hikkake(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
 }
 
 
@@ -1730,6 +1750,39 @@ def test_long_legged_doji_reference():
 def test_rickshaw_man_reference():
     t = ta.RickshawMan()
     assert t.update((10.0, 12.0, 8.0, 10.0, 1.0, 0)) == pytest.approx(1.0)
+
+
+def test_evening_doji_star_reference():
+    t = ta.EveningDojiStar()
+    assert t.update((10.0, 15.1, 9.9, 15.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((17.0, 17.1, 16.9, 17.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((16.0, 16.1, 11.9, 12.0, 1.0, 2)) == pytest.approx(-1.0)
+
+
+def test_morning_doji_star_reference():
+    t = ta.MorningDojiStar()
+    assert t.update((15.0, 15.1, 9.9, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((8.0, 8.1, 7.9, 8.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((9.0, 13.1, 8.9, 13.0, 1.0, 2)) == pytest.approx(1.0)
+
+
+def test_gap_side_by_side_white_reference():
+    t = ta.GapSideBySideWhite()
+    assert t.update((10.0, 11.1, 9.9, 11.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((13.0, 14.1, 12.9, 14.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((13.0, 14.1, 12.9, 14.0, 1.0, 2)) == pytest.approx(1.0)
+
+
+def test_high_wave_reference():
+    t = ta.HighWave()
+    assert t.update((10.0, 12.0, 8.0, 10.3, 1.0, 0)) == pytest.approx(1.0)
+
+
+def test_hikkake_reference():
+    t = ta.Hikkake()
+    assert t.update((10.0, 15.0, 5.0, 12.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((11.0, 13.0, 8.0, 12.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((9.0, 12.0, 6.0, 7.0, 1.0, 2)) == pytest.approx(1.0)
 
 # --- Lifecycle ------------------------------------------------------------
 
