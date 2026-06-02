@@ -123,6 +123,7 @@ mod instantaneous_trendline;
 mod inverse_fisher_transform;
 mod inverted_hammer;
 mod jma;
+mod kagi_bars;
 mod kama;
 mod kelly_criterion;
 mod keltner;
@@ -183,6 +184,7 @@ mod percentage_trailing_stop;
 mod pgo;
 mod piercing_dark_cloud;
 mod pmo;
+mod point_and_figure_bars;
 mod ppo;
 mod profit_factor;
 mod psar;
@@ -192,6 +194,7 @@ mod r_squared;
 mod realized_spread;
 mod recovery_factor;
 mod relative_strength_ab;
+mod renko_bars;
 mod renko_trailing_stop;
 mod rickshaw_man;
 mod rising_three_methods;
@@ -415,6 +418,7 @@ pub use instantaneous_trendline::InstantaneousTrendline;
 pub use inverse_fisher_transform::InverseFisherTransform;
 pub use inverted_hammer::InvertedHammer;
 pub use jma::Jma;
+pub use kagi_bars::{KagiBar, KagiBars};
 pub use kama::Kama;
 pub use kelly_criterion::KellyCriterion;
 pub use keltner::{Keltner, KeltnerOutput};
@@ -475,6 +479,7 @@ pub use percentage_trailing_stop::PercentageTrailingStop;
 pub use pgo::Pgo;
 pub use piercing_dark_cloud::PiercingDarkCloud;
 pub use pmo::Pmo;
+pub use point_and_figure_bars::{PnfColumn, PointAndFigureBars};
 pub use ppo::Ppo;
 pub use profit_factor::ProfitFactor;
 pub use psar::Psar;
@@ -484,6 +489,7 @@ pub use r_squared::RSquared;
 pub use realized_spread::RealizedSpread;
 pub use recovery_factor::RecoveryFactor;
 pub use relative_strength_ab::{RelativeStrengthAB, RelativeStrengthOutput};
+pub use renko_bars::{RenkoBars, RenkoBrick};
 pub use renko_trailing_stop::RenkoTrailingStop;
 pub use rickshaw_man::RickshawMan;
 pub use rising_three_methods::RisingThreeMethods;
@@ -966,6 +972,10 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "Alpha",
         ],
     ),
+    (
+        "Alt-Chart Bars",
+        &["RenkoBars", "KagiBars", "PointAndFigureBars"],
+    ),
 ];
 
 #[cfg(test)]
@@ -994,6 +1004,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 287, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 290, "FAMILIES total drifted from indicator count");
     }
 }

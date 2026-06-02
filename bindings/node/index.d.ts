@@ -310,6 +310,21 @@ export interface LiquidationFeaturesValue {
   total: number
   imbalance: number
 }
+export interface RenkoBrickValue {
+  open: number
+  close: number
+  direction: number
+}
+export interface KagiSegmentValue {
+  start: number
+  end: number
+  direction: number
+}
+export interface PnfColumnValue {
+  direction: number
+  high: number
+  low: number
+}
 export type SmaNode = SMA
 export declare class SMA {
   constructor(period: number)
@@ -3021,6 +3036,31 @@ export declare class InformationRatio {
   reset(): void
   isReady(): boolean
   warmupPeriod(): number
+}
+export type RenkoBarsNode = RenkoBars
+export declare class RenkoBars {
+  constructor(boxSize: number)
+  update(close: number): Array<RenkoBrickValue>
+  batch(close: Array<number>): Array<RenkoBrickValue>
+  boxSize(): number
+  reset(): void
+}
+export type KagiBarsNode = KagiBars
+export declare class KagiBars {
+  constructor(reversal: number)
+  update(close: number): Array<KagiSegmentValue>
+  batch(close: Array<number>): Array<KagiSegmentValue>
+  reversal(): number
+  reset(): void
+}
+export type PointAndFigureBarsNode = PointAndFigureBars
+export declare class PointAndFigureBars {
+  constructor(boxSize: number, reversal: number)
+  update(close: number): Array<PnfColumnValue>
+  batch(close: Array<number>): Array<PnfColumnValue>
+  boxSize(): number
+  reversal(): number
+  reset(): void
 }
 export type AlphaNode = Alpha
 export declare class Alpha {

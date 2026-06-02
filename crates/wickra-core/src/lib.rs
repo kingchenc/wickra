@@ -76,44 +76,51 @@ pub use indicators::{
     HighWave, Hikkake, HikkakeModified, HilbertDominantCycle, HistoricalVolatility, Hma,
     HomingPigeon, HurstChannel, HurstChannelOutput, HurstExponent, Ichimoku, IchimokuOutput,
     IdenticalThreeCrows, InNeck, Inertia, InformationRatio, InitialBalance, InitialBalanceOutput,
-    InstantaneousTrendline, InverseFisherTransform, InvertedHammer, Jma, Kama, KellyCriterion,
-    Keltner, KeltnerOutput, Kicking, KickingByLength, Kst, KstOutput, Kurtosis, Kvo, KylesLambda,
-    LadderBottom, LaguerreRsi, LeadLagCrossCorrelation, LeadLagCrossCorrelationOutput, LinRegAngle,
-    LinRegChannel, LinRegChannelOutput, LinRegSlope, LinearRegression, LiquidationFeatures,
-    LiquidationFeaturesOutput, LongLeggedDoji, LongLine, LongShortRatio, MaEnvelope,
-    MaEnvelopeOutput, MacdIndicator, MacdOutput, Mama, MamaOutput, MarketFacilitationIndex,
-    Marubozu, MassIndex, MatHold, MatchingLow, MaxDrawdown, McGinleyDynamic,
-    MedianAbsoluteDeviation, MedianPrice, Mfi, Microprice, Mom, MorningDojiStar,
+    InstantaneousTrendline, InverseFisherTransform, InvertedHammer, Jma, KagiBars, Kama,
+    KellyCriterion, Keltner, KeltnerOutput, Kicking, KickingByLength, Kst, KstOutput, Kurtosis,
+    Kvo, KylesLambda, LadderBottom, LaguerreRsi, LeadLagCrossCorrelation,
+    LeadLagCrossCorrelationOutput, LinRegAngle, LinRegChannel, LinRegChannelOutput, LinRegSlope,
+    LinearRegression, LiquidationFeatures, LiquidationFeaturesOutput, LongLeggedDoji, LongLine,
+    LongShortRatio, MaEnvelope, MaEnvelopeOutput, MacdIndicator, MacdOutput, Mama, MamaOutput,
+    MarketFacilitationIndex, Marubozu, MassIndex, MatHold, MatchingLow, MaxDrawdown,
+    McGinleyDynamic, MedianAbsoluteDeviation, MedianPrice, Mfi, Microprice, Mom, MorningDojiStar,
     MorningEveningStar, Natr, Nvi, OIPriceDivergence, OIWeighted, Obv, OmegaRatio, OnNeck,
     OpenInterestDelta, OpeningMarubozu, OpeningRange, OpeningRangeOutput, OrderBookImbalanceFull,
     OrderBookImbalanceTop1, OrderBookImbalanceTopN, PainIndex, PairSpreadZScore, PairwiseBeta,
     ParkinsonVolatility, PearsonCorrelation, PercentB, PercentageTrailingStop, Pgo,
-    PiercingDarkCloud, Pmo, Ppo, ProfitFactor, Psar, Pvi, QuotedSpread, RSquared, RealizedSpread,
-    RecoveryFactor, RelativeStrengthAB, RelativeStrengthOutput, RenkoTrailingStop, RickshawMan,
-    RisingThreeMethods, Roc, RogersSatchellVolatility, RollingVwap, RoofingFilter, Rsi, Rvi,
-    RviVolatility, Rwi, RwiOutput, SeparatingLines, SharpeRatio, ShootingStar, ShortLine,
-    SignedVolume, SineWave, Skewness, Sma, Smi, Smma, SortinoRatio, SpearmanCorrelation,
-    SpinningTop, StalledPattern, StandardError, StandardErrorBands, StandardErrorBandsOutput,
-    StarcBands, StarcBandsOutput, Stc, StdDev, StepTrailingStop, StickSandwich, StochRsi,
-    Stochastic, StochasticOutput, SuperSmoother, SuperTrend, SuperTrendOutput, TakerBuySellRatio,
-    Takuri, TasukiGap, TdCombo, TdCountdown, TdDeMarker, TdDifferential, TdLines, TdLinesOutput,
-    TdOpen, TdPressure, TdRangeProjection, TdRangeProjectionOutput, TdRei, TdRiskLevel,
-    TdRiskLevelOutput, TdSequential, TdSequentialOutput, TdSetup, Tema, TermStructureBasis,
-    ThreeInside, ThreeLineStrike, ThreeOutside, ThreeSoldiersOrCrows, ThreeStarsInSouth, Thrusting,
-    Tii, TpoProfile, TpoProfileOutput, TradeImbalance, TreynorRatio, Trima, Trix, TrueRange, Tsi,
-    Tsv, TtmSqueeze, TtmSqueezeOutput, Tweezer, TwoCrows, TypicalPrice, UlcerIndex,
-    UltimateOscillator, UniqueThreeRiver, UpsideGapThreeMethods, UpsideGapTwoCrows, ValueArea,
-    ValueAreaOutput, ValueAtRisk, Variance, VerticalHorizontalFilter, Vidya, VoltyStop,
-    VolumeOscillator, VolumePriceTrend, VolumeProfile, VolumeProfileOutput, Vortex, VortexOutput,
-    Vwap, VwapStdDevBands, VwapStdDevBandsOutput, Vwma, Vzo, WaveTrend, WaveTrendOutput,
-    WeightedClose, WilliamsFractals, WilliamsFractalsOutput, WilliamsR, Wma, WoodiePivots,
-    WoodiePivotsOutput, YangZhangVolatility, YoyoExit, ZScore, ZeroLagMacd, ZeroLagMacdOutput,
-    ZigZag, ZigZagOutput, Zlema, FAMILIES, T3,
+    PiercingDarkCloud, Pmo, PointAndFigureBars, Ppo, ProfitFactor, Psar, Pvi, QuotedSpread,
+    RSquared, RealizedSpread, RecoveryFactor, RelativeStrengthAB, RelativeStrengthOutput,
+    RenkoBars, RenkoTrailingStop, RickshawMan, RisingThreeMethods, Roc, RogersSatchellVolatility,
+    RollingVwap, RoofingFilter, Rsi, Rvi, RviVolatility, Rwi, RwiOutput, SeparatingLines,
+    SharpeRatio, ShootingStar, ShortLine, SignedVolume, SineWave, Skewness, Sma, Smi, Smma,
+    SortinoRatio, SpearmanCorrelation, SpinningTop, StalledPattern, StandardError,
+    StandardErrorBands, StandardErrorBandsOutput, StarcBands, StarcBandsOutput, Stc, StdDev,
+    StepTrailingStop, StickSandwich, StochRsi, Stochastic, StochasticOutput, SuperSmoother,
+    SuperTrend, SuperTrendOutput, TakerBuySellRatio, Takuri, TasukiGap, TdCombo, TdCountdown,
+    TdDeMarker, TdDifferential, TdLines, TdLinesOutput, TdOpen, TdPressure, TdRangeProjection,
+    TdRangeProjectionOutput, TdRei, TdRiskLevel, TdRiskLevelOutput, TdSequential,
+    TdSequentialOutput, TdSetup, Tema, TermStructureBasis, ThreeInside, ThreeLineStrike,
+    ThreeOutside, ThreeSoldiersOrCrows, ThreeStarsInSouth, Thrusting, Tii, TpoProfile,
+    TpoProfileOutput, TradeImbalance, TreynorRatio, Trima, Trix, TrueRange, Tsi, Tsv, TtmSqueeze,
+    TtmSqueezeOutput, Tweezer, TwoCrows, TypicalPrice, UlcerIndex, UltimateOscillator,
+    UniqueThreeRiver, UpsideGapThreeMethods, UpsideGapTwoCrows, ValueArea, ValueAreaOutput,
+    ValueAtRisk, Variance, VerticalHorizontalFilter, Vidya, VoltyStop, VolumeOscillator,
+    VolumePriceTrend, VolumeProfile, VolumeProfileOutput, Vortex, VortexOutput, Vwap,
+    VwapStdDevBands, VwapStdDevBandsOutput, Vwma, Vzo, WaveTrend, WaveTrendOutput, WeightedClose,
+    WilliamsFractals, WilliamsFractalsOutput, WilliamsR, Wma, WoodiePivots, WoodiePivotsOutput,
+    YangZhangVolatility, YoyoExit, ZScore, ZeroLagMacd, ZeroLagMacdOutput, ZigZag, ZigZagOutput,
+    Zlema, FAMILIES, T3,
 };
 // `FootprintLevel` is a row element of `FootprintOutput`, re-exported on its own
 // line so the indicator-count tooling (which scans the braced block above and
 // strips only `*Output` companions) does not count it as a separate indicator.
 pub use indicators::FootprintLevel;
+// Bar element types for the alt-chart builders, re-exported on their own lines so
+// the indicator-count tooling (which scans only the braced block above) does not
+// count them as separate indicators.
+pub use indicators::KagiBar;
+pub use indicators::PnfColumn;
+pub use indicators::RenkoBrick;
 pub use microstructure::{Level, OrderBook, Side, Trade, TradeQuote};
 pub use ohlcv::{Candle, Tick};
-pub use traits::{BatchExt, Chain, Indicator};
+pub use traits::{BarBuilder, BatchExt, Chain, Indicator};

@@ -17,7 +17,7 @@ use pyo3::exceptions::{PyTypeError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
 use wickra_core as wc;
-use wickra_core::{BatchExt, Indicator};
+use wickra_core::{BarBuilder, BatchExt, Indicator};
 
 fn map_err(e: wc::Error) -> PyErr {
     match e {
@@ -14210,6 +14210,205 @@ impl PyAlpha {
     }
 }
 
+// ============================== Alt-Chart Bars ==============================
+//
+// Bar builders consume close prices and emit a variable number of completed bars
+// per input. `update(close)` returns the bars finished on that close; `batch`
+// returns a `(k, 3)` array of all completed bars concatenated.
+
+#[pyclass(name = "RenkoBars", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyRenkoBars {
+    inner: wc::RenkoBars,
+}
+
+#[pymethods]
+impl PyRenkoBars {
+    #[new]
+    fn new(box_size: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::RenkoBars::new(box_size).map_err(map_err)?,
+        })
+    }
+    /// Feed one close; returns bricks completed on it as `(open, close, direction)`.
+    fn update(&mut self, close: f64) -> PyResult<Vec<(f64, f64, i64)>> {
+        let candle = wc::Candle::new(close, close, close, close, 1.0, 0).map_err(map_err)?;
+        Ok(self
+            .inner
+            .update(candle)
+            .into_iter()
+            .map(|b| (b.open, b.close, i64::from(b.direction)))
+            .collect())
+    }
+    /// Batch over a close column. Returns shape `(k, 3)` of `[open, close, direction]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let prices = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let mut rows: Vec<f64> = Vec::new();
+        let mut k = 0usize;
+        for &price in prices {
+            let candle = wc::Candle::new(price, price, price, price, 1.0, 0).map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                rows.push(b.open);
+                rows.push(b.close);
+                rows.push(f64::from(b.direction));
+                k += 1;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((k, 3), rows)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn box_size(&self) -> f64 {
+        self.inner.box_size()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn __repr__(&self) -> String {
+        format!("RenkoBars(box_size={})", self.inner.box_size())
+    }
+}
+
+#[pyclass(name = "KagiBars", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyKagiBars {
+    inner: wc::KagiBars,
+}
+
+#[pymethods]
+impl PyKagiBars {
+    #[new]
+    fn new(reversal: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::KagiBars::new(reversal).map_err(map_err)?,
+        })
+    }
+    /// Feed one close; returns completed segments as `(start, end, direction)`.
+    fn update(&mut self, close: f64) -> PyResult<Vec<(f64, f64, i64)>> {
+        let candle = wc::Candle::new(close, close, close, close, 1.0, 0).map_err(map_err)?;
+        Ok(self
+            .inner
+            .update(candle)
+            .into_iter()
+            .map(|b| (b.start, b.end, i64::from(b.direction)))
+            .collect())
+    }
+    /// Batch over a close column. Returns shape `(k, 3)` of `[start, end, direction]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let prices = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let mut rows: Vec<f64> = Vec::new();
+        let mut k = 0usize;
+        for &price in prices {
+            let candle = wc::Candle::new(price, price, price, price, 1.0, 0).map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                rows.push(b.start);
+                rows.push(b.end);
+                rows.push(f64::from(b.direction));
+                k += 1;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((k, 3), rows)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn reversal(&self) -> f64 {
+        self.inner.reversal()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn __repr__(&self) -> String {
+        format!("KagiBars(reversal={})", self.inner.reversal())
+    }
+}
+
+#[pyclass(
+    name = "PointAndFigureBars",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyPointAndFigureBars {
+    inner: wc::PointAndFigureBars,
+}
+
+#[pymethods]
+impl PyPointAndFigureBars {
+    #[new]
+    #[pyo3(signature = (box_size, reversal=3))]
+    fn new(box_size: f64, reversal: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::PointAndFigureBars::new(box_size, reversal).map_err(map_err)?,
+        })
+    }
+    /// Feed one close; returns completed columns as `(direction, high, low)`.
+    fn update(&mut self, close: f64) -> PyResult<Vec<(i64, f64, f64)>> {
+        let candle = wc::Candle::new(close, close, close, close, 1.0, 0).map_err(map_err)?;
+        Ok(self
+            .inner
+            .update(candle)
+            .into_iter()
+            .map(|c| (i64::from(c.direction), c.high, c.low))
+            .collect())
+    }
+    /// Batch over a close column. Returns shape `(k, 3)` of `[direction, high, low]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let prices = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let mut rows: Vec<f64> = Vec::new();
+        let mut k = 0usize;
+        for &price in prices {
+            let candle = wc::Candle::new(price, price, price, price, 1.0, 0).map_err(map_err)?;
+            for col in self.inner.update(candle) {
+                rows.push(f64::from(col.direction));
+                rows.push(col.high);
+                rows.push(col.low);
+                k += 1;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((k, 3), rows)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn box_size(&self) -> f64 {
+        self.inner.box_size()
+    }
+    #[getter]
+    fn reversal(&self) -> usize {
+        self.inner.reversal()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "PointAndFigureBars(box_size={}, reversal={})",
+            self.inner.box_size(),
+            self.inner.reversal()
+        )
+    }
+}
+
 // ============================== Module ==============================
 
 #[pymodule]
@@ -14407,6 +14606,9 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyValueArea>()?;
     m.add_class::<PyVolumeProfile>()?;
     m.add_class::<PyTpoProfile>()?;
+    m.add_class::<PyRenkoBars>()?;
+    m.add_class::<PyKagiBars>()?;
+    m.add_class::<PyPointAndFigureBars>()?;
     m.add_class::<PyInitialBalance>()?;
     m.add_class::<PyOpeningRange>()?;
     // Candlestick patterns.

@@ -1272,3 +1272,37 @@ test('TpoProfile counts time at price, volume-agnostic', () => {
   assert.ok(Math.abs(out.priceHigh - 14) < 1e-9);
   assert.deepEqual(out.counts, [1, 2, 2, 1]);
 });
+
+test('RenkoBars prints aligned bricks and reverses on two boxes', () => {
+  const r = new wickra.RenkoBars(1.0);
+  assert.deepEqual(r.update(10), []); // seed
+  const up = r.update(13);
+  assert.equal(up.length, 3);
+  assert.ok(Math.abs(up[0].open - 10) < 1e-9 && Math.abs(up[0].close - 11) < 1e-9);
+  assert.ok(up.every((b) => b.direction === 1));
+  const down = r.update(10);
+  assert.equal(down.length, 2);
+  assert.ok(down.every((b) => b.direction === -1));
+});
+
+test('KagiBars closes a segment on a reversal', () => {
+  const k = new wickra.KagiBars(2.0);
+  k.update(10);
+  k.update(11);
+  k.update(15);
+  const seg = k.update(12);
+  assert.equal(seg.length, 1);
+  assert.equal(seg[0].direction, 1);
+  assert.ok(Math.abs(seg[0].start - 10) < 1e-9 && Math.abs(seg[0].end - 15) < 1e-9);
+});
+
+test('PointAndFigureBars closes a column on a 3-box reversal', () => {
+  const pnf = new wickra.PointAndFigureBars(1.0, 3);
+  pnf.update(10);
+  pnf.update(13);
+  pnf.update(15);
+  const col = pnf.update(12);
+  assert.equal(col.length, 1);
+  assert.equal(col[0].direction, 1);
+  assert.ok(Math.abs(col[0].high - 15) < 1e-9 && Math.abs(col[0].low - 10) < 1e-9);
+});

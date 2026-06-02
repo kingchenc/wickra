@@ -8,16 +8,25 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const wickra = require('..');
 
+// Bar builders (Renko / Kagi / Point & Figure) implement the `BarBuilder`
+// contract, not `Indicator`: they emit a variable number of completed bars per
+// candle and have no fixed warmup or ready state. They expose update/batch/reset
+// but intentionally not isReady/warmupPeriod, so they are excluded from the
+// Indicator completeness contract below (their interface is covered by the
+// dedicated bar-builder tests).
+const BAR_BUILDERS = new Set(['RenkoBars', 'KagiBars', 'PointAndFigureBars']);
+
 // An "indicator class" is an exported constructor whose prototype carries the
-// streaming `update` method. This excludes `version` (a plain function) and any
-// non-indicator export.
+// streaming `update` method. This excludes `version` (a plain function), the bar
+// builders, and any non-indicator export.
 function indicatorClasses() {
   return Object.keys(wickra).filter((name) => {
     const value = wickra[name];
     return (
       typeof value === 'function' &&
       value.prototype &&
-      typeof value.prototype.update === 'function'
+      typeof value.prototype.update === 'function' &&
+      !BAR_BUILDERS.has(name)
     );
   });
 }
