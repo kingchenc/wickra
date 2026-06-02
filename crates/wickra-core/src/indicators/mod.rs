@@ -63,10 +63,12 @@ mod demark_pivots;
 mod depth_slope;
 mod detrended_std_dev;
 mod doji;
+mod doji_star;
 mod donchian;
 mod donchian_stop;
 mod double_bollinger;
 mod dpo;
+mod dragonfly_doji;
 mod drawdown_duration;
 mod ease_of_movement;
 mod effective_spread;
@@ -89,6 +91,7 @@ mod funding_rate_mean;
 mod funding_rate_zscore;
 mod gain_loss_ratio;
 mod garman_klass;
+mod gravestone_doji;
 mod hammer;
 mod hanging_man;
 mod harami;
@@ -122,6 +125,7 @@ mod linreg_angle;
 mod linreg_channel;
 mod linreg_slope;
 mod liquidation_features;
+mod long_legged_doji;
 mod long_short_ratio;
 mod ma_envelope;
 mod macd;
@@ -168,6 +172,7 @@ mod realized_spread;
 mod recovery_factor;
 mod relative_strength_ab;
 mod renko_trailing_stop;
+mod rickshaw_man;
 mod roc;
 mod rogers_satchell;
 mod roofing_filter;
@@ -317,10 +322,12 @@ pub use demark_pivots::{DemarkPivots, DemarkPivotsOutput};
 pub use depth_slope::DepthSlope;
 pub use detrended_std_dev::DetrendedStdDev;
 pub use doji::Doji;
+pub use doji_star::DojiStar;
 pub use donchian::{Donchian, DonchianOutput};
 pub use donchian_stop::{DonchianStop, DonchianStopOutput};
 pub use double_bollinger::{DoubleBollinger, DoubleBollingerOutput};
 pub use dpo::Dpo;
+pub use dragonfly_doji::DragonflyDoji;
 pub use drawdown_duration::DrawdownDuration;
 pub use ease_of_movement::EaseOfMovement;
 pub use effective_spread::EffectiveSpread;
@@ -343,6 +350,7 @@ pub use funding_rate_mean::FundingRateMean;
 pub use funding_rate_zscore::FundingRateZScore;
 pub use gain_loss_ratio::GainLossRatio;
 pub use garman_klass::GarmanKlassVolatility;
+pub use gravestone_doji::GravestoneDoji;
 pub use hammer::Hammer;
 pub use hanging_man::HangingMan;
 pub use harami::Harami;
@@ -376,6 +384,7 @@ pub use linreg_angle::LinRegAngle;
 pub use linreg_channel::{LinRegChannel, LinRegChannelOutput};
 pub use linreg_slope::LinRegSlope;
 pub use liquidation_features::{LiquidationFeatures, LiquidationFeaturesOutput};
+pub use long_legged_doji::LongLeggedDoji;
 pub use long_short_ratio::LongShortRatio;
 pub use ma_envelope::{MaEnvelope, MaEnvelopeOutput};
 pub use macd::{MacdIndicator, MacdOutput};
@@ -422,6 +431,7 @@ pub use realized_spread::RealizedSpread;
 pub use recovery_factor::RecoveryFactor;
 pub use relative_strength_ab::{RelativeStrengthAB, RelativeStrengthOutput};
 pub use renko_trailing_stop::RenkoTrailingStop;
+pub use rickshaw_man::RickshawMan;
 pub use roc::Roc;
 pub use rogers_satchell::RogersSatchellVolatility;
 pub use roofing_filter::RoofingFilter;
@@ -785,6 +795,11 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "BeltHold",
             "Breakaway",
             "Counterattack",
+            "DojiStar",
+            "DragonflyDoji",
+            "GravestoneDoji",
+            "LongLeggedDoji",
+            "RickshawMan",
         ],
     ),
     (
@@ -876,6 +891,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 249, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 254, "FAMILIES total drifted from indicator count");
     }
 }

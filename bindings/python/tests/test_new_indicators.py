@@ -563,6 +563,26 @@ CANDLE_SCALAR = {
         lambda: ta.Counterattack(),
         lambda ind, h, l, c, v: ind.batch(c, h, l, c),
     ),
+    "DojiStar": (
+        lambda: ta.DojiStar(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "DragonflyDoji": (
+        lambda: ta.DragonflyDoji(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "GravestoneDoji": (
+        lambda: ta.GravestoneDoji(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "LongLeggedDoji": (
+        lambda: ta.LongLeggedDoji(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "RickshawMan": (
+        lambda: ta.RickshawMan(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
 }
 
 
@@ -1684,6 +1704,32 @@ def test_counterattack_reference():
     t = ta.Counterattack()
     assert t.update((20.0, 20.1, 14.9, 15.0, 1.0, 0)) == pytest.approx(0.0)
     assert t.update((10.0, 15.1, 9.9, 15.0, 1.0, 1)) == pytest.approx(1.0)
+
+
+def test_doji_star_reference():
+    t = ta.DojiStar()
+    assert t.update((20.0, 20.2, 14.8, 15.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((13.0, 13.1, 12.9, 13.0, 1.0, 1)) == pytest.approx(1.0)
+
+
+def test_dragonfly_doji_reference():
+    t = ta.DragonflyDoji()
+    assert t.update((10.0, 10.05, 6.0, 10.0, 1.0, 0)) == pytest.approx(1.0)
+
+
+def test_gravestone_doji_reference():
+    t = ta.GravestoneDoji()
+    assert t.update((10.0, 14.0, 9.95, 10.0, 1.0, 0)) == pytest.approx(-1.0)
+
+
+def test_long_legged_doji_reference():
+    t = ta.LongLeggedDoji()
+    assert t.update((10.0, 12.0, 8.0, 10.05, 1.0, 0)) == pytest.approx(1.0)
+
+
+def test_rickshaw_man_reference():
+    t = ta.RickshawMan()
+    assert t.update((10.0, 12.0, 8.0, 10.0, 1.0, 0)) == pytest.approx(1.0)
 
 # --- Lifecycle ------------------------------------------------------------
 
