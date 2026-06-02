@@ -6389,6 +6389,19 @@ wasm_candle_pattern!(
     wc::FallingThreeMethods,
     FallingThreeMethods
 );
+wasm_candle_pattern!(
+    WasmUpsideGapThreeMethods,
+    wc::UpsideGapThreeMethods,
+    UpsideGapThreeMethods
+);
+wasm_candle_pattern!(
+    WasmDownsideGapThreeMethods,
+    wc::DownsideGapThreeMethods,
+    DownsideGapThreeMethods
+);
+wasm_candle_pattern!(WasmStalledPattern, wc::StalledPattern, StalledPattern);
+wasm_candle_pattern!(WasmStickSandwich, wc::StickSandwich, StickSandwich);
+wasm_candle_pattern!(WasmTakuri, wc::Takuri, Takuri);
 
 // ============================== Microstructure: Order Book ==============================
 //

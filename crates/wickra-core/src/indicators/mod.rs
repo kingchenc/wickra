@@ -67,6 +67,7 @@ mod doji_star;
 mod donchian;
 mod donchian_stop;
 mod double_bollinger;
+mod downside_gap_three_methods;
 mod dpo;
 mod dragonfly_doji;
 mod drawdown_duration;
@@ -210,18 +211,21 @@ mod smma;
 mod sortino_ratio;
 mod spearman_correlation;
 mod spinning_top;
+mod stalled_pattern;
 mod standard_error;
 mod standard_error_bands;
 mod starc_bands;
 mod stc;
 mod std_dev;
 mod step_trailing_stop;
+mod stick_sandwich;
 mod stoch_rsi;
 mod stochastic;
 mod super_smoother;
 mod super_trend;
 mod t3;
 mod taker_buy_sell_ratio;
+mod takuri;
 mod td_combo;
 mod td_countdown;
 mod td_demarker;
@@ -256,6 +260,7 @@ mod two_crows;
 mod typical_price;
 mod ulcer_index;
 mod ultimate_oscillator;
+mod upside_gap_three_methods;
 mod upside_gap_two_crows;
 mod value_area;
 mod value_at_risk;
@@ -346,6 +351,7 @@ pub use doji_star::DojiStar;
 pub use donchian::{Donchian, DonchianOutput};
 pub use donchian_stop::{DonchianStop, DonchianStopOutput};
 pub use double_bollinger::{DoubleBollinger, DoubleBollingerOutput};
+pub use downside_gap_three_methods::DownsideGapThreeMethods;
 pub use dpo::Dpo;
 pub use dragonfly_doji::DragonflyDoji;
 pub use drawdown_duration::DrawdownDuration;
@@ -489,18 +495,21 @@ pub use smma::Smma;
 pub use sortino_ratio::SortinoRatio;
 pub use spearman_correlation::SpearmanCorrelation;
 pub use spinning_top::SpinningTop;
+pub use stalled_pattern::StalledPattern;
 pub use standard_error::StandardError;
 pub use standard_error_bands::{StandardErrorBands, StandardErrorBandsOutput};
 pub use starc_bands::{StarcBands, StarcBandsOutput};
 pub use stc::Stc;
 pub use std_dev::StdDev;
 pub use step_trailing_stop::StepTrailingStop;
+pub use stick_sandwich::StickSandwich;
 pub use stoch_rsi::StochRsi;
 pub use stochastic::{Stochastic, StochasticOutput};
 pub use super_smoother::SuperSmoother;
 pub use super_trend::{SuperTrend, SuperTrendOutput};
 pub use t3::T3;
 pub use taker_buy_sell_ratio::TakerBuySellRatio;
+pub use takuri::Takuri;
 pub use td_combo::TdCombo;
 pub use td_countdown::TdCountdown;
 pub use td_demarker::TdDeMarker;
@@ -535,6 +544,7 @@ pub use two_crows::TwoCrows;
 pub use typical_price::TypicalPrice;
 pub use ulcer_index::UlcerIndex;
 pub use ultimate_oscillator::UltimateOscillator;
+pub use upside_gap_three_methods::UpsideGapThreeMethods;
 pub use upside_gap_two_crows::UpsideGapTwoCrows;
 pub use value_area::{ValueArea, ValueAreaOutput};
 pub use value_at_risk::ValueAtRisk;
@@ -860,6 +870,11 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "ShortLine",
             "RisingThreeMethods",
             "FallingThreeMethods",
+            "UpsideGapThreeMethods",
+            "DownsideGapThreeMethods",
+            "StalledPattern",
+            "StickSandwich",
+            "Takuri",
         ],
     ),
     (
@@ -951,6 +966,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 274, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 279, "FAMILIES total drifted from indicator count");
     }
 }

@@ -270,6 +270,11 @@ const candleScalar = {
   ShortLine: { make: () => new wickra.ShortLine(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   RisingThreeMethods: { make: () => new wickra.RisingThreeMethods(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   FallingThreeMethods: { make: () => new wickra.FallingThreeMethods(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  UpsideGapThreeMethods: { make: () => new wickra.UpsideGapThreeMethods(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  DownsideGapThreeMethods: { make: () => new wickra.DownsideGapThreeMethods(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  StalledPattern: { make: () => new wickra.StalledPattern(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  StickSandwich: { make: () => new wickra.StickSandwich(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Takuri: { make: () => new wickra.Takuri(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {

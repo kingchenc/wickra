@@ -62,6 +62,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Short Line** — a single short-bodied candle with short shadows; bullish +1 (white) or bearish -1 (black) by colour (`CDLSHORTLINE`).
   - **Rising Three Methods** — a 5-bar bullish continuation: a long white candle, three small pullback bars holding within its range, then a white breakout to new highs; bullish +1 (`CDLRISEFALL3METHODS`).
   - **Falling Three Methods** — the bearish mirror of rising three methods: a long black candle, three small bars holding within its range, then a black breakdown to new lows; bearish -1 (`CDLRISEFALL3METHODS`).
+  - **Upside Gap Three Methods** — a 3-bar bullish continuation: two white candles gap up, then a black candle opens within the second body and closes within the first; bullish +1 (`CDLXSIDEGAP3METHODS`).
+  - **Downside Gap Three Methods** — the bearish mirror of upside gap three methods: two black candles gap down, then a white candle opens within the second body and closes within the first; bearish -1 (`CDLXSIDEGAP3METHODS`).
+  - **Stalled Pattern** — a 3-bar bearish reversal warning: two long white candles then a small white candle riding the shoulder, signalling the rally is stalling; bearish -1 (`CDLSTALLEDPATTERN`).
+  - **Stick Sandwich** — a 3-bar bullish reversal: two black candles closing at the same level sandwich a white candle, marking a support floor; bullish +1 (`CDLSTICKSANDWICH`).
+  - **Takuri** — a single-bar bullish reversal, a strict Dragonfly Doji with a negligible upper shadow and very long lower shadow; bullish +1 (`CDLTAKURI`).
 - **Derivatives family — funding & open interest (part 1).** A new family of
   indicators that consume a perpetual / futures tick (`DerivativesTick`,
   bundling funding rate, mark / index / futures price, open interest,
