@@ -79,6 +79,7 @@ mod empirical_mode_decomposition;
 mod engulfing;
 mod evening_doji_star;
 mod evwma;
+mod falling_three_methods;
 mod fama;
 mod fibonacci_pivots;
 mod fisher_transform;
@@ -136,6 +137,7 @@ mod linreg_channel;
 mod linreg_slope;
 mod liquidation_features;
 mod long_legged_doji;
+mod long_line;
 mod long_short_ratio;
 mod ma_envelope;
 mod macd;
@@ -144,6 +146,7 @@ mod market_facilitation_index;
 mod marubozu;
 mod mass_index;
 mod mat_hold;
+mod matching_low;
 mod max_drawdown;
 mod mcginley_dynamic;
 mod median_absolute_deviation;
@@ -186,6 +189,7 @@ mod recovery_factor;
 mod relative_strength_ab;
 mod renko_trailing_stop;
 mod rickshaw_man;
+mod rising_three_methods;
 mod roc;
 mod rogers_satchell;
 mod roofing_filter;
@@ -196,6 +200,7 @@ mod rwi;
 mod separating_lines;
 mod sharpe_ratio;
 mod shooting_star;
+mod short_line;
 mod signed_volume;
 mod sine_wave;
 mod skewness;
@@ -353,6 +358,7 @@ pub use empirical_mode_decomposition::EmpiricalModeDecomposition;
 pub use engulfing::Engulfing;
 pub use evening_doji_star::EveningDojiStar;
 pub use evwma::Evwma;
+pub use falling_three_methods::FallingThreeMethods;
 pub use fama::Fama;
 pub use fibonacci_pivots::{FibonacciPivots, FibonacciPivotsOutput};
 pub use fisher_transform::FisherTransform;
@@ -410,6 +416,7 @@ pub use linreg_channel::{LinRegChannel, LinRegChannelOutput};
 pub use linreg_slope::LinRegSlope;
 pub use liquidation_features::{LiquidationFeatures, LiquidationFeaturesOutput};
 pub use long_legged_doji::LongLeggedDoji;
+pub use long_line::LongLine;
 pub use long_short_ratio::LongShortRatio;
 pub use ma_envelope::{MaEnvelope, MaEnvelopeOutput};
 pub use macd::{MacdIndicator, MacdOutput};
@@ -418,6 +425,7 @@ pub use market_facilitation_index::MarketFacilitationIndex;
 pub use marubozu::Marubozu;
 pub use mass_index::MassIndex;
 pub use mat_hold::MatHold;
+pub use matching_low::MatchingLow;
 pub use max_drawdown::MaxDrawdown;
 pub use mcginley_dynamic::McGinleyDynamic;
 pub use median_absolute_deviation::MedianAbsoluteDeviation;
@@ -460,6 +468,7 @@ pub use recovery_factor::RecoveryFactor;
 pub use relative_strength_ab::{RelativeStrengthAB, RelativeStrengthOutput};
 pub use renko_trailing_stop::RenkoTrailingStop;
 pub use rickshaw_man::RickshawMan;
+pub use rising_three_methods::RisingThreeMethods;
 pub use roc::Roc;
 pub use rogers_satchell::RogersSatchellVolatility;
 pub use roofing_filter::RoofingFilter;
@@ -470,6 +479,7 @@ pub use rwi::{Rwi, RwiOutput};
 pub use separating_lines::SeparatingLines;
 pub use sharpe_ratio::SharpeRatio;
 pub use shooting_star::ShootingStar;
+pub use short_line::ShortLine;
 pub use signed_volume::SignedVolume;
 pub use sine_wave::SineWave;
 pub use skewness::Skewness;
@@ -845,6 +855,11 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "KickingByLength",
             "LadderBottom",
             "MatHold",
+            "MatchingLow",
+            "LongLine",
+            "ShortLine",
+            "RisingThreeMethods",
+            "FallingThreeMethods",
         ],
     ),
     (
@@ -936,6 +951,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 269, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 274, "FAMILIES total drifted from indicator count");
     }
 }

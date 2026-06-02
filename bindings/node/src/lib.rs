@@ -8799,6 +8799,19 @@ node_candle_pattern!(KickingNode, wc::Kicking, "Kicking");
 node_candle_pattern!(KickingByLengthNode, wc::KickingByLength, "KickingByLength");
 node_candle_pattern!(LadderBottomNode, wc::LadderBottom, "LadderBottom");
 node_candle_pattern!(MatHoldNode, wc::MatHold, "MatHold");
+node_candle_pattern!(MatchingLowNode, wc::MatchingLow, "MatchingLow");
+node_candle_pattern!(LongLineNode, wc::LongLine, "LongLine");
+node_candle_pattern!(ShortLineNode, wc::ShortLine, "ShortLine");
+node_candle_pattern!(
+    RisingThreeMethodsNode,
+    wc::RisingThreeMethods,
+    "RisingThreeMethods"
+);
+node_candle_pattern!(
+    FallingThreeMethodsNode,
+    wc::FallingThreeMethods,
+    "FallingThreeMethods"
+);
 
 // ============================== Microstructure: Order Book ==============================
 //

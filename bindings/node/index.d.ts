@@ -2480,6 +2480,51 @@ export declare class MatHold {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type MatchingLowNode = MatchingLow
+export declare class MatchingLow {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type LongLineNode = LongLine
+export declare class LongLine {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type ShortLineNode = ShortLine
+export declare class ShortLine {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RisingThreeMethodsNode = RisingThreeMethods
+export declare class RisingThreeMethods {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type FallingThreeMethodsNode = FallingThreeMethods
+export declare class FallingThreeMethods {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type OrderBookImbalanceTop1Node = OrderBookImbalanceTop1
 export declare class OrderBookImbalanceTop1 {
   constructor()
