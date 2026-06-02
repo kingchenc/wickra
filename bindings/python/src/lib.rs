@@ -11662,6 +11662,19 @@ candle_pattern_no_param!(PyKicking, wc::Kicking, "Kicking");
 candle_pattern_no_param!(PyKickingByLength, wc::KickingByLength, "KickingByLength");
 candle_pattern_no_param!(PyLadderBottom, wc::LadderBottom, "LadderBottom");
 candle_pattern_no_param!(PyMatHold, wc::MatHold, "MatHold");
+candle_pattern_no_param!(PyMatchingLow, wc::MatchingLow, "MatchingLow");
+candle_pattern_no_param!(PyLongLine, wc::LongLine, "LongLine");
+candle_pattern_no_param!(PyShortLine, wc::ShortLine, "ShortLine");
+candle_pattern_no_param!(
+    PyRisingThreeMethods,
+    wc::RisingThreeMethods,
+    "RisingThreeMethods"
+);
+candle_pattern_no_param!(
+    PyFallingThreeMethods,
+    wc::FallingThreeMethods,
+    "FallingThreeMethods"
+);
 // ============================== Microstructure: Order Book ==============================
 //
 // Order-book indicators consume a depth snapshot rather than OHLCV. Streaming
@@ -14188,6 +14201,11 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyKickingByLength>()?;
     m.add_class::<PyLadderBottom>()?;
     m.add_class::<PyMatHold>()?;
+    m.add_class::<PyMatchingLow>()?;
+    m.add_class::<PyLongLine>()?;
+    m.add_class::<PyShortLine>()?;
+    m.add_class::<PyRisingThreeMethods>()?;
+    m.add_class::<PyFallingThreeMethods>()?;
     // Microstructure: order book.
     m.add_class::<PyOrderBookImbalanceTop1>()?;
     m.add_class::<PyOrderBookImbalanceTopN>()?;

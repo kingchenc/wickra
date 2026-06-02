@@ -643,6 +643,26 @@ CANDLE_SCALAR = {
         lambda: ta.MatHold(),
         lambda ind, h, l, c, v: ind.batch(c, h, l, c),
     ),
+    "MatchingLow": (
+        lambda: ta.MatchingLow(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "LongLine": (
+        lambda: ta.LongLine(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "ShortLine": (
+        lambda: ta.ShortLine(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "RisingThreeMethods": (
+        lambda: ta.RisingThreeMethods(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "FallingThreeMethods": (
+        lambda: ta.FallingThreeMethods(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
 }
 
 
@@ -1890,6 +1910,46 @@ def test_mat_hold_reference():
     assert t.update((15.5, 15.6, 14.9, 15.0, 1.0, 2)) == pytest.approx(0.0)
     assert t.update((15.0, 15.1, 14.4, 14.5, 1.0, 3)) == pytest.approx(0.0)
     assert t.update((14.5, 17.1, 14.4, 17.0, 1.0, 4)) == pytest.approx(1.0)
+
+
+def test_matching_low_reference():
+    t = ta.MatchingLow()
+    assert t.update((15.0, 15.1, 9.9, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((13.0, 13.1, 9.9, 10.0, 1.0, 1)) == pytest.approx(1.0)
+
+
+def test_long_line_reference():
+    t = ta.LongLine()
+    # Five quiet bars fill the rolling range average, then a wide solid white bar.
+    for ts in range(5):
+        assert t.update((10.0, 10.5, 9.5, 10.2, 1.0, ts)) == pytest.approx(0.0)
+    assert t.update((10.0, 13.0, 9.9, 12.9, 1.0, 5)) == pytest.approx(1.0)
+
+
+def test_short_line_reference():
+    t = ta.ShortLine()
+    # Five wide bars fill the rolling range average, then a compact solid white bar.
+    for ts in range(5):
+        assert t.update((10.0, 13.0, 9.5, 12.9, 1.0, ts)) == pytest.approx(0.0)
+    assert t.update((10.0, 11.0, 9.9, 10.9, 1.0, 5)) == pytest.approx(1.0)
+
+
+def test_rising_three_methods_reference():
+    t = ta.RisingThreeMethods()
+    assert t.update((10.0, 15.1, 9.9, 15.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((14.0, 14.1, 12.9, 13.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((13.5, 13.6, 12.4, 12.5, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((13.0, 13.1, 11.9, 12.0, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((12.5, 16.1, 12.4, 16.0, 1.0, 4)) == pytest.approx(1.0)
+
+
+def test_falling_three_methods_reference():
+    t = ta.FallingThreeMethods()
+    assert t.update((15.0, 15.1, 9.9, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((11.0, 12.1, 10.9, 12.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((11.5, 12.6, 11.4, 12.5, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((12.0, 13.1, 11.9, 13.0, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((12.5, 12.6, 8.9, 9.0, 1.0, 4)) == pytest.approx(-1.0)
 
 # --- Lifecycle ------------------------------------------------------------
 

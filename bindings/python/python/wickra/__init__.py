@@ -270,6 +270,11 @@ from ._wickra import (
     KickingByLength,
     LadderBottom,
     MatHold,
+    MatchingLow,
+    LongLine,
+    ShortLine,
+    RisingThreeMethods,
+    FallingThreeMethods,
     # Microstructure: order book
     OrderBookImbalanceTop1,
     OrderBookImbalanceTopN,
@@ -567,6 +572,11 @@ __all__ = [
     "KickingByLength",
     "LadderBottom",
     "MatHold",
+    "MatchingLow",
+    "LongLine",
+    "ShortLine",
+    "RisingThreeMethods",
+    "FallingThreeMethods",
     # Microstructure: order book
     "OrderBookImbalanceTop1",
     "OrderBookImbalanceTopN",

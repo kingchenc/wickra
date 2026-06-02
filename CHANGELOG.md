@@ -57,6 +57,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Kicking by Length** — a kicking pattern signalled by the colour of the longer marubozu; +1 / -1 (`CDLKICKINGBYLENGTH`).
   - **Ladder Bottom** — three descending black candles, a fourth with an upper shadow, then a white candle gapping up, a bullish reversal; +1 (`CDLLADDERBOTTOM`).
   - **Mat Hold** — a long white candle, a holding three-bar pullback, then a new-high white candle, a bullish continuation; +1 (`CDLMATHOLD`).
+  - **Matching Low** — a 2-bar bullish reversal where two black candles in a decline share the same close, signalling selling pressure is exhausting; bullish +1 (`CDLMATCHINGLOW`).
+  - **Long Line** — a single long-bodied candle with short shadows; bullish +1 (white) or bearish -1 (black) by colour (`CDLLONGLINE`).
+  - **Short Line** — a single short-bodied candle with short shadows; bullish +1 (white) or bearish -1 (black) by colour (`CDLSHORTLINE`).
+  - **Rising Three Methods** — a 5-bar bullish continuation: a long white candle, three small pullback bars holding within its range, then a white breakout to new highs; bullish +1 (`CDLRISEFALL3METHODS`).
+  - **Falling Three Methods** — the bearish mirror of rising three methods: a long black candle, three small bars holding within its range, then a black breakdown to new lows; bearish -1 (`CDLRISEFALL3METHODS`).
 - **Derivatives family — funding & open interest (part 1).** A new family of
   indicators that consume a perpetual / futures tick (`DerivativesTick`,
   bundling funding rate, mark / index / futures price, open interest,

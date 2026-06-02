@@ -6376,6 +6376,19 @@ wasm_candle_pattern!(WasmKicking, wc::Kicking, Kicking);
 wasm_candle_pattern!(WasmKickingByLength, wc::KickingByLength, KickingByLength);
 wasm_candle_pattern!(WasmLadderBottom, wc::LadderBottom, LadderBottom);
 wasm_candle_pattern!(WasmMatHold, wc::MatHold, MatHold);
+wasm_candle_pattern!(WasmMatchingLow, wc::MatchingLow, MatchingLow);
+wasm_candle_pattern!(WasmLongLine, wc::LongLine, LongLine);
+wasm_candle_pattern!(WasmShortLine, wc::ShortLine, ShortLine);
+wasm_candle_pattern!(
+    WasmRisingThreeMethods,
+    wc::RisingThreeMethods,
+    RisingThreeMethods
+);
+wasm_candle_pattern!(
+    WasmFallingThreeMethods,
+    wc::FallingThreeMethods,
+    FallingThreeMethods
+);
 
 // ============================== Microstructure: Order Book ==============================
 //
