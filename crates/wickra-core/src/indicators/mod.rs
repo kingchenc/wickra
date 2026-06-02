@@ -113,6 +113,7 @@ mod hilo_activator;
 mod historical_volatility;
 mod hma;
 mod homing_pigeon;
+mod ht_phasor;
 mod hurst_channel;
 mod hurst_exponent;
 mod ichimoku;
@@ -424,6 +425,7 @@ pub use hilo_activator::HiLoActivator;
 pub use historical_volatility::HistoricalVolatility;
 pub use hma::Hma;
 pub use homing_pigeon::HomingPigeon;
+pub use ht_phasor::{HtPhasor, HtPhasorOutput};
 pub use hurst_channel::{HurstChannel, HurstChannelOutput};
 pub use hurst_exponent::HurstExponent;
 pub use ichimoku::{Ichimoku, IchimokuOutput};
@@ -846,6 +848,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "InverseFisherTransform",
             "SuperSmoother",
             "HilbertDominantCycle",
+            "HtPhasor",
             "SineWave",
             "Decycler",
             "DecyclerOscillator",
@@ -1052,6 +1055,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 306, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 307, "FAMILIES total drifted from indicator count");
     }
 }

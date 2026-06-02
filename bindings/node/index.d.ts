@@ -45,6 +45,10 @@ export interface BollingerValue {
   lower: number
   stddev: number
 }
+export interface HtPhasorValue {
+  inphase: number
+  quadrature: number
+}
 export interface StochValue {
   k: number
   d: number
@@ -976,6 +980,19 @@ export declare class SAREXT {
   constructor(startValue: number, offsetOnReverse: number, accelInitLong: number, accelLong: number, accelMaxLong: number, accelInitShort: number, accelShort: number, accelMaxShort: number)
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type HtPhasorNode = HT_PHASOR
+export declare class HT_PHASOR {
+  constructor()
+  update(value: number): HtPhasorValue | null
+  /**
+   * Batch over a price array. Returns a flat array of length `2 * n`,
+   * interleaved per row as `[inphase0, quadrature0, inphase1, ...]`.
+   */
+  batch(prices: Array<number>): Array<number>
   reset(): void
   isReady(): boolean
   warmupPeriod(): number

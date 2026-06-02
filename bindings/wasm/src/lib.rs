@@ -1572,6 +1572,53 @@ impl WasmSarExt {
     }
 }
 
+#[wasm_bindgen(js_name = HT_PHASOR)]
+pub struct WasmHtPhasor {
+    inner: wc::HtPhasor,
+}
+
+impl Default for WasmHtPhasor {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = HT_PHASOR)]
+impl WasmHtPhasor {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmHtPhasor {
+        Self {
+            inner: wc::HtPhasor::new(),
+        }
+    }
+    pub fn update(&mut self, value: f64) -> JsValue {
+        match self.inner.update(value) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"inphase".into(), &o.inphase.into()).ok();
+                Reflect::set(&obj, &"quadrature".into(), &o.quadrature.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        }
+    }
+    /// Returns a flat `Float64Array` of length `2 * n`: `[inphase0, quad0, ...]`.
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let n = prices.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 2] = o.inphase;
+                out[i * 2 + 1] = o.quadrature;
+            }
+        }
+        Float64Array::from(out.as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
 #[wasm_bindgen(js_name = Stochastic)]
 pub struct WasmStoch {
     inner: wc::Stochastic,

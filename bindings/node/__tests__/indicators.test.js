@@ -316,6 +316,7 @@ const multi = {
   Alligator: { make: () => new wickra.Alligator(13, 8, 5), fields: ['jaw', 'teeth', 'lips'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   ZeroLagMACD: { make: () => new wickra.ZeroLagMACD(12, 26, 9), fields: ['macd', 'signal', 'histogram'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   MACD: { make: () => new wickra.MACD(12, 26, 9), fields: ['macd', 'signal', 'histogram'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
+  HT_PHASOR: { make: () => new wickra.HT_PHASOR(), fields: ['inphase', 'quadrature'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   MACDFIX: { make: () => new wickra.MACDFIX(9), fields: ['macd', 'signal', 'histogram'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   MACDEXT: { make: () => new wickra.MACDEXT(12, 0, 26, 0, 9, 0), fields: ['macd', 'signal', 'histogram'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   KST: { make: () => wickra.KST.classic(), fields: ['kst', 'signal'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },

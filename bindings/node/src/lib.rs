@@ -1336,6 +1336,65 @@ impl SarExtNode {
 }
 
 #[napi(object)]
+pub struct HtPhasorValue {
+    pub inphase: f64,
+    pub quadrature: f64,
+}
+
+#[napi(js_name = "HT_PHASOR")]
+pub struct HtPhasorNode {
+    inner: wc::HtPhasor,
+}
+
+impl Default for HtPhasorNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl HtPhasorNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::HtPhasor::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<HtPhasorValue> {
+        self.inner.update(value).map(|o| HtPhasorValue {
+            inphase: o.inphase,
+            quadrature: o.quadrature,
+        })
+    }
+    /// Batch over a price array. Returns a flat array of length `2 * n`,
+    /// interleaved per row as `[inphase0, quadrature0, inphase1, ...]`.
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        let mut out = vec![f64::NAN; prices.len() * 2];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 2] = o.inphase;
+                out[i * 2 + 1] = o.quadrature;
+            }
+        }
+        out
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(object)]
 pub struct StochValue {
     pub k: f64,
     pub d: f64,

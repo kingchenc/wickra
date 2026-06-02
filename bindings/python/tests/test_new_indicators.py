@@ -144,6 +144,7 @@ SCALAR_MULTI = {
     "DoubleBollinger": (lambda: ta.DoubleBollinger(20, 1.0, 2.0), 5),
     "MacdFix": (lambda: ta.MACDFIX(9), 3),
     "MacdExt": (lambda: ta.MACDEXT(12, 0, 26, 0, 9, 0), 3),
+    "HtPhasor": (lambda: ta.HT_PHASOR(), 2),
 }
 
 

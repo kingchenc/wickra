@@ -37,6 +37,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **TA-Lib parity — `MacdExt` (`MACDEXT`)** — MACD with an independently
   selectable moving-average type (new `MaType` enum: SMA/EMA/WMA/DEMA/TEMA/TRIMA)
   for each of the fast, slow and signal lines.
+- **TA-Lib parity — `HtPhasor` (`HT_PHASOR`)** — the in-phase and quadrature
+  components of the Hilbert-transform analytic signal, as a `{inphase,
+  quadrature}` pair.
 
 ## [0.4.5] - 2026-06-02
 
