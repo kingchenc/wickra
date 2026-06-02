@@ -833,6 +833,15 @@ export declare class PLUS_DM {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type MinusDmNode = MINUS_DM
+export declare class MINUS_DM {
+  constructor(period: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type StochNode = Stochastic
 export declare class Stochastic {
   constructor(kPeriod: number, dPeriod: number)

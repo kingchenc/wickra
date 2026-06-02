@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   previously available only bundled inside `Adx`, as standalone single-output
   indicators:
   - `PlusDm` (`PLUS_DM`) — Wilder-smoothed plus directional movement.
+  - `MinusDm` (`MINUS_DM`) — Wilder-smoothed minus directional movement.
 
 ## [0.4.5] - 2026-06-02
 

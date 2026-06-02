@@ -161,6 +161,7 @@ for (const [name, make] of Object.entries(scalarFactories)) {
 const candleScalar = {
   ATR: { make: () => new wickra.ATR(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   PLUS_DM: { make: () => new wickra.PLUS_DM(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  MINUS_DM: { make: () => new wickra.MINUS_DM(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   CCI: { make: () => new wickra.CCI(20), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   WilliamsR: { make: () => new wickra.WilliamsR(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   PSAR: { make: () => new wickra.PSAR(0.02, 0.02, 0.2), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },

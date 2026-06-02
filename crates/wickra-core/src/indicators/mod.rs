@@ -158,6 +158,7 @@ mod median_absolute_deviation;
 mod median_price;
 mod mfi;
 mod microprice;
+mod minus_dm;
 mod mom;
 mod morning_doji_star;
 mod morning_evening_star;
@@ -454,6 +455,7 @@ pub use median_absolute_deviation::MedianAbsoluteDeviation;
 pub use median_price::MedianPrice;
 pub use mfi::Mfi;
 pub use microprice::Microprice;
+pub use minus_dm::MinusDm;
 pub use mom::Mom;
 pub use morning_doji_star::MorningDojiStar;
 pub use morning_evening_star::MorningEveningStar;
@@ -670,6 +672,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "ChoppinessIndex",
             "VerticalHorizontalFilter",
             "PlusDm",
+            "MinusDm",
         ],
     ),
     (
@@ -1007,6 +1010,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 291, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 292, "FAMILIES total drifted from indicator count");
     }
 }
