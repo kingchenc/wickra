@@ -8476,6 +8476,153 @@ impl ValueAreaNode {
     }
 }
 
+// ============================== VolumeProfile ==============================
+
+#[napi(object)]
+pub struct VolumeProfileValue {
+    pub price_low: f64,
+    pub price_high: f64,
+    pub bins: Vec<f64>,
+}
+
+#[napi(js_name = "VolumeProfile")]
+pub struct VolumeProfileNode {
+    inner: wc::VolumeProfile,
+}
+#[napi]
+impl VolumeProfileNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, bin_count: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::VolumeProfile::new(period as usize, bin_count as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        volume: f64,
+    ) -> napi::Result<Option<VolumeProfileValue>> {
+        let mid = f64::midpoint(high, low);
+        let candle = wc::Candle::new(mid, high, low, mid, volume, 0).map_err(map_err)?;
+        Ok(self.inner.update(candle).map(|o| VolumeProfileValue {
+            price_low: o.price_low,
+            price_high: o.price_high,
+            bins: o.bins,
+        }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        volume: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "high, low, volume must be equal length".to_string(),
+            ));
+        }
+        let k = self.inner.params().1 + 2;
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * k];
+        for i in 0..n {
+            let mid = f64::midpoint(high[i], low[i]);
+            let candle =
+                wc::Candle::new(mid, high[i], low[i], mid, volume[i], 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * k] = o.price_low;
+                out[i * k + 1] = o.price_high;
+                for (j, b) in o.bins.iter().enumerate() {
+                    out[i * k + 2 + j] = *b;
+                }
+            }
+        }
+        Ok(out)
+    }
+}
+
+// ============================== TpoProfile ==============================
+
+#[napi(object)]
+pub struct TpoProfileValue {
+    pub price_low: f64,
+    pub price_high: f64,
+    pub counts: Vec<f64>,
+}
+
+#[napi(js_name = "TpoProfile")]
+pub struct TpoProfileNode {
+    inner: wc::TpoProfile,
+}
+#[napi]
+impl TpoProfileNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, bin_count: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::TpoProfile::new(period as usize, bin_count as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<TpoProfileValue>> {
+        let mid = f64::midpoint(high, low);
+        let candle = wc::Candle::new(mid, high, low, mid, 1.0, 0).map_err(map_err)?;
+        Ok(self.inner.update(candle).map(|o| TpoProfileValue {
+            price_low: o.price_low,
+            price_high: o.price_high,
+            counts: o.counts,
+        }))
+    }
+    #[napi]
+    pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() {
+            return Err(NapiError::from_reason(
+                "high, low must be equal length".to_string(),
+            ));
+        }
+        let k = self.inner.params().1 + 2;
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * k];
+        for i in 0..n {
+            let mid = f64::midpoint(high[i], low[i]);
+            let candle = wc::Candle::new(mid, high[i], low[i], mid, 1.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * k] = o.price_low;
+                out[i * k + 1] = o.price_high;
+                for (j, count) in o.counts.iter().enumerate() {
+                    out[i * k + 2 + j] = *count;
+                }
+            }
+        }
+        Ok(out)
+    }
+}
+
 // ============================== InitialBalance ==============================
 
 #[napi(object)]

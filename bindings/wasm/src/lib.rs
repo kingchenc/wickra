@@ -6070,6 +6070,135 @@ impl WasmValueArea {
     }
 }
 
+#[wasm_bindgen(js_name = VolumeProfile)]
+pub struct WasmVolumeProfile {
+    inner: wc::VolumeProfile,
+}
+
+#[wasm_bindgen(js_class = VolumeProfile)]
+impl WasmVolumeProfile {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, bin_count: usize) -> Result<WasmVolumeProfile, JsError> {
+        Ok(Self {
+            inner: wc::VolumeProfile::new(period, bin_count).map_err(map_err)?,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        volume: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != volume.len() {
+            return Err(JsError::new("high, low, volume must be equal length"));
+        }
+        let k = self.inner.params().1 + 2;
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * k];
+        for i in 0..n {
+            let mid = f64::midpoint(high[i], low[i]);
+            let c = wc::Candle::new(mid, high[i], low[i], mid, volume[i], 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * k] = o.price_low;
+                out[i * k + 1] = o.price_high;
+                for (j, b) in o.bins.iter().enumerate() {
+                    out[i * k + 2 + j] = *b;
+                }
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    /// Streaming update. Returns `{ priceLow, priceHigh, bins }` once warm, else `null`.
+    pub fn update(&mut self, high: f64, low: f64, volume: f64) -> Result<JsValue, JsError> {
+        let mid = f64::midpoint(high, low);
+        let c = wc::Candle::new(mid, high, low, mid, volume, 0).map_err(map_err)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"priceLow".into(), &o.price_low.into()).ok();
+                Reflect::set(&obj, &"priceHigh".into(), &o.price_high.into()).ok();
+                let bins = Float64Array::from(o.bins.as_slice());
+                Reflect::set(&obj, &"bins".into(), &bins).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = TpoProfile)]
+pub struct WasmTpoProfile {
+    inner: wc::TpoProfile,
+}
+
+#[wasm_bindgen(js_class = TpoProfile)]
+impl WasmTpoProfile {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, bin_count: usize) -> Result<WasmTpoProfile, JsError> {
+        Ok(Self {
+            inner: wc::TpoProfile::new(period, bin_count).map_err(map_err)?,
+        })
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high, low must be equal length"));
+        }
+        let k = self.inner.params().1 + 2;
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * k];
+        for i in 0..n {
+            let mid = f64::midpoint(high[i], low[i]);
+            let c = wc::Candle::new(mid, high[i], low[i], mid, 1.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * k] = o.price_low;
+                out[i * k + 1] = o.price_high;
+                for (j, count) in o.counts.iter().enumerate() {
+                    out[i * k + 2 + j] = *count;
+                }
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    /// Streaming update. Returns `{ priceLow, priceHigh, counts }` once warm, else `null`.
+    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+        let mid = f64::midpoint(high, low);
+        let c = wc::Candle::new(mid, high, low, mid, 1.0, 0).map_err(map_err)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"priceLow".into(), &o.price_low.into()).ok();
+                Reflect::set(&obj, &"priceHigh".into(), &o.price_high.into()).ok();
+                let counts = Float64Array::from(o.counts.as_slice());
+                Reflect::set(&obj, &"counts".into(), &counts).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[wasm_bindgen(js_name = InitialBalance)]
 pub struct WasmInitialBalance {
     inner: wc::InitialBalance,

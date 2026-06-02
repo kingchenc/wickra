@@ -1246,3 +1246,29 @@ test('basis rejects bad input', () => {
   assert.throws(() => new wickra.TermStructureBasis().update(100, 0));
   assert.throws(() => new wickra.CalendarSpread().update(100, 0));
 });
+
+test('VolumeProfile exposes the full histogram', () => {
+  // bar0 single-print at 10 vol 100; bar1 spans 10..14 vol 80 over 4 bins.
+  const vp = new wickra.VolumeProfile(2, 4);
+  assert.equal(vp.update(10, 10, 100), null);
+  const out = vp.update(14, 10, 80);
+  assert.ok(out !== null);
+  assert.ok(Math.abs(out.priceLow - 10) < 1e-9);
+  assert.ok(Math.abs(out.priceHigh - 14) < 1e-9);
+  assert.deepEqual(out.bins.length, 4);
+  assert.ok(Math.abs(out.bins[0] - 120) < 1e-9);
+  for (let i = 1; i < 4; i++) {
+    assert.ok(Math.abs(out.bins[i] - 20) < 1e-9);
+  }
+});
+
+test('TpoProfile counts time at price, volume-agnostic', () => {
+  // bar0 spans 10..14 (+1 each bin); bar1 spans 11..12 (+1 bins 1,2).
+  const tpo = new wickra.TpoProfile(2, 4);
+  assert.equal(tpo.update(14, 10), null);
+  const out = tpo.update(12, 11);
+  assert.ok(out !== null);
+  assert.ok(Math.abs(out.priceLow - 10) < 1e-9);
+  assert.ok(Math.abs(out.priceHigh - 14) < 1e-9);
+  assert.deepEqual(out.counts, [1, 2, 2, 1]);
+});
