@@ -255,6 +255,11 @@ from ._wickra import (
     GravestoneDoji,
     LongLeggedDoji,
     RickshawMan,
+    EveningDojiStar,
+    MorningDojiStar,
+    GapSideBySideWhite,
+    HighWave,
+    Hikkake,
     # Microstructure: order book
     OrderBookImbalanceTop1,
     OrderBookImbalanceTopN,
@@ -537,6 +542,11 @@ __all__ = [
     "GravestoneDoji",
     "LongLeggedDoji",
     "RickshawMan",
+    "EveningDojiStar",
+    "MorningDojiStar",
+    "GapSideBySideWhite",
+    "HighWave",
+    "Hikkake",
     # Microstructure: order book
     "OrderBookImbalanceTop1",
     "OrderBookImbalanceTopN",

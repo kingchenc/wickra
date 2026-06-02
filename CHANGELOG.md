@@ -42,6 +42,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Gravestone Doji** — a doji opening and closing at the low with a long upper shadow, a bearish reversal; -1 (`CDLGRAVESTONEDOJI`).
   - **Long-Legged Doji** — a doji with long shadows on both sides, an indecision signal; +1 detection (`CDLLONGLEGGEDDOJI`).
   - **Rickshaw Man** — a long-legged doji with the body centred in the range, an indecision signal; +1 detection (`CDLRICKSHAWMAN`).
+  - **Evening Doji Star** — a bearish top reversal: long white bar, a doji gapping up, then a black bar closing deep into the first body; -1 (`CDLEVENINGDOJISTAR`).
+  - **Morning Doji Star** — a bullish bottom reversal: long black bar, a doji gapping down, then a white bar closing deep into the first body; +1 (`CDLMORNINGDOJISTAR`).
+  - **Gap Side-by-Side White** — two similar white candles opening side by side after a gap, a continuation; gap up +1, gap down -1 (`CDLGAPSIDESIDEWHITE`).
+  - **High-Wave** — a small body with very long shadows on both sides, an extreme indecision signal; +1 detection (`CDLHIGHWAVE`).
+  - **Hikkake** — an inside bar followed by a failed breakout, a trap; bullish +1, bearish -1 (`CDLHIKKAKE`).
 - **Derivatives family — funding & open interest (part 1).** A new family of
   indicators that consume a perpetual / futures tick (`DerivativesTick`,
   bundling funding rate, mark / index / futures price, open interest,
