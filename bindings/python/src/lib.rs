@@ -11688,6 +11688,15 @@ candle_pattern_no_param!(
 candle_pattern_no_param!(PyStalledPattern, wc::StalledPattern, "StalledPattern");
 candle_pattern_no_param!(PyStickSandwich, wc::StickSandwich, "StickSandwich");
 candle_pattern_no_param!(PyTakuri, wc::Takuri, "Takuri");
+candle_pattern_no_param!(PyClosingMarubozu, wc::ClosingMarubozu, "ClosingMarubozu");
+candle_pattern_no_param!(PyOpeningMarubozu, wc::OpeningMarubozu, "OpeningMarubozu");
+candle_pattern_no_param!(PyTasukiGap, wc::TasukiGap, "TasukiGap");
+candle_pattern_no_param!(PyUniqueThreeRiver, wc::UniqueThreeRiver, "UniqueThreeRiver");
+candle_pattern_no_param!(
+    PyConcealingBabySwallow,
+    wc::ConcealingBabySwallow,
+    "ConcealingBabySwallow"
+);
 // ============================== Microstructure: Order Book ==============================
 //
 // Order-book indicators consume a depth snapshot rather than OHLCV. Streaming
@@ -14224,6 +14233,11 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyStalledPattern>()?;
     m.add_class::<PyStickSandwich>()?;
     m.add_class::<PyTakuri>()?;
+    m.add_class::<PyClosingMarubozu>()?;
+    m.add_class::<PyOpeningMarubozu>()?;
+    m.add_class::<PyTasukiGap>()?;
+    m.add_class::<PyUniqueThreeRiver>()?;
+    m.add_class::<PyConcealingBabySwallow>()?;
     // Microstructure: order book.
     m.add_class::<PyOrderBookImbalanceTop1>()?;
     m.add_class::<PyOrderBookImbalanceTopN>()?;

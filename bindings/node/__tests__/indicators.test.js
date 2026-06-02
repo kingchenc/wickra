@@ -275,6 +275,11 @@ const candleScalar = {
   StalledPattern: { make: () => new wickra.StalledPattern(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   StickSandwich: { make: () => new wickra.StickSandwich(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   Takuri: { make: () => new wickra.Takuri(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  ClosingMarubozu: { make: () => new wickra.ClosingMarubozu(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  OpeningMarubozu: { make: () => new wickra.OpeningMarubozu(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  TasukiGap: { make: () => new wickra.TasukiGap(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  UniqueThreeRiver: { make: () => new wickra.UniqueThreeRiver(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  ConcealingBabySwallow: { make: () => new wickra.ConcealingBabySwallow(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {

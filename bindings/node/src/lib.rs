@@ -8825,6 +8825,19 @@ node_candle_pattern!(
 node_candle_pattern!(StalledPatternNode, wc::StalledPattern, "StalledPattern");
 node_candle_pattern!(StickSandwichNode, wc::StickSandwich, "StickSandwich");
 node_candle_pattern!(TakuriNode, wc::Takuri, "Takuri");
+node_candle_pattern!(ClosingMarubozuNode, wc::ClosingMarubozu, "ClosingMarubozu");
+node_candle_pattern!(OpeningMarubozuNode, wc::OpeningMarubozu, "OpeningMarubozu");
+node_candle_pattern!(TasukiGapNode, wc::TasukiGap, "TasukiGap");
+node_candle_pattern!(
+    UniqueThreeRiverNode,
+    wc::UniqueThreeRiver,
+    "UniqueThreeRiver"
+);
+node_candle_pattern!(
+    ConcealingBabySwallowNode,
+    wc::ConcealingBabySwallow,
+    "ConcealingBabySwallow"
+);
 
 // ============================== Microstructure: Order Book ==============================
 //

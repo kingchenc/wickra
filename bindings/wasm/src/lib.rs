@@ -6402,6 +6402,15 @@ wasm_candle_pattern!(
 wasm_candle_pattern!(WasmStalledPattern, wc::StalledPattern, StalledPattern);
 wasm_candle_pattern!(WasmStickSandwich, wc::StickSandwich, StickSandwich);
 wasm_candle_pattern!(WasmTakuri, wc::Takuri, Takuri);
+wasm_candle_pattern!(WasmClosingMarubozu, wc::ClosingMarubozu, ClosingMarubozu);
+wasm_candle_pattern!(WasmOpeningMarubozu, wc::OpeningMarubozu, OpeningMarubozu);
+wasm_candle_pattern!(WasmTasukiGap, wc::TasukiGap, TasukiGap);
+wasm_candle_pattern!(WasmUniqueThreeRiver, wc::UniqueThreeRiver, UniqueThreeRiver);
+wasm_candle_pattern!(
+    WasmConcealingBabySwallow,
+    wc::ConcealingBabySwallow,
+    ConcealingBabySwallow
+);
 
 // ============================== Microstructure: Order Book ==============================
 //

@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://wickra.org"><img src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/wickra-banner.webp?v=284" alt="Wickra — streaming-first technical indicators" width="100%"></a>
+  <a href="https://wickra.org"><img src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/wickra-banner.webp?v=289" alt="Wickra — streaming-first technical indicators" width="100%"></a>
 </p>
 
 [![CI](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml/badge.svg)](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml)
@@ -47,7 +47,7 @@ Full documentation lives at **[docs.wickra.org](https://docs.wickra.org)**:
   [Node](https://docs.wickra.org/Quickstart-Node),
   [WASM](https://docs.wickra.org/Quickstart-WASM).
 - **Indicators** — a per-indicator deep dive (formula, parameters, warmup) for
-  every one of the 284 indicators; start at the
+  every one of the 289 indicators; start at the
   [indicators overview](https://docs.wickra.org/Indicators-Overview).
 - **Reference** — [warmup periods](https://docs.wickra.org/Warmup-Periods),
   [streaming vs batch](https://docs.wickra.org/Streaming-vs-Batch),
@@ -135,7 +135,7 @@ python -m benchmarks.compare_libraries
 
 ## Indicators
 
-284 streaming-first indicators across eighteen families. Every one passes the
+289 streaming-first indicators across eighteen families. Every one passes the
 `batch == streaming` equivalence test, reference-value tests, and reset
 semantics tests. Each has a per-indicator deep dive (formula, parameters,
 warmup) at [docs.wickra.org](https://docs.wickra.org/Indicators-Overview).
@@ -155,7 +155,7 @@ warmup) at [docs.wickra.org](https://docs.wickra.org/Indicators-Overview).
 | Pivots & S/R         | Classic Pivots, Fibonacci Pivots, Camarilla, Woodie Pivots, DeMark Pivots, Williams Fractals, ZigZag |
 | DeMark               | TD Setup, TD Sequential, TD DeMarker, TD REI, TD Pressure, TD Combo, TD Countdown, TD Lines, TD Range Projection, TD Differential, TD Open, TD Risk Level |
 | Ichimoku & Charts    | Ichimoku Kinko Hyo (Tenkan, Kijun, Senkou A/B, Chikou), Heikin-Ashi |
-| Candlestick Patterns | Doji, Hammer, Inverted Hammer, Hanging Man, Shooting Star, Engulfing, Harami, Morning/Evening Star, Three White Soldiers/Black Crows, Piercing Line/Dark Cloud Cover, Marubozu, Tweezer, Spinning Top, Three Inside Up/Down, Three Outside Up/Down, Two Crows, Upside Gap Two Crows, Identical Three Crows, Three Line Strike, Three Stars in the South, Abandoned Baby, Advance Block, Belt-hold, Breakaway, Counterattack, Doji Star, Dragonfly Doji, Gravestone Doji, Long-Legged Doji, Rickshaw Man, Evening Doji Star, Morning Doji Star, Gap Side-by-Side White, High-Wave, Hikkake, Modified Hikkake, Homing Pigeon, On-Neck, In-Neck, Thrusting, Separating Lines, Kicking, Kicking by Length, Ladder Bottom, Mat Hold, Matching Low, Long Line, Short Line, Rising Three Methods, Falling Three Methods, Upside Gap Three Methods, Downside Gap Three Methods, Stalled Pattern, Stick Sandwich, Takuri |
+| Candlestick Patterns | Doji, Hammer, Inverted Hammer, Hanging Man, Shooting Star, Engulfing, Harami, Morning/Evening Star, Three White Soldiers/Black Crows, Piercing Line/Dark Cloud Cover, Marubozu, Tweezer, Spinning Top, Three Inside Up/Down, Three Outside Up/Down, Two Crows, Upside Gap Two Crows, Identical Three Crows, Three Line Strike, Three Stars in the South, Abandoned Baby, Advance Block, Belt-hold, Breakaway, Counterattack, Doji Star, Dragonfly Doji, Gravestone Doji, Long-Legged Doji, Rickshaw Man, Evening Doji Star, Morning Doji Star, Gap Side-by-Side White, High-Wave, Hikkake, Modified Hikkake, Homing Pigeon, On-Neck, In-Neck, Thrusting, Separating Lines, Kicking, Kicking by Length, Ladder Bottom, Mat Hold, Matching Low, Long Line, Short Line, Rising Three Methods, Falling Three Methods, Upside Gap Three Methods, Downside Gap Three Methods, Stalled Pattern, Stick Sandwich, Takuri, Closing Marubozu, Opening Marubozu, Tasuki Gap, Unique Three River, Concealing Baby Swallow |
 | Microstructure       | Order-Book Imbalance (Top-1 / Top-N / Full), Microprice, Quoted Spread, Depth Slope, Signed Volume, Cumulative Volume Delta, Trade Imbalance, Effective Spread, Realized Spread, Kyle's Lambda, Footprint |
 | Derivatives          | Funding Rate, Funding Rate Mean, Funding Rate Z-Score, Funding Basis, Open-Interest Delta, OI / Price Divergence, OI-Weighted Price, Long/Short Ratio, Taker Buy/Sell Ratio, Liquidation Features, Term-Structure Basis, Calendar Spread |
 | Market Profile       | Value Area (POC / VAH / VAL), Initial Balance, Opening Range |
@@ -238,7 +238,7 @@ A Python live-trading example using the public `websockets` package lives at
 ```
 wickra/
 ├── crates/
-│   ├── wickra-core/         core engine + all 284 indicators
+│   ├── wickra-core/         core engine + all 289 indicators
 │   ├── wickra/              top-level facade crate (publishes on crates.io) + benches/
 │   └── wickra-data/         CSV reader, tick aggregator, live exchange feeds
 ├── bindings/
