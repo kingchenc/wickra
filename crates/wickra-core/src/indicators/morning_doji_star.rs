@@ -238,4 +238,22 @@ mod tests {
         assert!(!t.is_ready());
         assert_eq!(t.update(c(15.0, 15.1, 9.9, 10.0, 0)), Some(0.0));
     }
+
+    #[test]
+    fn zero_range_yields_zero() {
+        let mut t = MorningDojiStar::new();
+        // Flat first bar (range1 == 0) -> rejected.
+        t.update(c(10.0, 10.0, 10.0, 10.0, 0));
+        t.update(c(8.0, 8.1, 7.9, 8.0, 1));
+        assert_eq!(t.update(c(9.0, 13.1, 8.9, 13.0, 2)), Some(0.0));
+    }
+
+    #[test]
+    fn short_first_body_yields_zero() {
+        let mut t = MorningDojiStar::new();
+        // bar1 has a wide range but a tiny body -> not a long black body.
+        t.update(c(10.0, 16.0, 9.0, 9.8, 0));
+        t.update(c(8.0, 8.1, 7.9, 8.0, 1));
+        assert_eq!(t.update(c(9.0, 13.1, 8.9, 13.0, 2)), Some(0.0));
+    }
 }

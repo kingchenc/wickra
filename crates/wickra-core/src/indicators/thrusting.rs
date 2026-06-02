@@ -183,4 +183,12 @@ mod tests {
         assert!(!t.is_ready());
         assert_eq!(t.update(c(15.0, 15.1, 9.0, 10.0, 0)), Some(0.0));
     }
+
+    #[test]
+    fn zero_range_first_bar_yields_zero() {
+        let mut t = Thrusting::new();
+        // Flat first bar (range1 == 0) -> rejected.
+        t.update(c(10.0, 10.0, 10.0, 10.0, 0));
+        assert_eq!(t.update(c(9.0, 10.0, 8.0, 9.5, 1)), Some(0.0));
+    }
 }

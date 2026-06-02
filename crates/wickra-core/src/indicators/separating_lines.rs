@@ -199,4 +199,20 @@ mod tests {
         assert!(!t.is_ready());
         assert_eq!(t.update(c(12.0, 12.1, 9.9, 10.0, 0)), Some(0.0));
     }
+
+    #[test]
+    fn zero_range_yields_zero() {
+        let mut t = SeparatingLines::new();
+        // Flat first bar (range1 == 0) -> rejected.
+        t.update(c(10.0, 10.0, 10.0, 10.0, 0));
+        assert_eq!(t.update(c(10.0, 12.0, 9.0, 11.0, 1)), Some(0.0));
+    }
+
+    #[test]
+    fn short_second_body_yields_zero() {
+        let mut t = SeparatingLines::new();
+        t.update(c(10.0, 12.0, 8.0, 9.0, 0));
+        // Opens coincide but bar2's body is too short to be a separating line.
+        assert_eq!(t.update(c(10.0, 11.0, 9.0, 10.1, 1)), Some(0.0));
+    }
 }

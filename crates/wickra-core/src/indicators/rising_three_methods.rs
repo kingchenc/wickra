@@ -210,4 +210,26 @@ mod tests {
         assert!(!t.is_ready());
         assert_eq!(t.update(c(10.0, 15.1, 9.9, 15.0, 0)), Some(0.0));
     }
+
+    #[test]
+    fn zero_range_first_bar_yields_zero() {
+        let mut t = RisingThreeMethods::new();
+        // Flat first bar (range1 == 0) -> rejected.
+        t.update(c(10.0, 10.0, 10.0, 10.0, 0));
+        t.update(c(14.0, 14.1, 12.9, 13.0, 1));
+        t.update(c(13.5, 13.6, 12.4, 12.5, 2));
+        t.update(c(13.0, 13.1, 11.9, 12.0, 3));
+        assert_eq!(t.update(c(12.5, 16.1, 12.4, 16.0, 4)), Some(0.0));
+    }
+
+    #[test]
+    fn short_first_body_yields_zero() {
+        let mut t = RisingThreeMethods::new();
+        // bar1 has a wide range but a tiny body -> not a long white body.
+        t.update(c(10.0, 16.0, 9.0, 10.2, 0));
+        t.update(c(14.0, 14.1, 12.9, 13.0, 1));
+        t.update(c(13.5, 13.6, 12.4, 12.5, 2));
+        t.update(c(13.0, 13.1, 11.9, 12.0, 3));
+        assert_eq!(t.update(c(12.5, 16.1, 12.4, 16.0, 4)), Some(0.0));
+    }
 }
