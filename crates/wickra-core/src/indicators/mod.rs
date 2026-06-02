@@ -115,6 +115,7 @@ mod hma;
 mod homing_pigeon;
 mod ht_dcphase;
 mod ht_phasor;
+mod ht_trendmode;
 mod hurst_channel;
 mod hurst_exponent;
 mod ichimoku;
@@ -428,6 +429,7 @@ pub use hma::Hma;
 pub use homing_pigeon::HomingPigeon;
 pub use ht_dcphase::HtDcPhase;
 pub use ht_phasor::{HtPhasor, HtPhasorOutput};
+pub use ht_trendmode::HtTrendMode;
 pub use hurst_channel::{HurstChannel, HurstChannelOutput};
 pub use hurst_exponent::HurstExponent;
 pub use ichimoku::{Ichimoku, IchimokuOutput};
@@ -852,6 +854,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "HilbertDominantCycle",
             "HtDcPhase",
             "HtPhasor",
+            "HtTrendMode",
             "SineWave",
             "Decycler",
             "DecyclerOscillator",
@@ -1058,6 +1061,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 308, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 309, "FAMILIES total drifted from indicator count");
     }
 }

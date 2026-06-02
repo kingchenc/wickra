@@ -42,6 +42,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   quadrature}` pair.
 - **TA-Lib parity — `HtDcPhase` (`HT_DCPHASE`)** — the phase angle (in degrees)
   of the Hilbert-transform dominant cycle.
+- **TA-Lib parity — `HtTrendMode` (`HT_TRENDMODE`)** — Ehlers' trend (`1`) vs
+  cycle (`0`) classification from the Hilbert-transform dominant cycle.
 
 ## [0.4.5] - 2026-06-02
 

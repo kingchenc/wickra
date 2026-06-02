@@ -103,6 +103,7 @@ SCALAR = [
     (ta.EmpiricalModeDecomposition, (20, 0.5)),
     (ta.HilbertDominantCycle, ()),
     (ta.HT_DCPHASE, ()),
+    (ta.HT_TRENDMODE, ()),
     (ta.AdaptiveCycle, ()),
     (ta.SineWave, ()),
     (ta.FAMA, (0.5, 0.05)),

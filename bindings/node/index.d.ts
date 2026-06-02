@@ -2192,6 +2192,15 @@ export declare class HT_DCPHASE {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type HtTrendModeNode = HT_TRENDMODE
+export declare class HT_TRENDMODE {
+  constructor()
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type HilbertDominantCycleNode = HilbertDominantCycle
 export declare class HilbertDominantCycle {
   constructor()

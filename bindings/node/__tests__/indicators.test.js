@@ -97,6 +97,7 @@ const scalarFactories = {
   EmpiricalModeDecomposition: () => new wickra.EmpiricalModeDecomposition(20, 0.5),
   HilbertDominantCycle: () => new wickra.HilbertDominantCycle(),
   HT_DCPHASE: () => new wickra.HT_DCPHASE(),
+  HT_TRENDMODE: () => new wickra.HT_TRENDMODE(),
   AdaptiveCycle: () => new wickra.AdaptiveCycle(),
   SineWave: () => new wickra.SineWave(),
   FAMA: () => new wickra.FAMA(0.5, 0.05),
