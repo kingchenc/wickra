@@ -12,6 +12,7 @@ SCALAR_INDICATORS = [
     (ta.EMA, (14,)),
     (ta.WMA, (14,)),
     (ta.RSI, (14,)),
+    (ta.AnchoredRSI, ()),
     (ta.MACD, ()),
     (ta.BollingerBands, ()),
 ]
@@ -42,6 +43,7 @@ def test_reset_returns_to_initial_state(cls, args):
         (ta.EMA, (14,), 14),
         (ta.WMA, (14,), 14),
         (ta.RSI, (14,), 15),
+        (ta.AnchoredRSI, (), 2),
         (ta.BollingerBands, (20, 2.0), 20),
     ],
 )

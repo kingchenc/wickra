@@ -1682,6 +1682,44 @@ impl WasmAdOscillator {
     }
 }
 
+#[wasm_bindgen(js_name = AnchoredRSI)]
+pub struct WasmAnchoredRsi {
+    inner: wc::AnchoredRsi,
+}
+
+#[wasm_bindgen(js_class = AnchoredRSI)]
+impl WasmAnchoredRsi {
+    #[wasm_bindgen(constructor)]
+    #[allow(clippy::new_without_default)]
+    pub fn new() -> WasmAnchoredRsi {
+        Self {
+            inner: wc::AnchoredRsi::new(),
+        }
+    }
+    #[wasm_bindgen(js_name = setAnchor)]
+    pub fn set_anchor(&mut self) {
+        self.inner.set_anchor();
+    }
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let out = flatten(self.inner.batch(prices));
+        Float64Array::from(out.as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[wasm_bindgen(js_name = AnchoredVWAP)]
 pub struct WasmAnchoredVwap {
     inner: wc::AnchoredVwap,

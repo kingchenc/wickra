@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Anchored RSI** — a cumulative Relative Strength Index whose averaging begins at a runtime-chosen anchor bar (`set_anchor`), the momentum counterpart to Anchored VWAP. Every up- and down-move since the anchor is weighted equally, so it reports the RSI of the entire move since the anchor point. Scalar input, Momentum Oscillators family; available in Rust, Python, Node and WASM.
+
 ## [0.4.4] - 2026-06-02
 
 ### Added

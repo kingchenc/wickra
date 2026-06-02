@@ -32,6 +32,7 @@ const scalarFactories = {
   EMA: () => new wickra.EMA(14),
   WMA: () => new wickra.WMA(14),
   RSI: () => new wickra.RSI(14),
+  AnchoredRSI: () => new wickra.AnchoredRSI(),
   DEMA: () => new wickra.DEMA(10),
   TEMA: () => new wickra.TEMA(10),
   HMA: () => new wickra.HMA(9),

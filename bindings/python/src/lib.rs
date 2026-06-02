@@ -5052,6 +5052,58 @@ impl PyAdOscillator {
     }
 }
 
+// ============================== Anchored RSI ==============================
+
+#[pyclass(name = "AnchoredRSI", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyAnchoredRsi {
+    inner: wc::AnchoredRsi,
+}
+
+#[pymethods]
+impl PyAnchoredRsi {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::AnchoredRsi::new(),
+        }
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    /// Re-anchor the cumulative window at the next bar that arrives.
+    fn set_anchor(&mut self) {
+        self.inner.set_anchor();
+    }
+    /// Batch over a close-price numpy column.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "AnchoredRSI()".to_string()
+    }
+}
+
 // ============================== Anchored VWAP ==============================
 
 #[pyclass(name = "AnchoredVWAP", module = "wickra._wickra", skip_from_py_object)]
@@ -14058,6 +14110,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyNvi>()?;
     m.add_class::<PyPvi>()?;
     m.add_class::<PyAdOscillator>()?;
+    m.add_class::<PyAnchoredRsi>()?;
     m.add_class::<PyAnchoredVwap>()?;
     m.add_class::<PyDemandIndex>()?;
     m.add_class::<PyTsv>()?;
