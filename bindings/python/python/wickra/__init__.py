@@ -227,6 +227,10 @@ from ._wickra import (
     TpoProfile,
     InitialBalance,
     OpeningRange,
+    # Alt-Chart Bars
+    RenkoBars,
+    KagiBars,
+    PointAndFigureBars,
     # Candlestick patterns
     Doji,
     Hammer,
@@ -542,6 +546,10 @@ __all__ = [
     "TpoProfile",
     "InitialBalance",
     "OpeningRange",
+    # Alt-Chart Bars
+    "RenkoBars",
+    "KagiBars",
+    "PointAndFigureBars",
     # Candlestick patterns
     "Doji",
     "Hammer",

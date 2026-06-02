@@ -86,3 +86,10 @@ path = "fuzz_targets/tick_aggregator.rs"
 test = false
 doc = false
 bench = false
+
+[[bin]]
+name = "bar_builder_update_candle"
+path = "fuzz_targets/bar_builder_update_candle.rs"
+test = false
+doc = false
+bench = false

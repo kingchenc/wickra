@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Anchored RSI** — a cumulative Relative Strength Index whose averaging begins at a runtime-chosen anchor bar (`set_anchor`), the momentum counterpart to Anchored VWAP. Every up- and down-move since the anchor is weighted equally, so it reports the RSI of the entire move since the anchor point. Scalar input, Momentum Oscillators family; available in Rust, Python, Node and WASM.
 - **Volume Profile** — the full per-bin volume distribution over a rolling window, exposing the raw histogram (price bounds plus per-bin volume) that Value Area reduces to POC/VAH/VAL. Market Profile family; candle input, available in Rust, Python, Node and WASM.
 - **TPO Profile** — the Time-Price-Opportunity (market-profile letter) distribution: a volume-agnostic count of how many periods traded at each price level over a rolling window. Market Profile family; candle input, available in Rust, Python, Node and WASM.
+- **Alt-Chart Bars** — a new `BarBuilder` trait and family of price-driven chart constructors that emit a variable number of completed bars per candle (so they are deliberately not `Indicator`s): **Renko** (fixed box-size bricks with the 2-box reversal rule), **Kagi** (reversal-amount line segments), and **Point & Figure** (box-size X/O columns with an N-box reversal). Available in Rust, Python, Node and WASM.
 
 ## [0.4.4] - 2026-06-02
 

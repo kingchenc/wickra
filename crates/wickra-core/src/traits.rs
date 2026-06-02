@@ -1,5 +1,7 @@
 //! Core traits: the [`Indicator`] state machine and the [`BatchExt`] blanket extension.
 
+use crate::ohlcv::Candle;
+
 /// A streaming technical indicator.
 ///
 /// Every indicator in Wickra implements this trait. The contract is:
@@ -87,6 +89,58 @@ pub trait BatchExt: Indicator {
 }
 
 impl<T: Indicator> BatchExt for T {}
+
+/// A streaming *bar builder* — an alternative-chart constructor (Renko, Kagi,
+/// Point-and-Figure) that turns a candle stream into a stream of price-driven
+/// bars.
+///
+/// Bar builders are deliberately **not** [`Indicator`]s: a single input candle
+/// may complete zero, one, or many bars (a large move can print several Renko
+/// bricks at once), which breaks the `update -> Option<Output>` one-in-one-out
+/// contract and the `batch == repeated update` length invariant. They get their
+/// own trait instead, returning a `Vec` of freshly completed bars per candle.
+///
+/// The contract is:
+///
+/// - [`update`](BarBuilder::update) ingests one candle and returns every bar it
+///   *completed* on that candle, in chronological order. An empty vector means
+///   the move was not large enough to finish a bar yet.
+/// - [`reset`](BarBuilder::reset) clears all state, returning the builder to the
+///   configuration it had immediately after construction.
+/// - [`batch`](BarBuilder::batch) concatenates the bars from replaying `update`
+///   over a slice; the flattened length is data-dependent, not the input length.
+///
+/// Bar builders cannot participate in [`Chain`] (which requires
+/// `Indicator<Input = f64, Output = f64>`); feed a downstream indicator from the
+/// bars' close prices manually if you need to chain off them.
+///
+/// ```text
+/// let mut renko = RenkoBars::new(1.0).unwrap();
+/// let bricks = renko.update(candle); // Vec<RenkoBrick>: 0..n completed bricks
+/// ```
+pub trait BarBuilder {
+    /// Type of one completed bar.
+    type Bar;
+
+    /// Feed one candle and return every bar completed on it (possibly none).
+    fn update(&mut self, candle: Candle) -> Vec<Self::Bar>;
+
+    /// Reset all internal state to the freshly-constructed configuration.
+    fn reset(&mut self);
+
+    /// Stable, human-readable builder name.
+    fn name(&self) -> &'static str;
+
+    /// Replay `update` over a slice, concatenating all completed bars. The
+    /// result length is data-dependent (not the input length).
+    fn batch(&mut self, candles: &[Candle]) -> Vec<Self::Bar> {
+        let mut out = Vec::new();
+        for candle in candles {
+            out.extend(self.update(*candle));
+        }
+        out
+    }
+}
 
 /// Chain two indicators so the output of the first becomes the input of the second.
 ///

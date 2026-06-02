@@ -12,7 +12,7 @@
 use js_sys::{Array, Float64Array, Object, Reflect};
 use wasm_bindgen::prelude::*;
 use wickra_core as wc;
-use wickra_core::{BatchExt, Indicator};
+use wickra_core::{BarBuilder, BatchExt, Indicator};
 
 fn map_err(e: wc::Error) -> JsError {
     JsError::new(&e.to_string())
@@ -8514,6 +8514,161 @@ impl WasmInformationRatio {
     #[wasm_bindgen(js_name = warmupPeriod)]
     pub fn warmup_period(&self) -> usize {
         self.inner.warmup_period()
+    }
+}
+
+// ============================== Alt-Chart Bars ==============================
+//
+// Bar builders consume close prices and emit a variable number of completed bars
+// per input. `update(close)` returns a JS array of the bars finished on that
+// close; `batch` returns all completed bars concatenated.
+
+#[wasm_bindgen(js_name = RenkoBars)]
+pub struct WasmRenkoBars {
+    inner: wc::RenkoBars,
+}
+
+#[wasm_bindgen(js_class = RenkoBars)]
+impl WasmRenkoBars {
+    #[wasm_bindgen(constructor)]
+    pub fn new(box_size: f64) -> Result<WasmRenkoBars, JsError> {
+        Ok(Self {
+            inner: wc::RenkoBars::new(box_size).map_err(map_err)?,
+        })
+    }
+    /// Returns an array of `{ open, close, direction }` bricks completed on this close.
+    pub fn update(&mut self, close: f64) -> Result<Array, JsError> {
+        let candle = wc::Candle::new(close, close, close, close, 1.0, 0).map_err(map_err)?;
+        let arr = Array::new();
+        for b in self.inner.update(candle) {
+            let obj = Object::new();
+            Reflect::set(&obj, &"open".into(), &b.open.into()).ok();
+            Reflect::set(&obj, &"close".into(), &b.close.into()).ok();
+            Reflect::set(&obj, &"direction".into(), &f64::from(b.direction).into()).ok();
+            arr.push(&obj);
+        }
+        Ok(arr)
+    }
+    pub fn batch(&mut self, close: &[f64]) -> Result<Array, JsError> {
+        let arr = Array::new();
+        for &price in close {
+            let candle = wc::Candle::new(price, price, price, price, 1.0, 0).map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                let obj = Object::new();
+                Reflect::set(&obj, &"open".into(), &b.open.into()).ok();
+                Reflect::set(&obj, &"close".into(), &b.close.into()).ok();
+                Reflect::set(&obj, &"direction".into(), &f64::from(b.direction).into()).ok();
+                arr.push(&obj);
+            }
+        }
+        Ok(arr)
+    }
+    #[wasm_bindgen(js_name = boxSize)]
+    pub fn box_size(&self) -> f64 {
+        self.inner.box_size()
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = KagiBars)]
+pub struct WasmKagiBars {
+    inner: wc::KagiBars,
+}
+
+#[wasm_bindgen(js_class = KagiBars)]
+impl WasmKagiBars {
+    #[wasm_bindgen(constructor)]
+    pub fn new(reversal: f64) -> Result<WasmKagiBars, JsError> {
+        Ok(Self {
+            inner: wc::KagiBars::new(reversal).map_err(map_err)?,
+        })
+    }
+    /// Returns an array of `{ start, end, direction }` segments completed on this close.
+    pub fn update(&mut self, close: f64) -> Result<Array, JsError> {
+        let candle = wc::Candle::new(close, close, close, close, 1.0, 0).map_err(map_err)?;
+        let arr = Array::new();
+        for b in self.inner.update(candle) {
+            let obj = Object::new();
+            Reflect::set(&obj, &"start".into(), &b.start.into()).ok();
+            Reflect::set(&obj, &"end".into(), &b.end.into()).ok();
+            Reflect::set(&obj, &"direction".into(), &f64::from(b.direction).into()).ok();
+            arr.push(&obj);
+        }
+        Ok(arr)
+    }
+    pub fn batch(&mut self, close: &[f64]) -> Result<Array, JsError> {
+        let arr = Array::new();
+        for &price in close {
+            let candle = wc::Candle::new(price, price, price, price, 1.0, 0).map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                let obj = Object::new();
+                Reflect::set(&obj, &"start".into(), &b.start.into()).ok();
+                Reflect::set(&obj, &"end".into(), &b.end.into()).ok();
+                Reflect::set(&obj, &"direction".into(), &f64::from(b.direction).into()).ok();
+                arr.push(&obj);
+            }
+        }
+        Ok(arr)
+    }
+    pub fn reversal(&self) -> f64 {
+        self.inner.reversal()
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = PointAndFigureBars)]
+pub struct WasmPointAndFigureBars {
+    inner: wc::PointAndFigureBars,
+}
+
+#[wasm_bindgen(js_class = PointAndFigureBars)]
+impl WasmPointAndFigureBars {
+    #[wasm_bindgen(constructor)]
+    pub fn new(box_size: f64, reversal: usize) -> Result<WasmPointAndFigureBars, JsError> {
+        Ok(Self {
+            inner: wc::PointAndFigureBars::new(box_size, reversal).map_err(map_err)?,
+        })
+    }
+    /// Returns an array of `{ direction, high, low }` columns completed on this close.
+    pub fn update(&mut self, close: f64) -> Result<Array, JsError> {
+        let candle = wc::Candle::new(close, close, close, close, 1.0, 0).map_err(map_err)?;
+        let arr = Array::new();
+        for col in self.inner.update(candle) {
+            let obj = Object::new();
+            Reflect::set(&obj, &"direction".into(), &f64::from(col.direction).into()).ok();
+            Reflect::set(&obj, &"high".into(), &col.high.into()).ok();
+            Reflect::set(&obj, &"low".into(), &col.low.into()).ok();
+            arr.push(&obj);
+        }
+        Ok(arr)
+    }
+    pub fn batch(&mut self, close: &[f64]) -> Result<Array, JsError> {
+        let arr = Array::new();
+        for &price in close {
+            let candle = wc::Candle::new(price, price, price, price, 1.0, 0).map_err(map_err)?;
+            for col in self.inner.update(candle) {
+                let obj = Object::new();
+                Reflect::set(&obj, &"direction".into(), &f64::from(col.direction).into()).ok();
+                Reflect::set(&obj, &"high".into(), &col.high.into()).ok();
+                Reflect::set(&obj, &"low".into(), &col.low.into()).ok();
+                arr.push(&obj);
+            }
+        }
+        Ok(arr)
+    }
+    #[wasm_bindgen(js_name = boxSize)]
+    pub fn box_size(&self) -> f64 {
+        self.inner.box_size()
+    }
+    pub fn reversal(&self) -> usize {
+        self.inner.reversal()
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
     }
 }
 

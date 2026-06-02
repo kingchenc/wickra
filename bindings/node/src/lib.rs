@@ -16,7 +16,7 @@ use napi::Error as NapiError;
 use napi::Status;
 use napi_derive::napi;
 use wickra_core as wc;
-use wickra_core::{BatchExt, Indicator};
+use wickra_core::{BarBuilder, BatchExt, Indicator};
 
 fn map_err(e: wc::Error) -> NapiError {
     NapiError::new(Status::InvalidArg, e.to_string())
@@ -11057,6 +11057,190 @@ impl InformationRatioNode {
     #[napi(js_name = "warmupPeriod")]
     pub fn warmup_period(&self) -> u32 {
         self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Alt-Chart Bars ==============================
+//
+// Bar builders consume close prices and emit a variable number of completed bars
+// per input. `update(close)` returns the bars finished on that close; `batch`
+// returns all completed bars concatenated.
+
+#[napi(object)]
+pub struct RenkoBrickValue {
+    pub open: f64,
+    pub close: f64,
+    pub direction: i32,
+}
+
+#[napi(js_name = "RenkoBars")]
+pub struct RenkoBarsNode {
+    inner: wc::RenkoBars,
+}
+#[napi]
+impl RenkoBarsNode {
+    #[napi(constructor)]
+    pub fn new(box_size: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::RenkoBars::new(box_size).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, close: f64) -> napi::Result<Vec<RenkoBrickValue>> {
+        let candle = wc::Candle::new(close, close, close, close, 1.0, 0).map_err(map_err)?;
+        Ok(self
+            .inner
+            .update(candle)
+            .into_iter()
+            .map(|b| RenkoBrickValue {
+                open: b.open,
+                close: b.close,
+                direction: i32::from(b.direction),
+            })
+            .collect())
+    }
+    #[napi]
+    pub fn batch(&mut self, close: Vec<f64>) -> napi::Result<Vec<RenkoBrickValue>> {
+        let mut out = Vec::new();
+        for price in close {
+            let candle = wc::Candle::new(price, price, price, price, 1.0, 0).map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                out.push(RenkoBrickValue {
+                    open: b.open,
+                    close: b.close,
+                    direction: i32::from(b.direction),
+                });
+            }
+        }
+        Ok(out)
+    }
+    #[napi(js_name = "boxSize")]
+    pub fn box_size(&self) -> f64 {
+        self.inner.box_size()
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[napi(object)]
+pub struct KagiSegmentValue {
+    pub start: f64,
+    pub end: f64,
+    pub direction: i32,
+}
+
+#[napi(js_name = "KagiBars")]
+pub struct KagiBarsNode {
+    inner: wc::KagiBars,
+}
+#[napi]
+impl KagiBarsNode {
+    #[napi(constructor)]
+    pub fn new(reversal: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::KagiBars::new(reversal).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, close: f64) -> napi::Result<Vec<KagiSegmentValue>> {
+        let candle = wc::Candle::new(close, close, close, close, 1.0, 0).map_err(map_err)?;
+        Ok(self
+            .inner
+            .update(candle)
+            .into_iter()
+            .map(|b| KagiSegmentValue {
+                start: b.start,
+                end: b.end,
+                direction: i32::from(b.direction),
+            })
+            .collect())
+    }
+    #[napi]
+    pub fn batch(&mut self, close: Vec<f64>) -> napi::Result<Vec<KagiSegmentValue>> {
+        let mut out = Vec::new();
+        for price in close {
+            let candle = wc::Candle::new(price, price, price, price, 1.0, 0).map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                out.push(KagiSegmentValue {
+                    start: b.start,
+                    end: b.end,
+                    direction: i32::from(b.direction),
+                });
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reversal(&self) -> f64 {
+        self.inner.reversal()
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[napi(object)]
+pub struct PnfColumnValue {
+    pub direction: i32,
+    pub high: f64,
+    pub low: f64,
+}
+
+#[napi(js_name = "PointAndFigureBars")]
+pub struct PointAndFigureBarsNode {
+    inner: wc::PointAndFigureBars,
+}
+#[napi]
+impl PointAndFigureBarsNode {
+    #[napi(constructor)]
+    pub fn new(box_size: f64, reversal: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::PointAndFigureBars::new(box_size, reversal as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, close: f64) -> napi::Result<Vec<PnfColumnValue>> {
+        let candle = wc::Candle::new(close, close, close, close, 1.0, 0).map_err(map_err)?;
+        Ok(self
+            .inner
+            .update(candle)
+            .into_iter()
+            .map(|col| PnfColumnValue {
+                direction: i32::from(col.direction),
+                high: col.high,
+                low: col.low,
+            })
+            .collect())
+    }
+    #[napi]
+    pub fn batch(&mut self, close: Vec<f64>) -> napi::Result<Vec<PnfColumnValue>> {
+        let mut out = Vec::new();
+        for price in close {
+            let candle = wc::Candle::new(price, price, price, price, 1.0, 0).map_err(map_err)?;
+            for col in self.inner.update(candle) {
+                out.push(PnfColumnValue {
+                    direction: i32::from(col.direction),
+                    high: col.high,
+                    low: col.low,
+                });
+            }
+        }
+        Ok(out)
+    }
+    #[napi(js_name = "boxSize")]
+    pub fn box_size(&self) -> f64 {
+        self.inner.box_size()
+    }
+    #[napi]
+    pub fn reversal(&self) -> u32 {
+        self.inner.reversal() as u32
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
     }
 }
 

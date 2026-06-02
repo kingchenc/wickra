@@ -2649,3 +2649,44 @@ def test_basis_indicators_streaming_equals_batch():
         [streamer.update(futures[i], mark[i]) for i in range(n)], dtype=np.float64
     )
     assert _eq_nan(batch, streamed)
+
+
+# --- Alt-Chart Bars ------------------------------------------------------
+
+
+def test_renko_bars_reference():
+    r = ta.RenkoBars(1.0)
+    assert r.update(10.0) == []  # seed
+    assert r.update(13.0) == [(10.0, 11.0, 1), (11.0, 12.0, 1), (12.0, 13.0, 1)]
+    assert r.update(10.0) == [(12.0, 11.0, -1), (11.0, 10.0, -1)]  # 2-box reversal
+
+
+def test_renko_bars_batch_shape():
+    r = ta.RenkoBars(1.0)
+    out = r.batch(np.array([10.0, 11.0, 12.0, 13.0]))
+    assert out.shape == (3, 3)
+    np.testing.assert_allclose(out[:, 2], [1.0, 1.0, 1.0])
+
+
+def test_kagi_bars_reference():
+    k = ta.KagiBars(2.0)
+    assert k.update(10.0) == []  # seed
+    assert k.update(11.0) == []  # establishes up
+    assert k.update(15.0) == []  # extends
+    assert k.update(12.0) == [(10.0, 15.0, 1)]  # reversal closes up segment
+
+
+def test_point_and_figure_bars_reference():
+    pnf = ta.PointAndFigureBars(1.0, 3)
+    assert pnf.update(10.0) == []  # seed
+    assert pnf.update(13.0) == []  # starts X column
+    assert pnf.update(15.0) == []  # extends up
+    assert pnf.update(12.0) == [(1, 15.0, 10.0)]  # 3-box reversal closes X column
+
+
+def test_bar_builders_reset():
+    r = ta.RenkoBars(1.0)
+    r.update(10.0)
+    r.update(15.0)
+    r.reset()
+    assert r.update(50.0) == []  # re-seeds after reset
