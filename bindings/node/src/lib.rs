@@ -8632,6 +8632,47 @@ impl EmpiricalModeDecompositionNode {
     }
 }
 
+#[napi(js_name = "HT_DCPHASE")]
+pub struct HtDcPhaseNode {
+    inner: wc::HtDcPhase,
+}
+
+impl Default for HtDcPhaseNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl HtDcPhaseNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::HtDcPhase::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 #[napi(js_name = "HilbertDominantCycle")]
 pub struct HilbertDominantCycleNode {
     inner: wc::HilbertDominantCycle,

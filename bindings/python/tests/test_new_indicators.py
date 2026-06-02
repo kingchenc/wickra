@@ -102,6 +102,7 @@ SCALAR = [
     (ta.EhlersStochastic, (20,)),
     (ta.EmpiricalModeDecomposition, (20, 0.5)),
     (ta.HilbertDominantCycle, ()),
+    (ta.HT_DCPHASE, ()),
     (ta.AdaptiveCycle, ()),
     (ta.SineWave, ()),
     (ta.FAMA, (0.5, 0.05)),

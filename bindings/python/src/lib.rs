@@ -10887,6 +10887,7 @@ py_no_params_scalar!(
     wc::HilbertDominantCycle
 );
 py_no_params_scalar!(PyAdaptiveCycle, "AdaptiveCycle", wc::AdaptiveCycle);
+py_no_params_scalar!(PyHtDcPhase, "HT_DCPHASE", wc::HtDcPhase);
 
 // SineWave needs a `lead` accessor in addition to scalar value, but otherwise
 // matches the parameterless surface.
@@ -15648,6 +15649,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyEhlersStochastic>()?;
     m.add_class::<PyEmd>()?;
     m.add_class::<PyHilbertDominantCycle>()?;
+    m.add_class::<PyHtDcPhase>()?;
     m.add_class::<PyAdaptiveCycle>()?;
     m.add_class::<PySineWave>()?;
     m.add_class::<PyMama>()?;

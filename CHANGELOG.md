@@ -40,6 +40,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **TA-Lib parity — `HtPhasor` (`HT_PHASOR`)** — the in-phase and quadrature
   components of the Hilbert-transform analytic signal, as a `{inphase,
   quadrature}` pair.
+- **TA-Lib parity — `HtDcPhase` (`HT_DCPHASE`)** — the phase angle (in degrees)
+  of the Hilbert-transform dominant cycle.
 
 ## [0.4.5] - 2026-06-02
 

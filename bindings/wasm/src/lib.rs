@@ -4314,6 +4314,39 @@ impl WasmAroon {
 
 // ============================== Family 10: parameterless / multi-output ==============================
 
+#[wasm_bindgen(js_name = HT_DCPHASE)]
+pub struct WasmHtDcPhase {
+    inner: wc::HtDcPhase,
+}
+
+#[wasm_bindgen(js_class = HT_DCPHASE)]
+impl WasmHtDcPhase {
+    #[wasm_bindgen(constructor)]
+    #[allow(clippy::new_without_default)]
+    pub fn new() -> WasmHtDcPhase {
+        Self {
+            inner: wc::HtDcPhase::new(),
+        }
+    }
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        Float64Array::from(flatten(self.inner.batch(prices)).as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[wasm_bindgen(js_name = HilbertDominantCycle)]
 pub struct WasmHilbertDominantCycle {
     inner: wc::HilbertDominantCycle,
