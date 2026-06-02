@@ -691,6 +691,72 @@ impl MacdFixNode {
     }
 }
 
+#[napi(js_name = "MACDEXT")]
+pub struct MacdExtNode {
+    inner: wc::MacdExt,
+}
+
+#[napi]
+impl MacdExtNode {
+    /// Moving-average types are TA-Lib `MA_Type` codes `0..=5`
+    /// (SMA, EMA, WMA, DEMA, TEMA, TRIMA).
+    #[napi(constructor)]
+    pub fn new(
+        fast: u32,
+        fast_matype: u32,
+        slow: u32,
+        slow_matype: u32,
+        signal: u32,
+        signal_matype: u32,
+    ) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::MacdExt::new(
+                fast as usize,
+                wc::MaType::from_code(fast_matype).map_err(map_err)?,
+                slow as usize,
+                wc::MaType::from_code(slow_matype).map_err(map_err)?,
+                signal as usize,
+                wc::MaType::from_code(signal_matype).map_err(map_err)?,
+            )
+            .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<MacdValue> {
+        self.inner.update(value).map(|o| MacdValue {
+            macd: o.macd,
+            signal: o.signal,
+            histogram: o.histogram,
+        })
+    }
+    /// Batch over a price array. Returns a flat array of length `3 * n`,
+    /// interleaved per row as `[macd0, signal0, histogram0, macd1, ...]`.
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        let mut out = vec![f64::NAN; prices.len() * 3];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.macd;
+                out[i * 3 + 1] = o.signal;
+                out[i * 3 + 2] = o.histogram;
+            }
+        }
+        out
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== Bollinger ==============================
 
 #[napi(object)]

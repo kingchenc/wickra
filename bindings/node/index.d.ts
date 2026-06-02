@@ -868,6 +868,23 @@ export declare class MACDFIX {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type MacdExtNode = MACDEXT
+export declare class MACDEXT {
+  /**
+   * Moving-average types are TA-Lib `MA_Type` codes `0..=5`
+   * (SMA, EMA, WMA, DEMA, TEMA, TRIMA).
+   */
+  constructor(fast: number, fastMatype: number, slow: number, slowMatype: number, signal: number, signalMatype: number)
+  update(value: number): MacdValue | null
+  /**
+   * Batch over a price array. Returns a flat array of length `3 * n`,
+   * interleaved per row as `[macd0, signal0, histogram0, macd1, ...]`.
+   */
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type BollingerNode = BollingerBands
 export declare class BollingerBands {
   constructor(period: number, multiplier: number)

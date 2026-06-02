@@ -81,9 +81,9 @@ pub use indicators::{
     Kvo, KylesLambda, LadderBottom, LaguerreRsi, LeadLagCrossCorrelation,
     LeadLagCrossCorrelationOutput, LinRegAngle, LinRegChannel, LinRegChannelOutput,
     LinRegIntercept, LinRegSlope, LinearRegression, LiquidationFeatures, LiquidationFeaturesOutput,
-    LongLeggedDoji, LongLine, LongShortRatio, MaEnvelope, MaEnvelopeOutput, MacdFix, MacdIndicator,
-    MacdOutput, Mama, MamaOutput, MarketFacilitationIndex, Marubozu, MassIndex, MatHold,
-    MatchingLow, MaxDrawdown, McGinleyDynamic, MedianAbsoluteDeviation, MedianPrice, Mfi,
+    LongLeggedDoji, LongLine, LongShortRatio, MaEnvelope, MaEnvelopeOutput, MacdExt, MacdFix,
+    MacdIndicator, MacdOutput, Mama, MamaOutput, MarketFacilitationIndex, Marubozu, MassIndex,
+    MatHold, MatchingLow, MaxDrawdown, McGinleyDynamic, MedianAbsoluteDeviation, MedianPrice, Mfi,
     Microprice, MidPoint, MidPrice, MinusDi, MinusDm, Mom, MorningDojiStar, MorningEveningStar,
     Natr, Nvi, OIPriceDivergence, OIWeighted, Obv, OmegaRatio, OnNeck, OpenInterestDelta,
     OpeningMarubozu, OpeningRange, OpeningRangeOutput, OrderBookImbalanceFull,
@@ -116,6 +116,9 @@ pub use indicators::{
 // line so the indicator-count tooling (which scans the braced block above and
 // strips only `*Output` companions) does not count it as a separate indicator.
 pub use indicators::FootprintLevel;
+// `MaType` is a moving-average selector enum used by `MacdExt`, re-exported on
+// its own line so the indicator-count tooling does not count it as an indicator.
+pub use indicators::MaType;
 // Bar element types for the alt-chart builders, re-exported on their own lines so
 // the indicator-count tooling (which scans only the braced block above) does not
 // count them as separate indicators.

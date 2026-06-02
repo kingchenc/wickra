@@ -1412,6 +1412,65 @@ impl WasmAvgPrice {
     }
 }
 
+#[wasm_bindgen(js_name = MACDEXT)]
+pub struct WasmMacdExt {
+    inner: wc::MacdExt,
+}
+
+#[wasm_bindgen(js_class = MACDEXT)]
+impl WasmMacdExt {
+    /// Moving-average types are TA-Lib `MA_Type` codes `0..=5`.
+    #[wasm_bindgen(constructor)]
+    pub fn new(
+        fast: usize,
+        fast_matype: u32,
+        slow: usize,
+        slow_matype: u32,
+        signal: usize,
+        signal_matype: u32,
+    ) -> Result<WasmMacdExt, JsError> {
+        Ok(Self {
+            inner: wc::MacdExt::new(
+                fast,
+                wc::MaType::from_code(fast_matype).map_err(map_err)?,
+                slow,
+                wc::MaType::from_code(slow_matype).map_err(map_err)?,
+                signal,
+                wc::MaType::from_code(signal_matype).map_err(map_err)?,
+            )
+            .map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, value: f64) -> JsValue {
+        match self.inner.update(value) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"macd".into(), &o.macd.into()).ok();
+                Reflect::set(&obj, &"signal".into(), &o.signal.into()).ok();
+                Reflect::set(&obj, &"histogram".into(), &o.histogram.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        }
+    }
+    /// Returns a flat `Float64Array` of length `3 * n`: `[macd0, sig0, hist0, ...]`.
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let n = prices.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.macd;
+                out[i * 3 + 1] = o.signal;
+                out[i * 3 + 2] = o.histogram;
+            }
+        }
+        Float64Array::from(out.as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
 #[wasm_bindgen(js_name = MACDFIX)]
 pub struct WasmMacdFix {
     inner: wc::MacdFix,

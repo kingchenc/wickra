@@ -34,6 +34,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **TA-Lib parity — `SarExt` (`SAREXT`)** — Parabolic SAR with a start value,
   reversal offset, independent long/short acceleration, and a signed output
   (positive in long phases, negative in short phases).
+- **TA-Lib parity — `MacdExt` (`MACDEXT`)** — MACD with an independently
+  selectable moving-average type (new `MaType` enum: SMA/EMA/WMA/DEMA/TEMA/TRIMA)
+  for each of the fast, slow and signal lines.
 
 ## [0.4.5] - 2026-06-02
 

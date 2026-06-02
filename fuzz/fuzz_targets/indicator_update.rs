@@ -15,7 +15,7 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-AdaptiveCycle, Alma, AnchoredRsi, Apo, Autocorrelation, AverageDrawdown, BatchExt, Beta, BollingerBands, CalmarRatio, CenterOfGravity, Cfo, Cmo, CoefficientOfVariation, ConditionalValueAtRisk, ConnorsRsi, Coppock, CyberneticCycle, Decycler, DecyclerOscillator, Dema, DetrendedStdDev, DoubleBollinger, Dpo, DrawdownDuration, EhlersStochastic, ElderImpulse, Ema, EmpiricalModeDecomposition, Fama, FisherTransform, Frama, GainLossRatio, HilbertDominantCycle, HistoricalVolatility, Hma, HurstExponent, Indicator, InstantaneousTrendline, InverseFisherTransform, Jma, Kama, KellyCriterion, Kst, Kurtosis, LaguerreRsi, LinRegAngle, LinRegChannel, LinRegIntercept, LinRegSlope, LinearRegression, MaEnvelope, MacdFix, MacdIndicator, Mama, MaxDrawdown, McGinleyDynamic, MedianAbsoluteDeviation, MidPoint, Mom, OmegaRatio, PainIndex, PearsonCorrelation, PercentageTrailingStop, Pmo, Ppo, ProfitFactor, RSquared, RecoveryFactor, RenkoTrailingStop, Roc, Rocp, Rocr, Rocr100, RoofingFilter, Rsi, RviVolatility, SharpeRatio, SineWave, Skewness, Sma, Smma, SortinoRatio, SpearmanCorrelation, StandardError, StandardErrorBands, Stc, StdDev, StepTrailingStop, StochRsi, SuperSmoother, Tema, Tii, Trima, Trix, Tsf, Tsi, UlcerIndex, ValueAtRisk, Variance, VerticalHorizontalFilter, Vidya, Wma, ZScore, ZeroLagMacd, Zlema, T3
+AdaptiveCycle, Alma, AnchoredRsi, Apo, Autocorrelation, AverageDrawdown, BatchExt, Beta, BollingerBands, CalmarRatio, CenterOfGravity, Cfo, Cmo, CoefficientOfVariation, ConditionalValueAtRisk, ConnorsRsi, Coppock, CyberneticCycle, Decycler, DecyclerOscillator, Dema, DetrendedStdDev, DoubleBollinger, Dpo, DrawdownDuration, EhlersStochastic, ElderImpulse, Ema, EmpiricalModeDecomposition, Fama, FisherTransform, Frama, GainLossRatio, HilbertDominantCycle, HistoricalVolatility, Hma, HurstExponent, Indicator, InstantaneousTrendline, InverseFisherTransform, Jma, Kama, KellyCriterion, Kst, Kurtosis, LaguerreRsi, LinRegAngle, LinRegChannel, LinRegIntercept, LinRegSlope, LinearRegression, MaEnvelope, MaType, MacdExt, MacdFix, MacdIndicator, Mama, MaxDrawdown, McGinleyDynamic, MedianAbsoluteDeviation, MidPoint, Mom, OmegaRatio, PainIndex, PearsonCorrelation, PercentageTrailingStop, Pmo, Ppo, ProfitFactor, RSquared, RecoveryFactor, RenkoTrailingStop, Roc, Rocp, Rocr, Rocr100, RoofingFilter, Rsi, RviVolatility, SharpeRatio, SineWave, Skewness, Sma, Smma, SortinoRatio, SpearmanCorrelation, StandardError, StandardErrorBands, Stc, StdDev, StepTrailingStop, StochRsi, SuperSmoother, Tema, Tii, Trima, Trix, Tsf, Tsi, UlcerIndex, ValueAtRisk, Variance, VerticalHorizontalFilter, Vidya, Wma, ZScore, ZeroLagMacd, Zlema, T3
 };
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
@@ -191,6 +191,17 @@ fuzz_target!(|data: Vec<f64>| {
             let _ = fix.update(x);
         }
         let _ = MacdFix::new(9).unwrap().batch(&data);
+    }
+
+    // MACDEXT: selectable MA types per line, multi-output topology.
+    {
+        let mut ext = MacdExt::new(12, MaType::Ema, 26, MaType::Ema, 9, MaType::Sma).unwrap();
+        for &x in &data {
+            let _ = ext.update(x);
+        }
+        let _ = MacdExt::new(12, MaType::Ema, 26, MaType::Ema, 9, MaType::Sma)
+            .unwrap()
+            .batch(&data);
     }
     {
         let mut bb = BollingerBands::new(20, 2.0).unwrap();

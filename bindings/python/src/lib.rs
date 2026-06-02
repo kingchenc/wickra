@@ -1432,6 +1432,90 @@ impl PySarExt {
     }
 }
 
+// ============================== MACD Extended ==============================
+
+#[pyclass(name = "MACDEXT", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyMacdExt {
+    inner: wc::MacdExt,
+}
+
+#[pymethods]
+impl PyMacdExt {
+    /// Moving-average types are TA-Lib `MA_Type` codes `0..=5`
+    /// (SMA, EMA, WMA, DEMA, TEMA, TRIMA).
+    #[new]
+    #[pyo3(signature = (
+        fast=12,
+        fast_matype=0,
+        slow=26,
+        slow_matype=0,
+        signal=9,
+        signal_matype=0,
+    ))]
+    fn new(
+        fast: usize,
+        fast_matype: u32,
+        slow: usize,
+        slow_matype: u32,
+        signal: usize,
+        signal_matype: u32,
+    ) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::MacdExt::new(
+                fast,
+                wc::MaType::from_code(fast_matype).map_err(map_err)?,
+                slow,
+                wc::MaType::from_code(slow_matype).map_err(map_err)?,
+                signal,
+                wc::MaType::from_code(signal_matype).map_err(map_err)?,
+            )
+            .map_err(map_err)?,
+        })
+    }
+    /// Returns `(macd, signal, histogram)` or `None` during warmup.
+    fn update(&mut self, value: f64) -> Option<(f64, f64, f64)> {
+        self.inner
+            .update(value)
+            .map(|o| (o.macd, o.signal, o.histogram))
+    }
+    /// Batch over a numpy array of closes. Returns a 2D array of shape `(n, 3)`
+    /// with columns `[macd, signal, histogram]`. Warmup rows are NaN.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let n = slice.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for (i, p) in slice.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.macd;
+                out[i * 3 + 1] = o.signal;
+                out[i * 3 + 2] = o.histogram;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "MACDEXT()".to_string()
+    }
+}
+
 // ============================== Stochastic ==============================
 
 #[pyclass(name = "Stochastic", module = "wickra._wickra", skip_from_py_object)]
@@ -15345,6 +15429,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyRsi>()?;
     m.add_class::<PyMacd>()?;
     m.add_class::<PyMacdFix>()?;
+    m.add_class::<PyMacdExt>()?;
     m.add_class::<PyBb>()?;
     m.add_class::<PyAtr>()?;
     m.add_class::<PyStoch>()?;
