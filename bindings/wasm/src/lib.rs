@@ -6352,6 +6352,11 @@ wasm_candle_pattern!(WasmAdvanceBlock, wc::AdvanceBlock, AdvanceBlock);
 wasm_candle_pattern!(WasmBeltHold, wc::BeltHold, BeltHold);
 wasm_candle_pattern!(WasmBreakaway, wc::Breakaway, Breakaway);
 wasm_candle_pattern!(WasmCounterattack, wc::Counterattack, Counterattack);
+wasm_candle_pattern!(WasmDojiStar, wc::DojiStar, DojiStar);
+wasm_candle_pattern!(WasmDragonflyDoji, wc::DragonflyDoji, DragonflyDoji);
+wasm_candle_pattern!(WasmGravestoneDoji, wc::GravestoneDoji, GravestoneDoji);
+wasm_candle_pattern!(WasmLongLeggedDoji, wc::LongLeggedDoji, LongLeggedDoji);
+wasm_candle_pattern!(WasmRickshawMan, wc::RickshawMan, RickshawMan);
 
 // ============================== Microstructure: Order Book ==============================
 //

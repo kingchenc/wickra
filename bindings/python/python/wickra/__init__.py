@@ -250,6 +250,11 @@ from ._wickra import (
     BeltHold,
     Breakaway,
     Counterattack,
+    DojiStar,
+    DragonflyDoji,
+    GravestoneDoji,
+    LongLeggedDoji,
+    RickshawMan,
     # Microstructure: order book
     OrderBookImbalanceTop1,
     OrderBookImbalanceTopN,
@@ -527,6 +532,11 @@ __all__ = [
     "BeltHold",
     "Breakaway",
     "Counterattack",
+    "DojiStar",
+    "DragonflyDoji",
+    "GravestoneDoji",
+    "LongLeggedDoji",
+    "RickshawMan",
     # Microstructure: order book
     "OrderBookImbalanceTop1",
     "OrderBookImbalanceTopN",

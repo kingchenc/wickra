@@ -37,6 +37,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Belt-hold** — a single-bar reversal that opens at one extreme of its range and runs the other way; bullish +1, bearish -1 (`CDLBELTHOLD`).
   - **Breakaway** — a 5-bar reversal that gaps with the trend, drifts two more bars, then snaps back into the bar1/bar2 body gap; bullish +1, bearish -1 (`CDLBREAKAWAY`).
   - **Counterattack** — a 2-bar reversal where an opposite-coloured second bar closes level with the first (the counterattack line); bullish +1, bearish -1 (`CDLCOUNTERATTACK`).
+  - **Doji Star** — a long body followed by a doji gapping away in the trend direction; bullish +1, bearish -1 (`CDLDOJISTAR`).
+  - **Dragonfly Doji** — a doji opening and closing at the high with a long lower shadow, a bullish reversal; +1 (`CDLDRAGONFLYDOJI`).
+  - **Gravestone Doji** — a doji opening and closing at the low with a long upper shadow, a bearish reversal; -1 (`CDLGRAVESTONEDOJI`).
+  - **Long-Legged Doji** — a doji with long shadows on both sides, an indecision signal; +1 detection (`CDLLONGLEGGEDDOJI`).
+  - **Rickshaw Man** — a long-legged doji with the body centred in the range, an indecision signal; +1 detection (`CDLRICKSHAWMAN`).
 - **Derivatives family — funding & open interest (part 1).** A new family of
   indicators that consume a perpetual / futures tick (`DerivativesTick`,
   bundling funding rate, mark / index / futures price, open interest,

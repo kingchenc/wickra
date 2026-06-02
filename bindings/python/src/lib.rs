@@ -11638,6 +11638,11 @@ candle_pattern_no_param!(PyAdvanceBlock, wc::AdvanceBlock, "AdvanceBlock");
 candle_pattern_no_param!(PyBeltHold, wc::BeltHold, "BeltHold");
 candle_pattern_no_param!(PyBreakaway, wc::Breakaway, "Breakaway");
 candle_pattern_no_param!(PyCounterattack, wc::Counterattack, "Counterattack");
+candle_pattern_no_param!(PyDojiStar, wc::DojiStar, "DojiStar");
+candle_pattern_no_param!(PyDragonflyDoji, wc::DragonflyDoji, "DragonflyDoji");
+candle_pattern_no_param!(PyGravestoneDoji, wc::GravestoneDoji, "GravestoneDoji");
+candle_pattern_no_param!(PyLongLeggedDoji, wc::LongLeggedDoji, "LongLeggedDoji");
+candle_pattern_no_param!(PyRickshawMan, wc::RickshawMan, "RickshawMan");
 // ============================== Microstructure: Order Book ==============================
 //
 // Order-book indicators consume a depth snapshot rather than OHLCV. Streaming
@@ -14144,6 +14149,11 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyBeltHold>()?;
     m.add_class::<PyBreakaway>()?;
     m.add_class::<PyCounterattack>()?;
+    m.add_class::<PyDojiStar>()?;
+    m.add_class::<PyDragonflyDoji>()?;
+    m.add_class::<PyGravestoneDoji>()?;
+    m.add_class::<PyLongLeggedDoji>()?;
+    m.add_class::<PyRickshawMan>()?;
     // Microstructure: order book.
     m.add_class::<PyOrderBookImbalanceTop1>()?;
     m.add_class::<PyOrderBookImbalanceTopN>()?;
