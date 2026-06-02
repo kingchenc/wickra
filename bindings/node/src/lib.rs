@@ -642,6 +642,55 @@ impl MacdNode {
     }
 }
 
+#[napi(js_name = "MACDFIX")]
+pub struct MacdFixNode {
+    inner: wc::MacdFix,
+}
+
+#[napi]
+impl MacdFixNode {
+    #[napi(constructor)]
+    pub fn new(signal: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::MacdFix::new(signal as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<MacdValue> {
+        self.inner.update(value).map(|o| MacdValue {
+            macd: o.macd,
+            signal: o.signal,
+            histogram: o.histogram,
+        })
+    }
+    /// Batch over a price array. Returns a flat array of length `3 * n`,
+    /// interleaved per row as `[macd0, signal0, histogram0, macd1, ...]`.
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        let mut out = vec![f64::NAN; prices.len() * 3];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.macd;
+                out[i * 3 + 1] = o.signal;
+                out[i * 3 + 2] = o.histogram;
+            }
+        }
+        out
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== Bollinger ==============================
 
 #[napi(object)]

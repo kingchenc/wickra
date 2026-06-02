@@ -1412,6 +1412,49 @@ impl WasmAvgPrice {
     }
 }
 
+#[wasm_bindgen(js_name = MACDFIX)]
+pub struct WasmMacdFix {
+    inner: wc::MacdFix,
+}
+
+#[wasm_bindgen(js_class = MACDFIX)]
+impl WasmMacdFix {
+    #[wasm_bindgen(constructor)]
+    pub fn new(signal: usize) -> Result<WasmMacdFix, JsError> {
+        Ok(Self {
+            inner: wc::MacdFix::new(signal).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, value: f64) -> JsValue {
+        match self.inner.update(value) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"macd".into(), &o.macd.into()).ok();
+                Reflect::set(&obj, &"signal".into(), &o.signal.into()).ok();
+                Reflect::set(&obj, &"histogram".into(), &o.histogram.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        }
+    }
+    /// Returns a flat `Float64Array` of length `3 * n`: `[macd0, sig0, hist0, ...]`.
+    pub fn batch(&mut self, prices: &[f64]) -> Float64Array {
+        let n = prices.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for (i, p) in prices.iter().enumerate() {
+            if let Some(o) = self.inner.update(*p) {
+                out[i * 3] = o.macd;
+                out[i * 3 + 1] = o.signal;
+                out[i * 3 + 2] = o.histogram;
+            }
+        }
+        Float64Array::from(out.as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
 #[wasm_bindgen(js_name = Stochastic)]
 pub struct WasmStoch {
     inner: wc::Stochastic,

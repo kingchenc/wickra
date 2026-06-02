@@ -855,6 +855,19 @@ export declare class MACD {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type MacdFixNode = MACDFIX
+export declare class MACDFIX {
+  constructor(signal: number)
+  update(value: number): MacdValue | null
+  /**
+   * Batch over a price array. Returns a flat array of length `3 * n`,
+   * interleaved per row as `[macd0, signal0, histogram0, macd1, ...]`.
+   */
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type BollingerNode = BollingerBands
 export declare class BollingerBands {
   constructor(period: number, multiplier: number)

@@ -149,6 +149,7 @@ mod long_line;
 mod long_short_ratio;
 mod ma_envelope;
 mod macd;
+mod macd_fix;
 mod mama;
 mod market_facilitation_index;
 mod marubozu;
@@ -457,6 +458,7 @@ pub use long_line::LongLine;
 pub use long_short_ratio::LongShortRatio;
 pub use ma_envelope::{MaEnvelope, MaEnvelopeOutput};
 pub use macd::{MacdIndicator, MacdOutput};
+pub use macd_fix::MacdFix;
 pub use mama::{Mama, MamaOutput};
 pub use market_facilitation_index::MarketFacilitationIndex;
 pub use marubozu::Marubozu;
@@ -684,6 +686,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
         "Trend & Directional",
         &[
             "MacdIndicator",
+            "MacdFix",
             "Adx",
             "Adxr",
             "Aroon",
@@ -1043,6 +1046,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 303, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 304, "FAMILIES total drifted from indicator count");
     }
 }

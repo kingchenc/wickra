@@ -81,7 +81,7 @@ pub use indicators::{
     Kvo, KylesLambda, LadderBottom, LaguerreRsi, LeadLagCrossCorrelation,
     LeadLagCrossCorrelationOutput, LinRegAngle, LinRegChannel, LinRegChannelOutput,
     LinRegIntercept, LinRegSlope, LinearRegression, LiquidationFeatures, LiquidationFeaturesOutput,
-    LongLeggedDoji, LongLine, LongShortRatio, MaEnvelope, MaEnvelopeOutput, MacdIndicator,
+    LongLeggedDoji, LongLine, LongShortRatio, MaEnvelope, MaEnvelopeOutput, MacdFix, MacdIndicator,
     MacdOutput, Mama, MamaOutput, MarketFacilitationIndex, Marubozu, MassIndex, MatHold,
     MatchingLow, MaxDrawdown, McGinleyDynamic, MedianAbsoluteDeviation, MedianPrice, Mfi,
     Microprice, MidPoint, MidPrice, MinusDi, MinusDm, Mom, MorningDojiStar, MorningEveningStar,

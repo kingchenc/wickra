@@ -28,6 +28,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **TA-Lib parity — linear-regression outputs** — the remaining OLS endpoints:
   - `LinRegIntercept` (`LINEARREG_INTERCEPT`) — the OLS intercept `a`.
   - `Tsf` (`TSF`) — time series forecast, `a + b·period` (one bar ahead).
+- **TA-Lib parity — `MacdFix` (`MACDFIX`)** — MACD with fast/slow fixed at 12/26
+  and only the signal period configurable; output is the usual `{macd, signal,
+  histogram}` triple.
 
 ## [0.4.5] - 2026-06-02
 

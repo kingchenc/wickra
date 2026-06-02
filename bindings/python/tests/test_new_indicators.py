@@ -142,6 +142,7 @@ SCALAR_MULTI = {
     "LinRegChannel": (lambda: ta.LinRegChannel(20, 2.0), 3),
     "StandardErrorBands": (lambda: ta.StandardErrorBands(21, 2.0), 3),
     "DoubleBollinger": (lambda: ta.DoubleBollinger(20, 1.0, 2.0), 5),
+    "MacdFix": (lambda: ta.MACDFIX(9), 3),
 }
 
 
@@ -1267,6 +1268,14 @@ def test_linreg_intercept_and_tsf_reference():
     data = np.array([1.0, 2.0, 9.0])
     assert ta.LINEARREG_INTERCEPT(3).batch(data)[-1] == pytest.approx(0.0, abs=1e-9)
     assert ta.TSF(3).batch(data)[-1] == pytest.approx(12.0)
+
+
+def test_macdfix_matches_macd():
+    # MACDFIX(signal) is exactly MACD(12, 26, signal).
+    prices = 100.0 + np.sin(np.arange(80) * 0.3) * 5.0
+    fix = ta.MACDFIX(9).batch(prices)
+    classic = ta.MACD(12, 26, 9).batch(prices)
+    np.testing.assert_allclose(fix, classic, equal_nan=True)
 
 
 def test_nvi_reference():
