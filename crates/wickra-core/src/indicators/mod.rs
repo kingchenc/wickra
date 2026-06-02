@@ -252,6 +252,7 @@ mod three_soldiers_or_crows;
 mod three_stars_in_south;
 mod thrusting;
 mod tii;
+mod tpo_profile;
 mod trade_imbalance;
 mod treynor_ratio;
 mod trima;
@@ -275,6 +276,7 @@ mod vertical_horizontal_filter;
 mod vidya;
 mod volty_stop;
 mod volume_oscillator;
+mod volume_profile;
 mod vortex;
 mod vpt;
 mod vwap;
@@ -542,6 +544,7 @@ pub use three_soldiers_or_crows::ThreeSoldiersOrCrows;
 pub use three_stars_in_south::ThreeStarsInSouth;
 pub use thrusting::Thrusting;
 pub use tii::Tii;
+pub use tpo_profile::{TpoProfile, TpoProfileOutput};
 pub use trade_imbalance::TradeImbalance;
 pub use treynor_ratio::TreynorRatio;
 pub use trima::Trima;
@@ -565,6 +568,7 @@ pub use vertical_horizontal_filter::VerticalHorizontalFilter;
 pub use vidya::Vidya;
 pub use volty_stop::VoltyStop;
 pub use volume_oscillator::VolumeOscillator;
+pub use volume_profile::{VolumeProfile, VolumeProfileOutput};
 pub use vortex::{Vortex, VortexOutput};
 pub use vpt::VolumePriceTrend;
 pub use vwap::{RollingVwap, Vwap};
@@ -932,7 +936,13 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
     ),
     (
         "Market Profile",
-        &["ValueArea", "InitialBalance", "OpeningRange"],
+        &[
+            "ValueArea",
+            "InitialBalance",
+            "OpeningRange",
+            "VolumeProfile",
+            "TpoProfile",
+        ],
     ),
     (
         "Risk / Performance",
@@ -984,6 +994,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 285, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 287, "FAMILIES total drifted from indicator count");
     }
 }

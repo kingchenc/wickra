@@ -1010,6 +1010,64 @@ def test_opening_range_shape_and_streaming(ohlcv):
     assert _eq_nan(batch, np.array(rows, dtype=np.float64))
 
 
+def test_volume_profile_reference():
+    # bar0 single-print at 10 vol 100; bar1 spans 10..14 vol 80 over 4 bins.
+    vp = ta.VolumeProfile(2, 4)
+    assert vp.update((10.0, 10.0, 10.0, 10.0, 100.0, 0)) is None
+    out = vp.update((10.0, 14.0, 10.0, 12.0, 80.0, 1))
+    assert out is not None
+    price_low, price_high, bins = out
+    assert price_low == pytest.approx(10.0)
+    assert price_high == pytest.approx(14.0)
+    np.testing.assert_allclose(bins, [120.0, 20.0, 20.0, 20.0])
+
+
+def test_volume_profile_streaming_matches_batch(ohlcv):
+    high, low, close, volume = ohlcv
+    batch = ta.VolumeProfile(10, 8).batch(high, low, volume)
+    assert batch.shape == (high.size, 10)
+    streamer = ta.VolumeProfile(10, 8)
+    for i in range(high.size):
+        mid = float((high[i] + low[i]) / 2)
+        out = streamer.update((mid, float(high[i]), float(low[i]), mid, float(volume[i]), i))
+        if out is None:
+            assert np.isnan(batch[i]).all()
+        else:
+            pl, ph, bins = out
+            assert pl == pytest.approx(batch[i][0])
+            assert ph == pytest.approx(batch[i][1])
+            np.testing.assert_allclose(bins, batch[i][2:])
+
+
+def test_tpo_profile_reference():
+    # bar0 spans 10..14 (+1 to all 4 bins); bar1 spans 11..12 (+1 to bins 1,2).
+    tpo = ta.TpoProfile(2, 4)
+    assert tpo.update((12.0, 14.0, 10.0, 12.0, 5.0, 0)) is None
+    out = tpo.update((11.5, 12.0, 11.0, 11.5, 999.0, 1))
+    assert out is not None
+    price_low, price_high, counts = out
+    assert price_low == pytest.approx(10.0)
+    assert price_high == pytest.approx(14.0)
+    np.testing.assert_allclose(counts, [1.0, 2.0, 2.0, 1.0])
+
+
+def test_tpo_profile_streaming_matches_batch(ohlcv):
+    high, low, close, volume = ohlcv
+    batch = ta.TpoProfile(10, 8).batch(high, low)
+    assert batch.shape == (high.size, 10)
+    streamer = ta.TpoProfile(10, 8)
+    for i in range(high.size):
+        mid = float((high[i] + low[i]) / 2)
+        out = streamer.update((mid, float(high[i]), float(low[i]), mid, 1.0, i))
+        if out is None:
+            assert np.isnan(batch[i]).all()
+        else:
+            pl, ph, counts = out
+            assert pl == pytest.approx(batch[i][0])
+            assert ph == pytest.approx(batch[i][1])
+            np.testing.assert_allclose(counts, batch[i][2:])
+
+
 # --- TD Pressure (OHLCV-input) -------------------------------------------
 
 

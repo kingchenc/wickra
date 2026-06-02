@@ -39,9 +39,10 @@ use wickra::{
     Level, LinearRegression, MacdIndicator, MacdOutput, Mama, MamaOutput, MaxDrawdown, Microprice,
     Obv, OrderBook, OrderBookImbalanceFull, OrderBookImbalanceTop1, ParkinsonVolatility, Ppo, Psar,
     RollingVwap, Rsi, SharpeRatio, Side, SignedVolume, Sma, Stc, SuperTrend, SuperTrendOutput,
-    TdSequential, TdSequentialOutput, Trade, TradeImbalance, TradeQuote, TtmSqueeze,
-    TtmSqueezeOutput, ValueArea, ValueAreaOutput, ValueAtRisk, Vwap, VwapStdDevBands,
-    VwapStdDevBandsOutput, WaveTrend, YangZhangVolatility, T3,
+    TdSequential, TdSequentialOutput, TpoProfile, TpoProfileOutput, Trade, TradeImbalance,
+    TradeQuote, TtmSqueeze, TtmSqueezeOutput, ValueArea, ValueAreaOutput, ValueAtRisk,
+    VolumeProfile, VolumeProfileOutput, Vwap, VwapStdDevBands, VwapStdDevBandsOutput, WaveTrend,
+    YangZhangVolatility, T3,
 };
 use wickra_data::csv::CandleReader;
 
@@ -347,6 +348,12 @@ fn benches(c: &mut Criterion) {
     // === Family 15 — Market Profile ===
     bench_candle_input::<_, _, ValueAreaOutput>(c, "value_area", &candles, || {
         ValueArea::new(20, 50, 0.70).unwrap()
+    });
+    bench_candle_input::<_, _, VolumeProfileOutput>(c, "volume_profile", &candles, || {
+        VolumeProfile::new(20, 50).unwrap()
+    });
+    bench_candle_input::<_, _, TpoProfileOutput>(c, "tpo_profile", &candles, || {
+        TpoProfile::new(20, 50).unwrap()
     });
 
     // === Family 16 — Risk / Performance Metrics ===

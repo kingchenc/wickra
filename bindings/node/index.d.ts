@@ -270,6 +270,16 @@ export interface ValueAreaValue {
   vah: number
   val: number
 }
+export interface VolumeProfileValue {
+  priceLow: number
+  priceHigh: number
+  bins: Array<number>
+}
+export interface TpoProfileValue {
+  priceLow: number
+  priceHigh: number
+  counts: Array<number>
+}
 export interface InitialBalanceValue {
   high: number
   low: number
@@ -2063,6 +2073,24 @@ export declare class ValueArea {
   warmupPeriod(): number
   update(high: number, low: number, volume: number): ValueAreaValue | null
   batch(high: Array<number>, low: Array<number>, volume: Array<number>): Array<number>
+}
+export type VolumeProfileNode = VolumeProfile
+export declare class VolumeProfile {
+  constructor(period: number, binCount: number)
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+  update(high: number, low: number, volume: number): VolumeProfileValue | null
+  batch(high: Array<number>, low: Array<number>, volume: Array<number>): Array<number>
+}
+export type TpoProfileNode = TpoProfile
+export declare class TpoProfile {
+  constructor(period: number, binCount: number)
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+  update(high: number, low: number): TpoProfileValue | null
+  batch(high: Array<number>, low: Array<number>): Array<number>
 }
 export type InitialBalanceNode = InitialBalance
 export declare class InitialBalance {

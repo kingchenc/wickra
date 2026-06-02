@@ -223,6 +223,8 @@ from ._wickra import (
     HeikinAshi,
     # Market Profile
     ValueArea,
+    VolumeProfile,
+    TpoProfile,
     InitialBalance,
     OpeningRange,
     # Candlestick patterns
@@ -536,6 +538,8 @@ __all__ = [
     "HeikinAshi",
     # Market Profile
     "ValueArea",
+    "VolumeProfile",
+    "TpoProfile",
     "InitialBalance",
     "OpeningRange",
     # Candlestick patterns

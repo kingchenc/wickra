@@ -11326,6 +11326,183 @@ impl PyValueArea {
     }
 }
 
+// ============================== VolumeProfile ==============================
+
+/// Streaming profile output: `(price_low, price_high, per_bin_values)`, or `None`
+/// during warmup. Shared by `VolumeProfile` (volume bins) and `TpoProfile` (TPO
+/// counts).
+type ProfileHistogram<'py> = Option<(f64, f64, Bound<'py, PyArray1<f64>>)>;
+
+#[pyclass(name = "VolumeProfile", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyVolumeProfile {
+    inner: wc::VolumeProfile,
+}
+
+#[pymethods]
+impl PyVolumeProfile {
+    #[new]
+    #[pyo3(signature = (period=20, bin_count=50))]
+    fn new(period: usize, bin_count: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::VolumeProfile::new(period, bin_count).map_err(map_err)?,
+        })
+    }
+    /// Streaming update. Returns `(price_low, price_high, bins)` once warm, else `None`.
+    fn update<'py>(
+        &mut self,
+        py: Python<'py>,
+        candle: &Bound<'_, PyAny>,
+    ) -> PyResult<ProfileHistogram<'py>> {
+        let c = extract_candle(candle)?;
+        Ok(self
+            .inner
+            .update(c)
+            .map(|o| (o.price_low, o.price_high, o.bins.into_pyarray(py))))
+    }
+    /// Batch over numpy columns high, low, volume. Returns shape `(n, bin_count + 2)`
+    /// with columns `[price_low, price_high, bin_0, ..., bin_{k-1}]`; warmup rows are `NaN`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != v.len() {
+            return Err(PyValueError::new_err(
+                "high, low, volume must be equal length",
+            ));
+        }
+        let k = self.inner.params().1 + 2;
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * k];
+        for i in 0..n {
+            let mid = f64::midpoint(h[i], l[i]);
+            let candle = wc::Candle::new(mid, h[i], l[i], mid, v[i], 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * k] = o.price_low;
+                out[i * k + 1] = o.price_high;
+                for (j, b) in o.bins.iter().enumerate() {
+                    out[i * k + 2 + j] = *b;
+                }
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, k), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn params(&self) -> (usize, usize) {
+        self.inner.params()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (period, bin_count) = self.inner.params();
+        format!("VolumeProfile(period={period}, bin_count={bin_count})")
+    }
+}
+
+// ============================== TpoProfile ==============================
+
+#[pyclass(name = "TpoProfile", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyTpoProfile {
+    inner: wc::TpoProfile,
+}
+
+#[pymethods]
+impl PyTpoProfile {
+    #[new]
+    #[pyo3(signature = (period=30, bin_count=50))]
+    fn new(period: usize, bin_count: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::TpoProfile::new(period, bin_count).map_err(map_err)?,
+        })
+    }
+    /// Streaming update. Returns `(price_low, price_high, counts)` once warm, else `None`.
+    fn update<'py>(
+        &mut self,
+        py: Python<'py>,
+        candle: &Bound<'_, PyAny>,
+    ) -> PyResult<ProfileHistogram<'py>> {
+        let c = extract_candle(candle)?;
+        Ok(self
+            .inner
+            .update(c)
+            .map(|o| (o.price_low, o.price_high, o.counts.into_pyarray(py))))
+    }
+    /// Batch over numpy columns high, low. Returns shape `(n, bin_count + 2)`
+    /// with columns `[price_low, price_high, count_0, ..., count_{k-1}]`; warmup rows are `NaN`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high, low must be equal length"));
+        }
+        let k = self.inner.params().1 + 2;
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * k];
+        for i in 0..n {
+            let mid = f64::midpoint(h[i], l[i]);
+            let candle = wc::Candle::new(mid, h[i], l[i], mid, 1.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * k] = o.price_low;
+                out[i * k + 1] = o.price_high;
+                for (j, count) in o.counts.iter().enumerate() {
+                    out[i * k + 2 + j] = *count;
+                }
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, k), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn params(&self) -> (usize, usize) {
+        self.inner.params()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (period, bin_count) = self.inner.params();
+        format!("TpoProfile(period={period}, bin_count={bin_count})")
+    }
+}
+
 // ============================== InitialBalance ==============================
 
 #[pyclass(
@@ -14228,6 +14405,8 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyRelativeStrengthAB>()?;
     m.add_class::<PySpearmanCorrelation>()?;
     m.add_class::<PyValueArea>()?;
+    m.add_class::<PyVolumeProfile>()?;
+    m.add_class::<PyTpoProfile>()?;
     m.add_class::<PyInitialBalance>()?;
     m.add_class::<PyOpeningRange>()?;
     // Candlestick patterns.
