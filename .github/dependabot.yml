@@ -6,6 +6,8 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: "deps(cargo)"
 
@@ -15,6 +17,8 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: "deps(npm)"
 
@@ -24,6 +28,8 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: "deps(pip)"
 
@@ -37,6 +43,8 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: "deps(ci-pip)"
 
@@ -47,5 +55,7 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: "deps(actions)"
