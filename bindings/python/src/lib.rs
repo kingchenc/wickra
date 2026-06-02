@@ -1031,6 +1031,150 @@ impl PyAvgPrice {
     }
 }
 
+// ============================== Rocp ==============================
+
+#[pyclass(name = "ROCP", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyRocp {
+    inner: wc::Rocp,
+}
+
+#[pymethods]
+impl PyRocp {
+    #[new]
+    #[pyo3(signature = (period=10))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Rocp::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("ROCP(period={})", self.inner.period())
+    }
+}
+
+// ============================== Rocr ==============================
+
+#[pyclass(name = "ROCR", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyRocr {
+    inner: wc::Rocr,
+}
+
+#[pymethods]
+impl PyRocr {
+    #[new]
+    #[pyo3(signature = (period=10))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Rocr::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("ROCR(period={})", self.inner.period())
+    }
+}
+
+// ============================== Rocr100 ==============================
+
+#[pyclass(name = "ROCR100", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyRocr100 {
+    inner: wc::Rocr100,
+}
+
+#[pymethods]
+impl PyRocr100 {
+    #[new]
+    #[pyo3(signature = (period=10))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Rocr100::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("ROCR100(period={})", self.inner.period())
+    }
+}
+
 // ============================== Stochastic ==============================
 
 #[pyclass(name = "Stochastic", module = "wickra._wickra", skip_from_py_object)]
@@ -15251,5 +15395,8 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyMidPrice>()?;
     m.add_class::<PyMidPoint>()?;
     m.add_class::<PyAvgPrice>()?;
+    m.add_class::<PyRocp>()?;
+    m.add_class::<PyRocr>()?;
+    m.add_class::<PyRocr100>()?;
     Ok(())
 }

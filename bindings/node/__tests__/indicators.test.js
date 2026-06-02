@@ -28,6 +28,9 @@ function num(v) {
 // --- Scalar indicators: update(value) vs batch(prices) ---
 
 const scalarFactories = {
+  ROCR100: () => new wickra.ROCR100(10),
+  ROCR: () => new wickra.ROCR(10),
+  ROCP: () => new wickra.ROCP(10),
   MIDPOINT: () => new wickra.MIDPOINT(14),
   SMA: () => new wickra.SMA(14),
   EMA: () => new wickra.EMA(14),

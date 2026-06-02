@@ -45,6 +45,9 @@ def ohlcv() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 # --- Scalar (f64 -> f64) indicators ---------------------------------------
 
 SCALAR = [
+    (ta.ROCR100, (10,)),
+    (ta.ROCR, (10,)),
+    (ta.ROCP, (10,)),
     (ta.MIDPOINT, (14,)),
     (ta.SMMA, (14,)),
     (ta.TRIMA, (20,)),
@@ -1248,6 +1251,13 @@ def test_mid_point_reference():
 def test_avg_price_reference():
     # (open + high + low + close) / 4 = (10 + 14 + 6 + 12) / 4 = 10.5.
     assert ta.AVGPRICE().update((10.0, 14.0, 6.0, 12.0, 1.0, 0)) == pytest.approx(10.5)
+
+
+def test_roc_ratio_variants_reference():
+    # period 1 over [10, 11]: ROCP = 0.1, ROCR = 1.1, ROCR100 = 110.
+    assert ta.ROCP(1).batch(np.array([10.0, 11.0]))[-1] == pytest.approx(0.1)
+    assert ta.ROCR(1).batch(np.array([10.0, 11.0]))[-1] == pytest.approx(1.1)
+    assert ta.ROCR100(1).batch(np.array([10.0, 11.0]))[-1] == pytest.approx(110.0)
 
 
 def test_nvi_reference():

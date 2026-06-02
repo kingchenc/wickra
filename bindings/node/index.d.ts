@@ -667,6 +667,33 @@ export declare class MIDPOINT {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type RocpNode = ROCP
+export declare class ROCP {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RocrNode = ROCR
+export declare class ROCR {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type Rocr100Node = ROCR100
+export declare class ROCR100 {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type AutocorrelationNode = Autocorrelation
 export declare class Autocorrelation {
   constructor(period: number, lag: number)

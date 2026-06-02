@@ -173,6 +173,9 @@ node_scalar_indicator!(
     wc::MedianAbsoluteDeviation
 );
 node_scalar_indicator!(MidPointNode, "MIDPOINT", wc::MidPoint);
+node_scalar_indicator!(RocpNode, "ROCP", wc::Rocp);
+node_scalar_indicator!(RocrNode, "ROCR", wc::Rocr);
+node_scalar_indicator!(Rocr100Node, "ROCR100", wc::Rocr100);
 
 // ============================== Autocorrelation (period + lag) ==============================
 

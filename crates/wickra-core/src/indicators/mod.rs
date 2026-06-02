@@ -207,6 +207,9 @@ mod renko_trailing_stop;
 mod rickshaw_man;
 mod rising_three_methods;
 mod roc;
+mod rocp;
+mod rocr;
+mod rocr100;
 mod rogers_satchell;
 mod roofing_filter;
 mod rsi;
@@ -510,6 +513,9 @@ pub use renko_trailing_stop::RenkoTrailingStop;
 pub use rickshaw_man::RickshawMan;
 pub use rising_three_methods::RisingThreeMethods;
 pub use roc::Roc;
+pub use rocp::Rocp;
+pub use rocr::Rocr;
+pub use rocr100::Rocr100;
 pub use rogers_satchell::RogersSatchellVolatility;
 pub use roofing_filter::RoofingFilter;
 pub use rsi::Rsi;
@@ -665,6 +671,9 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "LaguerreRsi",
             "ConnorsRsi",
             "Inertia",
+            "Rocp",
+            "Rocr",
+            "Rocr100",
         ],
     ),
     (
@@ -1028,6 +1037,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 298, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 301, "FAMILIES total drifted from indicator count");
     }
 }

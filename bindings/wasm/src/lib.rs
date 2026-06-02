@@ -8621,6 +8621,9 @@ wasm_scalar_indicator!(WasmOmegaRatio, "OmegaRatio", wc::OmegaRatio, period: usi
 wasm_scalar_indicator!(WasmValueAtRisk, "ValueAtRisk", wc::ValueAtRisk, period: usize, confidence: f64);
 wasm_scalar_indicator!(WasmConditionalValueAtRisk, "ConditionalValueAtRisk", wc::ConditionalValueAtRisk, period: usize, confidence: f64);
 wasm_scalar_indicator!(WasmMidPoint, "MIDPOINT", wc::MidPoint, period: usize);
+wasm_scalar_indicator!(WasmRocp, "ROCP", wc::Rocp, period: usize);
+wasm_scalar_indicator!(WasmRocr, "ROCR", wc::Rocr, period: usize);
+wasm_scalar_indicator!(WasmRocr100, "ROCR100", wc::Rocr100, period: usize);
 
 // --- DrawdownDuration: u32 output, no constructor args ---
 
