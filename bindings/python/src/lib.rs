@@ -13675,6 +13675,14 @@ candle_pattern_no_param!(
     wc::ConcealingBabySwallow,
     "ConcealingBabySwallow"
 );
+candle_pattern_no_param!(PyDoubleTopBottom, wc::DoubleTopBottom, "DoubleTopBottom");
+candle_pattern_no_param!(PyTripleTopBottom, wc::TripleTopBottom, "TripleTopBottom");
+candle_pattern_no_param!(PyHeadAndShoulders, wc::HeadAndShoulders, "HeadAndShoulders");
+candle_pattern_no_param!(PyTriangle, wc::Triangle, "Triangle");
+candle_pattern_no_param!(PyWedge, wc::Wedge, "Wedge");
+candle_pattern_no_param!(PyFlagPennant, wc::FlagPennant, "FlagPennant");
+candle_pattern_no_param!(PyRectangleRange, wc::RectangleRange, "RectangleRange");
+candle_pattern_no_param!(PyCupAndHandle, wc::CupAndHandle, "CupAndHandle");
 // ============================== Microstructure: Order Book ==============================
 //
 // Order-book indicators consume a depth snapshot rather than OHLCV. Streaming
@@ -18196,5 +18204,13 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyDayOfWeekProfile>()?;
     m.add_class::<PyIntradayVolatilityProfile>()?;
     m.add_class::<PyVolumeByTimeProfile>()?;
+    m.add_class::<PyDoubleTopBottom>()?;
+    m.add_class::<PyTripleTopBottom>()?;
+    m.add_class::<PyHeadAndShoulders>()?;
+    m.add_class::<PyTriangle>()?;
+    m.add_class::<PyWedge>()?;
+    m.add_class::<PyFlagPennant>()?;
+    m.add_class::<PyRectangleRange>()?;
+    m.add_class::<PyCupAndHandle>()?;
     Ok(())
 }

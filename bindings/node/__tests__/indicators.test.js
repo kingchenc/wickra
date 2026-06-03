@@ -297,6 +297,14 @@ const candleScalar = {
   TasukiGap: { make: () => new wickra.TasukiGap(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   UniqueThreeRiver: { make: () => new wickra.UniqueThreeRiver(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   ConcealingBabySwallow: { make: () => new wickra.ConcealingBabySwallow(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  DoubleTopBottom: { make: () => new wickra.DoubleTopBottom(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  TripleTopBottom: { make: () => new wickra.TripleTopBottom(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  HeadAndShoulders: { make: () => new wickra.HeadAndShoulders(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Triangle: { make: () => new wickra.Triangle(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Wedge: { make: () => new wickra.Wedge(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  FlagPennant: { make: () => new wickra.FlagPennant(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  RectangleRange: { make: () => new wickra.RectangleRange(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  CupAndHandle: { make: () => new wickra.CupAndHandle(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {

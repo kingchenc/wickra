@@ -4,6 +4,11 @@
 //! [`FAMILIES`]. Every public name is re-exported flat from this module and
 //! from the crate root for convenience.
 
+// Internal shared building block for the chart- and harmonic-pattern detectors.
+// Declared `pub(crate)` (not `mod`) so it is excluded from the public-catalogue
+// counter (`grep -c '^mod '`) and re-exported nowhere.
+pub(crate) mod pattern_swing;
+
 mod abandoned_baby;
 mod absolute_breadth_index;
 mod acceleration_bands;
@@ -66,6 +71,7 @@ mod connors_rsi;
 mod coppock;
 mod counterattack;
 mod cumulative_volume_index;
+mod cup_and_handle;
 mod cvd;
 mod cybernetic_cycle;
 mod day_of_week_profile;
@@ -82,6 +88,7 @@ mod doji_star;
 mod donchian;
 mod donchian_stop;
 mod double_bollinger;
+mod double_top_bottom;
 mod downside_gap_three_methods;
 mod dpo;
 mod dragonfly_doji;
@@ -100,6 +107,7 @@ mod falling_three_methods;
 mod fama;
 mod fibonacci_pivots;
 mod fisher_transform;
+mod flag_pennant;
 mod footprint;
 mod force_index;
 mod fractal_chaos_bands;
@@ -116,6 +124,7 @@ mod gravestone_doji;
 mod hammer;
 mod hanging_man;
 mod harami;
+mod head_and_shoulders;
 mod heikin_ashi;
 mod high_low_index;
 mod high_wave;
@@ -229,6 +238,7 @@ mod quoted_spread;
 mod r_squared;
 mod realized_spread;
 mod recovery_factor;
+mod rectangle_range;
 mod relative_strength_ab;
 mod renko_bars;
 mod renko_trailing_stop;
@@ -308,8 +318,10 @@ mod time_of_day_return_profile;
 mod tpo_profile;
 mod trade_imbalance;
 mod treynor_ratio;
+mod triangle;
 mod trima;
 mod trin;
+mod triple_top_bottom;
 mod trix;
 mod true_range;
 mod tsf;
@@ -343,6 +355,7 @@ mod vwap_stddev_bands;
 mod vwma;
 mod vzo;
 mod wave_trend;
+mod wedge;
 mod weighted_close;
 mod williams_fractals;
 mod williams_r;
@@ -417,6 +430,7 @@ pub use connors_rsi::ConnorsRsi;
 pub use coppock::Coppock;
 pub use counterattack::Counterattack;
 pub use cumulative_volume_index::CumulativeVolumeIndex;
+pub use cup_and_handle::CupAndHandle;
 pub use cvd::CumulativeVolumeDelta;
 pub use cybernetic_cycle::CyberneticCycle;
 pub use day_of_week_profile::{DayOfWeekProfile, DayOfWeekProfileOutput};
@@ -433,6 +447,7 @@ pub use doji_star::DojiStar;
 pub use donchian::{Donchian, DonchianOutput};
 pub use donchian_stop::{DonchianStop, DonchianStopOutput};
 pub use double_bollinger::{DoubleBollinger, DoubleBollingerOutput};
+pub use double_top_bottom::DoubleTopBottom;
 pub use downside_gap_three_methods::DownsideGapThreeMethods;
 pub use dpo::Dpo;
 pub use dragonfly_doji::DragonflyDoji;
@@ -451,6 +466,7 @@ pub use falling_three_methods::FallingThreeMethods;
 pub use fama::Fama;
 pub use fibonacci_pivots::{FibonacciPivots, FibonacciPivotsOutput};
 pub use fisher_transform::FisherTransform;
+pub use flag_pennant::FlagPennant;
 pub use footprint::{Footprint, FootprintLevel, FootprintOutput};
 pub use force_index::ForceIndex;
 pub use fractal_chaos_bands::{FractalChaosBands, FractalChaosBandsOutput};
@@ -467,6 +483,7 @@ pub use gravestone_doji::GravestoneDoji;
 pub use hammer::Hammer;
 pub use hanging_man::HangingMan;
 pub use harami::Harami;
+pub use head_and_shoulders::HeadAndShoulders;
 pub use heikin_ashi::{HeikinAshi, HeikinAshiOutput};
 pub use high_low_index::HighLowIndex;
 pub use high_wave::HighWave;
@@ -580,6 +597,7 @@ pub use quoted_spread::QuotedSpread;
 pub use r_squared::RSquared;
 pub use realized_spread::RealizedSpread;
 pub use recovery_factor::RecoveryFactor;
+pub use rectangle_range::RectangleRange;
 pub use relative_strength_ab::{RelativeStrengthAB, RelativeStrengthOutput};
 pub use renko_bars::{RenkoBars, RenkoBrick};
 pub use renko_trailing_stop::RenkoTrailingStop;
@@ -659,8 +677,10 @@ pub use time_of_day_return_profile::{TimeOfDayReturnProfile, TimeOfDayReturnProf
 pub use tpo_profile::{TpoProfile, TpoProfileOutput};
 pub use trade_imbalance::TradeImbalance;
 pub use treynor_ratio::TreynorRatio;
+pub use triangle::Triangle;
 pub use trima::Trima;
 pub use trin::Trin;
+pub use triple_top_bottom::TripleTopBottom;
 pub use trix::Trix;
 pub use true_range::TrueRange;
 pub use tsf::Tsf;
@@ -694,6 +714,7 @@ pub use vwap_stddev_bands::{VwapStdDevBands, VwapStdDevBandsOutput};
 pub use vwma::Vwma;
 pub use vzo::Vzo;
 pub use wave_trend::{WaveTrend, WaveTrendOutput};
+pub use wedge::Wedge;
 pub use weighted_close::WeightedClose;
 pub use williams_fractals::{WilliamsFractals, WilliamsFractalsOutput};
 pub use williams_r::WilliamsR;
@@ -1159,6 +1180,19 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "VolumeByTimeProfile",
         ],
     ),
+    (
+        "Chart Patterns",
+        &[
+            "DoubleTopBottom",
+            "TripleTopBottom",
+            "HeadAndShoulders",
+            "Triangle",
+            "Wedge",
+            "FlagPennant",
+            "RectangleRange",
+            "CupAndHandle",
+        ],
+    ),
 ];
 
 #[cfg(test)]
@@ -1187,6 +1221,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 351, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 359, "FAMILIES total drifted from indicator count");
     }
 }
