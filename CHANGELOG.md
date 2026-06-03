@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Three Drives** — three symmetric drives with extension legs; bullish +1, bearish -1 (`THREE_DRIVES`).
+- **Cypher** — five-point harmonic whose D retraces XC by 0.786; bullish +1, bearish -1 (`CYPHER`).
+- **Shark** — five-point harmonic with an expansion leg and 0.886-1.13 D; bullish +1, bearish -1 (`SHARK`).
+- **Crab** — five-point harmonic with the deepest (1.618 XA) D completion; bullish +1, bearish -1 (`CRAB`).
+- **Bat** — five-point harmonic with a shallow B and 0.886 D completion; bullish +1, bearish -1 (`BAT`).
+- **Butterfly** — five-point harmonic with an extended (1.27-1.618 XA) D; bullish +1, bearish -1 (`BUTTERFLY`).
+- **Gartley** — five-point harmonic with a 0.786 D completion; bullish +1, bearish -1 (`GARTLEY`).
+- **AB=CD** — four-point AB=CD harmonic: BC retraces AB, CD mirrors AB; bullish +1, bearish -1 (`ABCD`).
 - **Cup and Handle** — rounded base with a shallow handle near the rim; bullish +1, inverse -1 (`CUP_AND_HANDLE`).
 - **Rectangle / Range** — flat support and resistance; mean-reversion signal off the just-touched boundary; support +1, resistance -1 (`RECTANGLE_RANGE`).
 - **Flag / Pennant** — shallow consolidation against a sharp pole; continuation in the pole direction; bull +1, bear -1 (`FLAG_PENNANT`).

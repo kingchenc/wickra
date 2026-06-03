@@ -330,6 +330,15 @@ from ._wickra import (
     HeadAndShoulders,
     TripleTopBottom,
     DoubleTopBottom,
+    # Harmonic patterns
+    ThreeDrives,
+    Cypher,
+    Shark,
+    Crab,
+    Bat,
+    Butterfly,
+    Gartley,
+    Abcd,
     # Microstructure: order book
     OrderBookImbalanceTop1,
     OrderBookImbalanceTopN,
@@ -716,6 +725,15 @@ __all__ = [
     "HeadAndShoulders",
     "TripleTopBottom",
     "DoubleTopBottom",
+    # Harmonic patterns
+    "ThreeDrives",
+    "Cypher",
+    "Shark",
+    "Crab",
+    "Bat",
+    "Butterfly",
+    "Gartley",
+    "Abcd",
     # Microstructure: order book
     "OrderBookImbalanceTop1",
     "OrderBookImbalanceTopN",

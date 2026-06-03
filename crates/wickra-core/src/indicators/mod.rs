@@ -10,6 +10,7 @@
 pub(crate) mod pattern_swing;
 
 mod abandoned_baby;
+mod abcd;
 mod absolute_breadth_index;
 mod acceleration_bands;
 mod accelerator_oscillator;
@@ -40,6 +41,7 @@ mod avg_price;
 mod awesome_oscillator;
 mod awesome_oscillator_histogram;
 mod balance_of_power;
+mod bat;
 mod belt_hold;
 mod beta;
 mod beta_neutral_spread;
@@ -48,6 +50,7 @@ mod bollinger_bandwidth;
 mod breadth_thrust;
 mod breakaway;
 mod bullish_percent_index;
+mod butterfly;
 mod calendar_spread;
 mod calmar_ratio;
 mod camarilla_pivots;
@@ -70,10 +73,12 @@ mod conditional_value_at_risk;
 mod connors_rsi;
 mod coppock;
 mod counterattack;
+mod crab;
 mod cumulative_volume_index;
 mod cup_and_handle;
 mod cvd;
 mod cybernetic_cycle;
+mod cypher;
 mod day_of_week_profile;
 mod decycler;
 mod decycler_oscillator;
@@ -119,6 +124,7 @@ mod funding_rate_zscore;
 mod gain_loss_ratio;
 mod gap_side_by_side_white;
 mod garman_klass;
+mod gartley;
 mod granger_causality;
 mod gravestone_doji;
 mod hammer;
@@ -262,6 +268,7 @@ mod separating_lines;
 mod session_high_low;
 mod session_range;
 mod session_vwap;
+mod shark;
 mod sharpe_ratio;
 mod shooting_star;
 mod short_line;
@@ -306,6 +313,7 @@ mod td_sequential;
 mod td_setup;
 mod tema;
 mod term_structure_basis;
+mod three_drives;
 mod three_inside;
 mod three_line_strike;
 mod three_outside;
@@ -369,6 +377,7 @@ mod zig_zag;
 mod zlema;
 
 pub use abandoned_baby::AbandonedBaby;
+pub use abcd::Abcd;
 pub use absolute_breadth_index::AbsoluteBreadthIndex;
 pub use acceleration_bands::{AccelerationBands, AccelerationBandsOutput};
 pub use accelerator_oscillator::AcceleratorOscillator;
@@ -399,6 +408,7 @@ pub use avg_price::AvgPrice;
 pub use awesome_oscillator::AwesomeOscillator;
 pub use awesome_oscillator_histogram::AwesomeOscillatorHistogram;
 pub use balance_of_power::BalanceOfPower;
+pub use bat::Bat;
 pub use belt_hold::BeltHold;
 pub use beta::Beta;
 pub use beta_neutral_spread::BetaNeutralSpread;
@@ -407,6 +417,7 @@ pub use bollinger_bandwidth::BollingerBandwidth;
 pub use breadth_thrust::BreadthThrust;
 pub use breakaway::Breakaway;
 pub use bullish_percent_index::BullishPercentIndex;
+pub use butterfly::Butterfly;
 pub use calendar_spread::CalendarSpread;
 pub use calmar_ratio::CalmarRatio;
 pub use camarilla_pivots::{Camarilla, CamarillaPivotsOutput};
@@ -429,10 +440,12 @@ pub use conditional_value_at_risk::ConditionalValueAtRisk;
 pub use connors_rsi::ConnorsRsi;
 pub use coppock::Coppock;
 pub use counterattack::Counterattack;
+pub use crab::Crab;
 pub use cumulative_volume_index::CumulativeVolumeIndex;
 pub use cup_and_handle::CupAndHandle;
 pub use cvd::CumulativeVolumeDelta;
 pub use cybernetic_cycle::CyberneticCycle;
+pub use cypher::Cypher;
 pub use day_of_week_profile::{DayOfWeekProfile, DayOfWeekProfileOutput};
 pub use decycler::Decycler;
 pub use decycler_oscillator::DecyclerOscillator;
@@ -478,6 +491,7 @@ pub use funding_rate_zscore::FundingRateZScore;
 pub use gain_loss_ratio::GainLossRatio;
 pub use gap_side_by_side_white::GapSideBySideWhite;
 pub use garman_klass::GarmanKlassVolatility;
+pub use gartley::Gartley;
 pub use granger_causality::GrangerCausality;
 pub use gravestone_doji::GravestoneDoji;
 pub use hammer::Hammer;
@@ -621,6 +635,7 @@ pub use separating_lines::SeparatingLines;
 pub use session_high_low::{SessionHighLow, SessionHighLowOutput};
 pub use session_range::{SessionRange, SessionRangeOutput};
 pub use session_vwap::SessionVwap;
+pub use shark::Shark;
 pub use sharpe_ratio::SharpeRatio;
 pub use shooting_star::ShootingStar;
 pub use short_line::ShortLine;
@@ -665,6 +680,7 @@ pub use td_sequential::{TdSequential, TdSequentialOutput};
 pub use td_setup::TdSetup;
 pub use tema::Tema;
 pub use term_structure_basis::TermStructureBasis;
+pub use three_drives::ThreeDrives;
 pub use three_inside::ThreeInside;
 pub use three_line_strike::ThreeLineStrike;
 pub use three_outside::ThreeOutside;
@@ -1193,6 +1209,19 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "CupAndHandle",
         ],
     ),
+    (
+        "Harmonic Patterns",
+        &[
+            "Abcd",
+            "Gartley",
+            "Butterfly",
+            "Bat",
+            "Crab",
+            "Shark",
+            "Cypher",
+            "ThreeDrives",
+        ],
+    ),
 ];
 
 #[cfg(test)]
@@ -1221,6 +1250,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 359, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 367, "FAMILIES total drifted from indicator count");
     }
 }

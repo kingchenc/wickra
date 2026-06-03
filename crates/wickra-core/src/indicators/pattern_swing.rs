@@ -191,6 +191,47 @@ pub(crate) fn approx_equal(a: f64, b: f64, tol: f64) -> bool {
     (a - b).abs() <= tol * scale
 }
 
+/// The five most recent pivots interpreted as the X-A-B-C-D points of a harmonic
+/// pattern, with the terminal direction. The slice must hold at least five
+/// pivots. Each detector derives the leg lengths and Fibonacci ratios it needs
+/// from these five prices.
+#[derive(Debug, Clone, Copy)]
+pub(crate) struct Xabcd {
+    pub x: f64,
+    pub a: f64,
+    pub b: f64,
+    pub c: f64,
+    pub d: f64,
+    /// `true` when the terminal point D is a swing low (a bullish, buy-side
+    /// completion); `false` when D is a swing high (bearish).
+    pub bullish: bool,
+}
+
+/// Read the last five pivots as an [`Xabcd`]. Pivots are guaranteed nonzero-leg
+/// (the swing tracker only confirms moves of at least the threshold), so the
+/// leg-ratio divisions in the detectors never divide by zero.
+pub(crate) fn xabcd(pivots: &[Pivot]) -> Xabcd {
+    let n = pivots.len();
+    Xabcd {
+        x: pivots[n - 5].price,
+        a: pivots[n - 4].price,
+        b: pivots[n - 3].price,
+        c: pivots[n - 2].price,
+        d: pivots[n - 1].price,
+        bullish: pivots[n - 1].direction < 0.0,
+    }
+}
+
+/// `true` when every `(value, low, high)` triple satisfies `low <= value <= high`.
+/// Harmonic detectors express their Fibonacci windows as a list of these triples;
+/// evaluating them in one expression keeps the per-triple comparison on a single
+/// line (no multi-line `&&` coverage gaps).
+pub(crate) fn ratios_in(checks: &[(f64, f64, f64)]) -> bool {
+    checks
+        .iter()
+        .all(|&(value, low, high)| value >= low && value <= high)
+}
+
 /// Build a candle sequence that drives a `SwingTracker` (or any detector built
 /// on one) to confirm exactly the given alternating pivot prices, in order.
 ///
@@ -376,6 +417,49 @@ mod tests {
             },
         ];
         assert_eq!(recent_legs(&ending_low), (120.0, 110.0, 100.0, 99.0));
+    }
+
+    #[test]
+    fn xabcd_reads_last_five_pivots_and_direction() {
+        let pivots = [
+            Pivot {
+                price: 50.0,
+                direction: 1.0,
+            },
+            Pivot {
+                price: 100.0,
+                direction: -1.0,
+            }, // X
+            Pivot {
+                price: 140.0,
+                direction: 1.0,
+            }, // A
+            Pivot {
+                price: 115.0,
+                direction: -1.0,
+            }, // B
+            Pivot {
+                price: 128.0,
+                direction: 1.0,
+            }, // C
+            Pivot {
+                price: 108.0,
+                direction: -1.0,
+            }, // D (low → bullish)
+        ];
+        let p = xabcd(&pivots);
+        assert_eq!(
+            (p.x, p.a, p.b, p.c, p.d),
+            (100.0, 140.0, 115.0, 128.0, 108.0)
+        );
+        assert!(p.bullish);
+    }
+
+    #[test]
+    fn ratios_in_checks_every_window() {
+        assert!(ratios_in(&[(0.6, 0.5, 0.7), (1.5, 1.0, 2.0)]));
+        assert!(!ratios_in(&[(0.6, 0.5, 0.7), (3.0, 1.0, 2.0)])); // second out of range
+        assert!(!ratios_in(&[(0.4, 0.5, 0.7)])); // below the window
     }
 
     #[test]
