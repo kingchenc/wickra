@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.2] - 2026-06-03
+
 ### Added
 - **Three Drives** — three symmetric drives with extension legs; bullish +1, bearish -1 (`THREE_DRIVES`).
 - **Cypher** — five-point harmonic whose D retraces XC by 0.786; bullish +1, bearish -1 (`CYPHER`).
@@ -1203,7 +1205,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.5.1...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.5.2...HEAD
+[0.5.2]: https://github.com/wickra-lib/wickra/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/wickra-lib/wickra/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/wickra-lib/wickra/compare/v0.4.7...v0.5.0
 [0.4.7]: https://github.com/wickra-lib/wickra/compare/v0.4.6...v0.4.7
