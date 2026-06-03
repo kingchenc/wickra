@@ -41,3 +41,38 @@ PyPI/npm packages, and the build/release workflows in `.github/workflows/`.
 
 Out of scope: vulnerabilities in third-party dependencies (report those
 upstream; we track them via Dependabot and `cargo-deny`).
+
+## Security assurance case
+
+This is a short, evidence-backed argument for why Wickra can be used safely.
+
+**Security requirements.** Wickra is a computational library: it ingests
+numeric market data and produces indicator values. It stores no user
+credentials, authenticates no external users, and implements no cryptography of
+its own. The requirements are therefore: (1) memory safety and freedom from
+undefined behaviour, (2) robust handling of untrusted/degenerate numeric input
+without panics or unbounded resource use, (3) integrity of the published
+artifacts, and (4) a healthy dependency supply chain.
+
+**How the requirements are met.**
+
+- *Memory safety* — the core and all bindings are written in Rust. The crates
+  forbid or minimise `unsafe`, so the compiler guarantees memory and thread
+  safety for the indicator logic.
+- *Input robustness* — every indicator validates its parameters and rejects
+  non-finite inputs at construction; behaviour on edge cases (flat markets,
+  warmup, reset) is pinned by unit tests, and the public update paths are
+  exercised by coverage-guided fuzzing (`cargo-fuzz` / libFuzzer) in CI.
+- *Static and dynamic analysis* — every push and pull request runs Clippy
+  (`clippy::pedantic`, warnings-as-errors), CodeQL, fuzzing, and the full test
+  suite, with 100% line coverage on the core crate tracked by Codecov.
+- *Artifact integrity* — releases are built in CI, commits and tags are signed,
+  the `main` branch requires signed commits, and release artifacts carry build
+  provenance attestations.
+- *Supply chain* — dependencies are pinned and monitored with Dependabot and
+  audited with `cargo-deny` (license + advisory checks) on every change.
+
+**Residual risk.** The optional `live-binance` feature opens a TLS WebSocket to
+an exchange using the platform TLS library; transport security therefore
+depends on that library, not on Wickra. Wickra is not a trading system and is
+provided "as is" — see the disclaimers in `README.md` and the licenses.

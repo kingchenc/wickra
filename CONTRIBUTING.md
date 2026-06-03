@@ -122,3 +122,33 @@ installed. Dependabot also keeps the `.github/requirements` pins current.
 Use the issue templates under
 [`.github/ISSUE_TEMPLATE`](.github/ISSUE_TEMPLATE). For security-sensitive
 reports, follow [`SECURITY.md`](SECURITY.md) instead of opening a public issue.
+
+## Developer Certificate of Origin (DCO)
+
+All contributions to Wickra are made under the [Developer Certificate of
+Origin (DCO) 1.1](DCO). By signing off on your commits you certify that you
+wrote the patch, or otherwise have the right to submit it under the project's
+`MIT OR Apache-2.0` license.
+
+Sign off every commit by adding a `Signed-off-by` trailer with your real name
+and email — Git adds it automatically with the `-s` flag:
+
+```bash
+git commit -s -m "your message"
+```
+
+This produces a trailer of the form:
+
+```
+Signed-off-by: Your Name <you@example.com>
+```
+
+The name and email must match the commit author. Commits without a valid
+sign-off line cannot be merged. To sign off a commit you already made, amend it
+with `git commit -s --amend`, or sign off a range with an interactive rebase.
+
+## Governance
+
+Wickra's decision-making and maintainership are described in
+[`GOVERNANCE.md`](GOVERNANCE.md); the current maintainers are listed in
+[`MAINTAINERS.md`](MAINTAINERS.md).
