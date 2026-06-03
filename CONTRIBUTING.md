@@ -5,11 +5,11 @@ build the project, the standards a change must meet, and how to get it merged.
 
 ## License of contributions
 
-Wickra is licensed under the **PolyForm Noncommercial License 1.0.0** (see
-[`LICENSE`](LICENSE)). By submitting a contribution you agree that it is
-licensed to the project under those same terms. The Noncommercial license
-permits use for any purpose **other than** a commercial one; keep that in mind
-when proposing features or depending on Wickra elsewhere.
+Wickra is dual-licensed under the [MIT](LICENSE-MIT) and
+[Apache-2.0](LICENSE-APACHE) licenses; users may choose either. Unless you
+explicitly state otherwise, any contribution you intentionally submit for
+inclusion in the work, as defined in the Apache-2.0 license, shall be dual
+licensed as above, without any additional terms or conditions.
 
 ## Project layout
 

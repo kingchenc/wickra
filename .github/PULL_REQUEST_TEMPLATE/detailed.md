@@ -60,7 +60,7 @@ Closes #
 - [ ] Public API changes are reflected in `CHANGELOG.md`
 - [ ] Public API changes are reflected in rustdoc / README / examples
 - [ ] No `todo*.md` or other local-only notes are staged
-- [ ] License header / `LICENSE` reference unchanged (PolyForm-NC-1.0.0)
+- [ ] License header / `LICENSE` reference unchanged (MIT OR Apache-2.0)
 
 ## Notes for reviewers
 
