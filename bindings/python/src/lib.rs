@@ -49,6 +49,8 @@ const NON_CONTIGUOUS: &str = "array must be C-contiguous; pass np.ascontiguousar
 
 /// `(pp, r1, r2, r3, s1, s2, s3)` pivot levels returned by Classic/Fibonacci pivots.
 type PivotLevels = (f64, f64, f64, f64, f64, f64, f64);
+/// The five Fibonacci-extension levels returned by `FibExtension`.
+type FibExtLevels = (f64, f64, f64, f64, f64);
 /// `(pp, r1, r2, s1, s2)` pivot levels returned by Woodie pivots.
 type WoodieLevels = (f64, f64, f64, f64, f64);
 /// `(tenkan, kijun, senkou_a, senkou_b, chikou)` Ichimoku lines, each optional during warmup.
@@ -17846,6 +17848,451 @@ impl PyOvernightIntradayReturn {
     }
 }
 
+// ============================== Fibonacci ==============================
+
+/// Build a candle for the swing-based Fibonacci tools from a `high`/`low` pair.
+/// Only the high and low drive the swing tracker, so open and close are pinned
+/// to the midpoint to keep the OHLC invariants valid.
+fn swing_candle(high: f64, low: f64) -> Result<wc::Candle, wc::Error> {
+    let mid = f64::midpoint(high, low);
+    wc::Candle::new(mid, high, low, mid, 0.0, 0)
+}
+
+#[pyclass(
+    name = "FibRetracement",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyFibRetracement {
+    inner: wc::FibRetracement,
+}
+
+#[pymethods]
+impl PyFibRetracement {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::FibRetracement::new(),
+        }
+    }
+    /// Returns `(level_0, …, level_1000)` (seven levels) or None during warmup.
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<PivotLevels>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| {
+            (
+                o.level_0,
+                o.level_236,
+                o.level_382,
+                o.level_500,
+                o.level_618,
+                o.level_786,
+                o.level_1000,
+            )
+        }))
+    }
+    /// Batch over numpy columns high, low. Returns shape `(n, 7)`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 7];
+        for i in 0..n {
+            if let Some(o) = self
+                .inner
+                .update(swing_candle(h[i], l[i]).map_err(map_err)?)
+            {
+                out[i * 7] = o.level_0;
+                out[i * 7 + 1] = o.level_236;
+                out[i * 7 + 2] = o.level_382;
+                out[i * 7 + 3] = o.level_500;
+                out[i * 7 + 4] = o.level_618;
+                out[i * 7 + 5] = o.level_786;
+                out[i * 7 + 6] = o.level_1000;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 7), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "FibRetracement()".to_string()
+    }
+}
+
+#[pyclass(name = "FibExtension", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyFibExtension {
+    inner: wc::FibExtension,
+}
+
+#[pymethods]
+impl PyFibExtension {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::FibExtension::new(),
+        }
+    }
+    /// Returns `(level_1272, level_1414, level_1618, level_2000, level_2618)` or None.
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<FibExtLevels>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| {
+            (
+                o.level_1272,
+                o.level_1414,
+                o.level_1618,
+                o.level_2000,
+                o.level_2618,
+            )
+        }))
+    }
+    /// Batch over numpy columns high, low. Returns shape `(n, 5)`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 5];
+        for i in 0..n {
+            if let Some(o) = self
+                .inner
+                .update(swing_candle(h[i], l[i]).map_err(map_err)?)
+            {
+                out[i * 5] = o.level_1272;
+                out[i * 5 + 1] = o.level_1414;
+                out[i * 5 + 2] = o.level_1618;
+                out[i * 5 + 3] = o.level_2000;
+                out[i * 5 + 4] = o.level_2618;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 5), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "FibExtension()".to_string()
+    }
+}
+
+#[pyclass(name = "FibProjection", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyFibProjection {
+    inner: wc::FibProjection,
+}
+
+#[pymethods]
+impl PyFibProjection {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::FibProjection::new(),
+        }
+    }
+    /// Returns `(level_618, level_1000, level_1618, level_2618)` or None during warmup.
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self
+            .inner
+            .update(c)
+            .map(|o| (o.level_618, o.level_1000, o.level_1618, o.level_2618)))
+    }
+    /// Batch over numpy columns high, low. Returns shape `(n, 4)`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 4];
+        for i in 0..n {
+            if let Some(o) = self
+                .inner
+                .update(swing_candle(h[i], l[i]).map_err(map_err)?)
+            {
+                out[i * 4] = o.level_618;
+                out[i * 4 + 1] = o.level_1000;
+                out[i * 4 + 2] = o.level_1618;
+                out[i * 4 + 3] = o.level_2618;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 4), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "FibProjection()".to_string()
+    }
+}
+
+#[pyclass(name = "AutoFib", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyAutoFib {
+    inner: wc::AutoFib,
+}
+
+#[pymethods]
+impl PyAutoFib {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::AutoFib::new(),
+        }
+    }
+    /// Returns `(level_0, …, level_1000)` for the dominant leg, or None during warmup.
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<PivotLevels>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| {
+            (
+                o.level_0,
+                o.level_236,
+                o.level_382,
+                o.level_500,
+                o.level_618,
+                o.level_786,
+                o.level_1000,
+            )
+        }))
+    }
+    /// Batch over numpy columns high, low. Returns shape `(n, 7)`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 7];
+        for i in 0..n {
+            if let Some(o) = self
+                .inner
+                .update(swing_candle(h[i], l[i]).map_err(map_err)?)
+            {
+                out[i * 7] = o.level_0;
+                out[i * 7 + 1] = o.level_236;
+                out[i * 7 + 2] = o.level_382;
+                out[i * 7 + 3] = o.level_500;
+                out[i * 7 + 4] = o.level_618;
+                out[i * 7 + 5] = o.level_786;
+                out[i * 7 + 6] = o.level_1000;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 7), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "AutoFib()".to_string()
+    }
+}
+
+#[pyclass(name = "GoldenPocket", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyGoldenPocket {
+    inner: wc::GoldenPocket,
+}
+
+#[pymethods]
+impl PyGoldenPocket {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::GoldenPocket::new(),
+        }
+    }
+    /// Returns `(low, mid, high)` of the golden-pocket band, or None during warmup.
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.low, o.mid, o.high)))
+    }
+    /// Batch over numpy columns high, low. Returns shape `(n, 3)`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            if let Some(o) = self
+                .inner
+                .update(swing_candle(h[i], l[i]).map_err(map_err)?)
+            {
+                out[i * 3] = o.low;
+                out[i * 3 + 1] = o.mid;
+                out[i * 3 + 2] = o.high;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "GoldenPocket()".to_string()
+    }
+}
+
+#[pyclass(name = "FibConfluence", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyFibConfluence {
+    inner: wc::FibConfluence,
+}
+
+#[pymethods]
+impl PyFibConfluence {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::FibConfluence::new(),
+        }
+    }
+    /// Returns `(price, strength)` of the densest cluster, or None during warmup.
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.price, o.strength)))
+    }
+    /// Batch over numpy columns high, low. Returns shape `(n, 2)`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self
+                .inner
+                .update(swing_candle(h[i], l[i]).map_err(map_err)?)
+            {
+                out[i * 2] = o.price;
+                out[i * 2 + 1] = o.strength;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "FibConfluence()".to_string()
+    }
+}
+
 #[pymodule]
 #[allow(clippy::too_many_lines)]
 fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -18228,5 +18675,12 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyShark>()?;
     m.add_class::<PyCypher>()?;
     m.add_class::<PyThreeDrives>()?;
+    // Fibonacci.
+    m.add_class::<PyFibRetracement>()?;
+    m.add_class::<PyFibExtension>()?;
+    m.add_class::<PyFibProjection>()?;
+    m.add_class::<PyAutoFib>()?;
+    m.add_class::<PyGoldenPocket>()?;
+    m.add_class::<PyFibConfluence>()?;
     Ok(())
 }

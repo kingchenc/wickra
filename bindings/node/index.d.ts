@@ -362,6 +362,46 @@ export interface OvernightIntradayReturnValue {
   overnight: number
   intraday: number
 }
+export interface FibRetracementValue {
+  level0: number
+  level236: number
+  level382: number
+  level500: number
+  level618: number
+  level786: number
+  level1000: number
+}
+export interface FibExtensionValue {
+  level1272: number
+  level1414: number
+  level1618: number
+  level2000: number
+  level2618: number
+}
+export interface FibProjectionValue {
+  level618: number
+  level1000: number
+  level1618: number
+  level2618: number
+}
+export interface AutoFibValue {
+  level0: number
+  level236: number
+  level382: number
+  level500: number
+  level618: number
+  level786: number
+  level1000: number
+}
+export interface GoldenPocketValue {
+  low: number
+  mid: number
+  high: number
+}
+export interface FibConfluenceValue {
+  price: number
+  strength: number
+}
 export type SmaNode = SMA
 export declare class SMA {
   constructor(period: number)
@@ -3828,6 +3868,60 @@ export declare class OvernightIntradayReturn {
   constructor(utcOffsetMinutes: number)
   update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): OvernightIntradayReturnValue | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type FibRetracementNode = FibRetracement
+export declare class FibRetracement {
+  constructor()
+  update(high: number, low: number): FibRetracementValue | null
+  batch(high: Array<number>, low: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type FibExtensionNode = FibExtension
+export declare class FibExtension {
+  constructor()
+  update(high: number, low: number): FibExtensionValue | null
+  batch(high: Array<number>, low: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type FibProjectionNode = FibProjection
+export declare class FibProjection {
+  constructor()
+  update(high: number, low: number): FibProjectionValue | null
+  batch(high: Array<number>, low: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type AutoFibNode = AutoFib
+export declare class AutoFib {
+  constructor()
+  update(high: number, low: number): AutoFibValue | null
+  batch(high: Array<number>, low: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type GoldenPocketNode = GoldenPocket
+export declare class GoldenPocket {
+  constructor()
+  update(high: number, low: number): GoldenPocketValue | null
+  batch(high: Array<number>, low: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type FibConfluenceNode = FibConfluence
+export declare class FibConfluence {
+  constructor()
+  update(high: number, low: number): FibConfluenceValue | null
+  batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
   isReady(): boolean
   warmupPeriod(): number

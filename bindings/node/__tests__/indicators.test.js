@@ -385,6 +385,12 @@ const multi = {
   // Family 13: Ichimoku & alternative charts
   Ichimoku: { make: () => new wickra.Ichimoku(9, 26, 52, 26), fields: ['tenkan', 'kijun', 'senkouA', 'senkouB', 'chikou'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   HeikinAshi: { make: () => new wickra.HeikinAshi(), fields: ['open', 'high', 'low', 'close'], step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  FibRetracement: { make: () => new wickra.FibRetracement(), fields: ['level0', 'level236', 'level382', 'level500', 'level618', 'level786', 'level1000'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  FibExtension: { make: () => new wickra.FibExtension(), fields: ['level1272', 'level1414', 'level1618', 'level2000', 'level2618'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  FibProjection: { make: () => new wickra.FibProjection(), fields: ['level618', 'level1000', 'level1618', 'level2618'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  AutoFib: { make: () => new wickra.AutoFib(), fields: ['level0', 'level236', 'level382', 'level500', 'level618', 'level786', 'level1000'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  GoldenPocket: { make: () => new wickra.GoldenPocket(), fields: ['low', 'mid', 'high'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  FibConfluence: { make: () => new wickra.FibConfluence(), fields: ['price', 'strength'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
 };
 
 for (const [name, d] of Object.entries(multi)) {

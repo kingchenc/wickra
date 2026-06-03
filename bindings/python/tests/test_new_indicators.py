@@ -860,6 +860,36 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 # --- Candle-input, multi-output indicators --------------------------------
 
 MULTI = {
+    "FibRetracement": (
+        lambda: ta.FibRetracement(),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+        7,
+    ),
+    "FibExtension": (
+        lambda: ta.FibExtension(),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+        5,
+    ),
+    "FibProjection": (
+        lambda: ta.FibProjection(),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+        4,
+    ),
+    "AutoFib": (
+        lambda: ta.AutoFib(),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+        7,
+    ),
+    "GoldenPocket": (
+        lambda: ta.GoldenPocket(),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+        3,
+    ),
+    "FibConfluence": (
+        lambda: ta.FibConfluence(),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+        2,
+    ),
     "Vortex": (
         lambda: ta.Vortex(14),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
@@ -2577,6 +2607,50 @@ def test_three_drives_reference():
     assert t.update((108.0, 126.72, 108.0, 108.0, 1.0, 3)) == pytest.approx(0.0)
     assert t.update((109.08, 136.0, 109.08, 109.08, 1.0, 4)) == pytest.approx(0.0)
     assert t.update((122.4, 134.64, 122.4, 122.4, 1.0, 5)) == pytest.approx(-1.0)
+
+
+def test_fib_retracement_reference():
+    t = ta.FibRetracement()
+    assert t.update((199.8, 200.0, 199.8, 199.8, 1.0, 0)) is None
+    assert t.update((100.0, 198.0, 100.0, 100.0, 1.0, 1)) is None
+    assert t.update((101.0, 110.0, 101.0, 101.0, 1.0, 2)) == pytest.approx((100.0, 123.6, 138.2, 150.0, 161.8, 178.6, 200.0))
+
+
+def test_fib_extension_reference():
+    t = ta.FibExtension()
+    assert t.update((199.8, 200.0, 199.8, 199.8, 1.0, 0)) is None
+    assert t.update((100.0, 198.0, 100.0, 100.0, 1.0, 1)) is None
+    assert t.update((101.0, 110.0, 101.0, 101.0, 1.0, 2)) == pytest.approx((72.8, 58.6, 38.2, 0.0, -61.8))
+
+
+def test_fib_projection_reference():
+    t = ta.FibProjection()
+    assert t.update((199.8, 200.0, 199.8, 199.8, 1.0, 0)) is None
+    assert t.update((160.0, 198.0, 160.0, 160.0, 1.0, 1)) is None
+    assert t.update((161.6, 190.0, 161.6, 161.6, 1.0, 2)) is None
+    assert t.update((171.0, 188.1, 171.0, 171.0, 1.0, 3)) == pytest.approx((165.28, 150.0, 125.28, 85.28))
+
+
+def test_auto_fib_reference():
+    t = ta.AutoFib()
+    assert t.update((199.8, 200.0, 199.8, 199.8, 1.0, 0)) is None
+    assert t.update((100.0, 198.0, 100.0, 100.0, 1.0, 1)) is None
+    assert t.update((101.0, 110.0, 101.0, 101.0, 1.0, 2)) == pytest.approx((100.0, 123.6, 138.2, 150.0, 161.8, 178.6, 200.0))
+
+
+def test_golden_pocket_reference():
+    t = ta.GoldenPocket()
+    assert t.update((199.8, 200.0, 199.8, 199.8, 1.0, 0)) is None
+    assert t.update((100.0, 198.0, 100.0, 100.0, 1.0, 1)) is None
+    assert t.update((101.0, 110.0, 101.0, 101.0, 1.0, 2)) == pytest.approx((161.8, 163.4, 165.0))
+
+
+def test_fib_confluence_reference():
+    t = ta.FibConfluence()
+    assert t.update((199.8, 200.0, 199.8, 199.8, 1.0, 0)) is None
+    assert t.update((100.0, 198.0, 100.0, 100.0, 1.0, 1)) is None
+    assert t.update((101.0, 160.0, 101.0, 101.0, 1.0, 2)) is None
+    assert t.update((144.0, 158.4, 144.0, 144.0, 1.0, 3)) == pytest.approx((137.64, 2.0))
 
 # --- Lifecycle ------------------------------------------------------------
 

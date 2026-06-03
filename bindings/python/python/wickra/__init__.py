@@ -339,6 +339,13 @@ from ._wickra import (
     Butterfly,
     Gartley,
     Abcd,
+    # Fibonacci
+    FibConfluence,
+    GoldenPocket,
+    AutoFib,
+    FibProjection,
+    FibExtension,
+    FibRetracement,
     # Microstructure: order book
     OrderBookImbalanceTop1,
     OrderBookImbalanceTopN,
@@ -734,6 +741,13 @@ __all__ = [
     "Butterfly",
     "Gartley",
     "Abcd",
+    # Fibonacci
+    "FibConfluence",
+    "GoldenPocket",
+    "AutoFib",
+    "FibProjection",
+    "FibExtension",
+    "FibRetracement",
     # Microstructure: order book
     "OrderBookImbalanceTop1",
     "OrderBookImbalanceTopN",
