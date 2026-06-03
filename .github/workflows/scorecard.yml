@@ -33,6 +33,13 @@ jobs:
         with:
           results_file: results.sarif
           results_format: sarif
+          # The default GITHUB_TOKEN cannot read classic branch-protection
+          # rules, so the Branch-Protection check fails with an internal error
+          # and scores -1. A read-only fine-grained PAT (Administration: read,
+          # Contents: read, Metadata: read) supplied as SCORECARD_TOKEN lets the
+          # check read the protection settings. See
+          # https://github.com/ossf/scorecard-action/blob/main/docs/authentication/fine-grained-auth-token.md
+          repo_token: ${{ secrets.SCORECARD_TOKEN }}
           # Publish to the public OpenSSF endpoint that backs the README badge.
           publish_results: true
 
