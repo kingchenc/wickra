@@ -158,6 +158,10 @@ mod tests {
         let third = shl.update(c(106.0, 101.0, 2 * HOUR)).unwrap();
         assert_relative_eq!(third.high, 108.0);
         assert_relative_eq!(third.low, 99.0);
+        // A bar with a lower low extends the range downward (same day).
+        let fourth = shl.update(c(107.0, 95.0, 3 * HOUR)).unwrap();
+        assert_relative_eq!(fourth.high, 108.0);
+        assert_relative_eq!(fourth.low, 95.0);
     }
 
     #[test]

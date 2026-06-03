@@ -94,10 +94,16 @@ impl TurnOfMonth {
         }
     }
 
-    fn finalize_day(&mut self) {
-        let Some((year, month, dom)) = self.day else {
-            return;
-        };
+    /// Settle the just-finished day `(year, month, dom)` whose last close is
+    /// `self.cur_close`, then start `next_key`.
+    fn roll_into(
+        &mut self,
+        year: i64,
+        month: u32,
+        dom: u32,
+        next_key: (i64, u32, u32),
+        close: f64,
+    ) {
         if let Some(prev) = self.prev_day_close {
             let ret = if prev == 0.0 {
                 0.0
@@ -110,6 +116,8 @@ impl TurnOfMonth {
             }
         }
         self.prev_day_close = Some(self.cur_close);
+        self.day = Some(next_key);
+        self.cur_close = close;
     }
 }
 
@@ -124,10 +132,8 @@ impl Indicator for TurnOfMonth {
             Some(prev) if prev == key => {
                 self.cur_close = candle.close;
             }
-            Some(_) => {
-                self.finalize_day();
-                self.day = Some(key);
-                self.cur_close = candle.close;
+            Some((year, month, dom)) => {
+                self.roll_into(year, month, dom, key, candle.close);
             }
             None => {
                 self.day = Some(key);
@@ -229,6 +235,19 @@ mod tests {
         // 2021-02-01 (in window): finalizes 01-31 with prev_close 0 -> ret 0.
         let v = tom.update(c(50.0, JAN28_2021 + 4 * DAY)).unwrap();
         assert_relative_eq!(v, 0.0);
+    }
+
+    #[test]
+    fn same_day_bars_use_latest_close() {
+        let mut tom = TurnOfMonth::new(3, 1, 0).unwrap();
+        // 2021-01-30 closes at 100 (prior day, sets prev_day_close).
+        tom.update(c(100.0, JAN28_2021 + 2 * DAY));
+        // 2021-01-31 two bars on the same day; the later close (120) wins.
+        tom.update(c(110.0, JAN28_2021 + 3 * DAY));
+        tom.update(c(120.0, JAN28_2021 + 3 * DAY + 3_600_000));
+        // 2021-02-01 (in window) finalizes 01-31: return = 120 / 100 - 1 = 0.20.
+        let v = tom.update(c(130.0, JAN28_2021 + 4 * DAY)).unwrap();
+        assert_relative_eq!(v, 0.20);
     }
 
     #[test]
