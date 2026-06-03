@@ -330,6 +330,38 @@ def test_relative_strength_streaming_matches_batch():
 # 6-tuple candle; the batch helper takes only the columns it needs.
 
 CANDLE_SCALAR = {
+    "CupAndHandle": (
+        lambda: ta.CupAndHandle(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "RectangleRange": (
+        lambda: ta.RectangleRange(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "FlagPennant": (
+        lambda: ta.FlagPennant(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Wedge": (
+        lambda: ta.Wedge(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Triangle": (
+        lambda: ta.Triangle(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "HeadAndShoulders": (
+        lambda: ta.HeadAndShoulders(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "TripleTopBottom": (
+        lambda: ta.TripleTopBottom(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "DoubleTopBottom": (
+        lambda: ta.DoubleTopBottom(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
     "MIDPRICE": (lambda: ta.MIDPRICE(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "AVGPRICE": (lambda: ta.AVGPRICE(), lambda ind, h, l, c, v: ind.batch(c, h, l, c)),
     "DX": (lambda: ta.DX(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
@@ -2353,6 +2385,81 @@ def test_granger_causality_reference():
     t = ta.GrangerCausality(60, 1)
     assert t.update(1.0, 1.0) is None
     assert t.update(2.0, 1.5) is None
+
+
+def test_double_top_bottom_reference():
+    t = ta.DoubleTopBottom()
+    assert t.update((119.88, 120.0, 119.88, 119.88, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((100.0, 118.8, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((101.0, 120.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((108.0, 118.8, 108.0, 108.0, 1.0, 3)) == pytest.approx(-1.0)
+
+
+def test_triple_top_bottom_reference():
+    t = ta.TripleTopBottom()
+    assert t.update((119.88, 120.0, 119.88, 119.88, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((100.0, 118.8, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((101.0, 121.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((99.0, 119.79, 99.0, 99.0, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((99.99, 119.0, 99.99, 99.99, 1.0, 4)) == pytest.approx(0.0)
+    assert t.update((107.1, 117.81, 107.1, 107.1, 1.0, 5)) == pytest.approx(-1.0)
+
+
+def test_head_and_shoulders_reference():
+    t = ta.HeadAndShoulders()
+    assert t.update((99.9, 100.0, 99.9, 99.9, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((90.0, 99.0, 90.0, 90.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((90.9, 120.0, 90.9, 90.9, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((92.0, 118.8, 92.0, 92.0, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((92.92, 101.0, 92.92, 92.92, 1.0, 4)) == pytest.approx(0.0)
+    assert t.update((90.9, 99.99, 90.9, 90.9, 1.0, 5)) == pytest.approx(-1.0)
+
+
+def test_triangle_reference():
+    t = ta.Triangle()
+    assert t.update((129.87, 130.0, 129.87, 129.87, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((100.0, 128.7, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((101.0, 120.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((110.0, 118.8, 110.0, 110.0, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((111.1, 120.0, 111.1, 111.1, 1.0, 4)) == pytest.approx(1.0)
+    assert t.update((108.0, 118.8, 108.0, 108.0, 1.0, 5)) == pytest.approx(1.0)
+
+
+def test_wedge_reference():
+    t = ta.Wedge()
+    assert t.update((109.89, 110.0, 109.89, 109.89, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((90.0, 108.9, 90.0, 90.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((90.9, 100.0, 90.9, 90.9, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((94.0, 99.0, 94.0, 94.0, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((94.94, 103.0, 94.94, 94.94, 1.0, 4)) == pytest.approx(0.0)
+    assert t.update((92.7, 101.97, 92.7, 92.7, 1.0, 5)) == pytest.approx(-1.0)
+
+
+def test_flag_pennant_reference():
+    t = ta.FlagPennant()
+    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((130.0, 138.6, 130.0, 130.0, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((131.3, 143.0, 131.3, 131.3, 1.0, 4)) == pytest.approx(1.0)
+
+
+def test_rectangle_range_reference():
+    t = ta.RectangleRange()
+    assert t.update((119.88, 120.0, 119.88, 119.88, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((100.0, 118.8, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((101.0, 121.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((99.0, 119.79, 99.0, 99.0, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((99.99, 108.9, 99.99, 99.99, 1.0, 4)) == pytest.approx(1.0)
+
+
+def test_cup_and_handle_reference():
+    t = ta.CupAndHandle()
+    assert t.update((119.88, 120.0, 119.88, 119.88, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((90.0, 118.8, 90.0, 90.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((90.9, 121.0, 90.9, 90.9, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((110.0, 119.79, 110.0, 110.0, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((111.1, 121.0, 111.1, 111.1, 1.0, 4)) == pytest.approx(1.0)
 
 # --- Lifecycle ------------------------------------------------------------
 

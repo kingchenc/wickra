@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Cup and Handle** — rounded base with a shallow handle near the rim; bullish +1, inverse -1 (`CUP_AND_HANDLE`).
+- **Rectangle / Range** — flat support and resistance; mean-reversion signal off the just-touched boundary; support +1, resistance -1 (`RECTANGLE_RANGE`).
+- **Flag / Pennant** — shallow consolidation against a sharp pole; continuation in the pole direction; bull +1, bear -1 (`FLAG_PENNANT`).
+- **Wedge (rising/falling)** — both trendlines slope the same way but converge; rising wedge -1, falling wedge +1 (`WEDGE`).
+- **Triangle (asc/desc/sym)** — converging trendlines; ascending +1, descending -1, symmetrical follows the last swing (`TRIANGLE`).
+- **Head and Shoulders** — central head flanked by two matching shoulders over a flat neckline; top -1, inverse +1 (`HEAD_AND_SHOULDERS`).
+- **Triple Top / Bottom** — three matching peaks / troughs; a stronger reversal than the double; bearish -1, bullish +1 (`TRIPLE_TOP_BOTTOM`).
+- **Double Top / Bottom** — twin-peak / twin-trough reversal confirmed on the second matching swing extreme; bearish -1, bullish +1 (`DOUBLE_TOP_BOTTOM`).
+
 ## [0.5.1] - 2026-06-03
 
 ### Added — Seasonality & Session family (12 indicators)

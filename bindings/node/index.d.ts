@@ -3032,6 +3032,78 @@ export declare class ConcealingBabySwallow {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type DoubleTopBottomNode = DoubleTopBottom
+export declare class DoubleTopBottom {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TripleTopBottomNode = TripleTopBottom
+export declare class TripleTopBottom {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type HeadAndShouldersNode = HeadAndShoulders
+export declare class HeadAndShoulders {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TriangleNode = Triangle
+export declare class Triangle {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type WedgeNode = Wedge
+export declare class Wedge {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type FlagPennantNode = FlagPennant
+export declare class FlagPennant {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RectangleRangeNode = RectangleRange
+export declare class RectangleRange {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type CupAndHandleNode = CupAndHandle
+export declare class CupAndHandle {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type OrderBookImbalanceTop1Node = OrderBookImbalanceTop1
 export declare class OrderBookImbalanceTop1 {
   constructor()

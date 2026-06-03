@@ -321,6 +321,15 @@ from ._wickra import (
     TasukiGap,
     UniqueThreeRiver,
     ConcealingBabySwallow,
+    # Chart patterns
+    CupAndHandle,
+    RectangleRange,
+    FlagPennant,
+    Wedge,
+    Triangle,
+    HeadAndShoulders,
+    TripleTopBottom,
+    DoubleTopBottom,
     # Microstructure: order book
     OrderBookImbalanceTop1,
     OrderBookImbalanceTopN,
@@ -698,6 +707,15 @@ __all__ = [
     "TasukiGap",
     "UniqueThreeRiver",
     "ConcealingBabySwallow",
+    # Chart patterns
+    "CupAndHandle",
+    "RectangleRange",
+    "FlagPennant",
+    "Wedge",
+    "Triangle",
+    "HeadAndShoulders",
+    "TripleTopBottom",
+    "DoubleTopBottom",
     # Microstructure: order book
     "OrderBookImbalanceTop1",
     "OrderBookImbalanceTopN",

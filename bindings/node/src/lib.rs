@@ -10014,6 +10014,18 @@ node_candle_pattern!(
     wc::ConcealingBabySwallow,
     "ConcealingBabySwallow"
 );
+node_candle_pattern!(DoubleTopBottomNode, wc::DoubleTopBottom, "DoubleTopBottom");
+node_candle_pattern!(TripleTopBottomNode, wc::TripleTopBottom, "TripleTopBottom");
+node_candle_pattern!(
+    HeadAndShouldersNode,
+    wc::HeadAndShoulders,
+    "HeadAndShoulders"
+);
+node_candle_pattern!(TriangleNode, wc::Triangle, "Triangle");
+node_candle_pattern!(WedgeNode, wc::Wedge, "Wedge");
+node_candle_pattern!(FlagPennantNode, wc::FlagPennant, "FlagPennant");
+node_candle_pattern!(RectangleRangeNode, wc::RectangleRange, "RectangleRange");
+node_candle_pattern!(CupAndHandleNode, wc::CupAndHandle, "CupAndHandle");
 
 // ============================== Microstructure: Order Book ==============================
 //
