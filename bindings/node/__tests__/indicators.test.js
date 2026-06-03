@@ -391,6 +391,10 @@ const multi = {
   AutoFib: { make: () => new wickra.AutoFib(), fields: ['level0', 'level236', 'level382', 'level500', 'level618', 'level786', 'level1000'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   GoldenPocket: { make: () => new wickra.GoldenPocket(), fields: ['low', 'mid', 'high'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   FibConfluence: { make: () => new wickra.FibConfluence(), fields: ['price', 'strength'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  FibFan: { make: () => new wickra.FibFan(), fields: ['fan382', 'fan500', 'fan618'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  FibArcs: { make: () => new wickra.FibArcs(), fields: ['arc382', 'arc500', 'arc618'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  FibChannel: { make: () => new wickra.FibChannel(), fields: ['base', 'level618', 'level1000', 'level1618'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  FibTimeZones: { make: () => new wickra.FibTimeZones(), fields: ['onZone', 'barsToNext'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
 };
 
 for (const [name, d] of Object.entries(multi)) {

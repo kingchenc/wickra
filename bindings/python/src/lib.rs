@@ -18293,6 +18293,275 @@ impl PyFibConfluence {
     }
 }
 
+#[pyclass(name = "FibFan", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyFibFan {
+    inner: wc::FibFan,
+}
+
+#[pymethods]
+impl PyFibFan {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::FibFan::new(),
+        }
+    }
+    /// Returns `(fan_382, fan_500, fan_618)` at the current bar, or None.
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self
+            .inner
+            .update(c)
+            .map(|o| (o.fan_382, o.fan_500, o.fan_618)))
+    }
+    /// Batch over numpy columns high, low. Returns shape `(n, 3)`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            if let Some(o) = self
+                .inner
+                .update(swing_candle(h[i], l[i]).map_err(map_err)?)
+            {
+                out[i * 3] = o.fan_382;
+                out[i * 3 + 1] = o.fan_500;
+                out[i * 3 + 2] = o.fan_618;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "FibFan()".to_string()
+    }
+}
+
+#[pyclass(name = "FibArcs", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyFibArcs {
+    inner: wc::FibArcs,
+}
+
+#[pymethods]
+impl PyFibArcs {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::FibArcs::new(),
+        }
+    }
+    /// Returns `(arc_382, arc_500, arc_618)` at the current bar, or None.
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self
+            .inner
+            .update(c)
+            .map(|o| (o.arc_382, o.arc_500, o.arc_618)))
+    }
+    /// Batch over numpy columns high, low. Returns shape `(n, 3)`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            if let Some(o) = self
+                .inner
+                .update(swing_candle(h[i], l[i]).map_err(map_err)?)
+            {
+                out[i * 3] = o.arc_382;
+                out[i * 3 + 1] = o.arc_500;
+                out[i * 3 + 2] = o.arc_618;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "FibArcs()".to_string()
+    }
+}
+
+#[pyclass(name = "FibChannel", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyFibChannel {
+    inner: wc::FibChannel,
+}
+
+#[pymethods]
+impl PyFibChannel {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::FibChannel::new(),
+        }
+    }
+    /// Returns `(base, level_618, level_1000, level_1618)` at the current bar, or None.
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self
+            .inner
+            .update(c)
+            .map(|o| (o.base, o.level_618, o.level_1000, o.level_1618)))
+    }
+    /// Batch over numpy columns high, low. Returns shape `(n, 4)`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 4];
+        for i in 0..n {
+            if let Some(o) = self
+                .inner
+                .update(swing_candle(h[i], l[i]).map_err(map_err)?)
+            {
+                out[i * 4] = o.base;
+                out[i * 4 + 1] = o.level_618;
+                out[i * 4 + 2] = o.level_1000;
+                out[i * 4 + 3] = o.level_1618;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 4), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "FibChannel()".to_string()
+    }
+}
+
+#[pyclass(name = "FibTimeZones", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyFibTimeZones {
+    inner: wc::FibTimeZones,
+}
+
+#[pymethods]
+impl PyFibTimeZones {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::FibTimeZones::new(),
+        }
+    }
+    /// Returns `(on_zone, bars_to_next)` at the current bar, or None during warmup.
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.on_zone, o.bars_to_next)))
+    }
+    /// Batch over numpy columns high, low. Returns shape `(n, 2)`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self
+                .inner
+                .update(swing_candle(h[i], l[i]).map_err(map_err)?)
+            {
+                out[i * 2] = o.on_zone;
+                out[i * 2 + 1] = o.bars_to_next;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "FibTimeZones()".to_string()
+    }
+}
+
 #[pymodule]
 #[allow(clippy::too_many_lines)]
 fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -18682,5 +18951,9 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyAutoFib>()?;
     m.add_class::<PyGoldenPocket>()?;
     m.add_class::<PyFibConfluence>()?;
+    m.add_class::<PyFibFan>()?;
+    m.add_class::<PyFibArcs>()?;
+    m.add_class::<PyFibChannel>()?;
+    m.add_class::<PyFibTimeZones>()?;
     Ok(())
 }

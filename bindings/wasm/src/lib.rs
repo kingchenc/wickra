@@ -11017,3 +11017,243 @@ impl WasmFibConfluence {
         self.inner.warmup_period()
     }
 }
+
+#[wasm_bindgen(js_name = FibFan)]
+pub struct WasmFibFan {
+    inner: wc::FibFan,
+}
+
+impl Default for WasmFibFan {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = FibFan)]
+impl WasmFibFan {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmFibFan {
+        Self {
+            inner: wc::FibFan::new(),
+        }
+    }
+    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+        let c = swing_make_candle(high, low)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"fan382".into(), &o.fan_382.into()).ok();
+                Reflect::set(&obj, &"fan500".into(), &o.fan_500.into()).ok();
+                Reflect::set(&obj, &"fan618".into(), &o.fan_618.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(swing_make_candle(high[i], low[i])?) {
+                out[i * 3] = o.fan_382;
+                out[i * 3 + 1] = o.fan_500;
+                out[i * 3 + 2] = o.fan_618;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = FibArcs)]
+pub struct WasmFibArcs {
+    inner: wc::FibArcs,
+}
+
+impl Default for WasmFibArcs {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = FibArcs)]
+impl WasmFibArcs {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmFibArcs {
+        Self {
+            inner: wc::FibArcs::new(),
+        }
+    }
+    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+        let c = swing_make_candle(high, low)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"arc382".into(), &o.arc_382.into()).ok();
+                Reflect::set(&obj, &"arc500".into(), &o.arc_500.into()).ok();
+                Reflect::set(&obj, &"arc618".into(), &o.arc_618.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(swing_make_candle(high[i], low[i])?) {
+                out[i * 3] = o.arc_382;
+                out[i * 3 + 1] = o.arc_500;
+                out[i * 3 + 2] = o.arc_618;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = FibChannel)]
+pub struct WasmFibChannel {
+    inner: wc::FibChannel,
+}
+
+impl Default for WasmFibChannel {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = FibChannel)]
+impl WasmFibChannel {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmFibChannel {
+        Self {
+            inner: wc::FibChannel::new(),
+        }
+    }
+    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+        let c = swing_make_candle(high, low)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"base".into(), &o.base.into()).ok();
+                Reflect::set(&obj, &"level618".into(), &o.level_618.into()).ok();
+                Reflect::set(&obj, &"level1000".into(), &o.level_1000.into()).ok();
+                Reflect::set(&obj, &"level1618".into(), &o.level_1618.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 4];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(swing_make_candle(high[i], low[i])?) {
+                out[i * 4] = o.base;
+                out[i * 4 + 1] = o.level_618;
+                out[i * 4 + 2] = o.level_1000;
+                out[i * 4 + 3] = o.level_1618;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = FibTimeZones)]
+pub struct WasmFibTimeZones {
+    inner: wc::FibTimeZones,
+}
+
+impl Default for WasmFibTimeZones {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = FibTimeZones)]
+impl WasmFibTimeZones {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmFibTimeZones {
+        Self {
+            inner: wc::FibTimeZones::new(),
+        }
+    }
+    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+        let c = swing_make_candle(high, low)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"onZone".into(), &o.on_zone.into()).ok();
+                Reflect::set(&obj, &"barsToNext".into(), &o.bars_to_next.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(swing_make_candle(high[i], low[i])?) {
+                out[i * 2] = o.on_zone;
+                out[i * 2 + 1] = o.bars_to_next;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}

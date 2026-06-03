@@ -111,10 +111,14 @@ mod evening_doji_star;
 mod evwma;
 mod falling_three_methods;
 mod fama;
+mod fib_arcs;
+mod fib_channel;
 mod fib_confluence;
 mod fib_extension;
+mod fib_fan;
 mod fib_projection;
 mod fib_retracement;
+mod fib_time_zones;
 mod fibonacci_pivots;
 mod fisher_transform;
 mod flag_pennant;
@@ -484,10 +488,14 @@ pub use evening_doji_star::EveningDojiStar;
 pub use evwma::Evwma;
 pub use falling_three_methods::FallingThreeMethods;
 pub use fama::Fama;
+pub use fib_arcs::{FibArcs, FibArcsOutput};
+pub use fib_channel::{FibChannel, FibChannelOutput};
 pub use fib_confluence::{FibConfluence, FibConfluenceOutput};
 pub use fib_extension::{FibExtension, FibExtensionOutput};
+pub use fib_fan::{FibFan, FibFanOutput};
 pub use fib_projection::{FibProjection, FibProjectionOutput};
 pub use fib_retracement::{FibRetracement, FibRetracementOutput};
+pub use fib_time_zones::{FibTimeZones, FibTimeZonesOutput};
 pub use fibonacci_pivots::{FibonacciPivots, FibonacciPivotsOutput};
 pub use fisher_transform::FisherTransform;
 pub use flag_pennant::FlagPennant;
@@ -1243,6 +1251,10 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "AutoFib",
             "GoldenPocket",
             "FibConfluence",
+            "FibFan",
+            "FibArcs",
+            "FibChannel",
+            "FibTimeZones",
         ],
     ),
 ];
@@ -1273,6 +1285,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 373, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 377, "FAMILIES total drifted from indicator count");
     }
 }
