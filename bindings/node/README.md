@@ -3,7 +3,7 @@
 [![CI](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml/badge.svg)](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/wickra-lib/wickra/branch/main/graph/badge.svg)](https://codecov.io/gh/wickra-lib/wickra)
 [![npm](https://img.shields.io/npm/v/wickra.svg?logo=npm&color=red)](https://www.npmjs.com/package/wickra)
-[![License: PolyForm-NC](https://img.shields.io/badge/license-PolyForm--NC--1.0.0-purple)](https://github.com/wickra-lib/wickra/blob/main/LICENSE)
+[![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT_OR_Apache--2.0-blue)](https://github.com/wickra-lib/wickra#license)
 
 **Streaming-first technical indicators for Node.js. `npm install wickra` —
 prebuilt native binary, no system dependencies.**
@@ -67,7 +67,5 @@ risk. The library is provided **as is**, without warranty of any kind.
 
 ## License
 
-Licensed under the **PolyForm Noncommercial License 1.0.0**. Personal projects,
-research, education, non-profits, and hobby trading bots are all fine; the one
-thing not allowed is commercial sale of the software or of services built
-around it. See [LICENSE](https://github.com/wickra-lib/wickra/blob/main/LICENSE).
+Licensed under either of [Apache-2.0](https://github.com/wickra-lib/wickra/blob/main/LICENSE-APACHE)
+or [MIT](https://github.com/wickra-lib/wickra/blob/main/LICENSE-MIT) at your option.

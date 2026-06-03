@@ -6,7 +6,7 @@
   "files": [
     "wickra.linux-arm64-gnu.node"
   ],
-  "license": "LicenseRef-Wickra-Noncommercial-1.0.0",
+  "license": "MIT OR Apache-2.0",
   "engines": {
     "node": ">= 18"
   },

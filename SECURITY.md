@@ -2,13 +2,13 @@
 
 ## Supported versions
 
-Wickra is pre-1.0. Security fixes are applied to the latest released `0.1.x`
+Wickra is pre-1.0. Security fixes are applied to the latest released `0.4.x`
 version only; please upgrade to the newest release before reporting an issue.
 
 | Version | Supported |
 | --- | --- |
-| 0.1.x (latest) | :white_check_mark: |
-| older 0.1.x | :x: |
+| 0.4.x (latest) | :white_check_mark: |
+| older 0.4.x | :x: |
 
 ## Reporting a vulnerability
 

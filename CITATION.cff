@@ -26,4 +26,6 @@ keywords:
   - quantitative-finance
   - rust
   - time-series
-license: PolyForm-Noncommercial-1.0.0
+license:
+  - MIT
+  - Apache-2.0

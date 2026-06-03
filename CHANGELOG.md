@@ -21,6 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Advance/Decline Volume Line** — cumulative net advancing-minus-declining volume across the universe (`AD_VOLUME_LINE`).
 - **Advance/Decline Ratio** — advancing issues divided by declining issues across the universe (`ADVANCE_DECLINE_RATIO`).
 
+### Changed
+- **Relicensed** from PolyForm Noncommercial 1.0.0 to dual **MIT OR Apache-2.0**. Wickra is now OSI-approved, permissive open source; commercial use is permitted under either license. See [`LICENSE-MIT`](LICENSE-MIT) and [`LICENSE-APACHE`](LICENSE-APACHE).
+
 ## [0.4.7] - 2026-06-03
 
 ### Added

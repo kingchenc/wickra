@@ -536,7 +536,7 @@ jobs:
             pkg.repository = { type: 'git', url: 'https://github.com/wickra-lib/wickra' };
             pkg.homepage = 'https://github.com/wickra-lib/wickra';
             pkg.bugs = { url: 'https://github.com/wickra-lib/wickra/issues' };
-            pkg.license = 'PolyForm-Noncommercial-1.0.0';
+            pkg.license = 'MIT OR Apache-2.0';
             fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
           "
 
