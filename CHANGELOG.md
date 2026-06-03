@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.7] - 2026-06-03
+
 ### Added
 - **Spread Bollinger Bands** — Bollinger bands on the spread of two series for pairs mean-reversion (`SPREAD_BOLLINGER_BANDS`).
 - **Kalman Hedge Ratio** — Kalman-filter dynamic hedge ratio and spread between two series (`KALMAN_HEDGE_RATIO`).
@@ -1145,7 +1147,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.4.6...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.4.7...HEAD
+[0.4.7]: https://github.com/wickra-lib/wickra/compare/v0.4.6...v0.4.7
 [0.4.6]: https://github.com/wickra-lib/wickra/compare/v0.4.5...v0.4.6
 [0.4.5]: https://github.com/wickra-lib/wickra/compare/v0.4.4...v0.4.5
 [0.4.4]: https://github.com/wickra-lib/wickra/compare/v0.4.3...v0.4.4
