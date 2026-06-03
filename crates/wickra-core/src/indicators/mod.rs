@@ -33,6 +33,7 @@ mod awesome_oscillator_histogram;
 mod balance_of_power;
 mod belt_hold;
 mod beta;
+mod beta_neutral_spread;
 mod bollinger;
 mod bollinger_bandwidth;
 mod breakaway;
@@ -67,6 +68,7 @@ mod demand_index;
 mod demark_pivots;
 mod depth_slope;
 mod detrended_std_dev;
+mod distance_ssd;
 mod doji;
 mod doji_star;
 mod donchian;
@@ -101,6 +103,7 @@ mod funding_rate_zscore;
 mod gain_loss_ratio;
 mod gap_side_by_side_white;
 mod garman_klass;
+mod granger_causality;
 mod gravestone_doji;
 mod hammer;
 mod hanging_man;
@@ -130,6 +133,7 @@ mod inverse_fisher_transform;
 mod inverted_hammer;
 mod jma;
 mod kagi_bars;
+mod kalman_hedge_ratio;
 mod kama;
 mod kelly_criterion;
 mod keltner;
@@ -187,6 +191,7 @@ mod omega_ratio;
 mod on_neck;
 mod opening_marubozu;
 mod opening_range;
+mod ou_half_life;
 mod pain_index;
 mod pair_spread_zscore;
 mod pairwise_beta;
@@ -218,6 +223,8 @@ mod rocp;
 mod rocr;
 mod rocr100;
 mod rogers_satchell;
+mod rolling_correlation;
+mod rolling_covariance;
 mod roofing_filter;
 mod rsi;
 mod rvi;
@@ -237,6 +244,8 @@ mod smma;
 mod sortino_ratio;
 mod spearman_correlation;
 mod spinning_top;
+mod spread_bollinger_bands;
+mod spread_hurst;
 mod stalled_pattern;
 mod standard_error;
 mod standard_error_bands;
@@ -295,6 +304,7 @@ mod upside_gap_two_crows;
 mod value_area;
 mod value_at_risk;
 mod variance;
+mod variance_ratio;
 mod vertical_horizontal_filter;
 mod vidya;
 mod volty_stop;
@@ -348,6 +358,7 @@ pub use awesome_oscillator_histogram::AwesomeOscillatorHistogram;
 pub use balance_of_power::BalanceOfPower;
 pub use belt_hold::BeltHold;
 pub use beta::Beta;
+pub use beta_neutral_spread::BetaNeutralSpread;
 pub use bollinger::{BollingerBands, BollingerOutput};
 pub use bollinger_bandwidth::BollingerBandwidth;
 pub use breakaway::Breakaway;
@@ -382,6 +393,7 @@ pub use demand_index::DemandIndex;
 pub use demark_pivots::{DemarkPivots, DemarkPivotsOutput};
 pub use depth_slope::DepthSlope;
 pub use detrended_std_dev::DetrendedStdDev;
+pub use distance_ssd::DistanceSsd;
 pub use doji::Doji;
 pub use doji_star::DojiStar;
 pub use donchian::{Donchian, DonchianOutput};
@@ -416,6 +428,7 @@ pub use funding_rate_zscore::FundingRateZScore;
 pub use gain_loss_ratio::GainLossRatio;
 pub use gap_side_by_side_white::GapSideBySideWhite;
 pub use garman_klass::GarmanKlassVolatility;
+pub use granger_causality::GrangerCausality;
 pub use gravestone_doji::GravestoneDoji;
 pub use hammer::Hammer;
 pub use hanging_man::HangingMan;
@@ -445,6 +458,7 @@ pub use inverse_fisher_transform::InverseFisherTransform;
 pub use inverted_hammer::InvertedHammer;
 pub use jma::Jma;
 pub use kagi_bars::{KagiBar, KagiBars};
+pub use kalman_hedge_ratio::{KalmanHedgeRatio, KalmanHedgeRatioOutput};
 pub use kama::Kama;
 pub use kelly_criterion::KellyCriterion;
 pub use keltner::{Keltner, KeltnerOutput};
@@ -502,6 +516,7 @@ pub use omega_ratio::OmegaRatio;
 pub use on_neck::OnNeck;
 pub use opening_marubozu::OpeningMarubozu;
 pub use opening_range::{OpeningRange, OpeningRangeOutput};
+pub use ou_half_life::OuHalfLife;
 pub use pain_index::PainIndex;
 pub use pair_spread_zscore::PairSpreadZScore;
 pub use pairwise_beta::PairwiseBeta;
@@ -533,6 +548,8 @@ pub use rocp::Rocp;
 pub use rocr::Rocr;
 pub use rocr100::Rocr100;
 pub use rogers_satchell::RogersSatchellVolatility;
+pub use rolling_correlation::RollingCorrelation;
+pub use rolling_covariance::RollingCovariance;
 pub use roofing_filter::RoofingFilter;
 pub use rsi::Rsi;
 pub use rvi::Rvi;
@@ -552,6 +569,8 @@ pub use smma::Smma;
 pub use sortino_ratio::SortinoRatio;
 pub use spearman_correlation::SpearmanCorrelation;
 pub use spinning_top::SpinningTop;
+pub use spread_bollinger_bands::{SpreadBollingerBands, SpreadBollingerBandsOutput};
+pub use spread_hurst::SpreadHurst;
 pub use stalled_pattern::StalledPattern;
 pub use standard_error::StandardError;
 pub use standard_error_bands::{StandardErrorBands, StandardErrorBandsOutput};
@@ -610,6 +629,7 @@ pub use upside_gap_two_crows::UpsideGapTwoCrows;
 pub use value_area::{ValueArea, ValueAreaOutput};
 pub use value_at_risk::ValueAtRisk;
 pub use variance::Variance;
+pub use variance_ratio::VarianceRatio;
 pub use vertical_horizontal_filter::VerticalHorizontalFilter;
 pub use vidya::Vidya;
 pub use volty_stop::VoltyStop;
@@ -848,6 +868,16 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "AvgPrice",
             "LinRegIntercept",
             "Tsf",
+            "RollingCorrelation",
+            "RollingCovariance",
+            "OuHalfLife",
+            "SpreadHurst",
+            "DistanceSsd",
+            "BetaNeutralSpread",
+            "VarianceRatio",
+            "GrangerCausality",
+            "KalmanHedgeRatio",
+            "SpreadBollingerBands",
         ],
     ),
     (
@@ -1069,6 +1099,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 315, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 325, "FAMILIES total drifted from indicator count");
     }
 }

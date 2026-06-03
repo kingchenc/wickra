@@ -167,6 +167,14 @@ def test_scalar_streaming_matches_batch(cls, args, sine_prices):
 # --- Two-series (asset, benchmark) indicators -----------------------------
 
 PAIR = [
+    (ta.GrangerCausality, (60, 1)),
+    (ta.VarianceRatio, (60, 2)),
+    (ta.BetaNeutralSpread, (20,)),
+    (ta.DistanceSsd, (20,)),
+    (ta.SpreadHurst, (60,)),
+    (ta.OuHalfLife, (60,)),
+    (ta.RollingCovariance, (20,)),
+    (ta.RollingCorrelation, (20,)),
     (ta.TreynorRatio, (20, 0.0)),
     (ta.InformationRatio, (20,)),
     (ta.Alpha, (20, 0.0)),
@@ -249,6 +257,42 @@ def test_cointegration_streaming_matches_batch():
             assert math.isclose(batch[i, 0], hr, rel_tol=1e-12, abs_tol=1e-12)
             assert math.isclose(batch[i, 1], sp, rel_tol=1e-12, abs_tol=1e-12)
             assert math.isclose(batch[i, 2], adf, rel_tol=1e-12, abs_tol=1e-12)
+
+
+def test_kalman_hedge_ratio_converges_and_streaming_matches_batch():
+    n = 500
+    b = np.array([100.0 + 95.0 * math.sin(t * 0.5) for t in range(n)])
+    a = 2.0 * b + 5.0  # a = 2*b + 5 with a wide-ranging b ⇒ identifiable
+    batch = ta.KalmanHedgeRatio(1e-2, 1e-3).batch(a, b)
+    assert batch.shape == (n, 3)
+    assert abs(batch[-1, 0] - 2.0) < 0.05  # hedge ratio
+    assert abs(batch[-1, 2]) < 0.05  # spread (forecast error)
+    streamer = ta.KalmanHedgeRatio(1e-2, 1e-3)
+    for i in range(n):
+        hr, ic, sp = streamer.update(float(a[i]), float(b[i]))
+        assert math.isclose(batch[i, 0], hr, rel_tol=1e-12, abs_tol=1e-12)
+        assert math.isclose(batch[i, 1], ic, rel_tol=1e-12, abs_tol=1e-12)
+        assert math.isclose(batch[i, 2], sp, rel_tol=1e-12, abs_tol=1e-12)
+
+
+def test_spread_bollinger_bands_streaming_matches_batch():
+    n = 60
+    b = np.array([100.0 + t for t in range(n)])
+    a = b + 3.0 * np.sin(np.arange(n) * 0.4)
+    batch = ta.SpreadBollingerBands(20, 2.0).batch(a, b)
+    assert batch.shape == (n, 4)
+    streamer = ta.SpreadBollingerBands(20, 2.0)
+    for i in range(n):
+        v = streamer.update(float(a[i]), float(b[i]))
+        if v is None:
+            assert np.all(np.isnan(batch[i]))
+        else:
+            mid, up, lo, pct_b = v
+            assert math.isclose(batch[i, 0], mid, rel_tol=1e-12, abs_tol=1e-12)
+            assert math.isclose(batch[i, 1], up, rel_tol=1e-12, abs_tol=1e-12)
+            assert math.isclose(batch[i, 2], lo, rel_tol=1e-12, abs_tol=1e-12)
+            assert math.isclose(batch[i, 3], pct_b, rel_tol=1e-12, abs_tol=1e-12)
+            assert lo <= mid <= up
 
 
 def test_relative_strength_constant_ratio():
@@ -2261,6 +2305,54 @@ def test_concealing_baby_swallow_reference():
     assert t.update((16.0, 16.1, 11.9, 12.0, 1.0, 1)) == pytest.approx(0.0)
     assert t.update((11.0, 13.0, 9.9, 10.0, 1.0, 2)) == pytest.approx(0.0)
     assert t.update((14.0, 14.1, 8.9, 9.0, 1.0, 3)) == pytest.approx(1.0)
+
+
+def test_rolling_correlation_reference():
+    t = ta.RollingCorrelation(20)
+    assert t.update(1.0, 1.0) is None
+    assert t.update(2.0, 1.5) is None
+
+
+def test_rolling_covariance_reference():
+    t = ta.RollingCovariance(20)
+    assert t.update(1.0, 1.0) is None
+    assert t.update(2.0, 1.5) is None
+
+
+def test_ou_half_life_reference():
+    t = ta.OuHalfLife(60)
+    assert t.update(1.0, 1.0) is None
+    assert t.update(2.0, 1.5) is None
+
+
+def test_spread_hurst_reference():
+    t = ta.SpreadHurst(60)
+    assert t.update(1.0, 1.0) is None
+    assert t.update(2.0, 1.5) is None
+
+
+def test_distance_ssd_reference():
+    t = ta.DistanceSsd(20)
+    assert t.update(1.0, 1.0) is None
+    assert t.update(2.0, 1.5) is None
+
+
+def test_beta_neutral_spread_reference():
+    t = ta.BetaNeutralSpread(20)
+    assert t.update(1.0, 1.0) is None
+    assert t.update(2.0, 1.5) is None
+
+
+def test_variance_ratio_reference():
+    t = ta.VarianceRatio(60, 2)
+    assert t.update(1.0, 1.0) is None
+    assert t.update(2.0, 1.5) is None
+
+
+def test_granger_causality_reference():
+    t = ta.GrangerCausality(60, 1)
+    assert t.update(1.0, 1.0) is None
+    assert t.update(2.0, 1.5) is None
 
 # --- Lifecycle ------------------------------------------------------------
 

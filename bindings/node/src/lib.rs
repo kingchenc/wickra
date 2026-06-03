@@ -322,6 +322,24 @@ node_pair_indicator!(
     "SpearmanCorrelation",
     wc::SpearmanCorrelation
 );
+node_pair_indicator!(
+    RollingCorrelationNode,
+    "RollingCorrelation",
+    wc::RollingCorrelation
+);
+node_pair_indicator!(
+    RollingCovarianceNode,
+    "RollingCovariance",
+    wc::RollingCovariance
+);
+node_pair_indicator!(OuHalfLifeNode, "OuHalfLife", wc::OuHalfLife);
+node_pair_indicator!(SpreadHurstNode, "SpreadHurst", wc::SpreadHurst);
+node_pair_indicator!(DistanceSsdNode, "DistanceSsd", wc::DistanceSsd);
+node_pair_indicator!(
+    BetaNeutralSpreadNode,
+    "BetaNeutralSpread",
+    wc::BetaNeutralSpread
+);
 
 // ============================== PairSpreadZScore ==============================
 
@@ -563,6 +581,252 @@ impl RelativeStrengthAbNode {
                 out[i * 3] = o.ratio;
                 out[i * 3 + 1] = o.ratio_ma;
                 out[i * 3 + 2] = o.ratio_rsi;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== VarianceRatio ==============================
+
+/// Lo–MacKinlay variance ratio: two ctor params (`period`, `q`), one `(a, b)`
+/// pair per update, a single ratio out.
+#[napi(js_name = "VarianceRatio")]
+pub struct VarianceRatioNode {
+    inner: wc::VarianceRatio,
+}
+
+#[napi]
+impl VarianceRatioNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, q: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::VarianceRatio::new(period as usize, q as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, a: f64, b: f64) -> Option<f64> {
+        self.inner.update((a, b))
+    }
+    /// Batch over two equally-sized arrays. Returns a length-`n` array with
+    /// `NaN` for warmup positions.
+    #[napi]
+    pub fn batch(&mut self, a: Vec<f64>, b: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if a.len() != b.len() {
+            return Err(NapiError::new(
+                Status::InvalidArg,
+                "a and b must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(a.len());
+        for i in 0..a.len() {
+            out.push(self.inner.update((a[i], b[i])).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== GrangerCausality ==============================
+
+/// Granger causality F-statistic: two ctor params (`period`, `lag`), one
+/// `(a, b)` pair per update, a single F-statistic out.
+#[napi(js_name = "GrangerCausality")]
+pub struct GrangerCausalityNode {
+    inner: wc::GrangerCausality,
+}
+
+#[napi]
+impl GrangerCausalityNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, lag: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::GrangerCausality::new(period as usize, lag as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, a: f64, b: f64) -> Option<f64> {
+        self.inner.update((a, b))
+    }
+    /// Batch over two equally-sized arrays. Returns a length-`n` array with
+    /// `NaN` for warmup positions.
+    #[napi]
+    pub fn batch(&mut self, a: Vec<f64>, b: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if a.len() != b.len() {
+            return Err(NapiError::new(
+                Status::InvalidArg,
+                "a and b must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(a.len());
+        for i in 0..a.len() {
+            out.push(self.inner.update((a[i], b[i])).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== KalmanHedgeRatio ==============================
+
+/// Kalman hedge-ratio result: dynamic hedge ratio, intercept, and spread.
+#[napi(object)]
+pub struct KalmanHedgeRatioValue {
+    /// Current hedge ratio (filtered slope of `a` on `b`).
+    pub hedge_ratio: f64,
+    /// Current intercept (filtered level offset).
+    pub intercept: f64,
+    /// Forecast error `a - (intercept + hedgeRatio*b)` — the spread signal.
+    pub spread: f64,
+}
+
+#[napi(js_name = "KalmanHedgeRatio")]
+pub struct KalmanHedgeRatioNode {
+    inner: wc::KalmanHedgeRatio,
+}
+
+#[napi]
+impl KalmanHedgeRatioNode {
+    #[napi(constructor)]
+    pub fn new(delta: f64, observation_var: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::KalmanHedgeRatio::new(delta, observation_var).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, a: f64, b: f64) -> Option<KalmanHedgeRatioValue> {
+        self.inner.update((a, b)).map(|o| KalmanHedgeRatioValue {
+            hedge_ratio: o.hedge_ratio,
+            intercept: o.intercept,
+            spread: o.spread,
+        })
+    }
+    /// Batch over two equally-sized arrays. Returns a flat array of length
+    /// `3 * n`, interleaved per row as `[hedgeRatio0, intercept0, spread0, ...]`.
+    /// Read column `j` of row `i` as `result[i * 3 + j]`. Warmup rows are `NaN`.
+    #[napi]
+    pub fn batch(&mut self, a: Vec<f64>, b: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if a.len() != b.len() {
+            return Err(NapiError::new(
+                Status::InvalidArg,
+                "a and b must be equal length".to_string(),
+            ));
+        }
+        let mut out = vec![f64::NAN; a.len() * 3];
+        for i in 0..a.len() {
+            if let Some(o) = self.inner.update((a[i], b[i])) {
+                out[i * 3] = o.hedge_ratio;
+                out[i * 3 + 1] = o.intercept;
+                out[i * 3 + 2] = o.spread;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== SpreadBollingerBands ==============================
+
+/// Spread Bollinger-bands result: middle, upper and lower bands plus `%b`.
+#[napi(object)]
+pub struct SpreadBollingerBandsValue {
+    /// Middle band: the rolling mean of the spread.
+    pub middle: f64,
+    /// Upper band.
+    pub upper: f64,
+    /// Lower band.
+    pub lower: f64,
+    /// `%b`: where the spread sits across the band (`0` lower, `1` upper).
+    pub percent_b: f64,
+}
+
+#[napi(js_name = "SpreadBollingerBands")]
+pub struct SpreadBollingerBandsNode {
+    inner: wc::SpreadBollingerBands,
+}
+
+#[napi]
+impl SpreadBollingerBandsNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, num_std: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::SpreadBollingerBands::new(period as usize, num_std).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, a: f64, b: f64) -> Option<SpreadBollingerBandsValue> {
+        self.inner
+            .update((a, b))
+            .map(|o| SpreadBollingerBandsValue {
+                middle: o.middle,
+                upper: o.upper,
+                lower: o.lower,
+                percent_b: o.percent_b,
+            })
+    }
+    /// Batch over two equally-sized arrays. Returns a flat array of length
+    /// `4 * n`, interleaved per row as `[middle0, upper0, lower0, percentB0, ...]`.
+    /// Read column `j` of row `i` as `result[i * 4 + j]`. Warmup rows are `NaN`.
+    #[napi]
+    pub fn batch(&mut self, a: Vec<f64>, b: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if a.len() != b.len() {
+            return Err(NapiError::new(
+                Status::InvalidArg,
+                "a and b must be equal length".to_string(),
+            ));
+        }
+        let mut out = vec![f64::NAN; a.len() * 4];
+        for i in 0..a.len() {
+            if let Some(o) = self.inner.update((a[i], b[i])) {
+                out[i * 4] = o.middle;
+                out[i * 4 + 1] = o.upper;
+                out[i * 4 + 2] = o.lower;
+                out[i * 4 + 3] = o.percent_b;
             }
         }
         Ok(out)

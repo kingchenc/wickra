@@ -60,6 +60,13 @@ pub enum Error {
     /// it surfaces as its own variant.
     #[error("invalid cross-section: {message}")]
     InvalidCrossSection { message: &'static str },
+
+    /// A real-valued configuration parameter was outside its admissible range
+    /// (e.g. a non-positive standard-deviation multiplier, or a Kalman filter
+    /// covariance that is not strictly positive). This is the floating-point
+    /// analogue of [`Error::InvalidPeriod`], which only covers integer windows.
+    #[error("invalid parameter: {message}")]
+    InvalidParameter { message: &'static str },
 }
 
 /// Convenience alias for `Result<T, wickra_core::Error>`.

@@ -33,6 +33,26 @@ export interface RelativeStrengthValue {
   /** RSI of the ratio. */
   ratioRsi: number
 }
+/** Kalman hedge-ratio result: dynamic hedge ratio, intercept, and spread. */
+export interface KalmanHedgeRatioValue {
+  /** Current hedge ratio (filtered slope of `a` on `b`). */
+  hedgeRatio: number
+  /** Current intercept (filtered level offset). */
+  intercept: number
+  /** Forecast error `a - (intercept + hedgeRatio*b)` — the spread signal. */
+  spread: number
+}
+/** Spread Bollinger-bands result: middle, upper and lower bands plus `%b`. */
+export interface SpreadBollingerBandsValue {
+  /** Middle band: the rolling mean of the spread. */
+  middle: number
+  /** Upper band. */
+  upper: number
+  /** Lower band. */
+  lower: number
+  /** `%b`: where the spread sits across the band (`0` lower, `1` upper). */
+  percentB: number
+}
 /** MACD triple: macd line, signal line, histogram. */
 export interface MacdValue {
   macd: number
@@ -786,6 +806,84 @@ export declare class SpearmanCorrelation {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type RollingCorrelationNode = RollingCorrelation
+export declare class RollingCorrelation {
+  constructor(period: number)
+  update(x: number, y: number): number | null
+  /**
+   * Batch over two equally-sized arrays. Returns a length-`n` array
+   * with `NaN` for warmup positions.
+   */
+  batch(x: Array<number>, y: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RollingCovarianceNode = RollingCovariance
+export declare class RollingCovariance {
+  constructor(period: number)
+  update(x: number, y: number): number | null
+  /**
+   * Batch over two equally-sized arrays. Returns a length-`n` array
+   * with `NaN` for warmup positions.
+   */
+  batch(x: Array<number>, y: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type OuHalfLifeNode = OuHalfLife
+export declare class OuHalfLife {
+  constructor(period: number)
+  update(x: number, y: number): number | null
+  /**
+   * Batch over two equally-sized arrays. Returns a length-`n` array
+   * with `NaN` for warmup positions.
+   */
+  batch(x: Array<number>, y: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type SpreadHurstNode = SpreadHurst
+export declare class SpreadHurst {
+  constructor(period: number)
+  update(x: number, y: number): number | null
+  /**
+   * Batch over two equally-sized arrays. Returns a length-`n` array
+   * with `NaN` for warmup positions.
+   */
+  batch(x: Array<number>, y: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type DistanceSsdNode = DistanceSsd
+export declare class DistanceSsd {
+  constructor(period: number)
+  update(x: number, y: number): number | null
+  /**
+   * Batch over two equally-sized arrays. Returns a length-`n` array
+   * with `NaN` for warmup positions.
+   */
+  batch(x: Array<number>, y: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type BetaNeutralSpreadNode = BetaNeutralSpread
+export declare class BetaNeutralSpread {
+  constructor(period: number)
+  update(x: number, y: number): number | null
+  /**
+   * Batch over two equally-sized arrays. Returns a length-`n` array
+   * with `NaN` for warmup positions.
+   */
+  batch(x: Array<number>, y: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type PairSpreadZScoreNode = PairSpreadZScore
 /**
  * Pair spread z-score: two ctor params (`betaPeriod`, `zPeriod`), one `(a, b)`
@@ -839,6 +937,68 @@ export declare class RelativeStrengthAB {
    * Batch over two equally-sized arrays. Returns a flat array of length
    * `3 * n`, interleaved per row as `[ratio0, ratioMa0, ratioRsi0, ...]`.
    * Read column `j` of row `i` as `result[i * 3 + j]`. Warmup rows are `NaN`.
+   */
+  batch(a: Array<number>, b: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type VarianceRatioNode = VarianceRatio
+/**
+ * Lo–MacKinlay variance ratio: two ctor params (`period`, `q`), one `(a, b)`
+ * pair per update, a single ratio out.
+ */
+export declare class VarianceRatio {
+  constructor(period: number, q: number)
+  update(a: number, b: number): number | null
+  /**
+   * Batch over two equally-sized arrays. Returns a length-`n` array with
+   * `NaN` for warmup positions.
+   */
+  batch(a: Array<number>, b: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type GrangerCausalityNode = GrangerCausality
+/**
+ * Granger causality F-statistic: two ctor params (`period`, `lag`), one
+ * `(a, b)` pair per update, a single F-statistic out.
+ */
+export declare class GrangerCausality {
+  constructor(period: number, lag: number)
+  update(a: number, b: number): number | null
+  /**
+   * Batch over two equally-sized arrays. Returns a length-`n` array with
+   * `NaN` for warmup positions.
+   */
+  batch(a: Array<number>, b: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type KalmanHedgeRatioNode = KalmanHedgeRatio
+export declare class KalmanHedgeRatio {
+  constructor(delta: number, observationVar: number)
+  update(a: number, b: number): KalmanHedgeRatioValue | null
+  /**
+   * Batch over two equally-sized arrays. Returns a flat array of length
+   * `3 * n`, interleaved per row as `[hedgeRatio0, intercept0, spread0, ...]`.
+   * Read column `j` of row `i` as `result[i * 3 + j]`. Warmup rows are `NaN`.
+   */
+  batch(a: Array<number>, b: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type SpreadBollingerBandsNode = SpreadBollingerBands
+export declare class SpreadBollingerBands {
+  constructor(period: number, numStd: number)
+  update(a: number, b: number): SpreadBollingerBandsValue | null
+  /**
+   * Batch over two equally-sized arrays. Returns a flat array of length
+   * `4 * n`, interleaved per row as `[middle0, upper0, lower0, percentB0, ...]`.
+   * Read column `j` of row `i` as `result[i * 4 + j]`. Warmup rows are `NaN`.
    */
   batch(a: Array<number>, b: Array<number>): Array<number>
   reset(): void

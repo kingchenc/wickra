@@ -8,10 +8,7 @@
 //! panic.
 
 use libfuzzer_sys::fuzz_target;
-use wickra_core::{
-    Alpha, BatchExt, Cointegration, Indicator, InformationRatio, LeadLagCrossCorrelation,
-    PairSpreadZScore, PairwiseBeta, RelativeStrengthAB, TreynorRatio,
-};
+use wickra_core::{Alpha, BatchExt, BetaNeutralSpread, Cointegration, DistanceSsd, GrangerCausality, Indicator, InformationRatio, KalmanHedgeRatio, LeadLagCrossCorrelation, OuHalfLife, PairSpreadZScore, PairwiseBeta, RelativeStrengthAB, RollingCorrelation, RollingCovariance, SpreadBollingerBands, SpreadHurst, TreynorRatio, VarianceRatio};
 
 #[inline(never)]
 fn drive<I>(make: impl Fn() -> I, data: &[(f64, f64)])
@@ -41,6 +38,14 @@ fuzz_target!(|data: &[u8]| {
     drive(|| Alpha::new(10, 0.0).unwrap(), &pairs);
     drive(|| PairwiseBeta::new(10).unwrap(), &pairs);
     drive(|| PairSpreadZScore::new(10, 10).unwrap(), &pairs);
+    drive(|| RollingCorrelation::new(20).unwrap(), &pairs);
+    drive(|| RollingCovariance::new(20).unwrap(), &pairs);
+    drive(|| OuHalfLife::new(60).unwrap(), &pairs);
+    drive(|| SpreadHurst::new(60).unwrap(), &pairs);
+    drive(|| DistanceSsd::new(20).unwrap(), &pairs);
+    drive(|| BetaNeutralSpread::new(20).unwrap(), &pairs);
+    drive(|| VarianceRatio::new(60, 2).unwrap(), &pairs);
+    drive(|| GrangerCausality::new(60, 1).unwrap(), &pairs);
 
     // Struct-output pair indicator: drive update + batch directly (the generic
     // `drive` above only covers `Output = f64`).
@@ -61,4 +66,16 @@ fuzz_target!(|data: &[u8]| {
         let _ = rs.update(x);
     }
     let _ = RelativeStrengthAB::new(10, 14).unwrap().batch(&pairs);
+    let mut kalman_hedge_ratio = KalmanHedgeRatio::new(0.001, 0.001).unwrap();
+    for &x in &pairs {
+        let _ = kalman_hedge_ratio.update(x);
+    }
+    let _ = KalmanHedgeRatio::new(0.001, 0.001).unwrap().batch(&pairs);
+
+    let mut spread_bollinger_bands = SpreadBollingerBands::new(20, 2.0).unwrap();
+    for &x in &pairs {
+        let _ = spread_bollinger_bands.update(x);
+    }
+    let _ = SpreadBollingerBands::new(20, 2.0).unwrap().batch(&pairs);
+
 });
