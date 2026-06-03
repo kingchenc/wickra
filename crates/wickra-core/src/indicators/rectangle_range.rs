@@ -106,6 +106,7 @@ mod tests {
         assert_eq!(indicator.name(), "RectangleRange");
         assert_eq!(indicator.warmup_period(), 5);
         assert!(!indicator.is_ready());
+        assert!(!RectangleRange::default().is_ready());
     }
 
     #[test]

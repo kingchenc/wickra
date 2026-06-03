@@ -118,6 +118,7 @@ mod tests {
         assert_eq!(indicator.name(), "Triangle");
         assert_eq!(indicator.warmup_period(), 5);
         assert!(!indicator.is_ready());
+        assert!(!Triangle::default().is_ready());
     }
 
     #[test]

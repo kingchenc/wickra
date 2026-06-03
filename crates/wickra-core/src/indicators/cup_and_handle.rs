@@ -119,6 +119,7 @@ mod tests {
         assert_eq!(indicator.name(), "CupAndHandle");
         assert_eq!(indicator.warmup_period(), 5);
         assert!(!indicator.is_ready());
+        assert!(!CupAndHandle::default().is_ready());
     }
 
     #[test]
@@ -139,6 +140,14 @@ mod tests {
     fn deep_handle_is_not_cup_and_handle() {
         // Handle (85) below the cup low (90) → a double bottom, not cup-and-handle.
         let out = run(&[120.0, 90.0, 121.0, 85.0]);
+        assert_eq!(*out.last().unwrap(), 0.0);
+    }
+
+    #[test]
+    fn inverse_with_mismatched_rims_does_not_trigger() {
+        // Inverse shape (ends high) but the rims (100 / 90) diverge → enters the
+        // inverse branch yet reports no pattern.
+        let out = run(&[140.0, 100.0, 130.0, 90.0, 110.0]);
         assert_eq!(*out.last().unwrap(), 0.0);
     }
 

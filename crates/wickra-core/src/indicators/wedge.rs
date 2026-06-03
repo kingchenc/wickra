@@ -108,6 +108,7 @@ mod tests {
         assert_eq!(indicator.name(), "Wedge");
         assert_eq!(indicator.warmup_period(), 5);
         assert!(!indicator.is_ready());
+        assert!(!Wedge::default().is_ready());
     }
 
     #[test]

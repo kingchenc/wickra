@@ -113,6 +113,7 @@ mod tests {
         assert_eq!(indicator.name(), "FlagPennant");
         assert_eq!(indicator.warmup_period(), 4);
         assert!(!indicator.is_ready());
+        assert!(!FlagPennant::default().is_ready());
     }
 
     #[test]

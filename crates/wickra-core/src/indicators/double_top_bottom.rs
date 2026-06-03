@@ -136,6 +136,7 @@ mod tests {
         assert_eq!(indicator.name(), "DoubleTopBottom");
         assert_eq!(indicator.warmup_period(), 5);
         assert!(!indicator.is_ready());
+        assert!(!DoubleTopBottom::default().is_ready());
     }
 
     #[test]

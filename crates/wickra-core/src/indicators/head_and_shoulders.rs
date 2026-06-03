@@ -126,6 +126,7 @@ mod tests {
         assert_eq!(indicator.name(), "HeadAndShoulders");
         assert_eq!(indicator.warmup_period(), 6);
         assert!(!indicator.is_ready());
+        assert!(!HeadAndShoulders::default().is_ready());
     }
 
     #[test]
