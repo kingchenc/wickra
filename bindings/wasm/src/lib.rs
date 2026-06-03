@@ -10226,3 +10226,390 @@ impl WasmAlpha {
         self.inner.warmup_period()
     }
 }
+
+// ====================== Seasonality & Session (full-candle) ======================
+//
+// These read the wall-clock fields of `Candle::timestamp`. JS passes `timestamp`
+// as a BigInt (epoch milliseconds). Following the multi-input precedent
+// (microstructure / derivatives), WASM exposes streaming `update` only — no
+// batch over ragged multi-arrays.
+
+macro_rules! wasm_seasonality_offset_scalar {
+    ($wrapper:ident, $js:ident, $rust:ty) => {
+        #[wasm_bindgen(js_name = $js)]
+        pub struct $wrapper {
+            inner: $rust,
+        }
+        #[wasm_bindgen(js_class = $js)]
+        impl $wrapper {
+            #[wasm_bindgen(constructor)]
+            pub fn new(utc_offset_minutes: i32) -> $wrapper {
+                Self {
+                    inner: <$rust>::new(utc_offset_minutes),
+                }
+            }
+            pub fn update(
+                &mut self,
+                open: f64,
+                high: f64,
+                low: f64,
+                close: f64,
+                volume: f64,
+                timestamp: i64,
+            ) -> Result<Option<f64>, JsError> {
+                Ok(self.inner.update(
+                    wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?,
+                ))
+            }
+            pub fn reset(&mut self) {
+                self.inner.reset();
+            }
+            #[wasm_bindgen(js_name = isReady)]
+            pub fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            #[wasm_bindgen(js_name = warmupPeriod)]
+            pub fn warmup_period(&self) -> usize {
+                self.inner.warmup_period()
+            }
+            #[wasm_bindgen(js_name = utcOffsetMinutes)]
+            pub fn utc_offset_minutes(&self) -> i32 {
+                self.inner.utc_offset_minutes()
+            }
+        }
+    };
+}
+
+macro_rules! wasm_seasonality_bucket_profile {
+    ($wrapper:ident, $js:ident, $rust:ty) => {
+        #[wasm_bindgen(js_name = $js)]
+        pub struct $wrapper {
+            inner: $rust,
+        }
+        #[wasm_bindgen(js_class = $js)]
+        impl $wrapper {
+            #[wasm_bindgen(constructor)]
+            pub fn new(buckets: usize, utc_offset_minutes: i32) -> Result<$wrapper, JsError> {
+                Ok(Self {
+                    inner: <$rust>::new(buckets, utc_offset_minutes).map_err(map_err)?,
+                })
+            }
+            pub fn update(
+                &mut self,
+                open: f64,
+                high: f64,
+                low: f64,
+                close: f64,
+                volume: f64,
+                timestamp: i64,
+            ) -> Result<JsValue, JsError> {
+                let c =
+                    wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?;
+                Ok(match self.inner.update(c) {
+                    Some(o) => Float64Array::from(o.bins.as_slice()).into(),
+                    None => JsValue::NULL,
+                })
+            }
+            pub fn reset(&mut self) {
+                self.inner.reset();
+            }
+            #[wasm_bindgen(js_name = isReady)]
+            pub fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            #[wasm_bindgen(js_name = warmupPeriod)]
+            pub fn warmup_period(&self) -> usize {
+                self.inner.warmup_period()
+            }
+            #[wasm_bindgen(js_name = utcOffsetMinutes)]
+            pub fn utc_offset_minutes(&self) -> i32 {
+                self.inner.params().1
+            }
+        }
+    };
+}
+
+macro_rules! wasm_seasonality_offset_profile {
+    ($wrapper:ident, $js:ident, $rust:ty) => {
+        #[wasm_bindgen(js_name = $js)]
+        pub struct $wrapper {
+            inner: $rust,
+        }
+        #[wasm_bindgen(js_class = $js)]
+        impl $wrapper {
+            #[wasm_bindgen(constructor)]
+            pub fn new(utc_offset_minutes: i32) -> $wrapper {
+                Self {
+                    inner: <$rust>::new(utc_offset_minutes),
+                }
+            }
+            pub fn update(
+                &mut self,
+                open: f64,
+                high: f64,
+                low: f64,
+                close: f64,
+                volume: f64,
+                timestamp: i64,
+            ) -> Result<JsValue, JsError> {
+                let c =
+                    wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?;
+                Ok(match self.inner.update(c) {
+                    Some(o) => Float64Array::from(o.bins.as_slice()).into(),
+                    None => JsValue::NULL,
+                })
+            }
+            pub fn reset(&mut self) {
+                self.inner.reset();
+            }
+            #[wasm_bindgen(js_name = isReady)]
+            pub fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            #[wasm_bindgen(js_name = warmupPeriod)]
+            pub fn warmup_period(&self) -> usize {
+                self.inner.warmup_period()
+            }
+            #[wasm_bindgen(js_name = utcOffsetMinutes)]
+            pub fn utc_offset_minutes(&self) -> i32 {
+                self.inner.utc_offset_minutes()
+            }
+        }
+    };
+}
+
+wasm_seasonality_offset_scalar!(WasmSessionVwap, SessionVwap, wc::SessionVwap);
+wasm_seasonality_offset_scalar!(WasmOvernightGap, OvernightGap, wc::OvernightGap);
+wasm_seasonality_offset_scalar!(WasmSeasonalZScore, SeasonalZScore, wc::SeasonalZScore);
+wasm_seasonality_bucket_profile!(
+    WasmTimeOfDayReturnProfile,
+    TimeOfDayReturnProfile,
+    wc::TimeOfDayReturnProfile
+);
+wasm_seasonality_bucket_profile!(
+    WasmIntradayVolatilityProfile,
+    IntradayVolatilityProfile,
+    wc::IntradayVolatilityProfile
+);
+wasm_seasonality_bucket_profile!(
+    WasmVolumeByTimeProfile,
+    VolumeByTimeProfile,
+    wc::VolumeByTimeProfile
+);
+wasm_seasonality_offset_profile!(WasmDayOfWeekProfile, DayOfWeekProfile, wc::DayOfWeekProfile);
+
+#[wasm_bindgen(js_name = AverageDailyRange)]
+pub struct WasmAverageDailyRange {
+    inner: wc::AverageDailyRange,
+}
+#[wasm_bindgen(js_class = AverageDailyRange)]
+impl WasmAverageDailyRange {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, utc_offset_minutes: i32) -> Result<WasmAverageDailyRange, JsError> {
+        Ok(Self {
+            inner: wc::AverageDailyRange::new(period, utc_offset_minutes).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+        timestamp: i64,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = TurnOfMonth)]
+pub struct WasmTurnOfMonth {
+    inner: wc::TurnOfMonth,
+}
+#[wasm_bindgen(js_class = TurnOfMonth)]
+impl WasmTurnOfMonth {
+    #[wasm_bindgen(constructor)]
+    pub fn new(
+        n_first: u32,
+        n_last: u32,
+        utc_offset_minutes: i32,
+    ) -> Result<WasmTurnOfMonth, JsError> {
+        Ok(Self {
+            inner: wc::TurnOfMonth::new(n_first, n_last, utc_offset_minutes).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+        timestamp: i64,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = SessionHighLow)]
+pub struct WasmSessionHighLow {
+    inner: wc::SessionHighLow,
+}
+#[wasm_bindgen(js_class = SessionHighLow)]
+impl WasmSessionHighLow {
+    #[wasm_bindgen(constructor)]
+    pub fn new(utc_offset_minutes: i32) -> WasmSessionHighLow {
+        Self {
+            inner: wc::SessionHighLow::new(utc_offset_minutes),
+        }
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+        timestamp: i64,
+    ) -> Result<JsValue, JsError> {
+        let c = wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"high".into(), &o.high.into()).ok();
+                Reflect::set(&obj, &"low".into(), &o.low.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = SessionRange)]
+pub struct WasmSessionRange {
+    inner: wc::SessionRange,
+}
+#[wasm_bindgen(js_class = SessionRange)]
+impl WasmSessionRange {
+    #[wasm_bindgen(constructor)]
+    pub fn new(utc_offset_minutes: i32) -> WasmSessionRange {
+        Self {
+            inner: wc::SessionRange::new(utc_offset_minutes),
+        }
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+        timestamp: i64,
+    ) -> Result<JsValue, JsError> {
+        let c = wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"asia".into(), &o.asia.into()).ok();
+                Reflect::set(&obj, &"eu".into(), &o.eu.into()).ok();
+                Reflect::set(&obj, &"us".into(), &o.us.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = OvernightIntradayReturn)]
+pub struct WasmOvernightIntradayReturn {
+    inner: wc::OvernightIntradayReturn,
+}
+#[wasm_bindgen(js_class = OvernightIntradayReturn)]
+impl WasmOvernightIntradayReturn {
+    #[wasm_bindgen(constructor)]
+    pub fn new(utc_offset_minutes: i32) -> WasmOvernightIntradayReturn {
+        Self {
+            inner: wc::OvernightIntradayReturn::new(utc_offset_minutes),
+        }
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+        timestamp: i64,
+    ) -> Result<JsValue, JsError> {
+        let c = wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"overnight".into(), &o.overnight.into()).ok();
+                Reflect::set(&obj, &"intraday".into(), &o.intraday.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}

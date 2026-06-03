@@ -22,9 +22,7 @@
 //! WeightedClose.
 
 use libfuzzer_sys::fuzz_target;
-use wickra_core::{
-AbandonedBaby, AccelerationBands, AcceleratorOscillator, AdOscillator, Adl, AdvanceBlock, Adx, Adxr, Alligator, AnchoredVwap, Aroon, AroonOscillator, Atr, AtrBands, AtrTrailingStop, AwesomeOscillator, AwesomeOscillatorHistogram, BalanceOfPower, BatchExt, BeltHold, Breakaway, Camarilla, Candle, Cci, ChaikinMoneyFlow, ChaikinOscillator, ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex, ClassicPivots, ClosingMarubozu, ConcealingBabySwallow, Counterattack, DemandIndex, DemarkPivots, Doji, DojiStar, Donchian, DonchianStop, DownsideGapThreeMethods, DragonflyDoji, Dx, EaseOfMovement, Engulfing, EveningDojiStar, Evwma, FallingThreeMethods, FibonacciPivots, ForceIndex, FractalChaosBands, GapSideBySideWhite, GarmanKlassVolatility, GravestoneDoji, Hammer, HangingMan, Harami, HeikinAshi, HiLoActivator, HighWave, Hikkake, HikkakeModified, HomingPigeon, HurstChannel, Ichimoku, IdenticalThreeCrows, InNeck, Indicator, Inertia, InitialBalance, InvertedHammer, Keltner, Kicking, KickingByLength, Kvo, LadderBottom, LongLeggedDoji, LongLine, MarketFacilitationIndex, Marubozu, MassIndex, MatHold, MatchingLow, AvgPrice, MedianPrice, Mfi, MidPrice, MinusDi, MinusDm, MorningDojiStar, MorningEveningStar, Natr, Nvi, Obv, OnNeck, OpeningMarubozu, OpeningRange, ParkinsonVolatility, Pgo, PiercingDarkCloud, PlusDi, PlusDm, Psar, Pvi, RickshawMan, RisingThreeMethods, RogersSatchellVolatility, RollingVwap, Rvi, Rwi, SarExt, SeparatingLines, ShootingStar, ShortLine, Smi, SpinningTop, StalledPattern, StarcBands, StickSandwich, Stochastic, SuperTrend, Takuri, TasukiGap, TdCombo, TdCountdown, TdDeMarker, TdDifferential, TdLines, TdOpen, TdPressure, TdRangeProjection, TdRei, TdRiskLevel, TdSequential, TdSetup, ThreeInside, ThreeLineStrike, ThreeOutside, ThreeSoldiersOrCrows, ThreeStarsInSouth, Thrusting, TpoProfile, TrueRange, Tsv, TtmSqueeze, Tweezer, TwoCrows, TypicalPrice, UltimateOscillator, UniqueThreeRiver, UpsideGapThreeMethods, UpsideGapTwoCrows, ValueArea, VoltyStop, VolumeOscillator, VolumePriceTrend, VolumeProfile, Vortex, Vwap, VwapStdDevBands, Vwma, Vzo, WaveTrend, WeightedClose, WilliamsFractals, WilliamsR, WoodiePivots, YangZhangVolatility, YoyoExit, ZigZag
-};
+use wickra_core::{AbandonedBaby, AccelerationBands, AcceleratorOscillator, AdOscillator, Adl, AdvanceBlock, Adx, Adxr, Alligator, AnchoredVwap, Aroon, AroonOscillator, Atr, AtrBands, AtrTrailingStop, AverageDailyRange, AwesomeOscillator, AwesomeOscillatorHistogram, BalanceOfPower, BatchExt, BeltHold, Breakaway, Camarilla, Candle, Cci, ChaikinMoneyFlow, ChaikinOscillator, ChaikinVolatility, ChandeKrollStop, ChandelierExit, ChoppinessIndex, ClassicPivots, ClosingMarubozu, ConcealingBabySwallow, Counterattack, DayOfWeekProfile, DemandIndex, DemarkPivots, Doji, DojiStar, Donchian, DonchianStop, DownsideGapThreeMethods, DragonflyDoji, Dx, EaseOfMovement, Engulfing, EveningDojiStar, Evwma, FallingThreeMethods, FibonacciPivots, ForceIndex, FractalChaosBands, GapSideBySideWhite, GarmanKlassVolatility, GravestoneDoji, Hammer, HangingMan, Harami, HeikinAshi, HiLoActivator, HighWave, Hikkake, HikkakeModified, HomingPigeon, HurstChannel, Ichimoku, IdenticalThreeCrows, InNeck, Indicator, Inertia, InitialBalance, IntradayVolatilityProfile, InvertedHammer, Keltner, Kicking, KickingByLength, Kvo, LadderBottom, LongLeggedDoji, LongLine, MarketFacilitationIndex, Marubozu, MassIndex, MatHold, MatchingLow, AvgPrice, MedianPrice, Mfi, MidPrice, MinusDi, MinusDm, MorningDojiStar, MorningEveningStar, Natr, Nvi, Obv, OnNeck, OpeningMarubozu, OpeningRange, OvernightGap, OvernightIntradayReturn, ParkinsonVolatility, Pgo, PiercingDarkCloud, PlusDi, PlusDm, Psar, Pvi, RickshawMan, RisingThreeMethods, RogersSatchellVolatility, RollingVwap, Rvi, Rwi, SarExt, SeasonalZScore, SeparatingLines, SessionHighLow, SessionRange, SessionVwap, ShootingStar, ShortLine, Smi, SpinningTop, StalledPattern, StarcBands, StickSandwich, Stochastic, SuperTrend, Takuri, TasukiGap, TdCombo, TdCountdown, TdDeMarker, TdDifferential, TdLines, TdOpen, TdPressure, TdRangeProjection, TdRei, TdRiskLevel, TdSequential, TdSetup, ThreeInside, ThreeLineStrike, ThreeOutside, ThreeSoldiersOrCrows, ThreeStarsInSouth, Thrusting, TimeOfDayReturnProfile, TpoProfile, TrueRange, Tsv, TtmSqueeze, TurnOfMonth, Tweezer, TwoCrows, TypicalPrice, UltimateOscillator, UniqueThreeRiver, UpsideGapThreeMethods, UpsideGapTwoCrows, ValueArea, VoltyStop, VolumeByTimeProfile, VolumeOscillator, VolumePriceTrend, VolumeProfile, Vortex, Vwap, VwapStdDevBands, Vwma, Vzo, WaveTrend, WeightedClose, WilliamsFractals, WilliamsR, WoodiePivots, YangZhangVolatility, YoyoExit, ZigZag};
 
 /// Convert a flat `f64` stream into a `Vec<Candle>` by chunking it into
 /// `[open, high, low, close, volume]` groups. Tuples that fail OHLCV
@@ -349,4 +347,29 @@ fuzz_target!(|data: Vec<f64>| {
     drive(TwoCrows::new, &candles);
     drive(UpsideGapTwoCrows::new, &candles);
     drive(IdenticalThreeCrows::new, &candles);
+    // --- Seasonality & Session ---
+    drive(|| VolumeByTimeProfile::new(24, 0).unwrap(), &candles);
+
+    drive(|| IntradayVolatilityProfile::new(24, 0).unwrap(), &candles);
+
+    drive(|| DayOfWeekProfile::new(0), &candles);
+
+    drive(|| TimeOfDayReturnProfile::new(24, 0).unwrap(), &candles);
+
+    drive(|| SeasonalZScore::new(0), &candles);
+
+    drive(|| TurnOfMonth::new(3, 1, 0).unwrap(), &candles);
+
+    drive(|| OvernightIntradayReturn::new(0), &candles);
+
+    drive(|| OvernightGap::new(0), &candles);
+
+    drive(|| AverageDailyRange::new(14, 0).unwrap(), &candles);
+
+    drive(|| SessionRange::new(0), &candles);
+
+    drive(|| SessionHighLow::new(0), &candles);
+
+    drive(|| SessionVwap::new(0), &candles);
+
 });

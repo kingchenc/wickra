@@ -13398,3 +13398,615 @@ impl AlphaNode {
         self.inner.warmup_period() as u32
     }
 }
+
+// ====================== Seasonality & Session (full-candle) ======================
+//
+// These read the wall-clock fields of `Candle::timestamp`, so the bindings take
+// the full candle (open, high, low, close, volume, timestamp) rather than the
+// high/low/close slice used by the candle indicators above.
+
+fn season_candles(
+    open: &[f64],
+    high: &[f64],
+    low: &[f64],
+    close: &[f64],
+    volume: &[f64],
+    timestamp: &[i64],
+) -> napi::Result<Vec<wc::Candle>> {
+    let n = open.len();
+    if [
+        high.len(),
+        low.len(),
+        close.len(),
+        volume.len(),
+        timestamp.len(),
+    ]
+    .iter()
+    .any(|&x| x != n)
+    {
+        return Err(NapiError::from_reason(
+            "open, high, low, close, volume, timestamp must be equal length".to_string(),
+        ));
+    }
+    let mut out = Vec::with_capacity(n);
+    for i in 0..n {
+        out.push(
+            wc::Candle::new(open[i], high[i], low[i], close[i], volume[i], timestamp[i])
+                .map_err(map_err)?,
+        );
+    }
+    Ok(out)
+}
+
+macro_rules! node_seasonality_offset_scalar {
+    ($wrapper:ident, $node_name:literal, $rust_ty:ty) => {
+        #[napi(js_name = $node_name)]
+        pub struct $wrapper {
+            inner: $rust_ty,
+        }
+        #[napi]
+        impl $wrapper {
+            #[napi(constructor)]
+            pub fn new(utc_offset_minutes: i32) -> Self {
+                Self {
+                    inner: <$rust_ty>::new(utc_offset_minutes),
+                }
+            }
+            #[napi]
+            pub fn update(
+                &mut self,
+                open: f64,
+                high: f64,
+                low: f64,
+                close: f64,
+                volume: f64,
+                timestamp: i64,
+            ) -> napi::Result<Option<f64>> {
+                Ok(self.inner.update(
+                    wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?,
+                ))
+            }
+            #[napi]
+            pub fn batch(
+                &mut self,
+                open: Vec<f64>,
+                high: Vec<f64>,
+                low: Vec<f64>,
+                close: Vec<f64>,
+                volume: Vec<f64>,
+                timestamp: Vec<i64>,
+            ) -> napi::Result<Vec<f64>> {
+                let candles = season_candles(&open, &high, &low, &close, &volume, &timestamp)?;
+                Ok(candles
+                    .into_iter()
+                    .map(|c| self.inner.update(c).unwrap_or(f64::NAN))
+                    .collect())
+            }
+            #[napi]
+            pub fn reset(&mut self) {
+                self.inner.reset();
+            }
+            #[napi(js_name = "isReady")]
+            pub fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            #[napi(js_name = "warmupPeriod")]
+            pub fn warmup_period(&self) -> u32 {
+                self.inner.warmup_period() as u32
+            }
+            #[napi(js_name = "utcOffsetMinutes")]
+            pub fn utc_offset_minutes(&self) -> i32 {
+                self.inner.utc_offset_minutes()
+            }
+        }
+    };
+}
+
+macro_rules! node_seasonality_bucket_profile {
+    ($wrapper:ident, $node_name:literal, $rust_ty:ty) => {
+        #[napi(js_name = $node_name)]
+        pub struct $wrapper {
+            inner: $rust_ty,
+        }
+        #[napi]
+        impl $wrapper {
+            #[napi(constructor)]
+            pub fn new(buckets: u32, utc_offset_minutes: i32) -> napi::Result<Self> {
+                Ok(Self {
+                    inner: <$rust_ty>::new(buckets as usize, utc_offset_minutes)
+                        .map_err(map_err)?,
+                })
+            }
+            #[napi]
+            pub fn update(
+                &mut self,
+                open: f64,
+                high: f64,
+                low: f64,
+                close: f64,
+                volume: f64,
+                timestamp: i64,
+            ) -> napi::Result<Option<Vec<f64>>> {
+                Ok(self
+                    .inner
+                    .update(
+                        wc::Candle::new(open, high, low, close, volume, timestamp)
+                            .map_err(map_err)?,
+                    )
+                    .map(|o| o.bins))
+            }
+            #[napi]
+            pub fn batch(
+                &mut self,
+                open: Vec<f64>,
+                high: Vec<f64>,
+                low: Vec<f64>,
+                close: Vec<f64>,
+                volume: Vec<f64>,
+                timestamp: Vec<i64>,
+            ) -> napi::Result<Vec<f64>> {
+                let candles = season_candles(&open, &high, &low, &close, &volume, &timestamp)?;
+                let k = self.inner.params().0;
+                let n = candles.len();
+                let mut out = vec![f64::NAN; n * k];
+                for (i, c) in candles.into_iter().enumerate() {
+                    if let Some(o) = self.inner.update(c) {
+                        for (j, b) in o.bins.iter().enumerate() {
+                            out[i * k + j] = *b;
+                        }
+                    }
+                }
+                Ok(out)
+            }
+            #[napi]
+            pub fn reset(&mut self) {
+                self.inner.reset();
+            }
+            #[napi(js_name = "isReady")]
+            pub fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            #[napi(js_name = "warmupPeriod")]
+            pub fn warmup_period(&self) -> u32 {
+                self.inner.warmup_period() as u32
+            }
+            #[napi(js_name = "buckets")]
+            pub fn buckets(&self) -> u32 {
+                self.inner.params().0 as u32
+            }
+            #[napi(js_name = "utcOffsetMinutes")]
+            pub fn utc_offset_minutes(&self) -> i32 {
+                self.inner.params().1
+            }
+        }
+    };
+}
+
+macro_rules! node_seasonality_offset_profile {
+    ($wrapper:ident, $node_name:literal, $rust_ty:ty, $k:expr) => {
+        #[napi(js_name = $node_name)]
+        pub struct $wrapper {
+            inner: $rust_ty,
+        }
+        #[napi]
+        impl $wrapper {
+            #[napi(constructor)]
+            pub fn new(utc_offset_minutes: i32) -> Self {
+                Self {
+                    inner: <$rust_ty>::new(utc_offset_minutes),
+                }
+            }
+            #[napi]
+            pub fn update(
+                &mut self,
+                open: f64,
+                high: f64,
+                low: f64,
+                close: f64,
+                volume: f64,
+                timestamp: i64,
+            ) -> napi::Result<Option<Vec<f64>>> {
+                Ok(self
+                    .inner
+                    .update(
+                        wc::Candle::new(open, high, low, close, volume, timestamp)
+                            .map_err(map_err)?,
+                    )
+                    .map(|o| o.bins))
+            }
+            #[napi]
+            pub fn batch(
+                &mut self,
+                open: Vec<f64>,
+                high: Vec<f64>,
+                low: Vec<f64>,
+                close: Vec<f64>,
+                volume: Vec<f64>,
+                timestamp: Vec<i64>,
+            ) -> napi::Result<Vec<f64>> {
+                let candles = season_candles(&open, &high, &low, &close, &volume, &timestamp)?;
+                let k = $k;
+                let n = candles.len();
+                let mut out = vec![f64::NAN; n * k];
+                for (i, c) in candles.into_iter().enumerate() {
+                    if let Some(o) = self.inner.update(c) {
+                        for (j, b) in o.bins.iter().enumerate() {
+                            out[i * k + j] = *b;
+                        }
+                    }
+                }
+                Ok(out)
+            }
+            #[napi]
+            pub fn reset(&mut self) {
+                self.inner.reset();
+            }
+            #[napi(js_name = "isReady")]
+            pub fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            #[napi(js_name = "warmupPeriod")]
+            pub fn warmup_period(&self) -> u32 {
+                self.inner.warmup_period() as u32
+            }
+            #[napi(js_name = "utcOffsetMinutes")]
+            pub fn utc_offset_minutes(&self) -> i32 {
+                self.inner.utc_offset_minutes()
+            }
+        }
+    };
+}
+
+node_seasonality_offset_scalar!(SessionVwapNode, "SessionVwap", wc::SessionVwap);
+node_seasonality_offset_scalar!(OvernightGapNode, "OvernightGap", wc::OvernightGap);
+node_seasonality_offset_scalar!(SeasonalZScoreNode, "SeasonalZScore", wc::SeasonalZScore);
+node_seasonality_bucket_profile!(
+    TimeOfDayReturnProfileNode,
+    "TimeOfDayReturnProfile",
+    wc::TimeOfDayReturnProfile
+);
+node_seasonality_bucket_profile!(
+    IntradayVolatilityProfileNode,
+    "IntradayVolatilityProfile",
+    wc::IntradayVolatilityProfile
+);
+node_seasonality_bucket_profile!(
+    VolumeByTimeProfileNode,
+    "VolumeByTimeProfile",
+    wc::VolumeByTimeProfile
+);
+node_seasonality_offset_profile!(
+    DayOfWeekProfileNode,
+    "DayOfWeekProfile",
+    wc::DayOfWeekProfile,
+    7
+);
+
+#[napi(js_name = "AverageDailyRange")]
+pub struct AverageDailyRangeNode {
+    inner: wc::AverageDailyRange,
+}
+#[napi]
+impl AverageDailyRangeNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, utc_offset_minutes: i32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::AverageDailyRange::new(period as usize, utc_offset_minutes)
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+        timestamp: i64,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self
+            .inner
+            .update(wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open: Vec<f64>,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+        volume: Vec<f64>,
+        timestamp: Vec<i64>,
+    ) -> napi::Result<Vec<f64>> {
+        let candles = season_candles(&open, &high, &low, &close, &volume, &timestamp)?;
+        Ok(candles
+            .into_iter()
+            .map(|c| self.inner.update(c).unwrap_or(f64::NAN))
+            .collect())
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "TurnOfMonth")]
+pub struct TurnOfMonthNode {
+    inner: wc::TurnOfMonth,
+}
+#[napi]
+impl TurnOfMonthNode {
+    #[napi(constructor)]
+    pub fn new(n_first: u32, n_last: u32, utc_offset_minutes: i32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::TurnOfMonth::new(n_first, n_last, utc_offset_minutes).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+        timestamp: i64,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self
+            .inner
+            .update(wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open: Vec<f64>,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+        volume: Vec<f64>,
+        timestamp: Vec<i64>,
+    ) -> napi::Result<Vec<f64>> {
+        let candles = season_candles(&open, &high, &low, &close, &volume, &timestamp)?;
+        Ok(candles
+            .into_iter()
+            .map(|c| self.inner.update(c).unwrap_or(f64::NAN))
+            .collect())
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(object)]
+pub struct SessionHighLowValue {
+    pub high: f64,
+    pub low: f64,
+}
+
+#[napi(js_name = "SessionHighLow")]
+pub struct SessionHighLowNode {
+    inner: wc::SessionHighLow,
+}
+#[napi]
+impl SessionHighLowNode {
+    #[napi(constructor)]
+    pub fn new(utc_offset_minutes: i32) -> Self {
+        Self {
+            inner: wc::SessionHighLow::new(utc_offset_minutes),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+        timestamp: i64,
+    ) -> napi::Result<Option<SessionHighLowValue>> {
+        Ok(self
+            .inner
+            .update(wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?)
+            .map(|o| SessionHighLowValue {
+                high: o.high,
+                low: o.low,
+            }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open: Vec<f64>,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+        volume: Vec<f64>,
+        timestamp: Vec<i64>,
+    ) -> napi::Result<Vec<f64>> {
+        let candles = season_candles(&open, &high, &low, &close, &volume, &timestamp)?;
+        let n = candles.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for (i, c) in candles.into_iter().enumerate() {
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.high;
+                out[i * 2 + 1] = o.low;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(object)]
+pub struct SessionRangeValue {
+    pub asia: f64,
+    pub eu: f64,
+    pub us: f64,
+}
+
+#[napi(js_name = "SessionRange")]
+pub struct SessionRangeNode {
+    inner: wc::SessionRange,
+}
+#[napi]
+impl SessionRangeNode {
+    #[napi(constructor)]
+    pub fn new(utc_offset_minutes: i32) -> Self {
+        Self {
+            inner: wc::SessionRange::new(utc_offset_minutes),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+        timestamp: i64,
+    ) -> napi::Result<Option<SessionRangeValue>> {
+        Ok(self
+            .inner
+            .update(wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?)
+            .map(|o| SessionRangeValue {
+                asia: o.asia,
+                eu: o.eu,
+                us: o.us,
+            }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open: Vec<f64>,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+        volume: Vec<f64>,
+        timestamp: Vec<i64>,
+    ) -> napi::Result<Vec<f64>> {
+        let candles = season_candles(&open, &high, &low, &close, &volume, &timestamp)?;
+        let n = candles.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for (i, c) in candles.into_iter().enumerate() {
+            if let Some(o) = self.inner.update(c) {
+                out[i * 3] = o.asia;
+                out[i * 3 + 1] = o.eu;
+                out[i * 3 + 2] = o.us;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(object)]
+pub struct OvernightIntradayReturnValue {
+    pub overnight: f64,
+    pub intraday: f64,
+}
+
+#[napi(js_name = "OvernightIntradayReturn")]
+pub struct OvernightIntradayReturnNode {
+    inner: wc::OvernightIntradayReturn,
+}
+#[napi]
+impl OvernightIntradayReturnNode {
+    #[napi(constructor)]
+    pub fn new(utc_offset_minutes: i32) -> Self {
+        Self {
+            inner: wc::OvernightIntradayReturn::new(utc_offset_minutes),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+        timestamp: i64,
+    ) -> napi::Result<Option<OvernightIntradayReturnValue>> {
+        Ok(self
+            .inner
+            .update(wc::Candle::new(open, high, low, close, volume, timestamp).map_err(map_err)?)
+            .map(|o| OvernightIntradayReturnValue {
+                overnight: o.overnight,
+                intraday: o.intraday,
+            }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open: Vec<f64>,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+        volume: Vec<f64>,
+        timestamp: Vec<i64>,
+    ) -> napi::Result<Vec<f64>> {
+        let candles = season_candles(&open, &high, &low, &close, &volume, &timestamp)?;
+        let n = candles.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for (i, c) in candles.into_iter().enumerate() {
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.overnight;
+                out[i * 2 + 1] = o.intraday;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}

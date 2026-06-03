@@ -17243,6 +17243,593 @@ impl PyPointAndFigureBars {
 
 // ============================== Module ==============================
 
+// ====================== Seasonality & Session (full-candle) ======================
+//
+// These indicators read the wall-clock fields of `Candle::timestamp`, so the
+// bindings consume the FULL candle (open, high, low, close, volume, timestamp)
+// — unlike the high/low/close candle indicators above.
+
+fn build_seasonality_candles<'py>(
+    open: &PyReadonlyArray1<'py, f64>,
+    high: &PyReadonlyArray1<'py, f64>,
+    low: &PyReadonlyArray1<'py, f64>,
+    close: &PyReadonlyArray1<'py, f64>,
+    volume: &PyReadonlyArray1<'py, f64>,
+    timestamp: &PyReadonlyArray1<'py, i64>,
+) -> PyResult<Vec<wc::Candle>> {
+    let o = open
+        .as_slice()
+        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+    let h = high
+        .as_slice()
+        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+    let l = low
+        .as_slice()
+        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+    let c = close
+        .as_slice()
+        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+    let v = volume
+        .as_slice()
+        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+    let t = timestamp
+        .as_slice()
+        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+    let n = o.len();
+    if [h.len(), l.len(), c.len(), v.len(), t.len()]
+        .iter()
+        .any(|&x| x != n)
+    {
+        return Err(PyValueError::new_err(
+            "open, high, low, close, volume, timestamp must be equal length",
+        ));
+    }
+    let mut candles = Vec::with_capacity(n);
+    for i in 0..n {
+        candles.push(wc::Candle::new(o[i], h[i], l[i], c[i], v[i], t[i]).map_err(map_err)?);
+    }
+    Ok(candles)
+}
+
+macro_rules! py_seasonality_offset_scalar {
+    ($pytype:ident, $name:literal, $rust:ident) => {
+        #[pyclass(name = $name, module = "wickra._wickra", skip_from_py_object)]
+        #[derive(Clone)]
+        struct $pytype {
+            inner: wc::$rust,
+        }
+        #[pymethods]
+        impl $pytype {
+            #[new]
+            #[pyo3(signature = (utc_offset_minutes = 0))]
+            fn new(utc_offset_minutes: i32) -> Self {
+                Self {
+                    inner: wc::$rust::new(utc_offset_minutes),
+                }
+            }
+            fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+                Ok(self.inner.update(extract_candle(candle)?))
+            }
+            #[allow(clippy::too_many_arguments)]
+            fn batch<'py>(
+                &mut self,
+                py: Python<'py>,
+                open: PyReadonlyArray1<'py, f64>,
+                high: PyReadonlyArray1<'py, f64>,
+                low: PyReadonlyArray1<'py, f64>,
+                close: PyReadonlyArray1<'py, f64>,
+                volume: PyReadonlyArray1<'py, f64>,
+                timestamp: PyReadonlyArray1<'py, i64>,
+            ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+                let candles =
+                    build_seasonality_candles(&open, &high, &low, &close, &volume, &timestamp)?;
+                let out: Vec<f64> = candles
+                    .into_iter()
+                    .map(|c| self.inner.update(c).unwrap_or(f64::NAN))
+                    .collect();
+                Ok(out.into_pyarray(py))
+            }
+            #[getter]
+            fn utc_offset_minutes(&self) -> i32 {
+                self.inner.utc_offset_minutes()
+            }
+            fn reset(&mut self) {
+                self.inner.reset();
+            }
+            fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            fn warmup_period(&self) -> usize {
+                self.inner.warmup_period()
+            }
+            fn __repr__(&self) -> String {
+                format!(
+                    "{}(utc_offset_minutes={})",
+                    $name,
+                    self.inner.utc_offset_minutes()
+                )
+            }
+        }
+    };
+}
+
+macro_rules! py_seasonality_bucket_profile {
+    ($pytype:ident, $name:literal, $rust:ident) => {
+        #[pyclass(name = $name, module = "wickra._wickra", skip_from_py_object)]
+        #[derive(Clone)]
+        struct $pytype {
+            inner: wc::$rust,
+        }
+        #[pymethods]
+        impl $pytype {
+            #[new]
+            #[pyo3(signature = (buckets = 24, utc_offset_minutes = 0))]
+            fn new(buckets: usize, utc_offset_minutes: i32) -> PyResult<Self> {
+                Ok(Self {
+                    inner: wc::$rust::new(buckets, utc_offset_minutes).map_err(map_err)?,
+                })
+            }
+            fn update<'py>(
+                &mut self,
+                py: Python<'py>,
+                candle: &Bound<'_, PyAny>,
+            ) -> PyResult<Option<Bound<'py, PyArray1<f64>>>> {
+                let c = extract_candle(candle)?;
+                Ok(self.inner.update(c).map(|o| o.bins.into_pyarray(py)))
+            }
+            #[allow(clippy::too_many_arguments)]
+            fn batch<'py>(
+                &mut self,
+                py: Python<'py>,
+                open: PyReadonlyArray1<'py, f64>,
+                high: PyReadonlyArray1<'py, f64>,
+                low: PyReadonlyArray1<'py, f64>,
+                close: PyReadonlyArray1<'py, f64>,
+                volume: PyReadonlyArray1<'py, f64>,
+                timestamp: PyReadonlyArray1<'py, i64>,
+            ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+                let candles =
+                    build_seasonality_candles(&open, &high, &low, &close, &volume, &timestamp)?;
+                let k = self.inner.params().0;
+                let n = candles.len();
+                let mut out = vec![f64::NAN; n * k];
+                for (i, c) in candles.into_iter().enumerate() {
+                    if let Some(o) = self.inner.update(c) {
+                        for (j, b) in o.bins.iter().enumerate() {
+                            out[i * k + j] = *b;
+                        }
+                    }
+                }
+                Ok(numpy::ndarray::Array2::from_shape_vec((n, k), out)
+                    .expect("shape consistent")
+                    .into_pyarray(py))
+            }
+            #[getter]
+            fn params(&self) -> (usize, i32) {
+                self.inner.params()
+            }
+            fn reset(&mut self) {
+                self.inner.reset();
+            }
+            fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            fn warmup_period(&self) -> usize {
+                self.inner.warmup_period()
+            }
+            fn __repr__(&self) -> String {
+                let (buckets, offset) = self.inner.params();
+                format!("{}(buckets={buckets}, utc_offset_minutes={offset})", $name)
+            }
+        }
+    };
+}
+
+macro_rules! py_seasonality_offset_profile {
+    ($pytype:ident, $name:literal, $rust:ident, $k:expr) => {
+        #[pyclass(name = $name, module = "wickra._wickra", skip_from_py_object)]
+        #[derive(Clone)]
+        struct $pytype {
+            inner: wc::$rust,
+        }
+        #[pymethods]
+        impl $pytype {
+            #[new]
+            #[pyo3(signature = (utc_offset_minutes = 0))]
+            fn new(utc_offset_minutes: i32) -> Self {
+                Self {
+                    inner: wc::$rust::new(utc_offset_minutes),
+                }
+            }
+            fn update<'py>(
+                &mut self,
+                py: Python<'py>,
+                candle: &Bound<'_, PyAny>,
+            ) -> PyResult<Option<Bound<'py, PyArray1<f64>>>> {
+                let c = extract_candle(candle)?;
+                Ok(self.inner.update(c).map(|o| o.bins.into_pyarray(py)))
+            }
+            #[allow(clippy::too_many_arguments)]
+            fn batch<'py>(
+                &mut self,
+                py: Python<'py>,
+                open: PyReadonlyArray1<'py, f64>,
+                high: PyReadonlyArray1<'py, f64>,
+                low: PyReadonlyArray1<'py, f64>,
+                close: PyReadonlyArray1<'py, f64>,
+                volume: PyReadonlyArray1<'py, f64>,
+                timestamp: PyReadonlyArray1<'py, i64>,
+            ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+                let candles =
+                    build_seasonality_candles(&open, &high, &low, &close, &volume, &timestamp)?;
+                let k = $k;
+                let n = candles.len();
+                let mut out = vec![f64::NAN; n * k];
+                for (i, c) in candles.into_iter().enumerate() {
+                    if let Some(o) = self.inner.update(c) {
+                        for (j, b) in o.bins.iter().enumerate() {
+                            out[i * k + j] = *b;
+                        }
+                    }
+                }
+                Ok(numpy::ndarray::Array2::from_shape_vec((n, k), out)
+                    .expect("shape consistent")
+                    .into_pyarray(py))
+            }
+            #[getter]
+            fn utc_offset_minutes(&self) -> i32 {
+                self.inner.utc_offset_minutes()
+            }
+            fn reset(&mut self) {
+                self.inner.reset();
+            }
+            fn is_ready(&self) -> bool {
+                self.inner.is_ready()
+            }
+            fn warmup_period(&self) -> usize {
+                self.inner.warmup_period()
+            }
+            fn __repr__(&self) -> String {
+                format!(
+                    "{}(utc_offset_minutes={})",
+                    $name,
+                    self.inner.utc_offset_minutes()
+                )
+            }
+        }
+    };
+}
+
+py_seasonality_offset_scalar!(PySessionVwap, "SessionVwap", SessionVwap);
+py_seasonality_offset_scalar!(PyOvernightGap, "OvernightGap", OvernightGap);
+py_seasonality_offset_scalar!(PySeasonalZScore, "SeasonalZScore", SeasonalZScore);
+py_seasonality_bucket_profile!(
+    PyTimeOfDayReturnProfile,
+    "TimeOfDayReturnProfile",
+    TimeOfDayReturnProfile
+);
+py_seasonality_bucket_profile!(
+    PyIntradayVolatilityProfile,
+    "IntradayVolatilityProfile",
+    IntradayVolatilityProfile
+);
+py_seasonality_bucket_profile!(
+    PyVolumeByTimeProfile,
+    "VolumeByTimeProfile",
+    VolumeByTimeProfile
+);
+py_seasonality_offset_profile!(PyDayOfWeekProfile, "DayOfWeekProfile", DayOfWeekProfile, 7);
+
+#[pyclass(
+    name = "AverageDailyRange",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyAverageDailyRange {
+    inner: wc::AverageDailyRange,
+}
+#[pymethods]
+impl PyAverageDailyRange {
+    #[new]
+    #[pyo3(signature = (period = 14, utc_offset_minutes = 0))]
+    fn new(period: usize, utc_offset_minutes: i32) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::AverageDailyRange::new(period, utc_offset_minutes).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(extract_candle(candle)?))
+    }
+    #[allow(clippy::too_many_arguments)]
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        open: PyReadonlyArray1<'py, f64>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+        timestamp: PyReadonlyArray1<'py, i64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let candles = build_seasonality_candles(&open, &high, &low, &close, &volume, &timestamp)?;
+        let out: Vec<f64> = candles
+            .into_iter()
+            .map(|c| self.inner.update(c).unwrap_or(f64::NAN))
+            .collect();
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn params(&self) -> (usize, i32) {
+        self.inner.params()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (period, offset) = self.inner.params();
+        format!("AverageDailyRange(period={period}, utc_offset_minutes={offset})")
+    }
+}
+
+#[pyclass(name = "TurnOfMonth", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyTurnOfMonth {
+    inner: wc::TurnOfMonth,
+}
+#[pymethods]
+impl PyTurnOfMonth {
+    #[new]
+    #[pyo3(signature = (n_first = 3, n_last = 1, utc_offset_minutes = 0))]
+    fn new(n_first: u32, n_last: u32, utc_offset_minutes: i32) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::TurnOfMonth::new(n_first, n_last, utc_offset_minutes).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(extract_candle(candle)?))
+    }
+    #[allow(clippy::too_many_arguments)]
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        open: PyReadonlyArray1<'py, f64>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+        timestamp: PyReadonlyArray1<'py, i64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let candles = build_seasonality_candles(&open, &high, &low, &close, &volume, &timestamp)?;
+        let out: Vec<f64> = candles
+            .into_iter()
+            .map(|c| self.inner.update(c).unwrap_or(f64::NAN))
+            .collect();
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn params(&self) -> (u32, u32, i32) {
+        self.inner.params()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (n_first, n_last, offset) = self.inner.params();
+        format!("TurnOfMonth(n_first={n_first}, n_last={n_last}, utc_offset_minutes={offset})")
+    }
+}
+
+#[pyclass(
+    name = "SessionHighLow",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PySessionHighLow {
+    inner: wc::SessionHighLow,
+}
+#[pymethods]
+impl PySessionHighLow {
+    #[new]
+    #[pyo3(signature = (utc_offset_minutes = 0))]
+    fn new(utc_offset_minutes: i32) -> Self {
+        Self {
+            inner: wc::SessionHighLow::new(utc_offset_minutes),
+        }
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.high, o.low)))
+    }
+    #[allow(clippy::too_many_arguments)]
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        open: PyReadonlyArray1<'py, f64>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+        timestamp: PyReadonlyArray1<'py, i64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let candles = build_seasonality_candles(&open, &high, &low, &close, &volume, &timestamp)?;
+        let n = candles.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for (i, c) in candles.into_iter().enumerate() {
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.high;
+                out[i * 2 + 1] = o.low;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn utc_offset_minutes(&self) -> i32 {
+        self.inner.utc_offset_minutes()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "SessionHighLow(utc_offset_minutes={})",
+            self.inner.utc_offset_minutes()
+        )
+    }
+}
+
+#[pyclass(name = "SessionRange", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PySessionRange {
+    inner: wc::SessionRange,
+}
+#[pymethods]
+impl PySessionRange {
+    #[new]
+    #[pyo3(signature = (utc_offset_minutes = 0))]
+    fn new(utc_offset_minutes: i32) -> Self {
+        Self {
+            inner: wc::SessionRange::new(utc_offset_minutes),
+        }
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.asia, o.eu, o.us)))
+    }
+    #[allow(clippy::too_many_arguments)]
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        open: PyReadonlyArray1<'py, f64>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+        timestamp: PyReadonlyArray1<'py, i64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let candles = build_seasonality_candles(&open, &high, &low, &close, &volume, &timestamp)?;
+        let n = candles.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for (i, c) in candles.into_iter().enumerate() {
+            if let Some(o) = self.inner.update(c) {
+                out[i * 3] = o.asia;
+                out[i * 3 + 1] = o.eu;
+                out[i * 3 + 2] = o.us;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn utc_offset_minutes(&self) -> i32 {
+        self.inner.utc_offset_minutes()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "SessionRange(utc_offset_minutes={})",
+            self.inner.utc_offset_minutes()
+        )
+    }
+}
+
+#[pyclass(
+    name = "OvernightIntradayReturn",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyOvernightIntradayReturn {
+    inner: wc::OvernightIntradayReturn,
+}
+#[pymethods]
+impl PyOvernightIntradayReturn {
+    #[new]
+    #[pyo3(signature = (utc_offset_minutes = 0))]
+    fn new(utc_offset_minutes: i32) -> Self {
+        Self {
+            inner: wc::OvernightIntradayReturn::new(utc_offset_minutes),
+        }
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.overnight, o.intraday)))
+    }
+    #[allow(clippy::too_many_arguments)]
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        open: PyReadonlyArray1<'py, f64>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+        timestamp: PyReadonlyArray1<'py, i64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let candles = build_seasonality_candles(&open, &high, &low, &close, &volume, &timestamp)?;
+        let n = candles.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for (i, c) in candles.into_iter().enumerate() {
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.overnight;
+                out[i * 2 + 1] = o.intraday;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn utc_offset_minutes(&self) -> i32 {
+        self.inner.utc_offset_minutes()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "OvernightIntradayReturn(utc_offset_minutes={})",
+            self.inner.utc_offset_minutes()
+        )
+    }
+}
+
 #[pymodule]
 #[allow(clippy::too_many_lines)]
 fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -17596,5 +18183,18 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyRocr100>()?;
     m.add_class::<PyLinRegIntercept>()?;
     m.add_class::<PyTsf>()?;
+    // Family 16: Seasonality & Session.
+    m.add_class::<PySessionVwap>()?;
+    m.add_class::<PySessionHighLow>()?;
+    m.add_class::<PySessionRange>()?;
+    m.add_class::<PyAverageDailyRange>()?;
+    m.add_class::<PyOvernightGap>()?;
+    m.add_class::<PyOvernightIntradayReturn>()?;
+    m.add_class::<PyTurnOfMonth>()?;
+    m.add_class::<PySeasonalZScore>()?;
+    m.add_class::<PyTimeOfDayReturnProfile>()?;
+    m.add_class::<PyDayOfWeekProfile>()?;
+    m.add_class::<PyIntradayVolatilityProfile>()?;
+    m.add_class::<PyVolumeByTimeProfile>()?;
     Ok(())
 }
