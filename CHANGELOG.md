@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-06-03
+
 ### Changed
 - **Relicensed** from PolyForm Noncommercial 1.0.0 to dual **MIT OR Apache-2.0**. Wickra is now OSI-approved, permissive open source; commercial use is permitted under either license. See [`LICENSE-MIT`](LICENSE-MIT) and [`LICENSE-APACHE`](LICENSE-APACHE).
 
@@ -1150,7 +1152,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.4.7...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/wickra-lib/wickra/compare/v0.4.7...v0.5.0
 [0.4.7]: https://github.com/wickra-lib/wickra/compare/v0.4.6...v0.4.7
 [0.4.6]: https://github.com/wickra-lib/wickra/compare/v0.4.5...v0.4.6
 [0.4.5]: https://github.com/wickra-lib/wickra/compare/v0.4.4...v0.4.5
