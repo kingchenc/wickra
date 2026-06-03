@@ -28,6 +28,12 @@ function num(v) {
 // --- Scalar indicators: update(value) vs batch(prices) ---
 
 const scalarFactories = {
+  TSF: () => new wickra.TSF(14),
+  LINEARREG_INTERCEPT: () => new wickra.LINEARREG_INTERCEPT(14),
+  ROCR100: () => new wickra.ROCR100(10),
+  ROCR: () => new wickra.ROCR(10),
+  ROCP: () => new wickra.ROCP(10),
+  MIDPOINT: () => new wickra.MIDPOINT(14),
   SMA: () => new wickra.SMA(14),
   EMA: () => new wickra.EMA(14),
   WMA: () => new wickra.WMA(14),
@@ -90,6 +96,8 @@ const scalarFactories = {
   EhlersStochastic: () => new wickra.EhlersStochastic(20),
   EmpiricalModeDecomposition: () => new wickra.EmpiricalModeDecomposition(20, 0.5),
   HilbertDominantCycle: () => new wickra.HilbertDominantCycle(),
+  HT_DCPHASE: () => new wickra.HT_DCPHASE(),
+  HT_TRENDMODE: () => new wickra.HT_TRENDMODE(),
   AdaptiveCycle: () => new wickra.AdaptiveCycle(),
   SineWave: () => new wickra.SineWave(),
   FAMA: () => new wickra.FAMA(0.5, 0.05),
@@ -159,10 +167,17 @@ for (const [name, make] of Object.entries(scalarFactories)) {
 // --- Scalar-output candle indicators: update(...) vs batch(...) ---
 
 const candleScalar = {
+  MIDPRICE: { make: () => new wickra.MIDPRICE(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  DX: { make: () => new wickra.DX(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  MINUS_DI: { make: () => new wickra.MINUS_DI(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  PLUS_DI: { make: () => new wickra.PLUS_DI(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ATR: { make: () => new wickra.ATR(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  PLUS_DM: { make: () => new wickra.PLUS_DM(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  MINUS_DM: { make: () => new wickra.MINUS_DM(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   CCI: { make: () => new wickra.CCI(20), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   WilliamsR: { make: () => new wickra.WilliamsR(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   PSAR: { make: () => new wickra.PSAR(0.02, 0.02, 0.2), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  SAREXT: { make: () => new wickra.SAREXT(0, 0, 0.02, 0.02, 0.2, 0.02, 0.02, 0.2), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   MFI: { make: () => new wickra.MFI(14), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
   VWAP: { make: () => new wickra.VWAP(), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
   RollingVWAP: { make: () => new wickra.RollingVWAP(20), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
@@ -170,6 +185,7 @@ const candleScalar = {
   OBV: { make: () => new wickra.OBV(), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
   VWMA: { make: () => new wickra.VWMA(20), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
   RVI: { make: () => new wickra.RVI(10), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  AVGPRICE: { make: () => new wickra.AVGPRICE(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   Inertia: { make: () => new wickra.Inertia(14, 20), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   PGO: { make: () => new wickra.PGO(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   SMI: { make: () => new wickra.SMI(5, 3, 3), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
@@ -302,6 +318,9 @@ const multi = {
   Alligator: { make: () => new wickra.Alligator(13, 8, 5), fields: ['jaw', 'teeth', 'lips'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   ZeroLagMACD: { make: () => new wickra.ZeroLagMACD(12, 26, 9), fields: ['macd', 'signal', 'histogram'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   MACD: { make: () => new wickra.MACD(12, 26, 9), fields: ['macd', 'signal', 'histogram'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
+  HT_PHASOR: { make: () => new wickra.HT_PHASOR(), fields: ['inphase', 'quadrature'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
+  MACDFIX: { make: () => new wickra.MACDFIX(9), fields: ['macd', 'signal', 'histogram'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
+  MACDEXT: { make: () => new wickra.MACDEXT(12, 0, 26, 0, 9, 0), fields: ['macd', 'signal', 'histogram'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   KST: { make: () => wickra.KST.classic(), fields: ['kst', 'signal'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   BollingerBands: { make: () => new wickra.BollingerBands(20, 2), fields: ['upper', 'middle', 'lower', 'stddev'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   Stochastic: { make: () => new wickra.Stochastic(14, 3), fields: ['k', 'd'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },

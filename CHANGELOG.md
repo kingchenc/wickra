@@ -7,6 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **TA-Lib parity — Directional Movement components** — the ADX building blocks,
+  previously available only bundled inside `Adx`, as standalone single-output
+  indicators:
+  - `PlusDm` (`PLUS_DM`) — Wilder-smoothed plus directional movement.
+  - `MinusDm` (`MINUS_DM`) — Wilder-smoothed minus directional movement.
+  - `PlusDi` (`PLUS_DI`) — plus directional indicator, `100 · smoothed(+DM) / ATR`.
+  - `MinusDi` (`MINUS_DI`) — minus directional indicator, `100 · smoothed(-DM) / ATR`.
+  - `Dx` (`DX`) — directional movement index, `100 · |+DI − −DI| / (+DI + −DI)`.
+- **TA-Lib parity — price transforms** — window and per-bar price aggregates:
+  - `MidPrice` (`MIDPRICE`) — `(highest high + lowest low) / 2` over a window.
+  - `MidPoint` (`MIDPOINT`) — `(max + min) / 2` of a scalar series over a window.
+  - `AvgPrice` (`AVGPRICE`) — per-bar `(open + high + low + close) / 4`.
+- **TA-Lib parity — rate-of-change variants** — the ratio forms of `Roc`:
+  - `Rocp` (`ROCP`) — `(close − close[period]) / close[period]` (fraction).
+  - `Rocr` (`ROCR`) — `close / close[period]` (ratio).
+  - `Rocr100` (`ROCR100`) — `close / close[period] · 100`.
+- **TA-Lib parity — linear-regression outputs** — the remaining OLS endpoints:
+  - `LinRegIntercept` (`LINEARREG_INTERCEPT`) — the OLS intercept `a`.
+  - `Tsf` (`TSF`) — time series forecast, `a + b·period` (one bar ahead).
+- **TA-Lib parity — `MacdFix` (`MACDFIX`)** — MACD with fast/slow fixed at 12/26
+  and only the signal period configurable; output is the usual `{macd, signal,
+  histogram}` triple.
+- **TA-Lib parity — `SarExt` (`SAREXT`)** — Parabolic SAR with a start value,
+  reversal offset, independent long/short acceleration, and a signed output
+  (positive in long phases, negative in short phases).
+- **TA-Lib parity — `MacdExt` (`MACDEXT`)** — MACD with an independently
+  selectable moving-average type (new `MaType` enum: SMA/EMA/WMA/DEMA/TEMA/TRIMA)
+  for each of the fast, slow and signal lines.
+- **TA-Lib parity — `HtPhasor` (`HT_PHASOR`)** — the in-phase and quadrature
+  components of the Hilbert-transform analytic signal, as a `{inphase,
+  quadrature}` pair.
+- **TA-Lib parity — `HtDcPhase` (`HT_DCPHASE`)** — the phase angle (in degrees)
+  of the Hilbert-transform dominant cycle.
+- **TA-Lib parity — `HtTrendMode` (`HT_TRENDMODE`)** — Ehlers' trend (`1`) vs
+  cycle (`0`) classification from the Hilbert-transform dominant cycle.
+
 ## [0.4.5] - 2026-06-02
 
 ### Added

@@ -15,21 +15,7 @@
 
 use libfuzzer_sys::fuzz_target;
 use wickra_core::{
-    AdaptiveCycle, Alma, AnchoredRsi, Apo, Autocorrelation, AverageDrawdown, BatchExt, Beta,
-    BollingerBands,
-    CalmarRatio, CenterOfGravity, Cfo, Cmo, CoefficientOfVariation, ConditionalValueAtRisk,
-    ConnorsRsi, Coppock, CyberneticCycle, Decycler, DecyclerOscillator, Dema, DetrendedStdDev,
-    DoubleBollinger, Dpo, DrawdownDuration, EhlersStochastic, ElderImpulse, Ema,
-    EmpiricalModeDecomposition, Fama, FisherTransform, Frama, GainLossRatio, HilbertDominantCycle,
-    HistoricalVolatility, Hma, HurstExponent, Indicator, InstantaneousTrendline,
-    InverseFisherTransform, Jma, Kama, KellyCriterion, Kst, Kurtosis, LaguerreRsi, LinRegAngle,
-    LinRegChannel, LinRegSlope, LinearRegression, MaEnvelope, MacdIndicator, Mama, MaxDrawdown,
-    McGinleyDynamic, MedianAbsoluteDeviation, Mom, OmegaRatio, PainIndex, PearsonCorrelation,
-    PercentageTrailingStop, Pmo, Ppo, ProfitFactor, RSquared, RecoveryFactor, RenkoTrailingStop,
-    Roc, RoofingFilter, Rsi, RviVolatility, SharpeRatio, SineWave, Skewness, Sma, Smma,
-    SortinoRatio, SpearmanCorrelation, StandardError, StandardErrorBands, Stc, StdDev,
-    StepTrailingStop, StochRsi, SuperSmoother, Tema, Tii, Trima, Trix, Tsi, UlcerIndex,
-    ValueAtRisk, Variance, VerticalHorizontalFilter, Vidya, Wma, ZScore, ZeroLagMacd, Zlema, T3,
+AdaptiveCycle, Alma, AnchoredRsi, Apo, Autocorrelation, AverageDrawdown, BatchExt, Beta, BollingerBands, CalmarRatio, CenterOfGravity, Cfo, Cmo, CoefficientOfVariation, ConditionalValueAtRisk, ConnorsRsi, Coppock, CyberneticCycle, Decycler, DecyclerOscillator, Dema, DetrendedStdDev, DoubleBollinger, Dpo, DrawdownDuration, EhlersStochastic, ElderImpulse, Ema, EmpiricalModeDecomposition, Fama, FisherTransform, Frama, GainLossRatio, HilbertDominantCycle, HistoricalVolatility, Hma, HtDcPhase, HtPhasor, HtTrendMode, HurstExponent, Indicator, InstantaneousTrendline, InverseFisherTransform, Jma, Kama, KellyCriterion, Kst, Kurtosis, LaguerreRsi, LinRegAngle, LinRegChannel, LinRegIntercept, LinRegSlope, LinearRegression, MaEnvelope, MaType, MacdExt, MacdFix, MacdIndicator, Mama, MaxDrawdown, McGinleyDynamic, MedianAbsoluteDeviation, MidPoint, Mom, OmegaRatio, PainIndex, PearsonCorrelation, PercentageTrailingStop, Pmo, Ppo, ProfitFactor, RSquared, RecoveryFactor, RenkoTrailingStop, Roc, Rocp, Rocr, Rocr100, RoofingFilter, Rsi, RviVolatility, SharpeRatio, SineWave, Skewness, Sma, Smma, SortinoRatio, SpearmanCorrelation, StandardError, StandardErrorBands, Stc, StdDev, StepTrailingStop, StochRsi, SuperSmoother, Tema, Tii, Trima, Trix, Tsf, Tsi, UlcerIndex, ValueAtRisk, Variance, VerticalHorizontalFilter, Vidya, Wma, ZScore, ZeroLagMacd, Zlema, T3
 };
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
@@ -60,6 +46,9 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| Tema::new(14).unwrap(), &data);
     drive(|| Hma::new(14).unwrap(), &data);
     drive(|| Roc::new(14).unwrap(), &data);
+    drive(|| Rocp::new(14).unwrap(), &data);
+    drive(|| Rocr::new(14).unwrap(), &data);
+    drive(|| Rocr100::new(14).unwrap(), &data);
     drive(|| Trix::new(14).unwrap(), &data);
     drive(|| Smma::new(14).unwrap(), &data);
     drive(|| Trima::new(14).unwrap(), &data);
@@ -88,7 +77,10 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| UlcerIndex::new(14).unwrap(), &data);
     drive(|| HistoricalVolatility::new(14, 252).unwrap(), &data);
     drive(|| LinearRegression::new(14).unwrap(), &data);
+    drive(|| MidPoint::new(14).unwrap(), &data);
     drive(|| LinRegSlope::new(14).unwrap(), &data);
+    drive(|| LinRegIntercept::new(14).unwrap(), &data);
+    drive(|| Tsf::new(14).unwrap(), &data);
     drive(|| LinRegAngle::new(14).unwrap(), &data);
     drive(|| VerticalHorizontalFilter::new(14).unwrap(), &data);
     drive(|| ZScore::new(14).unwrap(), &data);
@@ -146,6 +138,8 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| EhlersStochastic::new(20).unwrap(), &data);
     drive(|| EmpiricalModeDecomposition::new(20, 0.5).unwrap(), &data);
     drive(HilbertDominantCycle::new, &data);
+    drive(HtDcPhase::new, &data);
+    drive(HtTrendMode::new, &data);
     drive(AdaptiveCycle::new, &data);
     drive(SineWave::new, &data);
     drive(|| Fama::new(0.5, 0.05).unwrap(), &data);
@@ -190,6 +184,36 @@ fuzz_target!(|data: Vec<f64>| {
             let _ = macd.update(x);
         }
         let _ = MacdIndicator::new(12, 26, 9).unwrap().batch(&data);
+    }
+
+    // MACDFIX wraps MacdIndicator(12, 26, signal); same multi-output topology.
+    {
+        let mut fix = MacdFix::new(9).unwrap();
+        for &x in &data {
+            let _ = fix.update(x);
+        }
+        let _ = MacdFix::new(9).unwrap().batch(&data);
+    }
+
+    // MACDEXT: selectable MA types per line, multi-output topology.
+    {
+        let mut ext = MacdExt::new(12, MaType::Ema, 26, MaType::Ema, 9, MaType::Sma).unwrap();
+        for &x in &data {
+            let _ = ext.update(x);
+        }
+        let _ = MacdExt::new(12, MaType::Ema, 26, MaType::Ema, 9, MaType::Sma)
+            .unwrap()
+            .batch(&data);
+    }
+
+    // HT_PHASOR is scalar-input but emits a {inphase, quadrature} struct, so it
+    // bypasses the generic `drive` helper.
+    {
+        let mut ph = HtPhasor::new();
+        for &x in &data {
+            let _ = ph.update(x);
+        }
+        let _ = HtPhasor::new().batch(&data);
     }
     {
         let mut bb = BollingerBands::new(20, 2.0).unwrap();

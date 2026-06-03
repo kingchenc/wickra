@@ -310,7 +310,7 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, MOM, CMO, DPO, StdDev, UlcerIndex, VerticalHorizontalFilter, ZScore, McGinleyDynamic, FRAMA, SuperSmoother, FisherTransform, Decycler, CenterOfGravity, CyberneticCycle, InstantaneousTrendline, EhlersStochastic, RVIVolatility, Variance, CoefficientOfVariation, Skewness, Kurtosis, StandardError, DetrendedStdDev, RSquared, MedianAbsoluteDeviation, Autocorrelation, HurstExponent, PearsonCorrelation, Beta, PairwiseBeta, SpearmanCorrelation, PairSpreadZScore, LeadLagCrossCorrelation, Cointegration, RelativeStrengthAB, MACD, BollingerBands, ATR, Stochastic, OBV, ADX, ADXR, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, RollingVWAP, AwesomeOscillator, Aroon, Inertia, ConnorsRSI, LaguerreRSI, SMI, KST, PGO, RVI, AwesomeOscillatorHistogram, STC, ElderImpulse, ZeroLagMACD, CFO, APO, KAMA, EVWMA, Alligator, JMA, VIDYA, ALMA, T3, TSI, PMO, TII, ADL, VolumePriceTrend, ChaikinMoneyFlow, ChaikinOscillator, ForceIndex, NVI, PVI, VolumeOscillator, KVO, WilliamsAD, AnchoredRSI, AnchoredVWAP, DemandIndex, TSV, VZO, MarketFacilitationIndex, EaseOfMovement, SuperTrend, ChandelierExit, ChandeKrollStop, AtrTrailingStop, HiLoActivator, VoltyStop, YoyoExit, DonchianStop, PercentageTrailingStop, StepTrailingStop, RenkoTrailingStop, TypicalPrice, MedianPrice, WeightedClose, LinearRegression, LinRegSlope, AcceleratorOscillator, BalanceOfPower, ChoppinessIndex, TrueRange, ChaikinVolatility, YangZhangVolatility, RogersSatchellVolatility, GarmanKlassVolatility, ParkinsonVolatility, LinRegAngle, BollingerBandwidth, PercentB, NATR, HistoricalVolatility, AroonOscillator, WaveTrend, RWI, Vortex, MassIndex, StochRSI, UltimateOscillator, PPO, Coppock, VWMA, MaEnvelope, AccelerationBands, StarcBands, AtrBands, HurstChannel, LinRegChannel, StandardErrorBands, DoubleBollinger, TtmSqueeze, FractalChaosBands, VwapStdDevBands, ClassicPivots, FibonacciPivots, Camarilla, WoodiePivots, DemarkPivots, WilliamsFractals, ZigZag, TDSetup, TDSequential, TDDeMarker, TDREI, TDPressure, TDCombo, TDCountdown, TDLines, TDRangeProjection, TDDifferential, TDOpen, TDRiskLevel, InverseFisherTransform, DecyclerOscillator, RoofingFilter, EmpiricalModeDecomposition, HilbertDominantCycle, AdaptiveCycle, SineWave, MAMA, FAMA, Ichimoku, HeikinAshi, ValueArea, VolumeProfile, TpoProfile, InitialBalance, OpeningRange, Doji, Hammer, InvertedHammer, HangingMan, ShootingStar, Engulfing, Harami, MorningEveningStar, ThreeSoldiersOrCrows, PiercingDarkCloud, Marubozu, Tweezer, SpinningTop, ThreeInside, ThreeOutside, TwoCrows, UpsideGapTwoCrows, IdenticalThreeCrows, ThreeLineStrike, ThreeStarsInSouth, AbandonedBaby, AdvanceBlock, BeltHold, Breakaway, Counterattack, DojiStar, DragonflyDoji, GravestoneDoji, LongLeggedDoji, RickshawMan, EveningDojiStar, MorningDojiStar, GapSideBySideWhite, HighWave, Hikkake, HikkakeModified, HomingPigeon, OnNeck, InNeck, Thrusting, SeparatingLines, Kicking, KickingByLength, LadderBottom, MatHold, MatchingLow, LongLine, ShortLine, RisingThreeMethods, FallingThreeMethods, UpsideGapThreeMethods, DownsideGapThreeMethods, StalledPattern, StickSandwich, Takuri, ClosingMarubozu, OpeningMarubozu, TasukiGap, UniqueThreeRiver, ConcealingBabySwallow, OrderBookImbalanceTop1, OrderBookImbalanceFull, Microprice, QuotedSpread, DepthSlope, OrderBookImbalanceTopN, SignedVolume, CumulativeVolumeDelta, TradeImbalance, EffectiveSpread, RealizedSpread, KylesLambda, Footprint, FundingRate, FundingRateMean, FundingRateZScore, FundingBasis, OpenInterestDelta, OIPriceDivergence, OIWeighted, LongShortRatio, TakerBuySellRatio, LiquidationFeatures, TermStructureBasis, CalendarSpread, SharpeRatio, SortinoRatio, CalmarRatio, OmegaRatio, MaxDrawdown, AverageDrawdown, DrawdownDuration, PainIndex, ValueAtRisk, ConditionalValueAtRisk, ProfitFactor, GainLossRatio, RecoveryFactor, KellyCriterion, TreynorRatio, InformationRatio, RenkoBars, KagiBars, PointAndFigureBars, Alpha } = nativeBinding
+const { version, SMA, EMA, WMA, RSI, DEMA, TEMA, HMA, ROC, TRIX, SMMA, TRIMA, ZLEMA, MOM, CMO, DPO, StdDev, UlcerIndex, VerticalHorizontalFilter, ZScore, McGinleyDynamic, FRAMA, SuperSmoother, FisherTransform, Decycler, CenterOfGravity, CyberneticCycle, InstantaneousTrendline, EhlersStochastic, RVIVolatility, Variance, CoefficientOfVariation, Skewness, Kurtosis, StandardError, DetrendedStdDev, RSquared, MedianAbsoluteDeviation, MIDPOINT, ROCP, ROCR, ROCR100, LINEARREG_INTERCEPT, TSF, Autocorrelation, HurstExponent, PearsonCorrelation, Beta, PairwiseBeta, SpearmanCorrelation, PairSpreadZScore, LeadLagCrossCorrelation, Cointegration, RelativeStrengthAB, MACD, MACDFIX, MACDEXT, BollingerBands, ATR, PLUS_DM, MINUS_DM, PLUS_DI, MINUS_DI, DX, MIDPRICE, AVGPRICE, SAREXT, HT_PHASOR, Stochastic, OBV, ADX, ADXR, CCI, WilliamsR, MFI, PSAR, Keltner, Donchian, VWAP, RollingVWAP, AwesomeOscillator, Aroon, Inertia, ConnorsRSI, LaguerreRSI, SMI, KST, PGO, RVI, AwesomeOscillatorHistogram, STC, ElderImpulse, ZeroLagMACD, CFO, APO, KAMA, EVWMA, Alligator, JMA, VIDYA, ALMA, T3, TSI, PMO, TII, ADL, VolumePriceTrend, ChaikinMoneyFlow, ChaikinOscillator, ForceIndex, NVI, PVI, VolumeOscillator, KVO, WilliamsAD, AnchoredRSI, AnchoredVWAP, DemandIndex, TSV, VZO, MarketFacilitationIndex, EaseOfMovement, SuperTrend, ChandelierExit, ChandeKrollStop, AtrTrailingStop, HiLoActivator, VoltyStop, YoyoExit, DonchianStop, PercentageTrailingStop, StepTrailingStop, RenkoTrailingStop, TypicalPrice, MedianPrice, WeightedClose, LinearRegression, LinRegSlope, AcceleratorOscillator, BalanceOfPower, ChoppinessIndex, TrueRange, ChaikinVolatility, YangZhangVolatility, RogersSatchellVolatility, GarmanKlassVolatility, ParkinsonVolatility, LinRegAngle, BollingerBandwidth, PercentB, NATR, HistoricalVolatility, AroonOscillator, WaveTrend, RWI, Vortex, MassIndex, StochRSI, UltimateOscillator, PPO, Coppock, VWMA, MaEnvelope, AccelerationBands, StarcBands, AtrBands, HurstChannel, LinRegChannel, StandardErrorBands, DoubleBollinger, TtmSqueeze, FractalChaosBands, VwapStdDevBands, ClassicPivots, FibonacciPivots, Camarilla, WoodiePivots, DemarkPivots, WilliamsFractals, ZigZag, TDSetup, TDSequential, TDDeMarker, TDREI, TDPressure, TDCombo, TDCountdown, TDLines, TDRangeProjection, TDDifferential, TDOpen, TDRiskLevel, InverseFisherTransform, DecyclerOscillator, RoofingFilter, EmpiricalModeDecomposition, HT_DCPHASE, HT_TRENDMODE, HilbertDominantCycle, AdaptiveCycle, SineWave, MAMA, FAMA, Ichimoku, HeikinAshi, ValueArea, VolumeProfile, TpoProfile, InitialBalance, OpeningRange, Doji, Hammer, InvertedHammer, HangingMan, ShootingStar, Engulfing, Harami, MorningEveningStar, ThreeSoldiersOrCrows, PiercingDarkCloud, Marubozu, Tweezer, SpinningTop, ThreeInside, ThreeOutside, TwoCrows, UpsideGapTwoCrows, IdenticalThreeCrows, ThreeLineStrike, ThreeStarsInSouth, AbandonedBaby, AdvanceBlock, BeltHold, Breakaway, Counterattack, DojiStar, DragonflyDoji, GravestoneDoji, LongLeggedDoji, RickshawMan, EveningDojiStar, MorningDojiStar, GapSideBySideWhite, HighWave, Hikkake, HikkakeModified, HomingPigeon, OnNeck, InNeck, Thrusting, SeparatingLines, Kicking, KickingByLength, LadderBottom, MatHold, MatchingLow, LongLine, ShortLine, RisingThreeMethods, FallingThreeMethods, UpsideGapThreeMethods, DownsideGapThreeMethods, StalledPattern, StickSandwich, Takuri, ClosingMarubozu, OpeningMarubozu, TasukiGap, UniqueThreeRiver, ConcealingBabySwallow, OrderBookImbalanceTop1, OrderBookImbalanceFull, Microprice, QuotedSpread, DepthSlope, OrderBookImbalanceTopN, SignedVolume, CumulativeVolumeDelta, TradeImbalance, EffectiveSpread, RealizedSpread, KylesLambda, Footprint, FundingRate, FundingRateMean, FundingRateZScore, FundingBasis, OpenInterestDelta, OIPriceDivergence, OIWeighted, LongShortRatio, TakerBuySellRatio, LiquidationFeatures, TermStructureBasis, CalendarSpread, SharpeRatio, SortinoRatio, CalmarRatio, OmegaRatio, MaxDrawdown, AverageDrawdown, DrawdownDuration, PainIndex, ValueAtRisk, ConditionalValueAtRisk, ProfitFactor, GainLossRatio, RecoveryFactor, KellyCriterion, TreynorRatio, InformationRatio, RenkoBars, KagiBars, PointAndFigureBars, Alpha } = nativeBinding
 
 module.exports.version = version
 module.exports.SMA = SMA
@@ -350,6 +350,12 @@ module.exports.StandardError = StandardError
 module.exports.DetrendedStdDev = DetrendedStdDev
 module.exports.RSquared = RSquared
 module.exports.MedianAbsoluteDeviation = MedianAbsoluteDeviation
+module.exports.MIDPOINT = MIDPOINT
+module.exports.ROCP = ROCP
+module.exports.ROCR = ROCR
+module.exports.ROCR100 = ROCR100
+module.exports.LINEARREG_INTERCEPT = LINEARREG_INTERCEPT
+module.exports.TSF = TSF
 module.exports.Autocorrelation = Autocorrelation
 module.exports.HurstExponent = HurstExponent
 module.exports.PearsonCorrelation = PearsonCorrelation
@@ -361,8 +367,19 @@ module.exports.LeadLagCrossCorrelation = LeadLagCrossCorrelation
 module.exports.Cointegration = Cointegration
 module.exports.RelativeStrengthAB = RelativeStrengthAB
 module.exports.MACD = MACD
+module.exports.MACDFIX = MACDFIX
+module.exports.MACDEXT = MACDEXT
 module.exports.BollingerBands = BollingerBands
 module.exports.ATR = ATR
+module.exports.PLUS_DM = PLUS_DM
+module.exports.MINUS_DM = MINUS_DM
+module.exports.PLUS_DI = PLUS_DI
+module.exports.MINUS_DI = MINUS_DI
+module.exports.DX = DX
+module.exports.MIDPRICE = MIDPRICE
+module.exports.AVGPRICE = AVGPRICE
+module.exports.SAREXT = SAREXT
+module.exports.HT_PHASOR = HT_PHASOR
 module.exports.Stochastic = Stochastic
 module.exports.OBV = OBV
 module.exports.ADX = ADX
@@ -491,6 +508,8 @@ module.exports.InverseFisherTransform = InverseFisherTransform
 module.exports.DecyclerOscillator = DecyclerOscillator
 module.exports.RoofingFilter = RoofingFilter
 module.exports.EmpiricalModeDecomposition = EmpiricalModeDecomposition
+module.exports.HT_DCPHASE = HT_DCPHASE
+module.exports.HT_TRENDMODE = HT_TRENDMODE
 module.exports.HilbertDominantCycle = HilbertDominantCycle
 module.exports.AdaptiveCycle = AdaptiveCycle
 module.exports.SineWave = SineWave

@@ -45,6 +45,12 @@ def ohlcv() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 # --- Scalar (f64 -> f64) indicators ---------------------------------------
 
 SCALAR = [
+    (ta.TSF, (14,)),
+    (ta.LINEARREG_INTERCEPT, (14,)),
+    (ta.ROCR100, (10,)),
+    (ta.ROCR, (10,)),
+    (ta.ROCP, (10,)),
+    (ta.MIDPOINT, (14,)),
     (ta.SMMA, (14,)),
     (ta.TRIMA, (20,)),
     (ta.ZLEMA, (14,)),
@@ -96,6 +102,8 @@ SCALAR = [
     (ta.EhlersStochastic, (20,)),
     (ta.EmpiricalModeDecomposition, (20, 0.5)),
     (ta.HilbertDominantCycle, ()),
+    (ta.HT_DCPHASE, ()),
+    (ta.HT_TRENDMODE, ()),
     (ta.AdaptiveCycle, ()),
     (ta.SineWave, ()),
     (ta.FAMA, (0.5, 0.05)),
@@ -136,6 +144,9 @@ SCALAR_MULTI = {
     "LinRegChannel": (lambda: ta.LinRegChannel(20, 2.0), 3),
     "StandardErrorBands": (lambda: ta.StandardErrorBands(21, 2.0), 3),
     "DoubleBollinger": (lambda: ta.DoubleBollinger(20, 1.0, 2.0), 5),
+    "MacdFix": (lambda: ta.MACDFIX(9), 3),
+    "MacdExt": (lambda: ta.MACDEXT(12, 0, 26, 0, 9, 0), 3),
+    "HtPhasor": (lambda: ta.HT_PHASOR(), 2),
 }
 
 
@@ -275,7 +286,15 @@ def test_relative_strength_streaming_matches_batch():
 # 6-tuple candle; the batch helper takes only the columns it needs.
 
 CANDLE_SCALAR = {
+    "MIDPRICE": (lambda: ta.MIDPRICE(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
+    "AVGPRICE": (lambda: ta.AVGPRICE(), lambda ind, h, l, c, v: ind.batch(c, h, l, c)),
+    "DX": (lambda: ta.DX(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
+    "MINUS_DI": (lambda: ta.MINUS_DI(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
+    "PLUS_DI": (lambda: ta.PLUS_DI(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "VWMA": (lambda: ta.VWMA(20), lambda ind, h, l, c, v: ind.batch(c, v)),
+    "SAREXT": (lambda: ta.SAREXT(), lambda ind, h, l, c, v: ind.batch(h, l, c)),
+    "PLUS_DM": (lambda: ta.PLUS_DM(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
+    "MINUS_DM": (lambda: ta.MINUS_DM(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "RVI": (
         # extract_candle pulls the open price from index 0 of the tuple; the
         # streaming test below already builds candles with open == close, so
@@ -1169,6 +1188,99 @@ def test_weighted_close_reference():
     assert ta.WeightedClose().update((10.0, 12.0, 8.0, 11.0, 1.0, 0)) == pytest.approx(
         10.5
     )
+
+
+def test_plus_dm_reference():
+    # Highs rise by 1 (up = +1) while lows rise by 0.5, so every raw +DM equals
+    # the up-move (1.0). Period 3: seed = 3 * 1 = 3.0, then the Wilder step holds it.
+    high = np.array([11.0, 12.0, 13.0, 14.0, 15.0])
+    low = np.array([9.0, 9.5, 10.0, 10.5, 11.0])
+    close = np.array([10.0, 11.0, 12.0, 13.0, 14.0])
+    out = ta.PLUS_DM(3).batch(high, low, close)
+    assert math.isnan(out[0]) and math.isnan(out[2])
+    assert out[3] == pytest.approx(3.0)
+    assert out[4] == pytest.approx(3.0)
+
+
+def test_minus_dm_reference():
+    # Lows fall by 1 (down = +1) while highs fall by 0.5, so every raw -DM equals
+    # the down-move (1.0). Period 3: seed = 3 * 1 = 3.0, then the Wilder step holds it.
+    high = np.array([20.0, 19.5, 19.0, 18.5, 18.0])
+    low = np.array([18.0, 17.0, 16.0, 15.0, 14.0])
+    close = np.array([19.0, 18.0, 17.0, 16.0, 15.0])
+    out = ta.MINUS_DM(3).batch(high, low, close)
+    assert math.isnan(out[0]) and math.isnan(out[2])
+    assert out[3] == pytest.approx(3.0)
+    assert out[4] == pytest.approx(3.0)
+
+
+def test_plus_di_reference():
+    # Strict uptrend -> +DI dominates and stays within (0, 100].
+    high = np.array([101.0, 103.0, 105.0, 107.0, 109.0, 111.0])
+    low = np.array([99.5, 101.5, 103.5, 105.5, 107.5, 109.5])
+    close = np.array([100.5, 102.5, 104.5, 106.5, 108.5, 110.5])
+    out = ta.PLUS_DI(3).batch(high, low, close)
+    assert 0.0 < out[-1] <= 100.0
+
+
+def test_minus_di_reference():
+    # Strict downtrend -> -DI dominates and stays within (0, 100].
+    high = np.array([111.0, 109.0, 107.0, 105.0, 103.0, 101.0])
+    low = np.array([109.5, 107.5, 105.5, 103.5, 101.5, 99.5])
+    close = np.array([110.5, 108.5, 106.5, 104.5, 102.5, 100.5])
+    out = ta.MINUS_DI(3).batch(high, low, close)
+    assert 0.0 < out[-1] <= 100.0
+
+
+def test_dx_reference():
+    # Strict trend -> one-sided directional movement -> DX is large, in (0, 100].
+    high = np.array([101.0, 103.0, 105.0, 107.0, 109.0, 111.0])
+    low = np.array([99.5, 101.5, 103.5, 105.5, 107.5, 109.5])
+    close = np.array([100.5, 102.5, 104.5, 106.5, 108.5, 110.5])
+    out = ta.DX(3).batch(high, low, close)
+    assert 50.0 < out[-1] <= 100.0
+
+
+def test_mid_price_reference():
+    # Window highs {12, 14, 16}, lows {8, 9, 10}: (16 + 8) / 2 = 12.
+    high = np.array([12.0, 14.0, 16.0])
+    low = np.array([8.0, 9.0, 10.0])
+    close = np.array([10.0, 11.0, 12.0])
+    out = ta.MIDPRICE(3).batch(high, low, close)
+    assert out[-1] == pytest.approx(12.0)
+
+
+def test_mid_point_reference():
+    # Window {8, 12, 10}: (12 + 8) / 2 = 10.
+    out = ta.MIDPOINT(3).batch(np.array([8.0, 12.0, 10.0]))
+    assert out[-1] == pytest.approx(10.0)
+
+
+def test_avg_price_reference():
+    # (open + high + low + close) / 4 = (10 + 14 + 6 + 12) / 4 = 10.5.
+    assert ta.AVGPRICE().update((10.0, 14.0, 6.0, 12.0, 1.0, 0)) == pytest.approx(10.5)
+
+
+def test_roc_ratio_variants_reference():
+    # period 1 over [10, 11]: ROCP = 0.1, ROCR = 1.1, ROCR100 = 110.
+    assert ta.ROCP(1).batch(np.array([10.0, 11.0]))[-1] == pytest.approx(0.1)
+    assert ta.ROCR(1).batch(np.array([10.0, 11.0]))[-1] == pytest.approx(1.1)
+    assert ta.ROCR100(1).batch(np.array([10.0, 11.0]))[-1] == pytest.approx(110.0)
+
+
+def test_linreg_intercept_and_tsf_reference():
+    # period 3 over [1, 2, 9]: fit y = 0 + 4x. intercept = 0; forecast at x=3 = 12.
+    data = np.array([1.0, 2.0, 9.0])
+    assert ta.LINEARREG_INTERCEPT(3).batch(data)[-1] == pytest.approx(0.0, abs=1e-9)
+    assert ta.TSF(3).batch(data)[-1] == pytest.approx(12.0)
+
+
+def test_macdfix_matches_macd():
+    # MACDFIX(signal) is exactly MACD(12, 26, signal).
+    prices = 100.0 + np.sin(np.arange(80) * 0.3) * 5.0
+    fix = ta.MACDFIX(9).batch(prices)
+    classic = ta.MACD(12, 26, 9).batch(prices)
+    np.testing.assert_allclose(fix, classic, equal_nan=True)
 
 
 def test_nvi_reference():

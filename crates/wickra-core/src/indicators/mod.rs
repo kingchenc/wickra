@@ -26,6 +26,7 @@ mod atr_bands;
 mod atr_trailing_stop;
 mod autocorrelation;
 mod average_drawdown;
+mod avg_price;
 mod awesome_oscillator;
 mod awesome_oscillator_histogram;
 mod balance_of_power;
@@ -74,6 +75,7 @@ mod downside_gap_three_methods;
 mod dpo;
 mod dragonfly_doji;
 mod drawdown_duration;
+mod dx;
 mod ease_of_movement;
 mod effective_spread;
 mod ehlers_stochastic;
@@ -111,6 +113,9 @@ mod hilo_activator;
 mod historical_volatility;
 mod hma;
 mod homing_pigeon;
+mod ht_dcphase;
+mod ht_phasor;
+mod ht_trendmode;
 mod hurst_channel;
 mod hurst_exponent;
 mod ichimoku;
@@ -139,6 +144,7 @@ mod lead_lag_cross_correlation;
 mod linreg;
 mod linreg_angle;
 mod linreg_channel;
+mod linreg_intercept;
 mod linreg_slope;
 mod liquidation_features;
 mod long_legged_doji;
@@ -146,6 +152,8 @@ mod long_line;
 mod long_short_ratio;
 mod ma_envelope;
 mod macd;
+mod macd_ext;
+mod macd_fix;
 mod mama;
 mod market_facilitation_index;
 mod marubozu;
@@ -158,6 +166,10 @@ mod median_absolute_deviation;
 mod median_price;
 mod mfi;
 mod microprice;
+mod mid_point;
+mod mid_price;
+mod minus_di;
+mod minus_dm;
 mod mom;
 mod morning_doji_star;
 mod morning_evening_star;
@@ -183,6 +195,8 @@ mod percent_b;
 mod percentage_trailing_stop;
 mod pgo;
 mod piercing_dark_cloud;
+mod plus_di;
+mod plus_dm;
 mod pmo;
 mod point_and_figure_bars;
 mod ppo;
@@ -199,12 +213,16 @@ mod renko_trailing_stop;
 mod rickshaw_man;
 mod rising_three_methods;
 mod roc;
+mod rocp;
+mod rocr;
+mod rocr100;
 mod rogers_satchell;
 mod roofing_filter;
 mod rsi;
 mod rvi;
 mod rvi_volatility;
 mod rwi;
+mod sar_ext;
 mod separating_lines;
 mod sharpe_ratio;
 mod shooting_star;
@@ -261,6 +279,7 @@ mod treynor_ratio;
 mod trima;
 mod trix;
 mod true_range;
+mod tsf;
 mod tsi;
 mod tsv;
 mod ttm_squeeze;
@@ -321,6 +340,7 @@ pub use atr_bands::{AtrBands, AtrBandsOutput};
 pub use atr_trailing_stop::AtrTrailingStop;
 pub use autocorrelation::Autocorrelation;
 pub use average_drawdown::AverageDrawdown;
+pub use avg_price::AvgPrice;
 pub use awesome_oscillator::AwesomeOscillator;
 pub use awesome_oscillator_histogram::AwesomeOscillatorHistogram;
 pub use balance_of_power::BalanceOfPower;
@@ -369,6 +389,7 @@ pub use downside_gap_three_methods::DownsideGapThreeMethods;
 pub use dpo::Dpo;
 pub use dragonfly_doji::DragonflyDoji;
 pub use drawdown_duration::DrawdownDuration;
+pub use dx::Dx;
 pub use ease_of_movement::EaseOfMovement;
 pub use effective_spread::EffectiveSpread;
 pub use ehlers_stochastic::EhlersStochastic;
@@ -406,6 +427,9 @@ pub use hilo_activator::HiLoActivator;
 pub use historical_volatility::HistoricalVolatility;
 pub use hma::Hma;
 pub use homing_pigeon::HomingPigeon;
+pub use ht_dcphase::HtDcPhase;
+pub use ht_phasor::{HtPhasor, HtPhasorOutput};
+pub use ht_trendmode::HtTrendMode;
 pub use hurst_channel::{HurstChannel, HurstChannelOutput};
 pub use hurst_exponent::HurstExponent;
 pub use ichimoku::{Ichimoku, IchimokuOutput};
@@ -434,6 +458,7 @@ pub use lead_lag_cross_correlation::{LeadLagCrossCorrelation, LeadLagCrossCorrel
 pub use linreg::LinearRegression;
 pub use linreg_angle::LinRegAngle;
 pub use linreg_channel::{LinRegChannel, LinRegChannelOutput};
+pub use linreg_intercept::LinRegIntercept;
 pub use linreg_slope::LinRegSlope;
 pub use liquidation_features::{LiquidationFeatures, LiquidationFeaturesOutput};
 pub use long_legged_doji::LongLeggedDoji;
@@ -441,6 +466,8 @@ pub use long_line::LongLine;
 pub use long_short_ratio::LongShortRatio;
 pub use ma_envelope::{MaEnvelope, MaEnvelopeOutput};
 pub use macd::{MacdIndicator, MacdOutput};
+pub use macd_ext::{MaType, MacdExt};
+pub use macd_fix::MacdFix;
 pub use mama::{Mama, MamaOutput};
 pub use market_facilitation_index::MarketFacilitationIndex;
 pub use marubozu::Marubozu;
@@ -453,6 +480,10 @@ pub use median_absolute_deviation::MedianAbsoluteDeviation;
 pub use median_price::MedianPrice;
 pub use mfi::Mfi;
 pub use microprice::Microprice;
+pub use mid_point::MidPoint;
+pub use mid_price::MidPrice;
+pub use minus_di::MinusDi;
+pub use minus_dm::MinusDm;
 pub use mom::Mom;
 pub use morning_doji_star::MorningDojiStar;
 pub use morning_evening_star::MorningEveningStar;
@@ -478,6 +509,8 @@ pub use percent_b::PercentB;
 pub use percentage_trailing_stop::PercentageTrailingStop;
 pub use pgo::Pgo;
 pub use piercing_dark_cloud::PiercingDarkCloud;
+pub use plus_di::PlusDi;
+pub use plus_dm::PlusDm;
 pub use pmo::Pmo;
 pub use point_and_figure_bars::{PnfColumn, PointAndFigureBars};
 pub use ppo::Ppo;
@@ -494,12 +527,16 @@ pub use renko_trailing_stop::RenkoTrailingStop;
 pub use rickshaw_man::RickshawMan;
 pub use rising_three_methods::RisingThreeMethods;
 pub use roc::Roc;
+pub use rocp::Rocp;
+pub use rocr::Rocr;
+pub use rocr100::Rocr100;
 pub use rogers_satchell::RogersSatchellVolatility;
 pub use roofing_filter::RoofingFilter;
 pub use rsi::Rsi;
 pub use rvi::Rvi;
 pub use rvi_volatility::RviVolatility;
 pub use rwi::{Rwi, RwiOutput};
+pub use sar_ext::SarExt;
 pub use separating_lines::SeparatingLines;
 pub use sharpe_ratio::SharpeRatio;
 pub use shooting_star::ShootingStar;
@@ -556,6 +593,7 @@ pub use treynor_ratio::TreynorRatio;
 pub use trima::Trima;
 pub use trix::Trix;
 pub use true_range::TrueRange;
+pub use tsf::Tsf;
 pub use tsi::Tsi;
 pub use tsv::Tsv;
 pub use ttm_squeeze::{TtmSqueeze, TtmSqueezeOutput};
@@ -649,12 +687,17 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "LaguerreRsi",
             "ConnorsRsi",
             "Inertia",
+            "Rocp",
+            "Rocr",
+            "Rocr100",
         ],
     ),
     (
         "Trend & Directional",
         &[
             "MacdIndicator",
+            "MacdFix",
+            "MacdExt",
             "Adx",
             "Adxr",
             "Aroon",
@@ -667,6 +710,11 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "MassIndex",
             "ChoppinessIndex",
             "VerticalHorizontalFilter",
+            "PlusDm",
+            "MinusDm",
+            "PlusDi",
+            "MinusDi",
+            "Dx",
         ],
     ),
     (
@@ -738,6 +786,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "PercentageTrailingStop",
             "StepTrailingStop",
             "RenkoTrailingStop",
+            "SarExt",
         ],
     ),
     (
@@ -787,6 +836,11 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "PearsonCorrelation",
             "Beta",
             "SpearmanCorrelation",
+            "MidPrice",
+            "MidPoint",
+            "AvgPrice",
+            "LinRegIntercept",
+            "Tsf",
         ],
     ),
     (
@@ -798,6 +852,9 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "InverseFisherTransform",
             "SuperSmoother",
             "HilbertDominantCycle",
+            "HtDcPhase",
+            "HtPhasor",
+            "HtTrendMode",
             "SineWave",
             "Decycler",
             "DecyclerOscillator",
@@ -1004,6 +1061,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 290, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 309, "FAMILIES total drifted from indicator count");
     }
 }

@@ -45,6 +45,10 @@ export interface BollingerValue {
   lower: number
   stddev: number
 }
+export interface HtPhasorValue {
+  inphase: number
+  quadrature: number
+}
 export interface StochValue {
   k: number
   d: number
@@ -658,6 +662,60 @@ export declare class MedianAbsoluteDeviation {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type MidPointNode = MIDPOINT
+export declare class MIDPOINT {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RocpNode = ROCP
+export declare class ROCP {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RocrNode = ROCR
+export declare class ROCR {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type Rocr100Node = ROCR100
+export declare class ROCR100 {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type LinRegInterceptNode = LINEARREG_INTERCEPT
+export declare class LINEARREG_INTERCEPT {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TsfNode = TSF
+export declare class TSF {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type AutocorrelationNode = Autocorrelation
 export declare class Autocorrelation {
   constructor(period: number, lag: number)
@@ -801,6 +859,36 @@ export declare class MACD {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type MacdFixNode = MACDFIX
+export declare class MACDFIX {
+  constructor(signal: number)
+  update(value: number): MacdValue | null
+  /**
+   * Batch over a price array. Returns a flat array of length `3 * n`,
+   * interleaved per row as `[macd0, signal0, histogram0, macd1, ...]`.
+   */
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type MacdExtNode = MACDEXT
+export declare class MACDEXT {
+  /**
+   * Moving-average types are TA-Lib `MA_Type` codes `0..=5`
+   * (SMA, EMA, WMA, DEMA, TEMA, TRIMA).
+   */
+  constructor(fast: number, fastMatype: number, slow: number, slowMatype: number, signal: number, signalMatype: number)
+  update(value: number): MacdValue | null
+  /**
+   * Batch over a price array. Returns a flat array of length `3 * n`,
+   * interleaved per row as `[macd0, signal0, histogram0, macd1, ...]`.
+   */
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type BollingerNode = BollingerBands
 export declare class BollingerBands {
   constructor(period: number, multiplier: number)
@@ -820,6 +908,91 @@ export declare class ATR {
   constructor(period: number)
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type PlusDmNode = PLUS_DM
+export declare class PLUS_DM {
+  constructor(period: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type MinusDmNode = MINUS_DM
+export declare class MINUS_DM {
+  constructor(period: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type PlusDiNode = PLUS_DI
+export declare class PLUS_DI {
+  constructor(period: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type MinusDiNode = MINUS_DI
+export declare class MINUS_DI {
+  constructor(period: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type DxNode = DX
+export declare class DX {
+  constructor(period: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type MidPriceNode = MIDPRICE
+export declare class MIDPRICE {
+  constructor(period: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type AvgPriceNode = AVGPRICE
+export declare class AVGPRICE {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type SarExtNode = SAREXT
+export declare class SAREXT {
+  constructor(startValue: number, offsetOnReverse: number, accelInitLong: number, accelLong: number, accelMaxLong: number, accelInitShort: number, accelShort: number, accelMaxShort: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type HtPhasorNode = HT_PHASOR
+export declare class HT_PHASOR {
+  constructor()
+  update(value: number): HtPhasorValue | null
+  /**
+   * Batch over a price array. Returns a flat array of length `2 * n`,
+   * interleaved per row as `[inphase0, quadrature0, inphase1, ...]`.
+   */
+  batch(prices: Array<number>): Array<number>
   reset(): void
   isReady(): boolean
   warmupPeriod(): number
@@ -2004,6 +2177,24 @@ export declare class RoofingFilter {
 export type EmpiricalModeDecompositionNode = EmpiricalModeDecomposition
 export declare class EmpiricalModeDecomposition {
   constructor(period: number, fraction: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type HtDcPhaseNode = HT_DCPHASE
+export declare class HT_DCPHASE {
+  constructor()
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type HtTrendModeNode = HT_TRENDMODE
+export declare class HT_TRENDMODE {
+  constructor()
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void
