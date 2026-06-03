@@ -39,6 +39,27 @@ contributors who have demonstrated sustained, high-quality involvement, at the
 current maintainer's discretion. If the project grows to multiple maintainers,
 this document will be updated to describe shared decision-making.
 
+## Continuity and succession
+
+The project is designed to survive the loss of any single individual, so that
+issues can be triaged, proposed changes accepted, and releases published within
+one week of confirmed loss of the maintainer:
+
+- **Credentials.** All credentials required to operate the project — the
+  `wickra-lib` GitHub organization, the publishing tokens for crates.io, PyPI
+  and npm, and the `wickra.org` domain registrar — are stored in a password
+  manager. A trusted contact (a family member) holds **emergency access** to
+  that password manager and can obtain these credentials if the maintainer can
+  no longer continue.
+- **Continuity actions.** With that access, the trusted contact (or a delegate
+  they appoint) can create and close issues, accept pull requests, and publish
+  releases through the existing CI/CD workflows.
+- **Account recovery.** The maintainer's GitHub account has recovery configured,
+  and ownership of the `wickra-lib` organization can be transferred to a new
+  maintainer.
+- **Legal rights.** Legal rights to the project name and DNS are covered by the
+  maintainer's estate arrangements.
+
 ## Code of conduct
 
 All participants are expected to follow the
