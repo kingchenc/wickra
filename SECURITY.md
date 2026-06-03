@@ -76,3 +76,64 @@ artifacts, and (4) a healthy dependency supply chain.
 an exchange using the platform TLS library; transport security therefore
 depends on that library, not on Wickra. Wickra is not a trading system and is
 provided "as is" — see the disclaimers in `README.md` and the licenses.
+
+## Secrets management
+
+The project stores **no** secrets or credentials in the version control system.
+Secrets required by automation (publishing tokens, the about-sync PAT) are kept
+exclusively as **GitHub Actions encrypted secrets** and referenced via the
+`secrets.*` context; they are never written to the repository, logs, or build
+artifacts. GitHub **secret scanning with push protection** is enabled to block
+accidental commits of credentials. Secrets follow least privilege (the narrowest
+scope that works) and are rotated when a holder changes or on suspected
+exposure.
+
+## Verifying releases
+
+Released artifacts can be verified for integrity and authenticity:
+
+- **Build provenance.** Release assets carry GitHub build provenance
+  attestations. Verify a downloaded asset with the GitHub CLI:
+  `gh attestation verify <file> --repo wickra-lib/wickra`.
+- **Signed tags.** Each release corresponds to a signed git tag (`vX.Y.Z`);
+  the tag signature identifies the maintainer who authorised the release.
+- **Registry integrity.** Packages are distributed over HTTPS from crates.io,
+  PyPI and npm, which serve package checksums that package managers verify on
+  install.
+
+The release is published only by the maintainer through the tag-triggered
+release workflow, so a verified tag signature establishes the expected
+publisher identity.
+
+## Support timeline and end of support
+
+Wickra is **pre-1.0**: only the **latest released `0.y.z`** version receives
+security fixes. When a newer release is published, the previous version
+**immediately reaches end of support** and will not receive further fixes;
+users should upgrade to the latest release. The supported-versions table above
+is authoritative. After the `1.0.0` release this policy will be revised to
+support a defined window of releases.
+
+## Remediation policy (dependencies and code scanning)
+
+- **Severity threshold.** Vulnerabilities of **medium severity or higher** in
+  the project's own code or its dependencies are remediated promptly and before
+  the next release; lower-severity findings are addressed on a best-effort
+  basis.
+- **Automated enforcement (SCA).** Every change is evaluated by `cargo-deny`
+  (RUSTSEC advisories + license policy) and Dependabot; a known-vulnerable
+  dependency fails CI and **blocks the change** until resolved or explicitly
+  waived with justification.
+- **Automated enforcement (SAST).** Every change is evaluated by CodeQL and
+  Clippy (`-D warnings`); findings **block the change** in CI until fixed.
+- **Pre-release gate.** A release is not cut while an unresolved medium-or-higher
+  SCA/SAST finding is outstanding.
+
+## Vulnerability exploitability (VEX)
+
+Advisories reported by `cargo-deny`/Dependabot for third-party dependencies that
+do **not** affect Wickra (e.g. the vulnerable code path is not reachable, or the
+affected feature is not enabled) are triaged and recorded — with the
+not-affected justification — in the `cargo-deny` configuration (`deny.toml`) and
+the relevant pull request, rather than forcing an unnecessary dependency bump.
+This serves as the project's exploitability (VEX) record.
