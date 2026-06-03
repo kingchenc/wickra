@@ -305,6 +305,14 @@ const candleScalar = {
   FlagPennant: { make: () => new wickra.FlagPennant(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   RectangleRange: { make: () => new wickra.RectangleRange(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   CupAndHandle: { make: () => new wickra.CupAndHandle(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Abcd: { make: () => new wickra.Abcd(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Gartley: { make: () => new wickra.Gartley(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Butterfly: { make: () => new wickra.Butterfly(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Bat: { make: () => new wickra.Bat(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Crab: { make: () => new wickra.Crab(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Shark: { make: () => new wickra.Shark(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Cypher: { make: () => new wickra.Cypher(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  ThreeDrives: { make: () => new wickra.ThreeDrives(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {

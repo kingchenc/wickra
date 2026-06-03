@@ -330,6 +330,38 @@ def test_relative_strength_streaming_matches_batch():
 # 6-tuple candle; the batch helper takes only the columns it needs.
 
 CANDLE_SCALAR = {
+    "ThreeDrives": (
+        lambda: ta.ThreeDrives(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Cypher": (
+        lambda: ta.Cypher(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Shark": (
+        lambda: ta.Shark(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Crab": (
+        lambda: ta.Crab(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Bat": (
+        lambda: ta.Bat(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Butterfly": (
+        lambda: ta.Butterfly(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Gartley": (
+        lambda: ta.Gartley(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Abcd": (
+        lambda: ta.Abcd(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
     "CupAndHandle": (
         lambda: ta.CupAndHandle(),
         lambda ind, h, l, c, v: ind.batch(c, h, l, c),
@@ -2460,6 +2492,91 @@ def test_cup_and_handle_reference():
     assert t.update((90.9, 121.0, 90.9, 90.9, 1.0, 2)) == pytest.approx(0.0)
     assert t.update((110.0, 119.79, 110.0, 110.0, 1.0, 3)) == pytest.approx(0.0)
     assert t.update((111.1, 121.0, 111.1, 111.1, 1.0, 4)) == pytest.approx(1.0)
+
+
+def test_abcd_reference():
+    t = ta.Abcd()
+    assert t.update((139.86, 140.0, 139.86, 139.86, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((100.0, 138.6, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((101.0, 124.7, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((84.7, 123.453, 84.7, 84.7, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((85.547, 93.17, 85.547, 85.547, 1.0, 4)) == pytest.approx(1.0)
+
+
+def test_gartley_reference():
+    t = ta.Gartley()
+    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((115.3, 138.6, 115.3, 115.3, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((116.453, 127.65, 116.453, 116.453, 1.0, 4)) == pytest.approx(0.0)
+    assert t.update((108.56, 126.3735, 108.56, 108.56, 1.0, 5)) == pytest.approx(0.0)
+    assert t.update((109.6456, 119.416, 109.6456, 109.6456, 1.0, 6)) == pytest.approx(1.0)
+
+
+def test_butterfly_reference():
+    t = ta.Butterfly()
+    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((108.6, 138.6, 108.6, 108.6, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((109.686, 128.0, 109.686, 109.686, 1.0, 4)) == pytest.approx(0.0)
+    assert t.update((79.8, 126.72, 79.8, 79.8, 1.0, 5)) == pytest.approx(0.0)
+    assert t.update((80.598, 87.78, 80.598, 80.598, 1.0, 6)) == pytest.approx(1.0)
+
+
+def test_bat_reference():
+    t = ta.Bat()
+    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((122.0, 138.6, 122.0, 122.0, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((123.22, 137.0, 123.22, 123.22, 1.0, 4)) == pytest.approx(0.0)
+    assert t.update((104.56, 135.63, 104.56, 104.56, 1.0, 5)) == pytest.approx(0.0)
+    assert t.update((105.6056, 115.016, 105.6056, 105.6056, 1.0, 6)) == pytest.approx(1.0)
+
+
+def test_crab_reference():
+    t = ta.Crab()
+    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((120.0, 138.6, 120.0, 120.0, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((121.2, 137.5, 121.2, 121.2, 1.0, 4)) == pytest.approx(0.0)
+    assert t.update((75.3, 136.125, 75.3, 75.3, 1.0, 5)) == pytest.approx(0.0)
+    assert t.update((76.053, 82.83, 76.053, 76.053, 1.0, 6)) == pytest.approx(1.0)
+
+
+def test_shark_reference():
+    t = ta.Shark()
+    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((88.0, 138.6, 88.0, 88.0, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((88.88, 186.8, 88.88, 88.88, 1.0, 4)) == pytest.approx(0.0)
+    assert t.update((100.0, 184.932, 100.0, 100.0, 1.0, 5)) == pytest.approx(0.0)
+    assert t.update((101.0, 110.0, 101.0, 101.0, 1.0, 6)) == pytest.approx(1.0)
+
+
+def test_cypher_reference():
+    t = ta.Cypher()
+    assert t.update((149.85, 150.0, 149.85, 149.85, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((100.0, 148.5, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((101.0, 140.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((120.0, 138.6, 120.0, 120.0, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((121.2, 168.0, 121.2, 121.2, 1.0, 4)) == pytest.approx(0.0)
+    assert t.update((114.55, 166.32, 114.55, 114.55, 1.0, 5)) == pytest.approx(0.0)
+    assert t.update((115.6955, 126.005, 115.6955, 115.6955, 1.0, 6)) == pytest.approx(1.0)
+
+
+def test_three_drives_reference():
+    t = ta.ThreeDrives()
+    assert t.update((119.88, 120.0, 119.88, 119.88, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((100.0, 118.8, 100.0, 100.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((101.0, 128.0, 101.0, 101.0, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((108.0, 126.72, 108.0, 108.0, 1.0, 3)) == pytest.approx(0.0)
+    assert t.update((109.08, 136.0, 109.08, 109.08, 1.0, 4)) == pytest.approx(0.0)
+    assert t.update((122.4, 134.64, 122.4, 122.4, 1.0, 5)) == pytest.approx(-1.0)
 
 # --- Lifecycle ------------------------------------------------------------
 

@@ -13683,6 +13683,14 @@ candle_pattern_no_param!(PyWedge, wc::Wedge, "Wedge");
 candle_pattern_no_param!(PyFlagPennant, wc::FlagPennant, "FlagPennant");
 candle_pattern_no_param!(PyRectangleRange, wc::RectangleRange, "RectangleRange");
 candle_pattern_no_param!(PyCupAndHandle, wc::CupAndHandle, "CupAndHandle");
+candle_pattern_no_param!(PyAbcd, wc::Abcd, "Abcd");
+candle_pattern_no_param!(PyGartley, wc::Gartley, "Gartley");
+candle_pattern_no_param!(PyButterfly, wc::Butterfly, "Butterfly");
+candle_pattern_no_param!(PyBat, wc::Bat, "Bat");
+candle_pattern_no_param!(PyCrab, wc::Crab, "Crab");
+candle_pattern_no_param!(PyShark, wc::Shark, "Shark");
+candle_pattern_no_param!(PyCypher, wc::Cypher, "Cypher");
+candle_pattern_no_param!(PyThreeDrives, wc::ThreeDrives, "ThreeDrives");
 // ============================== Microstructure: Order Book ==============================
 //
 // Order-book indicators consume a depth snapshot rather than OHLCV. Streaming
@@ -18212,5 +18220,13 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyFlagPennant>()?;
     m.add_class::<PyRectangleRange>()?;
     m.add_class::<PyCupAndHandle>()?;
+    m.add_class::<PyAbcd>()?;
+    m.add_class::<PyGartley>()?;
+    m.add_class::<PyButterfly>()?;
+    m.add_class::<PyBat>()?;
+    m.add_class::<PyCrab>()?;
+    m.add_class::<PyShark>()?;
+    m.add_class::<PyCypher>()?;
+    m.add_class::<PyThreeDrives>()?;
     Ok(())
 }

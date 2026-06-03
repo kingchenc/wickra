@@ -10026,6 +10026,14 @@ node_candle_pattern!(WedgeNode, wc::Wedge, "Wedge");
 node_candle_pattern!(FlagPennantNode, wc::FlagPennant, "FlagPennant");
 node_candle_pattern!(RectangleRangeNode, wc::RectangleRange, "RectangleRange");
 node_candle_pattern!(CupAndHandleNode, wc::CupAndHandle, "CupAndHandle");
+node_candle_pattern!(AbcdNode, wc::Abcd, "Abcd");
+node_candle_pattern!(GartleyNode, wc::Gartley, "Gartley");
+node_candle_pattern!(ButterflyNode, wc::Butterfly, "Butterfly");
+node_candle_pattern!(BatNode, wc::Bat, "Bat");
+node_candle_pattern!(CrabNode, wc::Crab, "Crab");
+node_candle_pattern!(SharkNode, wc::Shark, "Shark");
+node_candle_pattern!(CypherNode, wc::Cypher, "Cypher");
+node_candle_pattern!(ThreeDrivesNode, wc::ThreeDrives, "ThreeDrives");
 
 // ============================== Microstructure: Order Book ==============================
 //

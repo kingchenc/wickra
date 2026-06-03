@@ -7362,6 +7362,14 @@ wasm_candle_pattern!(WasmWedge, wc::Wedge, Wedge);
 wasm_candle_pattern!(WasmFlagPennant, wc::FlagPennant, FlagPennant);
 wasm_candle_pattern!(WasmRectangleRange, wc::RectangleRange, RectangleRange);
 wasm_candle_pattern!(WasmCupAndHandle, wc::CupAndHandle, CupAndHandle);
+wasm_candle_pattern!(WasmAbcd, wc::Abcd, Abcd);
+wasm_candle_pattern!(WasmGartley, wc::Gartley, Gartley);
+wasm_candle_pattern!(WasmButterfly, wc::Butterfly, Butterfly);
+wasm_candle_pattern!(WasmBat, wc::Bat, Bat);
+wasm_candle_pattern!(WasmCrab, wc::Crab, Crab);
+wasm_candle_pattern!(WasmShark, wc::Shark, Shark);
+wasm_candle_pattern!(WasmCypher, wc::Cypher, Cypher);
+wasm_candle_pattern!(WasmThreeDrives, wc::ThreeDrives, ThreeDrives);
 
 // ============================== Microstructure: Order Book ==============================
 //
