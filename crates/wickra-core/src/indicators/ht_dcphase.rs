@@ -167,22 +167,7 @@ impl Indicator for HtDcPhase {
             imag_part += angle.cos() * sp;
         }
 
-        let mut dc_phase = if imag_part.abs() > 0.001 {
-            (real_part / imag_part).atan().to_degrees()
-        } else if real_part < 0.0 {
-            -90.0
-        } else {
-            90.0
-        };
-        dc_phase += 90.0;
-        // Compensate the group delay of the 4-bar weighted smoother.
-        dc_phase += 360.0 / smooth_period;
-        if imag_part < 0.0 {
-            dc_phase += 180.0;
-        }
-        if dc_phase > 315.0 {
-            dc_phase -= 360.0;
-        }
+        let dc_phase = compute_dc_phase(real_part, imag_part, smooth_period);
 
         self.last_value = Some(dc_phase);
         Some(dc_phase)
@@ -217,6 +202,32 @@ impl Indicator for HtDcPhase {
     }
 }
 
+/// Recovers the dominant-cycle phase (degrees) from the real/imaginary parts of
+/// the one-cycle homodyne integration, then unwraps it into TA-Lib's
+/// `[-45, 315)` output range with the 4-bar smoother group-delay correction.
+///
+/// When `imag_part` is within `±0.001` of zero the `atan` is undefined, so the
+/// phase collapses to `±90°` by the sign of `real_part`.
+fn compute_dc_phase(real_part: f64, imag_part: f64, smooth_period: f64) -> f64 {
+    let mut dc_phase = if imag_part.abs() > 0.001 {
+        (real_part / imag_part).atan().to_degrees()
+    } else if real_part < 0.0 {
+        -90.0
+    } else {
+        90.0
+    };
+    dc_phase += 90.0;
+    // Compensate the group delay of the 4-bar weighted smoother.
+    dc_phase += 360.0 / smooth_period;
+    if imag_part < 0.0 {
+        dc_phase += 180.0;
+    }
+    if dc_phase > 315.0 {
+        dc_phase -= 360.0;
+    }
+    dc_phase
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -234,6 +245,20 @@ mod tests {
         assert_eq!(ht.warmup_period(), 50);
         assert_eq!(ht.name(), "HT_DCPHASE");
         assert!(!ht.is_ready());
+    }
+
+    #[test]
+    fn near_zero_imaginary_collapses_to_signed_ninety() {
+        // A near-zero imaginary part makes atan(real/imag) undefined, so the phase
+        // collapses to +90 for non-negative real and -90 for negative real before
+        // the +90 offset and group-delay correction unwrap it.
+        let pos = compute_dc_phase(1.0, 0.0, 20.0);
+        let neg = compute_dc_phase(-1.0, 0.0, 20.0);
+        assert!((pos - 198.0).abs() < 1e-9);
+        assert!((neg - 18.0).abs() < 1e-9);
+        // The normal path still flows through atan.
+        let mid = compute_dc_phase(1.0, 1.0, 20.0);
+        assert!((mid - 153.0).abs() < 1e-9);
     }
 
     #[test]
