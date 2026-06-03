@@ -3084,6 +3084,15 @@ export declare class CalendarSpread {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type AdvanceDeclineNode = AdvanceDecline
+export declare class AdvanceDecline {
+  constructor()
+  update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
+  batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type SharpeRatioNode = SharpeRatio
 export declare class SharpeRatio {
   constructor(period: number, riskFree: number)

@@ -29,7 +29,8 @@ fn map_err(e: wc::Error) -> PyErr {
         | wc::Error::InvalidTick { .. }
         | wc::Error::InvalidOrderBook { .. }
         | wc::Error::InvalidTrade { .. }
-        | wc::Error::InvalidDerivatives { .. } => PyValueError::new_err(e.to_string()),
+        | wc::Error::InvalidDerivatives { .. }
+        | wc::Error::InvalidCrossSection { .. } => PyValueError::new_err(e.to_string()),
     }
 }
 
@@ -14383,6 +14384,101 @@ impl PyCalendarSpread {
     }
 }
 
+// ============================== Market Breadth ==============================
+//
+// Market-breadth indicators consume a `CrossSection`: one tick carrying the
+// per-symbol state of the whole universe. The Python convention passes a tick as
+// four equal-length parallel arrays (`change`, `volume`, `new_high`, `new_low`);
+// `batch` takes one such group of arrays per tick.
+
+fn build_cross_section(
+    change: &[f64],
+    volume: &[f64],
+    new_high: &[bool],
+    new_low: &[bool],
+) -> PyResult<wc::CrossSection> {
+    if change.len() != volume.len()
+        || change.len() != new_high.len()
+        || change.len() != new_low.len()
+    {
+        return Err(PyValueError::new_err(
+            "change, volume, new_high and new_low must be equal length",
+        ));
+    }
+    let members = (0..change.len())
+        .map(|i| wc::Member::new(change[i], volume[i], new_high[i], new_low[i]))
+        .collect();
+    wc::CrossSection::new(members, 0).map_err(map_err)
+}
+
+// AdvanceDecline takes no parameters; streaming `update(change, volume, new_high,
+// new_low)` over one universe, `batch` over one such array group per tick.
+#[pyclass(
+    name = "AdvanceDecline",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyAdvanceDecline {
+    inner: wc::AdvanceDecline,
+}
+
+#[pymethods]
+impl PyAdvanceDecline {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::AdvanceDecline::new(),
+        }
+    }
+    fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> PyResult<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(PyValueError::new_err(
+                "change, volume, new_high and new_low must have the same number of ticks",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "AdvanceDecline()".to_string()
+    }
+}
+
 // ============================== Family 15: Risk / Performance ==============================
 
 #[pyclass(name = "SharpeRatio", module = "wickra._wickra", skip_from_py_object)]
@@ -15776,6 +15872,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyLiquidationFeatures>()?;
     m.add_class::<PyTermStructureBasis>()?;
     m.add_class::<PyCalendarSpread>()?;
+    m.add_class::<PyAdvanceDecline>()?;
     // Family 15: Risk / Performance metrics.
     m.add_class::<PySharpeRatio>()?;
     m.add_class::<PySortinoRatio>()?;

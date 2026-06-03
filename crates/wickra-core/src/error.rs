@@ -52,6 +52,14 @@ pub enum Error {
     /// own variant.
     #[error("invalid derivatives tick: {message}")]
     InvalidDerivatives { message: &'static str },
+
+    /// A market-breadth cross-section whose members do not satisfy the
+    /// cross-section invariants (an empty universe, a non-finite change, or a
+    /// negative / non-finite volume) was provided. A cross-section is a
+    /// breadth input distinct from candles, ticks, order books and trades, so
+    /// it surfaces as its own variant.
+    #[error("invalid cross-section: {message}")]
+    InvalidCrossSection { message: &'static str },
 }
 
 /// Convenience alias for `Result<T, wickra_core::Error>`.

@@ -341,6 +341,8 @@ from ._wickra import (
     LiquidationFeatures,
     TermStructureBasis,
     CalendarSpread,
+    # Market Breadth
+    AdvanceDecline,
     # Risk / Performance
     SharpeRatio,
     SortinoRatio,
@@ -679,6 +681,8 @@ __all__ = [
     "LiquidationFeatures",
     "TermStructureBasis",
     "CalendarSpread",
+    # Market Breadth
+    "AdvanceDecline",
     # Risk / Performance
     "SharpeRatio",
     "SortinoRatio",

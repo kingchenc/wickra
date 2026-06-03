@@ -1202,6 +1202,39 @@ test('derivatives reject bad input', () => {
   assert.throws(() => new wickra.FundingBasis().update(100, 0));
 });
 
+test('market breadth: AdvanceDecline reference values', () => {
+  // A breadth tick is the universe as parallel arrays; the sign of `change`
+  // classifies each symbol as advancing / declining / unchanged.
+  const change = [
+    [1.0, 0.5, 2.0, -1.0], // 3 up, 1 down -> net +2
+    [-1.0, -0.5, -2.0, 1.0], // 1 up, 3 down -> net -2
+    [0.0, 0.0, 1.0, -1.0], // 1 up, 1 down -> net 0
+  ];
+  const volume = change.map((row) => row.map(() => 10.0));
+  const flags = change.map((row) => row.map(() => false));
+
+  const ad = new wickra.AdvanceDecline();
+  // Cumulative line: +2 -> 0 -> 0.
+  assert.equal(ad.update(change[0], volume[0], flags[0], flags[0]), 2.0);
+  assert.equal(ad.update(change[1], volume[1], flags[1], flags[1]), 0.0);
+  assert.equal(ad.update(change[2], volume[2], flags[2], flags[2]), 0.0);
+
+  // batch matches streaming.
+  const batch = new wickra.AdvanceDecline().batch(change, volume, flags, flags);
+  assert.deepEqual(Array.from(batch), [2.0, 0.0, 0.0]);
+});
+
+test('market breadth: AdvanceDecline rejects ragged universe', () => {
+  assert.throws(() =>
+    new wickra.AdvanceDecline().update(
+      [1.0, -1.0],
+      [10.0],
+      [false, false],
+      [false, false],
+    ),
+  );
+});
+
 test('OI / flow / liquidation indicators reference values', () => {
   // OI +10% while price flat -> divergence +0.1.
   const div = new wickra.OIPriceDivergence(1);

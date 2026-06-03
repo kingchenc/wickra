@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Market Breadth family** — a new indicator family built on a new
+  `CrossSection` input type that carries the per-symbol state of an entire
+  universe in one tick (each `Member` holds a signed `change`, a `volume`, and
+  `new_high` / `new_low` flags). `CrossSection::new` validates the universe
+  (non-empty, finite changes, finite non-negative volumes); `new_unchecked`
+  skips validation for hot paths.
+  - `AdvanceDecline` (`ADVANCE_DECLINE`) — the Advance/Decline Line, the running
+    cumulative sum of net advancing-minus-declining issues across the universe.
+
 ## [0.4.6] - 2026-06-03
 
 ### Added

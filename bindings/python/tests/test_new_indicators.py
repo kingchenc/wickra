@@ -2659,6 +2659,38 @@ def test_funding_indicators_streaming_equals_batch():
         assert _eq_nan(batch, streamed)
 
 
+def test_advance_decline_streaming_equals_batch():
+    # Three ticks over a universe of four symbols; the sign of `change`
+    # classifies each symbol as advancing / declining / unchanged.
+    change = [
+        [1.0, 0.5, 2.0, -1.0],  # 3 up, 1 down -> net +2
+        [-1.0, -0.5, -2.0, 1.0],  # 1 up, 3 down -> net -2
+        [0.0, 0.0, 1.0, -1.0],  # 1 up, 1 down -> net 0
+    ]
+    volume = [[10.0] * 4 for _ in range(3)]
+    new_high = [[False] * 4 for _ in range(3)]
+    new_low = [[False] * 4 for _ in range(3)]
+    batch = ta.AdvanceDecline().batch(change, volume, new_high, new_low)
+    streamer = ta.AdvanceDecline()
+    streamed = np.array(
+        [
+            streamer.update(change[i], volume[i], new_high[i], new_low[i])
+            for i in range(3)
+        ],
+        dtype=np.float64,
+    )
+    assert batch.shape == (3,)
+    assert _eq_nan(batch, streamed)
+    # Cumulative line: +2 -> 0 -> 0.
+    assert list(batch) == [2.0, 0.0, 0.0]
+
+
+def test_advance_decline_rejects_ragged_universe():
+    ad = ta.AdvanceDecline()
+    with pytest.raises(ValueError):
+        ad.update([1.0, -1.0], [10.0], [False, False], [False, False])
+
+
 def test_funding_basis_streaming_equals_batch():
     n = 40
     index = np.array([100.0 + 0.5 * math.sin(i * 0.2) for i in range(n)], dtype=np.float64)
