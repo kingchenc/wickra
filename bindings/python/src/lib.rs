@@ -15161,6 +15161,994 @@ impl PyAdvanceDecline {
     }
 }
 
+fn build_cross_section_above_ma(
+    change: &[f64],
+    volume: &[f64],
+    new_high: &[bool],
+    new_low: &[bool],
+    above_ma: &[bool],
+) -> PyResult<wc::CrossSection> {
+    if change.len() != volume.len()
+        || change.len() != new_high.len()
+        || change.len() != new_low.len()
+        || change.len() != above_ma.len()
+    {
+        return Err(PyValueError::new_err(
+            "change, volume, new_high, new_low and above_ma must be equal length",
+        ));
+    }
+    let members = (0..change.len())
+        .map(|i| {
+            wc::Member::with_signals(
+                change[i],
+                volume[i],
+                new_high[i],
+                new_low[i],
+                above_ma[i],
+                false,
+            )
+        })
+        .collect();
+    wc::CrossSection::new(members, 0).map_err(map_err)
+}
+
+fn build_cross_section_buy(
+    change: &[f64],
+    volume: &[f64],
+    new_high: &[bool],
+    new_low: &[bool],
+    on_buy_signal: &[bool],
+) -> PyResult<wc::CrossSection> {
+    if change.len() != volume.len()
+        || change.len() != new_high.len()
+        || change.len() != new_low.len()
+        || change.len() != on_buy_signal.len()
+    {
+        return Err(PyValueError::new_err(
+            "change, volume, new_high, new_low and on_buy_signal must be equal length",
+        ));
+    }
+    let members = (0..change.len())
+        .map(|i| {
+            wc::Member::with_signals(
+                change[i],
+                volume[i],
+                new_high[i],
+                new_low[i],
+                false,
+                on_buy_signal[i],
+            )
+        })
+        .collect();
+    wc::CrossSection::new(members, 0).map_err(map_err)
+}
+
+#[pyclass(
+    name = "AdvanceDeclineRatio",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyAdvanceDeclineRatio {
+    inner: wc::AdvanceDeclineRatio,
+}
+
+#[pymethods]
+impl PyAdvanceDeclineRatio {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::AdvanceDeclineRatio::new(),
+        }
+    }
+    fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> PyResult<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(PyValueError::new_err(
+                "change, volume, new_high and new_low must have the same number of ticks",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "AdvanceDeclineRatio()".to_string()
+    }
+}
+
+#[pyclass(name = "AdVolumeLine", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyAdVolumeLine {
+    inner: wc::AdVolumeLine,
+}
+
+#[pymethods]
+impl PyAdVolumeLine {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::AdVolumeLine::new(),
+        }
+    }
+    fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> PyResult<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(PyValueError::new_err(
+                "change, volume, new_high and new_low must have the same number of ticks",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "AdVolumeLine()".to_string()
+    }
+}
+
+#[pyclass(
+    name = "McClellanOscillator",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyMcClellanOscillator {
+    inner: wc::McClellanOscillator,
+}
+
+#[pymethods]
+impl PyMcClellanOscillator {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::McClellanOscillator::new(),
+        }
+    }
+    fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> PyResult<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(PyValueError::new_err(
+                "change, volume, new_high and new_low must have the same number of ticks",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "McClellanOscillator()".to_string()
+    }
+}
+
+#[pyclass(
+    name = "McClellanSummationIndex",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyMcClellanSummationIndex {
+    inner: wc::McClellanSummationIndex,
+}
+
+#[pymethods]
+impl PyMcClellanSummationIndex {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::McClellanSummationIndex::new(),
+        }
+    }
+    fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> PyResult<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(PyValueError::new_err(
+                "change, volume, new_high and new_low must have the same number of ticks",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "McClellanSummationIndex()".to_string()
+    }
+}
+
+#[pyclass(name = "Trin", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyTrin {
+    inner: wc::Trin,
+}
+
+#[pymethods]
+impl PyTrin {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::Trin::new(),
+        }
+    }
+    fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> PyResult<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(PyValueError::new_err(
+                "change, volume, new_high and new_low must have the same number of ticks",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "Trin()".to_string()
+    }
+}
+
+#[pyclass(name = "BreadthThrust", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyBreadthThrust {
+    inner: wc::BreadthThrust,
+}
+
+#[pymethods]
+impl PyBreadthThrust {
+    #[new]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::BreadthThrust::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> PyResult<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(PyValueError::new_err(
+                "change, volume, new_high and new_low must have the same number of ticks",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("BreadthThrust(period={})", self.inner.period())
+    }
+}
+
+#[pyclass(
+    name = "NewHighsNewLows",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyNewHighsNewLows {
+    inner: wc::NewHighsNewLows,
+}
+
+#[pymethods]
+impl PyNewHighsNewLows {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::NewHighsNewLows::new(),
+        }
+    }
+    fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> PyResult<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(PyValueError::new_err(
+                "change, volume, new_high and new_low must have the same number of ticks",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "NewHighsNewLows()".to_string()
+    }
+}
+
+#[pyclass(name = "HighLowIndex", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyHighLowIndex {
+    inner: wc::HighLowIndex,
+}
+
+#[pymethods]
+impl PyHighLowIndex {
+    #[new]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::HighLowIndex::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> PyResult<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(PyValueError::new_err(
+                "change, volume, new_high and new_low must have the same number of ticks",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("HighLowIndex(period={})", self.inner.period())
+    }
+}
+
+#[pyclass(
+    name = "PercentAboveMa",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyPercentAboveMa {
+    inner: wc::PercentAboveMa,
+}
+
+#[pymethods]
+impl PyPercentAboveMa {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::PercentAboveMa::new(),
+        }
+    }
+    fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+        above_ma: Vec<bool>,
+    ) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(build_cross_section_above_ma(
+            &change, &volume, &new_high, &new_low, &above_ma,
+        )?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+        above_ma: Vec<Vec<bool>>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+            || change.len() != above_ma.len()
+        {
+            return Err(PyValueError::new_err(
+                "change, volume, new_high, new_low and above_ma must have the same number of ticks",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section_above_ma(
+                &change[i],
+                &volume[i],
+                &new_high[i],
+                &new_low[i],
+                &above_ma[i],
+            )?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "PercentAboveMa()".to_string()
+    }
+}
+
+#[pyclass(
+    name = "UpDownVolumeRatio",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyUpDownVolumeRatio {
+    inner: wc::UpDownVolumeRatio,
+}
+
+#[pymethods]
+impl PyUpDownVolumeRatio {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::UpDownVolumeRatio::new(),
+        }
+    }
+    fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> PyResult<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(PyValueError::new_err(
+                "change, volume, new_high and new_low must have the same number of ticks",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "UpDownVolumeRatio()".to_string()
+    }
+}
+
+#[pyclass(
+    name = "BullishPercentIndex",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyBullishPercentIndex {
+    inner: wc::BullishPercentIndex,
+}
+
+#[pymethods]
+impl PyBullishPercentIndex {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::BullishPercentIndex::new(),
+        }
+    }
+    fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+        on_buy_signal: Vec<bool>,
+    ) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(build_cross_section_buy(
+            &change,
+            &volume,
+            &new_high,
+            &new_low,
+            &on_buy_signal,
+        )?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+        on_buy_signal: Vec<Vec<bool>>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+            || change.len() != on_buy_signal.len()
+        {
+            return Err(PyValueError::new_err(
+                "change, volume, new_high, new_low and on_buy_signal must have the same number of ticks",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section_buy(
+                &change[i],
+                &volume[i],
+                &new_high[i],
+                &new_low[i],
+                &on_buy_signal[i],
+            )?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "BullishPercentIndex()".to_string()
+    }
+}
+
+#[pyclass(
+    name = "CumulativeVolumeIndex",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyCumulativeVolumeIndex {
+    inner: wc::CumulativeVolumeIndex,
+}
+
+#[pymethods]
+impl PyCumulativeVolumeIndex {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::CumulativeVolumeIndex::new(),
+        }
+    }
+    fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> PyResult<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(PyValueError::new_err(
+                "change, volume, new_high and new_low must have the same number of ticks",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "CumulativeVolumeIndex()".to_string()
+    }
+}
+
+#[pyclass(
+    name = "AbsoluteBreadthIndex",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyAbsoluteBreadthIndex {
+    inner: wc::AbsoluteBreadthIndex,
+}
+
+#[pymethods]
+impl PyAbsoluteBreadthIndex {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::AbsoluteBreadthIndex::new(),
+        }
+    }
+    fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> PyResult<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(PyValueError::new_err(
+                "change, volume, new_high and new_low must have the same number of ticks",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "AbsoluteBreadthIndex()".to_string()
+    }
+}
+
+#[pyclass(name = "TickIndex", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyTickIndex {
+    inner: wc::TickIndex,
+}
+
+#[pymethods]
+impl PyTickIndex {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::TickIndex::new(),
+        }
+    }
+    fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> PyResult<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(PyValueError::new_err(
+                "change, volume, new_high and new_low must have the same number of ticks",
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "TickIndex()".to_string()
+    }
+}
+
 // ============================== Family 15: Risk / Performance ==============================
 
 #[pyclass(name = "SharpeRatio", module = "wickra._wickra", skip_from_py_object)]
@@ -16565,6 +17553,20 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyTermStructureBasis>()?;
     m.add_class::<PyCalendarSpread>()?;
     m.add_class::<PyAdvanceDecline>()?;
+    m.add_class::<PyAdvanceDeclineRatio>()?;
+    m.add_class::<PyAdVolumeLine>()?;
+    m.add_class::<PyMcClellanOscillator>()?;
+    m.add_class::<PyMcClellanSummationIndex>()?;
+    m.add_class::<PyTrin>()?;
+    m.add_class::<PyBreadthThrust>()?;
+    m.add_class::<PyNewHighsNewLows>()?;
+    m.add_class::<PyHighLowIndex>()?;
+    m.add_class::<PyPercentAboveMa>()?;
+    m.add_class::<PyUpDownVolumeRatio>()?;
+    m.add_class::<PyBullishPercentIndex>()?;
+    m.add_class::<PyCumulativeVolumeIndex>()?;
+    m.add_class::<PyAbsoluteBreadthIndex>()?;
+    m.add_class::<PyTickIndex>()?;
     // Family 15: Risk / Performance metrics.
     m.add_class::<PySharpeRatio>()?;
     m.add_class::<PySortinoRatio>()?;

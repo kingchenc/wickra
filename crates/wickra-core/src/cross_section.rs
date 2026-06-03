@@ -9,9 +9,10 @@
 //!
 //! Each [`Member`] precomputes the per-symbol signals the breadth indicators
 //! need — a signed price `change` (whose sign classifies the symbol as
-//! advancing, declining or unchanged), the period `volume`, and the
-//! `new_high` / `new_low` extreme flags — so the indicators stay stateless per
-//! tick and never have to track per-symbol history.
+//! advancing, declining or unchanged), the period `volume`, the
+//! `new_high` / `new_low` extreme flags, and the `above_ma` / `on_buy_signal`
+//! state flags — so the indicators stay stateless per tick and never have to
+//! track per-symbol history.
 //!
 //! [`DerivativesTick`]: crate::DerivativesTick
 //! [`OrderBook`]: crate::OrderBook
@@ -28,9 +29,16 @@ use crate::error::{Error, Result};
 /// - `volume` is finite and non-negative.
 ///
 /// `new_high` / `new_low` are caller-supplied flags marking whether the symbol
-/// printed a new period extreme; they carry no numeric invariant.
+/// printed a new period extreme; `above_ma` / `on_buy_signal` are caller-supplied
+/// per-symbol state signals (whether the symbol trades above its reference moving
+/// average, and whether it is on a point-and-figure buy signal). None of the four
+/// flags carries a numeric invariant.
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[allow(
+    clippy::struct_excessive_bools,
+    reason = "the four flags are independent per-symbol breadth signals, not a state machine"
+)]
 pub struct Member {
     /// Price change versus the previous close. Sign classifies the symbol:
     /// positive is advancing, negative is declining, zero is unchanged.
@@ -41,10 +49,17 @@ pub struct Member {
     pub new_high: bool,
     /// Whether the symbol printed a new period low.
     pub new_low: bool,
+    /// Whether the symbol is trading above its reference moving average
+    /// (consumed by the `% Above Moving Average` breadth indicator).
+    pub above_ma: bool,
+    /// Whether the symbol is on a point-and-figure buy signal
+    /// (consumed by the `Bullish Percent Index` breadth indicator).
+    pub on_buy_signal: bool,
 }
 
 impl Member {
-    /// Assemble a cross-section member.
+    /// Assemble a cross-section member from its core signals, leaving the
+    /// extended per-symbol state flags (`above_ma`, `on_buy_signal`) cleared.
     ///
     /// The field invariants documented on [`Member`] are validated centrally by
     /// [`CrossSection::new`] when the member is placed into a tick; this
@@ -57,6 +72,37 @@ impl Member {
             volume,
             new_high,
             new_low,
+            above_ma: false,
+            on_buy_signal: false,
+        }
+    }
+
+    /// Assemble a cross-section member including the extended per-symbol state
+    /// signals `above_ma` and `on_buy_signal`.
+    ///
+    /// Use this constructor for the breadth indicators that read per-symbol
+    /// state (`% Above Moving Average`, `Bullish Percent Index`); [`new`](Member::new)
+    /// is the shorthand that leaves both flags `false`.
+    #[must_use]
+    #[allow(
+        clippy::fn_params_excessive_bools,
+        reason = "mirrors the four independent per-symbol flag fields of Member"
+    )]
+    pub const fn with_signals(
+        change: f64,
+        volume: f64,
+        new_high: bool,
+        new_low: bool,
+        above_ma: bool,
+        on_buy_signal: bool,
+    ) -> Self {
+        Self {
+            change,
+            volume,
+            new_high,
+            new_low,
+            above_ma,
+            on_buy_signal,
         }
     }
 }
@@ -125,6 +171,56 @@ impl CrossSection {
     #[must_use]
     pub fn decliners(&self) -> usize {
         self.members.iter().filter(|m| m.change < 0.0).count()
+    }
+
+    /// Total volume traded by advancing symbols (those with positive `change`).
+    #[must_use]
+    pub fn advancing_volume(&self) -> f64 {
+        self.members
+            .iter()
+            .filter(|m| m.change > 0.0)
+            .map(|m| m.volume)
+            .sum()
+    }
+
+    /// Total volume traded by declining symbols (those with negative `change`).
+    #[must_use]
+    pub fn declining_volume(&self) -> f64 {
+        self.members
+            .iter()
+            .filter(|m| m.change < 0.0)
+            .map(|m| m.volume)
+            .sum()
+    }
+
+    /// Total volume traded across the whole universe.
+    #[must_use]
+    pub fn total_volume(&self) -> f64 {
+        self.members.iter().map(|m| m.volume).sum()
+    }
+
+    /// Number of symbols that printed a new period high.
+    #[must_use]
+    pub fn new_highs(&self) -> usize {
+        self.members.iter().filter(|m| m.new_high).count()
+    }
+
+    /// Number of symbols that printed a new period low.
+    #[must_use]
+    pub fn new_lows(&self) -> usize {
+        self.members.iter().filter(|m| m.new_low).count()
+    }
+
+    /// Number of symbols trading above their reference moving average.
+    #[must_use]
+    pub fn above_ma_count(&self) -> usize {
+        self.members.iter().filter(|m| m.above_ma).count()
+    }
+
+    /// Number of symbols on a point-and-figure buy signal.
+    #[must_use]
+    pub fn on_buy_signal_count(&self) -> usize {
+        self.members.iter().filter(|m| m.on_buy_signal).count()
     }
 }
 
@@ -222,5 +318,70 @@ mod tests {
         .unwrap();
         assert_eq!(cs.advancers(), 0);
         assert_eq!(cs.decliners(), 0);
+    }
+
+    #[test]
+    fn new_leaves_extended_flags_cleared() {
+        let m = Member::new(1.0, 10.0, true, false);
+        assert!(!m.above_ma);
+        assert!(!m.on_buy_signal);
+    }
+
+    #[test]
+    fn with_signals_assembles_all_fields() {
+        let m = Member::with_signals(2.0, 10.0, true, false, true, true);
+        assert_eq!(m.change, 2.0);
+        assert_eq!(m.volume, 10.0);
+        assert!(m.new_high);
+        assert!(!m.new_low);
+        assert!(m.above_ma);
+        assert!(m.on_buy_signal);
+    }
+
+    #[test]
+    fn volume_helpers_bucket_by_change_sign() {
+        let cs = CrossSection::new(
+            vec![
+                Member::new(1.5, 100.0, false, false), // advancing
+                Member::new(2.0, 40.0, false, false),  // advancing
+                Member::new(-0.5, 50.0, false, false), // declining
+                Member::new(0.0, 7.0, false, false),   // unchanged
+            ],
+            0,
+        )
+        .unwrap();
+        assert_eq!(cs.advancing_volume(), 140.0);
+        assert_eq!(cs.declining_volume(), 50.0);
+        assert_eq!(cs.total_volume(), 197.0);
+    }
+
+    #[test]
+    fn high_low_helpers_count_flags() {
+        let cs = CrossSection::new(
+            vec![
+                Member::new(1.0, 1.0, true, false),
+                Member::new(1.0, 1.0, true, false),
+                Member::new(-1.0, 1.0, false, true),
+            ],
+            0,
+        )
+        .unwrap();
+        assert_eq!(cs.new_highs(), 2);
+        assert_eq!(cs.new_lows(), 1);
+    }
+
+    #[test]
+    fn state_helpers_count_extended_flags() {
+        let cs = CrossSection::new(
+            vec![
+                Member::with_signals(1.0, 1.0, false, false, true, true),
+                Member::with_signals(1.0, 1.0, false, false, true, false),
+                Member::with_signals(-1.0, 1.0, false, false, false, true),
+            ],
+            0,
+        )
+        .unwrap();
+        assert_eq!(cs.above_ma_count(), 2);
+        assert_eq!(cs.on_buy_signal_count(), 2);
     }
 }
