@@ -5,13 +5,16 @@
 //! from the crate root for convenience.
 
 mod abandoned_baby;
+mod absolute_breadth_index;
 mod acceleration_bands;
 mod accelerator_oscillator;
 mod ad_oscillator;
+mod ad_volume_line;
 mod adaptive_cycle;
 mod adl;
 mod advance_block;
 mod advance_decline;
+mod advance_decline_ratio;
 mod adx;
 mod adxr;
 mod alligator;
@@ -36,7 +39,9 @@ mod beta;
 mod beta_neutral_spread;
 mod bollinger;
 mod bollinger_bandwidth;
+mod breadth_thrust;
 mod breakaway;
+mod bullish_percent_index;
 mod calendar_spread;
 mod calmar_ratio;
 mod camarilla_pivots;
@@ -59,6 +64,7 @@ mod conditional_value_at_risk;
 mod connors_rsi;
 mod coppock;
 mod counterattack;
+mod cumulative_volume_index;
 mod cvd;
 mod cybernetic_cycle;
 mod decycler;
@@ -109,6 +115,7 @@ mod hammer;
 mod hanging_man;
 mod harami;
 mod heikin_ashi;
+mod high_low_index;
 mod high_wave;
 mod hikkake;
 mod hikkake_modified;
@@ -166,6 +173,8 @@ mod mass_index;
 mod mat_hold;
 mod matching_low;
 mod max_drawdown;
+mod mcclellan_oscillator;
+mod mcclellan_summation_index;
 mod mcginley_dynamic;
 mod median_absolute_deviation;
 mod median_price;
@@ -179,6 +188,7 @@ mod mom;
 mod morning_doji_star;
 mod morning_evening_star;
 mod natr;
+mod new_highs_new_lows;
 mod nvi;
 mod ob_imbalance_full;
 mod ob_imbalance_top1;
@@ -197,6 +207,7 @@ mod pair_spread_zscore;
 mod pairwise_beta;
 mod parkinson;
 mod pearson_correlation;
+mod percent_above_ma;
 mod percent_b;
 mod percentage_trailing_stop;
 mod pgo;
@@ -282,11 +293,13 @@ mod three_outside;
 mod three_soldiers_or_crows;
 mod three_stars_in_south;
 mod thrusting;
+mod tick_index;
 mod tii;
 mod tpo_profile;
 mod trade_imbalance;
 mod treynor_ratio;
 mod trima;
+mod trin;
 mod trix;
 mod true_range;
 mod tsf;
@@ -299,6 +312,7 @@ mod typical_price;
 mod ulcer_index;
 mod ultimate_oscillator;
 mod unique_three_river;
+mod up_down_volume_ratio;
 mod upside_gap_three_methods;
 mod upside_gap_two_crows;
 mod value_area;
@@ -330,13 +344,16 @@ mod zig_zag;
 mod zlema;
 
 pub use abandoned_baby::AbandonedBaby;
+pub use absolute_breadth_index::AbsoluteBreadthIndex;
 pub use acceleration_bands::{AccelerationBands, AccelerationBandsOutput};
 pub use accelerator_oscillator::AcceleratorOscillator;
 pub use ad_oscillator::AdOscillator;
+pub use ad_volume_line::AdVolumeLine;
 pub use adaptive_cycle::AdaptiveCycle;
 pub use adl::Adl;
 pub use advance_block::AdvanceBlock;
 pub use advance_decline::AdvanceDecline;
+pub use advance_decline_ratio::AdvanceDeclineRatio;
 pub use adx::{Adx, AdxOutput};
 pub use adxr::Adxr;
 pub use alligator::{Alligator, AlligatorOutput};
@@ -361,7 +378,9 @@ pub use beta::Beta;
 pub use beta_neutral_spread::BetaNeutralSpread;
 pub use bollinger::{BollingerBands, BollingerOutput};
 pub use bollinger_bandwidth::BollingerBandwidth;
+pub use breadth_thrust::BreadthThrust;
 pub use breakaway::Breakaway;
+pub use bullish_percent_index::BullishPercentIndex;
 pub use calendar_spread::CalendarSpread;
 pub use calmar_ratio::CalmarRatio;
 pub use camarilla_pivots::{Camarilla, CamarillaPivotsOutput};
@@ -384,6 +403,7 @@ pub use conditional_value_at_risk::ConditionalValueAtRisk;
 pub use connors_rsi::ConnorsRsi;
 pub use coppock::Coppock;
 pub use counterattack::Counterattack;
+pub use cumulative_volume_index::CumulativeVolumeIndex;
 pub use cvd::CumulativeVolumeDelta;
 pub use cybernetic_cycle::CyberneticCycle;
 pub use decycler::Decycler;
@@ -434,6 +454,7 @@ pub use hammer::Hammer;
 pub use hanging_man::HangingMan;
 pub use harami::Harami;
 pub use heikin_ashi::{HeikinAshi, HeikinAshiOutput};
+pub use high_low_index::HighLowIndex;
 pub use high_wave::HighWave;
 pub use hikkake::Hikkake;
 pub use hikkake_modified::HikkakeModified;
@@ -491,6 +512,8 @@ pub use mass_index::MassIndex;
 pub use mat_hold::MatHold;
 pub use matching_low::MatchingLow;
 pub use max_drawdown::MaxDrawdown;
+pub use mcclellan_oscillator::McClellanOscillator;
+pub use mcclellan_summation_index::McClellanSummationIndex;
 pub use mcginley_dynamic::McGinleyDynamic;
 pub use median_absolute_deviation::MedianAbsoluteDeviation;
 pub use median_price::MedianPrice;
@@ -504,6 +527,7 @@ pub use mom::Mom;
 pub use morning_doji_star::MorningDojiStar;
 pub use morning_evening_star::MorningEveningStar;
 pub use natr::Natr;
+pub use new_highs_new_lows::NewHighsNewLows;
 pub use nvi::Nvi;
 pub use ob_imbalance_full::OrderBookImbalanceFull;
 pub use ob_imbalance_top1::OrderBookImbalanceTop1;
@@ -522,6 +546,7 @@ pub use pair_spread_zscore::PairSpreadZScore;
 pub use pairwise_beta::PairwiseBeta;
 pub use parkinson::ParkinsonVolatility;
 pub use pearson_correlation::PearsonCorrelation;
+pub use percent_above_ma::PercentAboveMa;
 pub use percent_b::PercentB;
 pub use percentage_trailing_stop::PercentageTrailingStop;
 pub use pgo::Pgo;
@@ -607,11 +632,13 @@ pub use three_outside::ThreeOutside;
 pub use three_soldiers_or_crows::ThreeSoldiersOrCrows;
 pub use three_stars_in_south::ThreeStarsInSouth;
 pub use thrusting::Thrusting;
+pub use tick_index::TickIndex;
 pub use tii::Tii;
 pub use tpo_profile::{TpoProfile, TpoProfileOutput};
 pub use trade_imbalance::TradeImbalance;
 pub use treynor_ratio::TreynorRatio;
 pub use trima::Trima;
+pub use trin::Trin;
 pub use trix::Trix;
 pub use true_range::TrueRange;
 pub use tsf::Tsf;
@@ -624,6 +651,7 @@ pub use typical_price::TypicalPrice;
 pub use ulcer_index::UlcerIndex;
 pub use ultimate_oscillator::UltimateOscillator;
 pub use unique_three_river::UniqueThreeRiver;
+pub use up_down_volume_ratio::UpDownVolumeRatio;
 pub use upside_gap_three_methods::UpsideGapThreeMethods;
 pub use upside_gap_two_crows::UpsideGapTwoCrows;
 pub use value_area::{ValueArea, ValueAreaOutput};
@@ -1070,7 +1098,26 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
         "Alt-Chart Bars",
         &["RenkoBars", "KagiBars", "PointAndFigureBars"],
     ),
-    ("Market Breadth", &["AdvanceDecline"]),
+    (
+        "Market Breadth",
+        &[
+            "AdvanceDecline",
+            "AdvanceDeclineRatio",
+            "AdVolumeLine",
+            "McClellanOscillator",
+            "McClellanSummationIndex",
+            "Trin",
+            "BreadthThrust",
+            "NewHighsNewLows",
+            "HighLowIndex",
+            "PercentAboveMa",
+            "UpDownVolumeRatio",
+            "BullishPercentIndex",
+            "CumulativeVolumeIndex",
+            "AbsoluteBreadthIndex",
+            "TickIndex",
+        ],
+    ),
 ];
 
 #[cfg(test)]
@@ -1099,6 +1146,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 325, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 339, "FAMILIES total drifted from indicator count");
     }
 }

@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **TICK Index** — instantaneous net advancing-minus-declining issues (`TICK_INDEX`).
+- **Absolute Breadth Index** — absolute value of net advancing-minus-declining issues (`ABSOLUTE_BREADTH_INDEX`).
+- **Cumulative Volume Index** — running total of volume-normalised net advancing volume (`CUMULATIVE_VOLUME_INDEX`).
+- **Bullish Percent Index** — percentage of the universe on a point-and-figure buy signal (`BULLISH_PERCENT_INDEX`).
+- **Up/Down Volume Ratio** — advancing volume divided by declining volume (`UP_DOWN_VOLUME_RATIO`).
+- **Percent Above Moving Average** — percentage of the universe trading above its reference moving average (`PERCENT_ABOVE_MA`).
+- **High-Low Index** — moving average of the record-high percentage (`HIGH_LOW_INDEX`).
+- **New Highs - New Lows** — net count of new period highs minus new period lows (`NEW_HIGHS_NEW_LOWS`).
+- **Breadth Thrust** — moving average of the advancing-issues share (Zweig) (`BREADTH_THRUST`).
+- **TRIN / Arms Index** — advance-decline ratio divided by the up-down volume ratio (`TRIN`).
+- **McClellan Summation Index** — running cumulative total of the McClellan Oscillator (`MCCLELLAN_SUMMATION_INDEX`).
+- **McClellan Oscillator** — spread between a 19- and 39-period EMA of ratio-adjusted net advances (`MCCLELLAN_OSCILLATOR`).
+- **Advance/Decline Volume Line** — cumulative net advancing-minus-declining volume across the universe (`AD_VOLUME_LINE`).
+- **Advance/Decline Ratio** — advancing issues divided by declining issues across the universe (`ADVANCE_DECLINE_RATIO`).
 
 ## [0.4.7] - 2026-06-03
 
