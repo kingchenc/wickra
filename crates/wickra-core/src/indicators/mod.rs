@@ -836,6 +836,11 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "PearsonCorrelation",
             "Beta",
             "SpearmanCorrelation",
+            "Cointegration",
+            "LeadLagCrossCorrelation",
+            "PairSpreadZScore",
+            "PairwiseBeta",
+            "RelativeStrengthAB",
             "MidPrice",
             "MidPoint",
             "AvgPrice",
@@ -1061,6 +1066,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 309, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 314, "FAMILIES total drifted from indicator count");
     }
 }
