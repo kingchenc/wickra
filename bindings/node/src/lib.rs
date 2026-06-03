@@ -14030,3 +14030,455 @@ impl OvernightIntradayReturnNode {
         self.inner.warmup_period() as u32
     }
 }
+
+// ============================== Fibonacci ==============================
+
+/// Build a candle for the swing-based Fibonacci tools from a `high`/`low` pair;
+/// only the high and low drive the swing tracker, so open/close are the midpoint.
+fn swing_cnd(high: f64, low: f64) -> napi::Result<wc::Candle> {
+    cnd(high, low, f64::midpoint(high, low), 0.0)
+}
+
+#[napi(object)]
+pub struct FibRetracementValue {
+    pub level_0: f64,
+    pub level_236: f64,
+    pub level_382: f64,
+    pub level_500: f64,
+    pub level_618: f64,
+    pub level_786: f64,
+    pub level_1000: f64,
+}
+
+#[napi(js_name = "FibRetracement")]
+pub struct FibRetracementNode {
+    inner: wc::FibRetracement,
+}
+
+#[napi]
+impl FibRetracementNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::FibRetracement::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<FibRetracementValue>> {
+        Ok(self
+            .inner
+            .update(swing_cnd(high, low)?)
+            .map(|o| FibRetracementValue {
+                level_0: o.level_0,
+                level_236: o.level_236,
+                level_382: o.level_382,
+                level_500: o.level_500,
+                level_618: o.level_618,
+                level_786: o.level_786,
+                level_1000: o.level_1000,
+            }))
+    }
+    #[napi]
+    pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() {
+            return Err(NapiError::from_reason(
+                "high and low must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 7];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(swing_cnd(high[i], low[i])?) {
+                out[i * 7] = o.level_0;
+                out[i * 7 + 1] = o.level_236;
+                out[i * 7 + 2] = o.level_382;
+                out[i * 7 + 3] = o.level_500;
+                out[i * 7 + 4] = o.level_618;
+                out[i * 7 + 5] = o.level_786;
+                out[i * 7 + 6] = o.level_1000;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(object)]
+pub struct FibExtensionValue {
+    pub level_1272: f64,
+    pub level_1414: f64,
+    pub level_1618: f64,
+    pub level_2000: f64,
+    pub level_2618: f64,
+}
+
+#[napi(js_name = "FibExtension")]
+pub struct FibExtensionNode {
+    inner: wc::FibExtension,
+}
+
+#[napi]
+impl FibExtensionNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::FibExtension::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<FibExtensionValue>> {
+        Ok(self
+            .inner
+            .update(swing_cnd(high, low)?)
+            .map(|o| FibExtensionValue {
+                level_1272: o.level_1272,
+                level_1414: o.level_1414,
+                level_1618: o.level_1618,
+                level_2000: o.level_2000,
+                level_2618: o.level_2618,
+            }))
+    }
+    #[napi]
+    pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() {
+            return Err(NapiError::from_reason(
+                "high and low must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 5];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(swing_cnd(high[i], low[i])?) {
+                out[i * 5] = o.level_1272;
+                out[i * 5 + 1] = o.level_1414;
+                out[i * 5 + 2] = o.level_1618;
+                out[i * 5 + 3] = o.level_2000;
+                out[i * 5 + 4] = o.level_2618;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(object)]
+pub struct FibProjectionValue {
+    pub level_618: f64,
+    pub level_1000: f64,
+    pub level_1618: f64,
+    pub level_2618: f64,
+}
+
+#[napi(js_name = "FibProjection")]
+pub struct FibProjectionNode {
+    inner: wc::FibProjection,
+}
+
+#[napi]
+impl FibProjectionNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::FibProjection::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<FibProjectionValue>> {
+        Ok(self
+            .inner
+            .update(swing_cnd(high, low)?)
+            .map(|o| FibProjectionValue {
+                level_618: o.level_618,
+                level_1000: o.level_1000,
+                level_1618: o.level_1618,
+                level_2618: o.level_2618,
+            }))
+    }
+    #[napi]
+    pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() {
+            return Err(NapiError::from_reason(
+                "high and low must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 4];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(swing_cnd(high[i], low[i])?) {
+                out[i * 4] = o.level_618;
+                out[i * 4 + 1] = o.level_1000;
+                out[i * 4 + 2] = o.level_1618;
+                out[i * 4 + 3] = o.level_2618;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(object)]
+pub struct AutoFibValue {
+    pub level_0: f64,
+    pub level_236: f64,
+    pub level_382: f64,
+    pub level_500: f64,
+    pub level_618: f64,
+    pub level_786: f64,
+    pub level_1000: f64,
+}
+
+#[napi(js_name = "AutoFib")]
+pub struct AutoFibNode {
+    inner: wc::AutoFib,
+}
+
+#[napi]
+impl AutoFibNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::AutoFib::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<AutoFibValue>> {
+        Ok(self
+            .inner
+            .update(swing_cnd(high, low)?)
+            .map(|o| AutoFibValue {
+                level_0: o.level_0,
+                level_236: o.level_236,
+                level_382: o.level_382,
+                level_500: o.level_500,
+                level_618: o.level_618,
+                level_786: o.level_786,
+                level_1000: o.level_1000,
+            }))
+    }
+    #[napi]
+    pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() {
+            return Err(NapiError::from_reason(
+                "high and low must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 7];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(swing_cnd(high[i], low[i])?) {
+                out[i * 7] = o.level_0;
+                out[i * 7 + 1] = o.level_236;
+                out[i * 7 + 2] = o.level_382;
+                out[i * 7 + 3] = o.level_500;
+                out[i * 7 + 4] = o.level_618;
+                out[i * 7 + 5] = o.level_786;
+                out[i * 7 + 6] = o.level_1000;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(object)]
+pub struct GoldenPocketValue {
+    pub low: f64,
+    pub mid: f64,
+    pub high: f64,
+}
+
+#[napi(js_name = "GoldenPocket")]
+pub struct GoldenPocketNode {
+    inner: wc::GoldenPocket,
+}
+
+#[napi]
+impl GoldenPocketNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::GoldenPocket::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<GoldenPocketValue>> {
+        Ok(self
+            .inner
+            .update(swing_cnd(high, low)?)
+            .map(|o| GoldenPocketValue {
+                low: o.low,
+                mid: o.mid,
+                high: o.high,
+            }))
+    }
+    #[napi]
+    pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() {
+            return Err(NapiError::from_reason(
+                "high and low must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(swing_cnd(high[i], low[i])?) {
+                out[i * 3] = o.low;
+                out[i * 3 + 1] = o.mid;
+                out[i * 3 + 2] = o.high;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(object)]
+pub struct FibConfluenceValue {
+    pub price: f64,
+    pub strength: f64,
+}
+
+#[napi(js_name = "FibConfluence")]
+pub struct FibConfluenceNode {
+    inner: wc::FibConfluence,
+}
+
+#[napi]
+impl FibConfluenceNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::FibConfluence::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<FibConfluenceValue>> {
+        Ok(self
+            .inner
+            .update(swing_cnd(high, low)?)
+            .map(|o| FibConfluenceValue {
+                price: o.price,
+                strength: o.strength,
+            }))
+    }
+    #[napi]
+    pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() {
+            return Err(NapiError::from_reason(
+                "high and low must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(swing_cnd(high[i], low[i])?) {
+                out[i * 2] = o.price;
+                out[i * 2 + 1] = o.strength;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+impl Default for FibRetracementNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl Default for FibExtensionNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl Default for FibProjectionNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl Default for AutoFibNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl Default for GoldenPocketNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl Default for FibConfluenceNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}

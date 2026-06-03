@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **Fibonacci Confluence** — densest cluster of retracement levels across recent swing legs (price + strength) (`FIB_CONFLUENCE`).
+- **Golden Pocket** — the 0.618-0.65 optimal-trade-entry band of the most recent swing leg (`GOLDEN_POCKET`).
+- **Auto-Fibonacci** — retracement anchored on the dominant (largest-magnitude) leg among recent swings (`AUTO_FIB`).
+- **Fibonacci Projection** — measured-move target zone from the last three pivots (A-B-C), projecting A->B from C (`FIB_PROJECTION`).
+- **Fibonacci Extension** — projects the latest swing leg to the canonical extension ratios (127.2/141.4/161.8/200/261.8%) (`FIB_EXTENSION`).
+- **Fibonacci Retracement** — seven retracement levels (0/23.6/38.2/50/61.8/78.6/100%) of the most recent confirmed swing leg (`FIB_RETRACEMENT`).
 
 ## [0.5.2] - 2026-06-03
 

@@ -34,6 +34,7 @@ mod aroon_oscillator;
 mod atr;
 mod atr_bands;
 mod atr_trailing_stop;
+mod auto_fib;
 mod autocorrelation;
 mod average_daily_range;
 mod average_drawdown;
@@ -110,6 +111,10 @@ mod evening_doji_star;
 mod evwma;
 mod falling_three_methods;
 mod fama;
+mod fib_confluence;
+mod fib_extension;
+mod fib_projection;
+mod fib_retracement;
 mod fibonacci_pivots;
 mod fisher_transform;
 mod flag_pennant;
@@ -125,6 +130,7 @@ mod gain_loss_ratio;
 mod gap_side_by_side_white;
 mod garman_klass;
 mod gartley;
+mod golden_pocket;
 mod granger_causality;
 mod gravestone_doji;
 mod hammer;
@@ -401,6 +407,7 @@ pub use aroon_oscillator::AroonOscillator;
 pub use atr::Atr;
 pub use atr_bands::{AtrBands, AtrBandsOutput};
 pub use atr_trailing_stop::AtrTrailingStop;
+pub use auto_fib::{AutoFib, AutoFibOutput};
 pub use autocorrelation::Autocorrelation;
 pub use average_daily_range::AverageDailyRange;
 pub use average_drawdown::AverageDrawdown;
@@ -477,6 +484,10 @@ pub use evening_doji_star::EveningDojiStar;
 pub use evwma::Evwma;
 pub use falling_three_methods::FallingThreeMethods;
 pub use fama::Fama;
+pub use fib_confluence::{FibConfluence, FibConfluenceOutput};
+pub use fib_extension::{FibExtension, FibExtensionOutput};
+pub use fib_projection::{FibProjection, FibProjectionOutput};
+pub use fib_retracement::{FibRetracement, FibRetracementOutput};
 pub use fibonacci_pivots::{FibonacciPivots, FibonacciPivotsOutput};
 pub use fisher_transform::FisherTransform;
 pub use flag_pennant::FlagPennant;
@@ -492,6 +503,7 @@ pub use gain_loss_ratio::GainLossRatio;
 pub use gap_side_by_side_white::GapSideBySideWhite;
 pub use garman_klass::GarmanKlassVolatility;
 pub use gartley::Gartley;
+pub use golden_pocket::{GoldenPocket, GoldenPocketOutput};
 pub use granger_causality::GrangerCausality;
 pub use gravestone_doji::GravestoneDoji;
 pub use hammer::Hammer;
@@ -1222,6 +1234,17 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "ThreeDrives",
         ],
     ),
+    (
+        "Fibonacci",
+        &[
+            "FibRetracement",
+            "FibExtension",
+            "FibProjection",
+            "AutoFib",
+            "GoldenPocket",
+            "FibConfluence",
+        ],
+    ),
 ];
 
 #[cfg(test)]
@@ -1250,6 +1273,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 367, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 373, "FAMILIES total drifted from indicator count");
     }
 }
