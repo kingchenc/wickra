@@ -9,7 +9,7 @@ edition.workspace = true
 # also emits `cargo::` directives that require >= 1.77 — that older floor is
 # subsumed by the 1.88 requirement now.
 rust-version = "1.88"
-license-file.workspace = true
+license.workspace = true
 repository.workspace = true
 homepage.workspace = true
 readme.workspace = true
