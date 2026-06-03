@@ -7,14 +7,13 @@ name = "wickra"
 version = "0.4.7"
 description = "Streaming-first technical indicators: incremental, fast, install-free."
 readme = "README.md"
-license = { text = "PolyForm-Noncommercial-1.0.0 with additional personal-account permissions; see LICENSE" }
+license = "MIT OR Apache-2.0"
 authors = [{ name = "kingchenc", email = "support@wickra.org" }]
 requires-python = ">=3.9"
 keywords = ["finance", "trading", "indicators", "technical-analysis", "ta-lib"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Financial and Insurance Industry",
-    "License :: Free for non-commercial use",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.9",
