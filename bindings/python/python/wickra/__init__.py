@@ -340,6 +340,10 @@ from ._wickra import (
     Gartley,
     Abcd,
     # Fibonacci
+    FibTimeZones,
+    FibChannel,
+    FibArcs,
+    FibFan,
     FibConfluence,
     GoldenPocket,
     AutoFib,
@@ -742,6 +746,10 @@ __all__ = [
     "Gartley",
     "Abcd",
     # Fibonacci
+    "FibTimeZones",
+    "FibChannel",
+    "FibArcs",
+    "FibFan",
     "FibConfluence",
     "GoldenPocket",
     "AutoFib",

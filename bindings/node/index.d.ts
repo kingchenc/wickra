@@ -402,6 +402,26 @@ export interface FibConfluenceValue {
   price: number
   strength: number
 }
+export interface FibFanValue {
+  fan382: number
+  fan500: number
+  fan618: number
+}
+export interface FibArcsValue {
+  arc382: number
+  arc500: number
+  arc618: number
+}
+export interface FibChannelValue {
+  base: number
+  level618: number
+  level1000: number
+  level1618: number
+}
+export interface FibTimeZonesValue {
+  onZone: number
+  barsToNext: number
+}
 export type SmaNode = SMA
 export declare class SMA {
   constructor(period: number)
@@ -3921,6 +3941,42 @@ export type FibConfluenceNode = FibConfluence
 export declare class FibConfluence {
   constructor()
   update(high: number, low: number): FibConfluenceValue | null
+  batch(high: Array<number>, low: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type FibFanNode = FibFan
+export declare class FibFan {
+  constructor()
+  update(high: number, low: number): FibFanValue | null
+  batch(high: Array<number>, low: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type FibArcsNode = FibArcs
+export declare class FibArcs {
+  constructor()
+  update(high: number, low: number): FibArcsValue | null
+  batch(high: Array<number>, low: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type FibChannelNode = FibChannel
+export declare class FibChannel {
+  constructor()
+  update(high: number, low: number): FibChannelValue | null
+  batch(high: Array<number>, low: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type FibTimeZonesNode = FibTimeZones
+export declare class FibTimeZones {
+  constructor()
+  update(high: number, low: number): FibTimeZonesValue | null
   batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
   isReady(): boolean

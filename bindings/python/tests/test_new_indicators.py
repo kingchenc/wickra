@@ -860,6 +860,26 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 # --- Candle-input, multi-output indicators --------------------------------
 
 MULTI = {
+    "FibFan": (
+        lambda: ta.FibFan(),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+        3,
+    ),
+    "FibArcs": (
+        lambda: ta.FibArcs(),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+        3,
+    ),
+    "FibChannel": (
+        lambda: ta.FibChannel(),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+        4,
+    ),
+    "FibTimeZones": (
+        lambda: ta.FibTimeZones(),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+        2,
+    ),
     "FibRetracement": (
         lambda: ta.FibRetracement(),
         lambda ind, h, l, c, v: ind.batch(h, l),
@@ -2651,6 +2671,41 @@ def test_fib_confluence_reference():
     assert t.update((100.0, 198.0, 100.0, 100.0, 1.0, 1)) is None
     assert t.update((101.0, 160.0, 101.0, 101.0, 1.0, 2)) is None
     assert t.update((144.0, 158.4, 144.0, 144.0, 1.0, 3)) == pytest.approx((137.64, 2.0))
+
+
+def test_fib_fan_reference():
+    t = ta.FibFan()
+    assert t.update((199.0, 200.0, 199.0, 199.0, 1.0, 0)) is None
+    assert t.update((160.0, 190.0, 160.0, 160.0, 1.0, 1)) is None
+    assert t.update((100.0, 150.0, 100.0, 100.0, 1.0, 2)) is None
+    assert t.update((105.0, 110.0, 105.0, 105.0, 1.0, 3)) == pytest.approx((142.7, 125.0, 107.3))
+
+
+def test_fib_arcs_reference():
+    t = ta.FibArcs()
+    assert t.update((199.0, 200.0, 199.0, 199.0, 1.0, 0)) is None
+    assert t.update((160.0, 190.0, 160.0, 160.0, 1.0, 1)) is None
+    assert t.update((100.0, 150.0, 100.0, 100.0, 1.0, 2)) is None
+    assert t.update((105.0, 110.0, 105.0, 105.0, 1.0, 3)) == pytest.approx((133.082181, 143.30127, 153.52037))
+
+
+def test_fib_channel_reference():
+    t = ta.FibChannel()
+    assert t.update((199.0, 200.0, 199.0, 199.0, 1.0, 0)) is None
+    assert t.update((100.0, 190.0, 100.0, 100.0, 1.0, 1)) is None
+    assert t.update((108.0, 110.0, 108.0, 108.0, 1.0, 2)) is None
+    assert t.update((210.0, 220.0, 210.0, 210.0, 1.0, 3)) is None
+    assert t.update((150.0, 200.0, 150.0, 150.0, 1.0, 4)) == pytest.approx((226.666667, 160.746667, 120.0, 54.08))
+
+
+def test_fib_time_zones_reference():
+    t = ta.FibTimeZones()
+    assert t.update((199.0, 200.0, 199.0, 199.0, 1.0, 0)) is None
+    assert t.update((150.0, 190.0, 150.0, 150.0, 1.0, 1)) == pytest.approx((1.0, 1.0))
+    assert t.update((151.0, 155.0, 151.0, 151.0, 1.0, 2)) == pytest.approx((1.0, 1.0))
+    assert t.update((151.0, 155.0, 151.0, 151.0, 1.0, 3)) == pytest.approx((1.0, 2.0))
+    assert t.update((151.0, 155.0, 151.0, 151.0, 1.0, 4)) == pytest.approx((0.0, 1.0))
+    assert t.update((151.0, 155.0, 151.0, 151.0, 1.0, 5)) == pytest.approx((1.0, 3.0))
 
 # --- Lifecycle ------------------------------------------------------------
 

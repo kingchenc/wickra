@@ -27,14 +27,19 @@ pub(crate) const SWING_THRESHOLD: f64 = 0.05;
 /// flat boundary of a rectangle.
 pub(crate) const LEVEL_TOLERANCE: f64 = 0.03;
 
-/// A confirmed swing pivot: the extreme price the swing turned from and its
-/// direction (`+1.0` for a swing high, `-1.0` for a swing low).
+/// A confirmed swing pivot: the extreme price the swing turned from, its
+/// direction (`+1.0` for a swing high, `-1.0` for a swing low) and the bar index
+/// at which that extreme occurred.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(crate) struct Pivot {
     /// Price of the confirmed swing extreme.
     pub price: f64,
     /// `+1.0` if the pivot is a swing high, `-1.0` if it is a swing low.
     pub direction: f64,
+    /// Zero-based index of the candle at which the swing extreme occurred (not
+    /// the later bar that confirmed it). Used by the geometric Fibonacci tools
+    /// (fan, arcs, channel, time zones) to place trendlines and time offsets.
+    pub bar: usize,
 }
 
 /// Non-repainting percent-threshold swing tracker with a bounded pivot history.
@@ -50,6 +55,8 @@ pub(crate) struct Pivot {
 pub(crate) struct SwingTracker {
     threshold: f64,
     cap: usize,
+    /// Number of candles fed so far; the current bar index is `bars_seen - 1`.
+    bars_seen: usize,
     state: Option<State>,
     pivots: Vec<Pivot>,
 }
@@ -61,6 +68,8 @@ struct State {
     direction: f64,
     /// The running candidate extreme price.
     extreme: f64,
+    /// Bar index at which the running extreme was last set.
+    extreme_bar: usize,
 }
 
 impl SwingTracker {
@@ -75,6 +84,7 @@ impl SwingTracker {
         Self {
             threshold,
             cap,
+            bars_seen: 0,
             state: None,
             pivots: Vec::new(),
         }
@@ -82,11 +92,14 @@ impl SwingTracker {
 
     /// Feed one candle. Returns `true` when a new pivot was confirmed this bar.
     pub(crate) fn update(&mut self, candle: Candle) -> bool {
+        let bar = self.bars_seen;
+        self.bars_seen += 1;
         let Some(s) = self.state else {
             // Bootstrap: seed an uptrend tracking the first candle's high.
             self.state = Some(State {
                 direction: 1.0,
                 extreme: candle.high,
+                extreme_bar: bar,
             });
             return false;
         };
@@ -97,6 +110,7 @@ impl SwingTracker {
                 self.state = Some(State {
                     direction: 1.0,
                     extreme: candle.high,
+                    extreme_bar: bar,
                 });
                 return false;
             }
@@ -105,10 +119,12 @@ impl SwingTracker {
                 self.push(Pivot {
                     price: s.extreme,
                     direction: 1.0,
+                    bar: s.extreme_bar,
                 });
                 self.state = Some(State {
                     direction: -1.0,
                     extreme: candle.low,
+                    extreme_bar: bar,
                 });
                 return true;
             }
@@ -119,6 +135,7 @@ impl SwingTracker {
                 self.state = Some(State {
                     direction: -1.0,
                     extreme: candle.low,
+                    extreme_bar: bar,
                 });
                 return false;
             }
@@ -127,15 +144,23 @@ impl SwingTracker {
                 self.push(Pivot {
                     price: s.extreme,
                     direction: -1.0,
+                    bar: s.extreme_bar,
                 });
                 self.state = Some(State {
                     direction: 1.0,
                     extreme: candle.high,
+                    extreme_bar: bar,
                 });
                 return true;
             }
             false
         }
+    }
+
+    /// Zero-based index of the most recently fed candle. Saturates at `0` before
+    /// any candle has been seen.
+    pub(crate) fn current_bar(&self) -> usize {
+        self.bars_seen.saturating_sub(1)
     }
 
     fn push(&mut self, pivot: Pivot) {
@@ -152,6 +177,7 @@ impl SwingTracker {
 
     /// Clear all state, returning the tracker to its just-constructed condition.
     pub(crate) fn reset(&mut self) {
+        self.bars_seen = 0;
         self.state = None;
         self.pivots.clear();
     }
@@ -312,9 +338,11 @@ mod tests {
         assert!(t.update(c_hl(101.0, 100.0, 2)));
         assert_eq!(
             t.pivots().last().copied(),
+            // The high extreme was set at bar 1, confirmed at bar 2.
             Some(Pivot {
                 price: 120.0,
                 direction: 1.0,
+                bar: 1,
             })
         );
         // Now in a downtrend: a lower low extends the candidate low.
@@ -323,9 +351,11 @@ mod tests {
         assert!(t.update(c_hl(100.0, 99.0, 4)));
         assert_eq!(
             t.pivots().last().copied(),
+            // The low extreme was set at bar 3, confirmed at bar 4.
             Some(Pivot {
                 price: 90.0,
                 direction: -1.0,
+                bar: 3,
             })
         );
     }
@@ -382,18 +412,22 @@ mod tests {
             Pivot {
                 price: 100.0,
                 direction: -1.0,
+                bar: 0,
             },
             Pivot {
                 price: 120.0,
                 direction: 1.0,
+                bar: 0,
             },
             Pivot {
                 price: 110.0,
                 direction: -1.0,
+                bar: 0,
             },
             Pivot {
                 price: 121.0,
                 direction: 1.0,
+                bar: 0,
             },
         ];
         assert_eq!(recent_legs(&ending_high), (120.0, 121.0, 100.0, 110.0));
@@ -402,18 +436,22 @@ mod tests {
             Pivot {
                 price: 120.0,
                 direction: 1.0,
+                bar: 0,
             },
             Pivot {
                 price: 100.0,
                 direction: -1.0,
+                bar: 0,
             },
             Pivot {
                 price: 110.0,
                 direction: 1.0,
+                bar: 0,
             },
             Pivot {
                 price: 99.0,
                 direction: -1.0,
+                bar: 0,
             },
         ];
         assert_eq!(recent_legs(&ending_low), (120.0, 110.0, 100.0, 99.0));
@@ -425,26 +463,32 @@ mod tests {
             Pivot {
                 price: 50.0,
                 direction: 1.0,
+                bar: 0,
             },
             Pivot {
                 price: 100.0,
                 direction: -1.0,
+                bar: 0,
             }, // X
             Pivot {
                 price: 140.0,
                 direction: 1.0,
+                bar: 0,
             }, // A
             Pivot {
                 price: 115.0,
                 direction: -1.0,
+                bar: 0,
             }, // B
             Pivot {
                 price: 128.0,
                 direction: 1.0,
+                bar: 0,
             }, // C
             Pivot {
                 price: 108.0,
                 direction: -1.0,
+                bar: 0,
             }, // D (low → bullish)
         ];
         let p = xabcd(&pivots);
@@ -482,5 +526,17 @@ mod tests {
         assert!(!approx_equal(100.0, 110.0, 0.03)); // 10% apart, outside 3%
         assert!(approx_equal(0.0, 0.0, 0.01)); // both zero
         assert!(approx_equal(-50.0, -49.0, 0.05)); // negative magnitudes
+    }
+
+    #[test]
+    fn tracks_extreme_bar_and_current_bar() {
+        let mut t = SwingTracker::new(0.10, 6);
+        // Before any candle, the current bar saturates at 0.
+        assert_eq!(t.current_bar(), 0);
+        let _ = t.update(c_hl(100.0, 99.5, 0));
+        let _ = t.update(c_hl(120.0, 119.5, 1)); // candidate high at bar 1
+        let _ = t.update(c_hl(101.0, 90.0, 2)); // confirm high @120 (extreme bar 1)
+        assert_eq!(t.current_bar(), 2);
+        assert_eq!(t.pivots().last().unwrap().bar, 1);
     }
 }

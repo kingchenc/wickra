@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **Fibonacci Time Zones** — vertical markers at Fibonacci bar-distances (1/2/3/5/8/...) from the latest swing pivot (`FIB_TIME_ZONES`).
+- **Fibonacci Channel** — a sloped base trendline plus parallel lines at Fibonacci multiples of the channel width (`FIB_CHANNEL`).
+- **Fibonacci Arcs** — semicircular retracement levels centred on the swing end, normalised by leg bar-width (`FIB_ARCS`).
+- **Fibonacci Fan** — three trendlines fanning from a swing start through its 38.2/50/61.8% retracement levels (`FIB_FAN`).
 - **Fibonacci Confluence** — densest cluster of retracement levels across recent swing legs (price + strength) (`FIB_CONFLUENCE`).
 - **Golden Pocket** — the 0.618-0.65 optimal-trade-entry band of the most recent swing leg (`GOLDEN_POCKET`).
 - **Auto-Fibonacci** — retracement anchored on the dominant (largest-magnitude) leg among recent swings (`AUTO_FIB`).
