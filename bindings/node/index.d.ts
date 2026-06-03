@@ -349,6 +349,19 @@ export interface PnfColumnValue {
   high: number
   low: number
 }
+export interface SessionHighLowValue {
+  high: number
+  low: number
+}
+export interface SessionRangeValue {
+  asia: number
+  eu: number
+  us: number
+}
+export interface OvernightIntradayReturnValue {
+  overnight: number
+  intraday: number
+}
 export type SmaNode = SMA
 export declare class SMA {
   constructor(period: number)
@@ -3553,6 +3566,124 @@ export declare class Alpha {
   constructor(period: number, riskFree: number)
   update(asset: number, benchmark: number): number | null
   batch(asset: Array<number>, benchmark: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type SessionVwapNode = SessionVwap
+export declare class SessionVwap {
+  constructor(utcOffsetMinutes: number)
+  update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+  utcOffsetMinutes(): number
+}
+export type OvernightGapNode = OvernightGap
+export declare class OvernightGap {
+  constructor(utcOffsetMinutes: number)
+  update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+  utcOffsetMinutes(): number
+}
+export type SeasonalZScoreNode = SeasonalZScore
+export declare class SeasonalZScore {
+  constructor(utcOffsetMinutes: number)
+  update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+  utcOffsetMinutes(): number
+}
+export type TimeOfDayReturnProfileNode = TimeOfDayReturnProfile
+export declare class TimeOfDayReturnProfile {
+  constructor(buckets: number, utcOffsetMinutes: number)
+  update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): Array<number> | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+  buckets(): number
+  utcOffsetMinutes(): number
+}
+export type IntradayVolatilityProfileNode = IntradayVolatilityProfile
+export declare class IntradayVolatilityProfile {
+  constructor(buckets: number, utcOffsetMinutes: number)
+  update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): Array<number> | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+  buckets(): number
+  utcOffsetMinutes(): number
+}
+export type VolumeByTimeProfileNode = VolumeByTimeProfile
+export declare class VolumeByTimeProfile {
+  constructor(buckets: number, utcOffsetMinutes: number)
+  update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): Array<number> | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+  buckets(): number
+  utcOffsetMinutes(): number
+}
+export type DayOfWeekProfileNode = DayOfWeekProfile
+export declare class DayOfWeekProfile {
+  constructor(utcOffsetMinutes: number)
+  update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): Array<number> | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+  utcOffsetMinutes(): number
+}
+export type AverageDailyRangeNode = AverageDailyRange
+export declare class AverageDailyRange {
+  constructor(period: number, utcOffsetMinutes: number)
+  update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TurnOfMonthNode = TurnOfMonth
+export declare class TurnOfMonth {
+  constructor(nFirst: number, nLast: number, utcOffsetMinutes: number)
+  update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type SessionHighLowNode = SessionHighLow
+export declare class SessionHighLow {
+  constructor(utcOffsetMinutes: number)
+  update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): SessionHighLowValue | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type SessionRangeNode = SessionRange
+export declare class SessionRange {
+  constructor(utcOffsetMinutes: number)
+  update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): SessionRangeValue | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type OvernightIntradayReturnNode = OvernightIntradayReturn
+export declare class OvernightIntradayReturn {
+  constructor(utcOffsetMinutes: number)
+  update(open: number, high: number, low: number, close: number, volume: number, timestamp: number): OvernightIntradayReturnValue | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>, timestamp: Array<number>): Array<number>
   reset(): void
   isReady(): boolean
   warmupPeriod(): number

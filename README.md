@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://wickra.org"><img src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/wickra-banner.webp?v=339" alt="Wickra — streaming-first technical indicators" width="100%"></a>
+  <a href="https://wickra.org"><img src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/wickra-banner.webp?v=351" alt="Wickra — streaming-first technical indicators" width="100%"></a>
 </p>
 
 [![CI](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml/badge.svg)](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml)
@@ -47,7 +47,7 @@ Full documentation lives at **[docs.wickra.org](https://docs.wickra.org)**:
   [Node](https://docs.wickra.org/Quickstart-Node),
   [WASM](https://docs.wickra.org/Quickstart-WASM).
 - **Indicators** — a per-indicator deep dive (formula, parameters, warmup) for
-  every one of the 339 indicators; start at the
+  every one of the 351 indicators; start at the
   [indicators overview](https://docs.wickra.org/Indicators-Overview).
 - **Reference** — [warmup periods](https://docs.wickra.org/Warmup-Periods),
   [streaming vs batch](https://docs.wickra.org/Streaming-vs-Batch),
@@ -135,7 +135,7 @@ python -m benchmarks.compare_libraries
 
 ## Indicators
 
-339 streaming-first indicators across twenty families. Every one passes the
+351 streaming-first indicators across twenty-one families. Every one passes the
 `batch == streaming` equivalence test, reference-value tests, and reset
 semantics tests. Each has a per-indicator deep dive (formula, parameters,
 warmup) at [docs.wickra.org](https://docs.wickra.org/Indicators-Overview).
@@ -162,6 +162,7 @@ warmup) at [docs.wickra.org](https://docs.wickra.org/Indicators-Overview).
 | Market Profile       | Value Area (POC / VAH / VAL), Volume Profile (histogram), TPO Profile, Initial Balance, Opening Range |
 | Market Breadth       | Advance/Decline Line, Advance/Decline Ratio, Advance/Decline Volume Line, McClellan Oscillator, McClellan Summation Index, TRIN / Arms Index, Breadth Thrust, New Highs - New Lows, High-Low Index, Percent Above Moving Average, Up/Down Volume Ratio, Bullish Percent Index, Cumulative Volume Index, Absolute Breadth Index, TICK Index |
 | Risk / Performance   | Sharpe Ratio, Sortino Ratio, Calmar Ratio, Omega Ratio, Max Drawdown, Average Drawdown, Drawdown Duration, Pain Index, Value at Risk, Conditional Value at Risk (CVaR), Profit Factor, Gain/Loss Ratio, Recovery Factor, Kelly Criterion, Treynor Ratio, Information Ratio, Alpha (Jensen) |
+| Seasonality & Session | Session VWAP, Session High/Low, Session Range, Average Daily Range, Overnight Gap, Overnight/Intraday Return, Turn-of-Month, Seasonal Z-Score, Time-of-Day Return Profile, Day-of-Week Profile, Intraday Volatility Profile, Volume-by-Time Profile |
 
 Every candlestick pattern emits a signed per-bar value — `+1.0` bullish,
 `−1.0` bearish, `0.0` none — so the family drops straight into a feature matrix
@@ -240,7 +241,7 @@ A Python live-trading example using the public `websockets` package lives at
 ```
 wickra/
 ├── crates/
-│   ├── wickra-core/         core engine + all 339 indicators
+│   ├── wickra-core/         core engine + all 351 indicators
 │   ├── wickra/              top-level facade crate (publishes on crates.io) + benches/
 │   └── wickra-data/         CSV reader, tick aggregator, live exchange feeds
 ├── bindings/

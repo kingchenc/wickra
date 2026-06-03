@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **Volume-by-Time Profile** — mean traded volume bucketed by intraday time (`VOLUME_BY_TIME_PROFILE`).
+- **Intraday Volatility Profile** — return standard deviation bucketed by intraday time (`INTRADAY_VOLATILITY_PROFILE`).
+- **Day-of-Week Profile** — mean bar return bucketed by weekday (`DAY_OF_WEEK_PROFILE`).
+- **Time-of-Day Return Profile** — mean bar return bucketed by intraday time (`TIME_OF_DAY_RETURN_PROFILE`).
+- **Seasonal Z-Score** — z-score of the current return versus the same hour-of-day history (`SEASONAL_Z_SCORE`).
+- **Turn-of-Month** — mean daily return inside the turn-of-month window (`TURN_OF_MONTH`).
+- **Overnight/Intraday Return** — decomposition of session return into overnight and intraday legs (`OVERNIGHT_INTRADAY_RETURN`).
+- **Overnight Gap** — close-to-open return across the session boundary (`OVERNIGHT_GAP`).
+- **Average Daily Range** — mean high-low range of the last N completed sessions (`AVERAGE_DAILY_RANGE`).
+- **Session Range** — per-session (Asia/EU/US) high-low range (`SESSION_RANGE`).
+- **Session High/Low** — running high and low of the current session (`SESSION_HIGH_LOW`).
+- **Session VWAP** — session-anchored volume-weighted average price (`SESSION_VWAP`).
 
 ## [0.5.0] - 2026-06-03
 

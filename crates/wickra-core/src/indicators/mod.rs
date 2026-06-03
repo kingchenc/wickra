@@ -29,6 +29,7 @@ mod atr;
 mod atr_bands;
 mod atr_trailing_stop;
 mod autocorrelation;
+mod average_daily_range;
 mod average_drawdown;
 mod avg_price;
 mod awesome_oscillator;
@@ -67,6 +68,7 @@ mod counterattack;
 mod cumulative_volume_index;
 mod cvd;
 mod cybernetic_cycle;
+mod day_of_week_profile;
 mod decycler;
 mod decycler_oscillator;
 mod dema;
@@ -136,6 +138,7 @@ mod inertia;
 mod information_ratio;
 mod initial_balance;
 mod instantaneous_trendline;
+mod intraday_volatility_profile;
 mod inverse_fisher_transform;
 mod inverted_hammer;
 mod jma;
@@ -202,6 +205,8 @@ mod on_neck;
 mod opening_marubozu;
 mod opening_range;
 mod ou_half_life;
+mod overnight_gap;
+mod overnight_intraday_return;
 mod pain_index;
 mod pair_spread_zscore;
 mod pairwise_beta;
@@ -242,7 +247,11 @@ mod rvi;
 mod rvi_volatility;
 mod rwi;
 mod sar_ext;
+mod seasonal_z_score;
 mod separating_lines;
+mod session_high_low;
+mod session_range;
+mod session_vwap;
 mod sharpe_ratio;
 mod shooting_star;
 mod short_line;
@@ -295,6 +304,7 @@ mod three_stars_in_south;
 mod thrusting;
 mod tick_index;
 mod tii;
+mod time_of_day_return_profile;
 mod tpo_profile;
 mod trade_imbalance;
 mod treynor_ratio;
@@ -306,6 +316,7 @@ mod tsf;
 mod tsi;
 mod tsv;
 mod ttm_squeeze;
+mod turn_of_month;
 mod tweezer;
 mod two_crows;
 mod typical_price;
@@ -322,6 +333,7 @@ mod variance_ratio;
 mod vertical_horizontal_filter;
 mod vidya;
 mod volty_stop;
+mod volume_by_time_profile;
 mod volume_oscillator;
 mod volume_profile;
 mod vortex;
@@ -368,6 +380,7 @@ pub use atr::Atr;
 pub use atr_bands::{AtrBands, AtrBandsOutput};
 pub use atr_trailing_stop::AtrTrailingStop;
 pub use autocorrelation::Autocorrelation;
+pub use average_daily_range::AverageDailyRange;
 pub use average_drawdown::AverageDrawdown;
 pub use avg_price::AvgPrice;
 pub use awesome_oscillator::AwesomeOscillator;
@@ -406,6 +419,7 @@ pub use counterattack::Counterattack;
 pub use cumulative_volume_index::CumulativeVolumeIndex;
 pub use cvd::CumulativeVolumeDelta;
 pub use cybernetic_cycle::CyberneticCycle;
+pub use day_of_week_profile::{DayOfWeekProfile, DayOfWeekProfileOutput};
 pub use decycler::Decycler;
 pub use decycler_oscillator::DecyclerOscillator;
 pub use dema::Dema;
@@ -475,6 +489,7 @@ pub use inertia::Inertia;
 pub use information_ratio::InformationRatio;
 pub use initial_balance::{InitialBalance, InitialBalanceOutput};
 pub use instantaneous_trendline::InstantaneousTrendline;
+pub use intraday_volatility_profile::{IntradayVolatilityProfile, IntradayVolatilityProfileOutput};
 pub use inverse_fisher_transform::InverseFisherTransform;
 pub use inverted_hammer::InvertedHammer;
 pub use jma::Jma;
@@ -541,6 +556,8 @@ pub use on_neck::OnNeck;
 pub use opening_marubozu::OpeningMarubozu;
 pub use opening_range::{OpeningRange, OpeningRangeOutput};
 pub use ou_half_life::OuHalfLife;
+pub use overnight_gap::OvernightGap;
+pub use overnight_intraday_return::{OvernightIntradayReturn, OvernightIntradayReturnOutput};
 pub use pain_index::PainIndex;
 pub use pair_spread_zscore::PairSpreadZScore;
 pub use pairwise_beta::PairwiseBeta;
@@ -581,7 +598,11 @@ pub use rvi::Rvi;
 pub use rvi_volatility::RviVolatility;
 pub use rwi::{Rwi, RwiOutput};
 pub use sar_ext::SarExt;
+pub use seasonal_z_score::SeasonalZScore;
 pub use separating_lines::SeparatingLines;
+pub use session_high_low::{SessionHighLow, SessionHighLowOutput};
+pub use session_range::{SessionRange, SessionRangeOutput};
+pub use session_vwap::SessionVwap;
 pub use sharpe_ratio::SharpeRatio;
 pub use shooting_star::ShootingStar;
 pub use short_line::ShortLine;
@@ -634,6 +655,7 @@ pub use three_stars_in_south::ThreeStarsInSouth;
 pub use thrusting::Thrusting;
 pub use tick_index::TickIndex;
 pub use tii::Tii;
+pub use time_of_day_return_profile::{TimeOfDayReturnProfile, TimeOfDayReturnProfileOutput};
 pub use tpo_profile::{TpoProfile, TpoProfileOutput};
 pub use trade_imbalance::TradeImbalance;
 pub use treynor_ratio::TreynorRatio;
@@ -645,6 +667,7 @@ pub use tsf::Tsf;
 pub use tsi::Tsi;
 pub use tsv::Tsv;
 pub use ttm_squeeze::{TtmSqueeze, TtmSqueezeOutput};
+pub use turn_of_month::TurnOfMonth;
 pub use tweezer::Tweezer;
 pub use two_crows::TwoCrows;
 pub use typical_price::TypicalPrice;
@@ -661,6 +684,7 @@ pub use variance_ratio::VarianceRatio;
 pub use vertical_horizontal_filter::VerticalHorizontalFilter;
 pub use vidya::Vidya;
 pub use volty_stop::VoltyStop;
+pub use volume_by_time_profile::{VolumeByTimeProfile, VolumeByTimeProfileOutput};
 pub use volume_oscillator::VolumeOscillator;
 pub use volume_profile::{VolumeProfile, VolumeProfileOutput};
 pub use vortex::{Vortex, VortexOutput};
@@ -1118,6 +1142,23 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "TickIndex",
         ],
     ),
+    (
+        "Seasonality & Session",
+        &[
+            "SessionVwap",
+            "SessionHighLow",
+            "SessionRange",
+            "AverageDailyRange",
+            "OvernightGap",
+            "OvernightIntradayReturn",
+            "TurnOfMonth",
+            "SeasonalZScore",
+            "TimeOfDayReturnProfile",
+            "DayOfWeekProfile",
+            "IntradayVolatilityProfile",
+            "VolumeByTimeProfile",
+        ],
+    ),
 ];
 
 #[cfg(test)]
@@ -1146,6 +1187,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 339, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 351, "FAMILIES total drifted from indicator count");
     }
 }
