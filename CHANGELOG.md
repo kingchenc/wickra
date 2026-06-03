@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Spread Bollinger Bands** — Bollinger bands on the spread of two series for pairs mean-reversion (`SPREAD_BOLLINGER_BANDS`).
+- **Kalman Hedge Ratio** — Kalman-filter dynamic hedge ratio and spread between two series (`KALMAN_HEDGE_RATIO`).
+- **Granger Causality** — Granger causality F-statistic measuring whether one series predicts another (`GRANGER_CAUSALITY`).
+- **Variance Ratio** — Lo-MacKinlay variance-ratio test on the spread of two series (`VARIANCE_RATIO`).
+- **Beta-Neutral Spread** — beta-neutral spread: the rolling OLS regression residual of two series (`BETA_NEUTRAL_SPREAD`).
+- **Distance SSD** — Gatev sum-of-squared-deviations distance between two normalised series (`DISTANCE_SSD`).
+- **Spread Hurst** — Hurst exponent of the spread of two series for regime detection (`SPREAD_HURST`).
+- **OU Half-Life** — Ornstein-Uhlenbeck half-life of mean reversion for the spread of two series (`OU_HALF_LIFE`).
+- **Rolling Covariance** — rolling covariance of the period-over-period returns of two series (`ROLLING_COVARIANCE`).
+- **Rolling Correlation** — rolling Pearson correlation of the period-over-period returns of two series (`ROLLING_CORRELATION`).
 
 - **Market Breadth family** — a new indicator family built on a new
   `CrossSection` input type that carries the per-symbol state of an entire

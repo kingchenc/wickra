@@ -30,7 +30,8 @@ fn map_err(e: wc::Error) -> PyErr {
         | wc::Error::InvalidOrderBook { .. }
         | wc::Error::InvalidTrade { .. }
         | wc::Error::InvalidDerivatives { .. }
-        | wc::Error::InvalidCrossSection { .. } => PyValueError::new_err(e.to_string()),
+        | wc::Error::InvalidCrossSection { .. }
+        | wc::Error::InvalidParameter { .. } => PyValueError::new_err(e.to_string()),
     }
 }
 
@@ -12250,6 +12251,687 @@ impl PyRelativeStrengthAB {
     }
 }
 
+// ============================== RollingCorrelation ==============================
+
+#[pyclass(
+    name = "RollingCorrelation",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyRollingCorrelation {
+    inner: wc::RollingCorrelation,
+}
+
+#[pymethods]
+impl PyRollingCorrelation {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::RollingCorrelation::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, a: f64, b: f64) -> Option<f64> {
+        self.inner.update((a, b))
+    }
+    /// Batch over two equally-sized numpy arrays: `a` and `b`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        a: PyReadonlyArray1<'py, f64>,
+        b: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let xs = a
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let ys = b
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if xs.len() != ys.len() {
+            return Err(PyValueError::new_err("a and b must be equal length"));
+        }
+        let mut out = Vec::with_capacity(xs.len());
+        for i in 0..xs.len() {
+            out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("RollingCorrelation(period={})", self.inner.period())
+    }
+}
+
+// ============================== RollingCovariance ==============================
+
+#[pyclass(
+    name = "RollingCovariance",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyRollingCovariance {
+    inner: wc::RollingCovariance,
+}
+
+#[pymethods]
+impl PyRollingCovariance {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::RollingCovariance::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, a: f64, b: f64) -> Option<f64> {
+        self.inner.update((a, b))
+    }
+    /// Batch over two equally-sized numpy arrays: `a` and `b`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        a: PyReadonlyArray1<'py, f64>,
+        b: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let xs = a
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let ys = b
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if xs.len() != ys.len() {
+            return Err(PyValueError::new_err("a and b must be equal length"));
+        }
+        let mut out = Vec::with_capacity(xs.len());
+        for i in 0..xs.len() {
+            out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("RollingCovariance(period={})", self.inner.period())
+    }
+}
+
+// ============================== OuHalfLife ==============================
+
+#[pyclass(name = "OuHalfLife", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyOuHalfLife {
+    inner: wc::OuHalfLife,
+}
+
+#[pymethods]
+impl PyOuHalfLife {
+    #[new]
+    #[pyo3(signature = (period=60))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::OuHalfLife::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, a: f64, b: f64) -> Option<f64> {
+        self.inner.update((a, b))
+    }
+    /// Batch over two equally-sized numpy arrays: `a` and `b`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        a: PyReadonlyArray1<'py, f64>,
+        b: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let xs = a
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let ys = b
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if xs.len() != ys.len() {
+            return Err(PyValueError::new_err("a and b must be equal length"));
+        }
+        let mut out = Vec::with_capacity(xs.len());
+        for i in 0..xs.len() {
+            out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("OuHalfLife(period={})", self.inner.period())
+    }
+}
+
+// ============================== SpreadHurst ==============================
+
+#[pyclass(name = "SpreadHurst", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PySpreadHurst {
+    inner: wc::SpreadHurst,
+}
+
+#[pymethods]
+impl PySpreadHurst {
+    #[new]
+    #[pyo3(signature = (period=60))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::SpreadHurst::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, a: f64, b: f64) -> Option<f64> {
+        self.inner.update((a, b))
+    }
+    /// Batch over two equally-sized numpy arrays: `a` and `b`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        a: PyReadonlyArray1<'py, f64>,
+        b: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let xs = a
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let ys = b
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if xs.len() != ys.len() {
+            return Err(PyValueError::new_err("a and b must be equal length"));
+        }
+        let mut out = Vec::with_capacity(xs.len());
+        for i in 0..xs.len() {
+            out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("SpreadHurst(period={})", self.inner.period())
+    }
+}
+
+// ============================== DistanceSsd ==============================
+
+#[pyclass(name = "DistanceSsd", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyDistanceSsd {
+    inner: wc::DistanceSsd,
+}
+
+#[pymethods]
+impl PyDistanceSsd {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::DistanceSsd::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, a: f64, b: f64) -> Option<f64> {
+        self.inner.update((a, b))
+    }
+    /// Batch over two equally-sized numpy arrays: `a` and `b`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        a: PyReadonlyArray1<'py, f64>,
+        b: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let xs = a
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let ys = b
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if xs.len() != ys.len() {
+            return Err(PyValueError::new_err("a and b must be equal length"));
+        }
+        let mut out = Vec::with_capacity(xs.len());
+        for i in 0..xs.len() {
+            out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("DistanceSsd(period={})", self.inner.period())
+    }
+}
+
+// ============================== BetaNeutralSpread ==============================
+
+#[pyclass(
+    name = "BetaNeutralSpread",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyBetaNeutralSpread {
+    inner: wc::BetaNeutralSpread,
+}
+
+#[pymethods]
+impl PyBetaNeutralSpread {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::BetaNeutralSpread::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, a: f64, b: f64) -> Option<f64> {
+        self.inner.update((a, b))
+    }
+    /// Batch over two equally-sized numpy arrays: `a` and `b`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        a: PyReadonlyArray1<'py, f64>,
+        b: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let xs = a
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let ys = b
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if xs.len() != ys.len() {
+            return Err(PyValueError::new_err("a and b must be equal length"));
+        }
+        let mut out = Vec::with_capacity(xs.len());
+        for i in 0..xs.len() {
+            out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("BetaNeutralSpread(period={})", self.inner.period())
+    }
+}
+
+// ============================== VarianceRatio ==============================
+
+#[pyclass(name = "VarianceRatio", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyVarianceRatio {
+    inner: wc::VarianceRatio,
+}
+
+#[pymethods]
+impl PyVarianceRatio {
+    #[new]
+    #[pyo3(signature = (period=60, q=2))]
+    fn new(period: usize, q: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::VarianceRatio::new(period, q).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, a: f64, b: f64) -> Option<f64> {
+        self.inner.update((a, b))
+    }
+    /// Batch over two equally-sized numpy arrays: `a` and `b`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        a: PyReadonlyArray1<'py, f64>,
+        b: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let xs = a
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let ys = b
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if xs.len() != ys.len() {
+            return Err(PyValueError::new_err("a and b must be equal length"));
+        }
+        let mut out = Vec::with_capacity(xs.len());
+        for i in 0..xs.len() {
+            out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn q(&self) -> usize {
+        self.inner.q()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "VarianceRatio(period={}, q={})",
+            self.inner.period(),
+            self.inner.q()
+        )
+    }
+}
+
+// ============================== GrangerCausality ==============================
+
+#[pyclass(
+    name = "GrangerCausality",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyGrangerCausality {
+    inner: wc::GrangerCausality,
+}
+
+#[pymethods]
+impl PyGrangerCausality {
+    #[new]
+    #[pyo3(signature = (period=60, lag=1))]
+    fn new(period: usize, lag: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::GrangerCausality::new(period, lag).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, a: f64, b: f64) -> Option<f64> {
+        self.inner.update((a, b))
+    }
+    /// Batch over two equally-sized numpy arrays: `a` and `b`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        a: PyReadonlyArray1<'py, f64>,
+        b: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let xs = a
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let ys = b
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if xs.len() != ys.len() {
+            return Err(PyValueError::new_err("a and b must be equal length"));
+        }
+        let mut out = Vec::with_capacity(xs.len());
+        for i in 0..xs.len() {
+            out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn lag(&self) -> usize {
+        self.inner.lag()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "GrangerCausality(period={}, lag={})",
+            self.inner.period(),
+            self.inner.lag()
+        )
+    }
+}
+
+// ============================== KalmanHedgeRatio ==============================
+
+#[pyclass(
+    name = "KalmanHedgeRatio",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyKalmanHedgeRatio {
+    inner: wc::KalmanHedgeRatio,
+}
+
+#[pymethods]
+impl PyKalmanHedgeRatio {
+    #[new]
+    #[pyo3(signature = (delta=1e-4, observation_var=1e-3))]
+    fn new(delta: f64, observation_var: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::KalmanHedgeRatio::new(delta, observation_var).map_err(map_err)?,
+        })
+    }
+    /// Returns `(hedge_ratio, intercept, spread)` or `None` during warmup.
+    fn update(&mut self, a: f64, b: f64) -> Option<(f64, f64, f64)> {
+        self.inner
+            .update((a, b))
+            .map(|o| (o.hedge_ratio, o.intercept, o.spread))
+    }
+    /// Batch over two equally-sized numpy arrays. Returns a 2D array of shape
+    /// `(n, 3)` with columns `[hedge_ratio, intercept, spread]`. Warmup rows are
+    /// NaN.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        a: PyReadonlyArray1<'py, f64>,
+        b: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let xs = a
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let ys = b
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if xs.len() != ys.len() {
+            return Err(PyValueError::new_err("a and b must be equal length"));
+        }
+        let n = xs.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            if let Some(o) = self.inner.update((xs[i], ys[i])) {
+                out[i * 3] = o.hedge_ratio;
+                out[i * 3 + 1] = o.intercept;
+                out[i * 3 + 2] = o.spread;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn delta(&self) -> f64 {
+        self.inner.delta()
+    }
+    #[getter]
+    fn observation_var(&self) -> f64 {
+        self.inner.observation_var()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "KalmanHedgeRatio(delta={}, observation_var={})",
+            self.inner.delta(),
+            self.inner.observation_var()
+        )
+    }
+}
+
+// ============================== SpreadBollingerBands ==============================
+
+#[pyclass(
+    name = "SpreadBollingerBands",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PySpreadBollingerBands {
+    inner: wc::SpreadBollingerBands,
+}
+
+#[pymethods]
+impl PySpreadBollingerBands {
+    #[new]
+    #[pyo3(signature = (period=20, num_std=2.0))]
+    fn new(period: usize, num_std: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::SpreadBollingerBands::new(period, num_std).map_err(map_err)?,
+        })
+    }
+    /// Returns `(middle, upper, lower, percent_b)` or `None` during warmup.
+    fn update(&mut self, a: f64, b: f64) -> Option<(f64, f64, f64, f64)> {
+        self.inner
+            .update((a, b))
+            .map(|o| (o.middle, o.upper, o.lower, o.percent_b))
+    }
+    /// Batch over two equally-sized numpy arrays. Returns a 2D array of shape
+    /// `(n, 4)` with columns `[middle, upper, lower, percent_b]`. Warmup rows are
+    /// NaN.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        a: PyReadonlyArray1<'py, f64>,
+        b: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let xs = a
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let ys = b
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if xs.len() != ys.len() {
+            return Err(PyValueError::new_err("a and b must be equal length"));
+        }
+        let n = xs.len();
+        let mut out = vec![f64::NAN; n * 4];
+        for i in 0..n {
+            if let Some(o) = self.inner.update((xs[i], ys[i])) {
+                out[i * 4] = o.middle;
+                out[i * 4 + 1] = o.upper;
+                out[i * 4 + 2] = o.lower;
+                out[i * 4 + 3] = o.percent_b;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 4), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn num_std(&self) -> f64 {
+        self.inner.num_std()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "SpreadBollingerBands(period={}, num_std={})",
+            self.inner.period(),
+            self.inner.num_std()
+        )
+    }
+}
+
 // ============================== SpearmanCorrelation ==============================
 
 #[pyclass(
@@ -15772,6 +16454,16 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyLeadLagCrossCorrelation>()?;
     m.add_class::<PyCointegration>()?;
     m.add_class::<PyRelativeStrengthAB>()?;
+    m.add_class::<PyRollingCorrelation>()?;
+    m.add_class::<PyRollingCovariance>()?;
+    m.add_class::<PyOuHalfLife>()?;
+    m.add_class::<PySpreadHurst>()?;
+    m.add_class::<PyDistanceSsd>()?;
+    m.add_class::<PyBetaNeutralSpread>()?;
+    m.add_class::<PyVarianceRatio>()?;
+    m.add_class::<PyGrangerCausality>()?;
+    m.add_class::<PyKalmanHedgeRatio>()?;
+    m.add_class::<PySpreadBollingerBands>()?;
     m.add_class::<PySpearmanCorrelation>()?;
     m.add_class::<PyValueArea>()?;
     m.add_class::<PyVolumeProfile>()?;

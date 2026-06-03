@@ -531,6 +531,24 @@ wasm_pair_indicator!(
     "SpearmanCorrelation",
     wc::SpearmanCorrelation
 );
+wasm_pair_indicator!(
+    WasmRollingCorrelation,
+    "RollingCorrelation",
+    wc::RollingCorrelation
+);
+wasm_pair_indicator!(
+    WasmRollingCovariance,
+    "RollingCovariance",
+    wc::RollingCovariance
+);
+wasm_pair_indicator!(WasmOuHalfLife, "OuHalfLife", wc::OuHalfLife);
+wasm_pair_indicator!(WasmSpreadHurst, "SpreadHurst", wc::SpreadHurst);
+wasm_pair_indicator!(WasmDistanceSsd, "DistanceSsd", wc::DistanceSsd);
+wasm_pair_indicator!(
+    WasmBetaNeutralSpread,
+    "BetaNeutralSpread",
+    wc::BetaNeutralSpread
+);
 
 // ---------- PairSpreadZScore (two params) ----------
 
@@ -731,6 +749,210 @@ impl WasmRelativeStrengthAb {
                 out[i * 3] = o.ratio;
                 out[i * 3 + 1] = o.ratio_ma;
                 out[i * 3 + 2] = o.ratio_rsi;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- VarianceRatio (two params) ----------
+
+#[wasm_bindgen(js_name = "VarianceRatio")]
+pub struct WasmVarianceRatio {
+    inner: wc::VarianceRatio,
+}
+
+#[wasm_bindgen(js_class = "VarianceRatio")]
+impl WasmVarianceRatio {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, q: usize) -> Result<WasmVarianceRatio, JsError> {
+        Ok(Self {
+            inner: wc::VarianceRatio::new(period, q).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, a: f64, b: f64) -> Option<f64> {
+        self.inner.update((a, b))
+    }
+    /// Batch over two equally-sized arrays of prices. Returns one `f64` per
+    /// input position (`NaN` during warmup).
+    pub fn batch(&mut self, a: &[f64], b: &[f64]) -> Result<Float64Array, JsError> {
+        if a.len() != b.len() {
+            return Err(JsError::new("a and b must be equal length"));
+        }
+        let mut out = Vec::with_capacity(a.len());
+        for i in 0..a.len() {
+            out.push(self.inner.update((a[i], b[i])).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- GrangerCausality (two params) ----------
+
+#[wasm_bindgen(js_name = "GrangerCausality")]
+pub struct WasmGrangerCausality {
+    inner: wc::GrangerCausality,
+}
+
+#[wasm_bindgen(js_class = "GrangerCausality")]
+impl WasmGrangerCausality {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, lag: usize) -> Result<WasmGrangerCausality, JsError> {
+        Ok(Self {
+            inner: wc::GrangerCausality::new(period, lag).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, a: f64, b: f64) -> Option<f64> {
+        self.inner.update((a, b))
+    }
+    /// Batch over two equally-sized arrays of prices. Returns one `f64` per
+    /// input position (`NaN` during warmup).
+    pub fn batch(&mut self, a: &[f64], b: &[f64]) -> Result<Float64Array, JsError> {
+        if a.len() != b.len() {
+            return Err(JsError::new("a and b must be equal length"));
+        }
+        let mut out = Vec::with_capacity(a.len());
+        for i in 0..a.len() {
+            out.push(self.inner.update((a[i], b[i])).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- KalmanHedgeRatio (two params, object output) ----------
+
+#[wasm_bindgen(js_name = "KalmanHedgeRatio")]
+pub struct WasmKalmanHedgeRatio {
+    inner: wc::KalmanHedgeRatio,
+}
+
+#[wasm_bindgen(js_class = "KalmanHedgeRatio")]
+impl WasmKalmanHedgeRatio {
+    #[wasm_bindgen(constructor)]
+    pub fn new(delta: f64, observation_var: f64) -> Result<WasmKalmanHedgeRatio, JsError> {
+        Ok(Self {
+            inner: wc::KalmanHedgeRatio::new(delta, observation_var).map_err(map_err)?,
+        })
+    }
+    /// Returns `{ hedgeRatio, intercept, spread }`, or `null` during warmup.
+    pub fn update(&mut self, a: f64, b: f64) -> JsValue {
+        match self.inner.update((a, b)) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"hedgeRatio".into(), &o.hedge_ratio.into()).ok();
+                Reflect::set(&obj, &"intercept".into(), &o.intercept.into()).ok();
+                Reflect::set(&obj, &"spread".into(), &o.spread.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        }
+    }
+    /// Flat `Float64Array` of length `3 * n`:
+    /// `[hedgeRatio0, intercept0, spread0, hedgeRatio1, ...]`. Warmup rows are NaN.
+    pub fn batch(&mut self, a: &[f64], b: &[f64]) -> Result<Float64Array, JsError> {
+        if a.len() != b.len() {
+            return Err(JsError::new("a and b must be equal length"));
+        }
+        let n = a.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            if let Some(o) = self.inner.update((a[i], b[i])) {
+                out[i * 3] = o.hedge_ratio;
+                out[i * 3 + 1] = o.intercept;
+                out[i * 3 + 2] = o.spread;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- SpreadBollingerBands (two params, object output) ----------
+
+#[wasm_bindgen(js_name = "SpreadBollingerBands")]
+pub struct WasmSpreadBollingerBands {
+    inner: wc::SpreadBollingerBands,
+}
+
+#[wasm_bindgen(js_class = "SpreadBollingerBands")]
+impl WasmSpreadBollingerBands {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, num_std: f64) -> Result<WasmSpreadBollingerBands, JsError> {
+        Ok(Self {
+            inner: wc::SpreadBollingerBands::new(period, num_std).map_err(map_err)?,
+        })
+    }
+    /// Returns `{ middle, upper, lower, percentB }`, or `null` during warmup.
+    pub fn update(&mut self, a: f64, b: f64) -> JsValue {
+        match self.inner.update((a, b)) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"middle".into(), &o.middle.into()).ok();
+                Reflect::set(&obj, &"upper".into(), &o.upper.into()).ok();
+                Reflect::set(&obj, &"lower".into(), &o.lower.into()).ok();
+                Reflect::set(&obj, &"percentB".into(), &o.percent_b.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        }
+    }
+    /// Flat `Float64Array` of length `4 * n`:
+    /// `[middle0, upper0, lower0, percentB0, middle1, ...]`. Warmup rows are NaN.
+    pub fn batch(&mut self, a: &[f64], b: &[f64]) -> Result<Float64Array, JsError> {
+        if a.len() != b.len() {
+            return Err(JsError::new("a and b must be equal length"));
+        }
+        let n = a.len();
+        let mut out = vec![f64::NAN; n * 4];
+        for i in 0..n {
+            if let Some(o) = self.inner.update((a[i], b[i])) {
+                out[i * 4] = o.middle;
+                out[i * 4 + 1] = o.upper;
+                out[i * 4 + 2] = o.lower;
+                out[i * 4 + 3] = o.percent_b;
             }
         }
         Ok(Float64Array::from(out.as_slice()))

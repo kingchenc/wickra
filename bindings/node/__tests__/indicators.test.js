@@ -529,6 +529,14 @@ const pairFactories = {
   PairwiseBeta: () => new wickra.PairwiseBeta(14),
   PairSpreadZScore: () => new wickra.PairSpreadZScore(14, 14),
   SpearmanCorrelation: () => new wickra.SpearmanCorrelation(14),
+  RollingCorrelation: () => new wickra.RollingCorrelation(20),
+  RollingCovariance: () => new wickra.RollingCovariance(20),
+  OuHalfLife: () => new wickra.OuHalfLife(60),
+  SpreadHurst: () => new wickra.SpreadHurst(60),
+  DistanceSsd: () => new wickra.DistanceSsd(20),
+  BetaNeutralSpread: () => new wickra.BetaNeutralSpread(20),
+  VarianceRatio: () => new wickra.VarianceRatio(60, 2),
+  GrangerCausality: () => new wickra.GrangerCausality(60, 1),
 };
 
 for (const [name, make] of Object.entries(pairFactories)) {
@@ -617,6 +625,47 @@ test('Cointegration batch is flat 3*n with last row matching', () => {
   assert.equal(out.length, 3 * n);
   assert.ok(Math.abs(out[3 * (n - 1)] - 2) < 0.1);
   assert.ok(out[3 * (n - 1) + 2] < -2);
+});
+
+test('KalmanHedgeRatio converges to a static hedge ratio (object output)', () => {
+  const n = 500;
+  const b = Array.from({ length: n }, (_, t) => 100 + 95 * Math.sin(t * 0.5));
+  const a = b.map((v) => 2 * v + 5);
+  const k = new wickra.KalmanHedgeRatio(1e-2, 1e-3);
+  let last = null;
+  for (let i = 0; i < n; i++) last = k.update(a[i], b[i]);
+  assert.ok(Math.abs(last.hedgeRatio - 2) < 0.05);
+  assert.ok(Math.abs(last.spread) < 0.05);
+});
+
+test('KalmanHedgeRatio batch is flat 3*n with last row matching', () => {
+  const n = 500;
+  const b = Array.from({ length: n }, (_, t) => 100 + 95 * Math.sin(t * 0.5));
+  const a = b.map((v) => 2 * v + 5);
+  const out = new wickra.KalmanHedgeRatio(1e-2, 1e-3).batch(a, b);
+  assert.equal(out.length, 3 * n);
+  assert.ok(Math.abs(out[3 * (n - 1)] - 2) < 0.05);
+  assert.ok(Math.abs(out[3 * (n - 1) + 2]) < 0.05);
+});
+
+test('SpreadBollingerBands bands are ordered (object output)', () => {
+  const n = 60;
+  const b = Array.from({ length: n }, (_, t) => 100 + t);
+  const a = b.map((v, t) => v + 3 * Math.sin(t * 0.4));
+  const bb = new wickra.SpreadBollingerBands(20, 2.0);
+  let last = null;
+  for (let i = 0; i < n; i++) last = bb.update(a[i], b[i]);
+  assert.ok(last.lower <= last.middle && last.middle <= last.upper);
+});
+
+test('SpreadBollingerBands batch is flat 4*n with last row matching', () => {
+  const n = 60;
+  const b = Array.from({ length: n }, (_, t) => 100 + t);
+  const a = b.map((v, t) => v + 3 * Math.sin(t * 0.4));
+  const out = new wickra.SpreadBollingerBands(20, 2.0).batch(a, b);
+  assert.equal(out.length, 4 * n);
+  const base = 4 * (n - 1);
+  assert.ok(out[base + 2] <= out[base] && out[base] <= out[base + 1]);
 });
 
 test('RelativeStrengthAB constant ratio is flat (object output)', () => {
