@@ -12,7 +12,7 @@
 //! streaming or batched.
 
 use libfuzzer_sys::fuzz_target;
-use wickra_core::{AdvanceDecline, BatchExt, CrossSection, Indicator, Member};
+use wickra_core::{AbsoluteBreadthIndex, AdVolumeLine, AdvanceDecline, AdvanceDeclineRatio, BatchExt, BreadthThrust, BullishPercentIndex, CrossSection, CumulativeVolumeIndex, HighLowIndex, Indicator, McClellanOscillator, McClellanSummationIndex, Member, NewHighsNewLows, PercentAboveMa, TickIndex, Trin, UpDownVolumeRatio};
 
 #[inline(never)]
 fn drive<I>(make: impl Fn() -> I, sections: &[CrossSection])
@@ -44,4 +44,18 @@ fuzz_target!(|data: &[u8]| {
         .collect();
 
     drive(AdvanceDecline::new, &sections);
+    drive(AdvanceDeclineRatio::new, &sections);
+    drive(AdVolumeLine::new, &sections);
+    drive(McClellanOscillator::new, &sections);
+    drive(McClellanSummationIndex::new, &sections);
+    drive(Trin::new, &sections);
+    drive(|| BreadthThrust::new(10).unwrap(), &sections);
+    drive(NewHighsNewLows::new, &sections);
+    drive(|| HighLowIndex::new(10).unwrap(), &sections);
+    drive(PercentAboveMa::new, &sections);
+    drive(UpDownVolumeRatio::new, &sections);
+    drive(BullishPercentIndex::new, &sections);
+    drive(CumulativeVolumeIndex::new, &sections);
+    drive(AbsoluteBreadthIndex::new, &sections);
+    drive(TickIndex::new, &sections);
 });

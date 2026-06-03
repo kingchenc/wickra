@@ -11526,6 +11526,1032 @@ impl AdvanceDeclineNode {
     }
 }
 
+fn build_cross_section_above_ma(
+    change: &[f64],
+    volume: &[f64],
+    new_high: &[bool],
+    new_low: &[bool],
+    above_ma: &[bool],
+) -> napi::Result<wc::CrossSection> {
+    if change.len() != volume.len()
+        || change.len() != new_high.len()
+        || change.len() != new_low.len()
+        || change.len() != above_ma.len()
+    {
+        return Err(NapiError::from_reason(
+            "change, volume, newHigh, newLow and aboveMa must be equal length".to_string(),
+        ));
+    }
+    let members = (0..change.len())
+        .map(|i| {
+            wc::Member::with_signals(
+                change[i],
+                volume[i],
+                new_high[i],
+                new_low[i],
+                above_ma[i],
+                false,
+            )
+        })
+        .collect();
+    wc::CrossSection::new(members, 0).map_err(map_err)
+}
+
+fn build_cross_section_buy(
+    change: &[f64],
+    volume: &[f64],
+    new_high: &[bool],
+    new_low: &[bool],
+    on_buy_signal: &[bool],
+) -> napi::Result<wc::CrossSection> {
+    if change.len() != volume.len()
+        || change.len() != new_high.len()
+        || change.len() != new_low.len()
+        || change.len() != on_buy_signal.len()
+    {
+        return Err(NapiError::from_reason(
+            "change, volume, newHigh, newLow and onBuySignal must be equal length".to_string(),
+        ));
+    }
+    let members = (0..change.len())
+        .map(|i| {
+            wc::Member::with_signals(
+                change[i],
+                volume[i],
+                new_high[i],
+                new_low[i],
+                false,
+                on_buy_signal[i],
+            )
+        })
+        .collect();
+    wc::CrossSection::new(members, 0).map_err(map_err)
+}
+
+#[napi(js_name = "AdvanceDeclineRatio")]
+pub struct AdvanceDeclineRatioNode {
+    inner: wc::AdvanceDeclineRatio,
+}
+
+impl Default for AdvanceDeclineRatioNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl AdvanceDeclineRatioNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::AdvanceDeclineRatio::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> napi::Result<Vec<f64>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(NapiError::from_reason(
+                "change, volume, newHigh and newLow must have the same number of ticks".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "AdVolumeLine")]
+pub struct AdVolumeLineNode {
+    inner: wc::AdVolumeLine,
+}
+
+impl Default for AdVolumeLineNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl AdVolumeLineNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::AdVolumeLine::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> napi::Result<Vec<f64>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(NapiError::from_reason(
+                "change, volume, newHigh and newLow must have the same number of ticks".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "McClellanOscillator")]
+pub struct McClellanOscillatorNode {
+    inner: wc::McClellanOscillator,
+}
+
+impl Default for McClellanOscillatorNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl McClellanOscillatorNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::McClellanOscillator::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> napi::Result<Vec<f64>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(NapiError::from_reason(
+                "change, volume, newHigh and newLow must have the same number of ticks".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "McClellanSummationIndex")]
+pub struct McClellanSummationIndexNode {
+    inner: wc::McClellanSummationIndex,
+}
+
+impl Default for McClellanSummationIndexNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl McClellanSummationIndexNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::McClellanSummationIndex::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> napi::Result<Vec<f64>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(NapiError::from_reason(
+                "change, volume, newHigh and newLow must have the same number of ticks".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "Trin")]
+pub struct TrinNode {
+    inner: wc::Trin,
+}
+
+impl Default for TrinNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl TrinNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::Trin::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> napi::Result<Vec<f64>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(NapiError::from_reason(
+                "change, volume, newHigh and newLow must have the same number of ticks".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "BreadthThrust")]
+pub struct BreadthThrustNode {
+    inner: wc::BreadthThrust,
+}
+
+#[napi]
+impl BreadthThrustNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::BreadthThrust::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> napi::Result<Vec<f64>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(NapiError::from_reason(
+                "change, volume, newHigh and newLow must have the same number of ticks".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "NewHighsNewLows")]
+pub struct NewHighsNewLowsNode {
+    inner: wc::NewHighsNewLows,
+}
+
+impl Default for NewHighsNewLowsNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl NewHighsNewLowsNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::NewHighsNewLows::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> napi::Result<Vec<f64>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(NapiError::from_reason(
+                "change, volume, newHigh and newLow must have the same number of ticks".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "HighLowIndex")]
+pub struct HighLowIndexNode {
+    inner: wc::HighLowIndex,
+}
+
+#[napi]
+impl HighLowIndexNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::HighLowIndex::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> napi::Result<Vec<f64>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(NapiError::from_reason(
+                "change, volume, newHigh and newLow must have the same number of ticks".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "PercentAboveMa")]
+pub struct PercentAboveMaNode {
+    inner: wc::PercentAboveMa,
+}
+
+impl Default for PercentAboveMaNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl PercentAboveMaNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::PercentAboveMa::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+        above_ma: Vec<bool>,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(build_cross_section_above_ma(
+            &change, &volume, &new_high, &new_low, &above_ma,
+        )?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+        above_ma: Vec<Vec<bool>>,
+    ) -> napi::Result<Vec<f64>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+            || change.len() != above_ma.len()
+        {
+            return Err(NapiError::from_reason(
+                "change, volume, newHigh, newLow and aboveMa must have the same number of ticks"
+                    .to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section_above_ma(
+                &change[i],
+                &volume[i],
+                &new_high[i],
+                &new_low[i],
+                &above_ma[i],
+            )?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "UpDownVolumeRatio")]
+pub struct UpDownVolumeRatioNode {
+    inner: wc::UpDownVolumeRatio,
+}
+
+impl Default for UpDownVolumeRatioNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl UpDownVolumeRatioNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::UpDownVolumeRatio::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> napi::Result<Vec<f64>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(NapiError::from_reason(
+                "change, volume, newHigh and newLow must have the same number of ticks".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "BullishPercentIndex")]
+pub struct BullishPercentIndexNode {
+    inner: wc::BullishPercentIndex,
+}
+
+impl Default for BullishPercentIndexNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl BullishPercentIndexNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::BullishPercentIndex::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+        on_buy_signal: Vec<bool>,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(build_cross_section_buy(
+            &change,
+            &volume,
+            &new_high,
+            &new_low,
+            &on_buy_signal,
+        )?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+        on_buy_signal: Vec<Vec<bool>>,
+    ) -> napi::Result<Vec<f64>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+            || change.len() != on_buy_signal.len()
+        {
+            return Err(NapiError::from_reason(
+                "change, volume, newHigh, newLow and onBuySignal must have the same number of ticks"
+                    .to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section_buy(
+                &change[i],
+                &volume[i],
+                &new_high[i],
+                &new_low[i],
+                &on_buy_signal[i],
+            )?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "CumulativeVolumeIndex")]
+pub struct CumulativeVolumeIndexNode {
+    inner: wc::CumulativeVolumeIndex,
+}
+
+impl Default for CumulativeVolumeIndexNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl CumulativeVolumeIndexNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::CumulativeVolumeIndex::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> napi::Result<Vec<f64>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(NapiError::from_reason(
+                "change, volume, newHigh and newLow must have the same number of ticks".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "AbsoluteBreadthIndex")]
+pub struct AbsoluteBreadthIndexNode {
+    inner: wc::AbsoluteBreadthIndex,
+}
+
+impl Default for AbsoluteBreadthIndexNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl AbsoluteBreadthIndexNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::AbsoluteBreadthIndex::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> napi::Result<Vec<f64>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(NapiError::from_reason(
+                "change, volume, newHigh and newLow must have the same number of ticks".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "TickIndex")]
+pub struct TickIndexNode {
+    inner: wc::TickIndex,
+}
+
+impl Default for TickIndexNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl TickIndexNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::TickIndex::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> napi::Result<Vec<f64>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(NapiError::from_reason(
+                "change, volume, newHigh and newLow must have the same number of ticks".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== Family 15: Risk / Performance ==============================
 
 // Risk metrics with fallible `new` (most need `period >= 2`), so each wrapper

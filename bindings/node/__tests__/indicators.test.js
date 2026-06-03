@@ -1284,6 +1284,112 @@ test('market breadth: AdvanceDecline rejects ragged universe', () => {
   );
 });
 
+test('market breadth: 14 indicators reference values + batch parity', () => {
+  const flags4 = [false, false, false, false];
+
+  // Advance/Decline Ratio: 3/1 = 3 ; 0 advancers -> 0.
+  const adr = new wickra.AdvanceDeclineRatio();
+  assert.equal(adr.update([1, 1, 1, -1], [10, 10, 10, 10], flags4, flags4), 3.0);
+  assert.equal(adr.update([-1, -1, -1, -1], [10, 10, 10, 10], flags4, flags4), 0.0);
+  assert.deepEqual(
+    Array.from(
+      new wickra.AdvanceDeclineRatio().batch(
+        [[1, 1, 1, -1], [-1, -1, -1, -1]],
+        [[10, 10, 10, 10], [10, 10, 10, 10]],
+        [flags4, flags4],
+        [flags4, flags4],
+      ),
+    ),
+    [3.0, 0.0],
+  );
+
+  // AD Volume Line: cumulative net advancing volume.
+  const adv = new wickra.AdVolumeLine();
+  assert.equal(adv.update([1, -1], [150, 50], [false, false], [false, false]), 100.0);
+  assert.equal(adv.update([1, -1], [60, 60], [false, false], [false, false]), 100.0);
+
+  // McClellan Oscillator + Summation: seed 0, then -50.
+  const osc = new wickra.McClellanOscillator();
+  assert.ok(Math.abs(osc.update([1, 1, 1, -1], [10, 10, 10, 10], flags4, flags4)) < 1e-9);
+  assert.ok(Math.abs(osc.update([-1, -1, -1, 1], [10, 10, 10, 10], flags4, flags4) - -50.0) < 1e-9);
+  const msi = new wickra.McClellanSummationIndex();
+  assert.ok(Math.abs(msi.update([1, 1, 1, -1], [10, 10, 10, 10], flags4, flags4)) < 1e-9);
+  assert.ok(Math.abs(msi.update([-1, -1, -1, 1], [10, 10, 10, 10], flags4, flags4) - -50.0) < 1e-9);
+
+  // TRIN: balanced breadth -> 1.
+  assert.ok(
+    Math.abs(new wickra.Trin().update([1, 1, 1, -1], [50, 50, 50, 50], flags4, flags4) - 1.0) < 1e-9,
+  );
+
+  // Breadth Thrust(2): warmup null, then SMA(2) of [0.8, 0.6] = 0.7.
+  const bt = new wickra.BreadthThrust(2);
+  const up10 = Array(10).fill(false);
+  assert.equal(bt.update([...Array(8).fill(1), -1, -1], Array(10).fill(10), up10, up10), null);
+  assert.ok(
+    Math.abs(bt.update([...Array(6).fill(1), -1, -1, -1, -1], Array(10).fill(10), up10, up10) - 0.7) < 1e-9,
+  );
+
+  // New Highs - New Lows: 2 - 1 = 1.
+  assert.equal(
+    new wickra.NewHighsNewLows().update([1, 1, -1], [10, 10, 10], [true, true, false], [false, false, true]),
+    1.0,
+  );
+
+  // High-Low Index(2): warmup null, then SMA(2) of [80, 60] = 70.
+  const hli = new wickra.HighLowIndex(2);
+  assert.equal(
+    hli.update(Array(10).fill(1), Array(10).fill(10), [...Array(8).fill(true), false, false], [...Array(8).fill(false), true, true]),
+    null,
+  );
+  assert.ok(
+    Math.abs(
+      hli.update(Array(10).fill(1), Array(10).fill(10), [...Array(6).fill(true), false, false, false, false], [...Array(6).fill(false), true, true, true, true]) - 70.0,
+    ) < 1e-9,
+  );
+
+  // Percent Above MA: 3/4 -> 75 (5-array update with aboveMa).
+  assert.equal(
+    new wickra.PercentAboveMa().update([1, 1, 1, -1], [10, 10, 10, 10], flags4, flags4, [true, true, true, false]),
+    75.0,
+  );
+
+  // Up/Down Volume Ratio: 150/50 = 3.
+  assert.equal(
+    new wickra.UpDownVolumeRatio().update([1, -1], [150, 50], [false, false], [false, false]),
+    3.0,
+  );
+
+  // Bullish Percent Index: 2/4 -> 50 (5-array update with onBuySignal).
+  assert.equal(
+    new wickra.BullishPercentIndex().update([1, 1, -1, -1], [10, 10, 10, 10], flags4, flags4, [true, true, false, false]),
+    50.0,
+  );
+
+  // Cumulative Volume Index: (100/200) -> 0.5.
+  assert.ok(
+    Math.abs(new wickra.CumulativeVolumeIndex().update([1, -1], [150, 50], [false, false], [false, false]) - 0.5) < 1e-9,
+  );
+
+  // Absolute Breadth Index: |2 - 3| = 1.
+  assert.equal(
+    new wickra.AbsoluteBreadthIndex().update([1, 1, -1, -1, -1], Array(5).fill(10), Array(5).fill(false), Array(5).fill(false)),
+    1.0,
+  );
+
+  // TICK Index: 2 - 3 = -1.
+  assert.equal(
+    new wickra.TickIndex().update([1, 1, -1, -1, -1], Array(5).fill(10), Array(5).fill(false), Array(5).fill(false)),
+    -1.0,
+  );
+});
+
+test('market breadth: rejects ragged universe', () => {
+  assert.throws(() => new wickra.Trin().update([1, -1], [10], [false, false], [false, false]));
+  assert.throws(() =>
+    new wickra.PercentAboveMa().update([1, -1], [10, 10], [false, false], [false, false], [true]),
+  );
+});
+
 test('OI / flow / liquidation indicators reference values', () => {
   // OI +10% while price flat -> divergence +0.1.
   const div = new wickra.OIPriceDivergence(1);

@@ -1,4 +1,4 @@
 # Proper nouns that appear in indicator documentation. They are real names,
 # not code identifiers, so `clippy::doc_markdown` must not demand backticks.
 # `..` keeps clippy's built-in default identifier list in addition to these.
-doc-valid-idents = ["LeBeau", ".."]
+doc-valid-idents = ["LeBeau", "McClellan", ".."]

@@ -8437,6 +8437,664 @@ impl WasmAdvanceDecline {
     }
 }
 
+fn build_cross_section_above_ma(
+    change: &[f64],
+    volume: &[f64],
+    new_high: &[f64],
+    new_low: &[f64],
+    above_ma: &[f64],
+) -> Result<wc::CrossSection, JsError> {
+    if change.len() != volume.len()
+        || change.len() != new_high.len()
+        || change.len() != new_low.len()
+        || change.len() != above_ma.len()
+    {
+        return Err(JsError::new(
+            "change, volume, newHigh, newLow and aboveMa must be equal length",
+        ));
+    }
+    let members = (0..change.len())
+        .map(|i| {
+            wc::Member::with_signals(
+                change[i],
+                volume[i],
+                new_high[i] != 0.0,
+                new_low[i] != 0.0,
+                above_ma[i] != 0.0,
+                false,
+            )
+        })
+        .collect();
+    wc::CrossSection::new(members, 0).map_err(map_err)
+}
+
+fn build_cross_section_buy(
+    change: &[f64],
+    volume: &[f64],
+    new_high: &[f64],
+    new_low: &[f64],
+    on_buy_signal: &[f64],
+) -> Result<wc::CrossSection, JsError> {
+    if change.len() != volume.len()
+        || change.len() != new_high.len()
+        || change.len() != new_low.len()
+        || change.len() != on_buy_signal.len()
+    {
+        return Err(JsError::new(
+            "change, volume, newHigh, newLow and onBuySignal must be equal length",
+        ));
+    }
+    let members = (0..change.len())
+        .map(|i| {
+            wc::Member::with_signals(
+                change[i],
+                volume[i],
+                new_high[i] != 0.0,
+                new_low[i] != 0.0,
+                false,
+                on_buy_signal[i] != 0.0,
+            )
+        })
+        .collect();
+    wc::CrossSection::new(members, 0).map_err(map_err)
+}
+
+#[wasm_bindgen(js_name = AdvanceDeclineRatio)]
+pub struct WasmAdvanceDeclineRatio {
+    inner: wc::AdvanceDeclineRatio,
+}
+
+impl Default for WasmAdvanceDeclineRatio {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = AdvanceDeclineRatio)]
+impl WasmAdvanceDeclineRatio {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmAdvanceDeclineRatio {
+        Self {
+            inner: wc::AdvanceDeclineRatio::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<f64>,
+        new_low: Vec<f64>,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = AdVolumeLine)]
+pub struct WasmAdVolumeLine {
+    inner: wc::AdVolumeLine,
+}
+
+impl Default for WasmAdVolumeLine {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = AdVolumeLine)]
+impl WasmAdVolumeLine {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmAdVolumeLine {
+        Self {
+            inner: wc::AdVolumeLine::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<f64>,
+        new_low: Vec<f64>,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = McClellanOscillator)]
+pub struct WasmMcClellanOscillator {
+    inner: wc::McClellanOscillator,
+}
+
+impl Default for WasmMcClellanOscillator {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = McClellanOscillator)]
+impl WasmMcClellanOscillator {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmMcClellanOscillator {
+        Self {
+            inner: wc::McClellanOscillator::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<f64>,
+        new_low: Vec<f64>,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = McClellanSummationIndex)]
+pub struct WasmMcClellanSummationIndex {
+    inner: wc::McClellanSummationIndex,
+}
+
+impl Default for WasmMcClellanSummationIndex {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = McClellanSummationIndex)]
+impl WasmMcClellanSummationIndex {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmMcClellanSummationIndex {
+        Self {
+            inner: wc::McClellanSummationIndex::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<f64>,
+        new_low: Vec<f64>,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = Trin)]
+pub struct WasmTrin {
+    inner: wc::Trin,
+}
+
+impl Default for WasmTrin {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = Trin)]
+impl WasmTrin {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmTrin {
+        Self {
+            inner: wc::Trin::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<f64>,
+        new_low: Vec<f64>,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = BreadthThrust)]
+pub struct WasmBreadthThrust {
+    inner: wc::BreadthThrust,
+}
+
+#[wasm_bindgen(js_class = BreadthThrust)]
+impl WasmBreadthThrust {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmBreadthThrust, JsError> {
+        Ok(WasmBreadthThrust {
+            inner: wc::BreadthThrust::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<f64>,
+        new_low: Vec<f64>,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = NewHighsNewLows)]
+pub struct WasmNewHighsNewLows {
+    inner: wc::NewHighsNewLows,
+}
+
+impl Default for WasmNewHighsNewLows {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = NewHighsNewLows)]
+impl WasmNewHighsNewLows {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmNewHighsNewLows {
+        Self {
+            inner: wc::NewHighsNewLows::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<f64>,
+        new_low: Vec<f64>,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = HighLowIndex)]
+pub struct WasmHighLowIndex {
+    inner: wc::HighLowIndex,
+}
+
+#[wasm_bindgen(js_class = HighLowIndex)]
+impl WasmHighLowIndex {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmHighLowIndex, JsError> {
+        Ok(WasmHighLowIndex {
+            inner: wc::HighLowIndex::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<f64>,
+        new_low: Vec<f64>,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = PercentAboveMa)]
+pub struct WasmPercentAboveMa {
+    inner: wc::PercentAboveMa,
+}
+
+impl Default for WasmPercentAboveMa {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = PercentAboveMa)]
+impl WasmPercentAboveMa {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmPercentAboveMa {
+        Self {
+            inner: wc::PercentAboveMa::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<f64>,
+        new_low: Vec<f64>,
+        above_ma: Vec<f64>,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(build_cross_section_above_ma(
+            &change, &volume, &new_high, &new_low, &above_ma,
+        )?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = UpDownVolumeRatio)]
+pub struct WasmUpDownVolumeRatio {
+    inner: wc::UpDownVolumeRatio,
+}
+
+impl Default for WasmUpDownVolumeRatio {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = UpDownVolumeRatio)]
+impl WasmUpDownVolumeRatio {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmUpDownVolumeRatio {
+        Self {
+            inner: wc::UpDownVolumeRatio::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<f64>,
+        new_low: Vec<f64>,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = BullishPercentIndex)]
+pub struct WasmBullishPercentIndex {
+    inner: wc::BullishPercentIndex,
+}
+
+impl Default for WasmBullishPercentIndex {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = BullishPercentIndex)]
+impl WasmBullishPercentIndex {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmBullishPercentIndex {
+        Self {
+            inner: wc::BullishPercentIndex::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<f64>,
+        new_low: Vec<f64>,
+        on_buy_signal: Vec<f64>,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(build_cross_section_buy(
+            &change,
+            &volume,
+            &new_high,
+            &new_low,
+            &on_buy_signal,
+        )?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = CumulativeVolumeIndex)]
+pub struct WasmCumulativeVolumeIndex {
+    inner: wc::CumulativeVolumeIndex,
+}
+
+impl Default for WasmCumulativeVolumeIndex {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = CumulativeVolumeIndex)]
+impl WasmCumulativeVolumeIndex {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmCumulativeVolumeIndex {
+        Self {
+            inner: wc::CumulativeVolumeIndex::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<f64>,
+        new_low: Vec<f64>,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = AbsoluteBreadthIndex)]
+pub struct WasmAbsoluteBreadthIndex {
+    inner: wc::AbsoluteBreadthIndex,
+}
+
+impl Default for WasmAbsoluteBreadthIndex {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = AbsoluteBreadthIndex)]
+impl WasmAbsoluteBreadthIndex {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmAbsoluteBreadthIndex {
+        Self {
+            inner: wc::AbsoluteBreadthIndex::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<f64>,
+        new_low: Vec<f64>,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+#[wasm_bindgen(js_name = TickIndex)]
+pub struct WasmTickIndex {
+    inner: wc::TickIndex,
+}
+
+impl Default for WasmTickIndex {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = TickIndex)]
+impl WasmTickIndex {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmTickIndex {
+        Self {
+            inner: wc::TickIndex::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<f64>,
+        new_low: Vec<f64>,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

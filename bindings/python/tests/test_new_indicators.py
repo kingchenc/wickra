@@ -2783,6 +2783,190 @@ def test_advance_decline_rejects_ragged_universe():
         ad.update([1.0, -1.0], [10.0], [False, False], [False, False])
 
 
+def _breadth_streaming_equals_batch(indicator, change, volume, new_high, new_low):
+    """Assert a 4-array breadth indicator's batch matches its streaming output."""
+    batch = indicator().batch(change, volume, new_high, new_low)
+    streamer = indicator()
+    streamed = np.array(
+        [
+            streamer.update(change[i], volume[i], new_high[i], new_low[i])
+            for i in range(len(change))
+        ],
+        dtype=np.float64,
+    )
+    assert batch.shape == (len(change),)
+    assert _eq_nan(batch, streamed)
+    return batch
+
+
+def test_advance_decline_ratio_breadth():
+    change = [[1.0, 1.0, 1.0, -1.0], [1.0, 0.0, 0.0, 0.0], [-1.0, -1.0, -1.0, -1.0]]
+    volume = [[10.0] * 4 for _ in range(3)]
+    flags = [[False] * 4 for _ in range(3)]
+    batch = _breadth_streaming_equals_batch(ta.AdvanceDeclineRatio, change, volume, flags, flags)
+    # 3/1 = 3 ; 1/max(0,1) = 1 ; 0/3 = 0.
+    assert list(batch) == [3.0, 1.0, 0.0]
+
+
+def test_ad_volume_line_breadth():
+    change = [[1.0, -1.0], [1.0, -1.0], [1.0, 0.0]]
+    volume = [[150.0, 50.0], [60.0, 60.0], [30.0, 0.0]]
+    flags = [[False] * 2 for _ in range(3)]
+    batch = _breadth_streaming_equals_batch(ta.AdVolumeLine, change, volume, flags, flags)
+    # net +100 -> 100 ; net 0 -> 100 ; net +30 -> 130.
+    assert list(batch) == [100.0, 100.0, 130.0]
+
+
+def test_mcclellan_oscillator_breadth():
+    change = [[1.0, 1.0, 1.0, -1.0], [-1.0, -1.0, -1.0, 1.0], [1.0, 1.0, -1.0, -1.0]]
+    volume = [[10.0] * 4 for _ in range(3)]
+    flags = [[False] * 4 for _ in range(3)]
+    batch = _breadth_streaming_equals_batch(ta.McClellanOscillator, change, volume, flags, flags)
+    # seed 0 ; -50 ; -67.5.
+    assert abs(batch[0]) < 1e-9
+    assert abs(batch[1] - (-50.0)) < 1e-9
+    assert abs(batch[2] - (-67.5)) < 1e-9
+
+
+def test_mcclellan_summation_index_breadth():
+    change = [[1.0, 1.0, 1.0, -1.0], [-1.0, -1.0, -1.0, 1.0], [1.0, 1.0, -1.0, -1.0]]
+    volume = [[10.0] * 4 for _ in range(3)]
+    flags = [[False] * 4 for _ in range(3)]
+    batch = _breadth_streaming_equals_batch(ta.McClellanSummationIndex, change, volume, flags, flags)
+    # 0 ; -50 ; -117.5.
+    assert abs(batch[0]) < 1e-9
+    assert abs(batch[1] - (-50.0)) < 1e-9
+    assert abs(batch[2] - (-117.5)) < 1e-9
+
+
+def test_trin_breadth():
+    change = [[1.0, 1.0, 1.0, -1.0], [1.0, 1.0, -1.0, -1.0]]
+    volume = [[50.0, 50.0, 50.0, 50.0], [10.0, 10.0, 40.0, 40.0]]
+    flags = [[False] * 4 for _ in range(2)]
+    batch = _breadth_streaming_equals_batch(ta.Trin, change, volume, flags, flags)
+    # (3/1)/(150/50) = 1 ; (2/2)/(20/80) = 4.
+    assert abs(batch[0] - 1.0) < 1e-9
+    assert abs(batch[1] - 4.0) < 1e-9
+
+
+def test_breadth_thrust_breadth():
+    change = [[1.0] * 8 + [-1.0] * 2, [1.0] * 6 + [-1.0] * 4]
+    volume = [[10.0] * 10 for _ in range(2)]
+    flags = [[False] * 10 for _ in range(2)]
+    batch = ta.BreadthThrust(2).batch(change, volume, flags, flags)
+    streamer = ta.BreadthThrust(2)
+    streamed = np.array(
+        [streamer.update(change[i], volume[i], flags[i], flags[i]) for i in range(2)],
+        dtype=np.float64,
+    )
+    assert _eq_nan(batch, streamed)
+    # 0.8 (warmup -> NaN) ; SMA(2) of [0.8, 0.6] = 0.7.
+    assert math.isnan(batch[0])
+    assert abs(batch[1] - 0.7) < 1e-9
+
+
+def test_new_highs_new_lows_breadth():
+    change = [[1.0, 1.0, -1.0], [1.0, -1.0, -1.0]]
+    volume = [[10.0] * 3 for _ in range(2)]
+    new_high = [[True, True, False], [True, False, False]]
+    new_low = [[False, False, True], [False, True, True]]
+    batch = _breadth_streaming_equals_batch(ta.NewHighsNewLows, change, volume, new_high, new_low)
+    # 2 - 1 = 1 ; 1 - 2 = -1.
+    assert list(batch) == [1.0, -1.0]
+
+
+def test_high_low_index_breadth():
+    change = [[1.0] * 10, [1.0] * 10]
+    volume = [[10.0] * 10 for _ in range(2)]
+    new_high = [[True] * 8 + [False] * 2, [True] * 6 + [False] * 4]
+    new_low = [[False] * 8 + [True] * 2, [False] * 6 + [True] * 4]
+    batch = ta.HighLowIndex(2).batch(change, volume, new_high, new_low)
+    streamer = ta.HighLowIndex(2)
+    streamed = np.array(
+        [streamer.update(change[i], volume[i], new_high[i], new_low[i]) for i in range(2)],
+        dtype=np.float64,
+    )
+    assert _eq_nan(batch, streamed)
+    # 80% (warmup) ; SMA(2) of [80, 60] = 70.
+    assert math.isnan(batch[0])
+    assert abs(batch[1] - 70.0) < 1e-9
+
+
+def test_percent_above_ma_breadth():
+    change = [[1.0, 1.0, 1.0, -1.0], [1.0, 1.0, -1.0, -1.0]]
+    volume = [[10.0] * 4 for _ in range(2)]
+    flags = [[False] * 4 for _ in range(2)]
+    above_ma = [[True, True, True, False], [True, False, False, False]]
+    batch = ta.PercentAboveMa().batch(change, volume, flags, flags, above_ma)
+    streamer = ta.PercentAboveMa()
+    streamed = np.array(
+        [streamer.update(change[i], volume[i], flags[i], flags[i], above_ma[i]) for i in range(2)],
+        dtype=np.float64,
+    )
+    assert _eq_nan(batch, streamed)
+    # 3/4 -> 75 ; 1/4 -> 25.
+    assert list(batch) == [75.0, 25.0]
+
+
+def test_up_down_volume_ratio_breadth():
+    change = [[1.0, -1.0], [1.0, 0.0]]
+    volume = [[150.0, 50.0], [100.0, 0.0]]
+    flags = [[False] * 2 for _ in range(2)]
+    batch = _breadth_streaming_equals_batch(ta.UpDownVolumeRatio, change, volume, flags, flags)
+    # 150/50 = 3 ; 100/max(0,1) = 100.
+    assert list(batch) == [3.0, 100.0]
+
+
+def test_bullish_percent_index_breadth():
+    change = [[1.0, 1.0, -1.0, -1.0], [1.0, 1.0, 1.0, 1.0]]
+    volume = [[10.0] * 4 for _ in range(2)]
+    flags = [[False] * 4 for _ in range(2)]
+    on_buy = [[True, True, False, False], [True, True, True, True]]
+    batch = ta.BullishPercentIndex().batch(change, volume, flags, flags, on_buy)
+    streamer = ta.BullishPercentIndex()
+    streamed = np.array(
+        [streamer.update(change[i], volume[i], flags[i], flags[i], on_buy[i]) for i in range(2)],
+        dtype=np.float64,
+    )
+    assert _eq_nan(batch, streamed)
+    # 2/4 -> 50 ; 4/4 -> 100.
+    assert list(batch) == [50.0, 100.0]
+
+
+def test_cumulative_volume_index_breadth():
+    change = [[1.0, -1.0], [1.0, -1.0], [0.0]]
+    volume = [[150.0, 50.0], [60.0, 60.0], [0.0]]
+    new_high = [[False, False], [False, False], [False]]
+    new_low = [[False, False], [False, False], [False]]
+    batch = ta.CumulativeVolumeIndex().batch(change, volume, new_high, new_low)
+    streamer = ta.CumulativeVolumeIndex()
+    streamed = np.array(
+        [streamer.update(change[i], volume[i], new_high[i], new_low[i]) for i in range(3)],
+        dtype=np.float64,
+    )
+    assert _eq_nan(batch, streamed)
+    # (100/200) -> 0.5 ; net 0 -> 0.5 ; zero-volume tick -> 0.5.
+    assert list(batch) == [0.5, 0.5, 0.5]
+
+
+def test_absolute_breadth_index_breadth():
+    change = [[1.0, 1.0, -1.0, -1.0, -1.0], [1.0, 1.0, 1.0, -1.0, -1.0]]
+    volume = [[10.0] * 5 for _ in range(2)]
+    flags = [[False] * 5 for _ in range(2)]
+    batch = _breadth_streaming_equals_batch(ta.AbsoluteBreadthIndex, change, volume, flags, flags)
+    # |2 - 3| = 1 ; |3 - 2| = 1.
+    assert list(batch) == [1.0, 1.0]
+
+
+def test_tick_index_breadth():
+    change = [[1.0, 1.0, -1.0, -1.0, -1.0], [1.0, 1.0, 1.0, -1.0, -1.0]]
+    volume = [[10.0] * 5 for _ in range(2)]
+    flags = [[False] * 5 for _ in range(2)]
+    batch = _breadth_streaming_equals_batch(ta.TickIndex, change, volume, flags, flags)
+    # 2 - 3 = -1 ; 3 - 2 = 1.
+    assert list(batch) == [-1.0, 1.0]
+
+
 def test_funding_basis_streaming_equals_batch():
     n = 40
     index = np.array([100.0 + 0.5 * math.sin(i * 0.2) for i in range(n)], dtype=np.float64)

@@ -3253,6 +3253,132 @@ export declare class AdvanceDecline {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type AdvanceDeclineRatioNode = AdvanceDeclineRatio
+export declare class AdvanceDeclineRatio {
+  constructor()
+  update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
+  batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type AdVolumeLineNode = AdVolumeLine
+export declare class AdVolumeLine {
+  constructor()
+  update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
+  batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type McClellanOscillatorNode = McClellanOscillator
+export declare class McClellanOscillator {
+  constructor()
+  update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
+  batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type McClellanSummationIndexNode = McClellanSummationIndex
+export declare class McClellanSummationIndex {
+  constructor()
+  update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
+  batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TrinNode = Trin
+export declare class Trin {
+  constructor()
+  update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
+  batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type BreadthThrustNode = BreadthThrust
+export declare class BreadthThrust {
+  constructor(period: number)
+  update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
+  batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type NewHighsNewLowsNode = NewHighsNewLows
+export declare class NewHighsNewLows {
+  constructor()
+  update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
+  batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type HighLowIndexNode = HighLowIndex
+export declare class HighLowIndex {
+  constructor(period: number)
+  update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
+  batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type PercentAboveMaNode = PercentAboveMa
+export declare class PercentAboveMa {
+  constructor()
+  update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>, aboveMa: Array<boolean>): number | null
+  batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>, aboveMa: Array<Array<boolean>>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type UpDownVolumeRatioNode = UpDownVolumeRatio
+export declare class UpDownVolumeRatio {
+  constructor()
+  update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
+  batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type BullishPercentIndexNode = BullishPercentIndex
+export declare class BullishPercentIndex {
+  constructor()
+  update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>, onBuySignal: Array<boolean>): number | null
+  batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>, onBuySignal: Array<Array<boolean>>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type CumulativeVolumeIndexNode = CumulativeVolumeIndex
+export declare class CumulativeVolumeIndex {
+  constructor()
+  update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
+  batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type AbsoluteBreadthIndexNode = AbsoluteBreadthIndex
+export declare class AbsoluteBreadthIndex {
+  constructor()
+  update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
+  batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TickIndexNode = TickIndex
+export declare class TickIndex {
+  constructor()
+  update(change: Array<number>, volume: Array<number>, newHigh: Array<boolean>, newLow: Array<boolean>): number | null
+  batch(change: Array<Array<number>>, volume: Array<Array<number>>, newHigh: Array<Array<boolean>>, newLow: Array<Array<boolean>>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type SharpeRatioNode = SharpeRatio
 export declare class SharpeRatio {
   constructor(period: number, riskFree: number)
