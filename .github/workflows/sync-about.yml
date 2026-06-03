@@ -41,17 +41,17 @@ name: Sync indicator count
 # `RollingVwap`, so the mod-count under-reports by one. lib.rs is the
 # single source of truth for what the bindings reach.
 #
-# Design: keep README in sync *before* a PR is merged, by pushing a
-# fix-up commit to the PR head branch. After squash-merge into main
-# the bot commit is folded into the single signed merge commit, so
-# main's history never shows an unsigned "sync indicator count" entry.
+# Design: on PRs this workflow is a READ-ONLY check. The indicator wiring
+# (ScriptHelpers/_common.py wire_readme_counter) bumps both README.md and
+# docs/README.md inside the author's code commit, so the counter is already
+# correct by the time CI runs. If it is not, the check below fails loud and
+# asks the author to re-run the wiring — it never pushes a fix-up commit.
 #
-# The push to PR head uses the default `GITHUB_TOKEN`, whose pushes
-# explicitly do NOT trigger downstream workflows (anti-recursion
-# policy). So a counter fix-up does not re-trigger ci.yml on the PR
-# — it does, however, re-trigger sync-about.yml on the next PR
-# `synchronize` event, which is what we want (a no-op if the counter
-# is now correct).
+# (An earlier version pushed a GITHUB_TOKEN "sync indicator count" commit to
+# the PR head. Because GITHUB_TOKEN pushes trigger no workflows, that commit
+# moved the PR head onto a commit with no CI run, which hid the Codecov patch
+# status — keyed to the PR head sha — from the PR. Keeping the counter in the
+# code commit avoids that entirely.)
 on:
   push:
     branches: [main]
@@ -73,53 +73,24 @@ permissions:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    # The only GITHUB_TOKEN write in this workflow: pushing the counter fix-up
-    # commit onto a same-repo PR head branch (git push origin HEAD:<ref>).
+    # This workflow never writes to wickra-lib/wickra with GITHUB_TOKEN: the PR
+    # flow is a read-only check, and the main/tag flow writes only to other
+    # repos (About metadata, docs, webpage, wiki, org) through the fine-grained
+    # ABOUT_SYNC_TOKEN PAT. So GITHUB_TOKEN stays read-only (OpenSSF Scorecard:
+    # Token-Permissions).
     permissions:
-      contents: write
+      contents: read
       pull-requests: read
     steps:
-      # On PRs from forks the head ref lives in another repo; pushing
-      # back to it from this workflow is blocked by GitHub. We still
-      # want the PR to surface the missing counter, so the check below
-      # falls back to a hard failure when push isn't possible.
-      - name: Determine if push to PR head is possible
-        id: ctx
-        # Untrusted PR contexts (head.ref / head.repo.full_name are attacker
-        # controlled on fork PRs) are passed through the environment, never
-        # interpolated straight into the shell, so a crafted branch name cannot
-        # inject commands (OpenSSF Scorecard: Dangerous-Workflow).
-        env:
-          EVENT_NAME: ${{ github.event_name }}
-          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
-          BASE_REPO: ${{ github.repository }}
-          HEAD_REF: ${{ github.event.pull_request.head.ref }}
-        run: |
-          if [ "$EVENT_NAME" = "pull_request" ]; then
-            if [ "$HEAD_REPO" = "$BASE_REPO" ]; then
-              echo "can_push=true" >> "$GITHUB_OUTPUT"
-              echo "head_ref=$HEAD_REF" >> "$GITHUB_OUTPUT"
-            else
-              echo "can_push=false" >> "$GITHUB_OUTPUT"
-              echo "head_ref=" >> "$GITHUB_OUTPUT"
-            fi
-          else
-            echo "can_push=false" >> "$GITHUB_OUTPUT"
-            echo "head_ref=" >> "$GITHUB_OUTPUT"
-          fi
-
-      # On PRs we check out the *head* commit (not the merge ref) so
-      # any fix-up commit we make goes onto the PR branch itself. On
-      # push events we check out the default ref. fetch-depth: 0 lets
-      # us push back without "shallow update not allowed".
+      # On PRs we check out the PR *head* commit (the author's code, not the
+      # merge ref) so the counter check validates exactly what will land. On
+      # push events we check out the default ref. No push is made, so a shallow
+      # checkout is enough.
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          fetch-depth: 0
+          fetch-depth: 1
           ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref }}
           repository: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name || github.repository }}
-          # Default GITHUB_TOKEN is fine for the same-repo PR-branch
-          # push; the About / Wiki steps re-authenticate with the PAT
-          # below where needed.
 
       - name: Count indicators
         id: count
@@ -139,69 +110,33 @@ jobs:
 
       # ----- PR flow ---------------------------------------------------
 
-      - name: Check README counter (PR)
+      - name: Check README counter (PR, read-only)
         if: github.event_name == 'pull_request'
-        id: pr_check
         run: |
           n="${{ steps.count.outputs.count }}"
-          if grep -qE "^${n} streaming-first indicators" README.md \
-            && grep -qE "\*\*${n} indicators\*\*" docs/README.md; then
-            echo "matches=true" >> "$GITHUB_OUTPUT"
-            echo "README + docs/README counter already at ${n}; nothing to do."
-          else
-            echo "matches=false" >> "$GITHUB_OUTPUT"
-            echo "README/docs counter does not match ${n}; will fix up."
+          ok=true
+          if ! grep -qE "^${n} streaming-first indicators" README.md; then
+            echo "::error::README.md does not say '${n} streaming-first indicators' — lib.rs exports ${n}. Re-run the indicator wiring (it bumps README.md), then push again."
+            ok=false
           fi
-
-      - name: Fix counter on fork PR head (read-only, fail loud)
-        if: github.event_name == 'pull_request' && steps.pr_check.outputs.matches == 'false' && steps.ctx.outputs.can_push == 'false'
-        run: |
-          n="${{ steps.count.outputs.count }}"
-          echo "::error::README.md / docs/README.md say a different indicator count than lib.rs (${n}). This PR is from a fork, so the workflow cannot push the fix; please set README.md to '${n} streaming-first indicators' and docs/README.md to '**${n} indicators**', then push again."
-          exit 1
-
-      - name: Patch README on PR head
-        if: github.event_name == 'pull_request' && steps.pr_check.outputs.matches == 'false' && steps.ctx.outputs.can_push == 'true'
-        id: pr_patch
-        run: |
-          n="${{ steps.count.outputs.count }}"
-          # docs/README.md carries the count in its docs.wickra.org pointer prose
-          # ("**N indicators**"); keep it in sync with README's prose count.
-          sed -i -E "s/[0-9]+ (streaming-first )?indicators/${n} \1indicators/g" README.md docs/README.md
-          # Bump the banner cache-buster so GitHub's Camo proxy refetches the org
-          # profile image (regenerated with the new count by .github/banner.yml)
-          # instead of serving a stale cached copy. (README only — docs has no banner.)
-          sed -i -E "s|(wickra-banner\.webp\?v=)[0-9]+|\1${n}|" README.md
-          if git diff --quiet; then
-            echo "No README changes after sed (counter regex did not match anything); skipping push."
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
+          if ! grep -qE "\*\*${n} indicators\*\*" docs/README.md; then
+            echo "::error::docs/README.md does not say '**${n} indicators**' — lib.rs exports ${n}. Re-run the indicator wiring (it bumps docs/README.md), then push again."
+            ok=false
           fi
-
-      - name: Commit & push counter fix to PR head
-        if: github.event_name == 'pull_request' && steps.pr_patch.outputs.changed == 'true'
-        # head_ref still carries the (untrusted) PR branch name forwarded by the
-        # ctx step; pass it through the environment so the push refspec cannot be
-        # used to inject shell commands (OpenSSF Scorecard: Dangerous-Workflow).
-        env:
-          COUNT: ${{ steps.count.outputs.count }}
-          HEAD_REF: ${{ steps.ctx.outputs.head_ref }}
-        run: |
-          git config user.name "wickra-bot"
-          git config user.email "wickra-bot@users.noreply.github.com"
-          git add README.md docs/README.md
-          git commit -m "chore: sync indicator count to ${COUNT}"
-          git push origin "HEAD:${HEAD_REF}"
+          if [ "$ok" = "true" ]; then
+            echo "README.md + docs/README.md counter already at ${n}; nothing to do."
+          else
+            exit 1
+          fi
 
       # ----- main / tag flow ------------------------------------------
       #
-      # After a PR squash-merges, this workflow runs again on the push
-      # to main. README is already correct (it was fixed on the PR
-      # branch before the merge); the only outward syncs left are the
-      # GitHub About description (repo metadata, not a commit) and the
-      # wiki repo (separate repo, no main history pollution). README is
-      # not touched on main any more.
+      # After a PR squash-merges, this workflow runs again on the push to main.
+      # README.md / docs/README.md are already correct (the indicator wiring
+      # bumped them in the merged code commit); the only outward syncs left are
+      # the GitHub About description (repo metadata, not a commit) and the docs /
+      # webpage / wiki / org repos (separate repos, no main history pollution).
+      # The wickra repo's own README is not touched on main any more.
 
       - name: Update GitHub About (description + homepage)
         if: github.event_name != 'pull_request'
