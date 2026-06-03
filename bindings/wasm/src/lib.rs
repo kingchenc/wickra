@@ -8143,6 +8143,78 @@ impl WasmCalendarSpread {
     }
 }
 
+// ---------- Market Breadth (CrossSection input) ----------
+//
+// A breadth tick is the per-symbol state of the whole universe, passed as four
+// equal-length parallel arrays (`change`, `volume`, `newHigh`, `newLow`). The
+// high/low flag arrays are numeric (non-zero is true) so the whole tick crosses
+// the wasm boundary as `Float64Array`s. The universe is ragged across ticks, so
+// only `update` is exposed (no `batch`), matching the other multi-input wasm
+// indicators.
+
+fn build_cross_section(
+    change: &[f64],
+    volume: &[f64],
+    new_high: &[f64],
+    new_low: &[f64],
+) -> Result<wc::CrossSection, JsError> {
+    if change.len() != volume.len()
+        || change.len() != new_high.len()
+        || change.len() != new_low.len()
+    {
+        return Err(JsError::new(
+            "change, volume, newHigh and newLow must be equal length",
+        ));
+    }
+    let members = (0..change.len())
+        .map(|i| wc::Member::new(change[i], volume[i], new_high[i] != 0.0, new_low[i] != 0.0))
+        .collect();
+    wc::CrossSection::new(members, 0).map_err(map_err)
+}
+
+#[wasm_bindgen(js_name = AdvanceDecline)]
+pub struct WasmAdvanceDecline {
+    inner: wc::AdvanceDecline,
+}
+
+impl Default for WasmAdvanceDecline {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = AdvanceDecline)]
+impl WasmAdvanceDecline {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmAdvanceDecline {
+        Self {
+            inner: wc::AdvanceDecline::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<f64>,
+        new_low: Vec<f64>,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

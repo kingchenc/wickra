@@ -11168,6 +11168,100 @@ impl CalendarSpreadNode {
     }
 }
 
+// ---------- Market Breadth (CrossSection input) ----------
+//
+// A breadth tick is the per-symbol state of the whole universe, passed as four
+// equal-length parallel arrays (`change`, `volume`, `newHigh`, `newLow`).
+// `batch` takes one such group of arrays per tick.
+
+fn build_cross_section(
+    change: &[f64],
+    volume: &[f64],
+    new_high: &[bool],
+    new_low: &[bool],
+) -> napi::Result<wc::CrossSection> {
+    if change.len() != volume.len()
+        || change.len() != new_high.len()
+        || change.len() != new_low.len()
+    {
+        return Err(NapiError::from_reason(
+            "change, volume, newHigh and newLow must be equal length".to_string(),
+        ));
+    }
+    let members = (0..change.len())
+        .map(|i| wc::Member::new(change[i], volume[i], new_high[i], new_low[i]))
+        .collect();
+    wc::CrossSection::new(members, 0).map_err(map_err)
+}
+
+#[napi(js_name = "AdvanceDecline")]
+pub struct AdvanceDeclineNode {
+    inner: wc::AdvanceDecline,
+}
+
+impl Default for AdvanceDeclineNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl AdvanceDeclineNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::AdvanceDecline::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        change: Vec<f64>,
+        volume: Vec<f64>,
+        new_high: Vec<bool>,
+        new_low: Vec<bool>,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self
+            .inner
+            .update(build_cross_section(&change, &volume, &new_high, &new_low)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        change: Vec<Vec<f64>>,
+        volume: Vec<Vec<f64>>,
+        new_high: Vec<Vec<bool>>,
+        new_low: Vec<Vec<bool>>,
+    ) -> napi::Result<Vec<f64>> {
+        if change.len() != volume.len()
+            || change.len() != new_high.len()
+            || change.len() != new_low.len()
+        {
+            return Err(NapiError::from_reason(
+                "change, volume, newHigh and newLow must have the same number of ticks".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(change.len());
+        for i in 0..change.len() {
+            let section = build_cross_section(&change[i], &volume[i], &new_high[i], &new_low[i])?;
+            out.push(self.inner.update(section).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== Family 15: Risk / Performance ==============================
 
 // Risk metrics with fallible `new` (most need `period >= 2`), so each wrapper

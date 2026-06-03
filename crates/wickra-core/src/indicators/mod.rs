@@ -11,6 +11,7 @@ mod ad_oscillator;
 mod adaptive_cycle;
 mod adl;
 mod advance_block;
+mod advance_decline;
 mod adx;
 mod adxr;
 mod alligator;
@@ -325,6 +326,7 @@ pub use ad_oscillator::AdOscillator;
 pub use adaptive_cycle::AdaptiveCycle;
 pub use adl::Adl;
 pub use advance_block::AdvanceBlock;
+pub use advance_decline::AdvanceDecline;
 pub use adx::{Adx, AdxOutput};
 pub use adxr::Adxr;
 pub use alligator::{Alligator, AlligatorOutput};
@@ -1038,6 +1040,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
         "Alt-Chart Bars",
         &["RenkoBars", "KagiBars", "PointAndFigureBars"],
     ),
+    ("Market Breadth", &["AdvanceDecline"]),
 ];
 
 #[cfg(test)]
@@ -1066,6 +1069,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 314, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 315, "FAMILIES total drifted from indicator count");
     }
 }
