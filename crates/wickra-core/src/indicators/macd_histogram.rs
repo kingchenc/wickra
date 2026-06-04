@@ -132,10 +132,9 @@ mod tests {
         let full = MacdIndicator::classic().batch(&prices);
         assert_eq!(hist.len(), full.len());
         for (h, m) in hist.iter().zip(full.iter()) {
-            match (h, m) {
-                (Some(h), Some(m)) => assert_relative_eq!(*h, m.histogram, epsilon = 1e-12),
-                (None, None) => {}
-                _ => unreachable!("emission cadence must match MacdIndicator"),
+            assert_eq!(h.is_some(), m.is_some());
+            if let (Some(h), Some(m)) = (h, m) {
+                assert_relative_eq!(*h, m.histogram, epsilon = 1e-12);
             }
         }
     }
