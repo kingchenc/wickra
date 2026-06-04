@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.5.7] - 2026-06-04
 - **Qstick** — Qstick (Chande), the SMA of the candle body (close − open) as a net buying/selling pressure gauge (`QSTICK`).
 - **TTM Trend** — TTM Trend (John Carter), +1/−1 by whether the close sits above the SMA of recent median prices (`TTM_TREND`).
 - **Trend Strength Index** — trend strength index, the signed r² of a linear regression of price against time (`TREND_STRENGTH_INDEX`).
@@ -1266,7 +1268,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.5.6...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.5.7...HEAD
+[0.5.7]: https://github.com/wickra-lib/wickra/compare/v0.5.6...v0.5.7
 [0.5.6]: https://github.com/wickra-lib/wickra/compare/v0.5.5...v0.5.6
 [0.5.5]: https://github.com/wickra-lib/wickra/compare/v0.5.4...v0.5.5
 [0.5.4]: https://github.com/wickra-lib/wickra/compare/v0.5.3...v0.5.4
