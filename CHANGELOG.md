@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **Roll Measure** — effective spread implied by the negative serial covariance of trade-price changes (Roll 1984) (`RollMeasure`).
+- **Amihud Illiquidity** — average absolute log return per unit of traded value (price-impact liquidity proxy, Amihud 2002) (`AmihudIlliquidity`).
+- **VPIN** — volume-synchronised probability of informed trading (volume-bucketed order-flow toxicity) (`Vpin`).
+- **Order Flow Imbalance** — rolling sum of best-level order-flow events (Cont-Kukanov-Stoikov OFI) (`OrderFlowImbalance`).
+- **Expectancy** — expected return per unit of average loss (R-multiple) over a rolling window of returns (`Expectancy`).
+- **Win Rate** — fraction of strictly-positive returns over a rolling window (`WinRate`).
+- **Regime Label** — volatility-quantile regime classification: −1 calm / 0 normal / +1 stressed, by where the rolling volatility sits in its own recent distribution (`RegimeLabel`).
+- **Jump Indicator** — flags return outliers beyond `threshold ×` trailing return volatility (−1 down / 0 / +1 up) (`JumpIndicator`).
+- **Trend Label** — discrete trend state from the sign of the rolling least-squares slope (−1 / 0 / +1) (`TrendLabel`).
+- **High-Low Range** — bar high-low range as a fraction of close (scale-free per-bar volatility) (`HighLowRange`).
+- **Wick Ratio** — signed upper-vs-lower shadow imbalance as a fraction of the range (`WickRatio`).
+- **Body Size Percent** — absolute candle body as a fraction of the bar range (`BodySizePct`).
+- **Close vs Open** — signed body as a fraction of the open price, `(close − open) / open` (`CloseVsOpen`).
+- **Spread AR(1) Coefficient** — first-order autoregression coefficient of the spread `a − b` (direct cointegration / mean-reversion strength) (`SpreadAr1Coefficient`).
+- **Rolling Quantile** — interpolated q-th quantile over a trailing window (type-7 / NumPy default) (`RollingQuantile`).
+- **Rolling Percentile Rank** — percentile rank of the latest value within its trailing window (`RollingPercentileRank`).
+- **Rolling IQR** — interquartile range (Q3 − Q1) over a trailing window (robust dispersion) (`RollingIqr`).
+- **Realized Volatility** — square root of the summed squared log returns (raw, un-annualised quadratic variation) (`RealizedVolatility`).
+- **Log Return** — logarithmic return over a fixed lag, `ln(price_t / price_{t−period})` (`LogReturn`).
 
 ## [0.5.3] - 2026-06-04
 - **Fibonacci Time Zones** — vertical markers at Fibonacci bar-distances (1/2/3/5/8/...) from the latest swing pivot (`FIB_TIME_ZONES`).

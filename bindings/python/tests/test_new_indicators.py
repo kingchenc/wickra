@@ -45,6 +45,16 @@ def ohlcv() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 # --- Scalar (f64 -> f64) indicators ---------------------------------------
 
 SCALAR = [
+    (ta.Expectancy, (20,)),
+    (ta.WinRate, (20,)),
+    (ta.RegimeLabel, (5, 20)),
+    (ta.JumpIndicator, (20, 3.0)),
+    (ta.TrendLabel, (10,)),
+    (ta.RollingQuantile, (20, 0.5)),
+    (ta.RollingPercentileRank, (14,)),
+    (ta.RollingIqr, (14,)),
+    (ta.RealizedVolatility, (20,)),
+    (ta.LogReturn, (1,)),
     (ta.TSF, (14,)),
     (ta.LINEARREG_INTERCEPT, (14,)),
     (ta.ROCR100, (10,)),
@@ -167,6 +177,7 @@ def test_scalar_streaming_matches_batch(cls, args, sine_prices):
 # --- Two-series (asset, benchmark) indicators -----------------------------
 
 PAIR = [
+    (ta.SpreadAr1Coefficient, (40,)),
     (ta.GrangerCausality, (60, 1)),
     (ta.VarianceRatio, (60, 2)),
     (ta.BetaNeutralSpread, (20,)),
@@ -330,6 +341,12 @@ def test_relative_strength_streaming_matches_batch():
 # 6-tuple candle; the batch helper takes only the columns it needs.
 
 CANDLE_SCALAR = {
+    # Per-bar OHLC transforms (open matters). The streaming harness feeds
+    # open == close, so batch passes the close column in for open to match.
+    "HighLowRange": (lambda: ta.HighLowRange(), lambda ind, h, l, c, v: ind.batch(c, h, l, c)),
+    "WickRatio": (lambda: ta.WickRatio(), lambda ind, h, l, c, v: ind.batch(c, h, l, c)),
+    "BodySizePct": (lambda: ta.BodySizePct(), lambda ind, h, l, c, v: ind.batch(c, h, l, c)),
+    "CloseVsOpen": (lambda: ta.CloseVsOpen(), lambda ind, h, l, c, v: ind.batch(c, h, l, c)),
     "ThreeDrives": (
         lambda: ta.ThreeDrives(),
         lambda ind, h, l, c, v: ind.batch(c, h, l, c),
@@ -2707,6 +2724,16 @@ def test_fib_time_zones_reference():
     assert t.update((151.0, 155.0, 151.0, 151.0, 1.0, 4)) == pytest.approx((0.0, 1.0))
     assert t.update((151.0, 155.0, 151.0, 151.0, 1.0, 5)) == pytest.approx((1.0, 3.0))
 
+
+def test_spread_ar1_coefficient_reference():
+    t = ta.SpreadAr1Coefficient(20)
+    assert t.update(1.0, 1.0) is None
+    # Spread a - b grows by exactly 1 each bar (unit root) => rho == 1.
+    a = np.array([2.0 * i for i in range(40)])
+    b = np.array([float(i) for i in range(40)])
+    out = ta.SpreadAr1Coefficient(20).batch(a, b)
+    assert math.isclose(out[-1], 1.0, abs_tol=1e-9)
+
 # --- Lifecycle ------------------------------------------------------------
 
 
@@ -3024,6 +3051,7 @@ def test_orderbook_indicators_streaming_equals_batch():
         ta.Microprice,
         ta.QuotedSpread,
         ta.DepthSlope,
+        lambda: ta.OrderFlowImbalance(10),
     ):
         batch = make().batch(snaps)
         streamer = make()
@@ -3043,6 +3071,9 @@ def test_tradeflow_indicators_streaming_equals_batch():
         ta.SignedVolume,
         ta.CumulativeVolumeDelta,
         lambda: ta.TradeImbalance(5),
+        lambda: ta.Vpin(8.0, 5),
+        lambda: ta.AmihudIlliquidity(14),
+        lambda: ta.RollMeasure(14),
     ):
         batch = make().batch(price, size, is_buy)
         streamer = make()

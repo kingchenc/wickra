@@ -11,10 +11,7 @@
 //! any of them, streaming or batched.
 
 use libfuzzer_sys::fuzz_target;
-use wickra_core::{
-    BatchExt, DepthSlope, Indicator, Level, Microprice, OrderBook, OrderBookImbalanceFull,
-    OrderBookImbalanceTop1, OrderBookImbalanceTopN, QuotedSpread,
-};
+use wickra_core::{BatchExt, DepthSlope, Indicator, Level, Microprice, OrderBook, OrderBookImbalanceFull, OrderBookImbalanceTop1, OrderBookImbalanceTopN, OrderFlowImbalance, QuotedSpread};
 
 #[inline(never)]
 fn drive<I>(make: impl Fn() -> I, books: &[OrderBook])
@@ -52,4 +49,5 @@ fuzz_target!(|data: &[u8]| {
     drive(Microprice::new, &books);
     drive(QuotedSpread::new, &books);
     drive(DepthSlope::new, &books);
+    drive(|| OrderFlowImbalance::new(20).unwrap(), &books);
 });

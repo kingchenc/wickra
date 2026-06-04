@@ -26,6 +26,7 @@ mod adxr;
 mod alligator;
 mod alma;
 mod alpha;
+mod amihud_illiquidity;
 mod anchored_rsi;
 mod anchored_vwap;
 mod apo;
@@ -46,6 +47,7 @@ mod bat;
 mod belt_hold;
 mod beta;
 mod beta_neutral_spread;
+mod body_size_pct;
 mod bollinger;
 mod bollinger_bandwidth;
 mod breadth_thrust;
@@ -64,6 +66,7 @@ mod chande_kroll_stop;
 mod chandelier_exit;
 mod choppiness_index;
 mod classic_pivots;
+mod close_vs_open;
 mod closing_marubozu;
 mod cmf;
 mod cmo;
@@ -109,6 +112,7 @@ mod empirical_mode_decomposition;
 mod engulfing;
 mod evening_doji_star;
 mod evwma;
+mod expectancy;
 mod falling_three_methods;
 mod fama;
 mod fib_arcs;
@@ -143,6 +147,7 @@ mod harami;
 mod head_and_shoulders;
 mod heikin_ashi;
 mod high_low_index;
+mod high_low_range;
 mod high_wave;
 mod hikkake;
 mod hikkake_modified;
@@ -167,6 +172,7 @@ mod intraday_volatility_profile;
 mod inverse_fisher_transform;
 mod inverted_hammer;
 mod jma;
+mod jump_indicator;
 mod kagi_bars;
 mod kalman_hedge_ratio;
 mod kama;
@@ -187,6 +193,7 @@ mod linreg_channel;
 mod linreg_intercept;
 mod linreg_slope;
 mod liquidation_features;
+mod log_return;
 mod long_legged_doji;
 mod long_line;
 mod long_short_ratio;
@@ -229,6 +236,7 @@ mod omega_ratio;
 mod on_neck;
 mod opening_marubozu;
 mod opening_range;
+mod order_flow_imbalance;
 mod ou_half_life;
 mod overnight_gap;
 mod overnight_intraday_return;
@@ -253,8 +261,10 @@ mod pvi;
 mod quoted_spread;
 mod r_squared;
 mod realized_spread;
+mod realized_volatility;
 mod recovery_factor;
 mod rectangle_range;
+mod regime_label;
 mod relative_strength_ab;
 mod renko_bars;
 mod renko_trailing_stop;
@@ -265,8 +275,12 @@ mod rocp;
 mod rocr;
 mod rocr100;
 mod rogers_satchell;
+mod roll_measure;
 mod rolling_correlation;
 mod rolling_covariance;
+mod rolling_iqr;
+mod rolling_percentile_rank;
+mod rolling_quantile;
 mod roofing_filter;
 mod rsi;
 mod rvi;
@@ -291,6 +305,7 @@ mod smma;
 mod sortino_ratio;
 mod spearman_correlation;
 mod spinning_top;
+mod spread_ar1_coefficient;
 mod spread_bollinger_bands;
 mod spread_hurst;
 mod stalled_pattern;
@@ -335,6 +350,7 @@ mod tii;
 mod time_of_day_return_profile;
 mod tpo_profile;
 mod trade_imbalance;
+mod trend_label;
 mod treynor_ratio;
 mod triangle;
 mod trima;
@@ -367,6 +383,7 @@ mod volume_by_time_profile;
 mod volume_oscillator;
 mod volume_profile;
 mod vortex;
+mod vpin;
 mod vpt;
 mod vwap;
 mod vwap_stddev_bands;
@@ -375,8 +392,10 @@ mod vzo;
 mod wave_trend;
 mod wedge;
 mod weighted_close;
+mod wick_ratio;
 mod williams_fractals;
 mod williams_r;
+mod win_rate;
 mod wma;
 mod woodie_pivots;
 mod yang_zhang;
@@ -403,6 +422,7 @@ pub use adxr::Adxr;
 pub use alligator::{Alligator, AlligatorOutput};
 pub use alma::Alma;
 pub use alpha::Alpha;
+pub use amihud_illiquidity::AmihudIlliquidity;
 pub use anchored_rsi::AnchoredRsi;
 pub use anchored_vwap::AnchoredVwap;
 pub use apo::Apo;
@@ -423,6 +443,7 @@ pub use bat::Bat;
 pub use belt_hold::BeltHold;
 pub use beta::Beta;
 pub use beta_neutral_spread::BetaNeutralSpread;
+pub use body_size_pct::BodySizePct;
 pub use bollinger::{BollingerBands, BollingerOutput};
 pub use bollinger_bandwidth::BollingerBandwidth;
 pub use breadth_thrust::BreadthThrust;
@@ -441,6 +462,7 @@ pub use chande_kroll_stop::{ChandeKrollStop, ChandeKrollStopOutput};
 pub use chandelier_exit::{ChandelierExit, ChandelierExitOutput};
 pub use choppiness_index::ChoppinessIndex;
 pub use classic_pivots::{ClassicPivots, ClassicPivotsOutput};
+pub use close_vs_open::CloseVsOpen;
 pub use closing_marubozu::ClosingMarubozu;
 pub use cmf::ChaikinMoneyFlow;
 pub use cmo::Cmo;
@@ -486,6 +508,7 @@ pub use empirical_mode_decomposition::EmpiricalModeDecomposition;
 pub use engulfing::Engulfing;
 pub use evening_doji_star::EveningDojiStar;
 pub use evwma::Evwma;
+pub use expectancy::Expectancy;
 pub use falling_three_methods::FallingThreeMethods;
 pub use fama::Fama;
 pub use fib_arcs::{FibArcs, FibArcsOutput};
@@ -520,6 +543,7 @@ pub use harami::Harami;
 pub use head_and_shoulders::HeadAndShoulders;
 pub use heikin_ashi::{HeikinAshi, HeikinAshiOutput};
 pub use high_low_index::HighLowIndex;
+pub use high_low_range::HighLowRange;
 pub use high_wave::HighWave;
 pub use hikkake::Hikkake;
 pub use hikkake_modified::HikkakeModified;
@@ -544,6 +568,7 @@ pub use intraday_volatility_profile::{IntradayVolatilityProfile, IntradayVolatil
 pub use inverse_fisher_transform::InverseFisherTransform;
 pub use inverted_hammer::InvertedHammer;
 pub use jma::Jma;
+pub use jump_indicator::JumpIndicator;
 pub use kagi_bars::{KagiBar, KagiBars};
 pub use kalman_hedge_ratio::{KalmanHedgeRatio, KalmanHedgeRatioOutput};
 pub use kama::Kama;
@@ -564,6 +589,7 @@ pub use linreg_channel::{LinRegChannel, LinRegChannelOutput};
 pub use linreg_intercept::LinRegIntercept;
 pub use linreg_slope::LinRegSlope;
 pub use liquidation_features::{LiquidationFeatures, LiquidationFeaturesOutput};
+pub use log_return::LogReturn;
 pub use long_legged_doji::LongLeggedDoji;
 pub use long_line::LongLine;
 pub use long_short_ratio::LongShortRatio;
@@ -606,6 +632,7 @@ pub use omega_ratio::OmegaRatio;
 pub use on_neck::OnNeck;
 pub use opening_marubozu::OpeningMarubozu;
 pub use opening_range::{OpeningRange, OpeningRangeOutput};
+pub use order_flow_imbalance::OrderFlowImbalance;
 pub use ou_half_life::OuHalfLife;
 pub use overnight_gap::OvernightGap;
 pub use overnight_intraday_return::{OvernightIntradayReturn, OvernightIntradayReturnOutput};
@@ -630,8 +657,10 @@ pub use pvi::Pvi;
 pub use quoted_spread::QuotedSpread;
 pub use r_squared::RSquared;
 pub use realized_spread::RealizedSpread;
+pub use realized_volatility::RealizedVolatility;
 pub use recovery_factor::RecoveryFactor;
 pub use rectangle_range::RectangleRange;
+pub use regime_label::RegimeLabel;
 pub use relative_strength_ab::{RelativeStrengthAB, RelativeStrengthOutput};
 pub use renko_bars::{RenkoBars, RenkoBrick};
 pub use renko_trailing_stop::RenkoTrailingStop;
@@ -642,8 +671,12 @@ pub use rocp::Rocp;
 pub use rocr::Rocr;
 pub use rocr100::Rocr100;
 pub use rogers_satchell::RogersSatchellVolatility;
+pub use roll_measure::RollMeasure;
 pub use rolling_correlation::RollingCorrelation;
 pub use rolling_covariance::RollingCovariance;
+pub use rolling_iqr::RollingIqr;
+pub use rolling_percentile_rank::RollingPercentileRank;
+pub use rolling_quantile::RollingQuantile;
 pub use roofing_filter::RoofingFilter;
 pub use rsi::Rsi;
 pub use rvi::Rvi;
@@ -668,6 +701,7 @@ pub use smma::Smma;
 pub use sortino_ratio::SortinoRatio;
 pub use spearman_correlation::SpearmanCorrelation;
 pub use spinning_top::SpinningTop;
+pub use spread_ar1_coefficient::SpreadAr1Coefficient;
 pub use spread_bollinger_bands::{SpreadBollingerBands, SpreadBollingerBandsOutput};
 pub use spread_hurst::SpreadHurst;
 pub use stalled_pattern::StalledPattern;
@@ -712,6 +746,7 @@ pub use tii::Tii;
 pub use time_of_day_return_profile::{TimeOfDayReturnProfile, TimeOfDayReturnProfileOutput};
 pub use tpo_profile::{TpoProfile, TpoProfileOutput};
 pub use trade_imbalance::TradeImbalance;
+pub use trend_label::TrendLabel;
 pub use treynor_ratio::TreynorRatio;
 pub use triangle::Triangle;
 pub use trima::Trima;
@@ -744,6 +779,7 @@ pub use volume_by_time_profile::{VolumeByTimeProfile, VolumeByTimeProfileOutput}
 pub use volume_oscillator::VolumeOscillator;
 pub use volume_profile::{VolumeProfile, VolumeProfileOutput};
 pub use vortex::{Vortex, VortexOutput};
+pub use vpin::Vpin;
 pub use vpt::VolumePriceTrend;
 pub use vwap::{RollingVwap, Vwap};
 pub use vwap_stddev_bands::{VwapStdDevBands, VwapStdDevBandsOutput};
@@ -752,8 +788,10 @@ pub use vzo::Vzo;
 pub use wave_trend::{WaveTrend, WaveTrendOutput};
 pub use wedge::Wedge;
 pub use weighted_close::WeightedClose;
+pub use wick_ratio::WickRatio;
 pub use williams_fractals::{WilliamsFractals, WilliamsFractalsOutput};
 pub use williams_r::WilliamsR;
+pub use win_rate::WinRate;
 pub use wma::Wma;
 pub use woodie_pivots::{WoodiePivots, WoodiePivotsOutput};
 pub use yang_zhang::YangZhangVolatility;
@@ -846,6 +884,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "PlusDi",
             "MinusDi",
             "Dx",
+            "TrendLabel",
         ],
     ),
     (
@@ -884,6 +923,8 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "GarmanKlassVolatility",
             "RogersSatchellVolatility",
             "YangZhangVolatility",
+            "JumpIndicator",
+            "RegimeLabel",
         ],
     ),
     (
@@ -987,6 +1028,16 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "GrangerCausality",
             "KalmanHedgeRatio",
             "SpreadBollingerBands",
+            "LogReturn",
+            "RealizedVolatility",
+            "RollingIqr",
+            "RollingPercentileRank",
+            "RollingQuantile",
+            "SpreadAr1Coefficient",
+            "CloseVsOpen",
+            "BodySizePct",
+            "WickRatio",
+            "HighLowRange",
         ],
     ),
     (
@@ -1124,6 +1175,10 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "RealizedSpread",
             "KylesLambda",
             "Footprint",
+            "OrderFlowImbalance",
+            "Vpin",
+            "AmihudIlliquidity",
+            "RollMeasure",
         ],
     ),
     (
@@ -1173,6 +1228,8 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "TreynorRatio",
             "InformationRatio",
             "Alpha",
+            "WinRate",
+            "Expectancy",
         ],
     ),
     (
@@ -1285,6 +1342,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 377, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 396, "FAMILIES total drifted from indicator count");
     }
 }

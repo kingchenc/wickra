@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://wickra.org"><img src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/wickra-banner.webp?v=377" alt="Wickra — streaming-first technical indicators" width="100%"></a>
+  <a href="https://wickra.org"><img src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/wickra-banner.webp?v=396" alt="Wickra — streaming-first technical indicators" width="100%"></a>
 </p>
 
 [![CI](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml/badge.svg)](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml)
@@ -48,7 +48,7 @@ Full documentation lives at **[docs.wickra.org](https://docs.wickra.org)**:
   [Node](https://docs.wickra.org/Quickstart-Node),
   [WASM](https://docs.wickra.org/Quickstart-WASM).
 - **Indicators** — a per-indicator deep dive (formula, parameters, warmup) for
-  every one of the 377 indicators; start at the
+  every one of the 396 indicators; start at the
   [indicators overview](https://docs.wickra.org/Indicators-Overview).
 - **Reference** — [warmup periods](https://docs.wickra.org/Warmup-Periods),
   [streaming vs batch](https://docs.wickra.org/Streaming-vs-Batch),
@@ -136,7 +136,7 @@ python -m benchmarks.compare_libraries
 
 ## Indicators
 
-377 streaming-first indicators across twenty-four families. Every one passes the
+396 streaming-first indicators across twenty-four families. Every one passes the
 `batch == streaming` equivalence test, reference-value tests, and reset
 semantics tests. Each has a per-indicator deep dive (formula, parameters,
 warmup) at [docs.wickra.org](https://docs.wickra.org/Indicators-Overview).
@@ -151,7 +151,7 @@ warmup) at [docs.wickra.org](https://docs.wickra.org/Indicators-Overview).
 | Bands & Channels     | MA Envelope, Acceleration Bands, STARC Bands, ATR Bands, Hurst Channel, LinReg Channel, Standard Error Bands, Double Bollinger Bands, TTM Squeeze, Fractal Chaos Bands, VWAP StdDev Bands |
 | Trailing Stops       | Parabolic SAR, Parabolic SAR Extended (SAREXT), SuperTrend, Chandelier Exit, Chande Kroll Stop, ATR Trailing Stop, HiLo Activator, Volty Stop, Yo-Yo Exit, Donchian Channel Stop, Percentage Trailing Stop, Step Trailing Stop, Renko Trailing Stop |
 | Volume               | OBV, VWAP (cumulative + rolling), ADL, Volume-Price Trend, Chaikin Money Flow, Chaikin Oscillator, Force Index, Ease of Movement, Klinger Volume Oscillator, Volume Oscillator, NVI, PVI, Williams A/D, Anchored VWAP, Demand Index, TSV, VZO, Market Facilitation Index |
-| Price Statistics     | Typical Price, Median Price, Weighted Close, Linear Regression, Linear Regression Slope, Z-Score, Linear Regression Angle, Variance, Coefficient of Variation, Skewness, Kurtosis, Standard Error, Detrended StdDev, R², Median Absolute Deviation, Autocorrelation, Hurst Exponent, Pearson Correlation, Beta, Pairwise Beta, Pair Spread Z-Score, Lead-Lag Cross-Correlation, Cointegration, Relative Strength A-vs-B, Spearman Correlation, Mid Price, Mid Point, Average Price, Linear Regression Intercept, Time Series Forecast, Rolling Correlation, Rolling Covariance, OU Half-Life, Spread Hurst, Distance SSD, Beta-Neutral Spread, Variance Ratio, Granger Causality, Kalman Hedge Ratio, Spread Bollinger Bands |
+| Price Statistics     | Typical Price, Median Price, Weighted Close, Linear Regression, Linear Regression Slope, Z-Score, Linear Regression Angle, Variance, Coefficient of Variation, Skewness, Kurtosis, Standard Error, Detrended StdDev, R², Median Absolute Deviation, Autocorrelation, Hurst Exponent, Pearson Correlation, Beta, Pairwise Beta, Pair Spread Z-Score, Lead-Lag Cross-Correlation, Cointegration, Relative Strength A-vs-B, Spearman Correlation, Mid Price, Mid Point, Average Price, Linear Regression Intercept, Time Series Forecast, Rolling Correlation, Rolling Covariance, OU Half-Life, Spread Hurst, Distance SSD, Beta-Neutral Spread, Variance Ratio, Granger Causality, Kalman Hedge Ratio, Spread Bollinger Bands, Spread AR(1) Coefficient |
 | Ehlers / Cycle (DSP) | MAMA, FAMA, Fisher Transform, Inverse Fisher Transform, SuperSmoother, Hilbert Dominant Cycle, Hilbert Phasor, Hilbert DC Phase, Hilbert Trend Mode, Sine Wave, Decycler, Decycler Oscillator, Roofing Filter, Center of Gravity, Cybernetic Cycle, Adaptive Cycle, Empirical Mode Decomposition, Ehlers Stochastic, Instantaneous Trendline |
 | Pivots & S/R         | Classic Pivots, Fibonacci Pivots, Camarilla, Woodie Pivots, DeMark Pivots, Williams Fractals, ZigZag |
 | DeMark               | TD Setup, TD Sequential, TD DeMarker, TD REI, TD Pressure, TD Combo, TD Countdown, TD Lines, TD Range Projection, TD Differential, TD Open, TD Risk Level |
@@ -161,7 +161,7 @@ warmup) at [docs.wickra.org](https://docs.wickra.org/Indicators-Overview).
 | Chart Patterns       | Double Top / Bottom, Triple Top / Bottom, Head and Shoulders, Triangle (asc/desc/sym), Wedge (rising/falling), Flag / Pennant, Rectangle / Range, Cup and Handle |
 | Harmonic Patterns    | AB=CD, Gartley, Butterfly, Bat, Crab, Shark, Cypher, Three Drives |
 | Fibonacci            | Fibonacci Retracement, Fibonacci Extension, Fibonacci Projection, Auto-Fibonacci, Golden Pocket, Fibonacci Confluence, Fibonacci Fan, Fibonacci Arcs, Fibonacci Channel, Fibonacci Time Zones |
-| Microstructure       | Order-Book Imbalance (Top-1 / Top-N / Full), Microprice, Quoted Spread, Depth Slope, Signed Volume, Cumulative Volume Delta, Trade Imbalance, Effective Spread, Realized Spread, Kyle's Lambda, Footprint |
+| Microstructure       | Order-Book Imbalance (Top-1 / Top-N / Full), Microprice, Quoted Spread, Depth Slope, Signed Volume, Cumulative Volume Delta, Trade Imbalance, Effective Spread, Realized Spread, Kyle's Lambda, Footprint, Order Flow Imbalance, VPIN, Amihud Illiquidity, Roll Measure |
 | Derivatives          | Funding Rate, Funding Rate Mean, Funding Rate Z-Score, Funding Basis, Open-Interest Delta, OI / Price Divergence, OI-Weighted Price, Long/Short Ratio, Taker Buy/Sell Ratio, Liquidation Features, Term-Structure Basis, Calendar Spread |
 | Market Profile       | Value Area (POC / VAH / VAL), Volume Profile (histogram), TPO Profile, Initial Balance, Opening Range |
 | Market Breadth       | Advance/Decline Line, Advance/Decline Ratio, Advance/Decline Volume Line, McClellan Oscillator, McClellan Summation Index, TRIN / Arms Index, Breadth Thrust, New Highs - New Lows, High-Low Index, Percent Above Moving Average, Up/Down Volume Ratio, Bullish Percent Index, Cumulative Volume Index, Absolute Breadth Index, TICK Index |
@@ -245,7 +245,7 @@ A Python live-trading example using the public `websockets` package lives at
 ```
 wickra/
 ├── crates/
-│   ├── wickra-core/         core engine + all 377 indicators
+│   ├── wickra-core/         core engine + all 396 indicators
 │   ├── wickra/              top-level facade crate (publishes on crates.io) + benches/
 │   └── wickra-data/         CSV reader, tick aggregator, live exchange feeds
 ├── bindings/

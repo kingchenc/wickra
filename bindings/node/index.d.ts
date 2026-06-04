@@ -809,6 +809,96 @@ export declare class TSF {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type LogReturnNode = LogReturn
+export declare class LogReturn {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RealizedVolatilityNode = RealizedVolatility
+export declare class RealizedVolatility {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RollingIqrNode = RollingIqr
+export declare class RollingIqr {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RollingPercentileRankNode = RollingPercentileRank
+export declare class RollingPercentileRank {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TrendLabelNode = TrendLabel
+export declare class TrendLabel {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type WinRateNode = WinRate
+export declare class WinRate {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type ExpectancyNode = Expectancy
+export declare class Expectancy {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type JumpIndicatorNode = JumpIndicator
+export declare class JumpIndicator {
+  constructor(period: number, threshold: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RegimeLabelNode = RegimeLabel
+export declare class RegimeLabel {
+  constructor(volPeriod: number, lookback: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RollingQuantileNode = RollingQuantile
+export declare class RollingQuantile {
+  constructor(period: number, quantile: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type AutocorrelationNode = Autocorrelation
 export declare class Autocorrelation {
   constructor(period: number, lag: number)
@@ -855,6 +945,19 @@ export declare class Beta {
 }
 export type PairwiseBetaNode = PairwiseBeta
 export declare class PairwiseBeta {
+  constructor(period: number)
+  update(x: number, y: number): number | null
+  /**
+   * Batch over two equally-sized arrays. Returns a length-`n` array
+   * with `NaN` for warmup positions.
+   */
+  batch(x: Array<number>, y: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type SpreadAr1CoefficientNode = SpreadAr1Coefficient
+export declare class SpreadAr1Coefficient {
   constructor(period: number)
   update(x: number, y: number): number | null
   /**
@@ -1226,6 +1329,42 @@ export declare class HT_PHASOR {
    * interleaved per row as `[inphase0, quadrature0, inphase1, ...]`.
    */
   batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type CloseVsOpenNode = CloseVsOpen
+export declare class CloseVsOpen {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type BodySizePctNode = BodySizePct
+export declare class BodySizePct {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type WickRatioNode = WickRatio
+export declare class WickRatio {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type HighLowRangeNode = HighLowRange
+export declare class HighLowRange {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
   isReady(): boolean
   warmupPeriod(): number
@@ -3311,6 +3450,42 @@ export declare class CumulativeVolumeDelta {
 export type TradeImbalanceNode = TradeImbalance
 export declare class TradeImbalance {
   constructor(window: number)
+  update(price: number, size: number, isBuy: boolean): number | null
+  batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type OrderFlowImbalanceNode = OrderFlowImbalance
+export declare class OrderFlowImbalance {
+  constructor(period: number)
+  update(bidPx: Array<number>, bidSz: Array<number>, askPx: Array<number>, askSz: Array<number>): number | null
+  batch(snapshots: Array<ObSnapshot>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type VpinNode = Vpin
+export declare class Vpin {
+  constructor(bucketVolume: number, numBuckets: number)
+  update(price: number, size: number, isBuy: boolean): number | null
+  batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type AmihudIlliquidityNode = AmihudIlliquidity
+export declare class AmihudIlliquidity {
+  constructor(period: number)
+  update(price: number, size: number, isBuy: boolean): number | null
+  batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RollMeasureNode = RollMeasure
+export declare class RollMeasure {
+  constructor(period: number)
   update(price: number, size: number, isBuy: boolean): number | null
   batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
   reset(): void

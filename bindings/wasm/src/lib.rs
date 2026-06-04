@@ -527,6 +527,11 @@ wasm_pair_indicator!(
 wasm_pair_indicator!(WasmBeta, "Beta", wc::Beta);
 wasm_pair_indicator!(WasmPairwiseBeta, "PairwiseBeta", wc::PairwiseBeta);
 wasm_pair_indicator!(
+    WasmSpreadAr1Coefficient,
+    "SpreadAr1Coefficient",
+    wc::SpreadAr1Coefficient
+);
+wasm_pair_indicator!(
     WasmSpearmanCorrelation,
     "SpearmanCorrelation",
     wc::SpearmanCorrelation
@@ -1835,6 +1840,210 @@ impl WasmHtPhasor {
             }
         }
         Float64Array::from(out.as_slice())
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = CloseVsOpen)]
+pub struct WasmCloseVsOpen {
+    inner: wc::CloseVsOpen,
+}
+
+impl Default for WasmCloseVsOpen {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = CloseVsOpen)]
+impl WasmCloseVsOpen {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmCloseVsOpen {
+        Self {
+            inner: wc::CloseVsOpen::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = make_candle_ohlc(open, high, low, close)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(open.len());
+        for i in 0..open.len() {
+            let c = make_candle_ohlc(open[i], high[i], low[i], close[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = BodySizePct)]
+pub struct WasmBodySizePct {
+    inner: wc::BodySizePct,
+}
+
+impl Default for WasmBodySizePct {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = BodySizePct)]
+impl WasmBodySizePct {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmBodySizePct {
+        Self {
+            inner: wc::BodySizePct::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = make_candle_ohlc(open, high, low, close)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(open.len());
+        for i in 0..open.len() {
+            let c = make_candle_ohlc(open[i], high[i], low[i], close[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = WickRatio)]
+pub struct WasmWickRatio {
+    inner: wc::WickRatio,
+}
+
+impl Default for WasmWickRatio {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = WickRatio)]
+impl WasmWickRatio {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmWickRatio {
+        Self {
+            inner: wc::WickRatio::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = make_candle_ohlc(open, high, low, close)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(open.len());
+        for i in 0..open.len() {
+            let c = make_candle_ohlc(open[i], high[i], low[i], close[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = HighLowRange)]
+pub struct WasmHighLowRange {
+    inner: wc::HighLowRange,
+}
+
+impl Default for WasmHighLowRange {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = HighLowRange)]
+impl WasmHighLowRange {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmHighLowRange {
+        Self {
+            inner: wc::HighLowRange::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = make_candle_ohlc(open, high, low, close)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(open.len());
+        for i in 0..open.len() {
+            let c = make_candle_ohlc(open[i], high[i], low[i], close[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
     }
     pub fn reset(&mut self) {
         self.inner.reset();
@@ -7596,6 +7805,133 @@ impl WasmTradeImbalance {
     }
 }
 
+// Order Flow Imbalance: order-book input with a `period` parameter.
+#[wasm_bindgen(js_name = OrderFlowImbalance)]
+pub struct WasmOrderFlowImbalance {
+    inner: wc::OrderFlowImbalance,
+}
+
+#[wasm_bindgen(js_class = OrderFlowImbalance)]
+impl WasmOrderFlowImbalance {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmOrderFlowImbalance, JsError> {
+        Ok(Self {
+            inner: wc::OrderFlowImbalance::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        bid_px: &[f64],
+        bid_sz: &[f64],
+        ask_px: &[f64],
+        ask_sz: &[f64],
+    ) -> Result<Option<f64>, JsError> {
+        let book = build_order_book(bid_px, bid_sz, ask_px, ask_sz)?;
+        Ok(self.inner.update(book))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// VPIN: trade input, volume-bucketed `(bucket_volume, num_buckets)`.
+#[wasm_bindgen(js_name = Vpin)]
+pub struct WasmVpin {
+    inner: wc::Vpin,
+}
+
+#[wasm_bindgen(js_class = Vpin)]
+impl WasmVpin {
+    #[wasm_bindgen(constructor)]
+    pub fn new(bucket_volume: f64, num_buckets: usize) -> Result<WasmVpin, JsError> {
+        Ok(Self {
+            inner: wc::Vpin::new(bucket_volume, num_buckets).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, price: f64, size: f64, is_buy: bool) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// Amihud Illiquidity: trade input with a `period` parameter.
+#[wasm_bindgen(js_name = AmihudIlliquidity)]
+pub struct WasmAmihudIlliquidity {
+    inner: wc::AmihudIlliquidity,
+}
+
+#[wasm_bindgen(js_class = AmihudIlliquidity)]
+impl WasmAmihudIlliquidity {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmAmihudIlliquidity, JsError> {
+        Ok(Self {
+            inner: wc::AmihudIlliquidity::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, price: f64, size: f64, is_buy: bool) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// Roll Measure: trade input with a `period` parameter.
+#[wasm_bindgen(js_name = RollMeasure)]
+pub struct WasmRollMeasure {
+    inner: wc::RollMeasure,
+}
+
+#[wasm_bindgen(js_class = RollMeasure)]
+impl WasmRollMeasure {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmRollMeasure, JsError> {
+        Ok(Self {
+            inner: wc::RollMeasure::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, price: f64, size: f64, is_buy: bool) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 // ============================== Microstructure: Price Impact ==============================
 //
 // Price-impact indicators consume a trade paired with the mid prevailing at
@@ -9867,6 +10203,16 @@ wasm_scalar_indicator!(WasmRocr, "ROCR", wc::Rocr, period: usize);
 wasm_scalar_indicator!(WasmRocr100, "ROCR100", wc::Rocr100, period: usize);
 wasm_scalar_indicator!(WasmLinRegIntercept, "LINEARREG_INTERCEPT", wc::LinRegIntercept, period: usize);
 wasm_scalar_indicator!(WasmTsf, "TSF", wc::Tsf, period: usize);
+wasm_scalar_indicator!(WasmLogReturn, "LogReturn", wc::LogReturn, period: usize);
+wasm_scalar_indicator!(WasmRealizedVolatility, "RealizedVolatility", wc::RealizedVolatility, period: usize);
+wasm_scalar_indicator!(WasmRollingIqr, "RollingIqr", wc::RollingIqr, period: usize);
+wasm_scalar_indicator!(WasmRollingPercentileRank, "RollingPercentileRank", wc::RollingPercentileRank, period: usize);
+wasm_scalar_indicator!(WasmRollingQuantile, "RollingQuantile", wc::RollingQuantile, period: usize, quantile: f64);
+wasm_scalar_indicator!(WasmTrendLabel, "TrendLabel", wc::TrendLabel, period: usize);
+wasm_scalar_indicator!(WasmJumpIndicator, "JumpIndicator", wc::JumpIndicator, period: usize, threshold: f64);
+wasm_scalar_indicator!(WasmRegimeLabel, "RegimeLabel", wc::RegimeLabel, vol_period: usize, lookback: usize);
+wasm_scalar_indicator!(WasmWinRate, "WinRate", wc::WinRate, period: usize);
+wasm_scalar_indicator!(WasmExpectancy, "Expectancy", wc::Expectancy, period: usize);
 
 // --- DrawdownDuration: u32 output, no constructor args ---
 
