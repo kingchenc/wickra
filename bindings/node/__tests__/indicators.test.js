@@ -28,6 +28,12 @@ function num(v) {
 // --- Scalar indicators: update(value) vs batch(prices) ---
 
 const scalarFactories = {
+  DerivativeOscillator: () => new wickra.DerivativeOscillator(14, 5, 3, 9),
+  RMI: () => new wickra.RMI(14, 5),
+  DynamicMomentumIndex: () => new wickra.DynamicMomentumIndex(14),
+  RSX: () => new wickra.RSX(14),
+  FisherRSI: () => new wickra.FisherRSI(14),
+  DisparityIndex: () => new wickra.DisparityIndex(14),
   HoltWinters: () => new wickra.HoltWinters(0.2, 0.1),
   GD: () => new wickra.GD(5, 0.7),
   AdaptiveLaguerre: () => new wickra.AdaptiveLaguerre(13),
@@ -334,6 +340,8 @@ const candleScalar = {
   BodySizePct: { make: () => new wickra.BodySizePct(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   WickRatio: { make: () => new wickra.WickRatio(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   HighLowRange: { make: () => new wickra.HighLowRange(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  StochasticCCI: { make: () => new wickra.StochasticCCI(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  IMI: { make: () => new wickra.IMI(14), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {
@@ -416,6 +424,8 @@ const multi = {
   FibArcs: { make: () => new wickra.FibArcs(), fields: ['arc382', 'arc500', 'arc618'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   FibChannel: { make: () => new wickra.FibChannel(), fields: ['base', 'level618', 'level1000', 'level1618'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   FibTimeZones: { make: () => new wickra.FibTimeZones(), fields: ['onZone', 'barsToNext'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  ElderRay: { make: () => new wickra.ElderRay(13), fields: ['bullPower', 'bearPower'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  QQE: { make: () => new wickra.QQE(14, 5, 4.236), fields: ['rsiMa', 'trailingLine'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
 };
 
 for (const [name, d] of Object.entries(multi)) {

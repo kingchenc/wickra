@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **QQE** — quantitative qualitative estimation, a smoothed RSI with an ATR-of-RSI trailing line (`QQE`).
+- **Intraday Momentum Index** — intraday momentum index (Chande), RSI on the open-to-close body (`IMI`).
+- **Elder Ray** — Elder Ray bull power and bear power around an EMA of close (`ElderRay`).
+- **Derivative Oscillator** — derivative oscillator (Constance Brown), a double-smoothed RSI histogram (`DerivativeOscillator`).
+- **RMI** — relative momentum index (RMI), RSI over a multi-bar momentum lookback (`RMI`).
+- **Stochastic CCI** — stochastic CCI, a stochastic oscillator over the CCI (`StochasticCCI`).
+- **Dynamic Momentum Index** — dynamic momentum index (Chande), a volatility-adaptive RSI (`DynamicMomentumIndex`).
+- **RSX** — RSX, a Jurik-style three-stage smoothed RSI (`RSX`).
+- **Fisher RSI** — Fisher RSI, the Fisher transform of a normalised RSI (`FisherRSI`).
+- **Disparity Index** — disparity index, the percent gap between price and its moving average (`DisparityIndex`).
 
 ## [0.5.5] - 2026-06-04
 - **GD** — generalized DEMA (GD), Tillson's volume-factor double EMA and the building block of T3 (`GD`).
