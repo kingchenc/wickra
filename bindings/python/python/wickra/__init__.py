@@ -25,6 +25,8 @@ from __future__ import annotations
 
 from ._wickra import (
     __version__,
+    Expectancy,
+    WinRate,
     RegimeLabel,
     JumpIndicator,
     TrendLabel,
@@ -443,6 +445,8 @@ from ._wickra import (
 )
 
 __all__ = [
+    "Expectancy",
+    "WinRate",
     "RegimeLabel",
     "JumpIndicator",
     "TrendLabel",

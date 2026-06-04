@@ -45,6 +45,8 @@ def ohlcv() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 # --- Scalar (f64 -> f64) indicators ---------------------------------------
 
 SCALAR = [
+    (ta.Expectancy, (20,)),
+    (ta.WinRate, (20,)),
     (ta.RegimeLabel, (5, 20)),
     (ta.JumpIndicator, (20, 3.0)),
     (ta.TrendLabel, (10,)),

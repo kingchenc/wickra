@@ -111,6 +111,7 @@ mod empirical_mode_decomposition;
 mod engulfing;
 mod evening_doji_star;
 mod evwma;
+mod expectancy;
 mod falling_three_methods;
 mod fama;
 mod fib_arcs;
@@ -390,6 +391,7 @@ mod weighted_close;
 mod wick_ratio;
 mod williams_fractals;
 mod williams_r;
+mod win_rate;
 mod wma;
 mod woodie_pivots;
 mod yang_zhang;
@@ -501,6 +503,7 @@ pub use empirical_mode_decomposition::EmpiricalModeDecomposition;
 pub use engulfing::Engulfing;
 pub use evening_doji_star::EveningDojiStar;
 pub use evwma::Evwma;
+pub use expectancy::Expectancy;
 pub use falling_three_methods::FallingThreeMethods;
 pub use fama::Fama;
 pub use fib_arcs::{FibArcs, FibArcsOutput};
@@ -780,6 +783,7 @@ pub use weighted_close::WeightedClose;
 pub use wick_ratio::WickRatio;
 pub use williams_fractals::{WilliamsFractals, WilliamsFractalsOutput};
 pub use williams_r::WilliamsR;
+pub use win_rate::WinRate;
 pub use wma::Wma;
 pub use woodie_pivots::{WoodiePivots, WoodiePivotsOutput};
 pub use yang_zhang::YangZhangVolatility;
@@ -1212,6 +1216,8 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "TreynorRatio",
             "InformationRatio",
             "Alpha",
+            "WinRate",
+            "Expectancy",
         ],
     ),
     (
@@ -1324,6 +1330,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 390, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 392, "FAMILIES total drifted from indicator count");
     }
 }

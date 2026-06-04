@@ -75,8 +75,8 @@ pub use indicators::{
     Donchian, DonchianOutput, DonchianStop, DonchianStopOutput, DoubleBollinger,
     DoubleBollingerOutput, DoubleTopBottom, DownsideGapThreeMethods, Dpo, DragonflyDoji,
     DrawdownDuration, Dx, EaseOfMovement, EffectiveSpread, EhlersStochastic, ElderImpulse, Ema,
-    EmpiricalModeDecomposition, Engulfing, EveningDojiStar, Evwma, FallingThreeMethods, Fama,
-    FibArcs, FibArcsOutput, FibChannel, FibChannelOutput, FibConfluence, FibConfluenceOutput,
+    EmpiricalModeDecomposition, Engulfing, EveningDojiStar, Evwma, Expectancy, FallingThreeMethods,
+    Fama, FibArcs, FibArcsOutput, FibChannel, FibChannelOutput, FibConfluence, FibConfluenceOutput,
     FibExtension, FibExtensionOutput, FibFan, FibFanOutput, FibProjection, FibProjectionOutput,
     FibRetracement, FibRetracementOutput, FibTimeZones, FibTimeZonesOutput, FibonacciPivots,
     FibonacciPivotsOutput, FisherTransform, FlagPennant, Footprint, FootprintOutput, ForceIndex,
@@ -130,8 +130,9 @@ pub use indicators::{
     VolumeByTimeProfileOutput, VolumeOscillator, VolumePriceTrend, VolumeProfile,
     VolumeProfileOutput, Vortex, VortexOutput, Vwap, VwapStdDevBands, VwapStdDevBandsOutput, Vwma,
     Vzo, WaveTrend, WaveTrendOutput, Wedge, WeightedClose, WickRatio, WilliamsFractals,
-    WilliamsFractalsOutput, WilliamsR, Wma, WoodiePivots, WoodiePivotsOutput, YangZhangVolatility,
-    YoyoExit, ZScore, ZeroLagMacd, ZeroLagMacdOutput, ZigZag, ZigZagOutput, Zlema, FAMILIES, T3,
+    WilliamsFractalsOutput, WilliamsR, WinRate, Wma, WoodiePivots, WoodiePivotsOutput,
+    YangZhangVolatility, YoyoExit, ZScore, ZeroLagMacd, ZeroLagMacdOutput, ZigZag, ZigZagOutput,
+    Zlema, FAMILIES, T3,
 };
 // `FootprintLevel` is a row element of `FootprintOutput`, re-exported on its own
 // line so the indicator-count tooling (which scans the braced block above and

@@ -28,6 +28,8 @@ function num(v) {
 // --- Scalar indicators: update(value) vs batch(prices) ---
 
 const scalarFactories = {
+  Expectancy: () => new wickra.Expectancy(20),
+  WinRate: () => new wickra.WinRate(20),
   RegimeLabel: () => new wickra.RegimeLabel(5, 20),
   JumpIndicator: () => new wickra.JumpIndicator(20, 3.0),
   TrendLabel: () => new wickra.TrendLabel(10),

@@ -195,6 +195,8 @@ node_scalar_indicator!(
     wc::RollingPercentileRank
 );
 node_scalar_indicator!(TrendLabelNode, "TrendLabel", wc::TrendLabel);
+node_scalar_indicator!(WinRateNode, "WinRate", wc::WinRate);
+node_scalar_indicator!(ExpectancyNode, "Expectancy", wc::Expectancy);
 #[napi(js_name = "JumpIndicator")]
 pub struct JumpIndicatorNode {
     inner: wc::JumpIndicator,

@@ -854,6 +854,24 @@ export declare class TrendLabel {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type WinRateNode = WinRate
+export declare class WinRate {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type ExpectancyNode = Expectancy
+export declare class Expectancy {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type JumpIndicatorNode = JumpIndicator
 export declare class JumpIndicator {
   constructor(period: number, threshold: number)
