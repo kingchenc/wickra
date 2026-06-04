@@ -25,6 +25,13 @@ from __future__ import annotations
 
 from ._wickra import (
     __version__,
+    Qstick,
+    GatorOscillator,
+    KasePermissionStochastic,
+    WAVE_PM,
+    POLARIZED_FRACTAL_EFFICIENCY,
+    TREND_STRENGTH_INDEX,
+    TTM_TREND,
     QQE,
     IMI,
     ElderRay,
@@ -466,6 +473,13 @@ from ._wickra import (
 )
 
 __all__ = [
+    "Qstick",
+    "GatorOscillator",
+    "KasePermissionStochastic",
+    "WAVE_PM",
+    "POLARIZED_FRACTAL_EFFICIENCY",
+    "TREND_STRENGTH_INDEX",
+    "TTM_TREND",
     "QQE",
     "IMI",
     "ElderRay",

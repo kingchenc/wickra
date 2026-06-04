@@ -214,6 +214,11 @@ node_scalar_indicator!(
     "DynamicMomentumIndex",
     wc::DynamicMomentumIndex
 );
+node_scalar_indicator!(
+    TrendStrengthIndexNode,
+    "TREND_STRENGTH_INDEX",
+    wc::TrendStrengthIndex
+);
 #[napi(js_name = "JumpIndicator")]
 pub struct JumpIndicatorNode {
     inner: wc::JumpIndicator,
@@ -2277,6 +2282,328 @@ impl ElderRayNode {
             if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
                 out[i * 2] = o.bull_power;
                 out[i * 2 + 1] = o.bear_power;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "TTM_TREND")]
+pub struct TtmTrendNode {
+    inner: wc::TtmTrend,
+}
+
+#[napi]
+impl TtmTrendNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::TtmTrend::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, 0.0)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "Qstick")]
+pub struct QstickNode {
+    inner: wc::Qstick,
+}
+
+#[napi]
+impl QstickNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Qstick::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, open: f64, close: f64) -> napi::Result<Option<f64>> {
+        let hi = open.max(close);
+        let lo = open.min(close);
+        Ok(self.inner.update(cnd4(open, hi, lo, close)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, open: Vec<f64>, close: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if open.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "open, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(open.len());
+        for i in 0..open.len() {
+            let hi = open[i].max(close[i]);
+            let lo = open[i].min(close[i]);
+            out.push(
+                self.inner
+                    .update(cnd4(open[i], hi, lo, close[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "POLARIZED_FRACTAL_EFFICIENCY")]
+pub struct PolarizedFractalEfficiencyNode {
+    inner: wc::PolarizedFractalEfficiency,
+}
+
+#[napi]
+impl PolarizedFractalEfficiencyNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, smoothing: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::PolarizedFractalEfficiency::new(period as usize, smoothing as usize)
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "WAVE_PM")]
+pub struct WavePmNode {
+    inner: wc::WavePm,
+}
+
+#[napi]
+impl WavePmNode {
+    #[napi(constructor)]
+    pub fn new(length: u32, smoothing: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::WavePm::new(length as usize, smoothing as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(object)]
+pub struct GatorOscillatorValue {
+    pub upper: f64,
+    pub lower: f64,
+}
+
+#[napi(js_name = "GatorOscillator")]
+pub struct GatorOscillatorNode {
+    inner: wc::GatorOscillator,
+}
+
+#[napi]
+impl GatorOscillatorNode {
+    #[napi(constructor)]
+    pub fn new(jaw_period: u32, teeth_period: u32, lips_period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::GatorOscillator::new(
+                jaw_period as usize,
+                teeth_period as usize,
+                lips_period as usize,
+            )
+            .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<GatorOscillatorValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| GatorOscillatorValue {
+                upper: o.upper,
+                lower: o.lower,
+            }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 2] = o.upper;
+                out[i * 2 + 1] = o.lower;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(object)]
+pub struct KasePermissionStochasticValue {
+    pub fast: f64,
+    pub slow: f64,
+}
+
+#[napi(js_name = "KasePermissionStochastic")]
+pub struct KasePermissionStochasticNode {
+    inner: wc::KasePermissionStochastic,
+}
+
+#[napi]
+impl KasePermissionStochasticNode {
+    #[napi(constructor)]
+    pub fn new(length: u32, smooth: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::KasePermissionStochastic::new(length as usize, smooth as usize)
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<KasePermissionStochasticValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| KasePermissionStochasticValue {
+                fast: o.fast,
+                slow: o.slow,
+            }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 2] = o.fast;
+                out[i * 2 + 1] = o.slow;
             }
         }
         Ok(out)

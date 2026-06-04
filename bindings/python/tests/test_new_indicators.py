@@ -45,6 +45,9 @@ def ohlcv() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 # --- Scalar (f64 -> f64) indicators ---------------------------------------
 
 SCALAR = [
+    (ta.WAVE_PM, (32, 3)),
+    (ta.POLARIZED_FRACTAL_EFFICIENCY, (10, 5)),
+    (ta.TREND_STRENGTH_INDEX, (20,)),
     (ta.DerivativeOscillator, (14, 5, 3, 9)),
     (ta.RMI, (14, 5)),
     (ta.DynamicMomentumIndex, (14,)),
@@ -355,6 +358,7 @@ def test_relative_strength_streaming_matches_batch():
 # 6-tuple candle; the batch helper takes only the columns it needs.
 
 CANDLE_SCALAR = {
+    "TTM_TREND": (lambda: ta.TTM_TREND(6), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "StochasticCCI": (lambda: ta.StochasticCCI(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     # Per-bar OHLC transforms (open matters). The streaming harness feeds
     # open == close, so batch passes the close column in for open to match.
@@ -892,6 +896,16 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 # --- Candle-input, multi-output indicators --------------------------------
 
 MULTI = {
+    "KasePermissionStochastic": (
+        lambda: ta.KasePermissionStochastic(9, 3),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+        2,
+    ),
+    "GatorOscillator": (
+        lambda: ta.GatorOscillator(13, 8, 5),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+        2,
+    ),
     "ElderRay": (
         lambda: ta.ElderRay(13),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
@@ -2778,6 +2792,75 @@ def test_imi_reference():
     assert math.isnan(out[0])
     assert math.isnan(out[1])
     assert out[2] == pytest.approx(75.0)
+
+
+def test_qstick_reference():
+    q = ta.Qstick(3)
+    open_ = np.array([10.0, 10.0, 10.0])
+    close = np.array([11.0, 11.0, 11.0])
+    out = q.batch(open_, close)
+    # Each body is close - open = 1; SMA(3) of [1, 1, 1] = 1.
+    assert math.isnan(out[0])
+    assert math.isnan(out[1])
+    assert out[2] == pytest.approx(1.0)
+
+
+def test_ttm_trend_reference():
+    t = ta.TTM_TREND(3)
+    high = np.array([13.0, 13.0, 13.0])
+    low = np.array([9.0, 9.0, 9.0])
+    close = np.array([12.0, 12.0, 12.0])
+    out = t.batch(high, low, close)
+    # Median (13 + 9) / 2 = 11; close 12 is above the SMA(3) reference -> +1.
+    assert math.isnan(out[0])
+    assert out[2] == pytest.approx(1.0)
+
+
+def test_trend_strength_index_reference():
+    tsi = ta.TREND_STRENGTH_INDEX(10)
+    closes = np.arange(10, dtype=float)
+    out = tsi.batch(closes)
+    # A clean ramp is a perfect uptrend -> signed r^2 = +1.
+    assert math.isclose(out[-1], 1.0, abs_tol=1e-9)
+
+
+def test_polarized_fractal_efficiency_reference():
+    pfe = ta.POLARIZED_FRACTAL_EFFICIENCY(5, 3)
+    closes = np.arange(20, dtype=float)
+    out = pfe.batch(closes)
+    # On a straight ramp the path equals the diagonal -> efficiency 1 -> +100.
+    assert math.isclose(out[-1], 100.0, abs_tol=1e-9)
+
+
+def test_wave_pm_reference():
+    wpm = ta.WAVE_PM(10, 3)
+    closes = np.arange(60, dtype=float) * 5.0
+    out = wpm.batch(closes)
+    # Constant-slope ramp: momentum equals its energy -> 100 * (1 - e^-0.5).
+    baseline = 100.0 * (1.0 - math.exp(-0.5))
+    assert math.isclose(out[-1], baseline, abs_tol=1e-9)
+
+
+def test_gator_oscillator_reference():
+    g = ta.GatorOscillator(13, 8, 5)
+    n = 40
+    high = np.full(n, 11.0)
+    low = np.full(n, 9.0)
+    close = np.full(n, 10.0)
+    out = g.batch(high, low, close)
+    # Constant median collapses all three Alligator lines -> both bars zero.
+    assert out[-1][0] == pytest.approx(0.0)
+    assert out[-1][1] == pytest.approx(0.0)
+
+
+def test_kase_permission_stochastic_reference():
+    k = ta.KasePermissionStochastic(4, 2)
+    n = 20
+    flat = np.full(n, 10.0)
+    out = k.batch(flat, flat, flat)
+    # HH == LL -> raw %K defaults to the neutral 50 -> both lines at 50.
+    assert out[-1][0] == pytest.approx(50.0)
+    assert out[-1][1] == pytest.approx(50.0)
 
 # --- Lifecycle ------------------------------------------------------------
 
