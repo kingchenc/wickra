@@ -10213,6 +10213,13 @@ wasm_scalar_indicator!(WasmJumpIndicator, "JumpIndicator", wc::JumpIndicator, pe
 wasm_scalar_indicator!(WasmRegimeLabel, "RegimeLabel", wc::RegimeLabel, vol_period: usize, lookback: usize);
 wasm_scalar_indicator!(WasmWinRate, "WinRate", wc::WinRate, period: usize);
 wasm_scalar_indicator!(WasmExpectancy, "Expectancy", wc::Expectancy, period: usize);
+wasm_scalar_indicator!(WasmSineWeightedMa, "SWMA", wc::SineWeightedMa, period: usize);
+wasm_scalar_indicator!(WasmGeometricMa, "GMA", wc::GeometricMa, period: usize);
+wasm_scalar_indicator!(WasmEhma, "EHMA", wc::Ehma, period: usize);
+wasm_scalar_indicator!(WasmMedianMa, "MedianMA", wc::MedianMa, period: usize);
+wasm_scalar_indicator!(WasmAdaptiveLaguerreFilter, "AdaptiveLaguerre", wc::AdaptiveLaguerreFilter, period: usize);
+wasm_scalar_indicator!(WasmGeneralizedDema, "GD", wc::GeneralizedDema, period: usize, v: f64);
+wasm_scalar_indicator!(WasmHoltWinters, "HoltWinters", wc::HoltWinters, alpha: f64, beta: f64);
 
 // --- DrawdownDuration: u32 output, no constructor args ---
 

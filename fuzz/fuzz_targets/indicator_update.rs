@@ -14,7 +14,7 @@
 //! `Ema(20)`. This target now covers every scalar indicator in the catalogue.
 
 use libfuzzer_sys::fuzz_target;
-use wickra_core::{AdaptiveCycle, Alma, AnchoredRsi, Apo, Autocorrelation, AverageDrawdown, BatchExt, Beta, BollingerBands, CalmarRatio, CenterOfGravity, Cfo, Cmo, CoefficientOfVariation, ConditionalValueAtRisk, ConnorsRsi, Coppock, CyberneticCycle, Decycler, DecyclerOscillator, Dema, DetrendedStdDev, DoubleBollinger, Dpo, DrawdownDuration, EhlersStochastic, ElderImpulse, Ema, EmpiricalModeDecomposition, Expectancy, Fama, FisherTransform, Frama, GainLossRatio, HilbertDominantCycle, HistoricalVolatility, Hma, HtDcPhase, HtPhasor, HtTrendMode, HurstExponent, Indicator, InstantaneousTrendline, InverseFisherTransform, Jma, JumpIndicator, Kama, KellyCriterion, Kst, Kurtosis, LaguerreRsi, LinRegAngle, LinRegChannel, LinRegIntercept, LinRegSlope, LinearRegression, LogReturn, MaEnvelope, MaType, MacdExt, MacdFix, MacdIndicator, Mama, MaxDrawdown, McGinleyDynamic, MedianAbsoluteDeviation, MidPoint, Mom, OmegaRatio, PainIndex, PearsonCorrelation, PercentageTrailingStop, Pmo, Ppo, ProfitFactor, RSquared, RealizedVolatility, RecoveryFactor, RegimeLabel, RenkoTrailingStop, Roc, Rocp, Rocr, Rocr100, RollingIqr, RollingPercentileRank, RollingQuantile, RoofingFilter, Rsi, RviVolatility, SharpeRatio, SineWave, Skewness, Sma, Smma, SortinoRatio, SpearmanCorrelation, StandardError, StandardErrorBands, Stc, StdDev, StepTrailingStop, StochRsi, SuperSmoother, Tema, Tii, TrendLabel, Trima, Trix, Tsf, Tsi, UlcerIndex, ValueAtRisk, Variance, VerticalHorizontalFilter, Vidya, WinRate, Wma, ZScore, ZeroLagMacd, Zlema, T3};
+use wickra_core::{AdaptiveCycle, AdaptiveLaguerreFilter, Alma, AnchoredRsi, Apo, Autocorrelation, AverageDrawdown, BatchExt, Beta, BollingerBands, CalmarRatio, CenterOfGravity, Cfo, Cmo, CoefficientOfVariation, ConditionalValueAtRisk, ConnorsRsi, Coppock, CyberneticCycle, Decycler, DecyclerOscillator, Dema, DetrendedStdDev, DoubleBollinger, Dpo, DrawdownDuration, EhlersStochastic, Ehma, ElderImpulse, Ema, EmpiricalModeDecomposition, Expectancy, Fama, FisherTransform, Frama, GainLossRatio, GeneralizedDema, GeometricMa, HilbertDominantCycle, HistoricalVolatility, Hma, HoltWinters, HtDcPhase, HtPhasor, HtTrendMode, HurstExponent, Indicator, InstantaneousTrendline, InverseFisherTransform, Jma, JumpIndicator, Kama, KellyCriterion, Kst, Kurtosis, LaguerreRsi, LinRegAngle, LinRegChannel, LinRegIntercept, LinRegSlope, LinearRegression, LogReturn, MaEnvelope, MaType, MacdExt, MacdFix, MacdIndicator, Mama, MaxDrawdown, McGinleyDynamic, MedianAbsoluteDeviation, MedianMa, MidPoint, Mom, OmegaRatio, PainIndex, PearsonCorrelation, PercentageTrailingStop, Pmo, Ppo, ProfitFactor, RSquared, RealizedVolatility, RecoveryFactor, RegimeLabel, RenkoTrailingStop, Roc, Rocp, Rocr, Rocr100, RollingIqr, RollingPercentileRank, RollingQuantile, RoofingFilter, Rsi, RviVolatility, SharpeRatio, SineWave, SineWeightedMa, Skewness, Sma, Smma, SortinoRatio, SpearmanCorrelation, StandardError, StandardErrorBands, Stc, StdDev, StepTrailingStop, StochRsi, SuperSmoother, Tema, Tii, TrendLabel, Trima, Trix, Tsf, Tsi, UlcerIndex, ValueAtRisk, Variance, VerticalHorizontalFilter, Vidya, WinRate, Wma, ZScore, ZeroLagMacd, Zlema, T3};
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
 /// `#[inline(never)]` so a panic backtrace pin-points the specific indicator.
@@ -43,6 +43,13 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| Dema::new(14).unwrap(), &data);
     drive(|| Tema::new(14).unwrap(), &data);
     drive(|| Hma::new(14).unwrap(), &data);
+    drive(|| SineWeightedMa::new(14).unwrap(), &data);
+    drive(|| GeometricMa::new(14).unwrap(), &data);
+    drive(|| Ehma::new(9).unwrap(), &data);
+    drive(|| MedianMa::new(14).unwrap(), &data);
+    drive(|| AdaptiveLaguerreFilter::new(13).unwrap(), &data);
+    drive(|| GeneralizedDema::new(5, 0.7).unwrap(), &data);
+    drive(|| HoltWinters::new(0.2, 0.1).unwrap(), &data);
     drive(|| Roc::new(14).unwrap(), &data);
     drive(|| Rocp::new(14).unwrap(), &data);
     drive(|| Rocr::new(14).unwrap(), &data);

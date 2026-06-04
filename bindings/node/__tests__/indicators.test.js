@@ -28,6 +28,13 @@ function num(v) {
 // --- Scalar indicators: update(value) vs batch(prices) ---
 
 const scalarFactories = {
+  HoltWinters: () => new wickra.HoltWinters(0.2, 0.1),
+  GD: () => new wickra.GD(5, 0.7),
+  AdaptiveLaguerre: () => new wickra.AdaptiveLaguerre(13),
+  MedianMA: () => new wickra.MedianMA(14),
+  EHMA: () => new wickra.EHMA(9),
+  GMA: () => new wickra.GMA(14),
+  SWMA: () => new wickra.SWMA(14),
   Expectancy: () => new wickra.Expectancy(20),
   WinRate: () => new wickra.WinRate(20),
   RegimeLabel: () => new wickra.RegimeLabel(5, 20),

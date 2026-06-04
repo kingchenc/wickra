@@ -25,6 +25,13 @@ from __future__ import annotations
 
 from ._wickra import (
     __version__,
+    HoltWinters,
+    GD,
+    AdaptiveLaguerre,
+    MedianMA,
+    EHMA,
+    GMA,
+    SWMA,
     Expectancy,
     WinRate,
     RegimeLabel,
@@ -449,6 +456,13 @@ from ._wickra import (
 )
 
 __all__ = [
+    "HoltWinters",
+    "GD",
+    "AdaptiveLaguerre",
+    "MedianMA",
+    "EHMA",
+    "GMA",
+    "SWMA",
     "Expectancy",
     "WinRate",
     "RegimeLabel",
