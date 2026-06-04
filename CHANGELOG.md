@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.5.5] - 2026-06-04
 - **GD** — generalized DEMA (GD), Tillson's volume-factor double EMA and the building block of T3 (`GD`).
 - **GMA** — geometric moving average (GMA), the rolling geometric mean of prices (`GMA`).
 - **Holt-Winters** — Holt's linear (double exponential) smoothing with level and trend components (`HoltWinters`).
@@ -1245,7 +1247,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.5.4...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.5.5...HEAD
+[0.5.5]: https://github.com/wickra-lib/wickra/compare/v0.5.4...v0.5.5
 [0.5.4]: https://github.com/wickra-lib/wickra/compare/v0.5.3...v0.5.4
 [0.5.3]: https://github.com/wickra-lib/wickra/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/wickra-lib/wickra/compare/v0.5.1...v0.5.2
