@@ -165,6 +165,18 @@ mod tests {
     }
 
     #[test]
+    fn empty_book_side_is_none() {
+        // A book with no levels on a side (only constructible via
+        // `new_unchecked`, since `OrderBook::new` rejects empty sides) carries
+        // no best-level information and emits `None` without advancing state.
+        let mut ofi = OrderFlowImbalance::new(2).unwrap();
+        let empty = OrderBook::new_unchecked(vec![], vec![]);
+        assert_eq!(ofi.update(empty), None);
+        // A real book afterwards still seeds the reference (state untouched).
+        assert_eq!(ofi.update(book(100.0, 5.0, 101.0, 4.0)), None);
+    }
+
+    #[test]
     fn rising_bid_adds_positive_flow() {
         // period 1. Reference book, then the bid lifts (price up) with size 6:
         // Δᵇ = 6 (bid_px > prev), Δᵃ = (ask unchanged px=) ask_sz - ask_sz = 0
