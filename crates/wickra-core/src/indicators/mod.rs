@@ -17,6 +17,7 @@ mod accelerator_oscillator;
 mod ad_oscillator;
 mod ad_volume_line;
 mod adaptive_cycle;
+mod adaptive_laguerre_filter;
 mod adl;
 mod advance_block;
 mod advance_decline;
@@ -106,6 +107,7 @@ mod dx;
 mod ease_of_movement;
 mod effective_spread;
 mod ehlers_stochastic;
+mod ehma;
 mod elder_impulse;
 mod ema;
 mod empirical_mode_decomposition;
@@ -138,6 +140,8 @@ mod gain_loss_ratio;
 mod gap_side_by_side_white;
 mod garman_klass;
 mod gartley;
+mod generalized_dema;
+mod geometric_ma;
 mod golden_pocket;
 mod granger_causality;
 mod gravestone_doji;
@@ -155,6 +159,7 @@ mod hilbert_dominant_cycle;
 mod hilo_activator;
 mod historical_volatility;
 mod hma;
+mod holt_winters;
 mod homing_pigeon;
 mod ht_dcphase;
 mod ht_phasor;
@@ -212,6 +217,7 @@ mod mcclellan_oscillator;
 mod mcclellan_summation_index;
 mod mcginley_dynamic;
 mod median_absolute_deviation;
+mod median_ma;
 mod median_price;
 mod mfi;
 mod microprice;
@@ -298,6 +304,7 @@ mod shooting_star;
 mod short_line;
 mod signed_volume;
 mod sine_wave;
+mod sine_weighted_ma;
 mod skewness;
 mod sma;
 mod smi;
@@ -413,6 +420,7 @@ pub use accelerator_oscillator::AcceleratorOscillator;
 pub use ad_oscillator::AdOscillator;
 pub use ad_volume_line::AdVolumeLine;
 pub use adaptive_cycle::AdaptiveCycle;
+pub use adaptive_laguerre_filter::AdaptiveLaguerreFilter;
 pub use adl::Adl;
 pub use advance_block::AdvanceBlock;
 pub use advance_decline::AdvanceDecline;
@@ -502,6 +510,7 @@ pub use dx::Dx;
 pub use ease_of_movement::EaseOfMovement;
 pub use effective_spread::EffectiveSpread;
 pub use ehlers_stochastic::EhlersStochastic;
+pub use ehma::Ehma;
 pub use elder_impulse::ElderImpulse;
 pub use ema::Ema;
 pub use empirical_mode_decomposition::EmpiricalModeDecomposition;
@@ -534,6 +543,8 @@ pub use gain_loss_ratio::GainLossRatio;
 pub use gap_side_by_side_white::GapSideBySideWhite;
 pub use garman_klass::GarmanKlassVolatility;
 pub use gartley::Gartley;
+pub use generalized_dema::GeneralizedDema;
+pub use geometric_ma::GeometricMa;
 pub use golden_pocket::{GoldenPocket, GoldenPocketOutput};
 pub use granger_causality::GrangerCausality;
 pub use gravestone_doji::GravestoneDoji;
@@ -551,6 +562,7 @@ pub use hilbert_dominant_cycle::HilbertDominantCycle;
 pub use hilo_activator::HiLoActivator;
 pub use historical_volatility::HistoricalVolatility;
 pub use hma::Hma;
+pub use holt_winters::HoltWinters;
 pub use homing_pigeon::HomingPigeon;
 pub use ht_dcphase::HtDcPhase;
 pub use ht_phasor::{HtPhasor, HtPhasorOutput};
@@ -608,6 +620,7 @@ pub use mcclellan_oscillator::McClellanOscillator;
 pub use mcclellan_summation_index::McClellanSummationIndex;
 pub use mcginley_dynamic::McGinleyDynamic;
 pub use median_absolute_deviation::MedianAbsoluteDeviation;
+pub use median_ma::MedianMa;
 pub use median_price::MedianPrice;
 pub use mfi::Mfi;
 pub use microprice::Microprice;
@@ -694,6 +707,7 @@ pub use shooting_star::ShootingStar;
 pub use short_line::ShortLine;
 pub use signed_volume::SignedVolume;
 pub use sine_wave::SineWave;
+pub use sine_weighted_ma::SineWeightedMa;
 pub use skewness::Skewness;
 pub use sma::Sma;
 pub use smi::Smi;
@@ -830,6 +844,13 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "Jma",
             "Alligator",
             "Evwma",
+            "SineWeightedMa",
+            "GeometricMa",
+            "Ehma",
+            "MedianMa",
+            "AdaptiveLaguerreFilter",
+            "GeneralizedDema",
+            "HoltWinters",
         ],
     ),
     (
@@ -1342,6 +1363,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 396, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 403, "FAMILIES total drifted from indicator count");
     }
 }

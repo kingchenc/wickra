@@ -197,6 +197,15 @@ node_scalar_indicator!(
 node_scalar_indicator!(TrendLabelNode, "TrendLabel", wc::TrendLabel);
 node_scalar_indicator!(WinRateNode, "WinRate", wc::WinRate);
 node_scalar_indicator!(ExpectancyNode, "Expectancy", wc::Expectancy);
+node_scalar_indicator!(SineWeightedMaNode, "SWMA", wc::SineWeightedMa);
+node_scalar_indicator!(GeometricMaNode, "GMA", wc::GeometricMa);
+node_scalar_indicator!(EhmaNode, "EHMA", wc::Ehma);
+node_scalar_indicator!(MedianMaNode, "MedianMA", wc::MedianMa);
+node_scalar_indicator!(
+    AdaptiveLaguerreFilterNode,
+    "AdaptiveLaguerre",
+    wc::AdaptiveLaguerreFilter
+);
 #[napi(js_name = "JumpIndicator")]
 pub struct JumpIndicatorNode {
     inner: wc::JumpIndicator,
@@ -3770,6 +3779,80 @@ impl T3Node {
     pub fn new(period: u32, v: f64) -> napi::Result<Self> {
         Ok(Self {
             inner: wc::T3::new(period as usize, v).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== GD ==============================
+
+#[napi(js_name = "GD")]
+pub struct GeneralizedDemaNode {
+    inner: wc::GeneralizedDema,
+}
+
+#[napi]
+impl GeneralizedDemaNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, v: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::GeneralizedDema::new(period as usize, v).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== HoltWinters ==============================
+
+#[napi(js_name = "HoltWinters")]
+pub struct HoltWintersNode {
+    inner: wc::HoltWinters,
+}
+
+#[napi]
+impl HoltWintersNode {
+    #[napi(constructor)]
+    pub fn new(alpha: f64, beta: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::HoltWinters::new(alpha, beta).map_err(map_err)?,
         })
     }
     #[napi]

@@ -2354,6 +2354,250 @@ impl PyExpectancy {
     }
 }
 
+// ============================== SineWeightedMa ==============================
+
+#[pyclass(name = "SWMA", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PySineWeightedMa {
+    inner: wc::SineWeightedMa,
+}
+
+#[pymethods]
+impl PySineWeightedMa {
+    #[new]
+    #[pyo3(signature = (period=14))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::SineWeightedMa::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("SWMA(period={})", self.inner.period())
+    }
+}
+
+// ============================== GeometricMa ==============================
+
+#[pyclass(name = "GMA", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyGeometricMa {
+    inner: wc::GeometricMa,
+}
+
+#[pymethods]
+impl PyGeometricMa {
+    #[new]
+    #[pyo3(signature = (period=14))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::GeometricMa::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("GMA(period={})", self.inner.period())
+    }
+}
+
+// ============================== Ehma ==============================
+
+#[pyclass(name = "EHMA", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyEhma {
+    inner: wc::Ehma,
+}
+
+#[pymethods]
+impl PyEhma {
+    #[new]
+    #[pyo3(signature = (period=9))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Ehma::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("EHMA(period={})", self.inner.period())
+    }
+}
+
+// ============================== MedianMa ==============================
+
+#[pyclass(name = "MedianMA", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyMedianMa {
+    inner: wc::MedianMa,
+}
+
+#[pymethods]
+impl PyMedianMa {
+    #[new]
+    #[pyo3(signature = (period=14))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::MedianMa::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("MedianMA(period={})", self.inner.period())
+    }
+}
+
+// ============================== AdaptiveLaguerreFilter ==============================
+
+#[pyclass(
+    name = "AdaptiveLaguerre",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyAdaptiveLaguerreFilter {
+    inner: wc::AdaptiveLaguerreFilter,
+}
+
+#[pymethods]
+impl PyAdaptiveLaguerreFilter {
+    #[new]
+    #[pyo3(signature = (period=13))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::AdaptiveLaguerreFilter::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("AdaptiveLaguerre(period={})", self.inner.period())
+    }
+}
+
 // ============================== Stochastic ==============================
 
 #[pyclass(name = "Stochastic", module = "wickra._wickra", skip_from_py_object)]
@@ -6193,6 +6437,130 @@ impl PyT3 {
             "T3(period={}, v={})",
             self.inner.period(),
             self.inner.volume_factor()
+        )
+    }
+}
+
+// ============================== GD ==============================
+
+#[pyclass(name = "GD", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyGeneralizedDema {
+    inner: wc::GeneralizedDema,
+}
+
+#[pymethods]
+impl PyGeneralizedDema {
+    #[new]
+    #[pyo3(signature = (period, v=0.7))]
+    fn new(period: usize, v: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::GeneralizedDema::new(period, v).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn volume_factor(&self) -> f64 {
+        self.inner.volume_factor()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "GD(period={}, v={})",
+            self.inner.period(),
+            self.inner.volume_factor()
+        )
+    }
+}
+
+// ============================== HoltWinters ==============================
+
+#[pyclass(name = "HoltWinters", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyHoltWinters {
+    inner: wc::HoltWinters,
+}
+
+#[pymethods]
+impl PyHoltWinters {
+    #[new]
+    #[pyo3(signature = (alpha=0.2, beta=0.1))]
+    fn new(alpha: f64, beta: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::HoltWinters::new(alpha, beta).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn alpha(&self) -> f64 {
+        self.inner.alpha()
+    }
+    #[getter]
+    fn beta(&self) -> f64 {
+        self.inner.beta()
+    }
+    #[getter]
+    fn level(&self) -> Option<f64> {
+        self.inner.level()
+    }
+    #[getter]
+    fn trend(&self) -> Option<f64> {
+        self.inner.trend()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "HoltWinters(alpha={}, beta={})",
+            self.inner.alpha(),
+            self.inner.beta()
         )
     }
 }
@@ -19667,6 +20035,8 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyTrima>()?;
     m.add_class::<PyZlema>()?;
     m.add_class::<PyT3>()?;
+    m.add_class::<PyGeneralizedDema>()?;
+    m.add_class::<PyHoltWinters>()?;
     m.add_class::<PyVwma>()?;
     m.add_class::<PyMom>()?;
     m.add_class::<PyCmo>()?;
@@ -20031,5 +20401,10 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyRegimeLabel>()?;
     m.add_class::<PyWinRate>()?;
     m.add_class::<PyExpectancy>()?;
+    m.add_class::<PySineWeightedMa>()?;
+    m.add_class::<PyGeometricMa>()?;
+    m.add_class::<PyEhma>()?;
+    m.add_class::<PyMedianMa>()?;
+    m.add_class::<PyAdaptiveLaguerreFilter>()?;
     Ok(())
 }

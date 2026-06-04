@@ -872,6 +872,51 @@ export declare class Expectancy {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type SineWeightedMaNode = SWMA
+export declare class SWMA {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type GeometricMaNode = GMA
+export declare class GMA {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type EhmaNode = EHMA
+export declare class EHMA {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type MedianMaNode = MedianMA
+export declare class MedianMA {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type AdaptiveLaguerreFilterNode = AdaptiveLaguerre
+export declare class AdaptiveLaguerre {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type JumpIndicatorNode = JumpIndicator
 export declare class JumpIndicator {
   constructor(period: number, threshold: number)
@@ -1671,6 +1716,24 @@ export declare class ALMA {
 export type T3Node = T3
 export declare class T3 {
   constructor(period: number, v: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type GeneralizedDemaNode = GD
+export declare class GD {
+  constructor(period: number, v: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type HoltWintersNode = HoltWinters
+export declare class HoltWinters {
+  constructor(alpha: number, beta: number)
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void

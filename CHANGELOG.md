@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **GD** — generalized DEMA (GD), Tillson's volume-factor double EMA and the building block of T3 (`GD`).
+- **GMA** — geometric moving average (GMA), the rolling geometric mean of prices (`GMA`).
+- **Holt-Winters** — Holt's linear (double exponential) smoothing with level and trend components (`HoltWinters`).
+- **Adaptive Laguerre** — Ehlers adaptive Laguerre filter with median-error-adaptive gamma (`AdaptiveLaguerre`).
+- **Median MA** — median moving average, the rolling median of prices (`MedianMA`).
+- **EHMA** — exponential Hull moving average (EHMA), the Hull construction built from EMAs (`EHMA`).
+- **SWMA** — sine-weighted moving average (SWMA), a symmetric half-cycle sine window (`SWMA`).
 
 ## [0.5.4] - 2026-06-04
 - **Roll Measure** — effective spread implied by the negative serial covariance of trade-price changes (Roll 1984) (`RollMeasure`).
