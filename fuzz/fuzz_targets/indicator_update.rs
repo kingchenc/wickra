@@ -67,6 +67,12 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| T3::new(14, 0.7).unwrap(), &data);
     drive(|| Mom::new(14).unwrap(), &data);
     drive(|| Cmo::new(14).unwrap(), &data);
+    drive(|| DisparityIndex::new(14).unwrap(), &data);
+    drive(|| FisherRsi::new(14).unwrap(), &data);
+    drive(|| Rsx::new(14).unwrap(), &data);
+    drive(|| DynamicMomentumIndex::new(14).unwrap(), &data);
+    drive(|| Rmi::new(14, 5).unwrap(), &data);
+    drive(|| DerivativeOscillator::new(14, 5, 3, 9).unwrap(), &data);
     drive(|| Tsi::new(25, 13).unwrap(), &data);
     drive(|| Pmo::new(35, 20).unwrap(), &data);
     drive(|| Tii::new(60, 30).unwrap(), &data);
