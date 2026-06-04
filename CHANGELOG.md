@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.5.4] - 2026-06-04
 - **Roll Measure** — effective spread implied by the negative serial covariance of trade-price changes (Roll 1984) (`RollMeasure`).
 - **Amihud Illiquidity** — average absolute log return per unit of traded value (price-impact liquidity proxy, Amihud 2002) (`AmihudIlliquidity`).
 - **VPIN** — volume-synchronised probability of informed trading (volume-bucketed order-flow toxicity) (`Vpin`).
@@ -1236,7 +1238,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.5.3...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.5.4...HEAD
+[0.5.4]: https://github.com/wickra-lib/wickra/compare/v0.5.3...v0.5.4
 [0.5.3]: https://github.com/wickra-lib/wickra/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/wickra-lib/wickra/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/wickra-lib/wickra/compare/v0.5.0...v0.5.1
