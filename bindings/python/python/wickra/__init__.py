@@ -366,6 +366,7 @@ from ._wickra import (
     FibExtension,
     FibRetracement,
     # Microstructure: order book
+    OrderFlowImbalance,
     OrderBookImbalanceTop1,
     OrderBookImbalanceTopN,
     OrderBookImbalanceFull,
@@ -373,6 +374,9 @@ from ._wickra import (
     QuotedSpread,
     DepthSlope,
     # Microstructure: trade flow
+    RollMeasure,
+    AmihudIlliquidity,
+    Vpin,
     SignedVolume,
     CumulativeVolumeDelta,
     TradeImbalance,
@@ -787,6 +791,7 @@ __all__ = [
     "FibExtension",
     "FibRetracement",
     # Microstructure: order book
+    "OrderFlowImbalance",
     "OrderBookImbalanceTop1",
     "OrderBookImbalanceTopN",
     "OrderBookImbalanceFull",
@@ -794,6 +799,9 @@ __all__ = [
     "QuotedSpread",
     "DepthSlope",
     # Microstructure: trade flow
+    "RollMeasure",
+    "AmihudIlliquidity",
+    "Vpin",
     "SignedVolume",
     "CumulativeVolumeDelta",
     "TradeImbalance",

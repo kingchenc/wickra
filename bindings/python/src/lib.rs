@@ -14823,6 +14823,221 @@ impl PyTradeImbalance {
     }
 }
 
+// Order Flow Imbalance carries a `period` parameter and an order-book input,
+// so it is hand-written.
+#[pyclass(
+    name = "OrderFlowImbalance",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyOrderFlowImbalance {
+    inner: wc::OrderFlowImbalance,
+}
+
+#[pymethods]
+impl PyOrderFlowImbalance {
+    #[new]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::OrderFlowImbalance::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(
+        &mut self,
+        bid_px: Vec<f64>,
+        bid_sz: Vec<f64>,
+        ask_px: Vec<f64>,
+        ask_sz: Vec<f64>,
+    ) -> PyResult<Option<f64>> {
+        let book = build_order_book(&bid_px, &bid_sz, &ask_px, &ask_sz)?;
+        Ok(self.inner.update(book))
+    }
+    #[allow(clippy::type_complexity)]
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        snapshots: Vec<(Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>)>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let mut out = Vec::with_capacity(snapshots.len());
+        for (bid_px, bid_sz, ask_px, ask_sz) in &snapshots {
+            let book = build_order_book(bid_px, bid_sz, ask_px, ask_sz)?;
+            out.push(self.inner.update(book).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("OrderFlowImbalance(period={})", self.inner.period())
+    }
+}
+
+// VPIN buckets trades by volume; it carries `(bucket_volume, num_buckets)`.
+#[pyclass(name = "Vpin", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyVpin {
+    inner: wc::Vpin,
+}
+
+#[pymethods]
+impl PyVpin {
+    #[new]
+    fn new(bucket_volume: f64, num_buckets: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Vpin::new(bucket_volume, num_buckets).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, price: f64, size: f64, is_buy: bool) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        price: Vec<f64>,
+        size: Vec<f64>,
+        is_buy: Vec<bool>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if price.len() != size.len() || size.len() != is_buy.len() {
+            return Err(PyValueError::new_err(
+                "price, size, is_buy must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            let trade = build_trade(price[i], size[i], is_buy[i])?;
+            out.push(self.inner.update(trade).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (bucket_volume, num_buckets) = self.inner.params();
+        format!("Vpin(bucket_volume={bucket_volume}, num_buckets={num_buckets})")
+    }
+}
+
+// Amihud illiquidity carries a `period` parameter and a trade input.
+#[pyclass(
+    name = "AmihudIlliquidity",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyAmihudIlliquidity {
+    inner: wc::AmihudIlliquidity,
+}
+
+#[pymethods]
+impl PyAmihudIlliquidity {
+    #[new]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::AmihudIlliquidity::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, price: f64, size: f64, is_buy: bool) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        price: Vec<f64>,
+        size: Vec<f64>,
+        is_buy: Vec<bool>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if price.len() != size.len() || size.len() != is_buy.len() {
+            return Err(PyValueError::new_err(
+                "price, size, is_buy must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            let trade = build_trade(price[i], size[i], is_buy[i])?;
+            out.push(self.inner.update(trade).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("AmihudIlliquidity(period={})", self.inner.period())
+    }
+}
+
+// Roll measure carries a `period` parameter and a trade input.
+#[pyclass(name = "RollMeasure", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyRollMeasure {
+    inner: wc::RollMeasure,
+}
+
+#[pymethods]
+impl PyRollMeasure {
+    #[new]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::RollMeasure::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, price: f64, size: f64, is_buy: bool) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        price: Vec<f64>,
+        size: Vec<f64>,
+        is_buy: Vec<bool>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if price.len() != size.len() || size.len() != is_buy.len() {
+            return Err(PyValueError::new_err(
+                "price, size, is_buy must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            let trade = build_trade(price[i], size[i], is_buy[i])?;
+            out.push(self.inner.update(trade).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("RollMeasure(period={})", self.inner.period())
+    }
+}
+
 // ============================== Microstructure: Price Impact ==============================
 //
 // Price-impact indicators consume a trade paired with the mid prevailing at
@@ -19695,6 +19910,10 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PySignedVolume>()?;
     m.add_class::<PyCumulativeVolumeDelta>()?;
     m.add_class::<PyTradeImbalance>()?;
+    m.add_class::<PyOrderFlowImbalance>()?;
+    m.add_class::<PyVpin>()?;
+    m.add_class::<PyAmihudIlliquidity>()?;
+    m.add_class::<PyRollMeasure>()?;
     // Microstructure: price impact.
     m.add_class::<PyEffectiveSpread>()?;
     m.add_class::<PyRealizedSpread>()?;

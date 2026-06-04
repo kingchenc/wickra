@@ -3456,6 +3456,42 @@ export declare class TradeImbalance {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type OrderFlowImbalanceNode = OrderFlowImbalance
+export declare class OrderFlowImbalance {
+  constructor(period: number)
+  update(bidPx: Array<number>, bidSz: Array<number>, askPx: Array<number>, askSz: Array<number>): number | null
+  batch(snapshots: Array<ObSnapshot>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type VpinNode = Vpin
+export declare class Vpin {
+  constructor(bucketVolume: number, numBuckets: number)
+  update(price: number, size: number, isBuy: boolean): number | null
+  batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type AmihudIlliquidityNode = AmihudIlliquidity
+export declare class AmihudIlliquidity {
+  constructor(period: number)
+  update(price: number, size: number, isBuy: boolean): number | null
+  batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RollMeasureNode = RollMeasure
+export declare class RollMeasure {
+  constructor(period: number)
+  update(price: number, size: number, isBuy: boolean): number | null
+  batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type EffectiveSpreadNode = EffectiveSpread
 export declare class EffectiveSpread {
   constructor()

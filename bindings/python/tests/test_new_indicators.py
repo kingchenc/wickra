@@ -3051,6 +3051,7 @@ def test_orderbook_indicators_streaming_equals_batch():
         ta.Microprice,
         ta.QuotedSpread,
         ta.DepthSlope,
+        lambda: ta.OrderFlowImbalance(10),
     ):
         batch = make().batch(snaps)
         streamer = make()
@@ -3070,6 +3071,9 @@ def test_tradeflow_indicators_streaming_equals_batch():
         ta.SignedVolume,
         ta.CumulativeVolumeDelta,
         lambda: ta.TradeImbalance(5),
+        lambda: ta.Vpin(8.0, 5),
+        lambda: ta.AmihudIlliquidity(14),
+        lambda: ta.RollMeasure(14),
     ):
         batch = make().batch(price, size, is_buy)
         streamer = make()

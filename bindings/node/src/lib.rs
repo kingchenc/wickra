@@ -10718,6 +10718,207 @@ impl TradeImbalanceNode {
     }
 }
 
+// Order Flow Imbalance: order-book input with a `period` parameter.
+#[napi(js_name = "OrderFlowImbalance")]
+pub struct OrderFlowImbalanceNode {
+    inner: wc::OrderFlowImbalance,
+}
+
+#[napi]
+impl OrderFlowImbalanceNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::OrderFlowImbalance::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        bid_px: Vec<f64>,
+        bid_sz: Vec<f64>,
+        ask_px: Vec<f64>,
+        ask_sz: Vec<f64>,
+    ) -> napi::Result<Option<f64>> {
+        let book = build_order_book(&bid_px, &bid_sz, &ask_px, &ask_sz)?;
+        Ok(self.inner.update(book))
+    }
+    #[napi]
+    pub fn batch(&mut self, snapshots: Vec<ObSnapshot>) -> napi::Result<Vec<f64>> {
+        let mut out = Vec::with_capacity(snapshots.len());
+        for snap in &snapshots {
+            let book = build_order_book(&snap.bid_px, &snap.bid_sz, &snap.ask_px, &snap.ask_sz)?;
+            out.push(self.inner.update(book).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// VPIN: trade input, volume-bucketed `(bucket_volume, num_buckets)`.
+#[napi(js_name = "Vpin")]
+pub struct VpinNode {
+    inner: wc::Vpin,
+}
+
+#[napi]
+impl VpinNode {
+    #[napi(constructor)]
+    pub fn new(bucket_volume: f64, num_buckets: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Vpin::new(bucket_volume, num_buckets as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, price: f64, size: f64, is_buy: bool) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        price: Vec<f64>,
+        size: Vec<f64>,
+        is_buy: Vec<bool>,
+    ) -> napi::Result<Vec<f64>> {
+        if price.len() != size.len() || size.len() != is_buy.len() {
+            return Err(NapiError::from_reason(
+                "price, size, is_buy must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            let trade = build_trade(price[i], size[i], is_buy[i])?;
+            out.push(self.inner.update(trade).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// Amihud Illiquidity: trade input with a `period` parameter.
+#[napi(js_name = "AmihudIlliquidity")]
+pub struct AmihudIlliquidityNode {
+    inner: wc::AmihudIlliquidity,
+}
+
+#[napi]
+impl AmihudIlliquidityNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::AmihudIlliquidity::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, price: f64, size: f64, is_buy: bool) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        price: Vec<f64>,
+        size: Vec<f64>,
+        is_buy: Vec<bool>,
+    ) -> napi::Result<Vec<f64>> {
+        if price.len() != size.len() || size.len() != is_buy.len() {
+            return Err(NapiError::from_reason(
+                "price, size, is_buy must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            let trade = build_trade(price[i], size[i], is_buy[i])?;
+            out.push(self.inner.update(trade).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// Roll Measure: trade input with a `period` parameter.
+#[napi(js_name = "RollMeasure")]
+pub struct RollMeasureNode {
+    inner: wc::RollMeasure,
+}
+
+#[napi]
+impl RollMeasureNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::RollMeasure::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, price: f64, size: f64, is_buy: bool) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        price: Vec<f64>,
+        size: Vec<f64>,
+        is_buy: Vec<bool>,
+    ) -> napi::Result<Vec<f64>> {
+        if price.len() != size.len() || size.len() != is_buy.len() {
+            return Err(NapiError::from_reason(
+                "price, size, is_buy must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            let trade = build_trade(price[i], size[i], is_buy[i])?;
+            out.push(self.inner.update(trade).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== Microstructure: Price Impact ==============================
 //
 // Price-impact indicators consume a trade paired with the mid prevailing at

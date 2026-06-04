@@ -7805,6 +7805,133 @@ impl WasmTradeImbalance {
     }
 }
 
+// Order Flow Imbalance: order-book input with a `period` parameter.
+#[wasm_bindgen(js_name = OrderFlowImbalance)]
+pub struct WasmOrderFlowImbalance {
+    inner: wc::OrderFlowImbalance,
+}
+
+#[wasm_bindgen(js_class = OrderFlowImbalance)]
+impl WasmOrderFlowImbalance {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmOrderFlowImbalance, JsError> {
+        Ok(Self {
+            inner: wc::OrderFlowImbalance::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        bid_px: &[f64],
+        bid_sz: &[f64],
+        ask_px: &[f64],
+        ask_sz: &[f64],
+    ) -> Result<Option<f64>, JsError> {
+        let book = build_order_book(bid_px, bid_sz, ask_px, ask_sz)?;
+        Ok(self.inner.update(book))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// VPIN: trade input, volume-bucketed `(bucket_volume, num_buckets)`.
+#[wasm_bindgen(js_name = Vpin)]
+pub struct WasmVpin {
+    inner: wc::Vpin,
+}
+
+#[wasm_bindgen(js_class = Vpin)]
+impl WasmVpin {
+    #[wasm_bindgen(constructor)]
+    pub fn new(bucket_volume: f64, num_buckets: usize) -> Result<WasmVpin, JsError> {
+        Ok(Self {
+            inner: wc::Vpin::new(bucket_volume, num_buckets).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, price: f64, size: f64, is_buy: bool) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// Amihud Illiquidity: trade input with a `period` parameter.
+#[wasm_bindgen(js_name = AmihudIlliquidity)]
+pub struct WasmAmihudIlliquidity {
+    inner: wc::AmihudIlliquidity,
+}
+
+#[wasm_bindgen(js_class = AmihudIlliquidity)]
+impl WasmAmihudIlliquidity {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmAmihudIlliquidity, JsError> {
+        Ok(Self {
+            inner: wc::AmihudIlliquidity::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, price: f64, size: f64, is_buy: bool) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// Roll Measure: trade input with a `period` parameter.
+#[wasm_bindgen(js_name = RollMeasure)]
+pub struct WasmRollMeasure {
+    inner: wc::RollMeasure,
+}
+
+#[wasm_bindgen(js_class = RollMeasure)]
+impl WasmRollMeasure {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmRollMeasure, JsError> {
+        Ok(Self {
+            inner: wc::RollMeasure::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, price: f64, size: f64, is_buy: bool) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 // ============================== Microstructure: Price Impact ==============================
 //
 // Price-impact indicators consume a trade paired with the mid prevailing at

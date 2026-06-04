@@ -26,6 +26,7 @@ mod adxr;
 mod alligator;
 mod alma;
 mod alpha;
+mod amihud_illiquidity;
 mod anchored_rsi;
 mod anchored_vwap;
 mod apo;
@@ -235,6 +236,7 @@ mod omega_ratio;
 mod on_neck;
 mod opening_marubozu;
 mod opening_range;
+mod order_flow_imbalance;
 mod ou_half_life;
 mod overnight_gap;
 mod overnight_intraday_return;
@@ -273,6 +275,7 @@ mod rocp;
 mod rocr;
 mod rocr100;
 mod rogers_satchell;
+mod roll_measure;
 mod rolling_correlation;
 mod rolling_covariance;
 mod rolling_iqr;
@@ -380,6 +383,7 @@ mod volume_by_time_profile;
 mod volume_oscillator;
 mod volume_profile;
 mod vortex;
+mod vpin;
 mod vpt;
 mod vwap;
 mod vwap_stddev_bands;
@@ -418,6 +422,7 @@ pub use adxr::Adxr;
 pub use alligator::{Alligator, AlligatorOutput};
 pub use alma::Alma;
 pub use alpha::Alpha;
+pub use amihud_illiquidity::AmihudIlliquidity;
 pub use anchored_rsi::AnchoredRsi;
 pub use anchored_vwap::AnchoredVwap;
 pub use apo::Apo;
@@ -627,6 +632,7 @@ pub use omega_ratio::OmegaRatio;
 pub use on_neck::OnNeck;
 pub use opening_marubozu::OpeningMarubozu;
 pub use opening_range::{OpeningRange, OpeningRangeOutput};
+pub use order_flow_imbalance::OrderFlowImbalance;
 pub use ou_half_life::OuHalfLife;
 pub use overnight_gap::OvernightGap;
 pub use overnight_intraday_return::{OvernightIntradayReturn, OvernightIntradayReturnOutput};
@@ -665,6 +671,7 @@ pub use rocp::Rocp;
 pub use rocr::Rocr;
 pub use rocr100::Rocr100;
 pub use rogers_satchell::RogersSatchellVolatility;
+pub use roll_measure::RollMeasure;
 pub use rolling_correlation::RollingCorrelation;
 pub use rolling_covariance::RollingCovariance;
 pub use rolling_iqr::RollingIqr;
@@ -772,6 +779,7 @@ pub use volume_by_time_profile::{VolumeByTimeProfile, VolumeByTimeProfileOutput}
 pub use volume_oscillator::VolumeOscillator;
 pub use volume_profile::{VolumeProfile, VolumeProfileOutput};
 pub use vortex::{Vortex, VortexOutput};
+pub use vpin::Vpin;
 pub use vpt::VolumePriceTrend;
 pub use vwap::{RollingVwap, Vwap};
 pub use vwap_stddev_bands::{VwapStdDevBands, VwapStdDevBandsOutput};
@@ -1167,6 +1175,10 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "RealizedSpread",
             "KylesLambda",
             "Footprint",
+            "OrderFlowImbalance",
+            "Vpin",
+            "AmihudIlliquidity",
+            "RollMeasure",
         ],
     ),
     (
@@ -1330,6 +1342,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 392, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 396, "FAMILIES total drifted from indicator count");
     }
 }

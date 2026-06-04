@@ -1141,6 +1141,57 @@ test('trade-flow rejects bad input', () => {
   assert.throws(() => new wickra.SignedVolume().update(100, -1, true));
 });
 
+test('order-flow imbalance reference + streaming matches batch', () => {
+  // Rising bid (px up, size 6) with an unchanged ask -> +6 flow.
+  const ofi = new wickra.OrderFlowImbalance(1);
+  assert.equal(ofi.update([100], [5], [101], [4]), null); // seeds the reference
+  assert.ok(Math.abs(ofi.update([100.5], [6], [101], [4]) - 6.0) < 1e-12);
+  const snaps = Array.from({ length: 30 }, (_, i) => ({
+    bidPx: [100 + Math.sin(i * 0.3)],
+    bidSz: [5 + Math.abs(Math.cos(i * 0.5))],
+    askPx: [101 + Math.sin(i * 0.3)],
+    askSz: [4 + Math.abs(Math.sin(i * 0.4))],
+  }));
+  const batch = new wickra.OrderFlowImbalance(10).batch(snaps);
+  const streamer = new wickra.OrderFlowImbalance(10);
+  assert.equal(batch.length, snaps.length);
+  for (let i = 0; i < snaps.length; i++) {
+    const s = streamer.update(snaps[i].bidPx, snaps[i].bidSz, snaps[i].askPx, snaps[i].askSz);
+    assert.ok((Number.isNaN(batch[i]) && s === null) || Math.abs(s - batch[i]) < 1e-9, `mismatch at ${i}`);
+  }
+});
+
+test('vpin / amihud / roll reference + streaming matches batch', () => {
+  // VPIN: two pure-buy buckets of size 10 -> imbalance == size -> 1.
+  const v = new wickra.Vpin(10, 2);
+  let last;
+  for (let i = 0; i < 4; i++) last = v.update(100, 5, true);
+  assert.equal(last, 1.0);
+  // Amihud(1): |ln(101/100)| / (101 * 10).
+  const a = new wickra.AmihudIlliquidity(1);
+  assert.equal(a.update(100, 10, true), null);
+  assert.ok(Math.abs(a.update(101, 10, true) - Math.abs(Math.log(101 / 100)) / (101 * 10)) < 1e-15);
+  // Roll(6): a clean bid-ask bounce of ±1 implies a spread of 2.
+  const r = new wickra.RollMeasure(6);
+  let roll = null;
+  for (let i = 0; i < 20; i++) roll = r.update(i % 2 === 0 ? 100 : 101, 1, true);
+  assert.ok(Math.abs(roll - 2.0) < 1e-12);
+  // Streaming-vs-batch for the three trade-input indicators.
+  const n = 40;
+  const price = Array.from({ length: n }, (_, i) => 100 + Math.sin(i * 0.25) * 4);
+  const size = Array.from({ length: n }, (_, i) => 1 + (i % 5));
+  const isBuy = Array.from({ length: n }, (_, i) => i % 2 === 0);
+  for (const make of [() => new wickra.Vpin(8, 5), () => new wickra.AmihudIlliquidity(14), () => new wickra.RollMeasure(14)]) {
+    const batch = make().batch(price, size, isBuy);
+    const streamer = make();
+    assert.equal(batch.length, n);
+    for (let i = 0; i < n; i++) {
+      const s = streamer.update(price[i], size[i], isBuy[i]);
+      assert.ok((Number.isNaN(batch[i]) && s === null) || Math.abs(s - batch[i]) < 1e-9, `mismatch at ${i}`);
+    }
+  }
+});
+
 test('price-impact indicators reference values', () => {
   // Buy at 100.05 vs mid 100.0: 2 * (100.05 - 100) / 100 * 10000 = 10 bps.
   assert.ok(Math.abs(new wickra.EffectiveSpread().update(100.05, 1, true, 100.0) - 10.0) < 1e-9);

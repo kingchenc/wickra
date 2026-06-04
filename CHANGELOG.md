@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **Roll Measure** — effective spread implied by the negative serial covariance of trade-price changes (Roll 1984) (`RollMeasure`).
+- **Amihud Illiquidity** — average absolute log return per unit of traded value (price-impact liquidity proxy, Amihud 2002) (`AmihudIlliquidity`).
+- **VPIN** — volume-synchronised probability of informed trading (volume-bucketed order-flow toxicity) (`Vpin`).
+- **Order Flow Imbalance** — rolling sum of best-level order-flow events (Cont-Kukanov-Stoikov OFI) (`OrderFlowImbalance`).
 - **Expectancy** — expected return per unit of average loss (R-multiple) over a rolling window of returns (`Expectancy`).
 - **Win Rate** — fraction of strictly-positive returns over a rolling window (`WinRate`).
 - **Regime Label** — volatility-quantile regime classification: −1 calm / 0 normal / +1 stressed, by where the rolling volatility sits in its own recent distribution (`RegimeLabel`).
