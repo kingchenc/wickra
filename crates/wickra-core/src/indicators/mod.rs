@@ -91,7 +91,9 @@ mod dema;
 mod demand_index;
 mod demark_pivots;
 mod depth_slope;
+mod derivative_oscillator;
 mod detrended_std_dev;
+mod disparity_index;
 mod distance_ssd;
 mod doji;
 mod doji_star;
@@ -104,11 +106,13 @@ mod dpo;
 mod dragonfly_doji;
 mod drawdown_duration;
 mod dx;
+mod dynamic_momentum_index;
 mod ease_of_movement;
 mod effective_spread;
 mod ehlers_stochastic;
 mod ehma;
 mod elder_impulse;
+mod elder_ray;
 mod ema;
 mod empirical_mode_decomposition;
 mod engulfing;
@@ -126,6 +130,7 @@ mod fib_projection;
 mod fib_retracement;
 mod fib_time_zones;
 mod fibonacci_pivots;
+mod fisher_rsi;
 mod fisher_transform;
 mod flag_pennant;
 mod footprint;
@@ -173,6 +178,7 @@ mod inertia;
 mod information_ratio;
 mod initial_balance;
 mod instantaneous_trendline;
+mod intraday_momentum_index;
 mod intraday_volatility_profile;
 mod inverse_fisher_transform;
 mod inverted_hammer;
@@ -264,6 +270,7 @@ mod ppo;
 mod profit_factor;
 mod psar;
 mod pvi;
+mod qqe;
 mod quoted_spread;
 mod r_squared;
 mod realized_spread;
@@ -276,6 +283,7 @@ mod renko_bars;
 mod renko_trailing_stop;
 mod rickshaw_man;
 mod rising_three_methods;
+mod rmi;
 mod roc;
 mod rocp;
 mod rocr;
@@ -289,6 +297,7 @@ mod rolling_percentile_rank;
 mod rolling_quantile;
 mod roofing_filter;
 mod rsi;
+mod rsx;
 mod rvi;
 mod rvi_volatility;
 mod rwi;
@@ -325,6 +334,7 @@ mod step_trailing_stop;
 mod stick_sandwich;
 mod stoch_rsi;
 mod stochastic;
+mod stochastic_cci;
 mod super_smoother;
 mod super_trend;
 mod t3;
@@ -494,7 +504,9 @@ pub use dema::Dema;
 pub use demand_index::DemandIndex;
 pub use demark_pivots::{DemarkPivots, DemarkPivotsOutput};
 pub use depth_slope::DepthSlope;
+pub use derivative_oscillator::DerivativeOscillator;
 pub use detrended_std_dev::DetrendedStdDev;
+pub use disparity_index::DisparityIndex;
 pub use distance_ssd::DistanceSsd;
 pub use doji::Doji;
 pub use doji_star::DojiStar;
@@ -507,11 +519,13 @@ pub use dpo::Dpo;
 pub use dragonfly_doji::DragonflyDoji;
 pub use drawdown_duration::DrawdownDuration;
 pub use dx::Dx;
+pub use dynamic_momentum_index::DynamicMomentumIndex;
 pub use ease_of_movement::EaseOfMovement;
 pub use effective_spread::EffectiveSpread;
 pub use ehlers_stochastic::EhlersStochastic;
 pub use ehma::Ehma;
 pub use elder_impulse::ElderImpulse;
+pub use elder_ray::{ElderRay, ElderRayOutput};
 pub use ema::Ema;
 pub use empirical_mode_decomposition::EmpiricalModeDecomposition;
 pub use engulfing::Engulfing;
@@ -529,6 +543,7 @@ pub use fib_projection::{FibProjection, FibProjectionOutput};
 pub use fib_retracement::{FibRetracement, FibRetracementOutput};
 pub use fib_time_zones::{FibTimeZones, FibTimeZonesOutput};
 pub use fibonacci_pivots::{FibonacciPivots, FibonacciPivotsOutput};
+pub use fisher_rsi::FisherRsi;
 pub use fisher_transform::FisherTransform;
 pub use flag_pennant::FlagPennant;
 pub use footprint::{Footprint, FootprintLevel, FootprintOutput};
@@ -576,6 +591,7 @@ pub use inertia::Inertia;
 pub use information_ratio::InformationRatio;
 pub use initial_balance::{InitialBalance, InitialBalanceOutput};
 pub use instantaneous_trendline::InstantaneousTrendline;
+pub use intraday_momentum_index::IntradayMomentumIndex;
 pub use intraday_volatility_profile::{IntradayVolatilityProfile, IntradayVolatilityProfileOutput};
 pub use inverse_fisher_transform::InverseFisherTransform;
 pub use inverted_hammer::InvertedHammer;
@@ -667,6 +683,7 @@ pub use ppo::Ppo;
 pub use profit_factor::ProfitFactor;
 pub use psar::Psar;
 pub use pvi::Pvi;
+pub use qqe::{Qqe, QqeOutput};
 pub use quoted_spread::QuotedSpread;
 pub use r_squared::RSquared;
 pub use realized_spread::RealizedSpread;
@@ -679,6 +696,7 @@ pub use renko_bars::{RenkoBars, RenkoBrick};
 pub use renko_trailing_stop::RenkoTrailingStop;
 pub use rickshaw_man::RickshawMan;
 pub use rising_three_methods::RisingThreeMethods;
+pub use rmi::Rmi;
 pub use roc::Roc;
 pub use rocp::Rocp;
 pub use rocr::Rocr;
@@ -692,6 +710,7 @@ pub use rolling_percentile_rank::RollingPercentileRank;
 pub use rolling_quantile::RollingQuantile;
 pub use roofing_filter::RoofingFilter;
 pub use rsi::Rsi;
+pub use rsx::Rsx;
 pub use rvi::Rvi;
 pub use rvi_volatility::RviVolatility;
 pub use rwi::{Rwi, RwiOutput};
@@ -728,6 +747,7 @@ pub use step_trailing_stop::StepTrailingStop;
 pub use stick_sandwich::StickSandwich;
 pub use stoch_rsi::StochRsi;
 pub use stochastic::{Stochastic, StochasticOutput};
+pub use stochastic_cci::StochasticCci;
 pub use super_smoother::SuperSmoother;
 pub use super_trend::{SuperTrend, SuperTrendOutput};
 pub use t3::T3;
@@ -880,6 +900,16 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "Rocp",
             "Rocr",
             "Rocr100",
+            "DisparityIndex",
+            "FisherRsi",
+            "Rsx",
+            "DynamicMomentumIndex",
+            "StochasticCci",
+            "Rmi",
+            "DerivativeOscillator",
+            "ElderRay",
+            "IntradayMomentumIndex",
+            "Qqe",
         ],
     ),
     (
@@ -1363,6 +1393,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 403, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 413, "FAMILIES total drifted from indicator count");
     }
 }

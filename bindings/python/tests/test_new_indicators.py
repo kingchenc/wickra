@@ -45,6 +45,12 @@ def ohlcv() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 # --- Scalar (f64 -> f64) indicators ---------------------------------------
 
 SCALAR = [
+    (ta.DerivativeOscillator, (14, 5, 3, 9)),
+    (ta.RMI, (14, 5)),
+    (ta.DynamicMomentumIndex, (14,)),
+    (ta.RSX, (14,)),
+    (ta.FisherRSI, (14,)),
+    (ta.DisparityIndex, (14,)),
     (ta.HoltWinters, (0.2, 0.1)),
     (ta.GD, (5, 0.7)),
     (ta.AdaptiveLaguerre, (13,)),
@@ -157,6 +163,7 @@ SCALAR = [
 # Family 05 band/channel indicators with scalar input and multi-output.
 # `cols` is the expected number of band columns from `batch`.
 SCALAR_MULTI = {
+    "Qqe": (lambda: ta.QQE(14, 5, 4.236), 2),
     "MaEnvelope": (lambda: ta.MaEnvelope(20, 0.025), 3),
     "LinRegChannel": (lambda: ta.LinRegChannel(20, 2.0), 3),
     "StandardErrorBands": (lambda: ta.StandardErrorBands(21, 2.0), 3),
@@ -348,6 +355,7 @@ def test_relative_strength_streaming_matches_batch():
 # 6-tuple candle; the batch helper takes only the columns it needs.
 
 CANDLE_SCALAR = {
+    "StochasticCCI": (lambda: ta.StochasticCCI(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     # Per-bar OHLC transforms (open matters). The streaming harness feeds
     # open == close, so batch passes the close column in for open to match.
     "HighLowRange": (lambda: ta.HighLowRange(), lambda ind, h, l, c, v: ind.batch(c, h, l, c)),
@@ -884,6 +892,11 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 # --- Candle-input, multi-output indicators --------------------------------
 
 MULTI = {
+    "ElderRay": (
+        lambda: ta.ElderRay(13),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+        2,
+    ),
     "FibFan": (
         lambda: ta.FibFan(),
         lambda ind, h, l, c, v: ind.batch(h, l),
@@ -2740,6 +2753,31 @@ def test_spread_ar1_coefficient_reference():
     b = np.array([float(i) for i in range(40)])
     out = ta.SpreadAr1Coefficient(20).batch(a, b)
     assert math.isclose(out[-1], 1.0, abs_tol=1e-9)
+
+
+def test_elder_ray_reference():
+    er = ta.ElderRay(3)
+    high = np.array([11.0, 13.0, 16.0])
+    low = np.array([9.0, 11.0, 13.0])
+    close = np.array([10.0, 12.0, 14.0])
+    out = er.batch(high, low, close)
+    # EMA(3) seeds at the third bar with mean close 12; bar high 16 -> bull 4,
+    # low 13 -> bear 1.
+    assert out[2][0] == pytest.approx(4.0)
+    assert out[2][1] == pytest.approx(1.0)
+
+
+def test_imi_reference():
+    imi = ta.IMI(3)
+    open_ = np.array([10.0, 11.0, 10.0])
+    high = np.array([12.0, 12.0, 13.0])
+    low = np.array([9.0, 9.0, 9.0])
+    close = np.array([11.0, 10.0, 12.0])
+    out = imi.batch(open_, high, low, close)
+    # bodies +1, -1, +2 -> gain 3, loss 1 -> 100 * 3 / 4 = 75.
+    assert math.isnan(out[0])
+    assert math.isnan(out[1])
+    assert out[2] == pytest.approx(75.0)
 
 # --- Lifecycle ------------------------------------------------------------
 

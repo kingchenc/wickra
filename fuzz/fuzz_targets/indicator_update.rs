@@ -14,7 +14,7 @@
 //! `Ema(20)`. This target now covers every scalar indicator in the catalogue.
 
 use libfuzzer_sys::fuzz_target;
-use wickra_core::{AdaptiveCycle, AdaptiveLaguerreFilter, Alma, AnchoredRsi, Apo, Autocorrelation, AverageDrawdown, BatchExt, Beta, BollingerBands, CalmarRatio, CenterOfGravity, Cfo, Cmo, CoefficientOfVariation, ConditionalValueAtRisk, ConnorsRsi, Coppock, CyberneticCycle, Decycler, DecyclerOscillator, Dema, DetrendedStdDev, DoubleBollinger, Dpo, DrawdownDuration, EhlersStochastic, Ehma, ElderImpulse, Ema, EmpiricalModeDecomposition, Expectancy, Fama, FisherTransform, Frama, GainLossRatio, GeneralizedDema, GeometricMa, HilbertDominantCycle, HistoricalVolatility, Hma, HoltWinters, HtDcPhase, HtPhasor, HtTrendMode, HurstExponent, Indicator, InstantaneousTrendline, InverseFisherTransform, Jma, JumpIndicator, Kama, KellyCriterion, Kst, Kurtosis, LaguerreRsi, LinRegAngle, LinRegChannel, LinRegIntercept, LinRegSlope, LinearRegression, LogReturn, MaEnvelope, MaType, MacdExt, MacdFix, MacdIndicator, Mama, MaxDrawdown, McGinleyDynamic, MedianAbsoluteDeviation, MedianMa, MidPoint, Mom, OmegaRatio, PainIndex, PearsonCorrelation, PercentageTrailingStop, Pmo, Ppo, ProfitFactor, RSquared, RealizedVolatility, RecoveryFactor, RegimeLabel, RenkoTrailingStop, Roc, Rocp, Rocr, Rocr100, RollingIqr, RollingPercentileRank, RollingQuantile, RoofingFilter, Rsi, RviVolatility, SharpeRatio, SineWave, SineWeightedMa, Skewness, Sma, Smma, SortinoRatio, SpearmanCorrelation, StandardError, StandardErrorBands, Stc, StdDev, StepTrailingStop, StochRsi, SuperSmoother, Tema, Tii, TrendLabel, Trima, Trix, Tsf, Tsi, UlcerIndex, ValueAtRisk, Variance, VerticalHorizontalFilter, Vidya, WinRate, Wma, ZScore, ZeroLagMacd, Zlema, T3};
+use wickra_core::{AdaptiveCycle, AdaptiveLaguerreFilter, Alma, AnchoredRsi, Apo, Autocorrelation, AverageDrawdown, BatchExt, Beta, BollingerBands, CalmarRatio, CenterOfGravity, Cfo, Cmo, CoefficientOfVariation, ConditionalValueAtRisk, ConnorsRsi, Coppock, CyberneticCycle, Decycler, DecyclerOscillator, Dema, DerivativeOscillator, DetrendedStdDev, DisparityIndex, DoubleBollinger, Dpo, DrawdownDuration, DynamicMomentumIndex, EhlersStochastic, Ehma, ElderImpulse, Ema, EmpiricalModeDecomposition, Expectancy, Fama, FisherRsi, FisherTransform, Frama, GainLossRatio, GeneralizedDema, GeometricMa, HilbertDominantCycle, HistoricalVolatility, Hma, HoltWinters, HtDcPhase, HtPhasor, HtTrendMode, HurstExponent, Indicator, InstantaneousTrendline, InverseFisherTransform, Jma, JumpIndicator, Kama, KellyCriterion, Kst, Kurtosis, LaguerreRsi, LinRegAngle, LinRegChannel, LinRegIntercept, LinRegSlope, LinearRegression, LogReturn, MaEnvelope, MaType, MacdExt, MacdFix, MacdIndicator, Mama, MaxDrawdown, McGinleyDynamic, MedianAbsoluteDeviation, MedianMa, MidPoint, Mom, OmegaRatio, PainIndex, PearsonCorrelation, PercentageTrailingStop, Pmo, Ppo, ProfitFactor, Qqe, RSquared, RealizedVolatility, RecoveryFactor, RegimeLabel, RenkoTrailingStop, Rmi, Roc, Rocp, Rocr, Rocr100, RollingIqr, RollingPercentileRank, RollingQuantile, RoofingFilter, Rsi, Rsx, RviVolatility, SharpeRatio, SineWave, SineWeightedMa, Skewness, Sma, Smma, SortinoRatio, SpearmanCorrelation, StandardError, StandardErrorBands, Stc, StdDev, StepTrailingStop, StochRsi, SuperSmoother, Tema, Tii, TrendLabel, Trima, Trix, Tsf, Tsi, UlcerIndex, ValueAtRisk, Variance, VerticalHorizontalFilter, Vidya, WinRate, Wma, ZScore, ZeroLagMacd, Zlema, T3};
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
 /// `#[inline(never)]` so a panic backtrace pin-points the specific indicator.
@@ -67,6 +67,12 @@ fuzz_target!(|data: Vec<f64>| {
     drive(|| T3::new(14, 0.7).unwrap(), &data);
     drive(|| Mom::new(14).unwrap(), &data);
     drive(|| Cmo::new(14).unwrap(), &data);
+    drive(|| DisparityIndex::new(14).unwrap(), &data);
+    drive(|| FisherRsi::new(14).unwrap(), &data);
+    drive(|| Rsx::new(14).unwrap(), &data);
+    drive(|| DynamicMomentumIndex::new(14).unwrap(), &data);
+    drive(|| Rmi::new(14, 5).unwrap(), &data);
+    drive(|| DerivativeOscillator::new(14, 5, 3, 9).unwrap(), &data);
     drive(|| Tsi::new(25, 13).unwrap(), &data);
     drive(|| Pmo::new(35, 20).unwrap(), &data);
     drive(|| Tii::new(60, 30).unwrap(), &data);
@@ -121,6 +127,16 @@ fuzz_target!(|data: Vec<f64>| {
             let _ = kst.update(x);
         }
         let _ = Kst::classic().batch(&data);
+    }
+
+    // QQE is scalar-input but emits `QqeOutput`, so it bypasses the generic
+    // `drive` helper. Streaming + batch are still both exercised.
+    {
+        let mut qqe = Qqe::new(14, 5, 4.236).unwrap();
+        for &x in &data {
+            let _ = qqe.update(x);
+        }
+        let _ = Qqe::new(14, 5, 4.236).unwrap().batch(&data);
     }
 
     // Zero-Lag MACD shares MACD's multi-output topology, so it gets the

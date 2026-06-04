@@ -69,6 +69,14 @@ export interface HtPhasorValue {
   inphase: number
   quadrature: number
 }
+export interface QqeValue {
+  rsiMa: number
+  trailingLine: number
+}
+export interface ElderRayValue {
+  bullPower: number
+  bearPower: number
+}
 export interface StochValue {
   k: number
   d: number
@@ -917,6 +925,42 @@ export declare class AdaptiveLaguerre {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type DisparityIndexNode = DisparityIndex
+export declare class DisparityIndex {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type FisherRsiNode = FisherRSI
+export declare class FisherRSI {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RsxNode = RSX
+export declare class RSX {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type DynamicMomentumIndexNode = DynamicMomentumIndex
+export declare class DynamicMomentumIndex {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type JumpIndicatorNode = JumpIndicator
 export declare class JumpIndicator {
   constructor(period: number, threshold: number)
@@ -1414,6 +1458,42 @@ export declare class HighLowRange {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type StochasticCciNode = StochasticCCI
+export declare class StochasticCCI {
+  constructor(period: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type ImiNode = IMI
+export declare class IMI {
+  constructor(period: number)
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type QqeNode = QQE
+export declare class QQE {
+  constructor(rsiPeriod: number, smoothing: number, factor: number)
+  update(value: number): QqeValue | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type ElderRayNode = ElderRay
+export declare class ElderRay {
+  constructor(period: number)
+  update(high: number, low: number, close: number): ElderRayValue | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type StochNode = Stochastic
 export declare class Stochastic {
   constructor(kPeriod: number, dPeriod: number)
@@ -1734,6 +1814,24 @@ export declare class GD {
 export type HoltWintersNode = HoltWinters
 export declare class HoltWinters {
   constructor(alpha: number, beta: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RmiNode = RMI
+export declare class RMI {
+  constructor(period: number, momentum: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type DerivativeOscillatorNode = DerivativeOscillator
+export declare class DerivativeOscillator {
+  constructor(rsiPeriod: number, smooth1: number, smooth2: number, signalPeriod: number)
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void

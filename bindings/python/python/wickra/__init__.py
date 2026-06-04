@@ -25,6 +25,16 @@ from __future__ import annotations
 
 from ._wickra import (
     __version__,
+    QQE,
+    IMI,
+    ElderRay,
+    DerivativeOscillator,
+    RMI,
+    StochasticCCI,
+    DynamicMomentumIndex,
+    RSX,
+    FisherRSI,
+    DisparityIndex,
     HoltWinters,
     GD,
     AdaptiveLaguerre,
@@ -456,6 +466,16 @@ from ._wickra import (
 )
 
 __all__ = [
+    "QQE",
+    "IMI",
+    "ElderRay",
+    "DerivativeOscillator",
+    "RMI",
+    "StochasticCCI",
+    "DynamicMomentumIndex",
+    "RSX",
+    "FisherRSI",
+    "DisparityIndex",
     "HoltWinters",
     "GD",
     "AdaptiveLaguerre",
