@@ -28,6 +28,9 @@ function num(v) {
 // --- Scalar indicators: update(value) vs batch(prices) ---
 
 const scalarFactories = {
+  PpoHistogram: () => new wickra.PpoHistogram(3, 6, 3),
+  MacdHistogram: () => new wickra.MacdHistogram(3, 6, 3),
+  TsfOscillator: () => new wickra.TsfOscillator(3),
   WAVE_PM: () => new wickra.WAVE_PM(32, 3),
   POLARIZED_FRACTAL_EFFICIENCY: () => new wickra.POLARIZED_FRACTAL_EFFICIENCY(10, 5),
   TREND_STRENGTH_INDEX: () => new wickra.TREND_STRENGTH_INDEX(20),

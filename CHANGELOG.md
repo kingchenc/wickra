@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **TSF Oscillator** — the percentage gap of the close to the one-bar-ahead time-series forecast, a close-relative companion to CFO (`TsfOscillator`).
+- **MACD Histogram** — the standalone macd-minus-signal bar of MACD as a scalar series (`MacdHistogram`).
+- **PPO Histogram** — the Percentage Price Oscillator with its signal EMA and the resulting zero-centered histogram (`PpoHistogram`).
 
 ## [0.5.7] - 2026-06-04
 - **Qstick** — Qstick (Chande), the SMA of the candle body (close − open) as a net buying/selling pressure gauge (`QSTICK`).

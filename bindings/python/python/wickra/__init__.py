@@ -25,6 +25,9 @@ from __future__ import annotations
 
 from ._wickra import (
     __version__,
+    PpoHistogram,
+    MacdHistogram,
+    TsfOscillator,
     Qstick,
     GatorOscillator,
     KasePermissionStochastic,
@@ -473,6 +476,9 @@ from ._wickra import (
 )
 
 __all__ = [
+    "PpoHistogram",
+    "MacdHistogram",
+    "TsfOscillator",
     "Qstick",
     "GatorOscillator",
     "KasePermissionStochastic",

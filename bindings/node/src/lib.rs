@@ -219,6 +219,7 @@ node_scalar_indicator!(
     "TREND_STRENGTH_INDEX",
     wc::TrendStrengthIndex
 );
+node_scalar_indicator!(TsfOscillatorNode, "TsfOscillator", wc::TsfOscillator);
 #[napi(js_name = "JumpIndicator")]
 pub struct JumpIndicatorNode {
     inner: wc::JumpIndicator,
@@ -4509,6 +4510,82 @@ impl DerivativeOscillatorNode {
                 signal_period as usize,
             )
             .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== MacdHistogram ==============================
+
+#[napi(js_name = "MacdHistogram")]
+pub struct MacdHistogramNode {
+    inner: wc::MacdHistogram,
+}
+
+#[napi]
+impl MacdHistogramNode {
+    #[napi(constructor)]
+    pub fn new(fast: u32, slow: u32, signal: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::MacdHistogram::new(fast as usize, slow as usize, signal as usize)
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== PpoHistogram ==============================
+
+#[napi(js_name = "PpoHistogram")]
+pub struct PpoHistogramNode {
+    inner: wc::PpoHistogram,
+}
+
+#[napi]
+impl PpoHistogramNode {
+    #[napi(constructor)]
+    pub fn new(fast: u32, slow: u32, signal: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::PpoHistogram::new(fast as usize, slow as usize, signal as usize)
+                .map_err(map_err)?,
         })
     }
     #[napi]

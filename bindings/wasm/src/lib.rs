@@ -10653,6 +10653,9 @@ wasm_scalar_indicator!(WasmDynamicMomentumIndex, "DynamicMomentumIndex", wc::Dyn
 wasm_scalar_indicator!(WasmRmi, "RMI", wc::Rmi, period: usize, momentum: usize);
 wasm_scalar_indicator!(WasmDerivativeOscillator, "DerivativeOscillator", wc::DerivativeOscillator, rsi_period: usize, smooth1: usize, smooth2: usize, signal_period: usize);
 wasm_scalar_indicator!(WasmTrendStrengthIndex, "TREND_STRENGTH_INDEX", wc::TrendStrengthIndex, period: usize);
+wasm_scalar_indicator!(WasmTsfOscillator, "TsfOscillator", wc::TsfOscillator, period: usize);
+wasm_scalar_indicator!(WasmMacdHistogram, "MacdHistogram", wc::MacdHistogram, fast: usize, slow: usize, signal: usize);
+wasm_scalar_indicator!(WasmPpoHistogram, "PpoHistogram", wc::PpoHistogram, fast: usize, slow: usize, signal: usize);
 
 // --- DrawdownDuration: u32 output, no constructor args ---
 

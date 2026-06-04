@@ -978,6 +978,15 @@ export declare class TREND_STRENGTH_INDEX {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type TsfOscillatorNode = TsfOscillator
+export declare class TsfOscillator {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type JumpIndicatorNode = JumpIndicator
 export declare class JumpIndicator {
   constructor(period: number, threshold: number)
@@ -1903,6 +1912,24 @@ export declare class RMI {
 export type DerivativeOscillatorNode = DerivativeOscillator
 export declare class DerivativeOscillator {
   constructor(rsiPeriod: number, smooth1: number, smooth2: number, signalPeriod: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type MacdHistogramNode = MacdHistogram
+export declare class MacdHistogram {
+  constructor(fast: number, slow: number, signal: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type PpoHistogramNode = PpoHistogram
+export declare class PpoHistogram {
+  constructor(fast: number, slow: number, signal: number)
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
   reset(): void

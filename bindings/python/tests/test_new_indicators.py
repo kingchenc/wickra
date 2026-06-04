@@ -45,6 +45,9 @@ def ohlcv() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 # --- Scalar (f64 -> f64) indicators ---------------------------------------
 
 SCALAR = [
+    (ta.PpoHistogram, (3, 6, 3)),
+    (ta.MacdHistogram, (3, 6, 3)),
+    (ta.TsfOscillator, (3,)),
     (ta.WAVE_PM, (32, 3)),
     (ta.POLARIZED_FRACTAL_EFFICIENCY, (10, 5)),
     (ta.TREND_STRENGTH_INDEX, (20,)),
@@ -2861,6 +2864,31 @@ def test_kase_permission_stochastic_reference():
     # HH == LL -> raw %K defaults to the neutral 50 -> both lines at 50.
     assert out[-1][0] == pytest.approx(50.0)
     assert out[-1][1] == pytest.approx(50.0)
+
+
+def test_tsf_oscillator_reference():
+    t = ta.TsfOscillator(3)
+    assert t.update(1.0) is None
+    assert t.update(2.0) is None
+    assert t.update(9.0) == pytest.approx(-33.33333333333333)
+
+
+def test_macd_histogram_reference():
+    # On a constant-slope ramp the MACD line is flat once seeded, so the
+    # signal EMA catches up and the histogram collapses to 0.
+    t = ta.MacdHistogram(3, 6, 3)
+    for i in range(7):
+        assert t.update(100.0 + i * 2.0) is None
+    assert t.update(100.0 + 7 * 2.0) == pytest.approx(0.0, abs=1e-9)
+
+
+def test_ppo_histogram_reference():
+    # PPO divides the EMA gap by the slow EMA, so on the same ramp the ratio
+    # keeps drifting and the histogram stays non-zero.
+    t = ta.PpoHistogram(3, 6, 3)
+    for i in range(7):
+        assert t.update(100.0 + i * 2.0) is None
+    assert t.update(100.0 + 7 * 2.0) == pytest.approx(-0.052098, abs=1e-6)
 
 # --- Lifecycle ------------------------------------------------------------
 

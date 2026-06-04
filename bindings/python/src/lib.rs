@@ -3295,6 +3295,144 @@ impl PyKasePermissionStochastic {
     }
 }
 
+// ============================== TsfOscillator ==============================
+
+#[pyclass(name = "TsfOscillator", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyTsfOscillator {
+    inner: wc::TsfOscillator,
+}
+
+#[pymethods]
+impl PyTsfOscillator {
+    #[new]
+    #[pyo3(signature = (period=14))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::TsfOscillator::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("TsfOscillator(period={})", self.inner.period())
+    }
+}
+
+// ============================== MacdHistogram ==============================
+
+#[pyclass(name = "MacdHistogram", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyMacdHistogram {
+    inner: wc::MacdHistogram,
+}
+
+#[pymethods]
+impl PyMacdHistogram {
+    #[new]
+    #[pyo3(signature = (fast=12, slow=26, signal=9))]
+    fn new(fast: usize, slow: usize, signal: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::MacdHistogram::new(fast, slow, signal).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (fast, slow, signal) = self.inner.periods();
+        format!("MacdHistogram(fast={fast}, slow={slow}, signal={signal})")
+    }
+}
+
+// ============================== PpoHistogram ==============================
+
+#[pyclass(name = "PpoHistogram", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyPpoHistogram {
+    inner: wc::PpoHistogram,
+}
+
+#[pymethods]
+impl PyPpoHistogram {
+    #[new]
+    #[pyo3(signature = (fast=12, slow=26, signal=9))]
+    fn new(fast: usize, slow: usize, signal: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::PpoHistogram::new(fast, slow, signal).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (fast, slow, signal) = self.inner.periods();
+        format!("PpoHistogram(fast={fast}, slow={slow}, signal={signal})")
+    }
+}
+
 // ============================== Stochastic ==============================
 
 #[pyclass(name = "IMI", module = "wickra._wickra", skip_from_py_object)]
@@ -21422,5 +21560,8 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyWavePm>()?;
     m.add_class::<PyGatorOscillator>()?;
     m.add_class::<PyKasePermissionStochastic>()?;
+    m.add_class::<PyTsfOscillator>()?;
+    m.add_class::<PyMacdHistogram>()?;
+    m.add_class::<PyPpoHistogram>()?;
     Ok(())
 }

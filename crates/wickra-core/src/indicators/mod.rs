@@ -214,6 +214,7 @@ mod ma_envelope;
 mod macd;
 mod macd_ext;
 mod macd_fix;
+mod macd_histogram;
 mod mama;
 mod market_facilitation_index;
 mod marubozu;
@@ -270,6 +271,7 @@ mod pmo;
 mod point_and_figure_bars;
 mod polarized_fractal_efficiency;
 mod ppo;
+mod ppo_histogram;
 mod profit_factor;
 mod psar;
 mod pvi;
@@ -381,6 +383,7 @@ mod triple_top_bottom;
 mod trix;
 mod true_range;
 mod tsf;
+mod tsf_oscillator;
 mod tsi;
 mod tsv;
 mod ttm_squeeze;
@@ -634,6 +637,7 @@ pub use ma_envelope::{MaEnvelope, MaEnvelopeOutput};
 pub use macd::{MacdIndicator, MacdOutput};
 pub use macd_ext::{MaType, MacdExt};
 pub use macd_fix::MacdFix;
+pub use macd_histogram::MacdHistogram;
 pub use mama::{Mama, MamaOutput};
 pub use market_facilitation_index::MarketFacilitationIndex;
 pub use marubozu::Marubozu;
@@ -690,6 +694,7 @@ pub use pmo::Pmo;
 pub use point_and_figure_bars::{PnfColumn, PointAndFigureBars};
 pub use polarized_fractal_efficiency::PolarizedFractalEfficiency;
 pub use ppo::Ppo;
+pub use ppo_histogram::PpoHistogram;
 pub use profit_factor::ProfitFactor;
 pub use psar::Psar;
 pub use pvi::Pvi;
@@ -801,6 +806,7 @@ pub use triple_top_bottom::TripleTopBottom;
 pub use trix::Trix;
 pub use true_range::TrueRange;
 pub use tsf::Tsf;
+pub use tsf_oscillator::TsfOscillator;
 pub use tsi::Tsi;
 pub use tsv::Tsv;
 pub use ttm_squeeze::{TtmSqueeze, TtmSqueezeOutput};
@@ -973,6 +979,9 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "ZeroLagMacd",
             "ElderImpulse",
             "Stc",
+            "TsfOscillator",
+            "MacdHistogram",
+            "PpoHistogram",
         ],
     ),
     (
@@ -1414,6 +1423,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 420, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 423, "FAMILIES total drifted from indicator count");
     }
 }
