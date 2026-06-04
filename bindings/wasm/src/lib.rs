@@ -527,6 +527,11 @@ wasm_pair_indicator!(
 wasm_pair_indicator!(WasmBeta, "Beta", wc::Beta);
 wasm_pair_indicator!(WasmPairwiseBeta, "PairwiseBeta", wc::PairwiseBeta);
 wasm_pair_indicator!(
+    WasmSpreadAr1Coefficient,
+    "SpreadAr1Coefficient",
+    wc::SpreadAr1Coefficient
+);
+wasm_pair_indicator!(
     WasmSpearmanCorrelation,
     "SpearmanCorrelation",
     wc::SpearmanCorrelation
@@ -9867,6 +9872,11 @@ wasm_scalar_indicator!(WasmRocr, "ROCR", wc::Rocr, period: usize);
 wasm_scalar_indicator!(WasmRocr100, "ROCR100", wc::Rocr100, period: usize);
 wasm_scalar_indicator!(WasmLinRegIntercept, "LINEARREG_INTERCEPT", wc::LinRegIntercept, period: usize);
 wasm_scalar_indicator!(WasmTsf, "TSF", wc::Tsf, period: usize);
+wasm_scalar_indicator!(WasmLogReturn, "LogReturn", wc::LogReturn, period: usize);
+wasm_scalar_indicator!(WasmRealizedVolatility, "RealizedVolatility", wc::RealizedVolatility, period: usize);
+wasm_scalar_indicator!(WasmRollingIqr, "RollingIqr", wc::RollingIqr, period: usize);
+wasm_scalar_indicator!(WasmRollingPercentileRank, "RollingPercentileRank", wc::RollingPercentileRank, period: usize);
+wasm_scalar_indicator!(WasmRollingQuantile, "RollingQuantile", wc::RollingQuantile, period: usize, quantile: f64);
 
 // --- DrawdownDuration: u32 output, no constructor args ---
 

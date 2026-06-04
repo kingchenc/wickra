@@ -809,6 +809,51 @@ export declare class TSF {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type LogReturnNode = LogReturn
+export declare class LogReturn {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RealizedVolatilityNode = RealizedVolatility
+export declare class RealizedVolatility {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RollingIqrNode = RollingIqr
+export declare class RollingIqr {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RollingPercentileRankNode = RollingPercentileRank
+export declare class RollingPercentileRank {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RollingQuantileNode = RollingQuantile
+export declare class RollingQuantile {
+  constructor(period: number, quantile: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type AutocorrelationNode = Autocorrelation
 export declare class Autocorrelation {
   constructor(period: number, lag: number)
@@ -855,6 +900,19 @@ export declare class Beta {
 }
 export type PairwiseBetaNode = PairwiseBeta
 export declare class PairwiseBeta {
+  constructor(period: number)
+  update(x: number, y: number): number | null
+  /**
+   * Batch over two equally-sized arrays. Returns a length-`n` array
+   * with `NaN` for warmup positions.
+   */
+  batch(x: Array<number>, y: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type SpreadAr1CoefficientNode = SpreadAr1Coefficient
+export declare class SpreadAr1Coefficient {
   constructor(period: number)
   update(x: number, y: number): number | null
   /**

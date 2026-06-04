@@ -1576,6 +1576,266 @@ impl PyHtPhasor {
     }
 }
 
+// ============================== LogReturn ==============================
+
+#[pyclass(name = "LogReturn", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyLogReturn {
+    inner: wc::LogReturn,
+}
+
+#[pymethods]
+impl PyLogReturn {
+    #[new]
+    #[pyo3(signature = (period=1))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::LogReturn::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("LogReturn(period={})", self.inner.period())
+    }
+}
+
+// ============================== RealizedVolatility ==============================
+
+#[pyclass(
+    name = "RealizedVolatility",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyRealizedVolatility {
+    inner: wc::RealizedVolatility,
+}
+
+#[pymethods]
+impl PyRealizedVolatility {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::RealizedVolatility::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("RealizedVolatility(period={})", self.inner.period())
+    }
+}
+
+// ============================== RollingIqr ==============================
+
+#[pyclass(name = "RollingIqr", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyRollingIqr {
+    inner: wc::RollingIqr,
+}
+
+#[pymethods]
+impl PyRollingIqr {
+    #[new]
+    #[pyo3(signature = (period=14))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::RollingIqr::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("RollingIqr(period={})", self.inner.period())
+    }
+}
+
+// ============================== RollingPercentileRank ==============================
+
+#[pyclass(
+    name = "RollingPercentileRank",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyRollingPercentileRank {
+    inner: wc::RollingPercentileRank,
+}
+
+#[pymethods]
+impl PyRollingPercentileRank {
+    #[new]
+    #[pyo3(signature = (period=14))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::RollingPercentileRank::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("RollingPercentileRank(period={})", self.inner.period())
+    }
+}
+
+// ============================== RollingQuantile ==============================
+
+#[pyclass(
+    name = "RollingQuantile",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyRollingQuantile {
+    inner: wc::RollingQuantile,
+}
+
+#[pymethods]
+impl PyRollingQuantile {
+    #[new]
+    #[pyo3(signature = (period=20, quantile=0.5))]
+    fn new(period: usize, quantile: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::RollingQuantile::new(period, quantile).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn quantile(&self) -> f64 {
+        self.inner.quantile()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "RollingQuantile(period={}, quantile={})",
+            self.inner.period(),
+            self.inner.quantile()
+        )
+    }
+}
+
 // ============================== Stochastic ==============================
 
 #[pyclass(name = "Stochastic", module = "wickra._wickra", skip_from_py_object)]
@@ -11936,6 +12196,70 @@ impl PyPairwiseBeta {
     }
 }
 
+// ============================== SpreadAr1Coefficient ==============================
+
+#[pyclass(
+    name = "SpreadAr1Coefficient",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PySpreadAr1Coefficient {
+    inner: wc::SpreadAr1Coefficient,
+}
+
+#[pymethods]
+impl PySpreadAr1Coefficient {
+    #[new]
+    #[pyo3(signature = (period=40))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::SpreadAr1Coefficient::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, a: f64, b: f64) -> Option<f64> {
+        self.inner.update((a, b))
+    }
+    /// Batch over two equally-sized numpy arrays of prices: `a` and `b`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        a: PyReadonlyArray1<'py, f64>,
+        b: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let xs = a
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let ys = b
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if xs.len() != ys.len() {
+            return Err(PyValueError::new_err("a and b must be equal length"));
+        }
+        let mut out = Vec::with_capacity(xs.len());
+        for i in 0..xs.len() {
+            out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("SpreadAr1Coefficient(period={})", self.inner.period())
+    }
+}
+
 // ============================== PairSpreadZScore ==============================
 
 #[pyclass(
@@ -18757,6 +19081,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyPearsonCorrelation>()?;
     m.add_class::<PyBeta>()?;
     m.add_class::<PyPairwiseBeta>()?;
+    m.add_class::<PySpreadAr1Coefficient>()?;
     m.add_class::<PyPairSpreadZScore>()?;
     m.add_class::<PyLeadLagCrossCorrelation>()?;
     m.add_class::<PyCointegration>()?;
@@ -18955,5 +19280,10 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyFibArcs>()?;
     m.add_class::<PyFibChannel>()?;
     m.add_class::<PyFibTimeZones>()?;
+    m.add_class::<PyLogReturn>()?;
+    m.add_class::<PyRealizedVolatility>()?;
+    m.add_class::<PyRollingIqr>()?;
+    m.add_class::<PyRollingPercentileRank>()?;
+    m.add_class::<PyRollingQuantile>()?;
     Ok(())
 }

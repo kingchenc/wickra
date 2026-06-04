@@ -187,6 +187,7 @@ mod linreg_channel;
 mod linreg_intercept;
 mod linreg_slope;
 mod liquidation_features;
+mod log_return;
 mod long_legged_doji;
 mod long_line;
 mod long_short_ratio;
@@ -253,6 +254,7 @@ mod pvi;
 mod quoted_spread;
 mod r_squared;
 mod realized_spread;
+mod realized_volatility;
 mod recovery_factor;
 mod rectangle_range;
 mod relative_strength_ab;
@@ -267,6 +269,9 @@ mod rocr100;
 mod rogers_satchell;
 mod rolling_correlation;
 mod rolling_covariance;
+mod rolling_iqr;
+mod rolling_percentile_rank;
+mod rolling_quantile;
 mod roofing_filter;
 mod rsi;
 mod rvi;
@@ -291,6 +296,7 @@ mod smma;
 mod sortino_ratio;
 mod spearman_correlation;
 mod spinning_top;
+mod spread_ar1_coefficient;
 mod spread_bollinger_bands;
 mod spread_hurst;
 mod stalled_pattern;
@@ -564,6 +570,7 @@ pub use linreg_channel::{LinRegChannel, LinRegChannelOutput};
 pub use linreg_intercept::LinRegIntercept;
 pub use linreg_slope::LinRegSlope;
 pub use liquidation_features::{LiquidationFeatures, LiquidationFeaturesOutput};
+pub use log_return::LogReturn;
 pub use long_legged_doji::LongLeggedDoji;
 pub use long_line::LongLine;
 pub use long_short_ratio::LongShortRatio;
@@ -630,6 +637,7 @@ pub use pvi::Pvi;
 pub use quoted_spread::QuotedSpread;
 pub use r_squared::RSquared;
 pub use realized_spread::RealizedSpread;
+pub use realized_volatility::RealizedVolatility;
 pub use recovery_factor::RecoveryFactor;
 pub use rectangle_range::RectangleRange;
 pub use relative_strength_ab::{RelativeStrengthAB, RelativeStrengthOutput};
@@ -644,6 +652,9 @@ pub use rocr100::Rocr100;
 pub use rogers_satchell::RogersSatchellVolatility;
 pub use rolling_correlation::RollingCorrelation;
 pub use rolling_covariance::RollingCovariance;
+pub use rolling_iqr::RollingIqr;
+pub use rolling_percentile_rank::RollingPercentileRank;
+pub use rolling_quantile::RollingQuantile;
 pub use roofing_filter::RoofingFilter;
 pub use rsi::Rsi;
 pub use rvi::Rvi;
@@ -668,6 +679,7 @@ pub use smma::Smma;
 pub use sortino_ratio::SortinoRatio;
 pub use spearman_correlation::SpearmanCorrelation;
 pub use spinning_top::SpinningTop;
+pub use spread_ar1_coefficient::SpreadAr1Coefficient;
 pub use spread_bollinger_bands::{SpreadBollingerBands, SpreadBollingerBandsOutput};
 pub use spread_hurst::SpreadHurst;
 pub use stalled_pattern::StalledPattern;
@@ -987,6 +999,12 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "GrangerCausality",
             "KalmanHedgeRatio",
             "SpreadBollingerBands",
+            "LogReturn",
+            "RealizedVolatility",
+            "RollingIqr",
+            "RollingPercentileRank",
+            "RollingQuantile",
+            "SpreadAr1Coefficient",
         ],
     ),
     (
@@ -1285,6 +1303,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 377, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 383, "FAMILIES total drifted from indicator count");
     }
 }

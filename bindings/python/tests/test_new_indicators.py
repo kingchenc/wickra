@@ -45,6 +45,11 @@ def ohlcv() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 # --- Scalar (f64 -> f64) indicators ---------------------------------------
 
 SCALAR = [
+    (ta.RollingQuantile, (20, 0.5)),
+    (ta.RollingPercentileRank, (14,)),
+    (ta.RollingIqr, (14,)),
+    (ta.RealizedVolatility, (20,)),
+    (ta.LogReturn, (1,)),
     (ta.TSF, (14,)),
     (ta.LINEARREG_INTERCEPT, (14,)),
     (ta.ROCR100, (10,)),
@@ -167,6 +172,7 @@ def test_scalar_streaming_matches_batch(cls, args, sine_prices):
 # --- Two-series (asset, benchmark) indicators -----------------------------
 
 PAIR = [
+    (ta.SpreadAr1Coefficient, (40,)),
     (ta.GrangerCausality, (60, 1)),
     (ta.VarianceRatio, (60, 2)),
     (ta.BetaNeutralSpread, (20,)),
@@ -2706,6 +2712,16 @@ def test_fib_time_zones_reference():
     assert t.update((151.0, 155.0, 151.0, 151.0, 1.0, 3)) == pytest.approx((1.0, 2.0))
     assert t.update((151.0, 155.0, 151.0, 151.0, 1.0, 4)) == pytest.approx((0.0, 1.0))
     assert t.update((151.0, 155.0, 151.0, 151.0, 1.0, 5)) == pytest.approx((1.0, 3.0))
+
+
+def test_spread_ar1_coefficient_reference():
+    t = ta.SpreadAr1Coefficient(20)
+    assert t.update(1.0, 1.0) is None
+    # Spread a - b grows by exactly 1 each bar (unit root) => rho == 1.
+    a = np.array([2.0 * i for i in range(40)])
+    b = np.array([float(i) for i in range(40)])
+    out = ta.SpreadAr1Coefficient(20).batch(a, b)
+    assert math.isclose(out[-1], 1.0, abs_tol=1e-9)
 
 # --- Lifecycle ------------------------------------------------------------
 

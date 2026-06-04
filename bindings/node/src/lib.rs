@@ -182,6 +182,52 @@ node_scalar_indicator!(
     wc::LinRegIntercept
 );
 node_scalar_indicator!(TsfNode, "TSF", wc::Tsf);
+node_scalar_indicator!(LogReturnNode, "LogReturn", wc::LogReturn);
+node_scalar_indicator!(
+    RealizedVolatilityNode,
+    "RealizedVolatility",
+    wc::RealizedVolatility
+);
+node_scalar_indicator!(RollingIqrNode, "RollingIqr", wc::RollingIqr);
+node_scalar_indicator!(
+    RollingPercentileRankNode,
+    "RollingPercentileRank",
+    wc::RollingPercentileRank
+);
+#[napi(js_name = "RollingQuantile")]
+pub struct RollingQuantileNode {
+    inner: wc::RollingQuantile,
+}
+
+#[napi]
+impl RollingQuantileNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, quantile: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::RollingQuantile::new(period as usize, quantile).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
 
 // ============================== Autocorrelation (period + lag) ==============================
 
@@ -317,6 +363,11 @@ node_pair_indicator!(
 );
 node_pair_indicator!(BetaNode, "Beta", wc::Beta);
 node_pair_indicator!(PairwiseBetaNode, "PairwiseBeta", wc::PairwiseBeta);
+node_pair_indicator!(
+    SpreadAr1CoefficientNode,
+    "SpreadAr1Coefficient",
+    wc::SpreadAr1Coefficient
+);
 node_pair_indicator!(
     SpearmanCorrelationNode,
     "SpearmanCorrelation",

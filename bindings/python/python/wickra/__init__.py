@@ -25,6 +25,11 @@ from __future__ import annotations
 
 from ._wickra import (
     __version__,
+    RollingQuantile,
+    RollingPercentileRank,
+    RollingIqr,
+    RealizedVolatility,
+    LogReturn,
     TSF,
     LINEARREG_INTERCEPT,
     ROCR100,
@@ -189,6 +194,7 @@ from ._wickra import (
     PearsonCorrelation,
     Beta,
     PairwiseBeta,
+    SpreadAr1Coefficient,
     PairSpreadZScore,
     LeadLagCrossCorrelation,
     Cointegration,
@@ -430,6 +436,11 @@ from ._wickra import (
 )
 
 __all__ = [
+    "RollingQuantile",
+    "RollingPercentileRank",
+    "RollingIqr",
+    "RealizedVolatility",
+    "LogReturn",
     "TSF",
     "LINEARREG_INTERCEPT",
     "ROCR100",
@@ -595,6 +606,7 @@ __all__ = [
     "PearsonCorrelation",
     "Beta",
     "PairwiseBeta",
+    "SpreadAr1Coefficient",
     "PairSpreadZScore",
     "LeadLagCrossCorrelation",
     "Cointegration",
