@@ -117,7 +117,10 @@ impl AdaptiveLaguerreFilter {
             return 0.0;
         }
         let mut norm: Vec<f64> = self.diffs.iter().map(|&d| (d - ll) / range).collect();
-        norm.sort_by(|a, b| a.partial_cmp(b).expect("normalised errors are finite"));
+        // `total_cmp` never panics — under pathological (e.g. overflowing) fuzz
+        // inputs a normalised error can be non-finite; a total order keeps the
+        // sort sound where `partial_cmp` would return `None`.
+        norm.sort_by(f64::total_cmp);
         let mid = norm.len() / 2;
         if norm.len() % 2 == 1 {
             norm[mid]
@@ -284,12 +287,11 @@ mod tests {
             if i < 4 * period {
                 continue;
             }
-            if let Some(v) = v {
-                assert!(
-                    v >= lo - 1e-6 && v <= hi + 1e-6,
-                    "filter {v} left price range at index {i}"
-                );
-            }
+            let v = v.expect("filter is ready well past warmup");
+            assert!(
+                v >= lo - 1e-6 && v <= hi + 1e-6,
+                "filter out of range at {i}"
+            );
         }
     }
 
