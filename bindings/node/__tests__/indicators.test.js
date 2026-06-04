@@ -28,6 +28,9 @@ function num(v) {
 // --- Scalar indicators: update(value) vs batch(prices) ---
 
 const scalarFactories = {
+  WAVE_PM: () => new wickra.WAVE_PM(32, 3),
+  POLARIZED_FRACTAL_EFFICIENCY: () => new wickra.POLARIZED_FRACTAL_EFFICIENCY(10, 5),
+  TREND_STRENGTH_INDEX: () => new wickra.TREND_STRENGTH_INDEX(20),
   DerivativeOscillator: () => new wickra.DerivativeOscillator(14, 5, 3, 9),
   RMI: () => new wickra.RMI(14, 5),
   DynamicMomentumIndex: () => new wickra.DynamicMomentumIndex(14),
@@ -342,6 +345,8 @@ const candleScalar = {
   HighLowRange: { make: () => new wickra.HighLowRange(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   StochasticCCI: { make: () => new wickra.StochasticCCI(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   IMI: { make: () => new wickra.IMI(14), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  TTM_TREND: { make: () => new wickra.TTM_TREND(6), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  Qstick: { make: () => new wickra.Qstick(10), step: (ind, i) => ind.update(open[i], close[i]), batch: (ind) => ind.batch(open, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {
@@ -426,6 +431,8 @@ const multi = {
   FibTimeZones: { make: () => new wickra.FibTimeZones(), fields: ['onZone', 'barsToNext'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   ElderRay: { make: () => new wickra.ElderRay(13), fields: ['bullPower', 'bearPower'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   QQE: { make: () => new wickra.QQE(14, 5, 4.236), fields: ['rsiMa', 'trailingLine'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
+  GatorOscillator: { make: () => new wickra.GatorOscillator(13, 8, 5), fields: ['upper', 'lower'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  KasePermissionStochastic: { make: () => new wickra.KasePermissionStochastic(9, 3), fields: ['fast', 'slow'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
 };
 
 for (const [name, d] of Object.entries(multi)) {

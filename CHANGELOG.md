@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **Qstick** — Qstick (Chande), the SMA of the candle body (close − open) as a net buying/selling pressure gauge (`QSTICK`).
+- **TTM Trend** — TTM Trend (John Carter), +1/−1 by whether the close sits above the SMA of recent median prices (`TTM_TREND`).
+- **Trend Strength Index** — trend strength index, the signed r² of a linear regression of price against time (`TREND_STRENGTH_INDEX`).
+- **Polarized Fractal Efficiency** — polarized fractal efficiency (Hannula), directional trend efficiency over a fractal lookback (`POLARIZED_FRACTAL_EFFICIENCY`).
+- **Wave PM** — Wave PM (Kase), a variance-normalised peak-momentum statistic (`WAVE_PM`).
+- **Gator Oscillator** — Gator Oscillator (Bill Williams), the Alligator convergence/divergence histogram (`GATOR_OSCILLATOR`).
+- **Kase Permission Stochastic** — Kase Permission Stochastic, a double-smoothed stochastic used as a trade-permission filter (`KASE_PERMISSION_STOCHASTIC`).
 
 ## [0.5.6] - 2026-06-04
 - **QQE** — quantitative qualitative estimation, a smoothed RSI with an ATR-of-RSI trailing line (`QQE`).

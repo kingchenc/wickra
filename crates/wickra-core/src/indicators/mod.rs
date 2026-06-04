@@ -145,6 +145,7 @@ mod gain_loss_ratio;
 mod gap_side_by_side_white;
 mod garman_klass;
 mod gartley;
+mod gator_oscillator;
 mod generalized_dema;
 mod geometric_ma;
 mod golden_pocket;
@@ -187,6 +188,7 @@ mod jump_indicator;
 mod kagi_bars;
 mod kalman_hedge_ratio;
 mod kama;
+mod kase_permission_stochastic;
 mod kelly_criterion;
 mod keltner;
 mod kicking;
@@ -266,11 +268,13 @@ mod plus_di;
 mod plus_dm;
 mod pmo;
 mod point_and_figure_bars;
+mod polarized_fractal_efficiency;
 mod ppo;
 mod profit_factor;
 mod psar;
 mod pvi;
 mod qqe;
+mod qstick;
 mod quoted_spread;
 mod r_squared;
 mod realized_spread;
@@ -368,6 +372,7 @@ mod time_of_day_return_profile;
 mod tpo_profile;
 mod trade_imbalance;
 mod trend_label;
+mod trend_strength_index;
 mod treynor_ratio;
 mod triangle;
 mod trima;
@@ -379,6 +384,7 @@ mod tsf;
 mod tsi;
 mod tsv;
 mod ttm_squeeze;
+mod ttm_trend;
 mod turn_of_month;
 mod tweezer;
 mod two_crows;
@@ -406,6 +412,7 @@ mod vwap;
 mod vwap_stddev_bands;
 mod vwma;
 mod vzo;
+mod wave_pm;
 mod wave_trend;
 mod wedge;
 mod weighted_close;
@@ -558,6 +565,7 @@ pub use gain_loss_ratio::GainLossRatio;
 pub use gap_side_by_side_white::GapSideBySideWhite;
 pub use garman_klass::GarmanKlassVolatility;
 pub use gartley::Gartley;
+pub use gator_oscillator::GatorOscillator;
 pub use generalized_dema::GeneralizedDema;
 pub use geometric_ma::GeometricMa;
 pub use golden_pocket::{GoldenPocket, GoldenPocketOutput};
@@ -600,6 +608,7 @@ pub use jump_indicator::JumpIndicator;
 pub use kagi_bars::{KagiBar, KagiBars};
 pub use kalman_hedge_ratio::{KalmanHedgeRatio, KalmanHedgeRatioOutput};
 pub use kama::Kama;
+pub use kase_permission_stochastic::KasePermissionStochastic;
 pub use kelly_criterion::KellyCriterion;
 pub use keltner::{Keltner, KeltnerOutput};
 pub use kicking::Kicking;
@@ -679,11 +688,13 @@ pub use plus_di::PlusDi;
 pub use plus_dm::PlusDm;
 pub use pmo::Pmo;
 pub use point_and_figure_bars::{PnfColumn, PointAndFigureBars};
+pub use polarized_fractal_efficiency::PolarizedFractalEfficiency;
 pub use ppo::Ppo;
 pub use profit_factor::ProfitFactor;
 pub use psar::Psar;
 pub use pvi::Pvi;
 pub use qqe::{Qqe, QqeOutput};
+pub use qstick::Qstick;
 pub use quoted_spread::QuotedSpread;
 pub use r_squared::RSquared;
 pub use realized_spread::RealizedSpread;
@@ -781,6 +792,7 @@ pub use time_of_day_return_profile::{TimeOfDayReturnProfile, TimeOfDayReturnProf
 pub use tpo_profile::{TpoProfile, TpoProfileOutput};
 pub use trade_imbalance::TradeImbalance;
 pub use trend_label::TrendLabel;
+pub use trend_strength_index::TrendStrengthIndex;
 pub use treynor_ratio::TreynorRatio;
 pub use triangle::Triangle;
 pub use trima::Trima;
@@ -792,6 +804,7 @@ pub use tsf::Tsf;
 pub use tsi::Tsi;
 pub use tsv::Tsv;
 pub use ttm_squeeze::{TtmSqueeze, TtmSqueezeOutput};
+pub use ttm_trend::TtmTrend;
 pub use turn_of_month::TurnOfMonth;
 pub use tweezer::Tweezer;
 pub use two_crows::TwoCrows;
@@ -819,6 +832,7 @@ pub use vwap::{RollingVwap, Vwap};
 pub use vwap_stddev_bands::{VwapStdDevBands, VwapStdDevBandsOutput};
 pub use vwma::Vwma;
 pub use vzo::Vzo;
+pub use wave_pm::WavePm;
 pub use wave_trend::{WaveTrend, WaveTrendOutput};
 pub use wedge::Wedge;
 pub use weighted_close::WeightedClose;
@@ -936,6 +950,13 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "MinusDi",
             "Dx",
             "TrendLabel",
+            "TtmTrend",
+            "TrendStrengthIndex",
+            "Qstick",
+            "PolarizedFractalEfficiency",
+            "WavePm",
+            "GatorOscillator",
+            "KasePermissionStochastic",
         ],
     ),
     (
@@ -1393,6 +1414,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 413, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 420, "FAMILIES total drifted from indicator count");
     }
 }

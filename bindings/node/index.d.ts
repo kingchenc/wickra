@@ -77,6 +77,14 @@ export interface ElderRayValue {
   bullPower: number
   bearPower: number
 }
+export interface GatorOscillatorValue {
+  upper: number
+  lower: number
+}
+export interface KasePermissionStochasticValue {
+  fast: number
+  slow: number
+}
 export interface StochValue {
   k: number
   d: number
@@ -961,6 +969,15 @@ export declare class DynamicMomentumIndex {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type TrendStrengthIndexNode = TREND_STRENGTH_INDEX
+export declare class TREND_STRENGTH_INDEX {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type JumpIndicatorNode = JumpIndicator
 export declare class JumpIndicator {
   constructor(period: number, threshold: number)
@@ -1489,6 +1506,60 @@ export type ElderRayNode = ElderRay
 export declare class ElderRay {
   constructor(period: number)
   update(high: number, low: number, close: number): ElderRayValue | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TtmTrendNode = TTM_TREND
+export declare class TTM_TREND {
+  constructor(period: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type QstickNode = Qstick
+export declare class Qstick {
+  constructor(period: number)
+  update(open: number, close: number): number | null
+  batch(open: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type PolarizedFractalEfficiencyNode = POLARIZED_FRACTAL_EFFICIENCY
+export declare class POLARIZED_FRACTAL_EFFICIENCY {
+  constructor(period: number, smoothing: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type WavePmNode = WAVE_PM
+export declare class WAVE_PM {
+  constructor(length: number, smoothing: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type GatorOscillatorNode = GatorOscillator
+export declare class GatorOscillator {
+  constructor(jawPeriod: number, teethPeriod: number, lipsPeriod: number)
+  update(high: number, low: number, close: number): GatorOscillatorValue | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type KasePermissionStochasticNode = KasePermissionStochastic
+export declare class KasePermissionStochastic {
+  constructor(length: number, smooth: number)
+  update(high: number, low: number, close: number): KasePermissionStochasticValue | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
   isReady(): boolean
