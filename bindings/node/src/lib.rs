@@ -194,6 +194,77 @@ node_scalar_indicator!(
     "RollingPercentileRank",
     wc::RollingPercentileRank
 );
+node_scalar_indicator!(TrendLabelNode, "TrendLabel", wc::TrendLabel);
+#[napi(js_name = "JumpIndicator")]
+pub struct JumpIndicatorNode {
+    inner: wc::JumpIndicator,
+}
+
+#[napi]
+impl JumpIndicatorNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, threshold: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::JumpIndicator::new(period as usize, threshold).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "RegimeLabel")]
+pub struct RegimeLabelNode {
+    inner: wc::RegimeLabel,
+}
+
+#[napi]
+impl RegimeLabelNode {
+    #[napi(constructor)]
+    pub fn new(vol_period: u32, lookback: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::RegimeLabel::new(vol_period as usize, lookback as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 #[napi(js_name = "RollingQuantile")]
 pub struct RollingQuantileNode {
     inner: wc::RollingQuantile,

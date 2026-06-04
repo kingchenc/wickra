@@ -28,6 +28,9 @@ function num(v) {
 // --- Scalar indicators: update(value) vs batch(prices) ---
 
 const scalarFactories = {
+  RegimeLabel: () => new wickra.RegimeLabel(5, 20),
+  JumpIndicator: () => new wickra.JumpIndicator(20, 3.0),
+  TrendLabel: () => new wickra.TrendLabel(10),
   RollingQuantile: () => new wickra.RollingQuantile(20, 0.5),
   RollingPercentileRank: () => new wickra.RollingPercentileRank(14),
   RollingIqr: () => new wickra.RollingIqr(14),

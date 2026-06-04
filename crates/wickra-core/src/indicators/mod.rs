@@ -170,6 +170,7 @@ mod intraday_volatility_profile;
 mod inverse_fisher_transform;
 mod inverted_hammer;
 mod jma;
+mod jump_indicator;
 mod kagi_bars;
 mod kalman_hedge_ratio;
 mod kama;
@@ -260,6 +261,7 @@ mod realized_spread;
 mod realized_volatility;
 mod recovery_factor;
 mod rectangle_range;
+mod regime_label;
 mod relative_strength_ab;
 mod renko_bars;
 mod renko_trailing_stop;
@@ -344,6 +346,7 @@ mod tii;
 mod time_of_day_return_profile;
 mod tpo_profile;
 mod trade_imbalance;
+mod trend_label;
 mod treynor_ratio;
 mod triangle;
 mod trima;
@@ -557,6 +560,7 @@ pub use intraday_volatility_profile::{IntradayVolatilityProfile, IntradayVolatil
 pub use inverse_fisher_transform::InverseFisherTransform;
 pub use inverted_hammer::InvertedHammer;
 pub use jma::Jma;
+pub use jump_indicator::JumpIndicator;
 pub use kagi_bars::{KagiBar, KagiBars};
 pub use kalman_hedge_ratio::{KalmanHedgeRatio, KalmanHedgeRatioOutput};
 pub use kama::Kama;
@@ -647,6 +651,7 @@ pub use realized_spread::RealizedSpread;
 pub use realized_volatility::RealizedVolatility;
 pub use recovery_factor::RecoveryFactor;
 pub use rectangle_range::RectangleRange;
+pub use regime_label::RegimeLabel;
 pub use relative_strength_ab::{RelativeStrengthAB, RelativeStrengthOutput};
 pub use renko_bars::{RenkoBars, RenkoBrick};
 pub use renko_trailing_stop::RenkoTrailingStop;
@@ -731,6 +736,7 @@ pub use tii::Tii;
 pub use time_of_day_return_profile::{TimeOfDayReturnProfile, TimeOfDayReturnProfileOutput};
 pub use tpo_profile::{TpoProfile, TpoProfileOutput};
 pub use trade_imbalance::TradeImbalance;
+pub use trend_label::TrendLabel;
 pub use treynor_ratio::TreynorRatio;
 pub use triangle::Triangle;
 pub use trima::Trima;
@@ -866,6 +872,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "PlusDi",
             "MinusDi",
             "Dx",
+            "TrendLabel",
         ],
     ),
     (
@@ -904,6 +911,8 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "GarmanKlassVolatility",
             "RogersSatchellVolatility",
             "YangZhangVolatility",
+            "JumpIndicator",
+            "RegimeLabel",
         ],
     ),
     (
@@ -1315,6 +1324,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 387, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 390, "FAMILIES total drifted from indicator count");
     }
 }

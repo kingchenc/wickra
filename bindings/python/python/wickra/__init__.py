@@ -25,6 +25,9 @@ from __future__ import annotations
 
 from ._wickra import (
     __version__,
+    RegimeLabel,
+    JumpIndicator,
+    TrendLabel,
     HighLowRange,
     WickRatio,
     BodySizePct,
@@ -440,6 +443,9 @@ from ._wickra import (
 )
 
 __all__ = [
+    "RegimeLabel",
+    "JumpIndicator",
+    "TrendLabel",
     "HighLowRange",
     "WickRatio",
     "BodySizePct",

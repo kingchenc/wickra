@@ -10081,6 +10081,9 @@ wasm_scalar_indicator!(WasmRealizedVolatility, "RealizedVolatility", wc::Realize
 wasm_scalar_indicator!(WasmRollingIqr, "RollingIqr", wc::RollingIqr, period: usize);
 wasm_scalar_indicator!(WasmRollingPercentileRank, "RollingPercentileRank", wc::RollingPercentileRank, period: usize);
 wasm_scalar_indicator!(WasmRollingQuantile, "RollingQuantile", wc::RollingQuantile, period: usize, quantile: f64);
+wasm_scalar_indicator!(WasmTrendLabel, "TrendLabel", wc::TrendLabel, period: usize);
+wasm_scalar_indicator!(WasmJumpIndicator, "JumpIndicator", wc::JumpIndicator, period: usize, threshold: f64);
+wasm_scalar_indicator!(WasmRegimeLabel, "RegimeLabel", wc::RegimeLabel, vol_period: usize, lookback: usize);
 
 // --- DrawdownDuration: u32 output, no constructor args ---
 

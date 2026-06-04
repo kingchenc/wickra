@@ -845,6 +845,33 @@ export declare class RollingPercentileRank {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type TrendLabelNode = TrendLabel
+export declare class TrendLabel {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type JumpIndicatorNode = JumpIndicator
+export declare class JumpIndicator {
+  constructor(period: number, threshold: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RegimeLabelNode = RegimeLabel
+export declare class RegimeLabel {
+  constructor(volPeriod: number, lookback: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type RollingQuantileNode = RollingQuantile
 export declare class RollingQuantile {
   constructor(period: number, quantile: number)

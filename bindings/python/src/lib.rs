@@ -2104,6 +2104,160 @@ impl PyHighLowRange {
     }
 }
 
+// ============================== TrendLabel ==============================
+
+#[pyclass(name = "TrendLabel", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyTrendLabel {
+    inner: wc::TrendLabel,
+}
+
+#[pymethods]
+impl PyTrendLabel {
+    #[new]
+    #[pyo3(signature = (period=10))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::TrendLabel::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("TrendLabel(period={})", self.inner.period())
+    }
+}
+
+// ============================== JumpIndicator ==============================
+
+#[pyclass(name = "JumpIndicator", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyJumpIndicator {
+    inner: wc::JumpIndicator,
+}
+
+#[pymethods]
+impl PyJumpIndicator {
+    #[new]
+    #[pyo3(signature = (period=20, threshold=3.0))]
+    fn new(period: usize, threshold: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::JumpIndicator::new(period, threshold).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.params().0
+    }
+    #[getter]
+    fn threshold(&self) -> f64 {
+        self.inner.params().1
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (period, threshold) = self.inner.params();
+        format!("JumpIndicator(period={period}, threshold={threshold})")
+    }
+}
+
+// ============================== RegimeLabel ==============================
+
+#[pyclass(name = "RegimeLabel", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyRegimeLabel {
+    inner: wc::RegimeLabel,
+}
+
+#[pymethods]
+impl PyRegimeLabel {
+    #[new]
+    #[pyo3(signature = (vol_period=5, lookback=20))]
+    fn new(vol_period: usize, lookback: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::RegimeLabel::new(vol_period, lookback).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn vol_period(&self) -> usize {
+        self.inner.params().0
+    }
+    #[getter]
+    fn lookback(&self) -> usize {
+        self.inner.params().1
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (vol_period, lookback) = self.inner.params();
+        format!("RegimeLabel(vol_period={vol_period}, lookback={lookback})")
+    }
+}
+
 // ============================== Stochastic ==============================
 
 #[pyclass(name = "Stochastic", module = "wickra._wickra", skip_from_py_object)]
@@ -19557,5 +19711,8 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyBodySizePct>()?;
     m.add_class::<PyWickRatio>()?;
     m.add_class::<PyHighLowRange>()?;
+    m.add_class::<PyTrendLabel>()?;
+    m.add_class::<PyJumpIndicator>()?;
+    m.add_class::<PyRegimeLabel>()?;
     Ok(())
 }
