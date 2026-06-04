@@ -46,6 +46,7 @@ mod bat;
 mod belt_hold;
 mod beta;
 mod beta_neutral_spread;
+mod body_size_pct;
 mod bollinger;
 mod bollinger_bandwidth;
 mod breadth_thrust;
@@ -64,6 +65,7 @@ mod chande_kroll_stop;
 mod chandelier_exit;
 mod choppiness_index;
 mod classic_pivots;
+mod close_vs_open;
 mod closing_marubozu;
 mod cmf;
 mod cmo;
@@ -143,6 +145,7 @@ mod harami;
 mod head_and_shoulders;
 mod heikin_ashi;
 mod high_low_index;
+mod high_low_range;
 mod high_wave;
 mod hikkake;
 mod hikkake_modified;
@@ -381,6 +384,7 @@ mod vzo;
 mod wave_trend;
 mod wedge;
 mod weighted_close;
+mod wick_ratio;
 mod williams_fractals;
 mod williams_r;
 mod wma;
@@ -429,6 +433,7 @@ pub use bat::Bat;
 pub use belt_hold::BeltHold;
 pub use beta::Beta;
 pub use beta_neutral_spread::BetaNeutralSpread;
+pub use body_size_pct::BodySizePct;
 pub use bollinger::{BollingerBands, BollingerOutput};
 pub use bollinger_bandwidth::BollingerBandwidth;
 pub use breadth_thrust::BreadthThrust;
@@ -447,6 +452,7 @@ pub use chande_kroll_stop::{ChandeKrollStop, ChandeKrollStopOutput};
 pub use chandelier_exit::{ChandelierExit, ChandelierExitOutput};
 pub use choppiness_index::ChoppinessIndex;
 pub use classic_pivots::{ClassicPivots, ClassicPivotsOutput};
+pub use close_vs_open::CloseVsOpen;
 pub use closing_marubozu::ClosingMarubozu;
 pub use cmf::ChaikinMoneyFlow;
 pub use cmo::Cmo;
@@ -526,6 +532,7 @@ pub use harami::Harami;
 pub use head_and_shoulders::HeadAndShoulders;
 pub use heikin_ashi::{HeikinAshi, HeikinAshiOutput};
 pub use high_low_index::HighLowIndex;
+pub use high_low_range::HighLowRange;
 pub use high_wave::HighWave;
 pub use hikkake::Hikkake;
 pub use hikkake_modified::HikkakeModified;
@@ -764,6 +771,7 @@ pub use vzo::Vzo;
 pub use wave_trend::{WaveTrend, WaveTrendOutput};
 pub use wedge::Wedge;
 pub use weighted_close::WeightedClose;
+pub use wick_ratio::WickRatio;
 pub use williams_fractals::{WilliamsFractals, WilliamsFractalsOutput};
 pub use williams_r::WilliamsR;
 pub use wma::Wma;
@@ -1005,6 +1013,10 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "RollingPercentileRank",
             "RollingQuantile",
             "SpreadAr1Coefficient",
+            "CloseVsOpen",
+            "BodySizePct",
+            "WickRatio",
+            "HighLowRange",
         ],
     ),
     (
@@ -1303,6 +1315,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 383, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 387, "FAMILIES total drifted from indicator count");
     }
 }

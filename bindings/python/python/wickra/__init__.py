@@ -25,6 +25,10 @@ from __future__ import annotations
 
 from ._wickra import (
     __version__,
+    HighLowRange,
+    WickRatio,
+    BodySizePct,
+    CloseVsOpen,
     RollingQuantile,
     RollingPercentileRank,
     RollingIqr,
@@ -436,6 +440,10 @@ from ._wickra import (
 )
 
 __all__ = [
+    "HighLowRange",
+    "WickRatio",
+    "BodySizePct",
+    "CloseVsOpen",
     "RollingQuantile",
     "RollingPercentileRank",
     "RollingIqr",

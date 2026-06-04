@@ -1846,6 +1846,210 @@ impl WasmHtPhasor {
     }
 }
 
+#[wasm_bindgen(js_name = CloseVsOpen)]
+pub struct WasmCloseVsOpen {
+    inner: wc::CloseVsOpen,
+}
+
+impl Default for WasmCloseVsOpen {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = CloseVsOpen)]
+impl WasmCloseVsOpen {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmCloseVsOpen {
+        Self {
+            inner: wc::CloseVsOpen::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = make_candle_ohlc(open, high, low, close)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(open.len());
+        for i in 0..open.len() {
+            let c = make_candle_ohlc(open[i], high[i], low[i], close[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = BodySizePct)]
+pub struct WasmBodySizePct {
+    inner: wc::BodySizePct,
+}
+
+impl Default for WasmBodySizePct {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = BodySizePct)]
+impl WasmBodySizePct {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmBodySizePct {
+        Self {
+            inner: wc::BodySizePct::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = make_candle_ohlc(open, high, low, close)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(open.len());
+        for i in 0..open.len() {
+            let c = make_candle_ohlc(open[i], high[i], low[i], close[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = WickRatio)]
+pub struct WasmWickRatio {
+    inner: wc::WickRatio,
+}
+
+impl Default for WasmWickRatio {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = WickRatio)]
+impl WasmWickRatio {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmWickRatio {
+        Self {
+            inner: wc::WickRatio::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = make_candle_ohlc(open, high, low, close)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(open.len());
+        for i in 0..open.len() {
+            let c = make_candle_ohlc(open[i], high[i], low[i], close[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = HighLowRange)]
+pub struct WasmHighLowRange {
+    inner: wc::HighLowRange,
+}
+
+impl Default for WasmHighLowRange {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = HighLowRange)]
+impl WasmHighLowRange {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmHighLowRange {
+        Self {
+            inner: wc::HighLowRange::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> Result<Option<f64>, JsError> {
+        let c = make_candle_ohlc(open, high, low, close)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        open: &[f64],
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("open, high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(open.len());
+        for i in 0..open.len() {
+            let c = make_candle_ohlc(open[i], high[i], low[i], close[i])?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
 #[wasm_bindgen(js_name = Stochastic)]
 pub struct WasmStoch {
     inner: wc::Stochastic,

@@ -336,6 +336,12 @@ def test_relative_strength_streaming_matches_batch():
 # 6-tuple candle; the batch helper takes only the columns it needs.
 
 CANDLE_SCALAR = {
+    # Per-bar OHLC transforms (open matters). The streaming harness feeds
+    # open == close, so batch passes the close column in for open to match.
+    "HighLowRange": (lambda: ta.HighLowRange(), lambda ind, h, l, c, v: ind.batch(c, h, l, c)),
+    "WickRatio": (lambda: ta.WickRatio(), lambda ind, h, l, c, v: ind.batch(c, h, l, c)),
+    "BodySizePct": (lambda: ta.BodySizePct(), lambda ind, h, l, c, v: ind.batch(c, h, l, c)),
+    "CloseVsOpen": (lambda: ta.CloseVsOpen(), lambda ind, h, l, c, v: ind.batch(c, h, l, c)),
     "ThreeDrives": (
         lambda: ta.ThreeDrives(),
         lambda ind, h, l, c, v: ind.batch(c, h, l, c),

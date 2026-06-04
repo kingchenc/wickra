@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **High-Low Range** — bar high-low range as a fraction of close (scale-free per-bar volatility) (`HighLowRange`).
+- **Wick Ratio** — signed upper-vs-lower shadow imbalance as a fraction of the range (`WickRatio`).
+- **Body Size Percent** — absolute candle body as a fraction of the bar range (`BodySizePct`).
+- **Close vs Open** — signed body as a fraction of the open price, `(close − open) / open` (`CloseVsOpen`).
 - **Spread AR(1) Coefficient** — first-order autoregression coefficient of the spread `a − b` (direct cointegration / mean-reversion strength) (`SpreadAr1Coefficient`).
 - **Rolling Quantile** — interpolated q-th quantile over a trailing window (type-7 / NumPy default) (`RollingQuantile`).
 - **Rolling Percentile Rank** — percentile rank of the latest value within its trailing window (`RollingPercentileRank`).

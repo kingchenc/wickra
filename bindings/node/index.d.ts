@@ -1288,6 +1288,42 @@ export declare class HT_PHASOR {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type CloseVsOpenNode = CloseVsOpen
+export declare class CloseVsOpen {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type BodySizePctNode = BodySizePct
+export declare class BodySizePct {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type WickRatioNode = WickRatio
+export declare class WickRatio {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type HighLowRangeNode = HighLowRange
+export declare class HighLowRange {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type StochNode = Stochastic
 export declare class Stochastic {
   constructor(kPeriod: number, dPeriod: number)
