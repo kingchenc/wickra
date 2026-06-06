@@ -60,6 +60,12 @@ Full documentation lives at **[docs.wickra.org](https://docs.wickra.org)**:
 
 ## Why Wickra exists
 
+Wickra started as a personal itch. The existing TA libraries never quite fit the
+projects I was building, so I decided to build one from the ground up — partly to
+learn, partly because I genuinely enjoy taking something that already exists and
+trying to do it differently (and, ideally, better). It's open source because the
+useful version of that itch is the one other people can build on too.
+
 Plenty of TA libraries are fast. Each one forces a trade-off Wickra does not:
 
 | Library          | Install     | Streaming   | Languages                   | Indicators | Active |
@@ -75,10 +81,19 @@ Plenty of TA libraries are fast. Each one forces a trade-off Wickra does not:
 
 Wickra's edge is **breadth with reach**: 423 indicators that all update in O(1)
 per tick and ship natively to Python, Node.js, WebAssembly and Rust from a
-single engine. It is **not** the fastest per indicator — the leaner Rust crates
-(kand, ta-rs) win several of the micro-benchmarks below, and those losses are
-shown rather than hidden. What no other library matches is the *combination*:
-catalogue size, native streaming, and four first-class language targets at once.
+single engine.
+
+**On speed — and why Wickra isn't the fastest.** It deliberately isn't. The
+leaner Rust crates (kand, ta-rs) win several of the micro-benchmarks below, and
+those losses are shown rather than hidden. The gap is a *choice*, not a ceiling:
+every `update` validates its input, runs a real warmup before it emits a value,
+and returns an `Option` so a single bad tick can't silently poison the state.
+ta-rs, by contrast, hands back a bare `f64` from the first tick with no
+validation. If Wickra threw all of that away — raw `f64` out, no checks, no
+warmup contract — it would match or beat the leanest crate on every row. It
+keeps the guarantees instead, and still wins RSI, Bollinger and ATR against kand.
+What no other library matches is the *combination*: catalogue size, native O(1)
+streaming, NaN-safety, and four first-class language targets at once.
 
 ## Benchmarks
 
@@ -284,7 +299,8 @@ wickra/
 ├── crates/
 │   ├── wickra-core/         core engine + all 423 indicators
 │   ├── wickra/              top-level facade crate (publishes on crates.io) + benches/
-│   └── wickra-data/         CSV reader, tick aggregator, live exchange feeds
+│   ├── wickra-data/         CSV reader, tick aggregator, live exchange feeds
+│   └── wickra-bench/        internal cross-library benchmark harness (not published)
 ├── bindings/
 │   ├── python/              PyO3 + maturin (publishes on PyPI)
 │   ├── node/                napi-rs (publishes on npm)
@@ -298,9 +314,10 @@ wickra/
 └── .github/workflows/       CI and release pipelines
 ```
 
-Rust benchmarks live in `crates/wickra/benches/`; runnable Rust examples live
-in the workspace member crate at `examples/rust/`. There is no top-level
-`benches/` directory.
+Wickra's own regression benchmarks live in `crates/wickra/benches/`; the
+cross-library comparison against kand, ta-rs and yata lives in the internal
+`crates/wickra-bench/` crate. Runnable Rust examples live in the workspace member
+crate at `examples/rust/`. There is no top-level `benches/` directory.
 
 ## Building everything from source
 
@@ -308,7 +325,8 @@ in the workspace member crate at `examples/rust/`. There is no top-level
 # Rust core + tests
 cargo test --workspace
 cargo clippy --workspace --all-targets -- -D warnings
-cargo bench -p wickra
+cargo bench -p wickra           # Wickra's own regression benchmarks
+cargo bench -p wickra-bench     # cross-library comparison (kand, ta-rs, yata)
 
 # Python binding (requires Rust toolchain + maturin)
 cd bindings/python
@@ -407,4 +425,11 @@ The library is provided **as is**, without warranty of any kind; see
 
 <p align="center">
   If Wickra saved you time, the cheapest way to say thanks is to ⭐ the repo.
+</p>
+
+<p align="center">
+  <a href="https://github.com/wickra-lib/wickra">
+    <img alt="Star Wickra on GitHub"
+         src="https://img.shields.io/badge/%E2%AD%90%20Star%20Wickra%20on%20GitHub-1f2328?style=for-the-badge&logo=github&logoColor=ffd866&labelColor=1f2328">
+  </a>
 </p>
