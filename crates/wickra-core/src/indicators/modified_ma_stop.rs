@@ -193,10 +193,9 @@ mod tests {
         let candles: Vec<Candle> = (0..60).map(|i| c(100.0 + 2.0 * f64::from(i))).collect();
         let mut prev = f64::NEG_INFINITY;
         for o in m.batch(&candles).into_iter().flatten() {
-            if o.direction > 0.0 {
-                assert!(o.value >= prev, "long stop must not fall");
-                prev = o.value;
-            }
+            assert_eq!(o.direction, 1.0, "pure uptrend stays long");
+            assert!(o.value >= prev, "long stop must not fall");
+            prev = o.value;
         }
     }
 
