@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Internal Rust cross-library benchmark harness (`crates/wickra-bench`, not
+  published) comparing Wickra against `kand`, `ta-rs` and `yata` on an identical
+  candle series in both streaming and batch modes; wired into the nightly
+  `cross-library-bench` workflow.
+- `tulipy` runners and expanded per-tick streaming coverage (SMA, EMA, RSI,
+  MACD, Bollinger) in the Python `compare_libraries` benchmark.
+
+### Changed
+
+- Faster streaming and batch updates for SMA, Bollinger Bands, RSI, EMA and ATR
+  (flat ring buffers replacing `VecDeque`, hoisted reciprocals in the Wilder
+  smoothing, leaner hot state) — indicator outputs are unchanged.
+- Rewrote the README benchmark section into honest, tiered tables (Rust core vs
+  the other Rust crates, and Python vs the Python ecosystem) that show where
+  Wickra wins and where it loses, not only the favourable comparisons.
+
 ## [0.5.8] - 2026-06-04
 - **TSF Oscillator** — the percentage gap of the close to the one-bar-ahead time-series forecast, a close-relative companion to CFO (`TsfOscillator`).
 - **MACD Histogram** — the standalone macd-minus-signal bar of MACD as a scalar series (`MacdHistogram`).

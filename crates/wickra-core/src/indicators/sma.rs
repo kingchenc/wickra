@@ -1,7 +1,5 @@
 //! Simple Moving Average.
 
-use std::collections::VecDeque;
-
 use crate::error::{Error, Result};
 use crate::traits::Indicator;
 
@@ -33,7 +31,14 @@ use crate::traits::Indicator;
 #[derive(Debug, Clone)]
 pub struct Sma {
     period: usize,
-    window: VecDeque<f64>,
+    /// Fixed-capacity ring buffer of the last `period` finite inputs. A flat
+    /// `Box<[f64]>` with a manual write cursor beats `VecDeque` on this hot path:
+    /// sequential storage, branchless wraparound, no per-call bookkeeping.
+    buf: Box<[f64]>,
+    /// Index of the next slot to write — also the oldest element once full.
+    head: usize,
+    /// Number of slots filled, saturating at `period`.
+    count: usize,
     sum: f64,
     /// Number of finite updates since the running `sum` was last reseeded from
     /// the live window. Caps accumulated floating-point drift on long streams.
@@ -60,7 +65,9 @@ impl Sma {
         }
         Ok(Self {
             period,
-            window: VecDeque::with_capacity(period),
+            buf: vec![0.0; period].into_boxed_slice(),
+            head: 0,
+            count: 0,
             sum: 0.0,
             updates_since_recompute: 0,
         })
@@ -73,7 +80,7 @@ impl Sma {
 
     /// Current value if available.
     pub fn value(&self) -> Option<f64> {
-        if self.window.len() == self.period {
+        if self.count == self.period {
             Some(self.sum / self.period as f64)
         } else {
             None
@@ -89,25 +96,40 @@ impl Indicator for Sma {
         if !input.is_finite() {
             return self.value();
         }
-        if self.window.len() == self.period {
-            // Slide: drop the oldest, then add the new. Each step is a single
-            // f64 add/subtract — O(1) but introduces ~1 ULP of rounding noise.
-            // The periodic reseed below caps the accumulated drift.
-            let old = self.window.pop_front().expect("window non-empty");
-            self.sum -= old;
+        if self.count == self.period {
+            // Window full: overwrite the oldest slot (at `head`). Each step is a
+            // single f64 add/subtract — O(1) but introduces ~1 ULP of rounding
+            // noise. The periodic reseed below caps the accumulated drift.
+            self.sum -= self.buf[self.head];
+            self.buf[self.head] = input;
+            self.sum += input;
+        } else {
+            self.buf[self.head] = input;
+            self.sum += input;
+            self.count += 1;
         }
-        self.window.push_back(input);
-        self.sum += input;
+        // Branchless-ish wraparound, cheaper than `% period`.
+        self.head += 1;
+        if self.head == self.period {
+            self.head = 0;
+        }
         self.updates_since_recompute += 1;
         if self.updates_since_recompute >= RECOMPUTE_EVERY * self.period {
-            self.sum = self.window.iter().copied().sum();
+            // Reseed in chronological order (oldest at `head`) so the running sum
+            // tracks a fresh from-scratch mean to the bit on stable inputs.
+            self.sum = self.buf[self.head..]
+                .iter()
+                .chain(&self.buf[..self.head])
+                .copied()
+                .sum();
             self.updates_since_recompute = 0;
         }
         self.value()
     }
 
     fn reset(&mut self) {
-        self.window.clear();
+        self.head = 0;
+        self.count = 0;
         self.sum = 0.0;
         self.updates_since_recompute = 0;
     }
@@ -117,7 +139,7 @@ impl Indicator for Sma {
     }
 
     fn is_ready(&self) -> bool {
-        self.window.len() == self.period
+        self.count == self.period
     }
 
     fn name(&self) -> &'static str {
@@ -130,6 +152,7 @@ mod tests {
     use super::*;
     use crate::traits::BatchExt;
     use approx::assert_relative_eq;
+    use std::collections::VecDeque;
 
     #[test]
     fn new_rejects_zero_period() {

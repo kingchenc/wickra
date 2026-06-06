@@ -1,0 +1,22 @@
+[package]
+name = "wickra-bench"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+description = "Internal cross-library benchmark harness (not published)."
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+wickra = { path = "../wickra" }
+wickra-data = { path = "../wickra-data" }
+criterion = { workspace = true }
+kand = "0.2.2"
+ta = "0.5.0"
+yata = "0.7.0"
+
+[[bench]]
+name = "cross_lib"
+harness = false

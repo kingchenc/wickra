@@ -5,5 +5,7 @@
 maturin
 numpy
 pandas
+TA-Lib
+tulipy
 talipp
 finta

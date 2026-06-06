@@ -117,3 +117,29 @@ jobs:
         with:
           name: cross-library-bench
           path: bindings/python/benchmark.txt
+
+  rust-cross-bench:
+    name: Rust cross-library benchmark report
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable branch, 2026-03-27
+
+      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        continue-on-error: true # cache is an optimisation; never block on a stuck/slow restore
+        timeout-minutes: 6
+
+      # Wickra vs the other Rust TA crates (kand, ta-rs, yata) on an identical
+      # candle series — the like-for-like engine comparison with no binding
+      # overhead. Streaming + batch, in crates/wickra-bench/benches/cross_lib.rs.
+      - name: Run Rust cross-library benchmark
+        run: cargo bench -p wickra-bench --bench cross_lib | tee rust_cross_bench.txt
+
+      - name: Upload Rust report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: rust-cross-bench
+          path: rust_cross_bench.txt

@@ -39,6 +39,7 @@ bench = [
     "pytest-benchmark>=4",
     "TA-Lib; platform_system != 'Windows'",
     "pandas-ta>=0.3.14b",
+    "tulipy>=0.4; platform_system != 'Windows'",
     "talipp>=2",
     "finta>=1.3",
     "pandas>=2",

@@ -1,7 +1,5 @@
 //! Bollinger Bands.
 
-use std::collections::VecDeque;
-
 use crate::error::{Error, Result};
 use crate::traits::Indicator;
 
@@ -49,7 +47,13 @@ pub struct BollingerOutput {
 pub struct BollingerBands {
     period: usize,
     multiplier: f64,
-    window: VecDeque<f64>,
+    /// Fixed-capacity ring buffer of the last `period` finite inputs. A flat
+    /// `Box<[f64]>` with a manual write cursor beats `VecDeque` on this hot path.
+    buf: Box<[f64]>,
+    /// Index of the next slot to write — also the oldest element once full.
+    head: usize,
+    /// Number of slots filled, saturating at `period`.
+    count: usize,
     sum: f64,
     sum_sq: f64,
     /// Number of finite updates since the running sums were last reseeded
@@ -80,7 +84,9 @@ impl BollingerBands {
         Ok(Self {
             period,
             multiplier,
-            window: VecDeque::with_capacity(period),
+            buf: vec![0.0; period].into_boxed_slice(),
+            head: 0,
+            count: 0,
             sum: 0.0,
             sum_sq: 0.0,
             updates_since_recompute: 0,
@@ -103,7 +109,7 @@ impl BollingerBands {
     }
 
     fn current(&self) -> Option<BollingerOutput> {
-        if self.window.len() != self.period {
+        if self.count != self.period {
             return None;
         }
         let n = self.period as f64;
@@ -129,25 +135,38 @@ impl Indicator for BollingerBands {
         if !input.is_finite() {
             return self.current();
         }
-        if self.window.len() == self.period {
-            let old = self.window.pop_front().expect("non-empty");
+        if self.count == self.period {
+            let old = self.buf[self.head];
             self.sum -= old;
             self.sum_sq -= old * old;
+            self.buf[self.head] = input;
+            self.sum += input;
+            self.sum_sq += input * input;
+        } else {
+            self.buf[self.head] = input;
+            self.sum += input;
+            self.sum_sq += input * input;
+            self.count += 1;
         }
-        self.window.push_back(input);
-        self.sum += input;
-        self.sum_sq += input * input;
+        self.head += 1;
+        if self.head == self.period {
+            self.head = 0;
+        }
         self.updates_since_recompute += 1;
         if self.updates_since_recompute >= RECOMPUTE_EVERY * self.period {
-            self.sum = self.window.iter().copied().sum();
-            self.sum_sq = self.window.iter().copied().map(|x| x * x).sum();
+            // Reseed in chronological order (oldest at `head`) to keep the running
+            // sums bit-equivalent to a fresh from-scratch pass on stable inputs.
+            let chronological = self.buf[self.head..].iter().chain(&self.buf[..self.head]);
+            self.sum = chronological.clone().copied().sum();
+            self.sum_sq = chronological.map(|&x| x * x).sum();
             self.updates_since_recompute = 0;
         }
         self.current()
     }
 
     fn reset(&mut self) {
-        self.window.clear();
+        self.head = 0;
+        self.count = 0;
         self.sum = 0.0;
         self.sum_sq = 0.0;
         self.updates_since_recompute = 0;
@@ -158,7 +177,7 @@ impl Indicator for BollingerBands {
     }
 
     fn is_ready(&self) -> bool {
-        self.window.len() == self.period
+        self.count == self.period
     }
 
     fn name(&self) -> &'static str {
@@ -171,6 +190,7 @@ mod tests {
     use super::*;
     use crate::traits::BatchExt;
     use approx::assert_relative_eq;
+    use std::collections::VecDeque;
 
     fn naive(prices: &[f64], period: usize, mult: f64) -> BollingerOutput {
         assert!(

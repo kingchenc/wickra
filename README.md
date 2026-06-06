@@ -60,77 +60,129 @@ Full documentation lives at **[docs.wickra.org](https://docs.wickra.org)**:
 
 ## Why Wickra exists
 
-The Python TA ecosystem has plenty of libraries — TA-Lib, pandas-ta, finta,
-talipp, tulipy — and every one of them shares the same blind spot:
+Wickra started as a personal itch. The existing TA libraries never quite fit the
+projects I was building, so I decided to build one from the ground up — partly to
+learn, partly because I genuinely enjoy taking something that already exists and
+trying to do it differently (and, ideally, better). It's open source because the
+useful version of that itch is the one other people can build on too.
 
-| Library                | Install pain    | Streaming | Multi-language | Active |
-|------------------------|-----------------|-----------|----------------|--------|
-| **★&nbsp;Wickra**      | **clean**       | **yes**   | **Python + Node + WASM + Rust** | **yes** |
-| TA-Lib (Python)        | yes (C deps)    | no        | no             | barely |
-| pandas-ta              | clean           | no        | no             | slow   |
-| finta                  | clean           | no        | no             | stale  |
-| ta-lib-python          | yes (C deps)    | no        | no             | barely |
-| talipp                 | clean           | yes       | no             | yes    |
-| Tulip Indicators       | yes (C deps)    | no        | partial        | stale  |
-| ooples (C#)            | clean           | no        | C# only        | yes    |
+Plenty of TA libraries are fast. Each one forces a trade-off Wickra does not:
 
-Wickra is the only library that combines all of: clean install, streaming,
-multi-language reach, and active maintenance.
+| Library          | Install     | Streaming   | Languages                   | Indicators | Active |
+|------------------|-------------|-------------|-----------------------------|-----------:|--------|
+| **★&nbsp;Wickra**| **clean**   | **yes, O(1)** | **Python · Node · WASM · Rust** | **423** | **yes** |
+| kand             | clean       | yes         | Python · WASM · Rust        |       ~60  | yes    |
+| ta-rs            | clean       | yes         | Rust only                   |       ~30  | stale  |
+| yata             | clean       | partial     | Rust only                   |       ~35  | yes    |
+| TA-Lib           | yes (C deps)| no          | many bindings               |      ~150  | barely |
+| pandas-ta        | clean       | no          | Python                      |      ~130  | slow   |
+| finta            | clean       | no          | Python                      |       ~80  | stale  |
+| talipp           | clean       | yes         | Python                      |       ~40  | yes    |
 
-## Benchmark: how much faster is "streaming-first"?
+Wickra's edge is **breadth with reach**: 423 indicators that all update in O(1)
+per tick and ship natively to Python, Node.js, WebAssembly and Rust from a
+single engine.
 
-The numbers below were measured on a single developer workstation and are not
-guaranteed to reproduce identically on different hardware — absolute µs values
-depend on CPU, memory clock and OS scheduler. Read them as **relative
-speedups** between libraries on identical input, not as a universal
-performance contract.
+**On speed — and why Wickra isn't the fastest.** It deliberately isn't. The
+leaner Rust crates (kand, ta-rs) win several of the micro-benchmarks below, and
+those losses are shown rather than hidden. The gap is a *choice*, not a ceiling:
+every `update` validates its input, runs a real warmup before it emits a value,
+and returns an `Option` so a single bad tick can't silently poison the state.
+ta-rs, by contrast, hands back a bare `f64` from the first tick with no
+validation. If Wickra threw all of that away — raw `f64` out, no checks, no
+warmup contract — it would match or beat the leanest crate on every row. It
+keeps the guarantees instead, and still wins RSI, Bollinger and ATR against kand.
+What no other library matches is the *combination*: catalogue size, native O(1)
+streaming, NaN-safety, and four first-class language targets at once.
+
+## Benchmarks
+
+Three comparisons, split by layer and mode. Read them as **relative** speedups
+on identical input — absolute µs depend on CPU, memory clock and OS scheduler,
+not a universal contract.
 
 - **Reproduced on:** Windows 11 Pro 26200, AMD Ryzen 9 9950X, 64 GB DDR5,
-  Rust 1.92 (release profile, `lto = "fat"`, `codegen-units = 1`),
-  Python 3.12, Node 20.
-- **Reproduce yourself:** `pip install -e bindings/python[bench]` then
-  `python -m benchmarks.compare_libraries`. The script auto-detects every
-  installed peer library and runs them on the same generated inputs as
-  Wickra. The CI job `cross-library-bench` runs the same script on every
-  push and uploads the raw report as a build artefact.
+  Rust 1.92 (release: `lto = "fat"`, `codegen-units = 1`), Python 3.12.
+- **Reproduce yourself:**
+  - Rust core vs Rust crates: `cargo bench -p wickra-bench`
+  - Python vs Python libs: `pip install -e bindings/python[bench]` then
+    `python -m benchmarks.compare_libraries` (auto-detects installed peers).
 
-Lower µs/op = faster. Wickra wins every batch category outright, and the
-streaming gap widens linearly with how much history a batch-only library has
-to recompute on every tick.
+### 1. Rust core vs the other Rust TA crates
 
-### Batch — single full pass over a 20 000-bar series
+Like-for-like, no language-binding overhead, over a 50 000-bar series (µs for
+the whole series, lower = faster). This is the honest engine comparison —
+Wickra wins some and loses some, and both are shown.
 
-Reading the table: each cell shows that library's runtime, plus how many times
-slower it is than Wickra in parentheses. **★** marks the winner per row.
+**Streaming** (one value fed per `update`):
 
-| Indicator           | **★&nbsp;Wickra**   | finta                       | talipp                        |
-|---------------------|---------------------|-----------------------------|-------------------------------|
-| SMA(20)             | **95.6 µs ★**       | 343.5 µs (3.6× slower)      | 7 640.6 µs (79.9× slower)     |
-| EMA(20)             | **64.6 µs ★**       | 223.1 µs (3.5× slower)      | 12 160.9 µs (188.2× slower)   |
-| RSI(14)             | **126.2 µs ★**      | 1 107.1 µs (8.8× slower)    | 15 792.2 µs (125.1× slower)   |
-| MACD(12, 26, 9)     | **119.0 µs ★**      | 531.8 µs (4.5× slower)      | 49 788.1 µs (418.2× slower)   |
-| Bollinger(20, 2.0)  | **105.3 µs ★**      | 812.0 µs (7.7× slower)      | 130 938.3 µs (1 243.7× slower)|
-| ATR(14)             | **123.5 µs ★**      | 5 144.8 µs (41.7× slower)   | 28 816.0 µs (233.4× slower)   |
+| Indicator        | **★&nbsp;Wickra** | kand | ta-rs | yata |
+|------------------|------------------:|-----:|------:|-----:|
+| SMA(20)          | 50                | 38   | 47    | 38   |
+| EMA(20)          | 154               | 69   | 56    | 69   |
+| RSI(14)          | 164               | 216  | 74    | —    |
+| MACD(12, 26, 9)  | 275               | 143  | 66    | —    |
+| Bollinger(20, 2) | **128 ★**         | 248  | 168   | —    |
+| ATR(14)          | 152               | 166  | 61    | —    |
 
-### Streaming — per-tick latency after seeding with 5 000 historical bars
+**Batch** (whole series at once). Only Wickra and kand expose a batch API;
+ta-rs and yata are streaming-only.
 
-A batch-only library has to re-run its full indicator over the entire history on
-every new tick; Wickra updates state in O(1).
+| Indicator        | **★&nbsp;Wickra** | kand |
+|------------------|------------------:|-----:|
+| SMA(20)          | 82                | 42   |
+| EMA(20)          | 159               | 74   |
+| RSI(14)          | **253 ★**         | 274  |
+| MACD(12, 26, 9)  | 681               | 283  |
+| Bollinger(20, 2) | **445 ★**         | 462  |
+| ATR(14)          | 175               | 173  |
 
-| Indicator | **★&nbsp;Wickra (per tick)** | talipp (per tick)         |
-|-----------|---------------------|---------------------------|
-| RSI(14)   | **0.119 µs ★**      | 1.644 µs (13.8× slower)   |
+ta-rs is the per-indicator speed champion on almost every row — it returns a
+bare `f64` with no warmup state and no input validation, trading away the
+`None`-warmup and NaN-safety semantics Wickra keeps. Against kand, Wickra wins
+streaming RSI, Bollinger and ATR (and batch RSI + Bollinger); Bollinger is the
+one row where Wickra is the outright fastest of all four. The leaner crates
+still win the pure recurrences (EMA, MACD) and SMA. yata exposes only SMA/EMA as
+raw-value methods, so its other rows are omitted rather than faked.
 
-> TA-Lib and pandas-ta are not included here because both fail to install
-> cleanly on Windows without C build tooling — which is precisely the install
-> pain Wickra was built to remove. The benchmark script auto-detects every
-> peer library it can find and runs them on the same inputs as Wickra; install
-> them in your environment to see those rows light up too.
+### 2. Python vs the Python TA ecosystem — batch
+
+Full pass over a 20 000-bar series, µs/op (lower = faster). **★** per row.
+
+| Indicator        | **★&nbsp;Wickra** | finta               | TA-Lib | tulipy |
+|------------------|------------------:|---------------------|--------|--------|
+| SMA(20)          | **59.6 ★**        | 354.2 (5.9× slower) | ⧗      | ⧗      |
+| EMA(20)          | **88.4 ★**        | 309.3 (3.5× slower) | ⧗      | ⧗      |
+| RSI(14)          | **77.3 ★**        | 1 283 (16.6× slower)| ⧗      | ⧗      |
+| MACD(12, 26, 9)  | **116.4 ★**       | 529.5 (4.6× slower) | ⧗      | ⧗      |
+| Bollinger(20, 2) | **146.0 ★**       | 1 246 (8.5× slower) | ⧗      | ⧗      |
+| ATR(14)          | **135.8 ★**       | 3 812 (28× slower)  | ⧗      | ⧗      |
+
+> ⧗ = published by the CI Linux job. TA-Lib and tulipy ship C extensions that
+> don't build cleanly on every desktop, so their canonical numbers come from the
+> `cross-library-bench` workflow rather than this local table. pandas-ta needs
+> Python ≥ 3.12 and isn't in the 3.11 CI matrix. The script auto-detects
+> whichever peers are installed in your environment.
+
+### 3. Python — streaming (per-tick latency)
+
+Seed 5 000 bars, then feed ticks one at a time. talipp is the only Python peer
+with a true incremental API; batch-only libraries like TA-Lib must recompute the
+entire history on every tick — Wickra updates in O(1).
+
+| Indicator        | **★&nbsp;Wickra (per tick)** | talipp (per tick)       |
+|------------------|------------------------------:|-------------------------|
+| SMA(20)          | **0.067 µs ★**                | 0.63 µs (9.4× slower)   |
+| EMA(20)          | **0.051 µs ★**                | 0.63 µs (12.2× slower)  |
+| RSI(14)          | **0.053 µs ★**                | 1.00 µs (19.1× slower)  |
+| MACD(12, 26, 9)  | **0.071 µs ★**                | 3.64 µs (51.5× slower)  |
+| Bollinger(20, 2) | **0.085 µs ★**                | 4.87 µs (57.2× slower)  |
 
 Run the suite yourself:
 
 ```bash
-pip install -e bindings/python[bench]
+cargo bench -p wickra-bench            # Rust core vs kand / ta-rs / yata
+pip install -e bindings/python[bench]  # Python peers
 python -m benchmarks.compare_libraries
 ```
 
@@ -247,7 +299,8 @@ wickra/
 ├── crates/
 │   ├── wickra-core/         core engine + all 423 indicators
 │   ├── wickra/              top-level facade crate (publishes on crates.io) + benches/
-│   └── wickra-data/         CSV reader, tick aggregator, live exchange feeds
+│   ├── wickra-data/         CSV reader, tick aggregator, live exchange feeds
+│   └── wickra-bench/        internal cross-library benchmark harness (not published)
 ├── bindings/
 │   ├── python/              PyO3 + maturin (publishes on PyPI)
 │   ├── node/                napi-rs (publishes on npm)
@@ -261,9 +314,10 @@ wickra/
 └── .github/workflows/       CI and release pipelines
 ```
 
-Rust benchmarks live in `crates/wickra/benches/`; runnable Rust examples live
-in the workspace member crate at `examples/rust/`. There is no top-level
-`benches/` directory.
+Wickra's own regression benchmarks live in `crates/wickra/benches/`; the
+cross-library comparison against kand, ta-rs and yata lives in the internal
+`crates/wickra-bench/` crate. Runnable Rust examples live in the workspace member
+crate at `examples/rust/`. There is no top-level `benches/` directory.
 
 ## Building everything from source
 
@@ -271,7 +325,8 @@ in the workspace member crate at `examples/rust/`. There is no top-level
 # Rust core + tests
 cargo test --workspace
 cargo clippy --workspace --all-targets -- -D warnings
-cargo bench -p wickra
+cargo bench -p wickra           # Wickra's own regression benchmarks
+cargo bench -p wickra-bench     # cross-library comparison (kand, ta-rs, yata)
 
 # Python binding (requires Rust toolchain + maturin)
 cd bindings/python
@@ -370,4 +425,11 @@ The library is provided **as is**, without warranty of any kind; see
 
 <p align="center">
   If Wickra saved you time, the cheapest way to say thanks is to ⭐ the repo.
+</p>
+
+<p align="center">
+  <a href="https://github.com/wickra-lib/wickra">
+    <img alt="Star Wickra on GitHub"
+         src="https://img.shields.io/badge/%E2%AD%90%20Star%20Wickra%20on%20GitHub-1f2328?style=for-the-badge&logo=github&logoColor=ffd866&labelColor=1f2328">
+  </a>
 </p>

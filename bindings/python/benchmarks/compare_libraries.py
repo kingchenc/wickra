@@ -49,6 +49,7 @@ TALIB = _try_import("talib")
 PANDAS_TA = _try_import("pandas_ta")
 TALIPP = _try_import("talipp.indicators") or _try_import("talipp")
 FINTA = _try_import("finta")
+TULIPY = _try_import("tulipy")
 PD = _try_import("pandas")
 import wickra as WICKRA  # noqa: E402  -- the library under test must be importable
 
@@ -275,6 +276,34 @@ def talipp_bollinger_batch(prices: np.ndarray) -> Optional[Callable[[], None]]:
     return lambda: BB(period=20, std_dev_mult=2.0, input_values=list(prices))
 
 
+# tulipy wraps the C "Tulip Indicators" library; it takes contiguous float64
+# arrays and indicator options as positional arguments.
+
+
+def tulipy_sma_batch(prices: np.ndarray) -> Optional[Callable[[], None]]:
+    return None if TULIPY is None else (lambda: TULIPY.sma(prices, 20))
+
+
+def tulipy_ema_batch(prices: np.ndarray) -> Optional[Callable[[], None]]:
+    return None if TULIPY is None else (lambda: TULIPY.ema(prices, 20))
+
+
+def tulipy_rsi_batch(prices: np.ndarray) -> Optional[Callable[[], None]]:
+    return None if TULIPY is None else (lambda: TULIPY.rsi(prices, 14))
+
+
+def tulipy_macd_batch(prices: np.ndarray) -> Optional[Callable[[], None]]:
+    return None if TULIPY is None else (lambda: TULIPY.macd(prices, 12, 26, 9))
+
+
+def tulipy_bollinger_batch(prices: np.ndarray) -> Optional[Callable[[], None]]:
+    return None if TULIPY is None else (lambda: TULIPY.bbands(prices, 20, 2.0))
+
+
+def tulipy_atr_batch(high: np.ndarray, low: np.ndarray, close: np.ndarray) -> Optional[Callable[[], None]]:
+    return None if TULIPY is None else (lambda: TULIPY.atr(high, low, close, 14))
+
+
 # --------------------------------------------------------------------------- #
 # Streaming scenario: per-tick latency
 # --------------------------------------------------------------------------- #
@@ -329,6 +358,105 @@ def talipp_rsi_streaming(seed: np.ndarray, live: np.ndarray) -> Optional[Callabl
     return run
 
 
+# Scalar streaming peers: Wickra and talipp both update incrementally in O(1),
+# so this is the like-for-like per-tick comparison (batch-only libs are covered
+# by the batch tables and the recompute contrast on RSI above).
+
+
+def wickra_sma_streaming(seed: np.ndarray, live: np.ndarray) -> Callable[[], None]:
+    def run() -> None:
+        sma = WICKRA.SMA(20)
+        sma.batch(seed)
+        for p in live:
+            sma.update(float(p))
+
+    return run
+
+
+def talipp_sma_streaming(seed: np.ndarray, live: np.ndarray) -> Optional[Callable[[], None]]:
+    if TALIPP is None:
+        return None
+    from talipp.indicators import SMA  # type: ignore
+
+    def run() -> None:
+        sma = SMA(period=20, input_values=list(seed))
+        for p in live:
+            sma.add(float(p))
+
+    return run
+
+
+def wickra_ema_streaming(seed: np.ndarray, live: np.ndarray) -> Callable[[], None]:
+    def run() -> None:
+        ema = WICKRA.EMA(20)
+        ema.batch(seed)
+        for p in live:
+            ema.update(float(p))
+
+    return run
+
+
+def talipp_ema_streaming(seed: np.ndarray, live: np.ndarray) -> Optional[Callable[[], None]]:
+    if TALIPP is None:
+        return None
+    from talipp.indicators import EMA  # type: ignore
+
+    def run() -> None:
+        ema = EMA(period=20, input_values=list(seed))
+        for p in live:
+            ema.add(float(p))
+
+    return run
+
+
+def wickra_macd_streaming(seed: np.ndarray, live: np.ndarray) -> Callable[[], None]:
+    def run() -> None:
+        macd = WICKRA.MACD()
+        macd.batch(seed)
+        for p in live:
+            macd.update(float(p))
+
+    return run
+
+
+def talipp_macd_streaming(seed: np.ndarray, live: np.ndarray) -> Optional[Callable[[], None]]:
+    if TALIPP is None:
+        return None
+    from talipp.indicators import MACD  # type: ignore
+
+    def run() -> None:
+        macd = MACD(
+            fast_period=12, slow_period=26, signal_period=9, input_values=list(seed)
+        )
+        for p in live:
+            macd.add(float(p))
+
+    return run
+
+
+def wickra_bollinger_streaming(seed: np.ndarray, live: np.ndarray) -> Callable[[], None]:
+    def run() -> None:
+        bb = WICKRA.BollingerBands(20, 2.0)
+        bb.batch(seed)
+        for p in live:
+            bb.update(float(p))
+
+    return run
+
+
+def talipp_bollinger_streaming(seed: np.ndarray, live: np.ndarray) -> Optional[Callable[[], None]]:
+    if TALIPP is None:
+        return None
+    from talipp.indicators import BB  # type: ignore
+
+    def run() -> None:
+        bb = BB(period=20, std_dev_mult=2.0, input_values=list(seed))
+        for p in live:
+            bb.add(float(p))
+
+    return run
+
+
 # --------------------------------------------------------------------------- #
 # Runner
 # --------------------------------------------------------------------------- #
@@ -339,6 +467,7 @@ BATCH_INDICATORS = [
         ("Wickra", wickra_sma_batch),
         ("TA-Lib", talib_sma_batch),
         ("pandas-ta", pandas_ta_sma_batch),
+        ("tulipy", tulipy_sma_batch),
         ("finta", finta_sma_batch),
         ("talipp", talipp_sma_batch),
     ]),
@@ -346,6 +475,7 @@ BATCH_INDICATORS = [
         ("Wickra", wickra_ema_batch),
         ("TA-Lib", talib_ema_batch),
         ("pandas-ta", pandas_ta_ema_batch),
+        ("tulipy", tulipy_ema_batch),
         ("finta", finta_ema_batch),
         ("talipp", talipp_ema_batch),
     ]),
@@ -353,6 +483,7 @@ BATCH_INDICATORS = [
         ("Wickra", wickra_rsi_batch),
         ("TA-Lib", talib_rsi_batch),
         ("pandas-ta", pandas_ta_rsi_batch),
+        ("tulipy", tulipy_rsi_batch),
         ("finta", finta_rsi_batch),
         ("talipp", talipp_rsi_batch),
     ]),
@@ -360,6 +491,7 @@ BATCH_INDICATORS = [
         ("Wickra", wickra_macd_batch),
         ("TA-Lib", talib_macd_batch),
         ("pandas-ta", pandas_ta_macd_batch),
+        ("tulipy", tulipy_macd_batch),
         ("finta", finta_macd_batch),
         ("talipp", talipp_macd_batch),
     ]),
@@ -367,6 +499,7 @@ BATCH_INDICATORS = [
         ("Wickra", wickra_bollinger_batch),
         ("TA-Lib", talib_bollinger_batch),
         ("pandas-ta", pandas_ta_bollinger_batch),
+        ("tulipy", tulipy_bollinger_batch),
         ("finta", finta_bollinger_batch),
         ("talipp", talipp_bollinger_batch),
     ]),
@@ -376,17 +509,34 @@ OHLC_INDICATORS = [
     ("ATR(14)", [
         ("Wickra", wickra_atr_batch),
         ("TA-Lib", talib_atr_batch),
+        ("tulipy", tulipy_atr_batch),
         ("finta", finta_atr_batch),
         ("talipp", talipp_atr_batch),
     ]),
 ]
 
 STREAMING_INDICATORS = [
+    ("SMA(20)", [
+        ("Wickra", wickra_sma_streaming),
+        ("talipp", talipp_sma_streaming),
+    ]),
+    ("EMA(20)", [
+        ("Wickra", wickra_ema_streaming),
+        ("talipp", talipp_ema_streaming),
+    ]),
     ("RSI(14)", [
         ("Wickra", wickra_rsi_streaming),
         ("TA-Lib", talib_rsi_streaming),
         ("pandas-ta", pandas_ta_rsi_streaming),
         ("talipp", talipp_rsi_streaming),
+    ]),
+    ("MACD(12, 26, 9)", [
+        ("Wickra", wickra_macd_streaming),
+        ("talipp", talipp_macd_streaming),
+    ]),
+    ("Bollinger(20, 2.0)", [
+        ("Wickra", wickra_bollinger_streaming),
+        ("talipp", talipp_bollinger_streaming),
     ]),
 ]
 
@@ -501,6 +651,7 @@ def main() -> None:
     available = []
     if TALIB is not None: available.append("TA-Lib")
     if PANDAS_TA is not None: available.append("pandas-ta")
+    if TULIPY is not None: available.append("tulipy")
     if FINTA is not None: available.append("finta")
     if TALIPP is not None: available.append("talipp")
     print(f"Wickra benchmark suite — wickra=v{WICKRA.__version__}")
