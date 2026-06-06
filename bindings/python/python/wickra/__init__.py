@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from ._wickra import (
     __version__,
+    ProjectionOscillator,
     VolatilityCone,
     VolatilityRatio,
     BipowerVariation,
@@ -263,6 +264,10 @@ from ._wickra import (
     MAMA,
     FAMA,
     # Bands & Channels
+    ProjectionBands,
+    MedianChannel,
+    BomarBands,
+    QuartileBands,
     MaEnvelope,
     AccelerationBands,
     StarcBands,
@@ -482,6 +487,7 @@ from ._wickra import (
 )
 
 __all__ = [
+    "ProjectionOscillator",
     "VolatilityCone",
     "VolatilityRatio",
     "BipowerVariation",
@@ -721,6 +727,10 @@ __all__ = [
     "MAMA",
     "FAMA",
     # Bands & Channels
+    "ProjectionBands",
+    "MedianChannel",
+    "BomarBands",
+    "QuartileBands",
     "MaEnvelope",
     "AccelerationBands",
     "StarcBands",

@@ -14,7 +14,7 @@
 //! `Ema(20)`. This target now covers every scalar indicator in the catalogue.
 
 use libfuzzer_sys::fuzz_target;
-use wickra_core::{AdaptiveCycle, AdaptiveLaguerreFilter, Alma, AnchoredRsi, Apo, Autocorrelation, AverageDrawdown, BatchExt, Beta, BipowerVariation, BollingerBands, CalmarRatio, CenterOfGravity, Cfo, Cmo, CoefficientOfVariation, ConditionalValueAtRisk, ConnorsRsi, Coppock, CyberneticCycle, Decycler, DecyclerOscillator, Dema, DerivativeOscillator, DetrendedStdDev, DisparityIndex, DoubleBollinger, Dpo, DrawdownDuration, DynamicMomentumIndex, EhlersStochastic, Ehma, ElderImpulse, Ema, EmpiricalModeDecomposition, EwmaVolatility, Expectancy, Fama, FisherRsi, FisherTransform, Frama, GainLossRatio, Garch11, GeneralizedDema, GeometricMa, HilbertDominantCycle, HistoricalVolatility, Hma, HoltWinters, HtDcPhase, HtPhasor, HtTrendMode, HurstExponent, Indicator, InstantaneousTrendline, InverseFisherTransform, Jma, JumpIndicator, Kama, KellyCriterion, Kst, Kurtosis, LaguerreRsi, LinRegAngle, LinRegChannel, LinRegIntercept, LinRegSlope, LinearRegression, LogReturn, MaEnvelope, MaType, MacdExt, MacdFix, MacdHistogram, MacdIndicator, Mama, MaxDrawdown, McGinleyDynamic, MedianAbsoluteDeviation, MedianMa, MidPoint, Mom, OmegaRatio, PainIndex, PearsonCorrelation, PercentageTrailingStop, Pmo, PolarizedFractalEfficiency, Ppo, PpoHistogram, ProfitFactor, Qqe, RSquared, RealizedVolatility, RecoveryFactor, RegimeLabel, RenkoTrailingStop, Rmi, Roc, Rocp, Rocr, Rocr100, RollingIqr, RollingPercentileRank, RollingQuantile, RoofingFilter, Rsi, Rsx, RviVolatility, SharpeRatio, SineWave, SineWeightedMa, Skewness, Sma, Smma, SortinoRatio, SpearmanCorrelation, StandardError, StandardErrorBands, Stc, StdDev, StepTrailingStop, StochRsi, SuperSmoother, Tema, Tii, TrendLabel, TrendStrengthIndex, Trima, Trix, Tsf, TsfOscillator, Tsi, UlcerIndex, ValueAtRisk, Variance, VerticalHorizontalFilter, Vidya, VolatilityOfVolatility, WavePm, WinRate, Wma, ZScore, ZeroLagMacd, Zlema, T3};
+use wickra_core::{AdaptiveCycle, AdaptiveLaguerreFilter, Alma, AnchoredRsi, Apo, Autocorrelation, AverageDrawdown, BatchExt, Beta, BipowerVariation, BollingerBands, BomarBands, CalmarRatio, CenterOfGravity, Cfo, Cmo, CoefficientOfVariation, ConditionalValueAtRisk, ConnorsRsi, Coppock, CyberneticCycle, Decycler, DecyclerOscillator, Dema, DerivativeOscillator, DetrendedStdDev, DisparityIndex, DoubleBollinger, Dpo, DrawdownDuration, DynamicMomentumIndex, EhlersStochastic, Ehma, ElderImpulse, Ema, EmpiricalModeDecomposition, EwmaVolatility, Expectancy, Fama, FisherRsi, FisherTransform, Frama, GainLossRatio, Garch11, GeneralizedDema, GeometricMa, HilbertDominantCycle, HistoricalVolatility, Hma, HoltWinters, HtDcPhase, HtPhasor, HtTrendMode, HurstExponent, Indicator, InstantaneousTrendline, InverseFisherTransform, Jma, JumpIndicator, Kama, KellyCriterion, Kst, Kurtosis, LaguerreRsi, LinRegAngle, LinRegChannel, LinRegIntercept, LinRegSlope, LinearRegression, LogReturn, MaEnvelope, MaType, MacdExt, MacdFix, MacdHistogram, MacdIndicator, Mama, MaxDrawdown, McGinleyDynamic, MedianAbsoluteDeviation, MedianChannel, MedianMa, MidPoint, Mom, OmegaRatio, PainIndex, PearsonCorrelation, PercentageTrailingStop, Pmo, PolarizedFractalEfficiency, Ppo, PpoHistogram, ProfitFactor, Qqe, QuartileBands, RSquared, RealizedVolatility, RecoveryFactor, RegimeLabel, RenkoTrailingStop, Rmi, Roc, Rocp, Rocr, Rocr100, RollingIqr, RollingPercentileRank, RollingQuantile, RoofingFilter, Rsi, Rsx, RviVolatility, SharpeRatio, SineWave, SineWeightedMa, Skewness, Sma, Smma, SortinoRatio, SpearmanCorrelation, StandardError, StandardErrorBands, Stc, StdDev, StepTrailingStop, StochRsi, SuperSmoother, Tema, Tii, TrendLabel, TrendStrengthIndex, Trima, Trix, Tsf, TsfOscillator, Tsi, UlcerIndex, ValueAtRisk, Variance, VerticalHorizontalFilter, Vidya, VolatilityOfVolatility, WavePm, WinRate, Wma, ZScore, ZeroLagMacd, Zlema, T3};
 
 /// Drive a single streaming + batch run through one scalar indicator. Marked
 /// `#[inline(never)]` so a panic backtrace pin-points the specific indicator.
@@ -272,6 +272,27 @@ fuzz_target!(|data: Vec<f64>| {
     }
 
     // --- Family 05: scalar-input band/channel indicators (multi-output) ---
+    {
+        let mut medianchannel = MedianChannel::new(5, 2.0).unwrap();
+        for &x in &data {
+            let _ = medianchannel.update(x);
+        }
+        let _ = MedianChannel::new(5, 2.0).unwrap().batch(&data);
+    }
+    {
+        let mut bomarbands = BomarBands::new(4, 0.85).unwrap();
+        for &x in &data {
+            let _ = bomarbands.update(x);
+        }
+        let _ = BomarBands::new(4, 0.85).unwrap().batch(&data);
+    }
+    {
+        let mut quartilebands = QuartileBands::new(4).unwrap();
+        for &x in &data {
+            let _ = quartilebands.update(x);
+        }
+        let _ = QuartileBands::new(4).unwrap().batch(&data);
+    }
     {
         let mut env = MaEnvelope::new(20, 0.025).unwrap();
         for &x in &data {

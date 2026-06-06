@@ -199,6 +199,26 @@ export interface StandardErrorBandsValue {
   middle: number
   lower: number
 }
+export interface QuartileBandsValue {
+  upper: number
+  middle: number
+  lower: number
+}
+export interface BomarBandsValue {
+  upper: number
+  middle: number
+  lower: number
+}
+export interface MedianChannelValue {
+  upper: number
+  middle: number
+  lower: number
+}
+export interface ProjectionBandsValue {
+  upper: number
+  middle: number
+  lower: number
+}
 export interface DoubleBollingerValue {
   upperOuter: number
   upperInner: number
@@ -1639,6 +1659,15 @@ export declare class VolatilityRatio {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type ProjectionOscillatorNode = ProjectionOscillator
+export declare class ProjectionOscillator {
+  constructor(period: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type StochNode = Stochastic
 export declare class Stochastic {
   constructor(kPeriod: number, dPeriod: number)
@@ -2623,6 +2652,42 @@ export declare class StandardErrorBands {
   constructor(period: number, multiplier: number)
   update(value: number): StandardErrorBandsValue | null
   batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type QuartileBandsNode = QuartileBands
+export declare class QuartileBands {
+  constructor(period: number)
+  update(value: number): QuartileBandsValue | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type BomarBandsNode = BomarBands
+export declare class BomarBands {
+  constructor(period: number, coverage: number)
+  update(value: number): BomarBandsValue | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type MedianChannelNode = MedianChannel
+export declare class MedianChannel {
+  constructor(period: number, multiplier: number)
+  update(value: number): MedianChannelValue | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type ProjectionBandsNode = ProjectionBands
+export declare class ProjectionBands {
+  constructor(period: number)
+  update(high: number, low: number): ProjectionBandsValue | null
+  batch(high: Array<number>, low: Array<number>): Array<number>
   reset(): void
   isReady(): boolean
   warmupPeriod(): number
