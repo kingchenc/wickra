@@ -8,6 +8,7 @@ members = [
     "bindings/wasm",
     "bindings/node",
     "examples/rust",
+    "crates/wickra-bench",
 ]
 exclude = ["fuzz"]
 
