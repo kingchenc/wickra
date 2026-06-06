@@ -428,8 +428,8 @@ The library is provided **as is**, without warranty of any kind; see
 </p>
 
 <p align="center">
-  <a href="https://github.com/wickra-lib/wickra">
-    <img alt="Star Wickra on GitHub"
-         src="https://img.shields.io/badge/%E2%AD%90%20Star%20Wickra%20on%20GitHub-1f2328?style=for-the-badge&logo=github&logoColor=ffd866&labelColor=1f2328">
+  <a href="https://star-history.com/#wickra-lib/wickra&Date">
+    <img alt="Wickra star history" width="640"
+         src="https://api.star-history.com/svg?repos=wickra-lib/wickra&type=Date&theme=dark">
   </a>
 </p>
