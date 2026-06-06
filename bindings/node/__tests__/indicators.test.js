@@ -447,6 +447,7 @@ const multi = {
   BomarBands: { make: () => new wickra.BomarBands(4, 0.85), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   MedianChannel: { make: () => new wickra.MedianChannel(5, 2.0), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   ProjectionBands: { make: () => new wickra.ProjectionBands(3), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  KaseDevStop: { make: () => new wickra.KaseDevStop(3, 1.0), fields: ['value', 'direction'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
 };
 
 for (const [name, d] of Object.entries(multi)) {

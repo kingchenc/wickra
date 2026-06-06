@@ -908,6 +908,11 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 # --- Candle-input, multi-output indicators --------------------------------
 
 MULTI = {
+    "KaseDevStop": (
+        lambda: ta.KaseDevStop(3, 1.0),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+        2,
+    ),
     "ProjectionBands": (
         lambda: ta.ProjectionBands(3),
         lambda ind, h, l, c, v: ind.batch(h, l),
@@ -2966,6 +2971,14 @@ def test_projection_oscillator_reference():
     assert t.update((8.0, 10.0, 8.0, 9.0, 1.0, 0)) is None
     assert t.update((9.0, 12.0, 9.0, 11.0, 1.0, 1)) is None
     assert t.update((10.0, 11.0, 10.0, 11.0, 1.0, 2)) == pytest.approx(40.0)
+
+
+def test_kase_devstop_reference():
+    t = ta.KaseDevStop(3, 1.0)
+    assert t.update((100.0, 101.0, 99.0, 100.0, 1.0, 0)) is None
+    assert t.update((101.0, 102.0, 100.0, 101.0, 1.0, 1)) is None
+    assert t.update((102.0, 103.0, 101.0, 102.0, 1.0, 2)) is None
+    assert t.update((102.5, 104.0, 102.0, 103.0, 1.0, 3)) == pytest.approx((101.0, 1.0))
 
 # --- Lifecycle ------------------------------------------------------------
 

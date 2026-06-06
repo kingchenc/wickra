@@ -9813,6 +9813,82 @@ impl PyRenkoTrailingStop {
     }
 }
 
+// ============================== Kase DevStop ==============================
+
+#[pyclass(name = "KaseDevStop", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyKaseDevStop {
+    inner: wc::KaseDevStop,
+}
+
+#[pymethods]
+impl PyKaseDevStop {
+    #[new]
+    #[pyo3(signature = (period=30, dev=1.0))]
+    fn new(period: usize, dev: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::KaseDevStop::new(period, dev).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.value, o.direction)))
+    }
+    /// Batch over numpy columns high, low, close. Returns shape `(n, 2)` with
+    /// columns `[value, direction]`; warmup rows are `NaN`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 2] = o.value;
+                out[i * 2 + 1] = o.direction;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn params(&self) -> (usize, f64) {
+        self.inner.params()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (period, dev) = self.inner.params();
+        format!("KaseDevStop(period={period}, dev={dev})")
+    }
+}
+
 // ============================== Typical Price ==============================
 
 #[pyclass(name = "TypicalPrice", module = "wickra._wickra", skip_from_py_object)]
@@ -21894,6 +21970,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyPercentageTrailingStop>()?;
     m.add_class::<PyStepTrailingStop>()?;
     m.add_class::<PyRenkoTrailingStop>()?;
+    m.add_class::<PyKaseDevStop>()?;
     m.add_class::<PyTypicalPrice>()?;
     m.add_class::<PyMedianPrice>()?;
     m.add_class::<PyWeightedClose>()?;

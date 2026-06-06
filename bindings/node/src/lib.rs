@@ -6591,6 +6591,80 @@ impl RenkoTrailingStopNode {
     }
 }
 
+// ============================== Kase DevStop ==============================
+
+#[napi(object)]
+pub struct KaseDevStopValue {
+    pub value: f64,
+    pub direction: f64,
+}
+
+#[napi(js_name = "KaseDevStop")]
+pub struct KaseDevStopNode {
+    inner: wc::KaseDevStop,
+}
+
+#[napi]
+impl KaseDevStopNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, dev: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::KaseDevStop::new(period as usize, dev).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<KaseDevStopValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| KaseDevStopValue {
+                value: o.value,
+                direction: o.direction,
+            }))
+    }
+    /// Returns `[value0, direction0, value1, direction1, ...]`, length `2 * n`.
+    /// Warmup positions are `NaN`.
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 2] = o.value;
+                out[i * 2 + 1] = o.direction;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== Typical Price ==============================
 
 #[napi(js_name = "TypicalPrice")]

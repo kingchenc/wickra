@@ -192,6 +192,7 @@ mod jump_indicator;
 mod kagi_bars;
 mod kalman_hedge_ratio;
 mod kama;
+mod kase_devstop;
 mod kase_permission_stochastic;
 mod kelly_criterion;
 mod keltner;
@@ -626,6 +627,7 @@ pub use jump_indicator::JumpIndicator;
 pub use kagi_bars::{KagiBar, KagiBars};
 pub use kalman_hedge_ratio::{KalmanHedgeRatio, KalmanHedgeRatioOutput};
 pub use kama::Kama;
+pub use kase_devstop::{KaseDevStop, KaseDevStopOutput};
 pub use kase_permission_stochastic::{KasePermissionStochastic, KasePermissionStochasticOutput};
 pub use kelly_criterion::KellyCriterion;
 pub use keltner::{Keltner, KeltnerOutput};
@@ -1073,6 +1075,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "StepTrailingStop",
             "RenkoTrailingStop",
             "SarExt",
+            "KaseDevStop",
         ],
     ),
     (
@@ -1456,6 +1459,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 434, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 435, "FAMILIES total drifted from indicator count");
     }
 }

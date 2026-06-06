@@ -149,6 +149,10 @@ export interface DonchianStopValue {
   stopLong: number
   stopShort: number
 }
+export interface KaseDevStopValue {
+  value: number
+  direction: number
+}
 /** Vortex Indicator pair: `VI+` and `VI-`. */
 export interface VortexValue {
   plus: number
@@ -2324,6 +2328,19 @@ export declare class RenkoTrailingStop {
   constructor(blockSize: number)
   update(value: number): number | null
   batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type KaseDevStopNode = KaseDevStop
+export declare class KaseDevStop {
+  constructor(period: number, dev: number)
+  update(high: number, low: number, close: number): KaseDevStopValue | null
+  /**
+   * Returns `[value0, direction0, value1, direction1, ...]`, length `2 * n`.
+   * Warmup positions are `NaN`.
+   */
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
   isReady(): boolean
   warmupPeriod(): number

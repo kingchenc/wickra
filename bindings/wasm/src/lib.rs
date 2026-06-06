@@ -3833,6 +3833,59 @@ impl WasmRenkoTrailingStop {
     }
 }
 
+#[wasm_bindgen(js_name = KaseDevStop)]
+pub struct WasmKaseDevStop {
+    inner: wc::KaseDevStop,
+}
+
+#[wasm_bindgen(js_class = KaseDevStop)]
+impl WasmKaseDevStop {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, dev: f64) -> Result<WasmKaseDevStop, JsError> {
+        Ok(Self {
+            inner: wc::KaseDevStop::new(period, dev).map_err(map_err)?,
+        })
+    }
+    /// Returns `{ value, direction }` once warm, else `null`.
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<JsValue, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"value".into(), &o.value.into()).ok();
+                Reflect::set(&obj, &"direction".into(), &o.direction.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    /// Returns `[value0, direction0, value1, direction1, ...]`, length `2 * n`.
+    /// Warmup is NaN.
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        let n = high.len();
+        if low.len() != n || close.len() != n {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.value;
+                out[i * 2 + 1] = o.direction;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
 #[wasm_bindgen(js_name = TypicalPrice)]
 pub struct WasmTypicalPrice {
     inner: wc::TypicalPrice,
