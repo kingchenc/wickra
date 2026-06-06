@@ -169,6 +169,18 @@ mod tests {
     }
 
     #[test]
+    fn rolling_window_evicts_oldest() {
+        // Eight values through a period-4 window: only the last four survive,
+        // reproducing the `known_quartiles` window.
+        let mut qb = QuartileBands::new(4).unwrap();
+        let out = qb.batch(&[1.0, 2.0, 3.0, 4.0, 40.0, 30.0, 20.0, 10.0]);
+        let last = out[7].unwrap();
+        assert_relative_eq!(last.lower, 17.5, epsilon = 1e-9);
+        assert_relative_eq!(last.middle, 25.0, epsilon = 1e-9);
+        assert_relative_eq!(last.upper, 32.5, epsilon = 1e-9);
+    }
+
+    #[test]
     fn reset_clears_state() {
         let mut qb = QuartileBands::new(4).unwrap();
         for v in [10.0, 20.0, 30.0, 40.0] {

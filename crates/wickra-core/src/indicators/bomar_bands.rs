@@ -231,6 +231,18 @@ mod tests {
     }
 
     #[test]
+    fn rolling_window_evicts_oldest() {
+        // Eight values through a period-4 window: only the last four survive,
+        // reproducing the `known_bands` window.
+        let mut bb = BomarBands::new(4, 0.85).unwrap();
+        let out = bb.batch(&[50.0, 50.0, 50.0, 50.0, 100.0, 102.0, 98.0, 104.0]);
+        let last = out[7].unwrap();
+        assert_relative_eq!(last.middle, 101.0, epsilon = 1e-9);
+        assert_relative_eq!(last.upper, 104.0, epsilon = 1e-9);
+        assert_relative_eq!(last.lower, 98.0, epsilon = 1e-9);
+    }
+
+    #[test]
     fn reset_clears_state() {
         let mut bb = BomarBands::new(4, 0.85).unwrap();
         for v in [100.0, 102.0, 98.0, 104.0] {

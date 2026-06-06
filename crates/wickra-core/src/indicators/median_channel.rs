@@ -212,6 +212,18 @@ mod tests {
     }
 
     #[test]
+    fn rolling_window_evicts_oldest() {
+        // Ten values through a period-5 window: only the last five survive,
+        // reproducing the `known_channel` window.
+        let mut mc = MedianChannel::new(5, 2.0).unwrap();
+        let out = mc.batch(&[10.0, 10.0, 10.0, 10.0, 10.0, 1.0, 2.0, 3.0, 4.0, 5.0]);
+        let last = out[9].unwrap();
+        assert_relative_eq!(last.middle, 3.0, epsilon = 1e-12);
+        assert_relative_eq!(last.upper, 5.0, epsilon = 1e-12);
+        assert_relative_eq!(last.lower, 1.0, epsilon = 1e-12);
+    }
+
+    #[test]
     fn reset_clears_state() {
         let mut mc = MedianChannel::new(5, 2.0).unwrap();
         for v in [1.0, 2.0, 3.0, 4.0, 5.0] {
