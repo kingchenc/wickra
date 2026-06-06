@@ -28,9 +28,17 @@ use crate::traits::Indicator;
 #[derive(Debug, Clone)]
 pub struct Atr {
     period: usize,
+    /// `period - 1` as `f64`, precomputed for the Wilder smoothing step.
+    n_minus_1: f64,
+    /// `1 / period`, precomputed so the per-tick smoothing multiplies instead of
+    /// divides.
+    inv_period: f64,
     prev_close: Option<f64>,
     seed_buf: Vec<f64>,
-    avg: Option<f64>,
+    /// Smoothed ATR, valid once `seeded` is set. Bare `f64` + flag rather than
+    /// `Option<f64>` so the hot recurrence avoids an enum-tag read per tick.
+    avg: f64,
+    seeded: bool,
 }
 
 impl Atr {
@@ -45,9 +53,12 @@ impl Atr {
         }
         Ok(Self {
             period,
+            n_minus_1: (period - 1) as f64,
+            inv_period: 1.0 / period as f64,
             prev_close: None,
             seed_buf: Vec::with_capacity(period),
-            avg: None,
+            avg: 0.0,
+            seeded: false,
         })
     }
 
@@ -58,7 +69,11 @@ impl Atr {
 
     /// Current value if available.
     pub const fn value(&self) -> Option<f64> {
-        self.avg
+        if self.seeded {
+            Some(self.avg)
+        } else {
+            None
+        }
     }
 }
 
@@ -70,17 +85,18 @@ impl Indicator for Atr {
         let tr = candle.true_range(self.prev_close);
         self.prev_close = Some(candle.close);
 
-        if let Some(avg) = self.avg {
-            let n = self.period as f64;
-            let new_avg = avg.mul_add(n - 1.0, tr) / n;
-            self.avg = Some(new_avg);
+        if self.seeded {
+            // Wilder smoothing with the reciprocal hoisted out of the hot path.
+            let new_avg = self.avg.mul_add(self.n_minus_1, tr) * self.inv_period;
+            self.avg = new_avg;
             return Some(new_avg);
         }
 
         self.seed_buf.push(tr);
         if self.seed_buf.len() == self.period {
             let seed = self.seed_buf.iter().copied().sum::<f64>() / self.period as f64;
-            self.avg = Some(seed);
+            self.avg = seed;
+            self.seeded = true;
             return Some(seed);
         }
         None
@@ -89,7 +105,8 @@ impl Indicator for Atr {
     fn reset(&mut self) {
         self.prev_close = None;
         self.seed_buf.clear();
-        self.avg = None;
+        self.avg = 0.0;
+        self.seeded = false;
     }
 
     fn warmup_period(&self) -> usize {
@@ -97,7 +114,7 @@ impl Indicator for Atr {
     }
 
     fn is_ready(&self) -> bool {
-        self.avg.is_some()
+        self.seeded
     }
 
     fn name(&self) -> &'static str {

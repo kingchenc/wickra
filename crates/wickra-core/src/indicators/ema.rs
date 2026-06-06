@@ -25,7 +25,15 @@ use crate::traits::Indicator;
 pub struct Ema {
     period: usize,
     alpha: f64,
-    state: Option<f64>,
+    /// `1 - alpha`, precomputed so the recurrence avoids a subtraction per tick.
+    /// Cached value, so the steady-state output is bit-for-bit unchanged.
+    one_minus_alpha: f64,
+    /// Latest EMA value, valid only once `seeded` is true. Stored as a bare `f64`
+    /// (plus the `seeded` flag) rather than `Option<f64>` so the steady-state
+    /// recurrence reads and writes 8 bytes with no enum-tag handling per tick.
+    current: f64,
+    /// Whether `current` holds a real value yet (warmup complete).
+    seeded: bool,
     warmup_buf: Vec<f64>,
 }
 
@@ -43,7 +51,9 @@ impl Ema {
         Ok(Self {
             period,
             alpha,
-            state: None,
+            one_minus_alpha: 1.0 - alpha,
+            current: 0.0,
+            seeded: false,
             warmup_buf: Vec::with_capacity(period),
         })
     }
@@ -66,7 +76,9 @@ impl Ema {
         Ok(Self {
             period: 1,
             alpha,
-            state: None,
+            one_minus_alpha: 1.0 - alpha,
+            current: 0.0,
+            seeded: false,
             warmup_buf: Vec::with_capacity(1),
         })
     }
@@ -83,21 +95,28 @@ impl Ema {
 
     /// Current value if available.
     pub const fn value(&self) -> Option<f64> {
-        self.state
+        if self.seeded {
+            Some(self.current)
+        } else {
+            None
+        }
     }
 
     /// Internal helper that feeds a value without finiteness validation. The caller
     /// guarantees `input.is_finite()`. Used by MACD which has already validated.
     pub(crate) fn step_unchecked(&mut self, input: f64) -> Option<f64> {
-        if let Some(prev) = self.state {
-            let new = self.alpha.mul_add(input, (1.0 - self.alpha) * prev);
-            self.state = Some(new);
+        if self.seeded {
+            let new = self
+                .alpha
+                .mul_add(input, self.one_minus_alpha * self.current);
+            self.current = new;
             return Some(new);
         }
         self.warmup_buf.push(input);
         if self.warmup_buf.len() == self.period {
             let seed = self.warmup_buf.iter().copied().sum::<f64>() / self.period as f64;
-            self.state = Some(seed);
+            self.current = seed;
+            self.seeded = true;
             return Some(seed);
         }
         None
@@ -110,13 +129,14 @@ impl Indicator for Ema {
 
     fn update(&mut self, input: f64) -> Option<f64> {
         if !input.is_finite() {
-            return self.state;
+            return self.value();
         }
         self.step_unchecked(input)
     }
 
     fn reset(&mut self) {
-        self.state = None;
+        self.current = 0.0;
+        self.seeded = false;
         self.warmup_buf.clear();
     }
 
@@ -125,7 +145,7 @@ impl Indicator for Ema {
     }
 
     fn is_ready(&self) -> bool {
-        self.state.is_some()
+        self.seeded
     }
 
     fn name(&self) -> &'static str {

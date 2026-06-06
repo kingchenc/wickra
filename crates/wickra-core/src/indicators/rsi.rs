@@ -25,13 +25,24 @@ use crate::traits::Indicator;
 #[derive(Debug, Clone)]
 pub struct Rsi {
     period: usize,
-    prev_close: Option<f64>,
+    /// `period - 1` as `f64`, precomputed for the Wilder smoothing step.
+    n_minus_1: f64,
+    /// `1 / period`, precomputed so the per-tick smoothing multiplies instead of
+    /// divides (a reciprocal is hoisted out of the hot path).
+    inv_period: f64,
+    /// Previous close, valid once `has_prev` is set. Bare `f64` + flag instead of
+    /// `Option<f64>` to avoid an enum-tag read on every tick.
+    prev_close: f64,
+    has_prev: bool,
     // Wilder seeds with the simple average of the first `period` gains/losses,
     // then transitions to recursive smoothing.
     seed_buf_gains: Vec<f64>,
     seed_buf_losses: Vec<f64>,
-    avg_gain: Option<f64>,
-    avg_loss: Option<f64>,
+    /// Smoothed average gain / loss, valid once `avgs_seeded` is set. Bare `f64`s
+    /// + flag so the hot recurrence avoids reading two `Option<f64>` tags per tick.
+    avg_gain: f64,
+    avg_loss: f64,
+    avgs_seeded: bool,
     last_value: Option<f64>,
 }
 
@@ -47,11 +58,15 @@ impl Rsi {
         }
         Ok(Self {
             period,
-            prev_close: None,
+            n_minus_1: (period - 1) as f64,
+            inv_period: 1.0 / period as f64,
+            prev_close: 0.0,
+            has_prev: false,
             seed_buf_gains: Vec::with_capacity(period),
             seed_buf_losses: Vec::with_capacity(period),
-            avg_gain: None,
-            avg_loss: None,
+            avg_gain: 0.0,
+            avg_loss: 0.0,
+            avgs_seeded: false,
             last_value: None,
         })
     }
@@ -67,16 +82,16 @@ impl Rsi {
     }
 
     fn rsi_from_avgs(avg_gain: f64, avg_loss: f64) -> f64 {
-        if avg_loss == 0.0 {
-            if avg_gain == 0.0 {
-                // No movement at all -> RSI undefined; standard convention returns 50.
-                50.0
-            } else {
-                100.0
-            }
+        // Algebraically `100 - 100/(1 + ag/al)` collapses to `100·ag/(ag+al)`,
+        // which needs a single division instead of two and removes the separate
+        // `rs` step. Edge cases stay exact: `al == 0, ag > 0` gives `100·ag/ag =
+        // 100`; `ag == 0, al > 0` gives `0`; both zero (no movement) is the
+        // undefined case and returns the neutral 50.
+        let denom = avg_gain + avg_loss;
+        if denom == 0.0 {
+            50.0
         } else {
-            let rs = avg_gain / avg_loss;
-            100.0 - 100.0 / (1.0 + rs)
+            100.0 * avg_gain / denom
         }
     }
 }
@@ -90,22 +105,25 @@ impl Indicator for Rsi {
             return self.last_value;
         }
 
-        let Some(prev) = self.prev_close else {
-            self.prev_close = Some(input);
+        if !self.has_prev {
+            self.prev_close = input;
+            self.has_prev = true;
             return None;
-        };
-        self.prev_close = Some(input);
+        }
+        let prev = self.prev_close;
+        self.prev_close = input;
 
         let diff = input - prev;
         let gain = if diff > 0.0 { diff } else { 0.0 };
         let loss = if diff < 0.0 { -diff } else { 0.0 };
 
-        if let (Some(ag), Some(al)) = (self.avg_gain, self.avg_loss) {
-            let n = self.period as f64;
-            let new_ag = (ag * (n - 1.0) + gain) / n;
-            let new_al = (al * (n - 1.0) + loss) / n;
-            self.avg_gain = Some(new_ag);
-            self.avg_loss = Some(new_al);
+        if self.avgs_seeded {
+            // Wilder smoothing `(prev·(n-1) + x) / n` with the reciprocal hoisted:
+            // a fused multiply-add then a multiply by `1/n`, no per-tick division.
+            let new_ag = self.avg_gain.mul_add(self.n_minus_1, gain) * self.inv_period;
+            let new_al = self.avg_loss.mul_add(self.n_minus_1, loss) * self.inv_period;
+            self.avg_gain = new_ag;
+            self.avg_loss = new_al;
             let v = Self::rsi_from_avgs(new_ag, new_al);
             self.last_value = Some(v);
             return Some(v);
@@ -116,8 +134,9 @@ impl Indicator for Rsi {
         if self.seed_buf_gains.len() == self.period {
             let ag = self.seed_buf_gains.iter().sum::<f64>() / self.period as f64;
             let al = self.seed_buf_losses.iter().sum::<f64>() / self.period as f64;
-            self.avg_gain = Some(ag);
-            self.avg_loss = Some(al);
+            self.avg_gain = ag;
+            self.avg_loss = al;
+            self.avgs_seeded = true;
             let v = Self::rsi_from_avgs(ag, al);
             self.last_value = Some(v);
             return Some(v);
@@ -126,11 +145,13 @@ impl Indicator for Rsi {
     }
 
     fn reset(&mut self) {
-        self.prev_close = None;
+        self.prev_close = 0.0;
+        self.has_prev = false;
         self.seed_buf_gains.clear();
         self.seed_buf_losses.clear();
-        self.avg_gain = None;
-        self.avg_loss = None;
+        self.avg_gain = 0.0;
+        self.avg_loss = 0.0;
+        self.avgs_seeded = false;
         self.last_value = None;
     }
 
