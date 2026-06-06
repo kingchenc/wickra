@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **Projection Oscillator** — Widner projection oscillator: close position inside the projection bands, scaled 0..100 (`ProjectionOscillator`).
+- **Projection Bands** — Widner projection bands: forward-projected high/low regression envelope (`ProjectionBands`).
+- **Median Channel** — robust median +/- multiplier*MAD envelope (`MedianChannel`).
+- **Bomar Bands** — adaptive percentage bands containing a target coverage fraction of recent closes (`BomarBands`).
+- **Quartile Bands** — rolling 25th/50th/75th-percentile (Q1/median/Q3) envelope (`QuartileBands`).
 
 ## [0.6.0] - 2026-06-06
 - **Volatility Cone** — volatility cone: current realized volatility within its historical min/median/max envelope (`VolatilityCone`).

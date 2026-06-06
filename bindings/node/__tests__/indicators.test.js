@@ -355,6 +355,7 @@ const candleScalar = {
   TTM_TREND: { make: () => new wickra.TTM_TREND(6), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   Qstick: { make: () => new wickra.Qstick(10), step: (ind, i) => ind.update(open[i], close[i]), batch: (ind) => ind.batch(open, close) },
   VolatilityRatio: { make: () => new wickra.VolatilityRatio(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  ProjectionOscillator: { make: () => new wickra.ProjectionOscillator(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {
@@ -442,6 +443,10 @@ const multi = {
   GatorOscillator: { make: () => new wickra.GatorOscillator(13, 8, 5), fields: ['upper', 'lower'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   KasePermissionStochastic: { make: () => new wickra.KasePermissionStochastic(9, 3), fields: ['fast', 'slow'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   VolatilityCone: { make: () => new wickra.VolatilityCone(20, 60), fields: ['current', 'min', 'median', 'max', 'percentile'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  QuartileBands: { make: () => new wickra.QuartileBands(4), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
+  BomarBands: { make: () => new wickra.BomarBands(4, 0.85), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
+  MedianChannel: { make: () => new wickra.MedianChannel(5, 2.0), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
+  ProjectionBands: { make: () => new wickra.ProjectionBands(3), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
 };
 
 for (const [name, d] of Object.entries(multi)) {

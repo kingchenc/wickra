@@ -52,6 +52,7 @@ mod bipower_variation;
 mod body_size_pct;
 mod bollinger;
 mod bollinger_bandwidth;
+mod bomar_bands;
 mod breadth_thrust;
 mod breakaway;
 mod bullish_percent_index;
@@ -229,6 +230,7 @@ mod mcclellan_oscillator;
 mod mcclellan_summation_index;
 mod mcginley_dynamic;
 mod median_absolute_deviation;
+mod median_channel;
 mod median_ma;
 mod median_price;
 mod mfi;
@@ -276,10 +278,13 @@ mod polarized_fractal_efficiency;
 mod ppo;
 mod ppo_histogram;
 mod profit_factor;
+mod projection_bands;
+mod projection_oscillator;
 mod psar;
 mod pvi;
 mod qqe;
 mod qstick;
+mod quartile_bands;
 mod quoted_spread;
 mod r_squared;
 mod realized_spread;
@@ -481,6 +486,7 @@ pub use bipower_variation::BipowerVariation;
 pub use body_size_pct::BodySizePct;
 pub use bollinger::{BollingerBands, BollingerOutput};
 pub use bollinger_bandwidth::BollingerBandwidth;
+pub use bomar_bands::{BomarBands, BomarBandsOutput};
 pub use breadth_thrust::BreadthThrust;
 pub use breakaway::Breakaway;
 pub use bullish_percent_index::BullishPercentIndex;
@@ -658,6 +664,7 @@ pub use mcclellan_oscillator::McClellanOscillator;
 pub use mcclellan_summation_index::McClellanSummationIndex;
 pub use mcginley_dynamic::McGinleyDynamic;
 pub use median_absolute_deviation::MedianAbsoluteDeviation;
+pub use median_channel::{MedianChannel, MedianChannelOutput};
 pub use median_ma::MedianMa;
 pub use median_price::MedianPrice;
 pub use mfi::Mfi;
@@ -705,10 +712,13 @@ pub use polarized_fractal_efficiency::PolarizedFractalEfficiency;
 pub use ppo::Ppo;
 pub use ppo_histogram::PpoHistogram;
 pub use profit_factor::ProfitFactor;
+pub use projection_bands::{ProjectionBands, ProjectionBandsOutput};
+pub use projection_oscillator::ProjectionOscillator;
 pub use psar::Psar;
 pub use pvi::Pvi;
 pub use qqe::{Qqe, QqeOutput};
 pub use qstick::Qstick;
+pub use quartile_bands::{QuartileBands, QuartileBandsOutput};
 pub use quoted_spread::QuotedSpread;
 pub use r_squared::RSquared;
 pub use realized_spread::RealizedSpread;
@@ -1040,6 +1050,11 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "TtmSqueeze",
             "FractalChaosBands",
             "VwapStdDevBands",
+            "QuartileBands",
+            "BomarBands",
+            "MedianChannel",
+            "ProjectionBands",
+            "ProjectionOscillator",
         ],
     ),
     (
@@ -1441,6 +1456,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 429, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 434, "FAMILIES total drifted from indicator count");
     }
 }

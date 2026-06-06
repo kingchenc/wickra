@@ -173,6 +173,9 @@ SCALAR = [
 # Family 05 band/channel indicators with scalar input and multi-output.
 # `cols` is the expected number of band columns from `batch`.
 SCALAR_MULTI = {
+    "MedianChannel": (lambda: ta.MedianChannel(5, 2.0), 3),
+    "BomarBands": (lambda: ta.BomarBands(4, 0.85), 3),
+    "QuartileBands": (lambda: ta.QuartileBands(4), 3),
     "Qqe": (lambda: ta.QQE(14, 5, 4.236), 2),
     "MaEnvelope": (lambda: ta.MaEnvelope(20, 0.025), 3),
     "LinRegChannel": (lambda: ta.LinRegChannel(20, 2.0), 3),
@@ -365,6 +368,7 @@ def test_relative_strength_streaming_matches_batch():
 # 6-tuple candle; the batch helper takes only the columns it needs.
 
 CANDLE_SCALAR = {
+    "ProjectionOscillator": (lambda: ta.ProjectionOscillator(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "VolatilityRatio": (lambda: ta.VolatilityRatio(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "TTM_TREND": (lambda: ta.TTM_TREND(6), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "StochasticCCI": (lambda: ta.StochasticCCI(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
@@ -904,6 +908,11 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 # --- Candle-input, multi-output indicators --------------------------------
 
 MULTI = {
+    "ProjectionBands": (
+        lambda: ta.ProjectionBands(3),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+        3,
+    ),
     "VolatilityCone": (
         lambda: ta.VolatilityCone(20, 60),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
@@ -2917,6 +2926,46 @@ def test_garch11_reference():
 
 def test_volatility_cone_reference():
     t = ta.VolatilityCone(20, 60)
+
+
+def test_quartile_bands_reference():
+    t = ta.QuartileBands(4)
+    assert t.update(40.0) is None
+    assert t.update(30.0) is None
+    assert t.update(20.0) is None
+    assert t.update(10.0) == pytest.approx((32.5, 25.0, 17.5))
+
+
+def test_bomar_bands_reference():
+    t = ta.BomarBands(4, 0.85)
+    assert t.update(100.0) is None
+    assert t.update(102.0) is None
+    assert t.update(98.0) is None
+    assert t.update(104.0) == pytest.approx((104.0, 101.0, 98.0))
+
+
+def test_median_channel_reference():
+    t = ta.MedianChannel(5, 2.0)
+    assert t.update(1.0) is None
+    assert t.update(2.0) is None
+    assert t.update(3.0) is None
+    assert t.update(4.0) is None
+    assert t.update(5.0) == pytest.approx((5.0, 3.0, 1.0))
+
+
+def test_projection_bands_reference():
+    t = ta.ProjectionBands(3)
+    assert t.update((8.0, 10.0, 8.0, 9.0, 1.0, 0)) is None
+    assert t.update((9.0, 12.0, 9.0, 11.0, 1.0, 1)) is None
+    assert t.update((10.0, 11.0, 10.0, 11.0, 1.0, 2)) == pytest.approx((12.5, 11.25, 10.0))
+
+
+def test_projection_oscillator_reference():
+    # Same window as ProjectionBands: upper 12.5, lower 10; close 11 -> 40.
+    t = ta.ProjectionOscillator(3)
+    assert t.update((8.0, 10.0, 8.0, 9.0, 1.0, 0)) is None
+    assert t.update((9.0, 12.0, 9.0, 11.0, 1.0, 1)) is None
+    assert t.update((10.0, 11.0, 10.0, 11.0, 1.0, 2)) == pytest.approx(40.0)
 
 # --- Lifecycle ------------------------------------------------------------
 
