@@ -220,6 +220,199 @@ node_scalar_indicator!(
     wc::TrendStrengthIndex
 );
 node_scalar_indicator!(TsfOscillatorNode, "TsfOscillator", wc::TsfOscillator);
+node_scalar_indicator!(
+    BipowerVariationNode,
+    "BipowerVariation",
+    wc::BipowerVariation
+);
+
+#[napi(js_name = "EwmaVolatility")]
+pub struct EwmaVolatilityNode {
+    inner: wc::EwmaVolatility,
+}
+
+#[napi]
+impl EwmaVolatilityNode {
+    #[napi(constructor)]
+    pub fn new(lambda: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::EwmaVolatility::new(lambda).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "Garch11")]
+pub struct Garch11Node {
+    inner: wc::Garch11,
+}
+
+#[napi]
+impl Garch11Node {
+    #[napi(constructor)]
+    pub fn new(omega: f64, alpha: f64, beta: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Garch11::new(omega, alpha, beta).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "VolatilityOfVolatility")]
+pub struct VolatilityOfVolatilityNode {
+    inner: wc::VolatilityOfVolatility,
+}
+
+#[napi]
+impl VolatilityOfVolatilityNode {
+    #[napi(constructor)]
+    pub fn new(vol_window: u32, vov_window: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::VolatilityOfVolatility::new(vol_window as usize, vov_window as usize)
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+/// Volatility-cone result: current realized volatility and its lookback
+/// envelope (min / median / max) plus the percentile rank of `current`.
+#[napi(object)]
+pub struct VolatilityConeValue {
+    pub current: f64,
+    pub min: f64,
+    pub median: f64,
+    pub max: f64,
+    pub percentile: f64,
+}
+
+#[napi(js_name = "VolatilityCone")]
+pub struct VolatilityConeNode {
+    inner: wc::VolatilityCone,
+}
+
+#[napi]
+impl VolatilityConeNode {
+    #[napi(constructor)]
+    pub fn new(window: u32, lookback: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::VolatilityCone::new(window as usize, lookback as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<VolatilityConeValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, close, 0.0)?)
+            .map(|o| VolatilityConeValue {
+                current: o.current,
+                min: o.min,
+                median: o.median,
+                max: o.max,
+                percentile: o.percentile,
+            }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 5];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], close[i], 0.0)?) {
+                out[i * 5] = o.current;
+                out[i * 5 + 1] = o.min;
+                out[i * 5 + 2] = o.median;
+                out[i * 5 + 3] = o.max;
+                out[i * 5 + 4] = o.percentile;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 #[napi(js_name = "JumpIndicator")]
 pub struct JumpIndicatorNode {
     inner: wc::JumpIndicator,
@@ -2606,6 +2799,59 @@ impl KasePermissionStochasticNode {
                 out[i * 2] = o.fast;
                 out[i * 2 + 1] = o.slow;
             }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "VolatilityRatio")]
+pub struct VolatilityRatioNode {
+    inner: wc::VolatilityRatio,
+}
+
+#[napi]
+impl VolatilityRatioNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::VolatilityRatio::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, 0.0)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
         }
         Ok(out)
     }

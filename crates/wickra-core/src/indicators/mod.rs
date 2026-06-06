@@ -48,6 +48,7 @@ mod bat;
 mod belt_hold;
 mod beta;
 mod beta_neutral_spread;
+mod bipower_variation;
 mod body_size_pct;
 mod bollinger;
 mod bollinger_bandwidth;
@@ -118,6 +119,7 @@ mod empirical_mode_decomposition;
 mod engulfing;
 mod evening_doji_star;
 mod evwma;
+mod ewma_volatility;
 mod expectancy;
 mod falling_three_methods;
 mod fama;
@@ -143,6 +145,7 @@ mod funding_rate_mean;
 mod funding_rate_zscore;
 mod gain_loss_ratio;
 mod gap_side_by_side_white;
+mod garch11;
 mod garman_klass;
 mod gartley;
 mod gator_oscillator;
@@ -404,6 +407,9 @@ mod variance;
 mod variance_ratio;
 mod vertical_horizontal_filter;
 mod vidya;
+mod volatility_cone;
+mod volatility_of_volatility;
+mod volatility_ratio;
 mod volty_stop;
 mod volume_by_time_profile;
 mod volume_oscillator;
@@ -471,6 +477,7 @@ pub use bat::Bat;
 pub use belt_hold::BeltHold;
 pub use beta::Beta;
 pub use beta_neutral_spread::BetaNeutralSpread;
+pub use bipower_variation::BipowerVariation;
 pub use body_size_pct::BodySizePct;
 pub use bollinger::{BollingerBands, BollingerOutput};
 pub use bollinger_bandwidth::BollingerBandwidth;
@@ -541,6 +548,7 @@ pub use empirical_mode_decomposition::EmpiricalModeDecomposition;
 pub use engulfing::Engulfing;
 pub use evening_doji_star::EveningDojiStar;
 pub use evwma::Evwma;
+pub use ewma_volatility::EwmaVolatility;
 pub use expectancy::Expectancy;
 pub use falling_three_methods::FallingThreeMethods;
 pub use fama::Fama;
@@ -566,6 +574,7 @@ pub use funding_rate_mean::FundingRateMean;
 pub use funding_rate_zscore::FundingRateZScore;
 pub use gain_loss_ratio::GainLossRatio;
 pub use gap_side_by_side_white::GapSideBySideWhite;
+pub use garch11::Garch11;
 pub use garman_klass::GarmanKlassVolatility;
 pub use gartley::Gartley;
 pub use gator_oscillator::{GatorOscillator, GatorOscillatorOutput};
@@ -827,6 +836,9 @@ pub use variance::Variance;
 pub use variance_ratio::VarianceRatio;
 pub use vertical_horizontal_filter::VerticalHorizontalFilter;
 pub use vidya::Vidya;
+pub use volatility_cone::{VolatilityCone, VolatilityConeOutput};
+pub use volatility_of_volatility::VolatilityOfVolatility;
+pub use volatility_ratio::VolatilityRatio;
 pub use volty_stop::VoltyStop;
 pub use volume_by_time_profile::{VolumeByTimeProfile, VolumeByTimeProfileOutput};
 pub use volume_oscillator::VolumeOscillator;
@@ -1006,6 +1018,12 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "YangZhangVolatility",
             "JumpIndicator",
             "RegimeLabel",
+            "EwmaVolatility",
+            "Garch11",
+            "VolatilityOfVolatility",
+            "BipowerVariation",
+            "VolatilityRatio",
+            "VolatilityCone",
         ],
     ),
     (
@@ -1423,6 +1441,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 423, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 429, "FAMILIES total drifted from indicator count");
     }
 }

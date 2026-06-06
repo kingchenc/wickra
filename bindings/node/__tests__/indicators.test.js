@@ -28,6 +28,10 @@ function num(v) {
 // --- Scalar indicators: update(value) vs batch(prices) ---
 
 const scalarFactories = {
+  BipowerVariation: () => new wickra.BipowerVariation(20),
+  VolatilityOfVolatility: () => new wickra.VolatilityOfVolatility(20, 20),
+  Garch11: () => new wickra.Garch11(0.000002, 0.1, 0.88),
+  EwmaVolatility: () => new wickra.EwmaVolatility(0.94),
   PpoHistogram: () => new wickra.PpoHistogram(3, 6, 3),
   MacdHistogram: () => new wickra.MacdHistogram(3, 6, 3),
   TsfOscillator: () => new wickra.TsfOscillator(3),
@@ -350,6 +354,7 @@ const candleScalar = {
   IMI: { make: () => new wickra.IMI(14), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   TTM_TREND: { make: () => new wickra.TTM_TREND(6), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   Qstick: { make: () => new wickra.Qstick(10), step: (ind, i) => ind.update(open[i], close[i]), batch: (ind) => ind.batch(open, close) },
+  VolatilityRatio: { make: () => new wickra.VolatilityRatio(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {
@@ -436,6 +441,7 @@ const multi = {
   QQE: { make: () => new wickra.QQE(14, 5, 4.236), fields: ['rsiMa', 'trailingLine'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   GatorOscillator: { make: () => new wickra.GatorOscillator(13, 8, 5), fields: ['upper', 'lower'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   KasePermissionStochastic: { make: () => new wickra.KasePermissionStochastic(9, 3), fields: ['fast', 'slow'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  VolatilityCone: { make: () => new wickra.VolatilityCone(20, 60), fields: ['current', 'min', 'median', 'max', 'percentile'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
 };
 
 for (const [name, d] of Object.entries(multi)) {

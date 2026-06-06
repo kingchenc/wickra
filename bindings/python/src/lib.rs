@@ -53,6 +53,8 @@ type PivotLevels = (f64, f64, f64, f64, f64, f64, f64);
 type FibExtLevels = (f64, f64, f64, f64, f64);
 /// `(pp, r1, r2, s1, s2)` pivot levels returned by Woodie pivots.
 type WoodieLevels = (f64, f64, f64, f64, f64);
+/// `(current, min, median, max, percentile)` volatility-cone envelope.
+type ConeBands = (f64, f64, f64, f64, f64);
 /// `(tenkan, kijun, senkou_a, senkou_b, chikou)` Ichimoku lines, each optional during warmup.
 type IchimokuLines = (
     Option<f64>,
@@ -3430,6 +3432,130 @@ impl PyPpoHistogram {
     fn __repr__(&self) -> String {
         let (fast, slow, signal) = self.inner.periods();
         format!("PpoHistogram(fast={fast}, slow={slow}, signal={signal})")
+    }
+}
+
+// ============================== BipowerVariation ==============================
+
+#[pyclass(
+    name = "BipowerVariation",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyBipowerVariation {
+    inner: wc::BipowerVariation,
+}
+
+#[pymethods]
+impl PyBipowerVariation {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::BipowerVariation::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("BipowerVariation(period={})", self.inner.period())
+    }
+}
+
+// ============================== VolatilityRatio ==============================
+
+#[pyclass(
+    name = "VolatilityRatio",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyVolatilityRatio {
+    inner: wc::VolatilityRatio,
+}
+
+#[pymethods]
+impl PyVolatilityRatio {
+    #[new]
+    #[pyo3(signature = (period=14))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::VolatilityRatio::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("VolatilityRatio(period={})", self.inner.period())
     }
 }
 
@@ -21124,6 +21250,245 @@ impl PyFibTimeZones {
     }
 }
 
+// ============================== EWMA Volatility ==============================
+
+#[pyclass(
+    name = "EwmaVolatility",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyEwmaVolatility {
+    inner: wc::EwmaVolatility,
+}
+
+#[pymethods]
+impl PyEwmaVolatility {
+    #[new]
+    #[pyo3(signature = (lambda_=0.94))]
+    fn new(lambda_: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::EwmaVolatility::new(lambda_).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn lambda_(&self) -> f64 {
+        self.inner.lambda()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== GARCH(1,1) ==============================
+
+#[pyclass(name = "Garch11", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyGarch11 {
+    inner: wc::Garch11,
+}
+
+#[pymethods]
+impl PyGarch11 {
+    #[new]
+    #[pyo3(signature = (omega=0.000_002, alpha=0.1, beta=0.88))]
+    fn new(omega: f64, alpha: f64, beta: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Garch11::new(omega, alpha, beta).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn params(&self) -> (f64, f64, f64) {
+        self.inner.params()
+    }
+    #[getter]
+    fn unconditional_variance(&self) -> f64 {
+        self.inner.unconditional_variance()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== Volatility of Volatility ==============================
+
+#[pyclass(
+    name = "VolatilityOfVolatility",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyVolatilityOfVolatility {
+    inner: wc::VolatilityOfVolatility,
+}
+
+#[pymethods]
+impl PyVolatilityOfVolatility {
+    #[new]
+    #[pyo3(signature = (vol_window=20, vov_window=20))]
+    fn new(vol_window: usize, vov_window: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::VolatilityOfVolatility::new(vol_window, vov_window).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn windows(&self) -> (usize, usize) {
+        self.inner.windows()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== Volatility Cone ==============================
+
+#[pyclass(
+    name = "VolatilityCone",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyVolatilityCone {
+    inner: wc::VolatilityCone,
+}
+
+#[pymethods]
+impl PyVolatilityCone {
+    #[new]
+    #[pyo3(signature = (window=20, lookback=60))]
+    fn new(window: usize, lookback: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::VolatilityCone::new(window, lookback).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<ConeBands>> {
+        let c = extract_candle(candle)?;
+        Ok(self
+            .inner
+            .update(c)
+            .map(|o| (o.current, o.min, o.median, o.max, o.percentile)))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 5];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 5] = o.current;
+                out[i * 5 + 1] = o.min;
+                out[i * 5 + 2] = o.median;
+                out[i * 5 + 3] = o.max;
+                out[i * 5 + 4] = o.percentile;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 5), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn windows(&self) -> (usize, usize) {
+        self.inner.windows()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[pymodule]
 #[allow(clippy::too_many_lines)]
 fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -21563,5 +21928,11 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyTsfOscillator>()?;
     m.add_class::<PyMacdHistogram>()?;
     m.add_class::<PyPpoHistogram>()?;
+    m.add_class::<PyBipowerVariation>()?;
+    m.add_class::<PyVolatilityRatio>()?;
+    m.add_class::<PyEwmaVolatility>()?;
+    m.add_class::<PyGarch11>()?;
+    m.add_class::<PyVolatilityOfVolatility>()?;
+    m.add_class::<PyVolatilityCone>()?;
     Ok(())
 }

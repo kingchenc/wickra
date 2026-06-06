@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **Volatility Cone** — volatility cone: current realized volatility within its historical min/median/max envelope (`VolatilityCone`).
+- **VolatilityRatio** — Schwager's volatility ratio: true range over the EMA of prior true ranges (`VolatilityRatio`).
+- **BipowerVariation** — jump-robust realized bipower variation (pi/2 sum of adjacent absolute log-return products) (`BipowerVariation`).
+- **VolatilityOfVolatility** — vol-of-vol: sample stddev of a rolling realized-volatility series (`VolatilityOfVolatility`).
+- **Garch11** — GARCH(1,1) conditional volatility with a long-run-variance anchor (`Garch11`).
+- **EwmaVolatility** — RiskMetrics exponentially-weighted volatility of log returns (lambda decay) (`EwmaVolatility`).
 
 ## [0.5.9] - 2026-06-06
 

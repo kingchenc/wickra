@@ -45,6 +45,10 @@ def ohlcv() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 # --- Scalar (f64 -> f64) indicators ---------------------------------------
 
 SCALAR = [
+    (ta.BipowerVariation, (20,)),
+    (ta.VolatilityOfVolatility, (20, 20)),
+    (ta.Garch11, (0.000002, 0.1, 0.88)),
+    (ta.EwmaVolatility, (0.94,)),
     (ta.PpoHistogram, (3, 6, 3)),
     (ta.MacdHistogram, (3, 6, 3)),
     (ta.TsfOscillator, (3,)),
@@ -361,6 +365,7 @@ def test_relative_strength_streaming_matches_batch():
 # 6-tuple candle; the batch helper takes only the columns it needs.
 
 CANDLE_SCALAR = {
+    "VolatilityRatio": (lambda: ta.VolatilityRatio(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "TTM_TREND": (lambda: ta.TTM_TREND(6), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "StochasticCCI": (lambda: ta.StochasticCCI(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     # Per-bar OHLC transforms (open matters). The streaming harness feeds
@@ -899,6 +904,11 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 # --- Candle-input, multi-output indicators --------------------------------
 
 MULTI = {
+    "VolatilityCone": (
+        lambda: ta.VolatilityCone(20, 60),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+        5,
+    ),
     "KasePermissionStochastic": (
         lambda: ta.KasePermissionStochastic(9, 3),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
@@ -2889,6 +2899,24 @@ def test_ppo_histogram_reference():
     for i in range(7):
         assert t.update(100.0 + i * 2.0) is None
     assert t.update(100.0 + 7 * 2.0) == pytest.approx(-0.052098, abs=1e-6)
+
+
+def test_ewma_volatility_reference():
+    t = ta.EwmaVolatility(0.94)
+    assert t.update(100.0) is None
+    assert t.update(110.0) == pytest.approx(0.09531017980432493)
+    assert t.update(99.0) == pytest.approx(0.0959428936787596)
+
+
+def test_garch11_reference():
+    t = ta.Garch11(0.000002, 0.1, 0.88)
+    assert t.update(100.0) is None
+    assert t.update(110.0) == pytest.approx(0.009999999999999995)
+    assert t.update(99.0) == pytest.approx(0.031597516317477786)
+
+
+def test_volatility_cone_reference():
+    t = ta.VolatilityCone(20, 60)
 
 # --- Lifecycle ------------------------------------------------------------
 
