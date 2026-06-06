@@ -368,6 +368,7 @@ def test_relative_strength_streaming_matches_batch():
 # 6-tuple candle; the batch helper takes only the columns it needs.
 
 CANDLE_SCALAR = {
+    "TimeBasedStop": (lambda: ta.TimeBasedStop(5), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "ProjectionOscillator": (lambda: ta.ProjectionOscillator(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "VolatilityRatio": (lambda: ta.VolatilityRatio(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "TTM_TREND": (lambda: ta.TTM_TREND(6), lambda ind, h, l, c, v: ind.batch(h, l, c)),
@@ -908,6 +909,26 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 # --- Candle-input, multi-output indicators --------------------------------
 
 MULTI = {
+    "ModifiedMaStop": (
+        lambda: ta.ModifiedMaStop(14),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+        2,
+    ),
+    "Nrtr": (
+        lambda: ta.Nrtr(2.0),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+        2,
+    ),
+    "AtrRatchet": (
+        lambda: ta.AtrRatchet(14, 4.0, 0.1),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+        2,
+    ),
+    "ElderSafeZone": (
+        lambda: ta.ElderSafeZone(14, 2.0),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+        2,
+    ),
     "KaseDevStop": (
         lambda: ta.KaseDevStop(3, 1.0),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
@@ -2979,6 +3000,45 @@ def test_kase_devstop_reference():
     assert t.update((101.0, 102.0, 100.0, 101.0, 1.0, 1)) is None
     assert t.update((102.0, 103.0, 101.0, 102.0, 1.0, 2)) is None
     assert t.update((102.5, 104.0, 102.0, 103.0, 1.0, 3)) == pytest.approx((101.0, 1.0))
+
+
+def _stop_candles(n):
+    # Gently rising, valid OHLC: high >= open/close, low <= open/close.
+    return [(100.0 + i, 101.5 + i, 98.5 + i, 100.5 + i, 1.0, i) for i in range(n)]
+
+
+def test_elder_safezone_reference():
+    t = ta.ElderSafeZone(14, 2.0)
+    candles = _stop_candles(15)
+    for c in candles[:14]:
+        assert t.update(c) is None
+    assert t.update(candles[14]) == pytest.approx((112.5, 1.0))
+
+
+def test_atr_ratchet_reference():
+    t = ta.AtrRatchet(14, 4.0, 0.1)
+    candles = _stop_candles(14)
+    for c in candles[:13]:
+        assert t.update(c) is None
+    assert t.update(candles[13]) == pytest.approx((101.5, 1.0))
+
+
+def test_nrtr_reference():
+    t = ta.Nrtr(2.0)
+    assert t.update((100.0, 100.0, 100.0, 100.0, 1.0, 0)) == pytest.approx((98.0, 1.0))
+
+
+def test_time_based_stop_reference():
+    t = ta.TimeBasedStop(5)
+    assert t.update((100.0, 101.0, 99.0, 100.0, 1.0, 0)) == pytest.approx(0.2)
+
+
+def test_modified_ma_stop_reference():
+    t = ta.ModifiedMaStop(14)
+    candles = _stop_candles(14)
+    for c in candles[:13]:
+        assert t.update(c) is None
+    assert t.update(candles[13]) == pytest.approx((107.0, 1.0))
 
 # --- Lifecycle ------------------------------------------------------------
 

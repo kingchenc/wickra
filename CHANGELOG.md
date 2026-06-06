@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **Modified MA Stop** — Modified MA Stop — SMMA-ratcheted trailing stop with directional flip (`MODIFIED_MA_STOP`).
+- **Time-Based Stop** — Time-Based Stop — bar-count timer that fires after a fixed holding period (`TIME_BASED_STOP`).
+- **NRTR** — NRTR (Nick Rypock Trailing Reverse) — percentage trailing-reverse stop (`NRTR`).
+- **ATR Ratchet** — ATR Ratchet — Kaufman per-bar tightening volatility trailing stop (`ATR_RATCHET`).
+- **Elder SafeZone** — Elder SafeZone Stop — average noise-penetration trailing stop with directional flip (`ELDER_SAFE_ZONE`).
 - **Kase DevStop** — Kase DevStop volatility trailing stop using standard-deviation of two-bar true range (`KASE_DEV_STOP`).
 
 ## [0.6.1] - 2026-06-07

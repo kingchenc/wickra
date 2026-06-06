@@ -153,6 +153,22 @@ export interface KaseDevStopValue {
   value: number
   direction: number
 }
+export interface ElderSafeZoneValue {
+  value: number
+  direction: number
+}
+export interface AtrRatchetValue {
+  value: number
+  direction: number
+}
+export interface NrtrValue {
+  value: number
+  direction: number
+}
+export interface ModifiedMaStopValue {
+  value: number
+  direction: number
+}
 /** Vortex Indicator pair: `VI+` and `VI-`. */
 export interface VortexValue {
   plus: number
@@ -1672,6 +1688,15 @@ export declare class ProjectionOscillator {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type TimeBasedStopNode = TimeBasedStop
+export declare class TimeBasedStop {
+  constructor(maxBars: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type StochNode = Stochastic
 export declare class Stochastic {
   constructor(kPeriod: number, dPeriod: number)
@@ -2336,6 +2361,58 @@ export type KaseDevStopNode = KaseDevStop
 export declare class KaseDevStop {
   constructor(period: number, dev: number)
   update(high: number, low: number, close: number): KaseDevStopValue | null
+  /**
+   * Returns `[value0, direction0, value1, direction1, ...]`, length `2 * n`.
+   * Warmup positions are `NaN`.
+   */
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type ElderSafeZoneNode = ElderSafeZone
+export declare class ElderSafeZone {
+  constructor(period: number, coeff: number)
+  update(high: number, low: number, close: number): ElderSafeZoneValue | null
+  /**
+   * Returns `[value0, direction0, value1, direction1, ...]`, length `2 * n`.
+   * Warmup positions are `NaN`.
+   */
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type AtrRatchetNode = AtrRatchet
+export declare class AtrRatchet {
+  constructor(atrPeriod: number, startMult: number, increment: number)
+  update(high: number, low: number, close: number): AtrRatchetValue | null
+  /**
+   * Returns `[value0, direction0, value1, direction1, ...]`, length `2 * n`.
+   * Warmup positions are `NaN`.
+   */
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type NrtrNode = Nrtr
+export declare class Nrtr {
+  constructor(pct: number)
+  update(high: number, low: number, close: number): NrtrValue | null
+  /**
+   * Returns `[value0, direction0, value1, direction1, ...]`, length `2 * n`.
+   * Warmup positions are `NaN`.
+   */
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type ModifiedMaStopNode = ModifiedMaStop
+export declare class ModifiedMaStop {
+  constructor(period: number)
+  update(high: number, low: number, close: number): ModifiedMaStopValue | null
   /**
    * Returns `[value0, direction0, value1, direction1, ...]`, length `2 * n`.
    * Warmup positions are `NaN`.

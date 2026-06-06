@@ -356,6 +356,7 @@ const candleScalar = {
   Qstick: { make: () => new wickra.Qstick(10), step: (ind, i) => ind.update(open[i], close[i]), batch: (ind) => ind.batch(open, close) },
   VolatilityRatio: { make: () => new wickra.VolatilityRatio(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ProjectionOscillator: { make: () => new wickra.ProjectionOscillator(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  TimeBasedStop: { make: () => new wickra.TimeBasedStop(5), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {
@@ -448,6 +449,10 @@ const multi = {
   MedianChannel: { make: () => new wickra.MedianChannel(5, 2.0), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(close[i]), batch: (ind) => ind.batch(close) },
   ProjectionBands: { make: () => new wickra.ProjectionBands(3), fields: ['upper', 'middle', 'lower'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   KaseDevStop: { make: () => new wickra.KaseDevStop(3, 1.0), fields: ['value', 'direction'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  ElderSafeZone: { make: () => new wickra.ElderSafeZone(14, 2.0), fields: ['value', 'direction'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  AtrRatchet: { make: () => new wickra.AtrRatchet(14, 4.0, 0.1), fields: ['value', 'direction'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  Nrtr: { make: () => new wickra.Nrtr(2.0), fields: ['value', 'direction'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  ModifiedMaStop: { make: () => new wickra.ModifiedMaStop(14), fields: ['value', 'direction'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
 };
 
 for (const [name, d] of Object.entries(multi)) {
