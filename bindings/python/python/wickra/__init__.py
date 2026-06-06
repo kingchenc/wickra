@@ -25,6 +25,12 @@ from __future__ import annotations
 
 from ._wickra import (
     __version__,
+    VolatilityCone,
+    VolatilityRatio,
+    BipowerVariation,
+    VolatilityOfVolatility,
+    Garch11,
+    EwmaVolatility,
     PpoHistogram,
     MacdHistogram,
     TsfOscillator,
@@ -476,6 +482,12 @@ from ._wickra import (
 )
 
 __all__ = [
+    "VolatilityCone",
+    "VolatilityRatio",
+    "BipowerVariation",
+    "VolatilityOfVolatility",
+    "Garch11",
+    "EwmaVolatility",
     "PpoHistogram",
     "MacdHistogram",
     "TsfOscillator",

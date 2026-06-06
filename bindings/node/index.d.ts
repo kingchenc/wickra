@@ -5,6 +5,17 @@
 
 /** Library version (matches the Rust crate version). */
 export declare function version(): string
+/**
+ * Volatility-cone result: current realized volatility and its lookback
+ * envelope (min / median / max) plus the percentile rank of `current`.
+ */
+export interface VolatilityConeValue {
+  current: number
+  min: number
+  median: number
+  max: number
+  percentile: number
+}
 /** Lead/lag result: the offset that maximises correlation, and that correlation. */
 export interface LeadLagValue {
   /** Offset that maximises `|corr(a, b shifted)|`. Positive ⇒ `a` leads `b`. */
@@ -987,6 +998,51 @@ export declare class TsfOscillator {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type BipowerVariationNode = BipowerVariation
+export declare class BipowerVariation {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type EwmaVolatilityNode = EwmaVolatility
+export declare class EwmaVolatility {
+  constructor(lambda: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type Garch11Node = Garch11
+export declare class Garch11 {
+  constructor(omega: number, alpha: number, beta: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type VolatilityOfVolatilityNode = VolatilityOfVolatility
+export declare class VolatilityOfVolatility {
+  constructor(volWindow: number, vovWindow: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type VolatilityConeNode = VolatilityCone
+export declare class VolatilityCone {
+  constructor(window: number, lookback: number)
+  update(high: number, low: number, close: number): VolatilityConeValue | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type JumpIndicatorNode = JumpIndicator
 export declare class JumpIndicator {
   constructor(period: number, threshold: number)
@@ -1569,6 +1625,15 @@ export type KasePermissionStochasticNode = KasePermissionStochastic
 export declare class KasePermissionStochastic {
   constructor(length: number, smooth: number)
   update(high: number, low: number, close: number): KasePermissionStochasticValue | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type VolatilityRatioNode = VolatilityRatio
+export declare class VolatilityRatio {
+  constructor(period: number)
+  update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
   isReady(): boolean
