@@ -35,6 +35,7 @@ mod aroon;
 mod aroon_oscillator;
 mod atr;
 mod atr_bands;
+mod atr_ratchet;
 mod atr_trailing_stop;
 mod auto_fib;
 mod autocorrelation;
@@ -115,6 +116,7 @@ mod ehlers_stochastic;
 mod ehma;
 mod elder_impulse;
 mod elder_ray;
+mod elder_safezone;
 mod ema;
 mod empirical_mode_decomposition;
 mod engulfing;
@@ -192,6 +194,7 @@ mod jump_indicator;
 mod kagi_bars;
 mod kalman_hedge_ratio;
 mod kama;
+mod kase_devstop;
 mod kase_permission_stochastic;
 mod kelly_criterion;
 mod keltner;
@@ -239,11 +242,13 @@ mod mid_point;
 mod mid_price;
 mod minus_di;
 mod minus_dm;
+mod modified_ma_stop;
 mod mom;
 mod morning_doji_star;
 mod morning_evening_star;
 mod natr;
 mod new_highs_new_lows;
+mod nrtr;
 mod nvi;
 mod ob_imbalance_full;
 mod ob_imbalance_top1;
@@ -378,6 +383,7 @@ mod three_stars_in_south;
 mod thrusting;
 mod tick_index;
 mod tii;
+mod time_based_stop;
 mod time_of_day_return_profile;
 mod tpo_profile;
 mod trade_imbalance;
@@ -469,6 +475,7 @@ pub use aroon::{Aroon, AroonOutput};
 pub use aroon_oscillator::AroonOscillator;
 pub use atr::Atr;
 pub use atr_bands::{AtrBands, AtrBandsOutput};
+pub use atr_ratchet::{AtrRatchet, AtrRatchetOutput};
 pub use atr_trailing_stop::AtrTrailingStop;
 pub use auto_fib::{AutoFib, AutoFibOutput};
 pub use autocorrelation::Autocorrelation;
@@ -549,6 +556,7 @@ pub use ehlers_stochastic::EhlersStochastic;
 pub use ehma::Ehma;
 pub use elder_impulse::ElderImpulse;
 pub use elder_ray::{ElderRay, ElderRayOutput};
+pub use elder_safezone::{ElderSafeZone, ElderSafeZoneOutput};
 pub use ema::Ema;
 pub use empirical_mode_decomposition::EmpiricalModeDecomposition;
 pub use engulfing::Engulfing;
@@ -626,6 +634,7 @@ pub use jump_indicator::JumpIndicator;
 pub use kagi_bars::{KagiBar, KagiBars};
 pub use kalman_hedge_ratio::{KalmanHedgeRatio, KalmanHedgeRatioOutput};
 pub use kama::Kama;
+pub use kase_devstop::{KaseDevStop, KaseDevStopOutput};
 pub use kase_permission_stochastic::{KasePermissionStochastic, KasePermissionStochasticOutput};
 pub use kelly_criterion::KellyCriterion;
 pub use keltner::{Keltner, KeltnerOutput};
@@ -673,11 +682,13 @@ pub use mid_point::MidPoint;
 pub use mid_price::MidPrice;
 pub use minus_di::MinusDi;
 pub use minus_dm::MinusDm;
+pub use modified_ma_stop::{ModifiedMaStop, ModifiedMaStopOutput};
 pub use mom::Mom;
 pub use morning_doji_star::MorningDojiStar;
 pub use morning_evening_star::MorningEveningStar;
 pub use natr::Natr;
 pub use new_highs_new_lows::NewHighsNewLows;
+pub use nrtr::{Nrtr, NrtrOutput};
 pub use nvi::Nvi;
 pub use ob_imbalance_full::OrderBookImbalanceFull;
 pub use ob_imbalance_top1::OrderBookImbalanceTop1;
@@ -812,6 +823,7 @@ pub use three_stars_in_south::ThreeStarsInSouth;
 pub use thrusting::Thrusting;
 pub use tick_index::TickIndex;
 pub use tii::Tii;
+pub use time_based_stop::TimeBasedStop;
 pub use time_of_day_return_profile::{TimeOfDayReturnProfile, TimeOfDayReturnProfileOutput};
 pub use tpo_profile::{TpoProfile, TpoProfileOutput};
 pub use trade_imbalance::TradeImbalance;
@@ -1073,6 +1085,12 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "StepTrailingStop",
             "RenkoTrailingStop",
             "SarExt",
+            "KaseDevStop",
+            "ElderSafeZone",
+            "AtrRatchet",
+            "Nrtr",
+            "TimeBasedStop",
+            "ModifiedMaStop",
         ],
     ),
     (
@@ -1456,6 +1474,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 434, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 440, "FAMILIES total drifted from indicator count");
     }
 }

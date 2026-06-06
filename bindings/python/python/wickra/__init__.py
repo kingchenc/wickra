@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from ._wickra import (
     __version__,
+    TimeBasedStop,
     ProjectionOscillator,
     VolatilityCone,
     VolatilityRatio,
@@ -168,6 +169,11 @@ from ._wickra import (
     HistoricalVolatility,
     BollingerBandwidth,
     PercentB,
+    # Trailing Stops
+    ModifiedMaStop,
+    Nrtr,
+    AtrRatchet,
+    ElderSafeZone,
     SuperTrend,
     ChandelierExit,
     ChandeKrollStop,
@@ -179,6 +185,7 @@ from ._wickra import (
     PercentageTrailingStop,
     StepTrailingStop,
     RenkoTrailingStop,
+    KaseDevStop,
     TrueRange,
     ChaikinVolatility,
     RVIVolatility,
@@ -487,6 +494,7 @@ from ._wickra import (
 )
 
 __all__ = [
+    "TimeBasedStop",
     "ProjectionOscillator",
     "VolatilityCone",
     "VolatilityRatio",
@@ -631,6 +639,11 @@ __all__ = [
     "HistoricalVolatility",
     "BollingerBandwidth",
     "PercentB",
+    # Trailing Stops
+    "ModifiedMaStop",
+    "Nrtr",
+    "AtrRatchet",
+    "ElderSafeZone",
     "SuperTrend",
     "ChandelierExit",
     "ChandeKrollStop",
@@ -642,6 +655,7 @@ __all__ = [
     "PercentageTrailingStop",
     "StepTrailingStop",
     "RenkoTrailingStop",
+    "KaseDevStop",
     "TrueRange",
     "ChaikinVolatility",
     "RVIVolatility",
