@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.6.0] - 2026-06-06
 - **Volatility Cone** — volatility cone: current realized volatility within its historical min/median/max envelope (`VolatilityCone`).
 - **VolatilityRatio** — Schwager's volatility ratio: true range over the EMA of prior true ranges (`VolatilityRatio`).
 - **BipowerVariation** — jump-robust realized bipower variation (pi/2 sum of adjacent absolute log-return products) (`BipowerVariation`).
@@ -1299,7 +1301,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.5.9...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/wickra-lib/wickra/compare/v0.5.9...v0.6.0
 [0.5.9]: https://github.com/wickra-lib/wickra/compare/v0.5.8...v0.5.9
 [0.5.8]: https://github.com/wickra-lib/wickra/compare/v0.5.7...v0.5.8
 [0.5.7]: https://github.com/wickra-lib/wickra/compare/v0.5.6...v0.5.7
