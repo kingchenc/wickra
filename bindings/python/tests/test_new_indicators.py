@@ -45,6 +45,10 @@ def ohlcv() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 # --- Scalar (f64 -> f64) indicators ---------------------------------------
 
 SCALAR = [
+    (ta.SAMPLEENT, (20, 2, 0.2)),
+    (ta.SHANNONENT, (20, 8)),
+    (ta.ROLLINGMINMAX, (20,)),
+    (ta.JARQUEBERA, (20,)),
     (ta.BipowerVariation, (20,)),
     (ta.VolatilityOfVolatility, (20, 20)),
     (ta.Garch11, (0.000002, 0.1, 0.88)),
@@ -204,6 +208,7 @@ def test_scalar_streaming_matches_batch(cls, args, sine_prices):
 # --- Two-series (asset, benchmark) indicators -----------------------------
 
 PAIR = [
+    (ta.KendallTau, (20,)),
     (ta.SpreadAr1Coefficient, (40,)),
     (ta.GrangerCausality, (60, 1)),
     (ta.VarianceRatio, (60, 2)),
@@ -3092,6 +3097,10 @@ def test_better_volume_reference():
 
 def test_volume_weighted_macd_reference():
     t = ta.VolumeWeightedMacd(12, 26, 9)
+
+
+def test_kendall_tau_reference():
+    t = ta.KendallTau(20)
 
 # --- Lifecycle ------------------------------------------------------------
 

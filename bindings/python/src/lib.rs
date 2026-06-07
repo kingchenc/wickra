@@ -3700,6 +3700,102 @@ impl PyTimeBasedStop {
     }
 }
 
+// ============================== JarqueBera ==============================
+
+#[pyclass(name = "JARQUEBERA", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyJarqueBera {
+    inner: wc::JarqueBera,
+}
+
+#[pymethods]
+impl PyJarqueBera {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::JarqueBera::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("JARQUEBERA(period={})", self.inner.period())
+    }
+}
+
+// ============================== RollingMinMaxScaler ==============================
+
+#[pyclass(name = "ROLLINGMINMAX", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyRollingMinMaxScaler {
+    inner: wc::RollingMinMaxScaler,
+}
+
+#[pymethods]
+impl PyRollingMinMaxScaler {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::RollingMinMaxScaler::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("ROLLINGMINMAX(period={})", self.inner.period())
+    }
+}
+
 // ============================== Stochastic ==============================
 
 #[pyclass(name = "IMI", module = "wickra._wickra", skip_from_py_object)]
@@ -22735,6 +22831,176 @@ impl PyVolumeWeightedMacd {
     }
 }
 
+// ============================== Shannon Entropy ==============================
+
+#[pyclass(name = "SHANNONENT", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyShannonEntropy {
+    inner: wc::ShannonEntropy,
+}
+
+#[pymethods]
+impl PyShannonEntropy {
+    #[new]
+    #[pyo3(signature = (period=20, bins=8))]
+    fn new(period: usize, bins: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::ShannonEntropy::new(period, bins).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn params(&self) -> (usize, usize) {
+        self.inner.params()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (period, bins) = self.inner.params();
+        format!("SHANNONENT(period={period}, bins={bins})")
+    }
+}
+
+// ============================== Sample Entropy ==============================
+
+#[pyclass(name = "SAMPLEENT", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PySampleEntropy {
+    inner: wc::SampleEntropy,
+}
+
+#[pymethods]
+impl PySampleEntropy {
+    #[new]
+    #[pyo3(signature = (period=20, m=2, r_factor=0.2))]
+    fn new(period: usize, m: usize, r_factor: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::SampleEntropy::new(period, m, r_factor).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn params(&self) -> (usize, usize, f64) {
+        self.inner.params()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (period, m, r_factor) = self.inner.params();
+        format!("SAMPLEENT(period={period}, m={m}, r_factor={r_factor})")
+    }
+}
+
+// ============================== Kendall Tau ==============================
+
+#[pyclass(name = "KendallTau", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyKendallTau {
+    inner: wc::KendallTau,
+}
+
+#[pymethods]
+impl PyKendallTau {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::KendallTau::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, x: f64, y: f64) -> Option<f64> {
+        self.inner.update((x, y))
+    }
+    /// Batch over two equally-sized numpy arrays.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        x: PyReadonlyArray1<'py, f64>,
+        y: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let xs = x
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let ys = y
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if xs.len() != ys.len() {
+            return Err(PyValueError::new_err("x and y must be equal length"));
+        }
+        let mut out = Vec::with_capacity(xs.len());
+        for i in 0..xs.len() {
+            out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("KendallTau(period={})", self.inner.period())
+    }
+}
+
 #[pymodule]
 #[allow(clippy::too_many_lines)]
 fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -23198,5 +23464,10 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyIntradayIntensity>()?;
     m.add_class::<PyBetterVolume>()?;
     m.add_class::<PyVolumeWeightedMacd>()?;
+    m.add_class::<PyShannonEntropy>()?;
+    m.add_class::<PySampleEntropy>()?;
+    m.add_class::<PyKendallTau>()?;
+    m.add_class::<PyJarqueBera>()?;
+    m.add_class::<PyRollingMinMaxScaler>()?;
     Ok(())
 }
