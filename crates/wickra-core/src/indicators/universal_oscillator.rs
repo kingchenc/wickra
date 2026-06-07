@@ -96,6 +96,13 @@ impl Indicator for UniversalOscillator {
             return None;
         };
         let white_noise = (price - p2) / 2.0;
+        if !white_noise.is_finite() {
+            // `price - p2` can overflow to +/-inf even when both are finite;
+            // skip the bar rather than feeding a non-finite value downstream.
+            self.prev_price_2 = self.prev_price_1;
+            self.prev_price_1 = Some(price);
+            return self.last;
+        }
         let filt = self
             .smoother
             .update(white_noise)
@@ -231,5 +238,17 @@ mod tests {
         let mut b = UniversalOscillator::new(20).unwrap();
         let streamed: Vec<_> = xs.iter().map(|x| b.update(*x)).collect();
         assert_eq!(batch, streamed);
+    }
+
+    #[test]
+    fn non_finite_white_noise_is_skipped() {
+        // `price - p2` can overflow to infinity even when both prices are
+        // finite; the non-finite white-noise term must be skipped, not fed to
+        // the smoother (which would otherwise yield `None` on the first bar).
+        let mut u = UniversalOscillator::new(20).unwrap();
+        assert_eq!(u.update(-1e308), None);
+        assert_eq!(u.update(0.0), None);
+        // (1e308 - (-1e308)) overflows to +inf -> white_noise non-finite.
+        assert_eq!(u.update(1e308), None);
     }
 }

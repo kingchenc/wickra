@@ -251,4 +251,19 @@ mod tests {
         let streamed: Vec<_> = xs.iter().map(|x| b.update(*x)).collect();
         assert_eq!(batch, streamed);
     }
+
+    #[test]
+    fn flat_input_yields_zero_power() {
+        // A constant series drives the highpass/smoother outputs to zero, so the
+        // signal power is zero and the oscillator reports 0.0 (the `pwr == 0` arm).
+        let flat = [100.0_f64; 200];
+        let last = EvenBetterSinewave::new(40, 10)
+            .unwrap()
+            .batch(&flat)
+            .into_iter()
+            .flatten()
+            .last()
+            .unwrap();
+        assert_eq!(last, 0.0);
+    }
 }

@@ -321,4 +321,20 @@ mod tests {
         let streamed: Vec<_> = xs.iter().map(|x| b.update(*x)).collect();
         assert_eq!(batch, streamed);
     }
+
+    #[test]
+    fn flat_input_falls_back_to_min_period() {
+        // Constant input has zero variance, so every lag correlation is
+        // degenerate (denom <= 0), the max power is zero and no period clears
+        // the 0.5 threshold -> the dominant cycle defaults to `min_period`.
+        let flat = [100.0_f64; 200];
+        let last = AutocorrelationPeriodogram::new(10, 48)
+            .unwrap()
+            .batch(&flat)
+            .into_iter()
+            .flatten()
+            .last()
+            .unwrap();
+        assert_eq!(last, 10.0);
+    }
 }
