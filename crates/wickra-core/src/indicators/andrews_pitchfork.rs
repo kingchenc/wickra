@@ -296,6 +296,53 @@ mod tests {
     }
 
     #[test]
+    fn record_pivot_keeps_more_extreme_same_kind() {
+        let mut p = AndrewsPitchfork::new(2).unwrap();
+        p.record_pivot(Pivot {
+            index: 0.0,
+            price: 100.0,
+            is_high: true,
+        });
+        // A higher high of the same kind replaces the stored one.
+        p.record_pivot(Pivot {
+            index: 1.0,
+            price: 105.0,
+            is_high: true,
+        });
+        assert_eq!(p.pivots.len(), 1);
+        assert_eq!(p.pivots[0].price, 105.0);
+        // A lower high of the same kind is ignored.
+        p.record_pivot(Pivot {
+            index: 2.0,
+            price: 102.0,
+            is_high: true,
+        });
+        assert_eq!(p.pivots.len(), 1);
+        assert_eq!(p.pivots[0].price, 105.0);
+        // A low pivot of the other kind is appended.
+        p.record_pivot(Pivot {
+            index: 3.0,
+            price: 90.0,
+            is_high: false,
+        });
+        assert_eq!(p.pivots.len(), 2);
+        // A lower low of the same kind replaces the stored low.
+        p.record_pivot(Pivot {
+            index: 4.0,
+            price: 85.0,
+            is_high: false,
+        });
+        assert_eq!(p.pivots[1].price, 85.0);
+        // A higher low of the same kind is ignored.
+        p.record_pivot(Pivot {
+            index: 5.0,
+            price: 88.0,
+            is_high: false,
+        });
+        assert_eq!(p.pivots[1].price, 85.0);
+    }
+
+    #[test]
     fn batch_equals_streaming() {
         let candles = zigzag();
         let batch = AndrewsPitchfork::new(2).unwrap().batch(&candles);
