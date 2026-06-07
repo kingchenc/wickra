@@ -179,6 +179,19 @@ mod tests {
     }
 
     #[test]
+    fn flat_bars_drive_tmf_to_zero() {
+        // A flat bar (high == low == close == prior close) gives a zero two-bar
+        // range, so the accumulation term falls back to 0.0 and TMF settles at
+        // zero. Exercises the `range == 0` guard.
+        let mut tmf = TwiggsMoneyFlow::new(2).unwrap();
+        let flat: Vec<Candle> = (0..6)
+            .map(|_| candle(100.0, 100.0, 100.0, 1_000.0))
+            .collect();
+        let last = tmf.batch(&flat).into_iter().flatten().last().unwrap();
+        assert_relative_eq!(last, 0.0, epsilon = 1e-12);
+    }
+
+    #[test]
     fn accessors_and_metadata() {
         let tmf = TwiggsMoneyFlow::new(21).unwrap();
         assert_eq!(tmf.period(), 21);

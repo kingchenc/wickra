@@ -17163,17 +17163,17 @@ impl VolumeRsiNode {
 
 // ============================== Williams A/D ==============================
 
-#[napi(js_name = "WilliamsAd")]
-pub struct WilliamsAdNode {
-    inner: wc::WilliamsAd,
+#[napi(js_name = "Wad")]
+pub struct WadNode {
+    inner: wc::Wad,
 }
 
 #[napi]
-impl WilliamsAdNode {
+impl WadNode {
     #[napi(constructor)]
     pub fn new() -> Self {
         Self {
-            inner: wc::WilliamsAd::new(),
+            inner: wc::Wad::new(),
         }
     }
     #[napi]
@@ -17216,7 +17216,7 @@ impl WilliamsAdNode {
     }
 }
 
-impl Default for WilliamsAdNode {
+impl Default for WadNode {
     fn default() -> Self {
         Self::new()
     }

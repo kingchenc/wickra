@@ -141,8 +141,8 @@ pub use indicators::{
     VolatilityRatio, VoltyStop, VolumeByTimeProfile, VolumeByTimeProfileOutput, VolumeOscillator,
     VolumePriceTrend, VolumeProfile, VolumeProfileOutput, VolumeRsi, VolumeWeightedMacd,
     VolumeWeightedMacdOutput, Vortex, VortexOutput, Vpin, Vwap, VwapStdDevBands,
-    VwapStdDevBandsOutput, Vwma, Vzo, WavePm, WaveTrend, WaveTrendOutput, Wedge, WeightedClose,
-    WickRatio, WilliamsAd, WilliamsFractals, WilliamsFractalsOutput, WilliamsR, WinRate, Wma,
+    VwapStdDevBandsOutput, Vwma, Vzo, Wad, WavePm, WaveTrend, WaveTrendOutput, Wedge,
+    WeightedClose, WickRatio, WilliamsFractals, WilliamsFractalsOutput, WilliamsR, WinRate, Wma,
     WoodiePivots, WoodiePivotsOutput, YangZhangVolatility, YoyoExit, ZScore, ZeroLagMacd,
     ZeroLagMacdOutput, ZigZag, ZigZagOutput, Zlema, FAMILIES, T3,
 };

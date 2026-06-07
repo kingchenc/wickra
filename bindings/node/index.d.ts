@@ -4654,8 +4654,8 @@ export declare class VolumeRsi {
   isReady(): boolean
   warmupPeriod(): number
 }
-export type WilliamsAdNode = WilliamsAd
-export declare class WilliamsAd {
+export type WadNode = Wad
+export declare class Wad {
   constructor()
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>

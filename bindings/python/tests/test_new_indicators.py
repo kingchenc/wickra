@@ -384,8 +384,8 @@ CANDLE_SCALAR = {
         lambda: ta.TwiggsMoneyFlow(21),
         lambda ind, h, l, c, v: ind.batch(h, l, c, v),
     ),
-    "WilliamsAd": (
-        lambda: ta.WilliamsAd(),
+    "Wad": (
+        lambda: ta.Wad(),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
     ),
     "VolumeRsi": (
@@ -1609,7 +1609,7 @@ def test_kvo_constant_series_is_zero():
         assert v == pytest.approx(0.0, abs=1e-12)
 
 
-def test_williams_ad_reference():
+def test_wad_reference():
     # bar 0 seeds prev_close = 10.
     # bar 1: prev=10, today high=13, low=8, close=12 (up day).
     #   TR_l = min(10, 8) = 8 -> delta = 12 - 8 = 4. AD = 4.

@@ -29,9 +29,9 @@ use crate::traits::Indicator;
 /// # Example
 ///
 /// ```
-/// use wickra_core::{Candle, Indicator, WilliamsAd};
+/// use wickra_core::{Candle, Indicator, Wad};
 ///
-/// let mut indicator = WilliamsAd::new();
+/// let mut indicator = Wad::new();
 /// let mut last = None;
 /// for i in 0..20 {
 ///     let base = 100.0 + f64::from(i);
@@ -41,13 +41,13 @@ use crate::traits::Indicator;
 /// assert!(last.is_some());
 /// ```
 #[derive(Debug, Clone, Default)]
-pub struct WilliamsAd {
+pub struct Wad {
     prev_close: Option<f64>,
-    wad: f64,
+    line: f64,
     last: Option<f64>,
 }
 
-impl WilliamsAd {
+impl Wad {
     /// Construct a new Williams A/D line. The line is parameter-free.
     #[must_use]
     pub fn new() -> Self {
@@ -60,7 +60,7 @@ impl WilliamsAd {
     }
 }
 
-impl Indicator for WilliamsAd {
+impl Indicator for Wad {
     type Input = Candle;
     type Output = f64;
 
@@ -76,15 +76,15 @@ impl Indicator for WilliamsAd {
         } else {
             0.0
         };
-        self.wad += ad;
+        self.line += ad;
         self.prev_close = Some(candle.close);
-        self.last = Some(self.wad);
-        Some(self.wad)
+        self.last = Some(self.line);
+        Some(self.line)
     }
 
     fn reset(&mut self) {
         self.prev_close = None;
-        self.wad = 0.0;
+        self.line = 0.0;
         self.last = None;
     }
 
@@ -99,7 +99,7 @@ impl Indicator for WilliamsAd {
     }
 
     fn name(&self) -> &'static str {
-        "WilliamsAd"
+        "Wad"
     }
 }
 
@@ -115,16 +115,16 @@ mod tests {
 
     #[test]
     fn accessors_and_metadata() {
-        let wad = WilliamsAd::new();
+        let wad = Wad::new();
         assert_eq!(wad.warmup_period(), 2);
-        assert_eq!(wad.name(), "WilliamsAd");
+        assert_eq!(wad.name(), "Wad");
         assert!(!wad.is_ready());
         assert_eq!(wad.value(), None);
     }
 
     #[test]
     fn first_bar_seeds_without_output() {
-        let mut wad = WilliamsAd::new();
+        let mut wad = Wad::new();
         assert_eq!(wad.update(candle(101.0, 99.0, 100.0)), None);
         assert!(wad.update(candle(102.0, 100.0, 101.0)).is_some());
     }
@@ -133,7 +133,7 @@ mod tests {
     fn up_close_accumulates() {
         // close rises from 100 -> 101; true low = min(low, prev_close) = min(100,100)=100;
         // AD = 101 - 100 = 1.
-        let mut wad = WilliamsAd::new();
+        let mut wad = Wad::new();
         wad.update(candle(101.0, 99.0, 100.0));
         let v = wad.update(candle(102.0, 100.0, 101.0)).unwrap();
         assert_relative_eq!(v, 1.0, epsilon = 1e-9);
@@ -143,7 +143,7 @@ mod tests {
     fn down_close_distributes() {
         // close falls 100 -> 99; true high = max(high, prev_close) = max(101,100)=101;
         // AD = 99 - 101 = -2.
-        let mut wad = WilliamsAd::new();
+        let mut wad = Wad::new();
         wad.update(candle(102.0, 100.0, 100.0));
         let v = wad.update(candle(101.0, 98.0, 99.0)).unwrap();
         assert_relative_eq!(v, -2.0, epsilon = 1e-9);
@@ -151,7 +151,7 @@ mod tests {
 
     #[test]
     fn unchanged_close_adds_nothing() {
-        let mut wad = WilliamsAd::new();
+        let mut wad = Wad::new();
         wad.update(candle(101.0, 99.0, 100.0));
         let v = wad.update(candle(105.0, 95.0, 100.0)).unwrap();
         assert_relative_eq!(v, 0.0, epsilon = 1e-12);
@@ -159,7 +159,7 @@ mod tests {
 
     #[test]
     fn pure_uptrend_is_monotone() {
-        let mut wad = WilliamsAd::new();
+        let mut wad = Wad::new();
         let candles: Vec<Candle> = (0..30)
             .map(|i| {
                 let base = 100.0 + f64::from(i);
@@ -175,7 +175,7 @@ mod tests {
 
     #[test]
     fn reset_clears_state() {
-        let mut wad = WilliamsAd::new();
+        let mut wad = Wad::new();
         let candles: Vec<Candle> = (0..10)
             .map(|i| {
                 let base = 100.0 + f64::from(i);
@@ -198,8 +198,8 @@ mod tests {
                 candle(base + 2.0, base - 2.0, base + 0.5)
             })
             .collect();
-        let batch = WilliamsAd::new().batch(&candles);
-        let mut b = WilliamsAd::new();
+        let batch = Wad::new().batch(&candles);
+        let mut b = Wad::new();
         let streamed: Vec<_> = candles.iter().map(|c| b.update(*c)).collect();
         assert_eq!(batch, streamed);
     }

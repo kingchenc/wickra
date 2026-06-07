@@ -358,7 +358,7 @@ const candleScalar = {
   ProjectionOscillator: { make: () => new wickra.ProjectionOscillator(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   TimeBasedStop: { make: () => new wickra.TimeBasedStop(5), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   VolumeRsi: { make: () => new wickra.VolumeRsi(14), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
-  WilliamsAd: { make: () => new wickra.WilliamsAd(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  Wad: { make: () => new wickra.Wad(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   TwiggsMoneyFlow: { make: () => new wickra.TwiggsMoneyFlow(21), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
   TradeVolumeIndex: { make: () => new wickra.TradeVolumeIndex(0.25), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
   IntradayIntensity: { make: () => new wickra.IntradayIntensity(), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },

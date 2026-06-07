@@ -438,12 +438,12 @@ mod vwap;
 mod vwap_stddev_bands;
 mod vwma;
 mod vzo;
+mod wad;
 mod wave_pm;
 mod wave_trend;
 mod wedge;
 mod weighted_close;
 mod wick_ratio;
-mod williams_ad;
 mod williams_fractals;
 mod williams_r;
 mod win_rate;
@@ -885,12 +885,12 @@ pub use vwap::{RollingVwap, Vwap};
 pub use vwap_stddev_bands::{VwapStdDevBands, VwapStdDevBandsOutput};
 pub use vwma::Vwma;
 pub use vzo::Vzo;
+pub use wad::Wad;
 pub use wave_pm::WavePm;
 pub use wave_trend::{WaveTrend, WaveTrendOutput};
 pub use wedge::Wedge;
 pub use weighted_close::WeightedClose;
 pub use wick_ratio::WickRatio;
-pub use williams_ad::WilliamsAd;
 pub use williams_fractals::{WilliamsFractals, WilliamsFractalsOutput};
 pub use williams_r::WilliamsR;
 pub use win_rate::WinRate;
@@ -1130,7 +1130,7 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "Vzo",
             "MarketFacilitationIndex",
             "VolumeRsi",
-            "WilliamsAd",
+            "Wad",
             "TwiggsMoneyFlow",
             "TradeVolumeIndex",
             "IntradayIntensity",

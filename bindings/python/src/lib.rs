@@ -22307,18 +22307,18 @@ impl PyVolumeRsi {
 
 // ============================== Williams A/D ==============================
 
-#[pyclass(name = "WilliamsAd", module = "wickra._wickra", skip_from_py_object)]
+#[pyclass(name = "Wad", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
-struct PyWilliamsAd {
-    inner: wc::WilliamsAd,
+struct PyWad {
+    inner: wc::Wad,
 }
 
 #[pymethods]
-impl PyWilliamsAd {
+impl PyWad {
     #[new]
     fn new() -> Self {
         Self {
-            inner: wc::WilliamsAd::new(),
+            inner: wc::Wad::new(),
         }
     }
     fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
@@ -22364,7 +22364,7 @@ impl PyWilliamsAd {
         self.inner.warmup_period()
     }
     fn __repr__(&self) -> String {
-        "WilliamsAd()".to_string()
+        "Wad()".to_string()
     }
 }
 
@@ -23192,7 +23192,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyProjectionOscillator>()?;
     m.add_class::<PyTimeBasedStop>()?;
     m.add_class::<PyVolumeRsi>()?;
-    m.add_class::<PyWilliamsAd>()?;
+    m.add_class::<PyWad>()?;
     m.add_class::<PyTwiggsMoneyFlow>()?;
     m.add_class::<PyTradeVolumeIndex>()?;
     m.add_class::<PyIntradayIntensity>()?;

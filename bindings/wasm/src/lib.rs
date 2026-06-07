@@ -12758,17 +12758,17 @@ impl WasmVolumeRsi {
 
 // ============================== Williams A/D ==============================
 
-#[wasm_bindgen(js_name = WilliamsAd)]
-pub struct WasmWilliamsAd {
-    inner: wc::WilliamsAd,
+#[wasm_bindgen(js_name = Wad)]
+pub struct WasmWad {
+    inner: wc::Wad,
 }
 
-#[wasm_bindgen(js_class = WilliamsAd)]
-impl WasmWilliamsAd {
+#[wasm_bindgen(js_class = Wad)]
+impl WasmWad {
     #[wasm_bindgen(constructor)]
-    pub fn new() -> WasmWilliamsAd {
+    pub fn new() -> WasmWad {
         Self {
-            inner: wc::WilliamsAd::new(),
+            inner: wc::Wad::new(),
         }
     }
     pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
@@ -13077,7 +13077,7 @@ impl WasmVolumeWeightedMacd {
     }
 }
 
-impl Default for WasmWilliamsAd {
+impl Default for WasmWad {
     fn default() -> Self {
         Self::new()
     }
