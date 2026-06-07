@@ -143,8 +143,10 @@ impl BollingerBands {
 
         let p_f64 = p as f64;
         let mult = self.multiplier;
-        let mut out = Vec::with_capacity(n * 4);
-        for &x in inputs {
+        // Pre-sized output: warmup rows stay NaN, ready rows are written in place
+        // by index — no per-row `push` length/capacity check.
+        let mut out = vec![f64::NAN; n * 4];
+        for (i, &x) in inputs.iter().enumerate() {
             if self.count == p {
                 let old = self.buf[self.head];
                 self.sum -= old;
@@ -173,15 +175,10 @@ impl BollingerBands {
                 let mean = self.sum / p_f64;
                 let stddev = (self.sum_sq / p_f64 - mean * mean).max(0.0).sqrt();
                 let band = mult * stddev;
-                out.push(mean + band);
-                out.push(mean);
-                out.push(mean - band);
-                out.push(stddev);
-            } else {
-                out.push(f64::NAN);
-                out.push(f64::NAN);
-                out.push(f64::NAN);
-                out.push(f64::NAN);
+                out[i * 4] = mean + band;
+                out[i * 4 + 1] = mean;
+                out[i * 4 + 2] = mean - band;
+                out[i * 4 + 3] = stddev;
             }
         }
         out

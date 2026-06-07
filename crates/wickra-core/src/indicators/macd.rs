@@ -123,11 +123,9 @@ impl MacdIndicator {
             return out;
         }
 
-        // Warmup rows (before the first full output at index sp+gp-2) are NaN;
-        // steady rows are pushed once each, avoiding a fill-then-overwrite pass.
-        let first = sp + gp - 2;
-        let mut out = vec![f64::NAN; first * 3];
-        out.reserve((n - first) * 3);
+        // Pre-sized output: warmup rows stay NaN, full-output rows are written in
+        // place by index — no per-row `push` length/capacity check.
+        let mut out = vec![f64::NAN; n * 3];
         let (fa, fo) = (self.fast.alpha(), 1.0 - self.fast.alpha());
         let (sa, so) = (self.slow.alpha(), 1.0 - self.slow.alpha());
         let (ga, go) = (self.signal_ema.alpha(), 1.0 - self.signal_ema.alpha());
@@ -181,9 +179,9 @@ impl MacdIndicator {
                 sig
             };
             let histogram = macd - signal;
-            out.push(macd);
-            out.push(signal);
-            out.push(histogram);
+            out[i * 3] = macd;
+            out[i * 3 + 1] = signal;
+            out[i * 3 + 2] = histogram;
             last = MacdOutput {
                 macd,
                 signal,
