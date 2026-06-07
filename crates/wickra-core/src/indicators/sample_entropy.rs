@@ -318,4 +318,20 @@ mod tests {
         let streamed: Vec<_> = xs.iter().map(|x| b.update(*x)).collect();
         assert_eq!(batch, streamed);
     }
+
+    #[test]
+    fn falls_back_when_no_m_plus_one_matches() {
+        // `[1, 1, 1, 5]` with m = 2: the length-2 template `(1, 1)` repeats
+        // (matches_m > 0) but no length-3 template repeats (matches_m1 == 0),
+        // so SampEn takes the `ln(matches_m)` fallback branch.
+        let xs = [1.0, 1.0, 1.0, 5.0];
+        let v = SampleEntropy::new(4, 2, 0.2)
+            .unwrap()
+            .batch(&xs)
+            .into_iter()
+            .flatten()
+            .last()
+            .unwrap();
+        assert!(v.is_finite() && v >= 0.0, "got {v}");
+    }
 }

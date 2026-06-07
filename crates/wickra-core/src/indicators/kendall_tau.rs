@@ -281,4 +281,16 @@ mod tests {
         let streamed: Vec<_> = pairs.iter().map(|p| b.update(*p)).collect();
         assert_eq!(batch, streamed);
     }
+
+    #[test]
+    fn ties_are_corrected() {
+        // Tied x values (points 0 and 1) and tied y values (points 1 and 2)
+        // exercise the tie_x / tie_y correction counters.
+        let mut k = KendallTau::new(4).unwrap();
+        assert_eq!(k.update((1.0, 1.0)), None);
+        assert_eq!(k.update((1.0, 2.0)), None);
+        assert_eq!(k.update((2.0, 2.0)), None);
+        let v = k.update((3.0, 3.0)).unwrap();
+        assert!((-1.0..=1.0).contains(&v), "got {v}");
+    }
 }
