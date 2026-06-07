@@ -384,6 +384,8 @@ const candleScalar = {
   TDPropulsion: { make: () => new wickra.TDPropulsion(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   TDTrap: { make: () => new wickra.TDTrap(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   TDDWave: { make: () => new wickra.TDDWave(2), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  HeikinAshiOscillator: { make: () => new wickra.HeikinAshiOscillator(5), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  ThreeLineBreak: { make: () => new wickra.ThreeLineBreak(3), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {
@@ -486,6 +488,9 @@ const multi = {
   AndrewsPitchfork: { make: () => new wickra.AndrewsPitchfork(2), fields: ['median', 'upper', 'lower'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   VolumeWeightedSr: { make: () => new wickra.VolumeWeightedSr(3), fields: ['support', 'resistance'], step: (ind, i) => ind.update(high[i], low[i], volume[i]), batch: (ind) => ind.batch(high, low, volume) },
   TDMovingAverage: { make: () => new wickra.TDMovingAverage(5, 13), fields: ['st1', 'st2'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  SmoothedHeikinAshi: { make: () => new wickra.SmoothedHeikinAshi(5), fields: ['open', 'high', 'low', 'close'], step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  Equivolume: { make: () => new wickra.Equivolume(20), fields: ['height', 'width'], step: (ind, i) => ind.update(high[i], low[i], volume[i]), batch: (ind) => ind.batch(high, low, volume) },
+  CandleVolume: { make: () => new wickra.CandleVolume(20), fields: ['body', 'width'], step: (ind, i) => ind.update(open[i], close[i], volume[i]), batch: (ind) => ind.batch(open, close, volume) },
 };
 
 for (const [name, d] of Object.entries(multi)) {

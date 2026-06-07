@@ -12277,6 +12277,347 @@ impl HeikinAshiNode {
     }
 }
 
+// ============================== Heikin-Ashi Oscillator ==============================
+
+#[napi(js_name = "HeikinAshiOscillator")]
+pub struct HeikinAshiOscillatorNode {
+    inner: wc::HeikinAshiOscillator,
+}
+
+#[napi]
+impl HeikinAshiOscillatorNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::HeikinAshiOscillator::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<f64>> {
+        let c = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(self.inner.update(c))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open: Vec<f64>,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "open, high, low, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(open.len());
+        for i in 0..open.len() {
+            let c = wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Three Line Break ==============================
+
+#[napi(js_name = "ThreeLineBreak")]
+pub struct ThreeLineBreakNode {
+    inner: wc::ThreeLineBreak,
+}
+
+#[napi]
+impl ThreeLineBreakNode {
+    #[napi(constructor)]
+    pub fn new(lines: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::ThreeLineBreak::new(lines as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, 0.0)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Smoothed Heikin-Ashi ==============================
+
+#[napi(object)]
+pub struct SmoothedHeikinAshiValue {
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+}
+
+#[napi(js_name = "SmoothedHeikinAshi")]
+pub struct SmoothedHeikinAshiNode {
+    inner: wc::SmoothedHeikinAshi,
+}
+
+#[napi]
+impl SmoothedHeikinAshiNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::SmoothedHeikinAshi::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Option<SmoothedHeikinAshiValue>> {
+        let c = wc::Candle::new(open, high, low, close, 0.0, 0).map_err(map_err)?;
+        Ok(self.inner.update(c).map(|o| SmoothedHeikinAshiValue {
+            open: o.open,
+            high: o.high,
+            low: o.low,
+            close: o.close,
+        }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open: Vec<f64>,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "open, high, low, close must be equal length".to_string(),
+            ));
+        }
+        let n = open.len();
+        let mut out = vec![f64::NAN; n * 4];
+        for i in 0..n {
+            let c = wc::Candle::new(open[i], high[i], low[i], close[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 4] = o.open;
+                out[i * 4 + 1] = o.high;
+                out[i * 4 + 2] = o.low;
+                out[i * 4 + 3] = o.close;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== Equivolume ==============================
+
+#[napi(object)]
+pub struct EquivolumeValue {
+    pub height: f64,
+    pub width: f64,
+}
+
+#[napi(js_name = "Equivolume")]
+pub struct EquivolumeNode {
+    inner: wc::Equivolume,
+}
+
+#[napi]
+impl EquivolumeNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Equivolume::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        volume: f64,
+    ) -> napi::Result<Option<EquivolumeValue>> {
+        let c = wc::Candle::new(low, high, low, low, volume, 0).map_err(map_err)?;
+        Ok(self.inner.update(c).map(|o| EquivolumeValue {
+            height: o.height,
+            width: o.width,
+        }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        volume: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "high, low, volume must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let c =
+                wc::Candle::new(low[i], high[i], low[i], low[i], volume[i], 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.height;
+                out[i * 2 + 1] = o.width;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== CandleVolume ==============================
+
+#[napi(object)]
+pub struct CandleVolumeValue {
+    pub body: f64,
+    pub width: f64,
+}
+
+#[napi(js_name = "CandleVolume")]
+pub struct CandleVolumeNode {
+    inner: wc::CandleVolume,
+}
+
+#[napi]
+impl CandleVolumeNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::CandleVolume::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open: f64,
+        close: f64,
+        volume: f64,
+    ) -> napi::Result<Option<CandleVolumeValue>> {
+        let high = open.max(close);
+        let low = open.min(close);
+        let c = wc::Candle::new(open, high, low, close, volume, 0).map_err(map_err)?;
+        Ok(self.inner.update(c).map(|o| CandleVolumeValue {
+            body: o.body,
+            width: o.width,
+        }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open: Vec<f64>,
+        close: Vec<f64>,
+        volume: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if open.len() != close.len() || close.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "open, close, volume must be equal length".to_string(),
+            ));
+        }
+        let n = open.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let high = open[i].max(close[i]);
+            let low = open[i].min(close[i]);
+            let c = wc::Candle::new(open[i], high, low, close[i], volume[i], 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.body;
+                out[i * 2 + 1] = o.width;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== ValueArea ==============================
 
 #[napi(object)]

@@ -344,6 +344,11 @@ from ._wickra import (
     # Ichimoku & alternative charts
     Ichimoku,
     HeikinAshi,
+    SmoothedHeikinAshi,
+    HeikinAshiOscillator,
+    ThreeLineBreak,
+    Equivolume,
+    CandleVolume,
     # Market Profile
     ValueArea,
     VolumeProfile,
@@ -848,6 +853,11 @@ __all__ = [
     # Ichimoku & alternative charts
     "Ichimoku",
     "HeikinAshi",
+    "SmoothedHeikinAshi",
+    "HeikinAshiOscillator",
+    "ThreeLineBreak",
+    "Equivolume",
+    "CandleVolume",
     # Market Profile
     "ValueArea",
     "VolumeProfile",

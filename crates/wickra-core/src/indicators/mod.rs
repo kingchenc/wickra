@@ -67,6 +67,7 @@ mod butterfly;
 mod calendar_spread;
 mod calmar_ratio;
 mod camarilla_pivots;
+mod candle_volume;
 mod cci;
 mod center_of_gravity;
 mod central_pivot_range;
@@ -128,6 +129,7 @@ mod elder_safezone;
 mod ema;
 mod empirical_mode_decomposition;
 mod engulfing;
+mod equivolume;
 mod even_better_sinewave;
 mod evening_doji_star;
 mod evwma;
@@ -171,6 +173,7 @@ mod hanging_man;
 mod harami;
 mod head_and_shoulders;
 mod heikin_ashi;
+mod heikin_ashi_oscillator;
 mod high_low_index;
 mod high_low_range;
 mod high_wave;
@@ -356,6 +359,7 @@ mod skewness;
 mod sma;
 mod smi;
 mod smma;
+mod smoothed_heikin_ashi;
 mod sortino_ratio;
 mod spearman_correlation;
 mod spinning_top;
@@ -402,6 +406,7 @@ mod tema;
 mod term_structure_basis;
 mod three_drives;
 mod three_inside;
+mod three_line_break;
 mod three_line_strike;
 mod three_outside;
 mod three_soldiers_or_crows;
@@ -541,6 +546,7 @@ pub use butterfly::Butterfly;
 pub use calendar_spread::CalendarSpread;
 pub use calmar_ratio::CalmarRatio;
 pub use camarilla_pivots::{Camarilla, CamarillaPivotsOutput};
+pub use candle_volume::{CandleVolume, CandleVolumeOutput};
 pub use cci::Cci;
 pub use center_of_gravity::CenterOfGravity;
 pub use central_pivot_range::{CentralPivotRange, CentralPivotRangeOutput};
@@ -602,6 +608,7 @@ pub use elder_safezone::{ElderSafeZone, ElderSafeZoneOutput};
 pub use ema::Ema;
 pub use empirical_mode_decomposition::EmpiricalModeDecomposition;
 pub use engulfing::Engulfing;
+pub use equivolume::{Equivolume, EquivolumeOutput};
 pub use even_better_sinewave::EvenBetterSinewave;
 pub use evening_doji_star::EveningDojiStar;
 pub use evwma::Evwma;
@@ -645,6 +652,7 @@ pub use hanging_man::HangingMan;
 pub use harami::Harami;
 pub use head_and_shoulders::HeadAndShoulders;
 pub use heikin_ashi::{HeikinAshi, HeikinAshiOutput};
+pub use heikin_ashi_oscillator::HeikinAshiOscillator;
 pub use high_low_index::HighLowIndex;
 pub use high_low_range::HighLowRange;
 pub use high_wave::HighWave;
@@ -830,6 +838,7 @@ pub use skewness::Skewness;
 pub use sma::Sma;
 pub use smi::Smi;
 pub use smma::Smma;
+pub use smoothed_heikin_ashi::{SmoothedHeikinAshi, SmoothedHeikinAshiOutput};
 pub use sortino_ratio::SortinoRatio;
 pub use spearman_correlation::SpearmanCorrelation;
 pub use spinning_top::SpinningTop;
@@ -876,6 +885,7 @@ pub use tema::Tema;
 pub use term_structure_basis::TermStructureBasis;
 pub use three_drives::ThreeDrives;
 pub use three_inside::ThreeInside;
+pub use three_line_break::ThreeLineBreak;
 pub use three_line_strike::ThreeLineStrike;
 pub use three_outside::ThreeOutside;
 pub use three_soldiers_or_crows::ThreeSoldiersOrCrows;
@@ -1327,7 +1337,18 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "TdMovingAverage",
         ],
     ),
-    ("Ichimoku & Charts", &["Ichimoku", "HeikinAshi"]),
+    (
+        "Ichimoku & Charts",
+        &[
+            "Ichimoku",
+            "HeikinAshi",
+            "HeikinAshiOscillator",
+            "ThreeLineBreak",
+            "SmoothedHeikinAshi",
+            "Equivolume",
+            "CandleVolume",
+        ],
+    ),
     (
         "Candlestick Patterns",
         &[
@@ -1576,6 +1597,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 474, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 479, "FAMILIES total drifted from indicator count");
     }
 }
