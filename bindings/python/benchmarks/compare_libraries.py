@@ -72,13 +72,23 @@ class Sample:
         return (self.seconds / self.iterations) * 1_000_000
 
 
-def time_call(fn: Callable[[], None], iterations: int) -> float:
-    """Time ``fn`` over ``iterations`` calls, returning total wall seconds."""
+def time_call(fn: Callable[[], None], iterations: int, rounds: int = 5) -> float:
+    """Time ``fn`` over ``iterations`` calls per round, across ``rounds`` rounds.
+
+    Returns the *median* round's wall seconds for one round of ``iterations``
+    calls. Taking the median across several rounds damps the OS scheduling and
+    GC jitter that a single timing pass would otherwise bake into the result,
+    so the per-iteration figure is stable run-to-run. Callers keep dividing the
+    return value by ``iterations``.
+    """
     fn()  # one warmup call to populate caches
-    start = time.perf_counter()
-    for _ in range(iterations):
-        fn()
-    return time.perf_counter() - start
+    rounds_s: List[float] = []
+    for _ in range(rounds):
+        start = time.perf_counter()
+        for _ in range(iterations):
+            fn()
+        rounds_s.append(time.perf_counter() - start)
+    return statistics.median(rounds_s)
 
 
 def gen_prices(n: int, seed: int = 0xC0FFEE) -> np.ndarray:
@@ -457,6 +467,161 @@ def talipp_bollinger_streaming(seed: np.ndarray, live: np.ndarray) -> Optional[C
     return run
 
 
+# Recompute streaming peers: batch-only libraries have no incremental API, so
+# the only honest way to drive them tick-by-tick is to re-run the full batch
+# over the grown history on every new price. These runners expose exactly that
+# cost — the gap Wickra's O(1) update closes.
+
+
+def _talib_recompute_streaming(seed, live, fn):
+    def run() -> None:
+        history = list(seed)
+        for p in live:
+            history.append(float(p))
+            fn(np.asarray(history))
+
+    return run
+
+
+def _pandas_ta_recompute_streaming(seed, live, fn):
+    def run() -> None:
+        history = list(seed)
+        for p in live:
+            history.append(float(p))
+            fn(PD.Series(history))
+
+    return run
+
+
+def _tulipy_recompute_streaming(seed, live, fn):
+    def run() -> None:
+        history = list(seed)
+        for p in live:
+            history.append(float(p))
+            fn(np.asarray(history, dtype=np.float64))
+
+    return run
+
+
+def _finta_recompute_streaming(seed, live, fn):
+    def run() -> None:
+        history = list(seed)
+        for p in live:
+            history.append(float(p))
+            arr = np.asarray(history)
+            fn(PD.DataFrame({"open": arr, "high": arr, "low": arr, "close": arr, "volume": np.ones_like(arr)}))
+
+    return run
+
+
+def talib_sma_streaming(seed, live):
+    if TALIB is None:
+        return None
+    return _talib_recompute_streaming(seed, live, lambda a: TALIB.SMA(a, timeperiod=20))
+
+
+def pandas_ta_sma_streaming(seed, live):
+    if PANDAS_TA is None or PD is None:
+        return None
+    return _pandas_ta_recompute_streaming(seed, live, lambda s: PANDAS_TA.sma(s, length=20))
+
+
+def tulipy_sma_streaming(seed, live):
+    if TULIPY is None:
+        return None
+    return _tulipy_recompute_streaming(seed, live, lambda a: TULIPY.sma(a, 20))
+
+
+def finta_sma_streaming(seed, live):
+    if FINTA is None or PD is None:
+        return None
+    return _finta_recompute_streaming(seed, live, lambda df: FINTA.TA.SMA(df, period=20))
+
+
+def talib_ema_streaming(seed, live):
+    if TALIB is None:
+        return None
+    return _talib_recompute_streaming(seed, live, lambda a: TALIB.EMA(a, timeperiod=20))
+
+
+def pandas_ta_ema_streaming(seed, live):
+    if PANDAS_TA is None or PD is None:
+        return None
+    return _pandas_ta_recompute_streaming(seed, live, lambda s: PANDAS_TA.ema(s, length=20))
+
+
+def tulipy_ema_streaming(seed, live):
+    if TULIPY is None:
+        return None
+    return _tulipy_recompute_streaming(seed, live, lambda a: TULIPY.ema(a, 20))
+
+
+def finta_ema_streaming(seed, live):
+    if FINTA is None or PD is None:
+        return None
+    return _finta_recompute_streaming(seed, live, lambda df: FINTA.TA.EMA(df, period=20))
+
+
+def tulipy_rsi_streaming(seed, live):
+    if TULIPY is None:
+        return None
+    return _tulipy_recompute_streaming(seed, live, lambda a: TULIPY.rsi(a, 14))
+
+
+def finta_rsi_streaming(seed, live):
+    if FINTA is None or PD is None:
+        return None
+    return _finta_recompute_streaming(seed, live, lambda df: FINTA.TA.RSI(df, period=14))
+
+
+def talib_macd_streaming(seed, live):
+    if TALIB is None:
+        return None
+    return _talib_recompute_streaming(seed, live, lambda a: TALIB.MACD(a))
+
+
+def pandas_ta_macd_streaming(seed, live):
+    if PANDAS_TA is None or PD is None:
+        return None
+    return _pandas_ta_recompute_streaming(seed, live, lambda s: PANDAS_TA.macd(s))
+
+
+def tulipy_macd_streaming(seed, live):
+    if TULIPY is None:
+        return None
+    return _tulipy_recompute_streaming(seed, live, lambda a: TULIPY.macd(a, 12, 26, 9))
+
+
+def finta_macd_streaming(seed, live):
+    if FINTA is None or PD is None:
+        return None
+    return _finta_recompute_streaming(seed, live, lambda df: FINTA.TA.MACD(df))
+
+
+def talib_bollinger_streaming(seed, live):
+    if TALIB is None:
+        return None
+    return _talib_recompute_streaming(seed, live, lambda a: TALIB.BBANDS(a, timeperiod=20, nbdevup=2, nbdevdn=2))
+
+
+def pandas_ta_bollinger_streaming(seed, live):
+    if PANDAS_TA is None or PD is None:
+        return None
+    return _pandas_ta_recompute_streaming(seed, live, lambda s: PANDAS_TA.bbands(s, length=20, std=2.0))
+
+
+def tulipy_bollinger_streaming(seed, live):
+    if TULIPY is None:
+        return None
+    return _tulipy_recompute_streaming(seed, live, lambda a: TULIPY.bbands(a, 20, 2.0))
+
+
+def finta_bollinger_streaming(seed, live):
+    if FINTA is None or PD is None:
+        return None
+    return _finta_recompute_streaming(seed, live, lambda df: FINTA.TA.BBANDS(df, period=20, std_multiplier=2.0))
+
+
 # --------------------------------------------------------------------------- #
 # Runner
 # --------------------------------------------------------------------------- #
@@ -519,36 +684,54 @@ STREAMING_INDICATORS = [
     ("SMA(20)", [
         ("Wickra", wickra_sma_streaming),
         ("talipp", talipp_sma_streaming),
+        ("TA-Lib", talib_sma_streaming),
+        ("pandas-ta", pandas_ta_sma_streaming),
+        ("tulipy", tulipy_sma_streaming),
+        ("finta", finta_sma_streaming),
     ]),
     ("EMA(20)", [
         ("Wickra", wickra_ema_streaming),
         ("talipp", talipp_ema_streaming),
+        ("TA-Lib", talib_ema_streaming),
+        ("pandas-ta", pandas_ta_ema_streaming),
+        ("tulipy", tulipy_ema_streaming),
+        ("finta", finta_ema_streaming),
     ]),
     ("RSI(14)", [
         ("Wickra", wickra_rsi_streaming),
+        ("talipp", talipp_rsi_streaming),
         ("TA-Lib", talib_rsi_streaming),
         ("pandas-ta", pandas_ta_rsi_streaming),
-        ("talipp", talipp_rsi_streaming),
+        ("tulipy", tulipy_rsi_streaming),
+        ("finta", finta_rsi_streaming),
     ]),
     ("MACD(12, 26, 9)", [
         ("Wickra", wickra_macd_streaming),
         ("talipp", talipp_macd_streaming),
+        ("TA-Lib", talib_macd_streaming),
+        ("pandas-ta", pandas_ta_macd_streaming),
+        ("tulipy", tulipy_macd_streaming),
+        ("finta", finta_macd_streaming),
     ]),
     ("Bollinger(20, 2.0)", [
         ("Wickra", wickra_bollinger_streaming),
         ("talipp", talipp_bollinger_streaming),
+        ("TA-Lib", talib_bollinger_streaming),
+        ("pandas-ta", pandas_ta_bollinger_streaming),
+        ("tulipy", tulipy_bollinger_streaming),
+        ("finta", finta_bollinger_streaming),
     ]),
 ]
 
 
-def run_batch(prices: np.ndarray, iterations: int) -> List[Sample]:
+def run_batch(prices: np.ndarray, iterations: int, rounds: int) -> List[Sample]:
     out: List[Sample] = []
     for indicator_name, libs in BATCH_INDICATORS:
         for lib_name, factory in libs:
             runner = factory(prices)
             if runner is None:
                 continue
-            secs = time_call(runner, iterations)
+            secs = time_call(runner, iterations, rounds)
             out.append(Sample(lib_name, indicator_name, "batch", secs, iterations))
     return out
 
@@ -558,6 +741,7 @@ def run_ohlc(
     low: np.ndarray,
     close: np.ndarray,
     iterations: int,
+    rounds: int,
 ) -> List[Sample]:
     out: List[Sample] = []
     for indicator_name, libs in OHLC_INDICATORS:
@@ -565,12 +749,12 @@ def run_ohlc(
             runner = factory(high, low, close)
             if runner is None:
                 continue
-            secs = time_call(runner, iterations)
+            secs = time_call(runner, iterations, rounds)
             out.append(Sample(lib_name, indicator_name, "batch", secs, iterations))
     return out
 
 
-def run_streaming(prices: np.ndarray, streaming_window: int, iterations: int) -> List[Sample]:
+def run_streaming(prices: np.ndarray, streaming_window: int, iterations: int, rounds: int) -> List[Sample]:
     out: List[Sample] = []
     seed = prices[:streaming_window]
     live = prices[streaming_window:]
@@ -581,7 +765,7 @@ def run_streaming(prices: np.ndarray, streaming_window: int, iterations: int) ->
             runner = factory(seed, live)
             if runner is None:
                 continue
-            secs = time_call(runner, iterations)
+            secs = time_call(runner, iterations, rounds)
             sample = Sample(lib_name, indicator_name, "streaming", secs, iterations)
             sample.iterations = iterations * len(live)  # per-tick normalization
             out.append(sample)
@@ -630,6 +814,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--size", type=int, default=20_000, help="number of prices")
     parser.add_argument("--iterations", type=int, default=20, help="batch repetitions per timing")
     parser.add_argument(
+        "--rounds",
+        type=int,
+        default=5,
+        help="batch timing rounds; the median round is reported to damp jitter",
+    )
+    parser.add_argument(
         "--streaming-window",
         type=int,
         default=5_000,
@@ -641,6 +831,14 @@ def parse_args() -> argparse.Namespace:
         default=3,
         help="repetitions of the streaming workload (each iteration replays all live ticks)",
     )
+    parser.add_argument(
+        "--streaming-rounds",
+        type=int,
+        default=2,
+        help="streaming timing rounds; the median round is reported",
+    )
+    parser.add_argument("--skip-batch", action="store_true", help="skip the batch tables")
+    parser.add_argument("--skip-streaming", action="store_true", help="skip the streaming tables")
     return parser.parse_args()
 
 
@@ -660,11 +858,14 @@ def main() -> None:
     print(f"Streaming window: {args.streaming_window} seed, {args.size - args.streaming_window} live")
 
     high, low, close, _ = gen_ohlc(args.size)
-    batch_rows = run_batch(prices, args.iterations)
-    ohlc_rows = run_ohlc(high, low, close, args.iterations)
-    streaming_rows = run_streaming(prices, args.streaming_window, args.streaming_iterations)
+    rows: List[Sample] = []
+    if not args.skip_batch:
+        rows += run_batch(prices, args.iterations, args.rounds)
+        rows += run_ohlc(high, low, close, args.iterations, args.rounds)
+    if not args.skip_streaming:
+        rows += run_streaming(prices, args.streaming_window, args.streaming_iterations, args.streaming_rounds)
 
-    print(render_table(batch_rows + ohlc_rows + streaming_rows))
+    print(render_table(rows))
 
 
 if __name__ == "__main__":

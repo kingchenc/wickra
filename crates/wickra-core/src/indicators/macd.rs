@@ -86,6 +86,116 @@ impl MacdIndicator {
     pub const fn value(&self) -> Option<MacdOutput> {
         self.last
     }
+
+    /// Vectorized flat batch for bindings: `n * 3` values laid out as
+    /// `[macd, signal, histogram]` per input row, warmup rows all `NaN`.
+    ///
+    /// For a fresh, all-finite slice long enough for a full output it runs the
+    /// fast EMA, slow EMA and signal EMA as three recurrences fused into a single
+    /// pass with one allocation — no `Option` per tick, no per-EMA intermediate
+    /// buffers, identical SMA-mean seeds (division) and `mul_add` recurrences. The
+    /// result is *bit-for-bit* equal to replaying `update`. Anything else (not
+    /// fresh, non-finite, or too short to emit) defers to the exact `update`
+    /// replay.
+    ///
+    /// Separate from the trait [`batch`](crate::BatchExt::batch), which stays a
+    /// bit-identical `update` replay; only the bindings call this.
+    pub fn batch_macd(&mut self, inputs: &[f64]) -> Vec<f64> {
+        let n = inputs.len();
+        let (fp, sp, gp) = (self.fast_period, self.slow_period, self.signal_period);
+        // First full output needs the slow EMA seeded (index sp-1) plus gp signal
+        // values: index sp + gp - 2. Below that, or non-fresh/non-finite, replay.
+        if self.last.is_some()
+            || !self.fast.is_fresh()
+            || !self.slow.is_fresh()
+            || !self.signal_ema.is_fresh()
+            || n < sp + gp - 1
+            || !inputs.iter().all(|x| x.is_finite())
+        {
+            let mut out = vec![f64::NAN; n * 3];
+            for (i, &x) in inputs.iter().enumerate() {
+                if let Some(o) = self.update(x) {
+                    out[i * 3] = o.macd;
+                    out[i * 3 + 1] = o.signal;
+                    out[i * 3 + 2] = o.histogram;
+                }
+            }
+            return out;
+        }
+
+        // Pre-sized output: warmup rows stay NaN, full-output rows are written in
+        // place by index — no per-row `push` length/capacity check.
+        let mut out = vec![f64::NAN; n * 3];
+        let (fa, fo) = (self.fast.alpha(), 1.0 - self.fast.alpha());
+        let (sa, so) = (self.slow.alpha(), 1.0 - self.slow.alpha());
+        let (ga, go) = (self.signal_ema.alpha(), 1.0 - self.signal_ema.alpha());
+        let (fp_f, sp_f, gp_f) = (fp as f64, sp as f64, gp as f64);
+
+        let (mut fast_val, mut slow_val, mut sig) = (0.0_f64, 0.0_f64, 0.0_f64);
+        let (mut fsum, mut ssum, mut gsum) = (0.0_f64, 0.0_f64, 0.0_f64);
+        let mut sig_count = 0usize; // signal-EMA seed progress (raw MACD values seen)
+        let mut sig_seeded = false;
+        let mut last = MacdOutput {
+            macd: 0.0,
+            signal: 0.0,
+            histogram: 0.0,
+        };
+
+        for (i, &x) in inputs.iter().enumerate() {
+            // Fast EMA: SMA-seeded at index fp-1, then recurrence.
+            if i < fp {
+                fsum += x;
+                if i == fp - 1 {
+                    fast_val = fsum / fp_f;
+                }
+            } else {
+                fast_val = fa.mul_add(x, fo * fast_val);
+            }
+            // Slow EMA: SMA-seeded at index sp-1, then recurrence.
+            if i < sp {
+                ssum += x;
+                if i == sp - 1 {
+                    slow_val = ssum / sp_f;
+                }
+            } else {
+                slow_val = sa.mul_add(x, so * slow_val);
+            }
+            if i + 1 < sp {
+                continue; // slow EMA not seeded yet → no raw MACD line
+            }
+            let macd = fast_val - slow_val;
+            // Signal EMA over the MACD line: SMA-seeded over its first gp values.
+            let signal = if sig_seeded {
+                sig = ga.mul_add(macd, go * sig);
+                sig
+            } else {
+                gsum += macd;
+                sig_count += 1;
+                if sig_count < gp {
+                    continue; // signal EMA still seeding → no full output
+                }
+                sig = gsum / gp_f;
+                sig_seeded = true;
+                sig
+            };
+            let histogram = macd - signal;
+            out[i * 3] = macd;
+            out[i * 3 + 1] = signal;
+            out[i * 3 + 2] = histogram;
+            last = MacdOutput {
+                macd,
+                signal,
+                histogram,
+            };
+        }
+
+        // Leave every sub-EMA and `last` where a full `update` replay would.
+        self.fast.seed_to(fast_val);
+        self.slow.seed_to(slow_val);
+        self.signal_ema.seed_to(sig);
+        self.last = Some(last);
+        out
+    }
 }
 
 impl Indicator for MacdIndicator {
@@ -254,6 +364,79 @@ mod tests {
         macd.reset();
         assert!(!macd.is_ready());
         assert_eq!(macd.update(1.0), None);
+    }
+
+    fn bits_eq(a: &[f64], b: &[f64]) -> bool {
+        a.len() == b.len()
+            && a.iter()
+                .zip(b)
+                .all(|(x, y)| x == y || (x.is_nan() && y.is_nan()))
+    }
+
+    /// Flat `n*3` `[macd, signal, histogram]` replay of `update`.
+    fn macd_replay(series: &[f64]) -> Vec<f64> {
+        let mut m = MacdIndicator::classic();
+        let mut out = Vec::with_capacity(series.len() * 3);
+        for &x in series {
+            match m.update(x) {
+                Some(o) => out.extend_from_slice(&[o.macd, o.signal, o.histogram]),
+                None => out.extend_from_slice(&[f64::NAN; 3]),
+            }
+        }
+        out
+    }
+
+    #[test]
+    fn batch_macd_fast_path_is_bit_identical() {
+        let series: Vec<f64> = (0..300)
+            .map(|i| (f64::from(i) * 0.4).cos() * 10.0 + 100.0)
+            .collect();
+        let mut macd = MacdIndicator::classic();
+        let got = macd.batch_macd(&series);
+        assert!(bits_eq(&got, &macd_replay(&series)));
+        // Sub-EMA + last state left where the replay would: continued update agrees.
+        let mut ref_macd = MacdIndicator::classic();
+        for &x in &series {
+            ref_macd.update(x);
+        }
+        let (a, b) = (macd.update(101.0), ref_macd.update(101.0));
+        assert_eq!(a.is_some(), b.is_some());
+        assert_relative_eq!(a.unwrap().macd, b.unwrap().macd, epsilon = 1e-12);
+    }
+
+    #[test]
+    fn batch_macd_falls_back_on_non_finite() {
+        let mut series: Vec<f64> = (0..60).map(|i| f64::from(i) + 100.0).collect();
+        series[40] = f64::NAN;
+        let mut macd = MacdIndicator::classic();
+        assert!(bits_eq(&macd.batch_macd(&series), &macd_replay(&series)));
+    }
+
+    #[test]
+    fn batch_macd_falls_back_when_not_fresh() {
+        let series: Vec<f64> = (0..60).map(|i| f64::from(i) + 100.0).collect();
+        let mut macd = MacdIndicator::classic();
+        macd.update(50.0);
+        let mut ref_macd = MacdIndicator::classic();
+        ref_macd.update(50.0);
+        let mut want = Vec::new();
+        for &x in &series {
+            match ref_macd.update(x) {
+                Some(o) => want.extend_from_slice(&[o.macd, o.signal, o.histogram]),
+                None => want.extend_from_slice(&[f64::NAN; 3]),
+            }
+        }
+        assert!(bits_eq(&macd.batch_macd(&series), &want));
+    }
+
+    #[test]
+    fn batch_macd_too_short_for_output_falls_back() {
+        // n < slow + signal - 1 (= 34): no full output, routed to the replay.
+        let series: Vec<f64> = (0..20).map(|i| f64::from(i) + 100.0).collect();
+        let mut macd = MacdIndicator::classic();
+        let got = macd.batch_macd(&series);
+        assert!(bits_eq(&got, &macd_replay(&series)));
+        assert!(got.iter().all(|x| x.is_nan()));
     }
 
     #[test]

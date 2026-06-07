@@ -108,6 +108,82 @@ impl BollingerBands {
         self.multiplier
     }
 
+    /// Vectorized flat batch for bindings: returns `n * 4` values laid out as
+    /// `[upper, middle, lower, stddev]` per input row, warmup rows all `NaN`.
+    ///
+    /// For a fresh, all-finite slice it inlines `update`'s rolling `sum`/`sum_sq`
+    /// and drift-reseed, writing the four band values directly instead of an
+    /// `Option<BollingerOutput>` per element. Same add/subtract order, same reseed
+    /// cadence, same variance/`sqrt` math — so it is *bit-for-bit* equal to
+    /// replaying `update`, including the long-stream drift bound. Any other state,
+    /// or a non-finite element, defers to the exact `update` replay.
+    ///
+    /// This is a *separate* entry point from the trait [`batch`](crate::BatchExt::batch),
+    /// which returns `Vec<Option<BollingerOutput>>`; only the bindings, which want
+    /// a flat `f64` buffer, call this.
+    pub fn batch_bands(&mut self, inputs: &[f64]) -> Vec<f64> {
+        let p = self.period;
+        let n = inputs.len();
+        if self.count != 0
+            || self.updates_since_recompute != 0
+            || !inputs.iter().all(|x| x.is_finite())
+        {
+            // Slow path: exact replay of `update` into the flat layout.
+            let mut out = vec![f64::NAN; n * 4];
+            for (i, &x) in inputs.iter().enumerate() {
+                if let Some(o) = self.update(x) {
+                    out[i * 4] = o.upper;
+                    out[i * 4 + 1] = o.middle;
+                    out[i * 4 + 2] = o.lower;
+                    out[i * 4 + 3] = o.stddev;
+                }
+            }
+            return out;
+        }
+
+        let p_f64 = p as f64;
+        let mult = self.multiplier;
+        // Pre-sized output: warmup rows stay NaN, ready rows are written in place
+        // by index — no per-row `push` length/capacity check.
+        let mut out = vec![f64::NAN; n * 4];
+        for (i, &x) in inputs.iter().enumerate() {
+            if self.count == p {
+                let old = self.buf[self.head];
+                self.sum -= old;
+                self.sum_sq -= old * old;
+                self.buf[self.head] = x;
+                self.sum += x;
+                self.sum_sq += x * x;
+            } else {
+                self.buf[self.head] = x;
+                self.sum += x;
+                self.sum_sq += x * x;
+                self.count += 1;
+            }
+            self.head += 1;
+            if self.head == p {
+                self.head = 0;
+            }
+            self.updates_since_recompute += 1;
+            if self.updates_since_recompute >= RECOMPUTE_EVERY * p {
+                let chronological = self.buf[self.head..].iter().chain(&self.buf[..self.head]);
+                self.sum = chronological.clone().copied().sum();
+                self.sum_sq = chronological.map(|&v| v * v).sum();
+                self.updates_since_recompute = 0;
+            }
+            if self.count == p {
+                let mean = self.sum / p_f64;
+                let stddev = (self.sum_sq / p_f64 - mean * mean).max(0.0).sqrt();
+                let band = mult * stddev;
+                out[i * 4] = mean + band;
+                out[i * 4 + 1] = mean;
+                out[i * 4 + 2] = mean - band;
+                out[i * 4 + 3] = stddev;
+            }
+        }
+        out
+    }
+
     fn current(&self) -> Option<BollingerOutput> {
         if self.count != self.period {
             return None;
@@ -350,6 +426,79 @@ mod tests {
             got.stddev,
             scratch.stddev,
         );
+    }
+
+    fn bits_eq(a: &[f64], b: &[f64]) -> bool {
+        a.len() == b.len()
+            && a.iter()
+                .zip(b)
+                .all(|(x, y)| x == y || (x.is_nan() && y.is_nan()))
+    }
+
+    /// Flat `n*4` `[upper, middle, lower, stddev]` replay of `update`.
+    fn bb_replay(period: usize, mult: f64, series: &[f64]) -> Vec<f64> {
+        let mut bb = BollingerBands::new(period, mult).unwrap();
+        let mut out = Vec::with_capacity(series.len() * 4);
+        for &x in series {
+            match bb.update(x) {
+                Some(o) => out.extend_from_slice(&[o.upper, o.middle, o.lower, o.stddev]),
+                None => out.extend_from_slice(&[f64::NAN; 4]),
+            }
+        }
+        out
+    }
+
+    #[test]
+    fn batch_bands_fast_path_is_bit_identical_with_reseed() {
+        // > 16*period inputs so the drift-reseed branch fires inside batch_bands.
+        let series: Vec<f64> = (0..500)
+            .map(|i| (f64::from(i) * 0.2).sin() * 10.0 + 50.0)
+            .collect();
+        let mut bb = BollingerBands::new(20, 2.0).unwrap();
+        let got = bb.batch_bands(&series);
+        assert!(bits_eq(&got, &bb_replay(20, 2.0, &series)));
+        // State continues identically.
+        let mut ref_bb = BollingerBands::new(20, 2.0).unwrap();
+        for &x in &series {
+            ref_bb.update(x);
+        }
+        assert_eq!(bb.update(55.0), ref_bb.update(55.0));
+    }
+
+    #[test]
+    fn batch_bands_falls_back_on_non_finite() {
+        let series = [1.0, 2.0, 3.0, f64::NAN, 5.0, 6.0, 7.0];
+        let mut bb = BollingerBands::new(3, 2.0).unwrap();
+        assert!(bits_eq(
+            &bb.batch_bands(&series),
+            &bb_replay(3, 2.0, &series)
+        ));
+    }
+
+    #[test]
+    fn batch_bands_falls_back_when_not_fresh() {
+        let mut bb = BollingerBands::new(3, 2.0).unwrap();
+        bb.update(99.0);
+        let series = [1.0, 2.0, 3.0, 4.0];
+        let mut ref_bb = BollingerBands::new(3, 2.0).unwrap();
+        ref_bb.update(99.0);
+        let mut want = Vec::new();
+        for &x in &series {
+            match ref_bb.update(x) {
+                Some(o) => want.extend_from_slice(&[o.upper, o.middle, o.lower, o.stddev]),
+                None => want.extend_from_slice(&[f64::NAN; 4]),
+            }
+        }
+        assert!(bits_eq(&bb.batch_bands(&series), &want));
+    }
+
+    #[test]
+    fn batch_bands_sub_period_slice_is_all_nan() {
+        let series = [1.0, 2.0, 3.0];
+        let mut bb = BollingerBands::new(10, 2.0).unwrap();
+        let got = bb.batch_bands(&series);
+        assert!(bits_eq(&got, &bb_replay(10, 2.0, &series)));
+        assert!(got.iter().all(|x| x.is_nan()) && got.len() == 12);
     }
 
     #[test]

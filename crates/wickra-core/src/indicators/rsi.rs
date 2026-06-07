@@ -81,6 +81,76 @@ impl Rsi {
         self.last_value
     }
 
+    /// Vectorized batch returning one `f64` per input (`NaN` during warmup).
+    ///
+    /// Shadows the generic [`BatchNanExt::batch_nan`](crate::BatchNanExt) blanket
+    /// default. RSI is a recursive (IIR) filter — Wilder smoothing — so it cannot
+    /// be SIMD-vectorized any more than the C peers manage; the win is purely in
+    /// stripping per-tick overhead. For a fresh indicator over an all-finite slice
+    /// long enough to seed (`n > period`) it runs the seed once and then the bare
+    /// smoothing recurrence in a tight loop with no per-tick `is_finite`/`has_prev`/
+    /// `avgs_seeded` branch and no `Option`, using the identical division at the
+    /// seed and `mul_add`/`rsi_from_avgs` afterwards — so it is *bit-for-bit* equal
+    /// to replaying `update`. Shorter or non-fresh/non-finite inputs defer to the
+    /// exact `update` replay.
+    pub fn batch_nan(&mut self, inputs: &[f64]) -> Vec<f64> {
+        let p = self.period;
+        let n = inputs.len();
+        if self.has_prev
+            || self.avgs_seeded
+            || !self.seed_buf_gains.is_empty()
+            || n <= p
+            || !inputs.iter().all(|x| x.is_finite())
+        {
+            return inputs
+                .iter()
+                .map(|&x| self.update(x).unwrap_or(f64::NAN))
+                .collect();
+        }
+
+        // Warmup `[0, p)` is `NaN`; outputs from index `p` on are pushed once each.
+        let mut out = vec![f64::NAN; p];
+        out.reserve(n - p);
+        // Seed from the first `period` diffs (inputs[1..=p]); index 0 only sets the
+        // baseline. Retain the seed gains/losses exactly as `update` leaves them.
+        let mut prev = inputs[0];
+        let (mut sum_gain, mut sum_loss) = (0.0_f64, 0.0_f64);
+        for &x in &inputs[1..=p] {
+            let diff = x - prev;
+            prev = x;
+            let gain = if diff > 0.0 { diff } else { 0.0 };
+            let loss = if diff < 0.0 { -diff } else { 0.0 };
+            self.seed_buf_gains.push(gain);
+            self.seed_buf_losses.push(loss);
+            sum_gain += gain;
+            sum_loss += loss;
+        }
+        let p_f64 = p as f64;
+        let mut ag = sum_gain / p_f64;
+        let mut al = sum_loss / p_f64;
+        out.push(Self::rsi_from_avgs(ag, al));
+
+        // Steady state: Wilder smoothing, reciprocal hoisted, one `rsi_from_avgs`.
+        for &x in &inputs[p + 1..] {
+            let diff = x - prev;
+            prev = x;
+            let gain = if diff > 0.0 { diff } else { 0.0 };
+            let loss = if diff < 0.0 { -diff } else { 0.0 };
+            ag = ag.mul_add(self.n_minus_1, gain) * self.inv_period;
+            al = al.mul_add(self.n_minus_1, loss) * self.inv_period;
+            out.push(Self::rsi_from_avgs(ag, al));
+        }
+
+        // Leave state where a full `update` replay would.
+        self.prev_close = prev;
+        self.has_prev = true;
+        self.avg_gain = ag;
+        self.avg_loss = al;
+        self.avgs_seeded = true;
+        self.last_value = Some(out[n - 1]);
+        out
+    }
+
     fn rsi_from_avgs(avg_gain: f64, avg_loss: f64) -> f64 {
         // Algebraically `100 - 100/(1 + ag/al)` collapses to `100·ag/(ag+al)`,
         // which needs a single division instead of two and removes the separate
@@ -374,6 +444,65 @@ mod tests {
         assert_eq!(rsi.update(f64::NAN), before);
         assert_eq!(rsi.update(f64::INFINITY), before);
         assert_eq!(rsi.value(), before);
+    }
+
+    fn bits_eq(a: &[f64], b: &[f64]) -> bool {
+        a.len() == b.len()
+            && a.iter()
+                .zip(b)
+                .all(|(x, y)| x == y || (x.is_nan() && y.is_nan()))
+    }
+
+    fn rsi_replay(period: usize, series: &[f64]) -> Vec<f64> {
+        let mut r = Rsi::new(period).unwrap();
+        series
+            .iter()
+            .map(|&x| r.update(x).unwrap_or(f64::NAN))
+            .collect()
+    }
+
+    #[test]
+    fn batch_nan_fast_path_is_bit_identical() {
+        let series: Vec<f64> = (0..300)
+            .map(|i| (f64::from(i) * 0.3).sin() * 5.0 + f64::from(i) * 0.1 + 100.0)
+            .collect();
+        let mut rsi = Rsi::new(14).unwrap();
+        let got = rsi.batch_nan(&series);
+        assert!(bits_eq(&got, &rsi_replay(14, &series)));
+        let mut ref_rsi = Rsi::new(14).unwrap();
+        for &x in &series {
+            ref_rsi.update(x);
+        }
+        assert_eq!(rsi.update(123.0), ref_rsi.update(123.0));
+    }
+
+    #[test]
+    fn batch_nan_falls_back_on_non_finite() {
+        let series = [10.0, 11.0, 9.0, f64::NAN, 12.0, 13.0, 8.0];
+        let mut rsi = Rsi::new(3).unwrap();
+        assert!(bits_eq(&rsi.batch_nan(&series), &rsi_replay(3, &series)));
+    }
+
+    #[test]
+    fn batch_nan_falls_back_when_not_fresh() {
+        let mut rsi = Rsi::new(3).unwrap();
+        rsi.update(50.0);
+        let series = [51.0, 49.0, 52.0, 53.0, 50.0];
+        let mut ref_rsi = Rsi::new(3).unwrap();
+        ref_rsi.update(50.0);
+        let want: Vec<f64> = series
+            .iter()
+            .map(|&x| ref_rsi.update(x).unwrap_or(f64::NAN))
+            .collect();
+        assert!(bits_eq(&rsi.batch_nan(&series), &want));
+    }
+
+    #[test]
+    fn batch_nan_too_short_to_seed_falls_back() {
+        // n <= period: routed to the exact replay (cannot seed yet).
+        let series = [10.0, 11.0, 12.0];
+        let mut rsi = Rsi::new(3).unwrap();
+        assert!(bits_eq(&rsi.batch_nan(&series), &rsi_replay(3, &series)));
     }
 
     proptest::proptest! {

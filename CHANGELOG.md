@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Andrews Pitchfork** — median line and two parallels projected from the last three swing pivots (`ANDREWS_PITCHFORK`).
 - **Murrey Math Lines** — T. H. Murrey's eighths grid over the recent trading range, each level acting as support/resistance (`MURREY_MATH_LINES`).
 - **Central Pivot Range** — the classic pivot flanked by two central levels gauging the day's expected character (`CENTRAL_PIVOT_RANGE`).
+- **Faster scalar batch paths** — `Ema`, `Rsi`, `BollingerBands`, `MacdIndicator` and `Atr` gained dedicated batch fast paths (used by the Python bindings) that strip per-element `Option`/validation overhead and the intermediate `Vec<Option<_>>` allocation, while staying *bit-for-bit* equal to replaying `update` (including the SMA/Bollinger drift-reseed). Python batch is ~2× faster on EMA/RSI/MACD/ATR; streaming is unchanged.
+- **Cross-library benchmark refresh** — `benchmarks/compare_libraries.py` now measures the median across timing rounds (`--rounds` / `--streaming-rounds`), adds `--skip-batch` / `--skip-streaming`, and drives every peer through the streaming arena (recompute for batch-only libraries). `wickra-bench` compares the batch fast paths against `kand`.
 
 ## [0.6.5] - 2026-06-07
 - **Autocorrelation Periodogram** — Ehlers autocorrelation periodogram: dominant cycle period estimate (`AUTOCORRPGRAM`).
