@@ -22241,6 +22241,500 @@ impl PyVolatilityCone {
     }
 }
 
+// ============================== Volume RSI ==============================
+
+#[pyclass(name = "VolumeRsi", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyVolumeRsi {
+    inner: wc::VolumeRsi,
+}
+
+#[pymethods]
+impl PyVolumeRsi {
+    #[new]
+    #[pyo3(signature = (period=14))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::VolumeRsi::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over numpy close + volume arrays (both 1-D, equal length).
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if c.len() != v.len() {
+            return Err(PyValueError::new_err(
+                "close and volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(c.len());
+        for i in 0..c.len() {
+            let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("VolumeRsi(period={})", self.inner.period())
+    }
+}
+
+// ============================== Williams A/D ==============================
+
+#[pyclass(name = "WilliamsAd", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyWilliamsAd {
+    inner: wc::WilliamsAd,
+}
+
+#[pymethods]
+impl PyWilliamsAd {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::WilliamsAd::new(),
+        }
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over numpy high, low, close arrays (all 1-D, equal length).
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(c.len());
+        for i in 0..c.len() {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "WilliamsAd()".to_string()
+    }
+}
+
+// ============================== Twiggs Money Flow ==============================
+
+#[pyclass(
+    name = "TwiggsMoneyFlow",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyTwiggsMoneyFlow {
+    inner: wc::TwiggsMoneyFlow,
+}
+
+#[pymethods]
+impl PyTwiggsMoneyFlow {
+    #[new]
+    #[pyo3(signature = (period=21))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::TwiggsMoneyFlow::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over numpy high, low, close, volume arrays (all 1-D, equal length).
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let vol = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() || c.len() != vol.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close, volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(c.len());
+        for i in 0..c.len() {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], vol[i], 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("TwiggsMoneyFlow(period={})", self.inner.period())
+    }
+}
+
+// ============================== Trade Volume Index ==============================
+
+#[pyclass(
+    name = "TradeVolumeIndex",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyTradeVolumeIndex {
+    inner: wc::TradeVolumeIndex,
+}
+
+#[pymethods]
+impl PyTradeVolumeIndex {
+    #[new]
+    #[pyo3(signature = (min_tick=0.25))]
+    fn new(min_tick: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::TradeVolumeIndex::new(min_tick).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over numpy close + volume arrays (both 1-D, equal length).
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if c.len() != v.len() {
+            return Err(PyValueError::new_err(
+                "close and volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(c.len());
+        for i in 0..c.len() {
+            let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn min_tick(&self) -> f64 {
+        self.inner.min_tick()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("TradeVolumeIndex(min_tick={})", self.inner.min_tick())
+    }
+}
+
+// ============================== Intraday Intensity ==============================
+
+#[pyclass(
+    name = "IntradayIntensity",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyIntradayIntensity {
+    inner: wc::IntradayIntensity,
+}
+
+#[pymethods]
+impl PyIntradayIntensity {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::IntradayIntensity::new(),
+        }
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over numpy high, low, close, volume arrays (all 1-D, equal length).
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let vol = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() || c.len() != vol.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close, volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(c.len());
+        for i in 0..c.len() {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], vol[i], 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "IntradayIntensity()".to_string()
+    }
+}
+
+// ============================== Better Volume ==============================
+
+#[pyclass(name = "BetterVolume", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyBetterVolume {
+    inner: wc::BetterVolume,
+}
+
+#[pymethods]
+impl PyBetterVolume {
+    #[new]
+    #[pyo3(signature = (period=14))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::BetterVolume::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over numpy high, low, close, volume arrays (all 1-D, equal length).
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let vol = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() || c.len() != vol.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close, volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(c.len());
+        for i in 0..c.len() {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], vol[i], 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("BetterVolume(period={})", self.inner.period())
+    }
+}
+
+// ============================== Volume-Weighted MACD ==============================
+
+#[pyclass(
+    name = "VolumeWeightedMacd",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyVolumeWeightedMacd {
+    inner: wc::VolumeWeightedMacd,
+}
+
+#[pymethods]
+impl PyVolumeWeightedMacd {
+    #[new]
+    #[pyo3(signature = (fast=12, slow=26, signal=9))]
+    fn new(fast: usize, slow: usize, signal: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::VolumeWeightedMacd::new(fast, slow, signal).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self
+            .inner
+            .update(c)
+            .map(|o| (o.macd, o.signal, o.histogram)))
+    }
+    /// Batch over numpy close + volume arrays. Returns shape `(n, 3)` with
+    /// columns `[macd, signal, histogram]`; warmup rows are `NaN`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if c.len() != v.len() {
+            return Err(PyValueError::new_err(
+                "close and volume must be equal length",
+            ));
+        }
+        let n = c.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let candle = wc::Candle::new(c[i], c[i], c[i], c[i], v[i], 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 3] = o.macd;
+                out[i * 3 + 1] = o.signal;
+                out[i * 3 + 2] = o.histogram;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn periods(&self) -> (usize, usize, usize) {
+        self.inner.periods()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (fast, slow, signal) = self.inner.periods();
+        format!("VolumeWeightedMacd(fast={fast}, slow={slow}, signal={signal})")
+    }
+}
+
 #[pymodule]
 #[allow(clippy::too_many_lines)]
 fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -22697,5 +23191,12 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyVolatilityCone>()?;
     m.add_class::<PyProjectionOscillator>()?;
     m.add_class::<PyTimeBasedStop>()?;
+    m.add_class::<PyVolumeRsi>()?;
+    m.add_class::<PyWilliamsAd>()?;
+    m.add_class::<PyTwiggsMoneyFlow>()?;
+    m.add_class::<PyTradeVolumeIndex>()?;
+    m.add_class::<PyIntradayIntensity>()?;
+    m.add_class::<PyBetterVolume>()?;
+    m.add_class::<PyVolumeWeightedMacd>()?;
     Ok(())
 }

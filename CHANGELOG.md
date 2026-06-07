@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **Volume-Weighted MACD** — Volume-Weighted MACD: MACD computed on VWMA instead of EMA, with signal line and histogram (`VWMACD`).
+- **Better Volume** — Better Volume (VSA): classifies volume against bar spread to surface effort/result imbalance (`BETTERVOL`).
+- **Intraday Intensity Index** — Intraday Intensity Index: volume weighted by close position within the bar range (`INTRADAYINT`).
+- **Trade Volume Index** — Trade Volume Index: accumulates volume by tick direction past a min-tick threshold (distinct from TSV) (`TRADEVOLIDX`).
+- **Twiggs Money Flow** — Twiggs Money Flow: volume-weighted accumulation using true range and Wilder smoothing (distinct from CMF) (`TWIGGSMF`).
+- **Williams Accumulation/Distribution** — Williams Accumulation/Distribution: cumulative price-direction accumulator (distinct from Chaikin A/D) (`WILLIAMSAD`).
+- **Volume RSI** — Volume RSI: Wilder-style RSI computed on signed volume flow (`VOLUMERSI`).
 
 ## [0.6.2] - 2026-06-07
 - **Modified MA Stop** — Modified MA Stop — SMMA-ratcheted trailing stop with directional flip (`MODIFIED_MA_STOP`).
