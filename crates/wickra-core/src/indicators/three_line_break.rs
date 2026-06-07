@@ -220,6 +220,15 @@ mod tests {
     }
 
     #[test]
+    fn flat_close_emits_none_until_a_line_forms() {
+        let mut t = ThreeLineBreak::new(3).unwrap();
+        assert_eq!(t.update(c(100.0)), None);
+        // An identical close draws no line, so the direction stays unset.
+        assert_eq!(t.update(c(100.0)), None);
+        assert!(!t.is_ready());
+    }
+
+    #[test]
     fn batch_equals_streaming() {
         let candles: Vec<Candle> = (0..80)
             .map(|i| c(100.0 + (f64::from(i) * 0.25).sin() * 9.0))

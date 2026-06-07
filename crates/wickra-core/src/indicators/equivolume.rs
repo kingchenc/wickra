@@ -205,6 +205,18 @@ mod tests {
     }
 
     #[test]
+    fn zero_volume_gives_zero_width() {
+        let mut e = Equivolume::new(2).unwrap();
+        let out = e
+            .batch(&[c(11.0, 9.0, 0.0), c(12.0, 10.0, 0.0), c(13.0, 11.0, 0.0)])
+            .into_iter()
+            .flatten()
+            .last()
+            .unwrap();
+        assert_eq!(out.width, 0.0);
+    }
+
+    #[test]
     fn batch_equals_streaming() {
         let candles: Vec<Candle> = (0..80)
             .map(|i| {

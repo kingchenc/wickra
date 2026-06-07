@@ -204,6 +204,18 @@ mod tests {
     }
 
     #[test]
+    fn zero_volume_gives_zero_width() {
+        let mut cv = CandleVolume::new(2).unwrap();
+        let out = cv
+            .batch(&[c(10.0, 11.0, 0.0), c(11.0, 12.0, 0.0), c(12.0, 13.0, 0.0)])
+            .into_iter()
+            .flatten()
+            .last()
+            .unwrap();
+        assert_eq!(out.width, 0.0);
+    }
+
+    #[test]
     fn batch_equals_streaming() {
         let candles: Vec<Candle> = (0..80)
             .map(|i| {
