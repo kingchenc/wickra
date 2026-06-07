@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.6.8] - 2026-06-08
 - **Smoothed Heikin-Ashi** — a Heikin-Ashi candle computed from EMA-smoothed OHLC, damping noise into a cleaner trend candle (`SmoothedHeikinAshi`).
 - **Heikin-Ashi Oscillator** — the Heikin-Ashi candle body (`ha_close − ha_open`), optionally EMA-smoothed, as a zero-line oscillator (`HeikinAshiOscillator`).
 - **Three Line Break** — the trend direction of a line-break chart, reversing only when the close breaks the extreme of the last N lines (`ThreeLineBreak`).
@@ -1367,7 +1369,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.6.7...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.6.8...HEAD
+[0.6.8]: https://github.com/wickra-lib/wickra/compare/v0.6.7...v0.6.8
 [0.6.7]: https://github.com/wickra-lib/wickra/compare/v0.6.6...v0.6.7
 [0.6.6]: https://github.com/wickra-lib/wickra/compare/v0.6.5...v0.6.6
 [0.6.5]: https://github.com/wickra-lib/wickra/compare/v0.6.4...v0.6.5
