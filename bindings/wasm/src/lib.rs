@@ -7817,6 +7817,109 @@ impl WasmTdCombo {
     }
 }
 
+// ---------- TD D-Wave ----------
+
+#[wasm_bindgen(js_name = TDDWave)]
+pub struct WasmTdDWave {
+    inner: wc::TdDWave,
+}
+
+#[wasm_bindgen(js_class = TDDWave)]
+impl WasmTdDWave {
+    #[wasm_bindgen(constructor)]
+    pub fn new(strength: usize) -> Result<WasmTdDWave, JsError> {
+        Ok(Self {
+            inner: wc::TdDWave::new(strength).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> Result<Option<f64>, JsError> {
+        let c = make_candle(high, low, close, 0.0)?;
+        Ok(self.inner.update(c))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(JsError::new("high, low, close must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let c = make_candle(high[i], low[i], close[i], 0.0)?;
+            out.push(self.inner.update(c).unwrap_or(f64::NAN));
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- TD Moving Averages ----------
+
+#[wasm_bindgen(js_name = TDMovingAverage)]
+pub struct WasmTdMovingAverage {
+    inner: wc::TdMovingAverage,
+}
+
+#[wasm_bindgen(js_class = TDMovingAverage)]
+impl WasmTdMovingAverage {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period_st1: usize, period_st2: usize) -> Result<WasmTdMovingAverage, JsError> {
+        Ok(Self {
+            inner: wc::TdMovingAverage::new(period_st1, period_st2).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64) -> Result<JsValue, JsError> {
+        let candle = make_candle(high, low, low, 0.0)?;
+        match self.inner.update(candle) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"st1".into(), &o.st1.into()).ok();
+                Reflect::set(&obj, &"st2".into(), &o.st2.into()).ok();
+                Ok(obj.into())
+            }
+            None => Ok(JsValue::NULL),
+        }
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high, low must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let candle = make_candle(high[i], low[i], low[i], 0.0)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 2] = o.st1;
+                out[i * 2 + 1] = o.st2;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 // ---------- TD Countdown ----------
 
 #[wasm_bindgen(js_name = TDCountdown)]
@@ -8942,6 +9045,11 @@ wasm_candle_pattern!(WasmCrab, wc::Crab, Crab);
 wasm_candle_pattern!(WasmShark, wc::Shark, Shark);
 wasm_candle_pattern!(WasmCypher, wc::Cypher, Cypher);
 wasm_candle_pattern!(WasmThreeDrives, wc::ThreeDrives, ThreeDrives);
+wasm_candle_pattern!(WasmTdCamouflage, wc::TdCamouflage, TDCamouflage);
+wasm_candle_pattern!(WasmTdClop, wc::TdClop, TDClop);
+wasm_candle_pattern!(WasmTdClopwin, wc::TdClopwin, TDClopwin);
+wasm_candle_pattern!(WasmTdPropulsion, wc::TdPropulsion, TDPropulsion);
+wasm_candle_pattern!(WasmTdTrap, wc::TdTrap, TDTrap);
 
 // ============================== Microstructure: Order Book ==============================
 //

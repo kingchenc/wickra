@@ -382,6 +382,30 @@ def test_relative_strength_streaming_matches_batch():
 # 6-tuple candle; the batch helper takes only the columns it needs.
 
 CANDLE_SCALAR = {
+    "TDDWave": (
+        lambda: ta.TDDWave(2),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
+    "TDTrap": (
+        lambda: ta.TDTrap(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "TDPropulsion": (
+        lambda: ta.TDPropulsion(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "TDClopwin": (
+        lambda: ta.TDClopwin(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "TDClop": (
+        lambda: ta.TDClop(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "TDCamouflage": (
+        lambda: ta.TDCamouflage(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
     "PivotReversal": (
         lambda: ta.PivotReversal(1, 1),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
@@ -952,6 +976,11 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 # --- Candle-input, multi-output indicators --------------------------------
 
 MULTI = {
+    "TDMovingAverage": (
+        lambda: ta.TDMovingAverage(5, 13),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+        2,
+    ),
     "VolumeWeightedSr": (
         lambda: ta.VolumeWeightedSr(3),
         lambda ind, h, l, c, v: ind.batch(h, l, v),
@@ -3172,6 +3201,38 @@ def test_pivot_reversal_reference():
     assert t.update((9.0, 11.0, 9.0, 9.0, 1.0, 3)) == pytest.approx(0.0)
     # Close 13 > pivot high 12 with prev close 9 below it -> bullish reversal.
     assert t.update((13.0, 14.0, 12.5, 13.0, 1.0, 4)) == pytest.approx(1.0)
+
+
+
+def test_td_camouflage_reference():
+    t = ta.TDCamouflage()
+    assert t.update((10.0, 11.0, 8.0, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((9.0, 10.0, 7.0, 9.5, 1.0, 1)) == pytest.approx(1.0)
+
+
+def test_td_clop_reference():
+    t = ta.TDClop()
+    assert t.update((10.0, 12.0, 9.0, 11.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((9.0, 13.0, 8.0, 12.0, 1.0, 1)) == pytest.approx(1.0)
+
+
+def test_td_clopwin_reference():
+    t = ta.TDClopwin()
+    assert t.update((10.0, 15.0, 9.0, 14.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((11.0, 14.0, 10.0, 13.0, 1.0, 1)) == pytest.approx(1.0)
+
+
+def test_td_propulsion_reference():
+    t = ta.TDPropulsion()
+    assert t.update((9.5, 11.0, 9.0, 10.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((10.5, 12.0, 10.0, 11.5, 1.0, 1)) == pytest.approx(1.0)
+
+
+def test_td_trap_reference():
+    t = ta.TDTrap()
+    assert t.update((100.0, 110.0, 90.0, 100.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((101.5, 108.0, 95.0, 102.0, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((106.0, 112.0, 100.0, 109.0, 1.0, 2)) == pytest.approx(1.0)
 
 
 # --- Lifecycle ------------------------------------------------------------
