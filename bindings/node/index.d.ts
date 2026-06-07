@@ -239,6 +239,31 @@ export interface ProjectionBandsValue {
   middle: number
   lower: number
 }
+export interface CentralPivotRangeValue {
+  pivot: number
+  tc: number
+  bc: number
+}
+export interface MurreyMathLinesValue {
+  mm8_8: number
+  mm7_8: number
+  mm6_8: number
+  mm5_8: number
+  mm4_8: number
+  mm3_8: number
+  mm2_8: number
+  mm1_8: number
+  mm0_8: number
+}
+export interface AndrewsPitchforkValue {
+  median: number
+  upper: number
+  lower: number
+}
+export interface VolumeWeightedSrValue {
+  support: number
+  resistance: number
+}
 export interface DoubleBollingerValue {
   upperOuter: number
   upperInner: number
@@ -2926,6 +2951,51 @@ export declare class ProjectionBands {
   constructor(period: number)
   update(high: number, low: number): ProjectionBandsValue | null
   batch(high: Array<number>, low: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type CentralPivotRangeNode = CentralPivotRange
+export declare class CentralPivotRange {
+  constructor()
+  update(high: number, low: number, close: number): CentralPivotRangeValue | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type MurreyMathLinesNode = MurreyMathLines
+export declare class MurreyMathLines {
+  constructor(period: number)
+  update(high: number, low: number): MurreyMathLinesValue | null
+  batch(high: Array<number>, low: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type AndrewsPitchforkNode = AndrewsPitchfork
+export declare class AndrewsPitchfork {
+  constructor(strength: number)
+  update(high: number, low: number): AndrewsPitchforkValue | null
+  batch(high: Array<number>, low: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type VolumeWeightedSrNode = VolumeWeightedSr
+export declare class VolumeWeightedSr {
+  constructor(period: number)
+  update(high: number, low: number, volume: number): VolumeWeightedSrValue | null
+  batch(high: Array<number>, low: Array<number>, volume: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type PivotReversalNode = PivotReversal
+export declare class PivotReversal {
+  constructor(left: number, right: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void
   isReady(): boolean
   warmupPeriod(): number

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **Pivot Reversal** — a breakout signal when price closes through the most recently confirmed swing pivot (`PIVOT_REVERSAL`).
+- **Volume-Weighted Support/Resistance** — a band whose edges are the volume-weighted average of recent highs and lows (`VOLUME_WEIGHTED_SR`).
+- **Andrews Pitchfork** — median line and two parallels projected from the last three swing pivots (`ANDREWS_PITCHFORK`).
+- **Murrey Math Lines** — T. H. Murrey's eighths grid over the recent trading range, each level acting as support/resistance (`MURREY_MATH_LINES`).
+- **Central Pivot Range** — the classic pivot flanked by two central levels gauging the day's expected character (`CENTRAL_PIVOT_RANGE`).
 
 ## [0.6.5] - 2026-06-07
 - **Autocorrelation Periodogram** — Ehlers autocorrelation periodogram: dominant cycle period estimate (`AUTOCORRPGRAM`).

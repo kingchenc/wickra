@@ -309,6 +309,11 @@ from ._wickra import (
     FractalChaosBands,
     VwapStdDevBands,
     # Pivots & S/R
+    PivotReversal,
+    VolumeWeightedSr,
+    AndrewsPitchfork,
+    MurreyMathLines,
+    CentralPivotRange,
     ClassicPivots,
     FibonacciPivots,
     Camarilla,
@@ -801,6 +806,11 @@ __all__ = [
     "FractalChaosBands",
     "VwapStdDevBands",
     # Pivots & S/R
+    "PivotReversal",
+    "VolumeWeightedSr",
+    "AndrewsPitchfork",
+    "MurreyMathLines",
+    "CentralPivotRange",
     "ClassicPivots",
     "FibonacciPivots",
     "Camarilla",
