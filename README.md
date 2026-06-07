@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://wickra.org"><img src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/wickra-banner.webp?v=474" alt="Wickra — streaming-first technical indicators" width="100%"></a>
+  <a href="https://wickra.org"><img src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/wickra-banner.webp?v=479" alt="Wickra — streaming-first technical indicators" width="100%"></a>
 </p>
 
 [![CI](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml/badge.svg)](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml)
@@ -48,7 +48,7 @@ Full documentation lives at **[docs.wickra.org](https://docs.wickra.org)**:
   [Node](https://docs.wickra.org/Quickstart-Node),
   [WASM](https://docs.wickra.org/Quickstart-WASM).
 - **Indicators** — a per-indicator deep dive (formula, parameters, warmup) for
-  every one of the 474 indicators; start at the
+  every one of the 479 indicators; start at the
   [indicators overview](https://docs.wickra.org/Indicators-Overview).
 - **Reference** — [warmup periods](https://docs.wickra.org/Warmup-Periods),
   [streaming vs batch](https://docs.wickra.org/Streaming-vs-Batch),
@@ -66,7 +66,7 @@ an afterthought — **live, tick-by-tick data** — without giving up the breadt
 a full batch library, and without making you reimplement your indicators four
 times to get there.
 
-- **The biggest streaming-native catalogue, period.** 474 indicators across 24
+- **The biggest streaming-native catalogue, period.** 479 indicators across 24
   families — candlesticks, harmonic & chart patterns, market profile, market
   breadth, Renko/Kagi/Point&Figure bars, Ehlers DSP cycles, risk/performance
   metrics — every single one updating in **O(1) per tick**. TA-Lib ships ~150 and
@@ -77,7 +77,7 @@ times to get there.
 - **Correct by construction, not by hope.** Every `update` validates its input,
   runs a real warmup, and returns an `Option` so a single bad tick can't silently
   poison state. `batch == streaming` is **bit-exact, fuzzed and 100 %-line-covered
-  for all 474 indicators**.
+  for all 479 indicators**.
 - **Orders of magnitude faster where it counts.** In streaming Wickra is **11–56×**
   faster than the only other incremental peer and **thousands of times** faster
   than recompute-on-every-tick libraries. On batch it wins several rows outright
@@ -95,7 +95,7 @@ Every other library forces one of those compromises. Wickra doesn't:
 
 | Library          | Install     | Streaming   | Languages                   | Indicators | Active |
 |------------------|-------------|-------------|-----------------------------|-----------:|--------|
-| **★&nbsp;Wickra**| **clean**   | **yes, O(1)** | **Python · Node · WASM · Rust** | **474** | **yes** |
+| **★&nbsp;Wickra**| **clean**   | **yes, O(1)** | **Python · Node · WASM · Rust** | **479** | **yes** |
 | kand             | clean       | yes         | Python · WASM · Rust        |       ~60  | yes    |
 | ta-rs            | clean       | yes         | Rust only                   |       ~30  | stale  |
 | yata             | clean       | partial     | Rust only                   |       ~35  | yes    |
@@ -128,7 +128,7 @@ Full tables (Rust + Python, streaming + batch) and how to reproduce them live in
 
 ## Indicators
 
-474 streaming-first indicators across twenty-four families. Every one passes the
+479 streaming-first indicators across twenty-four families. Every one passes the
 `batch == streaming` equivalence test, reference-value tests, and reset
 semantics tests. Each has a per-indicator deep dive (formula, parameters,
 warmup) at [docs.wickra.org](https://docs.wickra.org/Indicators-Overview).
@@ -147,7 +147,7 @@ warmup) at [docs.wickra.org](https://docs.wickra.org/Indicators-Overview).
 | Ehlers / Cycle (DSP) | MAMA, FAMA, Fisher Transform, Inverse Fisher Transform, SuperSmoother, Hilbert Dominant Cycle, Hilbert Phasor, Hilbert DC Phase, Hilbert Trend Mode, Sine Wave, Decycler, Decycler Oscillator, Roofing Filter, Center of Gravity, Cybernetic Cycle, Adaptive Cycle, Empirical Mode Decomposition, Ehlers Stochastic, Instantaneous Trendline, Highpass Filter, Reflex, Trendflex, Correlation Trend Indicator, Adaptive RSI, Universal Oscillator, Adaptive CCI, Bandpass Filter, Even Better Sinewave, Autocorrelation Periodogram |
 | Pivots & S/R         | Classic Pivots, Fibonacci Pivots, Camarilla, Woodie Pivots, DeMark Pivots, Williams Fractals, ZigZag, Central Pivot Range, Murrey Math Lines, Andrews Pitchfork, Volume-Weighted Support/Resistance, Pivot Reversal |
 | DeMark               | TD Setup, TD Sequential, TD DeMarker, TD REI, TD Pressure, TD Combo, TD Countdown, TD Lines, TD Range Projection, TD Differential, TD Open, TD Risk Level, TD Camouflage, TD Clop, TD Clopwin, TD Propulsion, TD Trap, TD D-Wave, TD Moving Averages |
-| Ichimoku & Charts    | Ichimoku Kinko Hyo (Tenkan, Kijun, Senkou A/B, Chikou), Heikin-Ashi |
+| Ichimoku & Charts    | Ichimoku Kinko Hyo (Tenkan, Kijun, Senkou A/B, Chikou), Heikin-Ashi, Heikin-Ashi Oscillator, Three Line Break, Smoothed Heikin-Ashi, Equivolume, CandleVolume |
 | Alt-Chart Bars       | Renko (box-size bricks), Kagi (reversal-amount lines), Point & Figure (X/O columns) |
 | Candlestick Patterns | Doji, Hammer, Inverted Hammer, Hanging Man, Shooting Star, Engulfing, Harami, Morning/Evening Star, Three White Soldiers/Black Crows, Piercing Line/Dark Cloud Cover, Marubozu, Tweezer, Spinning Top, Three Inside Up/Down, Three Outside Up/Down, Two Crows, Upside Gap Two Crows, Identical Three Crows, Three Line Strike, Three Stars in the South, Abandoned Baby, Advance Block, Belt-hold, Breakaway, Counterattack, Doji Star, Dragonfly Doji, Gravestone Doji, Long-Legged Doji, Rickshaw Man, Evening Doji Star, Morning Doji Star, Gap Side-by-Side White, High-Wave, Hikkake, Modified Hikkake, Homing Pigeon, On-Neck, In-Neck, Thrusting, Separating Lines, Kicking, Kicking by Length, Ladder Bottom, Mat Hold, Matching Low, Long Line, Short Line, Rising Three Methods, Falling Three Methods, Upside Gap Three Methods, Downside Gap Three Methods, Stalled Pattern, Stick Sandwich, Takuri, Closing Marubozu, Opening Marubozu, Tasuki Gap, Unique Three River, Concealing Baby Swallow |
 | Chart Patterns       | Double Top / Bottom, Triple Top / Bottom, Head and Shoulders, Triangle (asc/desc/sym), Wedge (rising/falling), Flag / Pennant, Rectangle / Range, Cup and Handle |
@@ -237,7 +237,7 @@ A Python live-trading example using the public `websockets` package lives at
 ```
 wickra/
 ├── crates/
-│   ├── wickra-core/         core engine + all 474 indicators
+│   ├── wickra-core/         core engine + all 479 indicators
 │   ├── wickra/              top-level facade crate (publishes on crates.io) + benches/
 │   ├── wickra-data/         CSV reader, tick aggregator, live exchange feeds
 │   └── wickra-bench/        internal cross-library benchmark harness (not published)

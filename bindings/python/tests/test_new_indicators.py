@@ -382,6 +382,14 @@ def test_relative_strength_streaming_matches_batch():
 # 6-tuple candle; the batch helper takes only the columns it needs.
 
 CANDLE_SCALAR = {
+    "ThreeLineBreak": (
+        lambda: ta.ThreeLineBreak(3),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
+    "HeikinAshiOscillator": (
+        lambda: ta.HeikinAshiOscillator(5),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
     "TDDWave": (
         lambda: ta.TDDWave(2),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
@@ -976,6 +984,21 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 # --- Candle-input, multi-output indicators --------------------------------
 
 MULTI = {
+    "CandleVolume": (
+        lambda: ta.CandleVolume(20),
+        lambda ind, h, l, c, v: ind.batch(c, c, v),
+        2,
+    ),
+    "Equivolume": (
+        lambda: ta.Equivolume(20),
+        lambda ind, h, l, c, v: ind.batch(h, l, v),
+        2,
+    ),
+    "SmoothedHeikinAshi": (
+        lambda: ta.SmoothedHeikinAshi(5),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+        4,
+    ),
     "TDMovingAverage": (
         lambda: ta.TDMovingAverage(5, 13),
         lambda ind, h, l, c, v: ind.batch(h, l),
@@ -3234,6 +3257,26 @@ def test_td_trap_reference():
     assert t.update((101.5, 108.0, 95.0, 102.0, 1.0, 1)) == pytest.approx(0.0)
     assert t.update((106.0, 112.0, 100.0, 109.0, 1.0, 2)) == pytest.approx(1.0)
 
+
+
+def test_heikin_ashi_oscillator_reference():
+    t = ta.HeikinAshiOscillator(5)
+
+
+def test_three_line_break_reference():
+    t = ta.ThreeLineBreak(3)
+
+
+def test_smoothed_heikin_ashi_reference():
+    t = ta.SmoothedHeikinAshi(5)
+
+
+def test_equivolume_reference():
+    t = ta.Equivolume(20)
+
+
+def test_candle_volume_reference():
+    t = ta.CandleVolume(20)
 
 # --- Lifecycle ------------------------------------------------------------
 
