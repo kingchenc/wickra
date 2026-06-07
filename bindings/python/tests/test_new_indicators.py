@@ -382,6 +382,10 @@ def test_relative_strength_streaming_matches_batch():
 # 6-tuple candle; the batch helper takes only the columns it needs.
 
 CANDLE_SCALAR = {
+    "PivotReversal": (
+        lambda: ta.PivotReversal(1, 1),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
     "ADAPTIVECCI": (lambda: ta.ADAPTIVECCI(20), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "BetterVolume": (
         lambda: ta.BetterVolume(14),
@@ -948,6 +952,26 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 # --- Candle-input, multi-output indicators --------------------------------
 
 MULTI = {
+    "VolumeWeightedSr": (
+        lambda: ta.VolumeWeightedSr(3),
+        lambda ind, h, l, c, v: ind.batch(h, l, v),
+        2,
+    ),
+    "AndrewsPitchfork": (
+        lambda: ta.AndrewsPitchfork(2),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+        3,
+    ),
+    "MurreyMathLines": (
+        lambda: ta.MurreyMathLines(4),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+        9,
+    ),
+    "CentralPivotRange": (
+        lambda: ta.CentralPivotRange(),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+        3,
+    ),
     "VolumeWeightedMacd": (
         lambda: ta.VolumeWeightedMacd(12, 26, 9),
         lambda ind, h, l, c, v: ind.batch(c, v),
@@ -3111,6 +3135,44 @@ def test_volume_weighted_macd_reference():
 
 def test_kendall_tau_reference():
     t = ta.KendallTau(20)
+
+
+def test_central_pivot_range_reference():
+    t = ta.CentralPivotRange()
+    assert t.update((105.0, 110.0, 90.0, 105.0, 1.0, 0)) == pytest.approx((101.66666666666667, 103.33333333333334, 100.0))
+
+
+def test_murrey_math_lines_reference():
+    t = ta.MurreyMathLines(4)
+    assert t.update((140.0, 180.0, 100.0, 140.0, 1.0, 0)) is None
+    assert t.update((140.0, 180.0, 100.0, 140.0, 1.0, 1)) is None
+    assert t.update((140.0, 180.0, 100.0, 140.0, 1.0, 2)) is None
+    assert t.update((140.0, 180.0, 100.0, 140.0, 1.0, 3)) == pytest.approx((180.0, 170.0, 160.0, 150.0, 140.0, 130.0, 120.0, 110.0, 100.0))
+
+
+def test_andrews_pitchfork_reference():
+    t = ta.AndrewsPitchfork(2)
+    # Warmup: no pitchfork until three alternating swing pivots are confirmed.
+    assert t.update((100.0, 101.0, 99.0, 100.0, 1.0, 0)) is None
+
+
+def test_volume_weighted_sr_reference():
+    t = ta.VolumeWeightedSr(3)
+    assert t.update((100.0, 102.0, 98.0, 100.0, 1.0, 0)) is None
+    assert t.update((100.0, 104.0, 96.0, 100.0, 1.0, 1)) is None
+    assert t.update((100.0, 106.0, 94.0, 100.0, 1.0, 2)) == pytest.approx((96.0, 104.0))
+
+
+def test_pivot_reversal_reference():
+    t = ta.PivotReversal(1, 1)
+    assert t.update((9.5, 10.0, 9.0, 9.5, 1.0, 0)) is None
+    assert t.update((11.5, 12.0, 11.0, 11.5, 1.0, 1)) is None
+    # Pivot high = 12 confirmed; close 9.5 has not crossed it.
+    assert t.update((9.5, 10.0, 9.0, 9.5, 1.0, 2)) == pytest.approx(0.0)
+    assert t.update((9.0, 11.0, 9.0, 9.0, 1.0, 3)) == pytest.approx(0.0)
+    # Close 13 > pivot high 12 with prev close 9 below it -> bullish reversal.
+    assert t.update((13.0, 14.0, 12.5, 13.0, 1.0, 4)) == pytest.approx(1.0)
+
 
 # --- Lifecycle ------------------------------------------------------------
 
