@@ -1070,6 +1070,87 @@ export declare class ROLLINGMINMAX {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type HighpassFilterNode = HIGHPASS
+export declare class HIGHPASS {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type ReflexNode = REFLEX
+export declare class REFLEX {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TrendflexNode = TRENDFLEX
+export declare class TRENDFLEX {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type CorrelationTrendIndicatorNode = CTI
+export declare class CTI {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type AdaptiveRsiNode = ADAPTIVERSI
+export declare class ADAPTIVERSI {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type UniversalOscillatorNode = UNIVERSALOSC
+export declare class UNIVERSALOSC {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type BandpassFilterNode = BANDPASS
+export declare class BANDPASS {
+  constructor(period: number, bandwidth: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type EvenBetterSinewaveNode = EVENBETTERSINE
+export declare class EVENBETTERSINE {
+  constructor(hpPeriod: number, ssfLength: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type AutocorrelationPeriodogramNode = AUTOCORRPGRAM
+export declare class AUTOCORRPGRAM {
+  constructor(minPeriod: number, maxPeriod: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type ShannonEntropyNode = SHANNONENT
 export declare class SHANNONENT {
   constructor(period: number, bins: number)
@@ -1745,6 +1826,15 @@ export declare class ProjectionOscillator {
 export type TimeBasedStopNode = TimeBasedStop
 export declare class TimeBasedStop {
   constructor(maxBars: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type AdaptiveCciNode = ADAPTIVECCI
+export declare class ADAPTIVECCI {
+  constructor(period: number)
   update(high: number, low: number, close: number): number | null
   batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
   reset(): void

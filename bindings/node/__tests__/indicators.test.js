@@ -28,6 +28,15 @@ function num(v) {
 // --- Scalar indicators: update(value) vs batch(prices) ---
 
 const scalarFactories = {
+  AUTOCORRPGRAM: () => new wickra.AUTOCORRPGRAM(10, 48),
+  EVENBETTERSINE: () => new wickra.EVENBETTERSINE(40, 10),
+  BANDPASS: () => new wickra.BANDPASS(20, 0.3),
+  UNIVERSALOSC: () => new wickra.UNIVERSALOSC(20),
+  ADAPTIVERSI: () => new wickra.ADAPTIVERSI(14),
+  CTI: () => new wickra.CTI(20),
+  TRENDFLEX: () => new wickra.TRENDFLEX(20),
+  REFLEX: () => new wickra.REFLEX(20),
+  HIGHPASS: () => new wickra.HIGHPASS(48),
   SAMPLEENT: () => new wickra.SAMPLEENT(20, 2, 0.2),
   SHANNONENT: () => new wickra.SHANNONENT(20, 8),
   ROLLINGMINMAX: () => new wickra.ROLLINGMINMAX(20),
@@ -367,6 +376,7 @@ const candleScalar = {
   TradeVolumeIndex: { make: () => new wickra.TradeVolumeIndex(0.25), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
   IntradayIntensity: { make: () => new wickra.IntradayIntensity(), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
   BetterVolume: { make: () => new wickra.BetterVolume(14), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
+  ADAPTIVECCI: { make: () => new wickra.ADAPTIVECCI(20), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {

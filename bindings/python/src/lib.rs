@@ -3796,6 +3796,362 @@ impl PyRollingMinMaxScaler {
     }
 }
 
+// ============================== HighpassFilter ==============================
+
+#[pyclass(name = "HIGHPASS", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyHighpassFilter {
+    inner: wc::HighpassFilter,
+}
+
+#[pymethods]
+impl PyHighpassFilter {
+    #[new]
+    #[pyo3(signature = (period=48))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::HighpassFilter::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("HIGHPASS(period={})", self.inner.period())
+    }
+}
+
+// ============================== Reflex ==============================
+
+#[pyclass(name = "REFLEX", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyReflex {
+    inner: wc::Reflex,
+}
+
+#[pymethods]
+impl PyReflex {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Reflex::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("REFLEX(period={})", self.inner.period())
+    }
+}
+
+// ============================== Trendflex ==============================
+
+#[pyclass(name = "TRENDFLEX", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyTrendflex {
+    inner: wc::Trendflex,
+}
+
+#[pymethods]
+impl PyTrendflex {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Trendflex::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("TRENDFLEX(period={})", self.inner.period())
+    }
+}
+
+// ============================== CorrelationTrendIndicator ==============================
+
+#[pyclass(name = "CTI", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyCorrelationTrendIndicator {
+    inner: wc::CorrelationTrendIndicator,
+}
+
+#[pymethods]
+impl PyCorrelationTrendIndicator {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::CorrelationTrendIndicator::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("CTI(period={})", self.inner.period())
+    }
+}
+
+// ============================== AdaptiveRsi ==============================
+
+#[pyclass(name = "ADAPTIVERSI", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyAdaptiveRsi {
+    inner: wc::AdaptiveRsi,
+}
+
+#[pymethods]
+impl PyAdaptiveRsi {
+    #[new]
+    #[pyo3(signature = (period=14))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::AdaptiveRsi::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("ADAPTIVERSI(period={})", self.inner.period())
+    }
+}
+
+// ============================== UniversalOscillator ==============================
+
+#[pyclass(name = "UNIVERSALOSC", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyUniversalOscillator {
+    inner: wc::UniversalOscillator,
+}
+
+#[pymethods]
+impl PyUniversalOscillator {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::UniversalOscillator::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("UNIVERSALOSC(period={})", self.inner.period())
+    }
+}
+
+// ============================== AdaptiveCci ==============================
+
+#[pyclass(name = "ADAPTIVECCI", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyAdaptiveCci {
+    inner: wc::AdaptiveCci,
+}
+
+#[pymethods]
+impl PyAdaptiveCci {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::AdaptiveCci::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over numpy columns: high, low, close (all 1-D, equal length).
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("ADAPTIVECCI(period={})", self.inner.period())
+    }
+}
+
 // ============================== Stochastic ==============================
 
 #[pyclass(name = "IMI", module = "wickra._wickra", skip_from_py_object)]
@@ -23001,6 +23357,169 @@ impl PyKendallTau {
     }
 }
 
+// ============================== Bandpass Filter ==============================
+
+#[pyclass(name = "BANDPASS", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyBandpassFilter {
+    inner: wc::BandpassFilter,
+}
+
+#[pymethods]
+impl PyBandpassFilter {
+    #[new]
+    #[pyo3(signature = (period=20, bandwidth=0.3))]
+    fn new(period: usize, bandwidth: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::BandpassFilter::new(period, bandwidth).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn params(&self) -> (usize, f64) {
+        self.inner.params()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (period, bandwidth) = self.inner.params();
+        format!("BANDPASS(period={period}, bandwidth={bandwidth})")
+    }
+}
+
+// ============================== Even Better Sinewave ==============================
+
+#[pyclass(
+    name = "EVENBETTERSINE",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyEvenBetterSinewave {
+    inner: wc::EvenBetterSinewave,
+}
+
+#[pymethods]
+impl PyEvenBetterSinewave {
+    #[new]
+    #[pyo3(signature = (hp_period=40, ssf_length=10))]
+    fn new(hp_period: usize, ssf_length: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::EvenBetterSinewave::new(hp_period, ssf_length).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn params(&self) -> (usize, usize) {
+        self.inner.params()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (hp_period, ssf_length) = self.inner.params();
+        format!("EVENBETTERSINE(hp_period={hp_period}, ssf_length={ssf_length})")
+    }
+}
+
+// ============================== Autocorrelation Periodogram ==============================
+
+#[pyclass(name = "AUTOCORRPGRAM", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyAutocorrelationPeriodogram {
+    inner: wc::AutocorrelationPeriodogram,
+}
+
+#[pymethods]
+impl PyAutocorrelationPeriodogram {
+    #[new]
+    #[pyo3(signature = (min_period=10, max_period=48))]
+    fn new(min_period: usize, max_period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::AutocorrelationPeriodogram::new(min_period, max_period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+    }
+    #[getter]
+    fn periods(&self) -> (usize, usize) {
+        self.inner.periods()
+    }
+    #[getter]
+    fn value(&self) -> Option<f64> {
+        self.inner.value()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (min_period, max_period) = self.inner.periods();
+        format!("AUTOCORRPGRAM(min_period={min_period}, max_period={max_period})")
+    }
+}
+
 #[pymodule]
 #[allow(clippy::too_many_lines)]
 fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -23467,7 +23986,17 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyShannonEntropy>()?;
     m.add_class::<PySampleEntropy>()?;
     m.add_class::<PyKendallTau>()?;
+    m.add_class::<PyBandpassFilter>()?;
+    m.add_class::<PyEvenBetterSinewave>()?;
+    m.add_class::<PyAutocorrelationPeriodogram>()?;
     m.add_class::<PyJarqueBera>()?;
     m.add_class::<PyRollingMinMaxScaler>()?;
+    m.add_class::<PyHighpassFilter>()?;
+    m.add_class::<PyReflex>()?;
+    m.add_class::<PyTrendflex>()?;
+    m.add_class::<PyCorrelationTrendIndicator>()?;
+    m.add_class::<PyAdaptiveRsi>()?;
+    m.add_class::<PyUniversalOscillator>()?;
+    m.add_class::<PyAdaptiveCci>()?;
     Ok(())
 }

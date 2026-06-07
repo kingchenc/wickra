@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **Autocorrelation Periodogram** — Ehlers autocorrelation periodogram: dominant cycle period estimate (`AUTOCORRPGRAM`).
+- **Even Better Sinewave** — Ehlers Even Better Sinewave: normalized cycle-phase oscillator (`EVENBETTERSINE`).
+- **Bandpass Filter** — Ehlers bandpass filter: isolates a frequency band around the dominant cycle (`BANDPASS`).
+- **Adaptive CCI** — Adaptive CCI: efficiency-ratio-adaptive CCI on typical price (`ADAPTIVECCI`).
+- **Universal Oscillator** — Ehlers Universal Oscillator: SuperSmoother-based normalized cycle oscillator (`UNIVERSALOSC`).
+- **Adaptive RSI** — Adaptive RSI: dominant-cycle-tuned RSI length (Ehlers) (`ADAPTIVERSI`).
+- **Correlation Trend Indicator** — Ehlers Correlation Trend Indicator: Pearson correlation of price vs time (`CTI`).
+- **Trendflex** — Ehlers Trendflex: trend-following companion to Reflex (`TRENDFLEX`).
+- **Reflex** — Ehlers Reflex: trend-cycle oscillator measuring slope-adjusted displacement (`REFLEX`).
+- **Highpass Filter** — Ehlers highpass filter: removes low-frequency trend, leaving cyclic component (`HIGHPASS`).
 
 ## [0.6.4] - 2026-06-07
 - **Kendall Tau** — Kendall rank correlation (tau-b) over a rolling window of paired observations (`KENDALLTAU`).

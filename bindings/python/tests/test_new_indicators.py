@@ -45,6 +45,15 @@ def ohlcv() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 # --- Scalar (f64 -> f64) indicators ---------------------------------------
 
 SCALAR = [
+    (ta.AUTOCORRPGRAM, (10, 48)),
+    (ta.EVENBETTERSINE, (40, 10)),
+    (ta.BANDPASS, (20, 0.3)),
+    (ta.UNIVERSALOSC, (20,)),
+    (ta.ADAPTIVERSI, (14,)),
+    (ta.CTI, (20,)),
+    (ta.TRENDFLEX, (20,)),
+    (ta.REFLEX, (20,)),
+    (ta.HIGHPASS, (48,)),
     (ta.SAMPLEENT, (20, 2, 0.2)),
     (ta.SHANNONENT, (20, 8)),
     (ta.ROLLINGMINMAX, (20,)),
@@ -373,6 +382,7 @@ def test_relative_strength_streaming_matches_batch():
 # 6-tuple candle; the batch helper takes only the columns it needs.
 
 CANDLE_SCALAR = {
+    "ADAPTIVECCI": (lambda: ta.ADAPTIVECCI(20), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "BetterVolume": (
         lambda: ta.BetterVolume(14),
         lambda ind, h, l, c, v: ind.batch(h, l, c, v),
