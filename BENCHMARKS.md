@@ -26,15 +26,15 @@ was built to expose.
 
 | Indicator        | **★&nbsp;Wickra** | talipp           | TA-Lib (recompute)    |
 |------------------|------------------:|------------------|-----------------------|
-| SMA(20)          | **0.063 µs ★**    | 0.59 µs (9×)     | 204 µs (3 300×)       |
-| EMA(20)          | **0.060 µs ★**    | 0.72 µs (12×)    | 212 µs (3 500×)       |
-| RSI(14)          | **0.065 µs ★**    | 1.06 µs (16×)    | 230 µs (3 600×)       |
-| MACD(12, 26, 9)  | **0.078 µs ★**    | 4.22 µs (54×)    | 245 µs (3 100×)       |
-| Bollinger(20, 2) | **0.088 µs ★**    | 5.15 µs (58×)    | 229 µs (2 600×)       |
+| SMA(20)          | **0.089 µs ★**    | 0.96 µs (11×)    | 422 µs (4 700×)       |
+| EMA(20)          | **0.111 µs ★**    | 1.19 µs (11×)    | 430 µs (3 900×)       |
+| RSI(14)          | **0.061 µs ★**    | 0.95 µs (16×)    | 298 µs (4 900×)       |
+| MACD(12, 26, 9)  | **0.079 µs ★**    | 3.30 µs (42×)    | 327 µs (4 100×)       |
+| Bollinger(20, 2) | **0.089 µs ★**    | 4.97 µs (56×)    | 296 µs (3 300×)       |
 
-Against the only other incremental Python peer Wickra is **9–58× faster**;
-against the recompute-on-every-tick libraries it is **2 600–14 000× faster**
-(`finta` RSI hits 14 000×). tulipy / pandas-ta land in the same recompute band
+Against the only other incremental Python peer Wickra is **11–56× faster**;
+against the recompute-on-every-tick libraries it is **2 800–19 000× faster**
+(`finta` RSI hits 19 000×). tulipy / pandas-ta land in the same recompute band
 as TA-Lib.
 
 **Rust — per-tick latency** (whole 50 000-bar series, lower = faster):
@@ -65,15 +65,15 @@ field everywhere.
 
 | Indicator        | Wickra   | TA-Lib | tulipy | pandas-ta |
 |------------------|---------:|-------:|-------:|----------:|
-| SMA(20)          | 22.7     | **15.4** | 15.9 | 33.7      |
-| EMA(20)          | 30.8     | **30.3** | 31.1 | 48.8      |
-| RSI(14)          | 58.9     | 72.5   | **38.5** | 94.8    |
-| MACD(12, 26, 9)  | 71.7     | 99.1   | **33.5** | 207.6   |
-| Bollinger(20, 2) | 84.9     | 65.7   | **32.3** | 336.4   |
-| ATR(14)          | 52.0     | 79.4   | **31.9** | —        |
+| SMA(20)          | 22.2     | **15.6** | 15.9 | 32.7      |
+| EMA(20)          | 30.5     | **30.4** | 30.9 | 46.7      |
+| RSI(14)          | 52.3     | 72.0   | **34.2** | 88.8    |
+| MACD(12, 26, 9)  | 129.8    | 111.1  | **38.4** | 286.8   |
+| Bollinger(20, 2) | 87.2     | 74.6   | **37.9** | 474.3   |
+| ATR(14)          | 74.7     | 87.3   | **35.5** | —        |
 
-Wickra beats TA-Lib on RSI, MACD and ATR and the whole Python field on every
-row; tulipy's SIMD C stays ahead on the heavier indicators.
+Wickra beats pandas-ta on every row and TA-Lib on RSI and ATR; tulipy's SIMD C
+(and TA-Lib on SMA/EMA) lead the remaining rows.
 
 **Rust** (50 000-bar pass, µs, lower = faster). Only Wickra and `kand` expose a
 batch API; `ta-rs` and `yata` are streaming-only:
