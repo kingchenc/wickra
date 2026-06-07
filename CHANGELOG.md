@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.6.7] - 2026-06-08
 - **TD Camouflage** — a DeMark qualifier flagging hidden intrabar strength or weakness against the prior close (`TDCamouflage`).
 - **TD Clop** — a DeMark two-bar open/close engulfing reversal where the bar opens beyond and closes back across the prior body (`TDClop`).
 - **TD Clopwin** — the inside-body cousin of TD Clop, marking a compression bar whose direction hints at the next move (`TDClopwin`).
@@ -1360,7 +1362,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.6.6...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.6.7...HEAD
+[0.6.7]: https://github.com/wickra-lib/wickra/compare/v0.6.6...v0.6.7
 [0.6.6]: https://github.com/wickra-lib/wickra/compare/v0.6.5...v0.6.6
 [0.6.5]: https://github.com/wickra-lib/wickra/compare/v0.6.4...v0.6.5
 [0.6.4]: https://github.com/wickra-lib/wickra/compare/v0.6.3...v0.6.4
