@@ -385,6 +385,20 @@ export interface HeikinAshiValue {
   low: number
   close: number
 }
+export interface SmoothedHeikinAshiValue {
+  open: number
+  high: number
+  low: number
+  close: number
+}
+export interface EquivolumeValue {
+  height: number
+  width: number
+}
+export interface CandleVolumeValue {
+  body: number
+  width: number
+}
 export interface ValueAreaValue {
   poc: number
   vah: number
@@ -3358,6 +3372,51 @@ export declare class HeikinAshi {
   update(open: number, high: number, low: number, close: number): HeikinAshiValue | null
   /** Returns `[open0, high0, low0, close0, open1, ...]`, length `4 * n`. */
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type HeikinAshiOscillatorNode = HeikinAshiOscillator
+export declare class HeikinAshiOscillator {
+  constructor(period: number)
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type ThreeLineBreakNode = ThreeLineBreak
+export declare class ThreeLineBreak {
+  constructor(lines: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type SmoothedHeikinAshiNode = SmoothedHeikinAshi
+export declare class SmoothedHeikinAshi {
+  constructor(period: number)
+  update(open: number, high: number, low: number, close: number): SmoothedHeikinAshiValue | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type EquivolumeNode = Equivolume
+export declare class Equivolume {
+  constructor(period: number)
+  update(high: number, low: number, volume: number): EquivolumeValue | null
+  batch(high: Array<number>, low: Array<number>, volume: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type CandleVolumeNode = CandleVolume
+export declare class CandleVolume {
+  constructor(period: number)
+  update(open: number, close: number, volume: number): CandleVolumeValue | null
+  batch(open: Array<number>, close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
   isReady(): boolean
   warmupPeriod(): number

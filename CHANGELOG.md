@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **Smoothed Heikin-Ashi** — a Heikin-Ashi candle computed from EMA-smoothed OHLC, damping noise into a cleaner trend candle (`SmoothedHeikinAshi`).
+- **Heikin-Ashi Oscillator** — the Heikin-Ashi candle body (`ha_close − ha_open`), optionally EMA-smoothed, as a zero-line oscillator (`HeikinAshiOscillator`).
+- **Three Line Break** — the trend direction of a line-break chart, reversing only when the close breaks the extreme of the last N lines (`ThreeLineBreak`).
+- **Equivolume** — a chart box whose height is the bar range and whose width is volume-relative, fusing price range with activity (`Equivolume`).
+- **CandleVolume** — a candle whose body is close-minus-open and whose width is volume-relative, a volume-weighted candle chart (`CandleVolume`).
 
 ## [0.6.7] - 2026-06-08
 - **TD Camouflage** — a DeMark qualifier flagging hidden intrabar strength or weakness against the prior close (`TDCamouflage`).
