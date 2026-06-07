@@ -86,6 +86,62 @@ impl Sma {
             None
         }
     }
+
+    /// Vectorized batch returning one `f64` per input (`NaN` during warmup).
+    ///
+    /// Shadows the generic [`BatchNanExt::batch_nan`](crate::BatchNanExt) blanket
+    /// default via inherent-method resolution. For a fresh, all-finite slice it
+    /// inlines `update`'s rolling sum and drift-reseed, writing the mean as a bare
+    /// `f64` (warmup → `NaN`) instead of allocating an `Option<f64>` per element
+    /// and walking the result a second time. Same add/subtract order, same reseed
+    /// cadence, same `sum / period` division — so it is *bit-for-bit* equal to
+    /// replaying `update`, including the long-stream drift bound. Any other state,
+    /// or a non-finite element, defers to the exact `update` replay.
+    pub fn batch_nan(&mut self, inputs: &[f64]) -> Vec<f64> {
+        let p = self.period;
+        if self.count != 0
+            || self.updates_since_recompute != 0
+            || !inputs.iter().all(|x| x.is_finite())
+        {
+            return inputs
+                .iter()
+                .map(|&x| self.update(x).unwrap_or(f64::NAN))
+                .collect();
+        }
+
+        let p_f64 = p as f64;
+        let mut out = Vec::with_capacity(inputs.len());
+        for &x in inputs {
+            if self.count == p {
+                self.sum -= self.buf[self.head];
+                self.buf[self.head] = x;
+                self.sum += x;
+            } else {
+                self.buf[self.head] = x;
+                self.sum += x;
+                self.count += 1;
+            }
+            self.head += 1;
+            if self.head == p {
+                self.head = 0;
+            }
+            self.updates_since_recompute += 1;
+            if self.updates_since_recompute >= RECOMPUTE_EVERY * p {
+                self.sum = self.buf[self.head..]
+                    .iter()
+                    .chain(&self.buf[..self.head])
+                    .copied()
+                    .sum();
+                self.updates_since_recompute = 0;
+            }
+            out.push(if self.count == p {
+                self.sum / p_f64
+            } else {
+                f64::NAN
+            });
+        }
+        out
+    }
 }
 
 impl Indicator for Sma {
@@ -244,6 +300,69 @@ mod tests {
         for x in v.iter().skip(4) {
             assert_relative_eq!(x.unwrap(), 7.0, epsilon = 1e-12);
         }
+    }
+
+    /// NaN-aware bit-equality for the `f64`-with-NaN-warmup batch outputs.
+    fn bits_eq(a: &[f64], b: &[f64]) -> bool {
+        a.len() == b.len()
+            && a.iter()
+                .zip(b)
+                .all(|(x, y)| x == y || (x.is_nan() && y.is_nan()))
+    }
+
+    fn sma_replay(period: usize, series: &[f64]) -> Vec<f64> {
+        let mut s = Sma::new(period).unwrap();
+        series
+            .iter()
+            .map(|&x| s.update(x).unwrap_or(f64::NAN))
+            .collect()
+    }
+
+    #[test]
+    fn batch_nan_fast_path_is_bit_identical_with_reseed() {
+        // > 16*period inputs so the drift-reseed branch fires inside batch_nan.
+        let series: Vec<f64> = (0..500)
+            .map(|i| (f64::from(i) * 0.2).sin() * 10.0 + 50.0)
+            .collect();
+        let mut sma = Sma::new(14).unwrap();
+        let got = sma.batch_nan(&series);
+        assert!(bits_eq(&got, &sma_replay(14, &series)));
+        // State left where the replay would: continued updates agree.
+        let mut ref_sma = Sma::new(14).unwrap();
+        for &x in &series {
+            ref_sma.update(x);
+        }
+        assert_eq!(sma.update(42.0), ref_sma.update(42.0));
+    }
+
+    #[test]
+    fn batch_nan_falls_back_on_non_finite() {
+        let series = [1.0, 2.0, f64::NAN, 4.0, 5.0, 6.0];
+        let mut sma = Sma::new(3).unwrap();
+        assert!(bits_eq(&sma.batch_nan(&series), &sma_replay(3, &series)));
+    }
+
+    #[test]
+    fn batch_nan_falls_back_when_not_fresh() {
+        let mut sma = Sma::new(3).unwrap();
+        sma.update(99.0);
+        let series = [1.0, 2.0, 3.0, 4.0];
+        let mut ref_sma = Sma::new(3).unwrap();
+        ref_sma.update(99.0);
+        let want: Vec<f64> = series
+            .iter()
+            .map(|&x| ref_sma.update(x).unwrap_or(f64::NAN))
+            .collect();
+        assert!(bits_eq(&sma.batch_nan(&series), &want));
+    }
+
+    #[test]
+    fn batch_nan_sub_period_slice_is_all_nan() {
+        let series = [1.0, 2.0, 3.0];
+        let mut sma = Sma::new(10).unwrap();
+        let got = sma.batch_nan(&series);
+        assert!(bits_eq(&got, &sma_replay(10, &series)));
+        assert!(got.iter().all(|x| x.is_nan()));
     }
 
     proptest::proptest! {

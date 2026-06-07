@@ -17,7 +17,7 @@ use pyo3::exceptions::{PyTypeError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
 use wickra_core as wc;
-use wickra_core::{BarBuilder, BatchExt, Indicator};
+use wickra_core::{BarBuilder, BatchExt, BatchNanExt, Indicator};
 
 fn map_err(e: wc::Error) -> PyErr {
     match e {
@@ -33,15 +33,6 @@ fn map_err(e: wc::Error) -> PyErr {
         | wc::Error::InvalidCrossSection { .. }
         | wc::Error::InvalidParameter { .. } => PyValueError::new_err(e.to_string()),
     }
-}
-
-fn opt_to_nan(v: Option<f64>) -> f64 {
-    v.unwrap_or(f64::NAN)
-}
-
-/// Convert a slice of `Option<f64>` to a flat `Vec<f64>` with NaNs for warmup.
-fn flatten(values: Vec<Option<f64>>) -> Vec<f64> {
-    values.into_iter().map(opt_to_nan).collect()
 }
 
 /// Raised instead of panicking when a `NumPy` input is not C-contiguous.
@@ -91,7 +82,7 @@ impl PySma {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -142,7 +133,7 @@ impl PyEma {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -197,7 +188,7 @@ impl PyWma {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -249,7 +240,7 @@ impl PyRsi {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -307,14 +298,7 @@ impl PyMacd {
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
         let n = slice.len();
-        let mut out = vec![f64::NAN; n * 3];
-        for (i, p) in slice.iter().enumerate() {
-            if let Some(o) = self.inner.update(*p) {
-                out[i * 3] = o.macd;
-                out[i * 3 + 1] = o.signal;
-                out[i * 3 + 2] = o.histogram;
-            }
-        }
+        let out = self.inner.batch_macd(slice);
         Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
             .expect("shape consistent")
             .into_pyarray(py))
@@ -375,15 +359,7 @@ impl PyBb {
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
         let n = slice.len();
-        let mut out = vec![f64::NAN; n * 4];
-        for (i, p) in slice.iter().enumerate() {
-            if let Some(o) = self.inner.update(*p) {
-                out[i * 4] = o.upper;
-                out[i * 4 + 1] = o.middle;
-                out[i * 4 + 2] = o.lower;
-                out[i * 4 + 3] = o.stddev;
-            }
-        }
+        let out = self.inner.batch_bands(slice);
         Ok(numpy::ndarray::Array2::from_shape_vec((n, 4), out)
             .expect("shape consistent")
             .into_pyarray(py))
@@ -489,12 +465,20 @@ impl PyAtr {
                 "high, low, close must be equal length",
             ));
         }
-        let mut out = Vec::with_capacity(h.len());
+        // Validate the OHLC invariants once (the streaming path gets this from
+        // `Candle::new`); ATR uses the close as open, so `high >= close >= low`.
         for i in 0..h.len() {
-            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
-            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+            if !(h[i].is_finite() && l[i].is_finite() && c[i].is_finite())
+                || h[i] < l[i]
+                || h[i] < c[i]
+                || l[i] > c[i]
+            {
+                return Err(PyValueError::new_err(
+                    "high, low, close must be finite with low <= close <= high",
+                ));
+            }
         }
-        Ok(out.into_pyarray(py))
+        Ok(self.inner.batch_atr(h, l, c).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -950,7 +934,7 @@ impl PyMidPoint {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1065,7 +1049,7 @@ impl PyRocp {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1113,7 +1097,7 @@ impl PyRocr {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1161,7 +1145,7 @@ impl PyRocr100 {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1213,7 +1197,7 @@ impl PyLinRegIntercept {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1261,7 +1245,7 @@ impl PyTsf {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1606,7 +1590,7 @@ impl PyLogReturn {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1658,7 +1642,7 @@ impl PyRealizedVolatility {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1706,7 +1690,7 @@ impl PyRollingIqr {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1758,7 +1742,7 @@ impl PyRollingPercentileRank {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -1810,7 +1794,7 @@ impl PyRollingQuantile {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2134,7 +2118,7 @@ impl PyTrendLabel {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2182,7 +2166,7 @@ impl PyJumpIndicator {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2235,7 +2219,7 @@ impl PyRegimeLabel {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn vol_period(&self) -> usize {
@@ -2288,7 +2272,7 @@ impl PyWinRate {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2336,7 +2320,7 @@ impl PyExpectancy {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2384,7 +2368,7 @@ impl PySineWeightedMa {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2432,7 +2416,7 @@ impl PyGeometricMa {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2480,7 +2464,7 @@ impl PyEhma {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2528,7 +2512,7 @@ impl PyMedianMa {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2580,7 +2564,7 @@ impl PyAdaptiveLaguerreFilter {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2632,7 +2616,7 @@ impl PyDisparityIndex {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2680,7 +2664,7 @@ impl PyFisherRsi {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2728,7 +2712,7 @@ impl PyRsx {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn length(&self) -> usize {
@@ -2780,7 +2764,7 @@ impl PyDynamicMomentumIndex {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -2968,7 +2952,7 @@ impl PyTrendStrengthIndex {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3082,7 +3066,7 @@ impl PyPolarizedFractalEfficiency {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3131,7 +3115,7 @@ impl PyWavePm {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn length(&self) -> usize {
@@ -3325,7 +3309,7 @@ impl PyTsfOscillator {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3373,7 +3357,7 @@ impl PyMacdHistogram {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -3418,7 +3402,7 @@ impl PyPpoHistogram {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -3467,7 +3451,7 @@ impl PyBipowerVariation {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3728,7 +3712,7 @@ impl PyJarqueBera {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3776,7 +3760,7 @@ impl PyRollingMinMaxScaler {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3824,7 +3808,7 @@ impl PyHighpassFilter {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3872,7 +3856,7 @@ impl PyReflex {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3920,7 +3904,7 @@ impl PyTrendflex {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -3968,7 +3952,7 @@ impl PyCorrelationTrendIndicator {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4016,7 +4000,7 @@ impl PyAdaptiveRsi {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4064,7 +4048,7 @@ impl PyUniversalOscillator {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4512,7 +4496,7 @@ impl PyDema {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4559,7 +4543,7 @@ impl PyTema {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4606,7 +4590,7 @@ impl PyHma {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -4654,7 +4638,7 @@ impl PyKama {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -4766,7 +4750,7 @@ impl PyConnorsRsi {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -4811,7 +4795,7 @@ impl PyLaguerreRsi {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn gamma(&self) -> f64 {
@@ -5133,7 +5117,7 @@ impl PyFrama {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -5309,7 +5293,7 @@ impl PyJma {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -5354,7 +5338,7 @@ impl PyVidya {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -5403,7 +5387,7 @@ impl PyMcGinleyDynamic {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -5451,7 +5435,7 @@ impl PyAlma {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -5574,7 +5558,7 @@ impl PyStc {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -5625,7 +5609,7 @@ impl PyElderImpulse {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -5728,7 +5712,7 @@ impl PyCfo {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -5776,7 +5760,7 @@ impl PyApo {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -5888,7 +5872,7 @@ impl PyRoc {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -6203,7 +6187,7 @@ impl PyTrix {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -6827,7 +6811,7 @@ impl PyBollingerBandwidth {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -6887,7 +6871,7 @@ impl PyPercentB {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -7019,7 +7003,7 @@ impl PyStdDev {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -7071,7 +7055,7 @@ impl PyUlcerIndex {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -7127,7 +7111,7 @@ impl PyHistoricalVolatility {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -7548,7 +7532,7 @@ impl PyPpo {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -7601,7 +7585,7 @@ impl PyDpo {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -7657,7 +7641,7 @@ impl PyCoppock {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize, usize) {
@@ -7710,7 +7694,7 @@ impl PyStochRsi {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -7840,7 +7824,7 @@ impl PyMom {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -7892,7 +7876,7 @@ impl PyCmo {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -7944,7 +7928,7 @@ impl PyTsi {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -7997,7 +7981,7 @@ impl PyPmo {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -8050,7 +8034,7 @@ impl PyTii {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -8102,7 +8086,7 @@ impl PyZlema {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -8158,7 +8142,7 @@ impl PyT3 {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -8218,7 +8202,7 @@ impl PyGeneralizedDema {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -8274,7 +8258,7 @@ impl PyHoltWinters {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn alpha(&self) -> f64 {
@@ -8342,7 +8326,7 @@ impl PyRmi {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -8408,7 +8392,7 @@ impl PyDerivativeOscillator {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -8515,7 +8499,7 @@ impl PySmma {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -8566,7 +8550,7 @@ impl PyTrima {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -9154,7 +9138,7 @@ impl PyAnchoredRsi {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn value(&self) -> Option<f64> {
@@ -10210,7 +10194,7 @@ impl PyPercentageTrailingStop {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn percent(&self) -> f64 {
@@ -10262,7 +10246,7 @@ impl PyStepTrailingStop {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn step_size(&self) -> f64 {
@@ -10314,7 +10298,7 @@ impl PyRenkoTrailingStop {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn block_size(&self) -> f64 {
@@ -10933,7 +10917,7 @@ impl PyLinearRegression {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -10981,7 +10965,7 @@ impl PyLinRegSlope {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -11244,7 +11228,7 @@ impl PyVerticalHorizontalFilter {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -11422,7 +11406,7 @@ impl PyZScore {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -11470,7 +11454,7 @@ impl PyLinRegAngle {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -11822,7 +11806,7 @@ impl PyRviVolatility {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -14192,7 +14176,7 @@ macro_rules! py_scalar_one_period {
                 let slice = prices
                     .as_slice()
                     .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-                Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+                Ok(self.inner.batch_nan(slice).into_pyarray(py))
             }
             #[getter]
             fn period(&self) -> usize {
@@ -14262,7 +14246,7 @@ impl PyInverseFisherTransform {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn scale(&self) -> f64 {
@@ -14317,7 +14301,7 @@ impl PyDecyclerOscillator {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -14366,7 +14350,7 @@ impl PyRoofingFilter {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {
@@ -14419,7 +14403,7 @@ impl PyEmd {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -14476,7 +14460,7 @@ macro_rules! py_no_params_scalar {
                 let slice = prices
                     .as_slice()
                     .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-                Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+                Ok(self.inner.batch_nan(slice).into_pyarray(py))
             }
             #[getter]
             fn value(&self) -> Option<f64> {
@@ -14534,7 +14518,7 @@ impl PySineWave {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn value(&self) -> Option<f64> {
@@ -14647,7 +14631,7 @@ impl PyFama {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn limits(&self) -> (f64, f64) {
@@ -14879,7 +14863,7 @@ impl PyVariance {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -14931,7 +14915,7 @@ impl PyCoefficientOfVariation {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -14979,7 +14963,7 @@ impl PySkewness {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -15027,7 +15011,7 @@ impl PyKurtosis {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -15075,7 +15059,7 @@ impl PyStandardError {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -15127,7 +15111,7 @@ impl PyDetrendedStdDev {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -15175,7 +15159,7 @@ impl PyRSquared {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -15227,7 +15211,7 @@ impl PyAutocorrelation {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -15287,7 +15271,7 @@ impl PyMedianAbsoluteDeviation {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -15335,7 +15319,7 @@ impl PyHurstExponent {
         let s = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(s)).into_pyarray(py))
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -20087,7 +20071,7 @@ impl PySharpeRatio {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -20141,7 +20125,7 @@ impl PySortinoRatio {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -20194,7 +20178,7 @@ impl PyCalmarRatio {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -20240,7 +20224,7 @@ impl PyOmegaRatio {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -20293,7 +20277,7 @@ impl PyMaxDrawdown {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -20342,7 +20326,7 @@ impl PyAverageDrawdown {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -20438,7 +20422,7 @@ impl PyPainIndex {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -20484,7 +20468,7 @@ impl PyValueAtRisk {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -20542,7 +20526,7 @@ impl PyConditionalValueAtRisk {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -20595,7 +20579,7 @@ impl PyProfitFactor {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -20640,7 +20624,7 @@ impl PyGainLossRatio {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -20689,7 +20673,7 @@ impl PyRecoveryFactor {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     fn reset(&mut self) {
         self.inner.reset();
@@ -20734,7 +20718,7 @@ impl PyKellyCriterion {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn period(&self) -> usize {
@@ -22486,7 +22470,7 @@ impl PyEwmaVolatility {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn lambda_(&self) -> f64 {
@@ -22535,7 +22519,7 @@ impl PyGarch11 {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn params(&self) -> (f64, f64, f64) {
@@ -22592,7 +22576,7 @@ impl PyVolatilityOfVolatility {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn windows(&self) -> (usize, usize) {
@@ -23215,7 +23199,7 @@ impl PyShannonEntropy {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn params(&self) -> (usize, usize) {
@@ -23268,7 +23252,7 @@ impl PySampleEntropy {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn params(&self) -> (usize, usize, f64) {
@@ -23385,7 +23369,7 @@ impl PyBandpassFilter {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn params(&self) -> (usize, f64) {
@@ -23442,7 +23426,7 @@ impl PyEvenBetterSinewave {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn params(&self) -> (usize, usize) {
@@ -23495,7 +23479,7 @@ impl PyAutocorrelationPeriodogram {
         let slice = prices
             .as_slice()
             .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
-        Ok(flatten(self.inner.batch(slice)).into_pyarray(py))
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
     }
     #[getter]
     fn periods(&self) -> (usize, usize) {

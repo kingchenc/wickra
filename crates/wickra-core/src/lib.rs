@@ -165,4 +165,4 @@ pub use indicators::PnfColumn;
 pub use indicators::RenkoBrick;
 pub use microstructure::{Level, OrderBook, Side, Trade, TradeQuote};
 pub use ohlcv::{Candle, Tick};
-pub use traits::{BarBuilder, BatchExt, Chain, Indicator};
+pub use traits::{BarBuilder, BatchExt, BatchNanExt, Chain, Indicator};

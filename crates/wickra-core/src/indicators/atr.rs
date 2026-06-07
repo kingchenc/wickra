@@ -75,6 +75,67 @@ impl Atr {
             None
         }
     }
+
+    /// Vectorized batch over raw high/low/close columns: one `f64` per bar
+    /// (`NaN` during warmup). The caller guarantees the three slices are equal
+    /// length and finite with valid OHLC ordering (the binding validates once up
+    /// front); ATR only reads high, low and the previous close.
+    ///
+    /// For a fresh indicator long enough to seed (`n >= period`) it runs the
+    /// true-range seed once and then the bare Wilder recurrence in a tight loop —
+    /// no per-bar `Candle` construction/validation, no `Option`, identical
+    /// division at the seed and `mul_add` afterwards, so the result is
+    /// *bit-for-bit* equal to replaying `update` over the same candles. Shorter
+    /// or non-fresh inputs defer to an exact `update` replay.
+    pub fn batch_atr(&mut self, high: &[f64], low: &[f64], close: &[f64]) -> Vec<f64> {
+        let p = self.period;
+        let n = high.len();
+        if self.seeded || !self.seed_buf.is_empty() || self.prev_close.is_some() || n < p {
+            let mut out = vec![f64::NAN; n];
+            for i in 0..n {
+                let candle = Candle::new_unchecked(close[i], high[i], low[i], close[i], 0.0, 0);
+                if let Some(v) = self.update(candle) {
+                    out[i] = v;
+                }
+            }
+            return out;
+        }
+
+        // Warmup `[0, p-1)` is `NaN`; the first ATR is emitted at index `p - 1`.
+        let mut out = vec![f64::NAN; p - 1];
+        out.reserve(n - (p - 1));
+        // Seed: mean of the first `period` true ranges. TR₀ has no previous close.
+        let mut prev_close = close[0];
+        let mut sum_tr = high[0] - low[0];
+        self.seed_buf.push(sum_tr);
+        for i in 1..p {
+            let (h, l) = (high[i], low[i]);
+            let tr = (h - l)
+                .max((h - prev_close).abs())
+                .max((l - prev_close).abs());
+            prev_close = close[i];
+            self.seed_buf.push(tr);
+            sum_tr += tr;
+        }
+        let mut avg = sum_tr / p as f64;
+        out.push(avg);
+        // Steady state: Wilder smoothing, reciprocal hoisted out of the loop.
+        for i in p..n {
+            let (h, l) = (high[i], low[i]);
+            let tr = (h - l)
+                .max((h - prev_close).abs())
+                .max((l - prev_close).abs());
+            prev_close = close[i];
+            avg = avg.mul_add(self.n_minus_1, tr) * self.inv_period;
+            out.push(avg);
+        }
+
+        // Leave state where a full `update` replay would (seeded; seed_buf retained).
+        self.prev_close = Some(prev_close);
+        self.avg = avg;
+        self.seeded = true;
+        out
+    }
 }
 
 impl Indicator for Atr {
@@ -264,6 +325,81 @@ mod tests {
         for v in atr.batch(&candles).into_iter().flatten() {
             assert!(v >= 0.0, "ATR must be non-negative: {v}");
         }
+    }
+
+    fn bits_eq(a: &[f64], b: &[f64]) -> bool {
+        a.len() == b.len()
+            && a.iter()
+                .zip(b)
+                .all(|(x, y)| x == y || (x.is_nan() && y.is_nan()))
+    }
+
+    fn atr_replay(period: usize, high: &[f64], low: &[f64], close: &[f64]) -> Vec<f64> {
+        let mut a = Atr::new(period).unwrap();
+        (0..high.len())
+            .map(|i| {
+                let candle = Candle::new_unchecked(close[i], high[i], low[i], close[i], 0.0, 0);
+                a.update(candle).unwrap_or(f64::NAN)
+            })
+            .collect()
+    }
+
+    /// Valid OHLC columns from a wandering base price.
+    fn columns(n: usize) -> (Vec<f64>, Vec<f64>, Vec<f64>) {
+        let base: Vec<f64> = (0..n)
+            .map(|i| (f64::from(u32::try_from(i).unwrap()) * 0.3).sin() * 5.0 + 100.0)
+            .collect();
+        let high = base.iter().map(|b| b + 1.0).collect();
+        let low = base.iter().map(|b| b - 1.0).collect();
+        (high, low, base)
+    }
+
+    #[test]
+    fn batch_atr_fast_path_is_bit_identical() {
+        let (high, low, close) = columns(300);
+        let mut atr = Atr::new(14).unwrap();
+        let got = atr.batch_atr(&high, &low, &close);
+        assert!(bits_eq(&got, &atr_replay(14, &high, &low, &close)));
+        let mut ref_atr = Atr::new(14).unwrap();
+        for i in 0..high.len() {
+            ref_atr.update(Candle::new_unchecked(
+                close[i], high[i], low[i], close[i], 0.0, 0,
+            ));
+        }
+        let next = Candle::new_unchecked(101.0, 102.0, 100.0, 101.0, 0.0, 0);
+        assert_eq!(atr.update(next), ref_atr.update(next));
+    }
+
+    #[test]
+    fn batch_atr_falls_back_when_not_fresh() {
+        let (high, low, close) = columns(40);
+        let mut atr = Atr::new(14).unwrap();
+        atr.update(Candle::new_unchecked(
+            close[0], high[0], low[0], close[0], 0.0, 0,
+        ));
+        let mut ref_atr = Atr::new(14).unwrap();
+        ref_atr.update(Candle::new_unchecked(
+            close[0], high[0], low[0], close[0], 0.0, 0,
+        ));
+        let want: Vec<f64> = (0..high.len())
+            .map(|i| {
+                ref_atr
+                    .update(Candle::new_unchecked(
+                        close[i], high[i], low[i], close[i], 0.0, 0,
+                    ))
+                    .unwrap_or(f64::NAN)
+            })
+            .collect();
+        assert!(bits_eq(&atr.batch_atr(&high, &low, &close), &want));
+    }
+
+    #[test]
+    fn batch_atr_sub_period_slice_falls_back() {
+        let (high, low, close) = columns(5);
+        let mut atr = Atr::new(14).unwrap();
+        let got = atr.batch_atr(&high, &low, &close);
+        assert!(bits_eq(&got, &atr_replay(14, &high, &low, &close)));
+        assert!(got.iter().all(|x| x.is_nan()));
     }
 
     proptest::proptest! {

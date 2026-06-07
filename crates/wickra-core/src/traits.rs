@@ -90,6 +90,29 @@ pub trait BatchExt: Indicator {
 
 impl<T: Indicator> BatchExt for T {}
 
+/// Fast batch for scalar `f64 -> f64` indicators.
+///
+/// The generic [`BatchExt::batch`] returns `Vec<Option<f64>>` — 16 bytes per
+/// element (no niche fits an arbitrary `f64`), which a caller wanting a dense
+/// `f64` series then has to walk a second time to map warmup `None`s to `NaN`.
+/// This skips both the wide intermediate and the second pass: one allocation,
+/// one pass, warmup encoded as `NaN`. The default body is bit-identical to
+/// replaying `update`; indicators with a vectorizable closed form override it
+/// with an inherent `batch_nan` of the same name, which wins method resolution
+/// over this trait default.
+pub trait BatchNanExt: Indicator<Input = f64, Output = f64> {
+    /// One `f64` per input, warmup positions filled with `NaN`.
+    fn batch_nan(&mut self, inputs: &[f64]) -> Vec<f64> {
+        let mut out = Vec::with_capacity(inputs.len());
+        for &x in inputs {
+            out.push(self.update(x).unwrap_or(f64::NAN));
+        }
+        out
+    }
+}
+
+impl<T: Indicator<Input = f64, Output = f64>> BatchNanExt for T {}
+
 /// A streaming *bar builder* — an alternative-chart constructor (Renko, Kagi,
 /// Point-and-Figure) that turns a candle stream into a stream of price-driven
 /// bars.
@@ -295,6 +318,17 @@ mod tests {
         let mut id = Identity::default();
         let out = id.batch(&[1.0, 2.0, 3.0]);
         assert_eq!(out, vec![Some(1.0), Some(2.0), Some(3.0)]);
+    }
+
+    /// The blanket [`BatchNanExt::batch_nan`] default (used by every scalar
+    /// indicator without an inherent fast path) maps `update` outputs to a dense
+    /// `f64` series, warmup `None` becoming `NaN`. `Identity` is always ready, so
+    /// the result is just the inputs back.
+    #[test]
+    fn batch_nan_default_maps_none_to_nan() {
+        let mut id = Identity::default();
+        let out = id.batch_nan(&[1.0, 2.0, 3.0]);
+        assert_eq!(out, vec![1.0, 2.0, 3.0]);
     }
 
     #[test]
