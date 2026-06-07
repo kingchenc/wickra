@@ -32,6 +32,7 @@ mod alpha;
 mod amihud_illiquidity;
 mod anchored_rsi;
 mod anchored_vwap;
+mod andrews_pitchfork;
 mod apo;
 mod aroon;
 mod aroon_oscillator;
@@ -68,6 +69,7 @@ mod calmar_ratio;
 mod camarilla_pivots;
 mod cci;
 mod center_of_gravity;
+mod central_pivot_range;
 mod cfo;
 mod chaikin_oscillator;
 mod chaikin_volatility;
@@ -257,6 +259,7 @@ mod modified_ma_stop;
 mod mom;
 mod morning_doji_star;
 mod morning_evening_star;
+mod murrey_math_lines;
 mod natr;
 mod new_highs_new_lows;
 mod nrtr;
@@ -286,6 +289,7 @@ mod percent_b;
 mod percentage_trailing_stop;
 mod pgo;
 mod piercing_dark_cloud;
+mod pivot_reversal;
 mod plus_di;
 mod plus_dm;
 mod pmo;
@@ -446,6 +450,7 @@ mod volume_oscillator;
 mod volume_profile;
 mod volume_rsi;
 mod volume_weighted_macd;
+mod volume_weighted_sr;
 mod vortex;
 mod vpin;
 mod vpt;
@@ -494,6 +499,7 @@ pub use alpha::Alpha;
 pub use amihud_illiquidity::AmihudIlliquidity;
 pub use anchored_rsi::AnchoredRsi;
 pub use anchored_vwap::AnchoredVwap;
+pub use andrews_pitchfork::{AndrewsPitchfork, AndrewsPitchforkOutput};
 pub use apo::Apo;
 pub use aroon::{Aroon, AroonOutput};
 pub use aroon_oscillator::AroonOscillator;
@@ -530,6 +536,7 @@ pub use calmar_ratio::CalmarRatio;
 pub use camarilla_pivots::{Camarilla, CamarillaPivotsOutput};
 pub use cci::Cci;
 pub use center_of_gravity::CenterOfGravity;
+pub use central_pivot_range::{CentralPivotRange, CentralPivotRangeOutput};
 pub use cfo::Cfo;
 pub use chaikin_oscillator::ChaikinOscillator;
 pub use chaikin_volatility::ChaikinVolatility;
@@ -719,6 +726,7 @@ pub use modified_ma_stop::{ModifiedMaStop, ModifiedMaStopOutput};
 pub use mom::Mom;
 pub use morning_doji_star::MorningDojiStar;
 pub use morning_evening_star::MorningEveningStar;
+pub use murrey_math_lines::{MurreyMathLines, MurreyMathLinesOutput};
 pub use natr::Natr;
 pub use new_highs_new_lows::NewHighsNewLows;
 pub use nrtr::{Nrtr, NrtrOutput};
@@ -748,6 +756,7 @@ pub use percent_b::PercentB;
 pub use percentage_trailing_stop::PercentageTrailingStop;
 pub use pgo::Pgo;
 pub use piercing_dark_cloud::PiercingDarkCloud;
+pub use pivot_reversal::PivotReversal;
 pub use plus_di::PlusDi;
 pub use plus_dm::PlusDm;
 pub use pmo::Pmo;
@@ -908,6 +917,7 @@ pub use volume_oscillator::VolumeOscillator;
 pub use volume_profile::{VolumeProfile, VolumeProfileOutput};
 pub use volume_rsi::VolumeRsi;
 pub use volume_weighted_macd::{VolumeWeightedMacd, VolumeWeightedMacdOutput};
+pub use volume_weighted_sr::{VolumeWeightedSr, VolumeWeightedSrOutput};
 pub use vortex::{Vortex, VortexOutput};
 pub use vpin::Vpin;
 pub use vpt::VolumePriceTrend;
@@ -1272,6 +1282,11 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "DemarkPivots",
             "WilliamsFractals",
             "ZigZag",
+            "CentralPivotRange",
+            "MurreyMathLines",
+            "AndrewsPitchfork",
+            "VolumeWeightedSr",
+            "PivotReversal",
         ],
     ),
     (
@@ -1540,6 +1555,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 462, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 467, "FAMILIES total drifted from indicator count");
     }
 }
