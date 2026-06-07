@@ -378,6 +378,12 @@ const candleScalar = {
   BetterVolume: { make: () => new wickra.BetterVolume(14), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
   ADAPTIVECCI: { make: () => new wickra.ADAPTIVECCI(20), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   PivotReversal: { make: () => new wickra.PivotReversal(1, 1), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  TDCamouflage: { make: () => new wickra.TDCamouflage(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  TDClop: { make: () => new wickra.TDClop(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  TDClopwin: { make: () => new wickra.TDClopwin(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  TDPropulsion: { make: () => new wickra.TDPropulsion(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  TDTrap: { make: () => new wickra.TDTrap(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  TDDWave: { make: () => new wickra.TDDWave(2), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {
@@ -479,6 +485,7 @@ const multi = {
   MurreyMathLines: { make: () => new wickra.MurreyMathLines(4), fields: ['mm8_8', 'mm7_8', 'mm6_8', 'mm5_8', 'mm4_8', 'mm3_8', 'mm2_8', 'mm1_8', 'mm0_8'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   AndrewsPitchfork: { make: () => new wickra.AndrewsPitchfork(2), fields: ['median', 'upper', 'lower'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
   VolumeWeightedSr: { make: () => new wickra.VolumeWeightedSr(3), fields: ['support', 'resistance'], step: (ind, i) => ind.update(high[i], low[i], volume[i]), batch: (ind) => ind.batch(high, low, volume) },
+  TDMovingAverage: { make: () => new wickra.TDMovingAverage(5, 13), fields: ['st1', 'st2'], step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
 };
 
 for (const [name, d] of Object.entries(multi)) {

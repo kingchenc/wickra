@@ -379,18 +379,25 @@ mod t3;
 mod taker_buy_sell_ratio;
 mod takuri;
 mod tasuki_gap;
+mod td_camouflage;
+mod td_clop;
+mod td_clopwin;
 mod td_combo;
 mod td_countdown;
 mod td_demarker;
 mod td_differential;
+mod td_dwave;
 mod td_lines;
+mod td_moving_average;
 mod td_open;
 mod td_pressure;
+mod td_propulsion;
 mod td_range_projection;
 mod td_rei;
 mod td_risk_level;
 mod td_sequential;
 mod td_setup;
+mod td_trap;
 mod tema;
 mod term_structure_basis;
 mod three_drives;
@@ -846,18 +853,25 @@ pub use t3::T3;
 pub use taker_buy_sell_ratio::TakerBuySellRatio;
 pub use takuri::Takuri;
 pub use tasuki_gap::TasukiGap;
+pub use td_camouflage::TdCamouflage;
+pub use td_clop::TdClop;
+pub use td_clopwin::TdClopwin;
 pub use td_combo::TdCombo;
 pub use td_countdown::TdCountdown;
 pub use td_demarker::TdDeMarker;
 pub use td_differential::TdDifferential;
+pub use td_dwave::TdDWave;
 pub use td_lines::{TdLines, TdLinesOutput};
+pub use td_moving_average::{TdMovingAverage, TdMovingAverageOutput};
 pub use td_open::TdOpen;
 pub use td_pressure::TdPressure;
+pub use td_propulsion::TdPropulsion;
 pub use td_range_projection::{TdRangeProjection, TdRangeProjectionOutput};
 pub use td_rei::TdRei;
 pub use td_risk_level::{TdRiskLevel, TdRiskLevelOutput};
 pub use td_sequential::{TdSequential, TdSequentialOutput};
 pub use td_setup::TdSetup;
+pub use td_trap::TdTrap;
 pub use tema::Tema;
 pub use term_structure_basis::TermStructureBasis;
 pub use three_drives::ThreeDrives;
@@ -1304,6 +1318,13 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "TdDifferential",
             "TdOpen",
             "TdRiskLevel",
+            "TdCamouflage",
+            "TdClop",
+            "TdClopwin",
+            "TdPropulsion",
+            "TdTrap",
+            "TdDWave",
+            "TdMovingAverage",
         ],
     ),
     ("Ichimoku & Charts", &["Ichimoku", "HeikinAshi"]),
@@ -1555,6 +1576,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 467, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 474, "FAMILIES total drifted from indicator count");
     }
 }

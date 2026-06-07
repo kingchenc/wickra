@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **TD Camouflage** — a DeMark qualifier flagging hidden intrabar strength or weakness against the prior close (`TDCamouflage`).
+- **TD Clop** — a DeMark two-bar open/close engulfing reversal where the bar opens beyond and closes back across the prior body (`TDClop`).
+- **TD Clopwin** — the inside-body cousin of TD Clop, marking a compression bar whose direction hints at the next move (`TDClopwin`).
+- **TD Propulsion** — a DeMark continuation thrust that opens on the trend side and closes beyond the prior bar's extreme (`TDPropulsion`).
+- **TD Trap** — an inside ("trap") bar followed by a close beyond its range, triggering a directional breakout signal (`TDTrap`).
+- **TD D-Wave** — a streaming Elliott-style swing-wave counter labelling the market's 1–5 impulse / A–C correction sequence (`TDDWave`).
+- **TD Moving Averages** — the DeMark ST1 (fast) and ST2 (slow) median-price trend ribbon whose crossover frames the trend (`TDMovingAverage`).
 
 ## [0.6.6] - 2026-06-08
 - **Pivot Reversal** — a breakout signal when price closes through the most recently confirmed swing pivot (`PIVOT_REVERSAL`).

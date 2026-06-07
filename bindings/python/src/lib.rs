@@ -14086,6 +14086,131 @@ impl PyTdCombo {
     }
 }
 
+// ============================== TD D-Wave ==============================
+
+#[pyclass(name = "TDDWave", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyTdDWave {
+    inner: wc::TdDWave,
+}
+
+#[pymethods]
+impl PyTdDWave {
+    #[new]
+    #[pyo3(signature = (strength=2))]
+    fn new(strength: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::TdDWave::new(strength).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== TD Moving Averages ==============================
+
+#[pyclass(
+    name = "TDMovingAverage",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyTdMovingAverage {
+    inner: wc::TdMovingAverage,
+}
+
+#[pymethods]
+impl PyTdMovingAverage {
+    #[new]
+    #[pyo3(signature = (period_st1=5, period_st2=13))]
+    fn new(period_st1: usize, period_st2: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::TdMovingAverage::new(period_st1, period_st2).map_err(map_err)?,
+        })
+    }
+    /// Returns `(st1, st2)`.
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.st1, o.st2)))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high, low must be equal length"));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let candle = wc::Candle::new(l[i], h[i], l[i], l[i], 0.0, 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 2] = o.st1;
+                out[i * 2 + 1] = o.st2;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 // ============================== TD Countdown ==============================
 
 #[pyclass(name = "TDCountdown", module = "wickra._wickra", skip_from_py_object)]
@@ -17703,6 +17828,11 @@ candle_pattern_no_param!(PyCrab, wc::Crab, "Crab");
 candle_pattern_no_param!(PyShark, wc::Shark, "Shark");
 candle_pattern_no_param!(PyCypher, wc::Cypher, "Cypher");
 candle_pattern_no_param!(PyThreeDrives, wc::ThreeDrives, "ThreeDrives");
+candle_pattern_no_param!(PyTdCamouflage, wc::TdCamouflage, "TDCamouflage");
+candle_pattern_no_param!(PyTdClop, wc::TdClop, "TDClop");
+candle_pattern_no_param!(PyTdClopwin, wc::TdClopwin, "TDClopwin");
+candle_pattern_no_param!(PyTdPropulsion, wc::TdPropulsion, "TDPropulsion");
+candle_pattern_no_param!(PyTdTrap, wc::TdTrap, "TDTrap");
 // ============================== Microstructure: Order Book ==============================
 //
 // Order-book indicators consume a depth snapshot rather than OHLCV. Streaming
@@ -24028,6 +24158,8 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyTdRei>()?;
     m.add_class::<PyTdPressure>()?;
     m.add_class::<PyTdCombo>()?;
+    m.add_class::<PyTdDWave>()?;
+    m.add_class::<PyTdMovingAverage>()?;
     m.add_class::<PyTdCountdown>()?;
     m.add_class::<PyTdLines>()?;
     m.add_class::<PyTdRangeProjection>()?;
@@ -24336,5 +24468,10 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyAdaptiveRsi>()?;
     m.add_class::<PyUniversalOscillator>()?;
     m.add_class::<PyAdaptiveCci>()?;
+    m.add_class::<PyTdCamouflage>()?;
+    m.add_class::<PyTdClop>()?;
+    m.add_class::<PyTdClopwin>()?;
+    m.add_class::<PyTdPropulsion>()?;
+    m.add_class::<PyTdTrap>()?;
     Ok(())
 }

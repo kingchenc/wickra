@@ -11100,6 +11100,124 @@ impl TdComboNode {
     }
 }
 
+// ============================== TD D-Wave ==============================
+
+#[napi(js_name = "TDDWave")]
+pub struct TdDWaveNode {
+    inner: wc::TdDWave,
+}
+
+#[napi]
+impl TdDWaveNode {
+    #[napi(constructor)]
+    pub fn new(strength: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::TdDWave::new(strength as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, 0.0)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// ============================== TD Moving Averages ==============================
+
+#[napi(object)]
+pub struct TdMovingAverageValue {
+    pub st1: f64,
+    pub st2: f64,
+}
+
+#[napi(js_name = "TDMovingAverage")]
+pub struct TdMovingAverageNode {
+    inner: wc::TdMovingAverage,
+}
+
+#[napi]
+impl TdMovingAverageNode {
+    #[napi(constructor)]
+    pub fn new(period_st1: u32, period_st2: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::TdMovingAverage::new(period_st1 as usize, period_st2 as usize)
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<TdMovingAverageValue>> {
+        Ok(self
+            .inner
+            .update(cnd(high, low, low, 0.0)?)
+            .map(|o| TdMovingAverageValue {
+                st1: o.st1,
+                st2: o.st2,
+            }))
+    }
+    #[napi]
+    pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() {
+            return Err(NapiError::from_reason(
+                "high, low must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            if let Some(o) = self.inner.update(cnd(high[i], low[i], low[i], 0.0)?) {
+                out[i * 2] = o.st1;
+                out[i * 2 + 1] = o.st2;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 // ============================== TD Countdown ==============================
 
 #[napi(js_name = "TDCountdown")]
@@ -12807,6 +12925,11 @@ node_candle_pattern!(CrabNode, wc::Crab, "Crab");
 node_candle_pattern!(SharkNode, wc::Shark, "Shark");
 node_candle_pattern!(CypherNode, wc::Cypher, "Cypher");
 node_candle_pattern!(ThreeDrivesNode, wc::ThreeDrives, "ThreeDrives");
+node_candle_pattern!(TdCamouflageNode, wc::TdCamouflage, "TDCamouflage");
+node_candle_pattern!(TdClopNode, wc::TdClop, "TDClop");
+node_candle_pattern!(TdClopwinNode, wc::TdClopwin, "TDClopwin");
+node_candle_pattern!(TdPropulsionNode, wc::TdPropulsion, "TDPropulsion");
+node_candle_pattern!(TdTrapNode, wc::TdTrap, "TDTrap");
 
 // ============================== Microstructure: Order Book ==============================
 //

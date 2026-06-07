@@ -342,6 +342,10 @@ export interface TdSequentialValue {
   countdown: number
   direction: number
 }
+export interface TdMovingAverageValue {
+  st1: number
+  st2: number
+}
 /** TD Lines output pair: latest TDST resistance / support (NaN if unset). */
 export interface TdLinesValue {
   resistance: number
@@ -3159,6 +3163,24 @@ export declare class TDCombo {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type TdDWaveNode = TDDWave
+export declare class TDDWave {
+  constructor(strength: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TdMovingAverageNode = TDMovingAverage
+export declare class TDMovingAverage {
+  constructor(periodSt1: number, periodSt2: number)
+  update(high: number, low: number): TdMovingAverageValue | null
+  batch(high: Array<number>, low: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type TdCountdownNode = TDCountdown
 export declare class TDCountdown {
   constructor(setupLookback: number, setupTarget: number, countdownLookback: number, countdownTarget: number)
@@ -4065,6 +4087,51 @@ export declare class Cypher {
 }
 export type ThreeDrivesNode = ThreeDrives
 export declare class ThreeDrives {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TdCamouflageNode = TDCamouflage
+export declare class TDCamouflage {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TdClopNode = TDClop
+export declare class TDClop {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TdClopwinNode = TDClopwin
+export declare class TDClopwin {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TdPropulsionNode = TDPropulsion
+export declare class TDPropulsion {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TdTrapNode = TDTrap
+export declare class TDTrap {
   constructor()
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
