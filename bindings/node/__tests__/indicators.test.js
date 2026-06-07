@@ -357,6 +357,12 @@ const candleScalar = {
   VolatilityRatio: { make: () => new wickra.VolatilityRatio(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ProjectionOscillator: { make: () => new wickra.ProjectionOscillator(14), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   TimeBasedStop: { make: () => new wickra.TimeBasedStop(5), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  VolumeRsi: { make: () => new wickra.VolumeRsi(14), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
+  Wad: { make: () => new wickra.Wad(), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  TwiggsMoneyFlow: { make: () => new wickra.TwiggsMoneyFlow(21), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
+  TradeVolumeIndex: { make: () => new wickra.TradeVolumeIndex(0.25), step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
+  IntradayIntensity: { make: () => new wickra.IntradayIntensity(), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
+  BetterVolume: { make: () => new wickra.BetterVolume(14), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {
@@ -453,6 +459,7 @@ const multi = {
   AtrRatchet: { make: () => new wickra.AtrRatchet(14, 4.0, 0.1), fields: ['value', 'direction'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   Nrtr: { make: () => new wickra.Nrtr(2.0), fields: ['value', 'direction'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   ModifiedMaStop: { make: () => new wickra.ModifiedMaStop(14), fields: ['value', 'direction'], step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  VolumeWeightedMacd: { make: () => new wickra.VolumeWeightedMacd(12, 26, 9), fields: ['macd', 'signal', 'histogram'], step: (ind, i) => ind.update(close[i], volume[i]), batch: (ind) => ind.batch(close, volume) },
 };
 
 for (const [name, d] of Object.entries(multi)) {

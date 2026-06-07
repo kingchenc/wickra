@@ -489,6 +489,11 @@ export interface FibTimeZonesValue {
   onZone: number
   barsToNext: number
 }
+export interface VolumeWeightedMacdValue {
+  macd: number
+  signal: number
+  histogram: number
+}
 export type SmaNode = SMA
 export declare class SMA {
   constructor(period: number)
@@ -4636,6 +4641,73 @@ export declare class FibTimeZones {
   constructor()
   update(high: number, low: number): FibTimeZonesValue | null
   batch(high: Array<number>, low: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type VolumeRsiNode = VolumeRsi
+export declare class VolumeRsi {
+  constructor(period: number)
+  update(close: number, volume: number): number | null
+  batch(close: Array<number>, volume: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type WadNode = Wad
+export declare class Wad {
+  constructor()
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TwiggsMoneyFlowNode = TwiggsMoneyFlow
+export declare class TwiggsMoneyFlow {
+  constructor(period: number)
+  update(high: number, low: number, close: number, volume: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TradeVolumeIndexNode = TradeVolumeIndex
+export declare class TradeVolumeIndex {
+  constructor(minTick: number)
+  update(close: number, volume: number): number | null
+  batch(close: Array<number>, volume: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type IntradayIntensityNode = IntradayIntensity
+export declare class IntradayIntensity {
+  constructor()
+  update(high: number, low: number, close: number, volume: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type BetterVolumeNode = BetterVolume
+export declare class BetterVolume {
+  constructor(period: number)
+  update(high: number, low: number, close: number, volume: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type VolumeWeightedMacdNode = VolumeWeightedMacd
+export declare class VolumeWeightedMacd {
+  constructor(fast: number, slow: number, signal: number)
+  update(close: number, volume: number): VolumeWeightedMacdValue | null
+  /**
+   * Returns `[macd0, signal0, histogram0, macd1, ...]`, length `3 * n`.
+   * Warmup positions are `NaN`.
+   */
+  batch(close: Array<number>, volume: Array<number>): Array<number>
   reset(): void
   isReady(): boolean
   warmupPeriod(): number

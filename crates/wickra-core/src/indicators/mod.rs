@@ -49,6 +49,7 @@ mod bat;
 mod belt_hold;
 mod beta;
 mod beta_neutral_spread;
+mod better_volume;
 mod bipower_variation;
 mod body_size_pct;
 mod bollinger;
@@ -185,6 +186,7 @@ mod inertia;
 mod information_ratio;
 mod initial_balance;
 mod instantaneous_trendline;
+mod intraday_intensity;
 mod intraday_momentum_index;
 mod intraday_volatility_profile;
 mod inverse_fisher_transform;
@@ -387,6 +389,7 @@ mod time_based_stop;
 mod time_of_day_return_profile;
 mod tpo_profile;
 mod trade_imbalance;
+mod trade_volume_index;
 mod trend_label;
 mod trend_strength_index;
 mod treynor_ratio;
@@ -404,6 +407,7 @@ mod ttm_squeeze;
 mod ttm_trend;
 mod turn_of_month;
 mod tweezer;
+mod twiggs_money_flow;
 mod two_crows;
 mod typical_price;
 mod ulcer_index;
@@ -425,6 +429,8 @@ mod volty_stop;
 mod volume_by_time_profile;
 mod volume_oscillator;
 mod volume_profile;
+mod volume_rsi;
+mod volume_weighted_macd;
 mod vortex;
 mod vpin;
 mod vpt;
@@ -432,6 +438,7 @@ mod vwap;
 mod vwap_stddev_bands;
 mod vwma;
 mod vzo;
+mod wad;
 mod wave_pm;
 mod wave_trend;
 mod wedge;
@@ -489,6 +496,7 @@ pub use bat::Bat;
 pub use belt_hold::BeltHold;
 pub use beta::Beta;
 pub use beta_neutral_spread::BetaNeutralSpread;
+pub use better_volume::BetterVolume;
 pub use bipower_variation::BipowerVariation;
 pub use body_size_pct::BodySizePct;
 pub use bollinger::{BollingerBands, BollingerOutput};
@@ -625,6 +633,7 @@ pub use inertia::Inertia;
 pub use information_ratio::InformationRatio;
 pub use initial_balance::{InitialBalance, InitialBalanceOutput};
 pub use instantaneous_trendline::InstantaneousTrendline;
+pub use intraday_intensity::IntradayIntensity;
 pub use intraday_momentum_index::IntradayMomentumIndex;
 pub use intraday_volatility_profile::{IntradayVolatilityProfile, IntradayVolatilityProfileOutput};
 pub use inverse_fisher_transform::InverseFisherTransform;
@@ -827,6 +836,7 @@ pub use time_based_stop::TimeBasedStop;
 pub use time_of_day_return_profile::{TimeOfDayReturnProfile, TimeOfDayReturnProfileOutput};
 pub use tpo_profile::{TpoProfile, TpoProfileOutput};
 pub use trade_imbalance::TradeImbalance;
+pub use trade_volume_index::TradeVolumeIndex;
 pub use trend_label::TrendLabel;
 pub use trend_strength_index::TrendStrengthIndex;
 pub use treynor_ratio::TreynorRatio;
@@ -844,6 +854,7 @@ pub use ttm_squeeze::{TtmSqueeze, TtmSqueezeOutput};
 pub use ttm_trend::TtmTrend;
 pub use turn_of_month::TurnOfMonth;
 pub use tweezer::Tweezer;
+pub use twiggs_money_flow::TwiggsMoneyFlow;
 pub use two_crows::TwoCrows;
 pub use typical_price::TypicalPrice;
 pub use ulcer_index::UlcerIndex;
@@ -865,6 +876,8 @@ pub use volty_stop::VoltyStop;
 pub use volume_by_time_profile::{VolumeByTimeProfile, VolumeByTimeProfileOutput};
 pub use volume_oscillator::VolumeOscillator;
 pub use volume_profile::{VolumeProfile, VolumeProfileOutput};
+pub use volume_rsi::VolumeRsi;
+pub use volume_weighted_macd::{VolumeWeightedMacd, VolumeWeightedMacdOutput};
 pub use vortex::{Vortex, VortexOutput};
 pub use vpin::Vpin;
 pub use vpt::VolumePriceTrend;
@@ -872,6 +885,7 @@ pub use vwap::{RollingVwap, Vwap};
 pub use vwap_stddev_bands::{VwapStdDevBands, VwapStdDevBandsOutput};
 pub use vwma::Vwma;
 pub use vzo::Vzo;
+pub use wad::Wad;
 pub use wave_pm::WavePm;
 pub use wave_trend::{WaveTrend, WaveTrendOutput};
 pub use wedge::Wedge;
@@ -1115,6 +1129,13 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "Tsv",
             "Vzo",
             "MarketFacilitationIndex",
+            "VolumeRsi",
+            "Wad",
+            "TwiggsMoneyFlow",
+            "TradeVolumeIndex",
+            "IntradayIntensity",
+            "BetterVolume",
+            "VolumeWeightedMacd",
         ],
     ),
     (
@@ -1474,6 +1495,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 440, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 447, "FAMILIES total drifted from indicator count");
     }
 }

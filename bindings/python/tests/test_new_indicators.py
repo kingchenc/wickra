@@ -368,6 +368,30 @@ def test_relative_strength_streaming_matches_batch():
 # 6-tuple candle; the batch helper takes only the columns it needs.
 
 CANDLE_SCALAR = {
+    "BetterVolume": (
+        lambda: ta.BetterVolume(14),
+        lambda ind, h, l, c, v: ind.batch(h, l, c, v),
+    ),
+    "IntradayIntensity": (
+        lambda: ta.IntradayIntensity(),
+        lambda ind, h, l, c, v: ind.batch(h, l, c, v),
+    ),
+    "TradeVolumeIndex": (
+        lambda: ta.TradeVolumeIndex(0.25),
+        lambda ind, h, l, c, v: ind.batch(c, v),
+    ),
+    "TwiggsMoneyFlow": (
+        lambda: ta.TwiggsMoneyFlow(21),
+        lambda ind, h, l, c, v: ind.batch(h, l, c, v),
+    ),
+    "Wad": (
+        lambda: ta.Wad(),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
+    "VolumeRsi": (
+        lambda: ta.VolumeRsi(14),
+        lambda ind, h, l, c, v: ind.batch(c, v),
+    ),
     "TimeBasedStop": (lambda: ta.TimeBasedStop(5), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "ProjectionOscillator": (lambda: ta.ProjectionOscillator(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
     "VolatilityRatio": (lambda: ta.VolatilityRatio(14), lambda ind, h, l, c, v: ind.batch(h, l, c)),
@@ -909,6 +933,11 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 # --- Candle-input, multi-output indicators --------------------------------
 
 MULTI = {
+    "VolumeWeightedMacd": (
+        lambda: ta.VolumeWeightedMacd(12, 26, 9),
+        lambda ind, h, l, c, v: ind.batch(c, v),
+        3,
+    ),
     "ModifiedMaStop": (
         lambda: ta.ModifiedMaStop(14),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
@@ -1580,7 +1609,7 @@ def test_kvo_constant_series_is_zero():
         assert v == pytest.approx(0.0, abs=1e-12)
 
 
-def test_williams_ad_reference():
+def test_wad_reference():
     # bar 0 seeds prev_close = 10.
     # bar 1: prev=10, today high=13, low=8, close=12 (up day).
     #   TR_l = min(10, 8) = 8 -> delta = 12 - 8 = 4. AD = 4.
@@ -3039,6 +3068,30 @@ def test_modified_ma_stop_reference():
     for c in candles[:13]:
         assert t.update(c) is None
     assert t.update(candles[13]) == pytest.approx((107.0, 1.0))
+
+
+def test_volume_rsi_reference():
+    t = ta.VolumeRsi(14)
+
+
+def test_twiggs_money_flow_reference():
+    t = ta.TwiggsMoneyFlow(21)
+
+
+def test_trade_volume_index_reference():
+    t = ta.TradeVolumeIndex(0.25)
+
+
+def test_intraday_intensity_reference():
+    t = ta.IntradayIntensity()
+
+
+def test_better_volume_reference():
+    t = ta.BetterVolume(14)
+
+
+def test_volume_weighted_macd_reference():
+    t = ta.VolumeWeightedMacd(12, 26, 9)
 
 # --- Lifecycle ------------------------------------------------------------
 
