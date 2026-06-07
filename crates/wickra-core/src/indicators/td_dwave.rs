@@ -210,6 +210,31 @@ mod tests {
     }
 
     #[test]
+    fn same_direction_pivots_extend_one_leg() {
+        // Strictly decreasing lows mean no bar is ever a low pivot, so the
+        // confirmed pivots are all highs. Consecutive same-direction highs
+        // exercise the `extends` branch (true at 30 > 20, false at 25 < 30)
+        // without ever advancing the wave past leg 1.
+        let mut td = TdDWave::new(1).unwrap();
+        let bars = [
+            (10.0, 100.0),
+            (20.0, 99.0),
+            (12.0, 98.0),
+            (30.0, 97.0),
+            (15.0, 96.0),
+            (25.0, 95.0),
+            (14.0, 94.0),
+            (14.0, 93.0),
+        ];
+        let vals: Vec<f64> = bars
+            .iter()
+            .filter_map(|&(high, low)| td.update(c(high, low)))
+            .collect();
+        assert!(!vals.is_empty());
+        assert!(vals.iter().all(|&v| v == 1.0));
+    }
+
+    #[test]
     fn wave_stays_in_one_to_eight() {
         let mut td = TdDWave::new(2).unwrap();
         for v in td.batch(&zigzag()).into_iter().flatten() {
