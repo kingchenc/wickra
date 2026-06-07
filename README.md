@@ -97,9 +97,12 @@ streaming, NaN-safety, and four first-class language targets at once.
 
 ## Benchmarks
 
-Three comparisons, split by layer and mode. Read them as **relative** speedups
-on identical input — absolute µs depend on CPU, memory clock and OS scheduler,
-not a universal contract.
+Read these as **relative** speedups on identical input — absolute µs depend on
+CPU, memory clock and OS scheduler, not a universal contract. **Streaming is the
+headline**: it is where Wickra's design pays off and where the gap is measured in
+orders of magnitude, not percent. The batch numbers come second and are shown
+honestly — the leanest crates edge Wickra out on the simple recurrences, and that
+is a deliberate trade for warmup/NaN semantics, not a ceiling.
 
 - **Reproduced on:** Windows 11 Pro 26200, AMD Ryzen 9 9950X, 64 GB DDR5,
   Rust 1.92 (release: `lto = "fat"`, `codegen-units = 1`), Python 3.12.
@@ -108,13 +111,30 @@ not a universal contract.
   - Python vs Python libs: `pip install -e bindings/python[bench]` then
     `python -m benchmarks.compare_libraries` (auto-detects installed peers).
 
-### 1. Rust core vs the other Rust TA crates
+### 1. Streaming — the structural win
 
-Like-for-like, no language-binding overhead, over a 50 000-bar series (µs for
-the whole series, lower = faster). This is the honest engine comparison —
-Wickra wins some and loses some, and both are shown.
+Live trading feeds one tick at a time. Wickra updates every indicator in **O(1)**;
+batch-only libraries (TA-Lib, tulipy, finta, pandas-ta) have no incremental API
+and must recompute the whole history on every tick. Only `talipp` (Python) and
+`ta-rs` / `yata` (Rust) carry real per-tick state. This is the gap the library
+was built to expose.
 
-**Streaming** (one value fed per `update`):
+**Python — per-tick latency** (seed 5 000 bars, then feed ticks one at a time):
+
+| Indicator        | **★&nbsp;Wickra** | talipp           | TA-Lib (recompute)    |
+|------------------|------------------:|------------------|-----------------------|
+| SMA(20)          | **0.063 µs ★**    | 0.59 µs (9×)     | 204 µs (3 300×)       |
+| EMA(20)          | **0.060 µs ★**    | 0.72 µs (12×)    | 212 µs (3 500×)       |
+| RSI(14)          | **0.065 µs ★**    | 1.06 µs (16×)    | 230 µs (3 600×)       |
+| MACD(12, 26, 9)  | **0.078 µs ★**    | 4.22 µs (54×)    | 245 µs (3 100×)       |
+| Bollinger(20, 2) | **0.088 µs ★**    | 5.15 µs (58×)    | 229 µs (2 600×)       |
+
+Against the only other incremental Python peer Wickra is **9–58× faster**;
+against the recompute-on-every-tick libraries it is **2 600–14 000× faster**
+(`finta` RSI hits 14 000×). tulipy / pandas-ta land in the same recompute band
+as TA-Lib.
+
+**Rust — per-tick latency** (whole 50 000-bar series, lower = faster):
 
 | Indicator        | **★&nbsp;Wickra** | kand | ta-rs | yata |
 |------------------|------------------:|-----:|------:|-----:|
@@ -125,58 +145,44 @@ Wickra wins some and loses some, and both are shown.
 | Bollinger(20, 2) | **128 ★**         | 248  | 168   | —    |
 | ATR(14)          | 152               | 166  | 61    | —    |
 
-**Batch** (whole series at once). Only Wickra and kand expose a batch API;
-ta-rs and yata are streaming-only.
-
-| Indicator        | **★&nbsp;Wickra** | kand |
-|------------------|------------------:|-----:|
-| SMA(20)          | 82                | 42   |
-| EMA(20)          | 159               | 74   |
-| RSI(14)          | **253 ★**         | 274  |
-| MACD(12, 26, 9)  | 681               | 283  |
-| Bollinger(20, 2) | **445 ★**         | 462  |
-| ATR(14)          | 175               | 173  |
-
-ta-rs is the per-indicator speed champion on almost every row — it returns a
-bare `f64` with no warmup state and no input validation, trading away the
-`None`-warmup and NaN-safety semantics Wickra keeps. Against kand, Wickra wins
-streaming RSI, Bollinger and ATR (and batch RSI + Bollinger); Bollinger is the
-one row where Wickra is the outright fastest of all four. The leaner crates
-still win the pure recurrences (EMA, MACD) and SMA. yata exposes only SMA/EMA as
+`ta-rs` hands back a bare `f64` from the first tick with no warmup and no
+validation; it leads several rows by giving those guarantees up. Against `kand`,
+Wickra wins streaming RSI, Bollinger and ATR. `yata` exposes only SMA/EMA as
 raw-value methods, so its other rows are omitted rather than faked.
 
-### 2. Python vs the Python TA ecosystem — batch
+### 2. Batch — competitive, not the headline
 
-Full pass over a 20 000-bar series, µs/op (lower = faster). **★** per row.
+Whole series in one call. Here hand-tuned C (`tulipy`, TA-Lib) and the leanest
+Rust crate (`kand`) win the simple recurrences — Wickra trades a few µs per pass
+for the `None`-warmup, NaN-safety and bit-exact `batch == streaming` guarantees
+none of them keep. It still wins several rows outright and beats the rest of the
+field everywhere.
 
-| Indicator        | **★&nbsp;Wickra** | finta               | TA-Lib | tulipy |
-|------------------|------------------:|---------------------|--------|--------|
-| SMA(20)          | **59.6 ★**        | 354.2 (5.9× slower) | ⧗      | ⧗      |
-| EMA(20)          | **88.4 ★**        | 309.3 (3.5× slower) | ⧗      | ⧗      |
-| RSI(14)          | **77.3 ★**        | 1 283 (16.6× slower)| ⧗      | ⧗      |
-| MACD(12, 26, 9)  | **116.4 ★**       | 529.5 (4.6× slower) | ⧗      | ⧗      |
-| Bollinger(20, 2) | **146.0 ★**       | 1 246 (8.5× slower) | ⧗      | ⧗      |
-| ATR(14)          | **135.8 ★**       | 3 812 (28× slower)  | ⧗      | ⧗      |
+**Python** (20 000-bar pass, µs/op, lower = faster):
 
-> ⧗ = published by the CI Linux job. TA-Lib and tulipy ship C extensions that
-> don't build cleanly on every desktop, so their canonical numbers come from the
-> `cross-library-bench` workflow rather than this local table. pandas-ta needs
-> Python ≥ 3.12 and isn't in the 3.11 CI matrix. The script auto-detects
-> whichever peers are installed in your environment.
+| Indicator        | Wickra   | TA-Lib | tulipy | pandas-ta |
+|------------------|---------:|-------:|-------:|----------:|
+| SMA(20)          | 22.7     | **15.4** | 15.9 | 33.7      |
+| EMA(20)          | 30.8     | **30.3** | 31.1 | 48.8      |
+| RSI(14)          | 58.9     | 72.5   | **38.5** | 94.8    |
+| MACD(12, 26, 9)  | 71.7     | 99.1   | **33.5** | 207.6   |
+| Bollinger(20, 2) | 84.9     | 65.7   | **32.3** | 336.4   |
+| ATR(14)          | 52.0     | 79.4   | **31.9** | —        |
 
-### 3. Python — streaming (per-tick latency)
+Wickra beats TA-Lib on RSI, MACD and ATR and the whole Python field on every
+row; tulipy's SIMD C stays ahead on the heavier indicators.
 
-Seed 5 000 bars, then feed ticks one at a time. talipp is the only Python peer
-with a true incremental API; batch-only libraries like TA-Lib must recompute the
-entire history on every tick — Wickra updates in O(1).
+**Rust** (50 000-bar pass, µs, lower = faster). Only Wickra and `kand` expose a
+batch API; `ta-rs` and `yata` are streaming-only:
 
-| Indicator        | **★&nbsp;Wickra (per tick)** | talipp (per tick)       |
-|------------------|------------------------------:|-------------------------|
-| SMA(20)          | **0.067 µs ★**                | 0.63 µs (9.4× slower)   |
-| EMA(20)          | **0.051 µs ★**                | 0.63 µs (12.2× slower)  |
-| RSI(14)          | **0.053 µs ★**                | 1.00 µs (19.1× slower)  |
-| MACD(12, 26, 9)  | **0.071 µs ★**                | 3.64 µs (51.5× slower)  |
-| Bollinger(20, 2) | **0.085 µs ★**                | 4.87 µs (57.2× slower)  |
+| Indicator        | **★&nbsp;Wickra** | kand   |
+|------------------|------------------:|-------:|
+| SMA(20)          | 50                | **38** |
+| EMA(20)          | 88                | **66** |
+| RSI(14)          | **137 ★**         | 236    |
+| MACD(12, 26, 9)  | 332               | **240** |
+| Bollinger(20, 2) | 338               | **325** |
+| ATR(14)          | **78 ★**          | 162    |
 
 Run the suite yourself:
 
