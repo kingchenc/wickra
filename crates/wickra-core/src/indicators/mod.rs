@@ -16,8 +16,10 @@ mod acceleration_bands;
 mod accelerator_oscillator;
 mod ad_oscillator;
 mod ad_volume_line;
+mod adaptive_cci;
 mod adaptive_cycle;
 mod adaptive_laguerre_filter;
+mod adaptive_rsi;
 mod adl;
 mod advance_block;
 mod advance_decline;
@@ -39,12 +41,14 @@ mod atr_ratchet;
 mod atr_trailing_stop;
 mod auto_fib;
 mod autocorrelation;
+mod autocorrelation_periodogram;
 mod average_daily_range;
 mod average_drawdown;
 mod avg_price;
 mod awesome_oscillator;
 mod awesome_oscillator_histogram;
 mod balance_of_power;
+mod bandpass_filter;
 mod bat;
 mod belt_hold;
 mod beta;
@@ -81,6 +85,7 @@ mod concealing_baby_swallow;
 mod conditional_value_at_risk;
 mod connors_rsi;
 mod coppock;
+mod correlation_trend_indicator;
 mod counterattack;
 mod crab;
 mod cumulative_volume_index;
@@ -121,6 +126,7 @@ mod elder_safezone;
 mod ema;
 mod empirical_mode_decomposition;
 mod engulfing;
+mod even_better_sinewave;
 mod evening_doji_star;
 mod evwma;
 mod ewma_volatility;
@@ -166,6 +172,7 @@ mod heikin_ashi;
 mod high_low_index;
 mod high_low_range;
 mod high_wave;
+mod highpass_filter;
 mod hikkake;
 mod hikkake_modified;
 mod hilbert_dominant_cycle;
@@ -300,6 +307,7 @@ mod realized_spread;
 mod realized_volatility;
 mod recovery_factor;
 mod rectangle_range;
+mod reflex;
 mod regime_label;
 mod relative_strength_ab;
 mod renko_bars;
@@ -397,6 +405,7 @@ mod trade_imbalance;
 mod trade_volume_index;
 mod trend_label;
 mod trend_strength_index;
+mod trendflex;
 mod treynor_ratio;
 mod triangle;
 mod trima;
@@ -418,6 +427,7 @@ mod typical_price;
 mod ulcer_index;
 mod ultimate_oscillator;
 mod unique_three_river;
+mod universal_oscillator;
 mod up_down_volume_ratio;
 mod upside_gap_three_methods;
 mod upside_gap_two_crows;
@@ -468,8 +478,10 @@ pub use acceleration_bands::{AccelerationBands, AccelerationBandsOutput};
 pub use accelerator_oscillator::AcceleratorOscillator;
 pub use ad_oscillator::AdOscillator;
 pub use ad_volume_line::AdVolumeLine;
+pub use adaptive_cci::AdaptiveCci;
 pub use adaptive_cycle::AdaptiveCycle;
 pub use adaptive_laguerre_filter::AdaptiveLaguerreFilter;
+pub use adaptive_rsi::AdaptiveRsi;
 pub use adl::Adl;
 pub use advance_block::AdvanceBlock;
 pub use advance_decline::AdvanceDecline;
@@ -491,12 +503,14 @@ pub use atr_ratchet::{AtrRatchet, AtrRatchetOutput};
 pub use atr_trailing_stop::AtrTrailingStop;
 pub use auto_fib::{AutoFib, AutoFibOutput};
 pub use autocorrelation::Autocorrelation;
+pub use autocorrelation_periodogram::AutocorrelationPeriodogram;
 pub use average_daily_range::AverageDailyRange;
 pub use average_drawdown::AverageDrawdown;
 pub use avg_price::AvgPrice;
 pub use awesome_oscillator::AwesomeOscillator;
 pub use awesome_oscillator_histogram::AwesomeOscillatorHistogram;
 pub use balance_of_power::BalanceOfPower;
+pub use bandpass_filter::BandpassFilter;
 pub use bat::Bat;
 pub use belt_hold::BeltHold;
 pub use beta::Beta;
@@ -533,6 +547,7 @@ pub use concealing_baby_swallow::ConcealingBabySwallow;
 pub use conditional_value_at_risk::ConditionalValueAtRisk;
 pub use connors_rsi::ConnorsRsi;
 pub use coppock::Coppock;
+pub use correlation_trend_indicator::CorrelationTrendIndicator;
 pub use counterattack::Counterattack;
 pub use crab::Crab;
 pub use cumulative_volume_index::CumulativeVolumeIndex;
@@ -573,6 +588,7 @@ pub use elder_safezone::{ElderSafeZone, ElderSafeZoneOutput};
 pub use ema::Ema;
 pub use empirical_mode_decomposition::EmpiricalModeDecomposition;
 pub use engulfing::Engulfing;
+pub use even_better_sinewave::EvenBetterSinewave;
 pub use evening_doji_star::EveningDojiStar;
 pub use evwma::Evwma;
 pub use ewma_volatility::EwmaVolatility;
@@ -618,6 +634,7 @@ pub use heikin_ashi::{HeikinAshi, HeikinAshiOutput};
 pub use high_low_index::HighLowIndex;
 pub use high_low_range::HighLowRange;
 pub use high_wave::HighWave;
+pub use highpass_filter::HighpassFilter;
 pub use hikkake::Hikkake;
 pub use hikkake_modified::HikkakeModified;
 pub use hilbert_dominant_cycle::HilbertDominantCycle;
@@ -752,6 +769,7 @@ pub use realized_spread::RealizedSpread;
 pub use realized_volatility::RealizedVolatility;
 pub use recovery_factor::RecoveryFactor;
 pub use rectangle_range::RectangleRange;
+pub use reflex::Reflex;
 pub use regime_label::RegimeLabel;
 pub use relative_strength_ab::{RelativeStrengthAB, RelativeStrengthOutput};
 pub use renko_bars::{RenkoBars, RenkoBrick};
@@ -849,6 +867,7 @@ pub use trade_imbalance::TradeImbalance;
 pub use trade_volume_index::TradeVolumeIndex;
 pub use trend_label::TrendLabel;
 pub use trend_strength_index::TrendStrengthIndex;
+pub use trendflex::Trendflex;
 pub use treynor_ratio::TreynorRatio;
 pub use triangle::Triangle;
 pub use trima::Trima;
@@ -870,6 +889,7 @@ pub use typical_price::TypicalPrice;
 pub use ulcer_index::UlcerIndex;
 pub use ultimate_oscillator::UltimateOscillator;
 pub use unique_three_river::UniqueThreeRiver;
+pub use universal_oscillator::UniversalOscillator;
 pub use up_down_volume_ratio::UpDownVolumeRatio;
 pub use upside_gap_three_methods::UpsideGapThreeMethods;
 pub use upside_gap_two_crows::UpsideGapTwoCrows;
@@ -1230,6 +1250,16 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "EmpiricalModeDecomposition",
             "EhlersStochastic",
             "InstantaneousTrendline",
+            "HighpassFilter",
+            "Reflex",
+            "Trendflex",
+            "CorrelationTrendIndicator",
+            "AdaptiveRsi",
+            "UniversalOscillator",
+            "AdaptiveCci",
+            "BandpassFilter",
+            "EvenBetterSinewave",
+            "AutocorrelationPeriodogram",
         ],
     ),
     (
@@ -1510,6 +1540,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 452, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 462, "FAMILIES total drifted from indicator count");
     }
 }

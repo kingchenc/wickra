@@ -231,6 +231,129 @@ node_scalar_indicator!(
     "ROLLINGMINMAX",
     wc::RollingMinMaxScaler
 );
+node_scalar_indicator!(HighpassFilterNode, "HIGHPASS", wc::HighpassFilter);
+node_scalar_indicator!(ReflexNode, "REFLEX", wc::Reflex);
+node_scalar_indicator!(TrendflexNode, "TRENDFLEX", wc::Trendflex);
+node_scalar_indicator!(
+    CorrelationTrendIndicatorNode,
+    "CTI",
+    wc::CorrelationTrendIndicator
+);
+node_scalar_indicator!(AdaptiveRsiNode, "ADAPTIVERSI", wc::AdaptiveRsi);
+node_scalar_indicator!(
+    UniversalOscillatorNode,
+    "UNIVERSALOSC",
+    wc::UniversalOscillator
+);
+
+// Multi-arg Ehlers scalars: hand-written (node_scalar_indicator! is single-period).
+
+#[napi(js_name = "BANDPASS")]
+pub struct BandpassFilterNode {
+    inner: wc::BandpassFilter,
+}
+
+#[napi]
+impl BandpassFilterNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, bandwidth: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::BandpassFilter::new(period as usize, bandwidth).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "EVENBETTERSINE")]
+pub struct EvenBetterSinewaveNode {
+    inner: wc::EvenBetterSinewave,
+}
+
+#[napi]
+impl EvenBetterSinewaveNode {
+    #[napi(constructor)]
+    pub fn new(hp_period: u32, ssf_length: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::EvenBetterSinewave::new(hp_period as usize, ssf_length as usize)
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "AUTOCORRPGRAM")]
+pub struct AutocorrelationPeriodogramNode {
+    inner: wc::AutocorrelationPeriodogram,
+}
+
+#[napi]
+impl AutocorrelationPeriodogramNode {
+    #[napi(constructor)]
+    pub fn new(min_period: u32, max_period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::AutocorrelationPeriodogram::new(min_period as usize, max_period as usize)
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
 
 // Shannon Entropy / Sample Entropy: multi-arg scalar ctors, hand-written
 // (node_scalar_indicator! only generates a single-period constructor).
@@ -3014,6 +3137,59 @@ impl TimeBasedStopNode {
     pub fn new(max_bars: u32) -> napi::Result<Self> {
         Ok(Self {
             inner: wc::TimeBasedStop::new(max_bars as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64, close: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, 0.0)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], 0.0)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "ADAPTIVECCI")]
+pub struct AdaptiveCciNode {
+    inner: wc::AdaptiveCci,
+}
+
+#[napi]
+impl AdaptiveCciNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::AdaptiveCci::new(period as usize).map_err(map_err)?,
         })
     }
     #[napi]

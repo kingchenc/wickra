@@ -25,6 +25,16 @@ from __future__ import annotations
 
 from ._wickra import (
     __version__,
+    AUTOCORRPGRAM,
+    EVENBETTERSINE,
+    BANDPASS,
+    ADAPTIVECCI,
+    UNIVERSALOSC,
+    ADAPTIVERSI,
+    CTI,
+    TRENDFLEX,
+    REFLEX,
+    HIGHPASS,
     SAMPLEENT,
     SHANNONENT,
     ROLLINGMINMAX,
@@ -506,6 +516,16 @@ from ._wickra import (
 )
 
 __all__ = [
+    "AUTOCORRPGRAM",
+    "EVENBETTERSINE",
+    "BANDPASS",
+    "ADAPTIVECCI",
+    "UNIVERSALOSC",
+    "ADAPTIVERSI",
+    "CTI",
+    "TRENDFLEX",
+    "REFLEX",
+    "HIGHPASS",
     "SAMPLEENT",
     "SHANNONENT",
     "ROLLINGMINMAX",
