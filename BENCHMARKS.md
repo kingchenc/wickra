@@ -63,17 +63,17 @@ field everywhere.
 
 **Python** (20 000-bar pass, µs/op, lower = faster):
 
-| Indicator        | Wickra   | TA-Lib | tulipy | pandas-ta |
-|------------------|---------:|-------:|-------:|----------:|
-| SMA(20)          | 22.2     | **15.6** | 15.9 | 32.7      |
-| EMA(20)          | 30.5     | **30.4** | 30.9 | 46.7      |
-| RSI(14)          | 52.3     | 72.0   | **34.2** | 88.8    |
-| MACD(12, 26, 9)  | 129.8    | 111.1  | **38.4** | 286.8   |
-| Bollinger(20, 2) | 87.2     | 74.6   | **37.9** | 474.3   |
-| ATR(14)          | 74.7     | 87.3   | **35.5** | —        |
+| Indicator        | Wickra   | TA-Lib   | tulipy   | pandas-ta | finta    |
+|------------------|---------:|---------:|---------:|----------:|---------:|
+| SMA(20)          | 22.2     | **15.6** | 15.9     | 32.7      | 290.1    |
+| EMA(20)          | 30.5     | **30.4** | 30.9     | 46.7      | 198.5    |
+| RSI(14)          | 52.3     | 72.0     | **34.2** | 88.8      | 812.3    |
+| MACD(12, 26, 9)  | 129.8    | 111.1    | **38.4** | 286.8     | 716.7    |
+| Bollinger(20, 2) | 87.2     | 74.6     | **37.9** | 474.3     | 1255.5   |
+| ATR(14)          | 74.7     | 87.3     | **35.5** | —         | 3496.4   |
 
-Wickra beats pandas-ta on every row and TA-Lib on RSI and ATR; tulipy's SIMD C
-(and TA-Lib on SMA/EMA) lead the remaining rows.
+Wickra beats pandas-ta and finta on every row and TA-Lib on RSI and ATR;
+tulipy's SIMD C (and TA-Lib on SMA/EMA) lead the remaining rows.
 
 **Rust** (50 000-bar pass, µs, lower = faster). Only Wickra and `kand` expose a
 batch API; `ta-rs` and `yata` are streaming-only:
