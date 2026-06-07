@@ -25,7 +25,7 @@
 
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use std::hint::black_box;
-use wickra::{Atr, BatchExt, BollingerBands, Candle, Ema, Indicator, MacdIndicator, Rsi, Sma};
+use wickra::{Atr, BollingerBands, Candle, Ema, Indicator, MacdIndicator, Rsi, Sma};
 use wickra_data::csv::CandleReader;
 use yata::prelude::Method;
 
@@ -82,7 +82,7 @@ fn sma_group(crit: &mut Criterion, closes: &[f64]) {
             |bencher, &series| {
                 bencher.iter(|| {
                     let mut ind = Sma::new(SMA_PERIOD).unwrap();
-                    black_box(ind.batch(series));
+                    black_box(ind.batch_nan(series));
                 });
             },
         );
@@ -170,7 +170,7 @@ fn ema_group(crit: &mut Criterion, closes: &[f64]) {
             |bencher, &series| {
                 bencher.iter(|| {
                     let mut ind = Ema::new(EMA_PERIOD).unwrap();
-                    black_box(ind.batch(series));
+                    black_box(ind.batch_nan(series));
                 });
             },
         );
@@ -253,7 +253,7 @@ fn rsi_group(crit: &mut Criterion, closes: &[f64]) {
             |bencher, &series| {
                 bencher.iter(|| {
                     let mut ind = Rsi::new(RSI_PERIOD).unwrap();
-                    black_box(ind.batch(series));
+                    black_box(ind.batch_nan(series));
                 });
             },
         );
@@ -352,7 +352,7 @@ fn macd_group(crit: &mut Criterion, closes: &[f64]) {
             |bencher, &series| {
                 bencher.iter(|| {
                     let mut ind = MacdIndicator::classic();
-                    black_box(ind.batch(series));
+                    black_box(ind.batch_macd(series));
                 });
             },
         );
@@ -478,7 +478,7 @@ fn bbands_group(crit: &mut Criterion, closes: &[f64]) {
             |bencher, &series| {
                 bencher.iter(|| {
                     let mut ind = BollingerBands::new(BB_PERIOD, BB_DEV).unwrap();
-                    black_box(ind.batch(series));
+                    black_box(ind.batch_bands(series));
                 });
             },
         );
@@ -604,9 +604,13 @@ fn atr_group(crit: &mut Criterion, candles: &[Candle]) {
             BenchmarkId::new("wickra/batch", len),
             &series,
             |bencher, &series| {
+                // Column extraction is outside the timed loop, mirroring kand's arm.
+                let high: Vec<f64> = series.iter().map(|candle| candle.high).collect();
+                let low: Vec<f64> = series.iter().map(|candle| candle.low).collect();
+                let close: Vec<f64> = series.iter().map(|candle| candle.close).collect();
                 bencher.iter(|| {
                     let mut ind = Atr::new(ATR_PERIOD).unwrap();
-                    black_box(ind.batch(series));
+                    black_box(ind.batch_atr(&high, &low, &close));
                 });
             },
         );
