@@ -557,6 +557,7 @@ wasm_pair_indicator!(
 wasm_pair_indicator!(WasmOuHalfLife, "OuHalfLife", wc::OuHalfLife);
 wasm_pair_indicator!(WasmSpreadHurst, "SpreadHurst", wc::SpreadHurst);
 wasm_pair_indicator!(WasmDistanceSsd, "DistanceSsd", wc::DistanceSsd);
+wasm_pair_indicator!(WasmKendallTau, "KendallTau", wc::KendallTau);
 wasm_pair_indicator!(
     WasmBetaNeutralSpread,
     "BetaNeutralSpread",
@@ -11256,6 +11257,10 @@ wasm_scalar_indicator!(WasmBipowerVariation, "BipowerVariation", wc::BipowerVari
 wasm_scalar_indicator!(WasmEwmaVolatility, "EwmaVolatility", wc::EwmaVolatility, lambda: f64);
 wasm_scalar_indicator!(WasmGarch11, "Garch11", wc::Garch11, omega: f64, alpha: f64, beta: f64);
 wasm_scalar_indicator!(WasmVolatilityOfVolatility, "VolatilityOfVolatility", wc::VolatilityOfVolatility, vol_window: usize, vov_window: usize);
+wasm_scalar_indicator!(WasmJarqueBera, "JARQUEBERA", wc::JarqueBera, period: usize);
+wasm_scalar_indicator!(WasmRollingMinMaxScaler, "ROLLINGMINMAX", wc::RollingMinMaxScaler, period: usize);
+wasm_scalar_indicator!(WasmShannonEntropy, "SHANNONENT", wc::ShannonEntropy, period: usize, bins: usize);
+wasm_scalar_indicator!(WasmSampleEntropy, "SAMPLEENT", wc::SampleEntropy, period: usize, m: usize, r_factor: f64);
 
 // --- VolatilityCone: Candle in, struct out (current/min/median/max/percentile) ---
 

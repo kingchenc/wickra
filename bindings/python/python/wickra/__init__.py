@@ -25,6 +25,10 @@ from __future__ import annotations
 
 from ._wickra import (
     __version__,
+    SAMPLEENT,
+    SHANNONENT,
+    ROLLINGMINMAX,
+    JARQUEBERA,
     TimeBasedStop,
     ProjectionOscillator,
     VolatilityCone,
@@ -221,6 +225,7 @@ from ._wickra import (
     MarketFacilitationIndex,
     EaseOfMovement,
     # Statistics
+    KendallTau,
     SpreadBollingerBands,
     KalmanHedgeRatio,
     GrangerCausality,
@@ -501,6 +506,10 @@ from ._wickra import (
 )
 
 __all__ = [
+    "SAMPLEENT",
+    "SHANNONENT",
+    "ROLLINGMINMAX",
+    "JARQUEBERA",
     "TimeBasedStop",
     "ProjectionOscillator",
     "VolatilityCone",
@@ -698,6 +707,7 @@ __all__ = [
     "MarketFacilitationIndex",
     "EaseOfMovement",
     # Statistics
+    "KendallTau",
     "SpreadBollingerBands",
     "KalmanHedgeRatio",
     "GrangerCausality",

@@ -191,6 +191,7 @@ mod intraday_momentum_index;
 mod intraday_volatility_profile;
 mod inverse_fisher_transform;
 mod inverted_hammer;
+mod jarque_bera;
 mod jma;
 mod jump_indicator;
 mod kagi_bars;
@@ -200,6 +201,7 @@ mod kase_devstop;
 mod kase_permission_stochastic;
 mod kelly_criterion;
 mod keltner;
+mod kendall_tau;
 mod kicking;
 mod kicking_by_length;
 mod kst;
@@ -314,6 +316,7 @@ mod roll_measure;
 mod rolling_correlation;
 mod rolling_covariance;
 mod rolling_iqr;
+mod rolling_min_max_scaler;
 mod rolling_percentile_rank;
 mod rolling_quantile;
 mod roofing_filter;
@@ -322,12 +325,14 @@ mod rsx;
 mod rvi;
 mod rvi_volatility;
 mod rwi;
+mod sample_entropy;
 mod sar_ext;
 mod seasonal_z_score;
 mod separating_lines;
 mod session_high_low;
 mod session_range;
 mod session_vwap;
+mod shannon_entropy;
 mod shark;
 mod sharpe_ratio;
 mod shooting_star;
@@ -638,6 +643,7 @@ pub use intraday_momentum_index::IntradayMomentumIndex;
 pub use intraday_volatility_profile::{IntradayVolatilityProfile, IntradayVolatilityProfileOutput};
 pub use inverse_fisher_transform::InverseFisherTransform;
 pub use inverted_hammer::InvertedHammer;
+pub use jarque_bera::JarqueBera;
 pub use jma::Jma;
 pub use jump_indicator::JumpIndicator;
 pub use kagi_bars::{KagiBar, KagiBars};
@@ -647,6 +653,7 @@ pub use kase_devstop::{KaseDevStop, KaseDevStopOutput};
 pub use kase_permission_stochastic::{KasePermissionStochastic, KasePermissionStochasticOutput};
 pub use kelly_criterion::KellyCriterion;
 pub use keltner::{Keltner, KeltnerOutput};
+pub use kendall_tau::KendallTau;
 pub use kicking::Kicking;
 pub use kicking_by_length::KickingByLength;
 pub use kst::{Kst, KstOutput};
@@ -761,6 +768,7 @@ pub use roll_measure::RollMeasure;
 pub use rolling_correlation::RollingCorrelation;
 pub use rolling_covariance::RollingCovariance;
 pub use rolling_iqr::RollingIqr;
+pub use rolling_min_max_scaler::RollingMinMaxScaler;
 pub use rolling_percentile_rank::RollingPercentileRank;
 pub use rolling_quantile::RollingQuantile;
 pub use roofing_filter::RoofingFilter;
@@ -769,12 +777,14 @@ pub use rsx::Rsx;
 pub use rvi::Rvi;
 pub use rvi_volatility::RviVolatility;
 pub use rwi::{Rwi, RwiOutput};
+pub use sample_entropy::SampleEntropy;
 pub use sar_ext::SarExt;
 pub use seasonal_z_score::SeasonalZScore;
 pub use separating_lines::SeparatingLines;
 pub use session_high_low::{SessionHighLow, SessionHighLowOutput};
 pub use session_range::{SessionRange, SessionRangeOutput};
 pub use session_vwap::SessionVwap;
+pub use shannon_entropy::ShannonEntropy;
 pub use shark::Shark;
 pub use sharpe_ratio::SharpeRatio;
 pub use shooting_star::ShootingStar;
@@ -1191,6 +1201,11 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "BodySizePct",
             "WickRatio",
             "HighLowRange",
+            "JarqueBera",
+            "RollingMinMaxScaler",
+            "ShannonEntropy",
+            "SampleEntropy",
+            "KendallTau",
         ],
     ),
     (
@@ -1495,6 +1510,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 447, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 452, "FAMILIES total drifted from indicator count");
     }
 }

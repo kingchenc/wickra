@@ -28,6 +28,10 @@ function num(v) {
 // --- Scalar indicators: update(value) vs batch(prices) ---
 
 const scalarFactories = {
+  SAMPLEENT: () => new wickra.SAMPLEENT(20, 2, 0.2),
+  SHANNONENT: () => new wickra.SHANNONENT(20, 8),
+  ROLLINGMINMAX: () => new wickra.ROLLINGMINMAX(20),
+  JARQUEBERA: () => new wickra.JARQUEBERA(20),
   BipowerVariation: () => new wickra.BipowerVariation(20),
   VolatilityOfVolatility: () => new wickra.VolatilityOfVolatility(20, 20),
   Garch11: () => new wickra.Garch11(0.000002, 0.1, 0.88),
@@ -629,6 +633,7 @@ const pairFactories = {
   VarianceRatio: () => new wickra.VarianceRatio(60, 2),
   GrangerCausality: () => new wickra.GrangerCausality(60, 1),
   SpreadAr1Coefficient: () => new wickra.SpreadAr1Coefficient(40),
+  KendallTau: () => new wickra.KendallTau(20),
 };
 
 for (const [name, make] of Object.entries(pairFactories)) {

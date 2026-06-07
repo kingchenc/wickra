@@ -225,6 +225,86 @@ node_scalar_indicator!(
     "BipowerVariation",
     wc::BipowerVariation
 );
+node_scalar_indicator!(JarqueBeraNode, "JARQUEBERA", wc::JarqueBera);
+node_scalar_indicator!(
+    RollingMinMaxScalerNode,
+    "ROLLINGMINMAX",
+    wc::RollingMinMaxScaler
+);
+
+// Shannon Entropy / Sample Entropy: multi-arg scalar ctors, hand-written
+// (node_scalar_indicator! only generates a single-period constructor).
+
+#[napi(js_name = "SHANNONENT")]
+pub struct ShannonEntropyNode {
+    inner: wc::ShannonEntropy,
+}
+
+#[napi]
+impl ShannonEntropyNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, bins: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::ShannonEntropy::new(period as usize, bins as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "SAMPLEENT")]
+pub struct SampleEntropyNode {
+    inner: wc::SampleEntropy,
+}
+
+#[napi]
+impl SampleEntropyNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, m: u32, r_factor: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::SampleEntropy::new(period as usize, m as usize, r_factor)
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
 
 #[napi(js_name = "EwmaVolatility")]
 pub struct EwmaVolatilityNode {
@@ -675,6 +755,7 @@ node_pair_indicator!(
 node_pair_indicator!(OuHalfLifeNode, "OuHalfLife", wc::OuHalfLife);
 node_pair_indicator!(SpreadHurstNode, "SpreadHurst", wc::SpreadHurst);
 node_pair_indicator!(DistanceSsdNode, "DistanceSsd", wc::DistanceSsd);
+node_pair_indicator!(KendallTauNode, "KendallTau", wc::KendallTau);
 node_pair_indicator!(
     BetaNeutralSpreadNode,
     "BetaNeutralSpread",

@@ -1052,6 +1052,42 @@ export declare class BipowerVariation {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type JarqueBeraNode = JARQUEBERA
+export declare class JARQUEBERA {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type RollingMinMaxScalerNode = ROLLINGMINMAX
+export declare class ROLLINGMINMAX {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type ShannonEntropyNode = SHANNONENT
+export declare class SHANNONENT {
+  constructor(period: number, bins: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type SampleEntropyNode = SAMPLEENT
+export declare class SAMPLEENT {
+  constructor(period: number, m: number, rFactor: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type EwmaVolatilityNode = EwmaVolatility
 export declare class EwmaVolatility {
   constructor(lambda: number)
@@ -1252,6 +1288,19 @@ export declare class SpreadHurst {
 }
 export type DistanceSsdNode = DistanceSsd
 export declare class DistanceSsd {
+  constructor(period: number)
+  update(x: number, y: number): number | null
+  /**
+   * Batch over two equally-sized arrays. Returns a length-`n` array
+   * with `NaN` for warmup positions.
+   */
+  batch(x: Array<number>, y: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type KendallTauNode = KendallTau
+export declare class KendallTau {
   constructor(period: number)
   update(x: number, y: number): number | null
   /**
