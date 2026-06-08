@@ -266,6 +266,34 @@ mod tests {
     }
 
     #[test]
+    fn flat_first_move_prints_nothing() {
+        let mut bars = ThreeLineBreakBars::new(3).unwrap();
+        assert!(bars.update(flat(10.0)).is_empty()); // seed
+        assert!(bars.update(flat(10.0)).is_empty()); // equal to seed -> no line
+    }
+
+    #[test]
+    fn first_line_down_then_down_trend_and_reversal() {
+        let mut bars = ThreeLineBreakBars::new(3).unwrap();
+        assert!(bars.update(flat(10.0)).is_empty()); // seed
+        let first = bars.update(flat(9.0)); // first line down
+        assert_eq!(first.len(), 1);
+        assert_eq!(first[0].direction, -1);
+        assert_relative_eq!(first[0].open, 10.0, epsilon = 1e-12);
+        assert_relative_eq!(first[0].close, 9.0, epsilon = 1e-12);
+        let cont = bars.update(flat(8.0)); // new low extends the down line
+        assert_eq!(cont.len(), 1);
+        assert_eq!(cont[0].direction, -1);
+        assert_relative_eq!(cont[0].open, 9.0, epsilon = 1e-12);
+        bars.update(flat(7.0)); // third down line; highs are 10/9/8
+        assert!(bars.update(flat(7.5)).is_empty()); // not < 7, not > highest high 10
+        let rev = bars.update(flat(11.0)); // > highest high 10 -> reverse up
+        assert_eq!(rev.len(), 1);
+        assert_eq!(rev[0].direction, 1);
+        assert_relative_eq!(rev[0].open, 7.0, epsilon = 1e-12);
+    }
+
+    #[test]
     fn batch_concatenates_completed_lines() {
         let mut bars = ThreeLineBreakBars::new(3).unwrap();
         let candles = [flat(10.0), flat(11.0), flat(12.0), flat(13.0)];
