@@ -227,4 +227,22 @@ mod tests {
         let streamed: Vec<_> = rets.iter().map(|r| streamer.update(*r)).collect();
         assert_eq!(batch, streamed);
     }
+
+    #[test]
+    fn percentile_at_top_returns_last() {
+        // The rank floor reaching the final index returns the largest element.
+        assert_relative_eq!(percentile(&[1.0, 2.0, 3.0], 100.0), 3.0, epsilon = 1e-12);
+    }
+
+    #[test]
+    fn zero_lower_tail_is_zero() {
+        // One loss but a 5th percentile of exactly zero: the tail term collapses
+        // and the indicator reports 0.0 rather than dividing by zero. With period
+        // 21 the 5% rank lands on sorted index 1, which is 0.0 here.
+        let mut returns = vec![0.0; 21];
+        returns[0] = -0.1;
+        let mut csr = CommonSenseRatio::new(21).unwrap();
+        let last = csr.batch(&returns).into_iter().flatten().last().unwrap();
+        assert_relative_eq!(last, 0.0, epsilon = 1e-12);
+    }
 }

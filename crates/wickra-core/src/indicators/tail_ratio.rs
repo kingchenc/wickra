@@ -214,4 +214,11 @@ mod tests {
         let streamed: Vec<_> = rets.iter().map(|r| streamer.update(*r)).collect();
         assert_eq!(batch, streamed);
     }
+
+    #[test]
+    fn percentile_at_top_returns_last() {
+        // When the rank floor reaches the final index (the 100th percentile), the
+        // helper returns the largest element without interpolating past the end.
+        assert_relative_eq!(percentile(&[1.0, 2.0, 3.0], 100.0), 3.0, epsilon = 1e-12);
+    }
 }

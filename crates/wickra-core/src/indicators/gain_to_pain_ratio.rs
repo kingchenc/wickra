@@ -201,6 +201,14 @@ mod tests {
     }
 
     #[test]
+    fn non_finite_before_ready_is_none() {
+        // A non-finite value arriving before the window fills yields None.
+        let mut g = GainToPainRatio::new(3).unwrap();
+        assert_eq!(g.update(0.02), None);
+        assert_eq!(g.update(f64::NAN), None);
+    }
+
+    #[test]
     fn reset_clears_state() {
         let mut g = GainToPainRatio::new(2).unwrap();
         g.batch(&[0.04, -0.02]);
