@@ -658,9 +658,14 @@ jobs:
       # is enough — and avoids a spurious CRLF/LF diff on the Windows runner.
       - name: Check the committed header is in sync with cbindgen
         if: runner.os == 'Linux'
+        shell: bash
         run: |
           cbindgen --config bindings/c/cbindgen.toml --crate wickra-c --output bindings/c/include/wickra.h
-          git diff --exit-status bindings/c/include/wickra.h
+          if ! git diff --quiet -- bindings/c/include/wickra.h; then
+            echo "::error::bindings/c/include/wickra.h is out of sync — run cbindgen and commit the result"
+            git --no-pager diff -- bindings/c/include/wickra.h
+            exit 1
+          fi
 
       # The real cross-language test: a foreign C consumer links the generated
       # header + the compiled library and runs. If this passes on all three OSes,
