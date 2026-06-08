@@ -45,6 +45,15 @@ def ohlcv() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 # --- Scalar (f64 -> f64) indicators ---------------------------------------
 
 SCALAR = [
+    (ta.M2Measure, (20, 0.0, 0.02)),
+    (ta.UpsidePotentialRatio, (20, 0.0)),
+    (ta.GainToPainRatio, (12,)),
+    (ta.CommonSenseRatio, (20,)),
+    (ta.KRatio, (30,)),
+    (ta.TailRatio, (20,)),
+    (ta.MartinRatio, (14,)),
+    (ta.BurkeRatio, (12,)),
+    (ta.SterlingRatio, (12,)),
     (ta.AUTOCORRPGRAM, (10, 48)),
     (ta.EVENBETTERSINE, (40, 10)),
     (ta.BANDPASS, (20, 0.3)),

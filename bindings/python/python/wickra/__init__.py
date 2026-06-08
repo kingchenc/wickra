@@ -25,6 +25,15 @@ from __future__ import annotations
 
 from ._wickra import (
     __version__,
+    M2Measure,
+    UpsidePotentialRatio,
+    GainToPainRatio,
+    CommonSenseRatio,
+    KRatio,
+    TailRatio,
+    MartinRatio,
+    BurkeRatio,
+    SterlingRatio,
     AUTOCORRPGRAM,
     EVENBETTERSINE,
     BANDPASS,
@@ -552,6 +561,15 @@ from ._wickra import (
 )
 
 __all__ = [
+    "M2Measure",
+    "UpsidePotentialRatio",
+    "GainToPainRatio",
+    "CommonSenseRatio",
+    "KRatio",
+    "TailRatio",
+    "MartinRatio",
+    "BurkeRatio",
+    "SterlingRatio",
     "AUTOCORRPGRAM",
     "EVENBETTERSINE",
     "BANDPASS",

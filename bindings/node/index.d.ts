@@ -1176,6 +1176,87 @@ export declare class UNIVERSALOSC {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type SterlingRatioNode = SterlingRatio
+export declare class SterlingRatio {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type BurkeRatioNode = BurkeRatio
+export declare class BurkeRatio {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type MartinRatioNode = MartinRatio
+export declare class MartinRatio {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TailRatioNode = TailRatio
+export declare class TailRatio {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type KRatioNode = KRatio
+export declare class KRatio {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type CommonSenseRatioNode = CommonSenseRatio
+export declare class CommonSenseRatio {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type GainToPainRatioNode = GainToPainRatio
+export declare class GainToPainRatio {
+  constructor(period: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type UpsidePotentialRatioNode = UpsidePotentialRatio
+export declare class UpsidePotentialRatio {
+  constructor(period: number, mar: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type M2MeasureNode = M2Measure
+export declare class M2Measure {
+  constructor(period: number, riskFree: number, benchmarkStddev: number)
+  update(value: number): number | null
+  batch(prices: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type BandpassFilterNode = BANDPASS
 export declare class BANDPASS {
   constructor(period: number, bandwidth: number)

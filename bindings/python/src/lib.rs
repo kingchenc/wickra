@@ -4136,6 +4136,350 @@ impl PyAdaptiveCci {
     }
 }
 
+// ============================== SterlingRatio ==============================
+
+#[pyclass(name = "SterlingRatio", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PySterlingRatio {
+    inner: wc::SterlingRatio,
+}
+
+#[pymethods]
+impl PySterlingRatio {
+    #[new]
+    #[pyo3(signature = (period=12))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::SterlingRatio::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("SterlingRatio(period={})", self.inner.period())
+    }
+}
+
+// ============================== BurkeRatio ==============================
+
+#[pyclass(name = "BurkeRatio", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyBurkeRatio {
+    inner: wc::BurkeRatio,
+}
+
+#[pymethods]
+impl PyBurkeRatio {
+    #[new]
+    #[pyo3(signature = (period=12))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::BurkeRatio::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("BurkeRatio(period={})", self.inner.period())
+    }
+}
+
+// ============================== MartinRatio ==============================
+
+#[pyclass(name = "MartinRatio", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyMartinRatio {
+    inner: wc::MartinRatio,
+}
+
+#[pymethods]
+impl PyMartinRatio {
+    #[new]
+    #[pyo3(signature = (period=14))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::MartinRatio::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("MartinRatio(period={})", self.inner.period())
+    }
+}
+
+// ============================== TailRatio ==============================
+
+#[pyclass(name = "TailRatio", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyTailRatio {
+    inner: wc::TailRatio,
+}
+
+#[pymethods]
+impl PyTailRatio {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::TailRatio::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("TailRatio(period={})", self.inner.period())
+    }
+}
+
+// ============================== KRatio ==============================
+
+#[pyclass(name = "KRatio", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyKRatio {
+    inner: wc::KRatio,
+}
+
+#[pymethods]
+impl PyKRatio {
+    #[new]
+    #[pyo3(signature = (period=30))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::KRatio::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("KRatio(period={})", self.inner.period())
+    }
+}
+
+// ============================== CommonSenseRatio ==============================
+
+#[pyclass(
+    name = "CommonSenseRatio",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyCommonSenseRatio {
+    inner: wc::CommonSenseRatio,
+}
+
+#[pymethods]
+impl PyCommonSenseRatio {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::CommonSenseRatio::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("CommonSenseRatio(period={})", self.inner.period())
+    }
+}
+
+// ============================== GainToPainRatio ==============================
+
+#[pyclass(
+    name = "GainToPainRatio",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyGainToPainRatio {
+    inner: wc::GainToPainRatio,
+}
+
+#[pymethods]
+impl PyGainToPainRatio {
+    #[new]
+    #[pyo3(signature = (period=12))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::GainToPainRatio::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let s = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(self.inner.batch_nan(s).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("GainToPainRatio(period={})", self.inner.period())
+    }
+}
+
 // ============================== Stochastic ==============================
 
 #[pyclass(name = "IMI", module = "wickra._wickra", skip_from_py_object)]
@@ -21908,6 +22252,123 @@ impl PyTickIndex {
 
 // ============================== Family 15: Risk / Performance ==============================
 
+#[pyclass(
+    name = "UpsidePotentialRatio",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyUpsidePotentialRatio {
+    inner: wc::UpsidePotentialRatio,
+}
+
+#[pymethods]
+impl PyUpsidePotentialRatio {
+    #[new]
+    #[pyo3(signature = (period, mar=0.0))]
+    fn new(period: usize, mar: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::UpsidePotentialRatio::new(period, mar).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn mar(&self) -> f64 {
+        self.inner.mar()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "UpsidePotentialRatio(period={}, mar={})",
+            self.inner.period(),
+            self.inner.mar()
+        )
+    }
+}
+
+#[pyclass(name = "M2Measure", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyM2Measure {
+    inner: wc::M2Measure,
+}
+
+#[pymethods]
+impl PyM2Measure {
+    #[new]
+    #[pyo3(signature = (period, risk_free, benchmark_stddev))]
+    fn new(period: usize, risk_free: f64, benchmark_stddev: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::M2Measure::new(period, risk_free, benchmark_stddev).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        prices: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let slice = prices
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        Ok(self.inner.batch_nan(slice).into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    #[getter]
+    fn risk_free(&self) -> f64 {
+        self.inner.risk_free()
+    }
+    #[getter]
+    fn benchmark_stddev(&self) -> f64 {
+        self.inner.benchmark_stddev()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "M2Measure(period={}, risk_free={}, benchmark_stddev={})",
+            self.inner.period(),
+            self.inner.risk_free(),
+            self.inner.benchmark_stddev()
+        )
+    }
+}
+
 #[pyclass(name = "SharpeRatio", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PySharpeRatio {
@@ -25881,5 +26342,14 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyFryPanBottom>()?;
     m.add_class::<PyDumplingTop>()?;
     m.add_class::<PyNewPriceLines>()?;
+    m.add_class::<PySterlingRatio>()?;
+    m.add_class::<PyBurkeRatio>()?;
+    m.add_class::<PyMartinRatio>()?;
+    m.add_class::<PyTailRatio>()?;
+    m.add_class::<PyKRatio>()?;
+    m.add_class::<PyCommonSenseRatio>()?;
+    m.add_class::<PyGainToPainRatio>()?;
+    m.add_class::<PyUpsidePotentialRatio>()?;
+    m.add_class::<PyM2Measure>()?;
     Ok(())
 }

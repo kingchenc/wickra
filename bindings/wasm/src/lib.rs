@@ -12755,6 +12755,15 @@ wasm_scalar_indicator!(WasmUniversalOscillator, "UNIVERSALOSC", wc::UniversalOsc
 wasm_scalar_indicator!(WasmBandpassFilter, "BANDPASS", wc::BandpassFilter, period: usize, bandwidth: f64);
 wasm_scalar_indicator!(WasmEvenBetterSinewave, "EVENBETTERSINE", wc::EvenBetterSinewave, hp_period: usize, ssf_length: usize);
 wasm_scalar_indicator!(WasmAutocorrelationPeriodogram, "AUTOCORRPGRAM", wc::AutocorrelationPeriodogram, min_period: usize, max_period: usize);
+wasm_scalar_indicator!(WasmSterlingRatio, "SterlingRatio", wc::SterlingRatio, period: usize);
+wasm_scalar_indicator!(WasmBurkeRatio, "BurkeRatio", wc::BurkeRatio, period: usize);
+wasm_scalar_indicator!(WasmMartinRatio, "MartinRatio", wc::MartinRatio, period: usize);
+wasm_scalar_indicator!(WasmTailRatio, "TailRatio", wc::TailRatio, period: usize);
+wasm_scalar_indicator!(WasmKRatio, "KRatio", wc::KRatio, period: usize);
+wasm_scalar_indicator!(WasmCommonSenseRatio, "CommonSenseRatio", wc::CommonSenseRatio, period: usize);
+wasm_scalar_indicator!(WasmGainToPainRatio, "GainToPainRatio", wc::GainToPainRatio, period: usize);
+wasm_scalar_indicator!(WasmUpsidePotentialRatio, "UpsidePotentialRatio", wc::UpsidePotentialRatio, period: usize, mar: f64);
+wasm_scalar_indicator!(WasmM2Measure, "M2Measure", wc::M2Measure, period: usize, risk_free: f64, benchmark_stddev: f64);
 
 // --- VolatilityCone: Candle in, struct out (current/min/median/max/percentile) ---
 

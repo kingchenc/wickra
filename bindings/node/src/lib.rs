@@ -245,8 +245,90 @@ node_scalar_indicator!(
     "UNIVERSALOSC",
     wc::UniversalOscillator
 );
+node_scalar_indicator!(SterlingRatioNode, "SterlingRatio", wc::SterlingRatio);
+node_scalar_indicator!(BurkeRatioNode, "BurkeRatio", wc::BurkeRatio);
+node_scalar_indicator!(MartinRatioNode, "MartinRatio", wc::MartinRatio);
+node_scalar_indicator!(TailRatioNode, "TailRatio", wc::TailRatio);
+node_scalar_indicator!(KRatioNode, "KRatio", wc::KRatio);
+node_scalar_indicator!(
+    CommonSenseRatioNode,
+    "CommonSenseRatio",
+    wc::CommonSenseRatio
+);
+node_scalar_indicator!(GainToPainRatioNode, "GainToPainRatio", wc::GainToPainRatio);
 
 // Multi-arg Ehlers scalars: hand-written (node_scalar_indicator! is single-period).
+
+#[napi(js_name = "UpsidePotentialRatio")]
+pub struct UpsidePotentialRatioNode {
+    inner: wc::UpsidePotentialRatio,
+}
+
+#[napi]
+impl UpsidePotentialRatioNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, mar: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::UpsidePotentialRatio::new(period as usize, mar).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(js_name = "M2Measure")]
+pub struct M2MeasureNode {
+    inner: wc::M2Measure,
+}
+
+#[napi]
+impl M2MeasureNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, risk_free: f64, benchmark_stddev: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::M2Measure::new(period as usize, risk_free, benchmark_stddev)
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, value: f64) -> Option<f64> {
+        self.inner.update(value)
+    }
+    #[napi]
+    pub fn batch(&mut self, prices: Vec<f64>) -> Vec<f64> {
+        flatten(self.inner.batch(&prices))
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
 
 #[napi(js_name = "BANDPASS")]
 pub struct BandpassFilterNode {

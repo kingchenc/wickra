@@ -63,6 +63,7 @@ mod bomar_bands;
 mod breadth_thrust;
 mod breakaway;
 mod bullish_percent_index;
+mod burke_ratio;
 mod butterfly;
 mod calendar_spread;
 mod calmar_ratio;
@@ -84,6 +85,7 @@ mod cmf;
 mod cmo;
 mod coefficient_of_variation;
 mod cointegration;
+mod common_sense_ratio;
 mod composite_profile;
 mod concealing_baby_swallow;
 mod conditional_value_at_risk;
@@ -163,6 +165,7 @@ mod funding_rate;
 mod funding_rate_mean;
 mod funding_rate_zscore;
 mod gain_loss_ratio;
+mod gain_to_pain_ratio;
 mod gap_side_by_side_white;
 mod garch11;
 mod garman_klass;
@@ -214,6 +217,7 @@ mod inverted_hammer;
 mod jarque_bera;
 mod jma;
 mod jump_indicator;
+mod k_ratio;
 mod kagi_bars;
 mod kalman_hedge_ratio;
 mod kama;
@@ -241,6 +245,7 @@ mod log_return;
 mod long_legged_doji;
 mod long_line;
 mod long_short_ratio;
+mod m2_measure;
 mod ma_envelope;
 mod macd;
 mod macd_ext;
@@ -248,6 +253,7 @@ mod macd_fix;
 mod macd_histogram;
 mod mama;
 mod market_facilitation_index;
+mod martin_ratio;
 mod marubozu;
 mod mass_index;
 mod mat_hold;
@@ -389,6 +395,7 @@ mod starc_bands;
 mod stc;
 mod std_dev;
 mod step_trailing_stop;
+mod sterling_ratio;
 mod stick_sandwich;
 mod stoch_rsi;
 mod stochastic;
@@ -396,6 +403,7 @@ mod stochastic_cci;
 mod super_smoother;
 mod super_trend;
 mod t3;
+mod tail_ratio;
 mod taker_buy_sell_ratio;
 mod takuri;
 mod tasuki_gap;
@@ -466,6 +474,7 @@ mod universal_oscillator;
 mod up_down_volume_ratio;
 mod upside_gap_three_methods;
 mod upside_gap_two_crows;
+mod upside_potential_ratio;
 mod value_area;
 mod value_at_risk;
 mod variance;
@@ -561,6 +570,7 @@ pub use bomar_bands::{BomarBands, BomarBandsOutput};
 pub use breadth_thrust::BreadthThrust;
 pub use breakaway::Breakaway;
 pub use bullish_percent_index::BullishPercentIndex;
+pub use burke_ratio::BurkeRatio;
 pub use butterfly::Butterfly;
 pub use calendar_spread::CalendarSpread;
 pub use calmar_ratio::CalmarRatio;
@@ -582,6 +592,7 @@ pub use cmf::ChaikinMoneyFlow;
 pub use cmo::Cmo;
 pub use coefficient_of_variation::CoefficientOfVariation;
 pub use cointegration::{Cointegration, CointegrationOutput};
+pub use common_sense_ratio::CommonSenseRatio;
 pub use composite_profile::{CompositeProfile, CompositeProfileOutput};
 pub use concealing_baby_swallow::ConcealingBabySwallow;
 pub use conditional_value_at_risk::ConditionalValueAtRisk;
@@ -661,6 +672,7 @@ pub use funding_rate::FundingRate;
 pub use funding_rate_mean::FundingRateMean;
 pub use funding_rate_zscore::FundingRateZScore;
 pub use gain_loss_ratio::GainLossRatio;
+pub use gain_to_pain_ratio::GainToPainRatio;
 pub use gap_side_by_side_white::GapSideBySideWhite;
 pub use garch11::Garch11;
 pub use garman_klass::GarmanKlassVolatility;
@@ -712,6 +724,7 @@ pub use inverted_hammer::InvertedHammer;
 pub use jarque_bera::JarqueBera;
 pub use jma::Jma;
 pub use jump_indicator::JumpIndicator;
+pub use k_ratio::KRatio;
 pub use kagi_bars::{KagiBar, KagiBars};
 pub use kalman_hedge_ratio::{KalmanHedgeRatio, KalmanHedgeRatioOutput};
 pub use kama::Kama;
@@ -739,6 +752,7 @@ pub use log_return::LogReturn;
 pub use long_legged_doji::LongLeggedDoji;
 pub use long_line::LongLine;
 pub use long_short_ratio::LongShortRatio;
+pub use m2_measure::M2Measure;
 pub use ma_envelope::{MaEnvelope, MaEnvelopeOutput};
 pub use macd::{MacdIndicator, MacdOutput};
 pub use macd_ext::{MaType, MacdExt};
@@ -746,6 +760,7 @@ pub use macd_fix::MacdFix;
 pub use macd_histogram::MacdHistogram;
 pub use mama::{Mama, MamaOutput};
 pub use market_facilitation_index::MarketFacilitationIndex;
+pub use martin_ratio::MartinRatio;
 pub use marubozu::Marubozu;
 pub use mass_index::MassIndex;
 pub use mat_hold::MatHold;
@@ -887,6 +902,7 @@ pub use starc_bands::{StarcBands, StarcBandsOutput};
 pub use stc::Stc;
 pub use std_dev::StdDev;
 pub use step_trailing_stop::StepTrailingStop;
+pub use sterling_ratio::SterlingRatio;
 pub use stick_sandwich::StickSandwich;
 pub use stoch_rsi::StochRsi;
 pub use stochastic::{Stochastic, StochasticOutput};
@@ -894,6 +910,7 @@ pub use stochastic_cci::StochasticCci;
 pub use super_smoother::SuperSmoother;
 pub use super_trend::{SuperTrend, SuperTrendOutput};
 pub use t3::T3;
+pub use tail_ratio::TailRatio;
 pub use taker_buy_sell_ratio::TakerBuySellRatio;
 pub use takuri::Takuri;
 pub use tasuki_gap::TasukiGap;
@@ -964,6 +981,7 @@ pub use universal_oscillator::UniversalOscillator;
 pub use up_down_volume_ratio::UpDownVolumeRatio;
 pub use upside_gap_three_methods::UpsideGapThreeMethods;
 pub use upside_gap_two_crows::UpsideGapTwoCrows;
+pub use upside_potential_ratio::UpsidePotentialRatio;
 pub use value_area::{ValueArea, ValueAreaOutput};
 pub use value_at_risk::ValueAtRisk;
 pub use variance::Variance;
@@ -1542,6 +1560,15 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "Alpha",
             "WinRate",
             "Expectancy",
+            "SterlingRatio",
+            "BurkeRatio",
+            "MartinRatio",
+            "TailRatio",
+            "KRatio",
+            "CommonSenseRatio",
+            "GainToPainRatio",
+            "UpsidePotentialRatio",
+            "M2Measure",
         ],
     ),
     (
@@ -1654,6 +1681,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 498, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 507, "FAMILIES total drifted from indicator count");
     }
 }
