@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **Open-Interest Momentum** — rate-of-change of open interest over a rolling window (`OpenInterestMomentum`).
+- **Funding-Implied APR** — annualised funding rate (per-interval funding times intervals per year) (`FundingImpliedApr`).
+- **Perpetual Premium Index** — relative premium of the mark price over the index price (`PerpetualPremiumIndex`).
+- **OI-to-Volume Ratio** — open interest divided by taker volume (position turnover proxy) (`OiToVolumeRatio`).
+- **Estimated Leverage Ratio** — open interest divided by aggregate long+short position size (leverage proxy) (`EstimatedLeverageRatio`).
 
 ## [0.7.0] - 2026-06-08
 - **Hasbrouck Information Share** — variance-ratio proxy for each venue's share of price discovery (Hasbrouck information share) (`HasbrouckInformationShare`).

@@ -9933,6 +9933,50 @@ fn deriv_taker(
     .map_err(map_err)
 }
 
+fn deriv_oi_long_short(
+    open_interest: f64,
+    long_size: f64,
+    short_size: f64,
+) -> Result<wc::DerivativesTick, JsError> {
+    wc::DerivativesTick::new(
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        open_interest,
+        long_size,
+        short_size,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_oi_taker(
+    open_interest: f64,
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+) -> Result<wc::DerivativesTick, JsError> {
+    wc::DerivativesTick::new(
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        open_interest,
+        0.0,
+        0.0,
+        taker_buy_volume,
+        taker_sell_volume,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
 fn deriv_liquidation(
     long_liquidation: f64,
     short_liquidation: f64,
@@ -10242,6 +10286,195 @@ impl WasmCalendarSpread {
         Ok(self
             .inner
             .update(deriv_futures_mark(futures_price, mark_price)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- Estimated Leverage Ratio ----------
+
+#[wasm_bindgen(js_name = EstimatedLeverageRatio)]
+pub struct WasmEstimatedLeverageRatio {
+    inner: wc::EstimatedLeverageRatio,
+}
+
+impl Default for WasmEstimatedLeverageRatio {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = EstimatedLeverageRatio)]
+impl WasmEstimatedLeverageRatio {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmEstimatedLeverageRatio {
+        Self {
+            inner: wc::EstimatedLeverageRatio::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        open_interest: f64,
+        long_size: f64,
+        short_size: f64,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self
+            .inner
+            .update(deriv_oi_long_short(open_interest, long_size, short_size)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- OI-to-Volume Ratio ----------
+
+#[wasm_bindgen(js_name = OiToVolumeRatio)]
+pub struct WasmOiToVolumeRatio {
+    inner: wc::OiToVolumeRatio,
+}
+
+impl Default for WasmOiToVolumeRatio {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = OiToVolumeRatio)]
+impl WasmOiToVolumeRatio {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmOiToVolumeRatio {
+        Self {
+            inner: wc::OiToVolumeRatio::new(),
+        }
+    }
+    pub fn update(
+        &mut self,
+        open_interest: f64,
+        taker_buy_volume: f64,
+        taker_sell_volume: f64,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(deriv_oi_taker(
+            open_interest,
+            taker_buy_volume,
+            taker_sell_volume,
+        )?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- Perpetual Premium Index ----------
+
+#[wasm_bindgen(js_name = PerpetualPremiumIndex)]
+pub struct WasmPerpetualPremiumIndex {
+    inner: wc::PerpetualPremiumIndex,
+}
+
+impl Default for WasmPerpetualPremiumIndex {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[wasm_bindgen(js_class = PerpetualPremiumIndex)]
+impl WasmPerpetualPremiumIndex {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> WasmPerpetualPremiumIndex {
+        Self {
+            inner: wc::PerpetualPremiumIndex::new(),
+        }
+    }
+    pub fn update(&mut self, mark_price: f64, index_price: f64) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(deriv_basis(mark_price, index_price)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- Funding-Implied APR ----------
+
+#[wasm_bindgen(js_name = FundingImpliedApr)]
+pub struct WasmFundingImpliedApr {
+    inner: wc::FundingImpliedApr,
+}
+
+#[wasm_bindgen(js_class = FundingImpliedApr)]
+impl WasmFundingImpliedApr {
+    #[wasm_bindgen(constructor)]
+    pub fn new(intervals_per_year: f64) -> Result<WasmFundingImpliedApr, JsError> {
+        Ok(Self {
+            inner: wc::FundingImpliedApr::new(intervals_per_year).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, funding_rate: f64) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(deriv_funding(funding_rate)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ---------- Open-Interest Momentum ----------
+
+#[wasm_bindgen(js_name = OpenInterestMomentum)]
+pub struct WasmOpenInterestMomentum {
+    inner: wc::OpenInterestMomentum,
+}
+
+#[wasm_bindgen(js_class = OpenInterestMomentum)]
+impl WasmOpenInterestMomentum {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmOpenInterestMomentum, JsError> {
+        Ok(Self {
+            inner: wc::OpenInterestMomentum::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, open_interest: f64) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(deriv_oi(open_interest)?))
     }
     pub fn reset(&mut self) {
         self.inner.reset();

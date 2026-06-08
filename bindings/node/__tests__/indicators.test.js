@@ -1443,6 +1443,56 @@ test('derivatives reject bad input', () => {
   assert.throws(() => new wickra.FundingBasis().update(100, 0));
 });
 
+test('B16 derivatives reference values', () => {
+  // Estimated leverage: oi / (long + short) = 200 / 100 = 2.
+  assert.ok(Math.abs(new wickra.EstimatedLeverageRatio().update(200, 60, 40) - 2.0) < 1e-12);
+  // OI-to-volume: oi / (buy + sell) = 100 / 50 = 2.
+  assert.ok(Math.abs(new wickra.OiToVolumeRatio().update(100, 30, 20) - 2.0) < 1e-12);
+  // Perpetual premium: (mark - index) / index = 0.5 / 100 = 0.005.
+  assert.ok(Math.abs(new wickra.PerpetualPremiumIndex().update(100.5, 100.0) - 0.005) < 1e-12);
+  // Funding-implied APR: rate * intervals = 0.0001 * 1095 = 0.1095.
+  assert.ok(Math.abs(new wickra.FundingImpliedApr(1095).update(0.0001) - 0.1095) < 1e-12);
+  // Open-interest momentum (period 2): warmup then ROC% = 100*(120 - 100)/100 = 20.
+  const oim = new wickra.OpenInterestMomentum(2);
+  assert.equal(oim.update(100), null);
+  assert.equal(oim.update(110), null);
+  assert.ok(Math.abs(oim.update(120) - 20.0) < 1e-12);
+});
+
+test('B16 derivatives streaming matches batch', () => {
+  const n = 30;
+  const oi = Array.from({ length: n }, (_, i) => 1000 + 50 * Math.sin(i * 0.3));
+  const longSz = Array.from({ length: n }, (_, i) => 600 + 20 * Math.cos(i * 0.2));
+  const shortSz = Array.from({ length: n }, (_, i) => 400 + 15 * Math.sin(i * 0.4));
+  const buy = Array.from({ length: n }, (_, i) => 300 + 10 * Math.sin(i * 0.5));
+  const sell = Array.from({ length: n }, (_, i) => 250 + 12 * Math.cos(i * 0.35));
+  const index = Array.from({ length: n }, (_, i) => 100 + Math.sin(i * 0.2));
+  const mark = Array.from({ length: n }, (_, i) => index[i] + 0.05 * Math.cos(i * 0.3));
+  const rate = Array.from({ length: n }, (_, i) => 0.0001 * Math.sin(i * 0.3));
+  const cmp = (batch, s, i) =>
+    assert.ok((s === null && Number.isNaN(batch[i])) || Math.abs(s - batch[i]) < 1e-12, `mismatch at ${i}`);
+
+  let b = new wickra.EstimatedLeverageRatio().batch(oi, longSz, shortSz);
+  let st = new wickra.EstimatedLeverageRatio();
+  for (let i = 0; i < n; i++) cmp(b, st.update(oi[i], longSz[i], shortSz[i]), i);
+
+  b = new wickra.OiToVolumeRatio().batch(oi, buy, sell);
+  st = new wickra.OiToVolumeRatio();
+  for (let i = 0; i < n; i++) cmp(b, st.update(oi[i], buy[i], sell[i]), i);
+
+  b = new wickra.PerpetualPremiumIndex().batch(mark, index);
+  st = new wickra.PerpetualPremiumIndex();
+  for (let i = 0; i < n; i++) cmp(b, st.update(mark[i], index[i]), i);
+
+  b = new wickra.FundingImpliedApr(1095).batch(rate);
+  st = new wickra.FundingImpliedApr(1095);
+  for (let i = 0; i < n; i++) cmp(b, st.update(rate[i]), i);
+
+  b = new wickra.OpenInterestMomentum(10).batch(oi);
+  st = new wickra.OpenInterestMomentum(10);
+  for (let i = 0; i < n; i++) cmp(b, st.update(oi[i]), i);
+});
+
 test('market breadth: AdvanceDecline reference values', () => {
   // A breadth tick is the universe as parallel arrays; the sign of `change`
   // classifies each symbol as advancing / declining / unchanged.
