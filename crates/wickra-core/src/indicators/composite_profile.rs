@@ -336,12 +336,12 @@ mod tests {
     }
 
     #[test]
-    fn value_area_expands_below_poc() {
-        // A mid-profile POC with a wide value-area target forces the value area
-        // to expand both above and below the POC bin.
-        let mut cp = CompositeProfile::new(2, 5, 0.7).unwrap();
-        cp.update(c(100.0, 0.0, 100.0)); // thin spread across all five bins
-        let out = cp.update(c(60.0, 40.0, 100.0)).unwrap(); // heavy at the middle bins
+    fn value_area_expands_down_from_top_poc() {
+        // POC sits in the top bin; with a wide value-area target the area runs
+        // out of bins above (the ceiling branch) and keeps expanding downward.
+        let mut cp = CompositeProfile::new(2, 3, 0.9).unwrap();
+        cp.update(c(100.0, 0.0, 30.0)); // thin spread across all three bins
+        let out = cp.update(c(100.0, 67.0, 60.0)).unwrap(); // heavy in the top bin
         assert!(out.val <= out.poc && out.poc <= out.vah);
     }
 }
