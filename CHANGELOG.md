@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.7.4] - 2026-06-08
 - **Three-Line Break** — Three-line-break bars (reversal needs N-line break) (`THREE_LINE_BREAK_BARS`).
 - **Run** — Run bars (consecutive same-direction tick runs) (`RUN_BARS`).
 - **Imbalance** — Imbalance bars (tick-rule signed imbalance threshold) (`IMBALANCE_BARS`).
@@ -1414,7 +1416,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.7.3...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.7.4...HEAD
+[0.7.4]: https://github.com/wickra-lib/wickra/compare/v0.7.3...v0.7.4
 [0.7.3]: https://github.com/wickra-lib/wickra/compare/v0.7.2...v0.7.3
 [0.7.2]: https://github.com/wickra-lib/wickra/compare/v0.7.1...v0.7.2
 [0.7.1]: https://github.com/wickra-lib/wickra/compare/v0.7.0...v0.7.1
