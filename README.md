@@ -78,7 +78,7 @@ times to get there.
   runs a real warmup, and returns an `Option` so a single bad tick can't silently
   poison state. `batch == streaming` is **bit-exact, fuzzed and 100 %-line-covered
   for all 479 indicators**.
-- **Orders of magnitude faster where it counts.** In streaming Wickra is **9–58×**
+- **Orders of magnitude faster where it counts.** In streaming Wickra is **11–56×**
   faster than the only other incremental peer and **thousands of times** faster
   than recompute-on-every-tick libraries. On batch it wins several rows outright
   and trades the simple recurrences (SMA, EMA, MACD) for its guarantees — and
@@ -118,7 +118,7 @@ useful version of that itch is the one other people can build on too.
 ## Benchmarks
 
 Wickra updates every indicator in **O(1)** per tick. In **streaming** — the
-workload it is built for — it is **9–58× faster** than the only other incremental
+workload it is built for — it is **11–56× faster** than the only other incremental
 peer and **thousands of times** faster than recompute-on-every-tick libraries.
 **Batch** is competitive: it wins several rows outright and trades a few µs
 elsewhere for `None`-warmup, NaN-safety and bit-exact `batch == streaming`.
