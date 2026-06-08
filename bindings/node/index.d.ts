@@ -4544,6 +4544,51 @@ export declare class CalendarSpread {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type EstimatedLeverageRatioNode = EstimatedLeverageRatio
+export declare class EstimatedLeverageRatio {
+  constructor()
+  update(openInterest: number, longSize: number, shortSize: number): number | null
+  batch(openInterest: Array<number>, longSize: Array<number>, shortSize: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type OiToVolumeRatioNode = OiToVolumeRatio
+export declare class OiToVolumeRatio {
+  constructor()
+  update(openInterest: number, takerBuyVolume: number, takerSellVolume: number): number | null
+  batch(openInterest: Array<number>, takerBuyVolume: Array<number>, takerSellVolume: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type PerpetualPremiumIndexNode = PerpetualPremiumIndex
+export declare class PerpetualPremiumIndex {
+  constructor()
+  update(markPrice: number, indexPrice: number): number | null
+  batch(markPrice: Array<number>, indexPrice: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type FundingImpliedAprNode = FundingImpliedApr
+export declare class FundingImpliedApr {
+  constructor(intervalsPerYear: number)
+  update(fundingRate: number): number | null
+  batch(fundingRate: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type OpenInterestMomentumNode = OpenInterestMomentum
+export declare class OpenInterestMomentum {
+  constructor(period: number)
+  update(openInterest: number): number | null
+  batch(openInterest: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type AdvanceDeclineNode = AdvanceDecline
 export declare class AdvanceDecline {
   constructor()

@@ -14450,6 +14450,50 @@ fn deriv_taker(taker_buy_volume: f64, taker_sell_volume: f64) -> napi::Result<wc
     .map_err(map_err)
 }
 
+fn deriv_oi_long_short(
+    open_interest: f64,
+    long_size: f64,
+    short_size: f64,
+) -> napi::Result<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        open_interest,
+        long_size,
+        short_size,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_oi_taker(
+    open_interest: f64,
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+) -> napi::Result<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        open_interest,
+        0.0,
+        0.0,
+        taker_buy_volume,
+        taker_sell_volume,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
 fn deriv_liquidation(
     long_liquidation: f64,
     short_liquidation: f64,
@@ -15148,6 +15192,288 @@ impl CalendarSpreadNode {
                     .update(deriv_futures_mark(futures_price[i], mark_price[i])?)
                     .unwrap_or(f64::NAN),
             );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// Estimated leverage ratio: open interest over aggregate long+short size.
+#[napi(js_name = "EstimatedLeverageRatio")]
+pub struct EstimatedLeverageRatioNode {
+    inner: wc::EstimatedLeverageRatio,
+}
+
+impl Default for EstimatedLeverageRatioNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl EstimatedLeverageRatioNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::EstimatedLeverageRatio::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open_interest: f64,
+        long_size: f64,
+        short_size: f64,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self
+            .inner
+            .update(deriv_oi_long_short(open_interest, long_size, short_size)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open_interest: Vec<f64>,
+        long_size: Vec<f64>,
+        short_size: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if open_interest.len() != long_size.len() || long_size.len() != short_size.len() {
+            return Err(NapiError::from_reason(
+                "open_interest, long_size, short_size must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(open_interest.len());
+        for i in 0..open_interest.len() {
+            out.push(
+                self.inner
+                    .update(deriv_oi_long_short(
+                        open_interest[i],
+                        long_size[i],
+                        short_size[i],
+                    )?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// OI-to-volume ratio: open interest over taker buy+sell volume.
+#[napi(js_name = "OiToVolumeRatio")]
+pub struct OiToVolumeRatioNode {
+    inner: wc::OiToVolumeRatio,
+}
+
+impl Default for OiToVolumeRatioNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl OiToVolumeRatioNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::OiToVolumeRatio::new(),
+        }
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open_interest: f64,
+        taker_buy_volume: f64,
+        taker_sell_volume: f64,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(deriv_oi_taker(
+            open_interest,
+            taker_buy_volume,
+            taker_sell_volume,
+        )?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open_interest: Vec<f64>,
+        taker_buy_volume: Vec<f64>,
+        taker_sell_volume: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if open_interest.len() != taker_buy_volume.len()
+            || taker_buy_volume.len() != taker_sell_volume.len()
+        {
+            return Err(NapiError::from_reason(
+                "open_interest, taker_buy_volume, taker_sell_volume must be equal length"
+                    .to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(open_interest.len());
+        for i in 0..open_interest.len() {
+            out.push(
+                self.inner
+                    .update(deriv_oi_taker(
+                        open_interest[i],
+                        taker_buy_volume[i],
+                        taker_sell_volume[i],
+                    )?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// Perpetual premium index: relative premium of mark over index price.
+#[napi(js_name = "PerpetualPremiumIndex")]
+pub struct PerpetualPremiumIndexNode {
+    inner: wc::PerpetualPremiumIndex,
+}
+
+impl Default for PerpetualPremiumIndexNode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[napi]
+impl PerpetualPremiumIndexNode {
+    #[napi(constructor)]
+    pub fn new() -> Self {
+        Self {
+            inner: wc::PerpetualPremiumIndex::new(),
+        }
+    }
+    #[napi]
+    pub fn update(&mut self, mark_price: f64, index_price: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(deriv_basis(mark_price, index_price)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, mark_price: Vec<f64>, index_price: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if mark_price.len() != index_price.len() {
+            return Err(NapiError::from_reason(
+                "mark_price and index_price must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(mark_price.len());
+        for i in 0..mark_price.len() {
+            out.push(
+                self.inner
+                    .update(deriv_basis(mark_price[i], index_price[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// Funding-implied APR: per-interval funding annualised.
+#[napi(js_name = "FundingImpliedApr")]
+pub struct FundingImpliedAprNode {
+    inner: wc::FundingImpliedApr,
+}
+
+#[napi]
+impl FundingImpliedAprNode {
+    #[napi(constructor)]
+    pub fn new(intervals_per_year: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::FundingImpliedApr::new(intervals_per_year).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, funding_rate: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(deriv_funding(funding_rate)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, funding_rate: Vec<f64>) -> napi::Result<Vec<f64>> {
+        let mut out = Vec::with_capacity(funding_rate.len());
+        for r in funding_rate {
+            out.push(self.inner.update(deriv_funding(r)?).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// Open-interest momentum: rate-of-change of open interest over a window.
+#[napi(js_name = "OpenInterestMomentum")]
+pub struct OpenInterestMomentumNode {
+    inner: wc::OpenInterestMomentum,
+}
+
+#[napi]
+impl OpenInterestMomentumNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::OpenInterestMomentum::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, open_interest: f64) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(deriv_oi(open_interest)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, open_interest: Vec<f64>) -> napi::Result<Vec<f64>> {
+        let mut out = Vec::with_capacity(open_interest.len());
+        for oi in open_interest {
+            out.push(self.inner.update(deriv_oi(oi)?).unwrap_or(f64::NAN));
         }
         Ok(out)
     }

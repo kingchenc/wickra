@@ -131,6 +131,7 @@ mod ema;
 mod empirical_mode_decomposition;
 mod engulfing;
 mod equivolume;
+mod estimated_leverage_ratio;
 mod even_better_sinewave;
 mod evening_doji_star;
 mod evwma;
@@ -156,6 +157,7 @@ mod fractal_chaos_bands;
 mod frama;
 mod fry_pan_bottom;
 mod funding_basis;
+mod funding_implied_apr;
 mod funding_rate;
 mod funding_rate_mean;
 mod funding_rate_zscore;
@@ -278,9 +280,11 @@ mod ob_imbalance_topn;
 mod obv;
 mod oi_delta;
 mod oi_price_divergence;
+mod oi_to_volume_ratio;
 mod oi_weighted;
 mod omega_ratio;
 mod on_neck;
+mod open_interest_momentum;
 mod opening_marubozu;
 mod opening_range;
 mod order_flow_imbalance;
@@ -295,6 +299,7 @@ mod pearson_correlation;
 mod percent_above_ma;
 mod percent_b;
 mod percentage_trailing_stop;
+mod perpetual_premium_index;
 mod pgo;
 mod piercing_dark_cloud;
 mod pin;
@@ -619,6 +624,7 @@ pub use ema::Ema;
 pub use empirical_mode_decomposition::EmpiricalModeDecomposition;
 pub use engulfing::Engulfing;
 pub use equivolume::{Equivolume, EquivolumeOutput};
+pub use estimated_leverage_ratio::EstimatedLeverageRatio;
 pub use even_better_sinewave::EvenBetterSinewave;
 pub use evening_doji_star::EveningDojiStar;
 pub use evwma::Evwma;
@@ -644,6 +650,7 @@ pub use fractal_chaos_bands::{FractalChaosBands, FractalChaosBandsOutput};
 pub use frama::Frama;
 pub use fry_pan_bottom::FryPanBottom;
 pub use funding_basis::FundingBasis;
+pub use funding_implied_apr::FundingImpliedApr;
 pub use funding_rate::FundingRate;
 pub use funding_rate_mean::FundingRateMean;
 pub use funding_rate_zscore::FundingRateZScore;
@@ -766,9 +773,11 @@ pub use ob_imbalance_topn::OrderBookImbalanceTopN;
 pub use obv::Obv;
 pub use oi_delta::OpenInterestDelta;
 pub use oi_price_divergence::OIPriceDivergence;
+pub use oi_to_volume_ratio::OiToVolumeRatio;
 pub use oi_weighted::OIWeighted;
 pub use omega_ratio::OmegaRatio;
 pub use on_neck::OnNeck;
+pub use open_interest_momentum::OpenInterestMomentum;
 pub use opening_marubozu::OpeningMarubozu;
 pub use opening_range::{OpeningRange, OpeningRangeOutput};
 pub use order_flow_imbalance::OrderFlowImbalance;
@@ -783,6 +792,7 @@ pub use pearson_correlation::PearsonCorrelation;
 pub use percent_above_ma::PercentAboveMa;
 pub use percent_b::PercentB;
 pub use percentage_trailing_stop::PercentageTrailingStop;
+pub use perpetual_premium_index::PerpetualPremiumIndex;
 pub use pgo::Pgo;
 pub use piercing_dark_cloud::PiercingDarkCloud;
 pub use pin::Pin;
@@ -1478,6 +1488,11 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "LiquidationFeatures",
             "TermStructureBasis",
             "CalendarSpread",
+            "EstimatedLeverageRatio",
+            "OiToVolumeRatio",
+            "PerpetualPremiumIndex",
+            "FundingImpliedApr",
+            "OpenInterestMomentum",
         ],
     ),
     (
@@ -1624,6 +1639,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 488, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 493, "FAMILIES total drifted from indicator count");
     }
 }

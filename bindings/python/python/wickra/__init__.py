@@ -480,6 +480,11 @@ from ._wickra import (
     # Microstructure: footprint
     Footprint,
     # Derivatives
+    OpenInterestMomentum,
+    FundingImpliedApr,
+    PerpetualPremiumIndex,
+    OiToVolumeRatio,
+    EstimatedLeverageRatio,
     FundingRate,
     FundingRateMean,
     FundingRateZScore,
@@ -998,6 +1003,11 @@ __all__ = [
     # Microstructure: footprint
     "Footprint",
     # Derivatives
+    "OpenInterestMomentum",
+    "FundingImpliedApr",
+    "PerpetualPremiumIndex",
+    "OiToVolumeRatio",
+    "EstimatedLeverageRatio",
     "FundingRate",
     "FundingRateMean",
     "FundingRateZScore",

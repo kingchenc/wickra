@@ -4082,6 +4082,71 @@ def test_basis_indicators_streaming_equals_batch():
     assert _eq_nan(batch, streamed)
 
 
+def test_b16_derivatives_reference():
+    # Estimated leverage: oi / (long + short) = 200 / 100 = 2.
+    assert ta.EstimatedLeverageRatio().update(200.0, 60.0, 40.0) == pytest.approx(2.0)
+    # OI-to-volume: oi / (buy + sell) = 100 / 50 = 2.
+    assert ta.OiToVolumeRatio().update(100.0, 30.0, 20.0) == pytest.approx(2.0)
+    # Perpetual premium: (mark - index) / index = 0.5 / 100 = 0.005.
+    assert ta.PerpetualPremiumIndex().update(100.5, 100.0) == pytest.approx(0.005)
+    # Funding-implied APR: rate * intervals = 0.0001 * 1095 = 0.1095.
+    assert ta.FundingImpliedApr(1095.0).update(0.0001) == pytest.approx(0.1095)
+    # Open-interest momentum (period 2): warmup then ROC% = 100*(120-100)/100 = 20.
+    oim = ta.OpenInterestMomentum(2)
+    assert oim.update(100.0) is None
+    assert oim.update(110.0) is None
+    assert oim.update(120.0) == pytest.approx(20.0)
+
+
+def test_b16_derivatives_streaming_equals_batch():
+    n = 40
+    oi = np.array([1000.0 + 50.0 * math.sin(i * 0.3) for i in range(n)], dtype=np.float64)
+    long_sz = np.array([600.0 + 20.0 * math.cos(i * 0.2) for i in range(n)], dtype=np.float64)
+    short_sz = np.array([400.0 + 15.0 * math.sin(i * 0.4) for i in range(n)], dtype=np.float64)
+    buy = np.array([300.0 + 10.0 * math.sin(i * 0.5) for i in range(n)], dtype=np.float64)
+    sell = np.array([250.0 + 12.0 * math.cos(i * 0.35) for i in range(n)], dtype=np.float64)
+    index = np.array([100.0 + math.sin(i * 0.2) for i in range(n)], dtype=np.float64)
+    mark = np.array([index[i] + 0.05 * math.cos(i * 0.3) for i in range(n)], dtype=np.float64)
+    rate = np.array([0.0001 * math.sin(i * 0.3) for i in range(n)], dtype=np.float64)
+
+    # EstimatedLeverageRatio; update(open_interest, long_size, short_size).
+    batch = ta.EstimatedLeverageRatio().batch(oi, long_sz, short_sz)
+    streamer = ta.EstimatedLeverageRatio()
+    streamed = np.array(
+        [streamer.update(oi[i], long_sz[i], short_sz[i]) for i in range(n)], dtype=np.float64
+    )
+    assert batch.shape == (n,)
+    assert _eq_nan(batch, streamed)
+
+    # OiToVolumeRatio; update(open_interest, taker_buy_volume, taker_sell_volume).
+    batch = ta.OiToVolumeRatio().batch(oi, buy, sell)
+    streamer = ta.OiToVolumeRatio()
+    streamed = np.array(
+        [streamer.update(oi[i], buy[i], sell[i]) for i in range(n)], dtype=np.float64
+    )
+    assert _eq_nan(batch, streamed)
+
+    # PerpetualPremiumIndex; update(mark_price, index_price).
+    batch = ta.PerpetualPremiumIndex().batch(mark, index)
+    streamer = ta.PerpetualPremiumIndex()
+    streamed = np.array(
+        [streamer.update(mark[i], index[i]) for i in range(n)], dtype=np.float64
+    )
+    assert _eq_nan(batch, streamed)
+
+    # FundingImpliedApr; update(funding_rate).
+    batch = ta.FundingImpliedApr(1095.0).batch(rate)
+    streamer = ta.FundingImpliedApr(1095.0)
+    streamed = np.array([streamer.update(rate[i]) for i in range(n)], dtype=np.float64)
+    assert _eq_nan(batch, streamed)
+
+    # OpenInterestMomentum; update(open_interest).
+    batch = ta.OpenInterestMomentum(10).batch(oi)
+    streamer = ta.OpenInterestMomentum(10)
+    streamed = np.array([streamer.update(oi[i]) for i in range(n)], dtype=np.float64)
+    assert _eq_nan(batch, streamed)
+
+
 # --- Alt-Chart Bars ------------------------------------------------------
 
 

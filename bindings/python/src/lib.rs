@@ -19420,6 +19420,50 @@ fn deriv_taker(taker_buy_volume: f64, taker_sell_volume: f64) -> PyResult<wc::De
     .map_err(map_err)
 }
 
+fn deriv_oi_long_short(
+    open_interest: f64,
+    long_size: f64,
+    short_size: f64,
+) -> PyResult<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        open_interest,
+        long_size,
+        short_size,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
+fn deriv_oi_taker(
+    open_interest: f64,
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+) -> PyResult<wc::DerivativesTick> {
+    wc::DerivativesTick::new(
+        0.0,
+        1.0,
+        1.0,
+        1.0,
+        open_interest,
+        0.0,
+        0.0,
+        taker_buy_volume,
+        taker_sell_volume,
+        0.0,
+        0.0,
+        0,
+    )
+    .map_err(map_err)
+}
+
 fn deriv_liquidation(
     long_liquidation: f64,
     short_liquidation: f64,
@@ -20137,6 +20181,302 @@ impl PyCalendarSpread {
     }
     fn __repr__(&self) -> String {
         "CalendarSpread()".to_string()
+    }
+}
+
+// Estimated leverage ratio: open interest over aggregate long+short size.
+#[pyclass(
+    name = "EstimatedLeverageRatio",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyEstimatedLeverageRatio {
+    inner: wc::EstimatedLeverageRatio,
+}
+
+#[pymethods]
+impl PyEstimatedLeverageRatio {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::EstimatedLeverageRatio::new(),
+        }
+    }
+    fn update(
+        &mut self,
+        open_interest: f64,
+        long_size: f64,
+        short_size: f64,
+    ) -> PyResult<Option<f64>> {
+        Ok(self
+            .inner
+            .update(deriv_oi_long_short(open_interest, long_size, short_size)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        open_interest: Vec<f64>,
+        long_size: Vec<f64>,
+        short_size: Vec<f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if open_interest.len() != long_size.len() || long_size.len() != short_size.len() {
+            return Err(PyValueError::new_err(
+                "open_interest, long_size, short_size must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(open_interest.len());
+        for i in 0..open_interest.len() {
+            out.push(
+                self.inner
+                    .update(deriv_oi_long_short(
+                        open_interest[i],
+                        long_size[i],
+                        short_size[i],
+                    )?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "EstimatedLeverageRatio()".to_string()
+    }
+}
+
+// OI-to-volume ratio: open interest over taker buy+sell volume.
+#[pyclass(
+    name = "OiToVolumeRatio",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyOiToVolumeRatio {
+    inner: wc::OiToVolumeRatio,
+}
+
+#[pymethods]
+impl PyOiToVolumeRatio {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::OiToVolumeRatio::new(),
+        }
+    }
+    fn update(
+        &mut self,
+        open_interest: f64,
+        taker_buy_volume: f64,
+        taker_sell_volume: f64,
+    ) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(deriv_oi_taker(
+            open_interest,
+            taker_buy_volume,
+            taker_sell_volume,
+        )?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        open_interest: Vec<f64>,
+        taker_buy_volume: Vec<f64>,
+        taker_sell_volume: Vec<f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if open_interest.len() != taker_buy_volume.len()
+            || taker_buy_volume.len() != taker_sell_volume.len()
+        {
+            return Err(PyValueError::new_err(
+                "open_interest, taker_buy_volume, taker_sell_volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(open_interest.len());
+        for i in 0..open_interest.len() {
+            out.push(
+                self.inner
+                    .update(deriv_oi_taker(
+                        open_interest[i],
+                        taker_buy_volume[i],
+                        taker_sell_volume[i],
+                    )?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "OiToVolumeRatio()".to_string()
+    }
+}
+
+// Perpetual premium index: relative premium of mark over index price.
+#[pyclass(
+    name = "PerpetualPremiumIndex",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyPerpetualPremiumIndex {
+    inner: wc::PerpetualPremiumIndex,
+}
+
+#[pymethods]
+impl PyPerpetualPremiumIndex {
+    #[new]
+    fn new() -> Self {
+        Self {
+            inner: wc::PerpetualPremiumIndex::new(),
+        }
+    }
+    fn update(&mut self, mark_price: f64, index_price: f64) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(deriv_basis(mark_price, index_price)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        mark_price: Vec<f64>,
+        index_price: Vec<f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if mark_price.len() != index_price.len() {
+            return Err(PyValueError::new_err(
+                "mark_price and index_price must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(mark_price.len());
+        for i in 0..mark_price.len() {
+            out.push(
+                self.inner
+                    .update(deriv_basis(mark_price[i], index_price[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        "PerpetualPremiumIndex()".to_string()
+    }
+}
+
+// Funding-implied APR: per-interval funding annualised.
+#[pyclass(
+    name = "FundingImpliedApr",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyFundingImpliedApr {
+    inner: wc::FundingImpliedApr,
+}
+
+#[pymethods]
+impl PyFundingImpliedApr {
+    #[new]
+    fn new(intervals_per_year: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::FundingImpliedApr::new(intervals_per_year).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, funding_rate: f64) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(deriv_funding(funding_rate)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        funding_rate: Vec<f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let mut out = Vec::with_capacity(funding_rate.len());
+        for r in funding_rate {
+            out.push(self.inner.update(deriv_funding(r)?).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!(
+            "FundingImpliedApr(intervals_per_year={})",
+            self.inner.intervals_per_year()
+        )
+    }
+}
+
+// Open-interest momentum: rate-of-change of open interest over a window.
+#[pyclass(
+    name = "OpenInterestMomentum",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyOpenInterestMomentum {
+    inner: wc::OpenInterestMomentum,
+}
+
+#[pymethods]
+impl PyOpenInterestMomentum {
+    #[new]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::OpenInterestMomentum::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, open_interest: f64) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(deriv_oi(open_interest)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        open_interest: Vec<f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let mut out = Vec::with_capacity(open_interest.len());
+        for oi in open_interest {
+            out.push(self.inner.update(deriv_oi(oi)?).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("OpenInterestMomentum(period={})", self.inner.period())
     }
 }
 
@@ -25029,6 +25369,11 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyLiquidationFeatures>()?;
     m.add_class::<PyTermStructureBasis>()?;
     m.add_class::<PyCalendarSpread>()?;
+    m.add_class::<PyEstimatedLeverageRatio>()?;
+    m.add_class::<PyOiToVolumeRatio>()?;
+    m.add_class::<PyPerpetualPremiumIndex>()?;
+    m.add_class::<PyFundingImpliedApr>()?;
+    m.add_class::<PyOpenInterestMomentum>()?;
     m.add_class::<PyAdvanceDecline>()?;
     m.add_class::<PyAdvanceDeclineRatio>()?;
     m.add_class::<PyAdVolumeLine>()?;
