@@ -38,6 +38,67 @@ fn map_err(e: wc::Error) -> PyErr {
 /// Raised instead of panicking when a `NumPy` input is not C-contiguous.
 const NON_CONTIGUOUS: &str = "array must be C-contiguous; pass np.ascontiguousarray(arr)";
 
+/// Borrowed `(open, high, low, close)` columns for candle-driven bar builders.
+type OhlcCols<'a> = (&'a [f64], &'a [f64], &'a [f64], &'a [f64]);
+/// Borrowed `(open, high, low, close, volume)` columns for candle-driven bar builders.
+type OhlcvCols<'a> = (&'a [f64], &'a [f64], &'a [f64], &'a [f64], &'a [f64]);
+
+/// `(open, high, low, close, volume)` rows from Tick/Volume bar builders.
+type OhlcvBarRows = Vec<(f64, f64, f64, f64, f64)>;
+/// `(open, high, low, close, volume, dollar)` rows from the Dollar bar builder.
+type DollarBarRows = Vec<(f64, f64, f64, f64, f64, f64)>;
+/// `(open, high, low, close, imbalance, direction)` rows from the Imbalance bar builder.
+type ImbalanceBarRows = Vec<(f64, f64, f64, f64, f64, i64)>;
+/// `(open, high, low, close, length, direction)` rows from the Run bar builder.
+type RunBarRows = Vec<(f64, f64, f64, f64, i64, i64)>;
+
+/// Extract four equal-length OHLC slices, erroring on non-contiguous or mismatched input.
+fn ohlc_slices<'a, 'py>(
+    open: &'a PyReadonlyArray1<'py, f64>,
+    high: &'a PyReadonlyArray1<'py, f64>,
+    low: &'a PyReadonlyArray1<'py, f64>,
+    close: &'a PyReadonlyArray1<'py, f64>,
+) -> PyResult<OhlcCols<'a>> {
+    let o = open
+        .as_slice()
+        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+    let h = high
+        .as_slice()
+        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+    let l = low
+        .as_slice()
+        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+    let c = close
+        .as_slice()
+        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+    if o.len() != h.len() || h.len() != l.len() || l.len() != c.len() {
+        return Err(PyValueError::new_err(
+            "open, high, low, close must be equal length",
+        ));
+    }
+    Ok((o, h, l, c))
+}
+
+/// Extract five equal-length OHLCV slices, erroring on non-contiguous or mismatched input.
+fn ohlcv_slices<'a, 'py>(
+    open: &'a PyReadonlyArray1<'py, f64>,
+    high: &'a PyReadonlyArray1<'py, f64>,
+    low: &'a PyReadonlyArray1<'py, f64>,
+    close: &'a PyReadonlyArray1<'py, f64>,
+    volume: &'a PyReadonlyArray1<'py, f64>,
+) -> PyResult<OhlcvCols<'a>> {
+    let (o, h, l, c) = ohlc_slices(open, high, low, close)?;
+    let v = volume
+        .as_slice()
+        .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+    if v.len() != o.len() {
+        return Err(PyValueError::new_err(
+            "open, high, low, close, volume must be equal length",
+        ));
+    }
+    Ok((o, h, l, c, v))
+}
+
 /// `(pp, r1, r2, r3, s1, s2, s3)` pivot levels returned by Classic/Fibonacci pivots.
 type PivotLevels = (f64, f64, f64, f64, f64, f64, f64);
 /// The five Fibonacci-extension levels returned by `FibExtension`.
@@ -23459,6 +23520,486 @@ impl PyPointAndFigureBars {
     }
 }
 
+#[pyclass(name = "RangeBars", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyRangeBars {
+    inner: wc::RangeBars,
+}
+
+#[pymethods]
+impl PyRangeBars {
+    #[new]
+    fn new(range: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::RangeBars::new(range).map_err(map_err)?,
+        })
+    }
+    /// Feed one close; returns bars completed on it as `(open, close, direction)`.
+    fn update(&mut self, close: f64) -> PyResult<Vec<(f64, f64, i64)>> {
+        let candle = wc::Candle::new(close, close, close, close, 1.0, 0).map_err(map_err)?;
+        Ok(self
+            .inner
+            .update(candle)
+            .into_iter()
+            .map(|b| (b.open, b.close, i64::from(b.direction)))
+            .collect())
+    }
+    /// Batch over a close column. Returns shape `(k, 3)` of `[open, close, direction]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let prices = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let mut rows: Vec<f64> = Vec::new();
+        let mut k = 0usize;
+        for &price in prices {
+            let candle = wc::Candle::new(price, price, price, price, 1.0, 0).map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                rows.push(b.open);
+                rows.push(b.close);
+                rows.push(f64::from(b.direction));
+                k += 1;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((k, 3), rows)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn range(&self) -> f64 {
+        self.inner.range()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn __repr__(&self) -> String {
+        format!("RangeBars(range={})", self.inner.range())
+    }
+}
+
+#[pyclass(name = "TickBars", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyTickBars {
+    inner: wc::TickBars,
+}
+
+#[pymethods]
+impl PyTickBars {
+    #[new]
+    fn new(ticks: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::TickBars::new(ticks).map_err(map_err)?,
+        })
+    }
+    /// Feed one candle; returns bars completed as `(open, high, low, close, volume)`.
+    #[allow(clippy::too_many_arguments)]
+    fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> PyResult<OhlcvBarRows> {
+        let candle = wc::Candle::new(open, high, low, close, volume, 0).map_err(map_err)?;
+        Ok(self
+            .inner
+            .update(candle)
+            .into_iter()
+            .map(|b| (b.open, b.high, b.low, b.close, b.volume))
+            .collect())
+    }
+    /// Batch over OHLCV columns. Returns shape `(k, 5)` of `[open, high, low, close, volume]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        open: PyReadonlyArray1<'py, f64>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let (o, h, l, c, v) = ohlcv_slices(&open, &high, &low, &close, &volume)?;
+        let mut rows: Vec<f64> = Vec::new();
+        let mut k = 0usize;
+        for i in 0..o.len() {
+            let candle = wc::Candle::new(o[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                rows.extend_from_slice(&[b.open, b.high, b.low, b.close, b.volume]);
+                k += 1;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((k, 5), rows)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn ticks(&self) -> usize {
+        self.inner.ticks()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn __repr__(&self) -> String {
+        format!("TickBars(ticks={})", self.inner.ticks())
+    }
+}
+
+#[pyclass(name = "VolumeBars", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyVolumeBars {
+    inner: wc::VolumeBars,
+}
+
+#[pymethods]
+impl PyVolumeBars {
+    #[new]
+    fn new(volume_per_bar: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::VolumeBars::new(volume_per_bar).map_err(map_err)?,
+        })
+    }
+    /// Feed one candle; returns bars completed as `(open, high, low, close, volume)`.
+    #[allow(clippy::too_many_arguments)]
+    fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> PyResult<OhlcvBarRows> {
+        let candle = wc::Candle::new(open, high, low, close, volume, 0).map_err(map_err)?;
+        Ok(self
+            .inner
+            .update(candle)
+            .into_iter()
+            .map(|b| (b.open, b.high, b.low, b.close, b.volume))
+            .collect())
+    }
+    /// Batch over OHLCV columns. Returns shape `(k, 5)` of `[open, high, low, close, volume]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        open: PyReadonlyArray1<'py, f64>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let (o, h, l, c, v) = ohlcv_slices(&open, &high, &low, &close, &volume)?;
+        let mut rows: Vec<f64> = Vec::new();
+        let mut k = 0usize;
+        for i in 0..o.len() {
+            let candle = wc::Candle::new(o[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                rows.extend_from_slice(&[b.open, b.high, b.low, b.close, b.volume]);
+                k += 1;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((k, 5), rows)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn volume_per_bar(&self) -> f64 {
+        self.inner.volume_per_bar()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn __repr__(&self) -> String {
+        format!("VolumeBars(volume_per_bar={})", self.inner.volume_per_bar())
+    }
+}
+
+#[pyclass(name = "DollarBars", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyDollarBars {
+    inner: wc::DollarBars,
+}
+
+#[pymethods]
+impl PyDollarBars {
+    #[new]
+    fn new(dollar_per_bar: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::DollarBars::new(dollar_per_bar).map_err(map_err)?,
+        })
+    }
+    /// Feed one candle; returns bars completed as `(open, high, low, close, volume, dollar)`.
+    #[allow(clippy::too_many_arguments)]
+    fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> PyResult<DollarBarRows> {
+        let candle = wc::Candle::new(open, high, low, close, volume, 0).map_err(map_err)?;
+        Ok(self
+            .inner
+            .update(candle)
+            .into_iter()
+            .map(|b| (b.open, b.high, b.low, b.close, b.volume, b.dollar))
+            .collect())
+    }
+    /// Batch over OHLCV columns. Returns shape `(k, 6)` of `[open, high, low, close, volume, dollar]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        open: PyReadonlyArray1<'py, f64>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let (o, h, l, c, v) = ohlcv_slices(&open, &high, &low, &close, &volume)?;
+        let mut rows: Vec<f64> = Vec::new();
+        let mut k = 0usize;
+        for i in 0..o.len() {
+            let candle = wc::Candle::new(o[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                rows.extend_from_slice(&[b.open, b.high, b.low, b.close, b.volume, b.dollar]);
+                k += 1;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((k, 6), rows)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn dollar_per_bar(&self) -> f64 {
+        self.inner.dollar_per_bar()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn __repr__(&self) -> String {
+        format!("DollarBars(dollar_per_bar={})", self.inner.dollar_per_bar())
+    }
+}
+
+#[pyclass(name = "ImbalanceBars", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyImbalanceBars {
+    inner: wc::ImbalanceBars,
+}
+
+#[pymethods]
+impl PyImbalanceBars {
+    #[new]
+    fn new(threshold: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::ImbalanceBars::new(threshold).map_err(map_err)?,
+        })
+    }
+    /// Feed one candle; returns bars completed as `(open, high, low, close, imbalance, direction)`.
+    fn update(&mut self, open: f64, high: f64, low: f64, close: f64) -> PyResult<ImbalanceBarRows> {
+        let candle = wc::Candle::new(open, high, low, close, 1.0, 0).map_err(map_err)?;
+        Ok(self
+            .inner
+            .update(candle)
+            .into_iter()
+            .map(|b| {
+                (
+                    b.open,
+                    b.high,
+                    b.low,
+                    b.close,
+                    b.imbalance,
+                    i64::from(b.direction),
+                )
+            })
+            .collect())
+    }
+    /// Batch over OHLC columns. Returns shape `(k, 6)` of `[open, high, low, close, imbalance, direction]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        open: PyReadonlyArray1<'py, f64>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let (o, h, l, c) = ohlc_slices(&open, &high, &low, &close)?;
+        let mut rows: Vec<f64> = Vec::new();
+        let mut k = 0usize;
+        for i in 0..o.len() {
+            let candle = wc::Candle::new(o[i], h[i], l[i], c[i], 1.0, 0).map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                rows.extend_from_slice(&[
+                    b.open,
+                    b.high,
+                    b.low,
+                    b.close,
+                    b.imbalance,
+                    f64::from(b.direction),
+                ]);
+                k += 1;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((k, 6), rows)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn threshold(&self) -> f64 {
+        self.inner.threshold()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn __repr__(&self) -> String {
+        format!("ImbalanceBars(threshold={})", self.inner.threshold())
+    }
+}
+
+#[pyclass(name = "RunBars", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyRunBars {
+    inner: wc::RunBars,
+}
+
+#[pymethods]
+impl PyRunBars {
+    #[new]
+    fn new(run_length: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::RunBars::new(run_length).map_err(map_err)?,
+        })
+    }
+    /// Feed one candle; returns bars completed as `(open, high, low, close, length, direction)`.
+    fn update(&mut self, open: f64, high: f64, low: f64, close: f64) -> PyResult<RunBarRows> {
+        let candle = wc::Candle::new(open, high, low, close, 1.0, 0).map_err(map_err)?;
+        Ok(self
+            .inner
+            .update(candle)
+            .into_iter()
+            .map(|b| {
+                (
+                    b.open,
+                    b.high,
+                    b.low,
+                    b.close,
+                    i64::try_from(b.length).unwrap_or(i64::MAX),
+                    i64::from(b.direction),
+                )
+            })
+            .collect())
+    }
+    /// Batch over OHLC columns. Returns shape `(k, 6)` of `[open, high, low, close, length, direction]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        open: PyReadonlyArray1<'py, f64>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let (o, h, l, c) = ohlc_slices(&open, &high, &low, &close)?;
+        let mut rows: Vec<f64> = Vec::new();
+        let mut k = 0usize;
+        for i in 0..o.len() {
+            let candle = wc::Candle::new(o[i], h[i], l[i], c[i], 1.0, 0).map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                #[allow(clippy::cast_precision_loss)]
+                rows.extend_from_slice(&[
+                    b.open,
+                    b.high,
+                    b.low,
+                    b.close,
+                    b.length as f64,
+                    f64::from(b.direction),
+                ]);
+                k += 1;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((k, 6), rows)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn run_length(&self) -> usize {
+        self.inner.run_length()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn __repr__(&self) -> String {
+        format!("RunBars(run_length={})", self.inner.run_length())
+    }
+}
+
+#[pyclass(
+    name = "ThreeLineBreakBars",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyThreeLineBreakBars {
+    inner: wc::ThreeLineBreakBars,
+}
+
+#[pymethods]
+impl PyThreeLineBreakBars {
+    #[new]
+    #[pyo3(signature = (lines=3))]
+    fn new(lines: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::ThreeLineBreakBars::new(lines).map_err(map_err)?,
+        })
+    }
+    /// Feed one close; returns bars completed on it as `(open, close, direction)`.
+    fn update(&mut self, close: f64) -> PyResult<Vec<(f64, f64, i64)>> {
+        let candle = wc::Candle::new(close, close, close, close, 1.0, 0).map_err(map_err)?;
+        Ok(self
+            .inner
+            .update(candle)
+            .into_iter()
+            .map(|b| (b.open, b.close, i64::from(b.direction)))
+            .collect())
+    }
+    /// Batch over a close column. Returns shape `(k, 3)` of `[open, close, direction]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let prices = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let mut rows: Vec<f64> = Vec::new();
+        let mut k = 0usize;
+        for &price in prices {
+            let candle = wc::Candle::new(price, price, price, price, 1.0, 0).map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                rows.push(b.open);
+                rows.push(b.close);
+                rows.push(f64::from(b.direction));
+                k += 1;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((k, 3), rows)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    #[getter]
+    fn lines(&self) -> usize {
+        self.inner.lines()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn __repr__(&self) -> String {
+        format!("ThreeLineBreakBars(lines={})", self.inner.lines())
+    }
+}
+
 // ============================== Module ==============================
 
 // ====================== Seasonality & Session (full-candle) ======================
@@ -26074,6 +26615,13 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyRenkoBars>()?;
     m.add_class::<PyKagiBars>()?;
     m.add_class::<PyPointAndFigureBars>()?;
+    m.add_class::<PyRangeBars>()?;
+    m.add_class::<PyTickBars>()?;
+    m.add_class::<PyVolumeBars>()?;
+    m.add_class::<PyDollarBars>()?;
+    m.add_class::<PyImbalanceBars>()?;
+    m.add_class::<PyRunBars>()?;
+    m.add_class::<PyThreeLineBreakBars>()?;
     m.add_class::<PyInitialBalance>()?;
     m.add_class::<PyOpeningRange>()?;
     m.add_class::<PyNakedPoc>()?;

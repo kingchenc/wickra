@@ -11,7 +11,7 @@
 //! and zero ranges within that band.
 
 use libfuzzer_sys::fuzz_target;
-use wickra_core::{BarBuilder, Candle, KagiBars, PointAndFigureBars, RenkoBars};
+use wickra_core::{BarBuilder, Candle, DollarBars, ImbalanceBars, KagiBars, PointAndFigureBars, RangeBars, RenkoBars, RunBars, ThreeLineBreakBars, TickBars, VolumeBars};
 
 /// Reinterpret the fuzz bytes as `[open, high, low, close, volume]` groups,
 /// keeping only structurally-valid candles whose magnitudes stay in a band that
@@ -40,6 +40,13 @@ fuzz_target!(|data: Vec<f64>| {
     drive(RenkoBars::new(5.0).unwrap(), &candles);
     drive(KagiBars::new(5.0).unwrap(), &candles);
     drive(PointAndFigureBars::new(5.0, 3).unwrap(), &candles);
+    drive(RangeBars::new(2.0).unwrap(), &candles);
+    drive(TickBars::new(5).unwrap(), &candles);
+    drive(VolumeBars::new(100.0).unwrap(), &candles);
+    drive(DollarBars::new(10000.0).unwrap(), &candles);
+    drive(ImbalanceBars::new(5.0).unwrap(), &candles);
+    drive(RunBars::new(3).unwrap(), &candles);
+    drive(ThreeLineBreakBars::new(3).unwrap(), &candles);
 
     let _ = RenkoBars::new(5.0).unwrap().batch(&candles);
     let _ = KagiBars::new(5.0).unwrap().batch(&candles);

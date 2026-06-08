@@ -17818,6 +17818,559 @@ impl PointAndFigureBarsNode {
     }
 }
 
+#[napi(object)]
+pub struct RangeBarValue {
+    pub open: f64,
+    pub close: f64,
+    pub direction: i32,
+}
+
+#[napi(js_name = "RangeBars")]
+pub struct RangeBarsNode {
+    inner: wc::RangeBars,
+}
+#[napi]
+impl RangeBarsNode {
+    #[napi(constructor)]
+    pub fn new(range: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::RangeBars::new(range).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, close: f64) -> napi::Result<Vec<RangeBarValue>> {
+        let candle = wc::Candle::new(close, close, close, close, 1.0, 0).map_err(map_err)?;
+        Ok(self
+            .inner
+            .update(candle)
+            .into_iter()
+            .map(|b| RangeBarValue {
+                open: b.open,
+                close: b.close,
+                direction: i32::from(b.direction),
+            })
+            .collect())
+    }
+    #[napi]
+    pub fn batch(&mut self, close: Vec<f64>) -> napi::Result<Vec<RangeBarValue>> {
+        let mut out = Vec::new();
+        for price in close {
+            let candle = wc::Candle::new(price, price, price, price, 1.0, 0).map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                out.push(RangeBarValue {
+                    open: b.open,
+                    close: b.close,
+                    direction: i32::from(b.direction),
+                });
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn range(&self) -> f64 {
+        self.inner.range()
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[napi(object)]
+pub struct TickBarValue {
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub volume: f64,
+}
+
+#[napi(js_name = "TickBars")]
+pub struct TickBarsNode {
+    inner: wc::TickBars,
+}
+#[napi]
+impl TickBarsNode {
+    #[napi(constructor)]
+    pub fn new(ticks: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::TickBars::new(ticks as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> napi::Result<Vec<TickBarValue>> {
+        let candle = wc::Candle::new(open, high, low, close, volume, 0).map_err(map_err)?;
+        Ok(self
+            .inner
+            .update(candle)
+            .into_iter()
+            .map(|b| TickBarValue {
+                open: b.open,
+                high: b.high,
+                low: b.low,
+                close: b.close,
+                volume: b.volume,
+            })
+            .collect())
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open: Vec<f64>,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+        volume: Vec<f64>,
+    ) -> napi::Result<Vec<TickBarValue>> {
+        if open.len() != high.len()
+            || high.len() != low.len()
+            || low.len() != close.len()
+            || close.len() != volume.len()
+        {
+            return Err(NapiError::from_reason(
+                "open, high, low, close, volume must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::new();
+        for i in 0..open.len() {
+            let candle = wc::Candle::new(open[i], high[i], low[i], close[i], volume[i], 0)
+                .map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                out.push(TickBarValue {
+                    open: b.open,
+                    high: b.high,
+                    low: b.low,
+                    close: b.close,
+                    volume: b.volume,
+                });
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn ticks(&self) -> u32 {
+        self.inner.ticks() as u32
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[napi(object)]
+pub struct VolumeBarValue {
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub volume: f64,
+}
+
+#[napi(js_name = "VolumeBars")]
+pub struct VolumeBarsNode {
+    inner: wc::VolumeBars,
+}
+#[napi]
+impl VolumeBarsNode {
+    #[napi(constructor)]
+    pub fn new(volume_per_bar: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::VolumeBars::new(volume_per_bar).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> napi::Result<Vec<VolumeBarValue>> {
+        let candle = wc::Candle::new(open, high, low, close, volume, 0).map_err(map_err)?;
+        Ok(self
+            .inner
+            .update(candle)
+            .into_iter()
+            .map(|b| VolumeBarValue {
+                open: b.open,
+                high: b.high,
+                low: b.low,
+                close: b.close,
+                volume: b.volume,
+            })
+            .collect())
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open: Vec<f64>,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+        volume: Vec<f64>,
+    ) -> napi::Result<Vec<VolumeBarValue>> {
+        if open.len() != high.len()
+            || high.len() != low.len()
+            || low.len() != close.len()
+            || close.len() != volume.len()
+        {
+            return Err(NapiError::from_reason(
+                "open, high, low, close, volume must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::new();
+        for i in 0..open.len() {
+            let candle = wc::Candle::new(open[i], high[i], low[i], close[i], volume[i], 0)
+                .map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                out.push(VolumeBarValue {
+                    open: b.open,
+                    high: b.high,
+                    low: b.low,
+                    close: b.close,
+                    volume: b.volume,
+                });
+            }
+        }
+        Ok(out)
+    }
+    #[napi(js_name = "volumePerBar")]
+    pub fn volume_per_bar(&self) -> f64 {
+        self.inner.volume_per_bar()
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[napi(object)]
+pub struct DollarBarValue {
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub volume: f64,
+    pub dollar: f64,
+}
+
+#[napi(js_name = "DollarBars")]
+pub struct DollarBarsNode {
+    inner: wc::DollarBars,
+}
+#[napi]
+impl DollarBarsNode {
+    #[napi(constructor)]
+    pub fn new(dollar_per_bar: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::DollarBars::new(dollar_per_bar).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> napi::Result<Vec<DollarBarValue>> {
+        let candle = wc::Candle::new(open, high, low, close, volume, 0).map_err(map_err)?;
+        Ok(self
+            .inner
+            .update(candle)
+            .into_iter()
+            .map(|b| DollarBarValue {
+                open: b.open,
+                high: b.high,
+                low: b.low,
+                close: b.close,
+                volume: b.volume,
+                dollar: b.dollar,
+            })
+            .collect())
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open: Vec<f64>,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+        volume: Vec<f64>,
+    ) -> napi::Result<Vec<DollarBarValue>> {
+        if open.len() != high.len()
+            || high.len() != low.len()
+            || low.len() != close.len()
+            || close.len() != volume.len()
+        {
+            return Err(NapiError::from_reason(
+                "open, high, low, close, volume must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::new();
+        for i in 0..open.len() {
+            let candle = wc::Candle::new(open[i], high[i], low[i], close[i], volume[i], 0)
+                .map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                out.push(DollarBarValue {
+                    open: b.open,
+                    high: b.high,
+                    low: b.low,
+                    close: b.close,
+                    volume: b.volume,
+                    dollar: b.dollar,
+                });
+            }
+        }
+        Ok(out)
+    }
+    #[napi(js_name = "dollarPerBar")]
+    pub fn dollar_per_bar(&self) -> f64 {
+        self.inner.dollar_per_bar()
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[napi(object)]
+pub struct ImbalanceBarValue {
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub imbalance: f64,
+    pub direction: i32,
+}
+
+#[napi(js_name = "ImbalanceBars")]
+pub struct ImbalanceBarsNode {
+    inner: wc::ImbalanceBars,
+}
+#[napi]
+impl ImbalanceBarsNode {
+    #[napi(constructor)]
+    pub fn new(threshold: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::ImbalanceBars::new(threshold).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Vec<ImbalanceBarValue>> {
+        let candle = wc::Candle::new(open, high, low, close, 1.0, 0).map_err(map_err)?;
+        Ok(self
+            .inner
+            .update(candle)
+            .into_iter()
+            .map(|b| ImbalanceBarValue {
+                open: b.open,
+                high: b.high,
+                low: b.low,
+                close: b.close,
+                imbalance: b.imbalance,
+                direction: i32::from(b.direction),
+            })
+            .collect())
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open: Vec<f64>,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<ImbalanceBarValue>> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "open, high, low, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::new();
+        for i in 0..open.len() {
+            let candle =
+                wc::Candle::new(open[i], high[i], low[i], close[i], 1.0, 0).map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                out.push(ImbalanceBarValue {
+                    open: b.open,
+                    high: b.high,
+                    low: b.low,
+                    close: b.close,
+                    imbalance: b.imbalance,
+                    direction: i32::from(b.direction),
+                });
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn threshold(&self) -> f64 {
+        self.inner.threshold()
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[napi(object)]
+pub struct RunBarValue {
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub length: u32,
+    pub direction: i32,
+}
+
+#[napi(js_name = "RunBars")]
+pub struct RunBarsNode {
+    inner: wc::RunBars,
+}
+#[napi]
+impl RunBarsNode {
+    #[napi(constructor)]
+    pub fn new(run_length: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::RunBars::new(run_length as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+    ) -> napi::Result<Vec<RunBarValue>> {
+        let candle = wc::Candle::new(open, high, low, close, 1.0, 0).map_err(map_err)?;
+        Ok(self
+            .inner
+            .update(candle)
+            .into_iter()
+            .map(|b| RunBarValue {
+                open: b.open,
+                high: b.high,
+                low: b.low,
+                close: b.close,
+                length: b.length as u32,
+                direction: i32::from(b.direction),
+            })
+            .collect())
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        open: Vec<f64>,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+    ) -> napi::Result<Vec<RunBarValue>> {
+        if open.len() != high.len() || high.len() != low.len() || low.len() != close.len() {
+            return Err(NapiError::from_reason(
+                "open, high, low, close must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::new();
+        for i in 0..open.len() {
+            let candle =
+                wc::Candle::new(open[i], high[i], low[i], close[i], 1.0, 0).map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                out.push(RunBarValue {
+                    open: b.open,
+                    high: b.high,
+                    low: b.low,
+                    close: b.close,
+                    length: b.length as u32,
+                    direction: i32::from(b.direction),
+                });
+            }
+        }
+        Ok(out)
+    }
+    #[napi(js_name = "runLength")]
+    pub fn run_length(&self) -> u32 {
+        self.inner.run_length() as u32
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[napi(object)]
+pub struct LineBreakBarValue {
+    pub open: f64,
+    pub close: f64,
+    pub direction: i32,
+}
+
+#[napi(js_name = "ThreeLineBreakBars")]
+pub struct ThreeLineBreakBarsNode {
+    inner: wc::ThreeLineBreakBars,
+}
+#[napi]
+impl ThreeLineBreakBarsNode {
+    #[napi(constructor)]
+    pub fn new(lines: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::ThreeLineBreakBars::new(lines as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, close: f64) -> napi::Result<Vec<LineBreakBarValue>> {
+        let candle = wc::Candle::new(close, close, close, close, 1.0, 0).map_err(map_err)?;
+        Ok(self
+            .inner
+            .update(candle)
+            .into_iter()
+            .map(|b| LineBreakBarValue {
+                open: b.open,
+                close: b.close,
+                direction: i32::from(b.direction),
+            })
+            .collect())
+    }
+    #[napi]
+    pub fn batch(&mut self, close: Vec<f64>) -> napi::Result<Vec<LineBreakBarValue>> {
+        let mut out = Vec::new();
+        for price in close {
+            let candle = wc::Candle::new(price, price, price, price, 1.0, 0).map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                out.push(LineBreakBarValue {
+                    open: b.open,
+                    close: b.close,
+                    direction: i32::from(b.direction),
+                });
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn lines(&self) -> u32 {
+        self.inner.lines() as u32
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
 #[napi(js_name = "Alpha")]
 pub struct AlphaNode {
     inner: wc::Alpha,

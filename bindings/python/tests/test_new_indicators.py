@@ -4237,3 +4237,83 @@ def test_bar_builders_reset():
     r.update(15.0)
     r.reset()
     assert r.update(50.0) == []  # re-seeds after reset
+
+
+def test_range_bars_reference():
+    rb = ta.RangeBars(1.0)
+    assert rb.update(10.0) == []  # seed
+    assert rb.update(13.0) == [(10.0, 11.0, 1), (11.0, 12.0, 1), (12.0, 13.0, 1)]
+
+
+def test_range_bars_batch_shape():
+    rb = ta.RangeBars(1.0)
+    out = rb.batch(np.array([10.0, 11.0, 12.0, 13.0]))
+    assert out.shape == (3, 3)
+    np.testing.assert_allclose(out[:, 2], [1.0, 1.0, 1.0])
+
+
+def test_tick_bars_reference():
+    tb = ta.TickBars(2)
+    assert tb.update(10.0, 11.0, 9.0, 10.5, 100.0) == []
+    out = tb.update(10.5, 12.0, 10.0, 11.0, 150.0)
+    assert len(out) == 1
+    assert out[0] == (10.0, 12.0, 9.0, 11.0, 250.0)
+
+
+def test_tick_bars_batch_shape():
+    tb = ta.TickBars(2)
+    col = np.array([10.0, 10.0, 10.0, 10.0])
+    vol = np.array([1.0, 1.0, 1.0, 1.0])
+    out = tb.batch(col, col, col, col, vol)
+    assert out.shape == (2, 5)
+
+
+def test_volume_bars_reference():
+    vb = ta.VolumeBars(100.0)
+    assert vb.update(10.0, 10.0, 10.0, 10.0, 60.0) == []
+    out = vb.update(10.5, 10.5, 10.5, 10.5, 60.0)
+    assert len(out) == 1
+    assert out[0][4] == 120.0  # accumulated volume
+
+
+def test_dollar_bars_reference():
+    db = ta.DollarBars(1000.0)
+    assert db.update(10.0, 10.0, 10.0, 10.0, 60.0) == []  # 600
+    out = db.update(10.0, 10.0, 10.0, 10.0, 60.0)  # 1200 >= 1000
+    assert len(out) == 1
+    assert out[0][4] == 120.0  # volume
+    assert out[0][5] == 1200.0  # traded value
+
+
+def test_imbalance_bars_reference():
+    ib = ta.ImbalanceBars(3.0)
+    assert ib.update(10.0, 10.0, 10.0, 10.0) == []  # seed
+    ib.update(11.0, 11.0, 11.0, 11.0)  # +1
+    ib.update(12.0, 12.0, 12.0, 12.0)  # +2
+    out = ib.update(13.0, 13.0, 13.0, 13.0)  # +3 -> close
+    assert len(out) == 1
+    assert out[0][4] == 3.0  # imbalance
+    assert out[0][5] == 1  # direction
+
+
+def test_run_bars_reference():
+    rb = ta.RunBars(3)
+    assert rb.update(10.0, 10.0, 10.0, 10.0) == []  # seed
+    rb.update(11.0, 11.0, 11.0, 11.0)  # run 1
+    rb.update(12.0, 12.0, 12.0, 12.0)  # run 2
+    out = rb.update(13.0, 13.0, 13.0, 13.0)  # run 3 -> close
+    assert len(out) == 1
+    assert out[0][4] == 3  # length
+    assert out[0][5] == 1  # direction
+
+
+def test_three_line_break_bars_reference():
+    tlb = ta.ThreeLineBreakBars(3)
+    assert tlb.update(10.0) == []  # seed
+    assert tlb.update(11.0) == [(10.0, 11.0, 1)]
+
+
+def test_three_line_break_bars_batch_shape():
+    tlb = ta.ThreeLineBreakBars(3)
+    out = tlb.batch(np.array([10.0, 11.0, 12.0, 13.0]))
+    assert out.shape[1] == 3

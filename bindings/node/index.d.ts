@@ -468,6 +468,54 @@ export interface PnfColumnValue {
   high: number
   low: number
 }
+export interface RangeBarValue {
+  open: number
+  close: number
+  direction: number
+}
+export interface TickBarValue {
+  open: number
+  high: number
+  low: number
+  close: number
+  volume: number
+}
+export interface VolumeBarValue {
+  open: number
+  high: number
+  low: number
+  close: number
+  volume: number
+}
+export interface DollarBarValue {
+  open: number
+  high: number
+  low: number
+  close: number
+  volume: number
+  dollar: number
+}
+export interface ImbalanceBarValue {
+  open: number
+  high: number
+  low: number
+  close: number
+  imbalance: number
+  direction: number
+}
+export interface RunBarValue {
+  open: number
+  high: number
+  low: number
+  close: number
+  length: number
+  direction: number
+}
+export interface LineBreakBarValue {
+  open: number
+  close: number
+  direction: number
+}
 export interface SessionHighLowValue {
   high: number
   low: number
@@ -5026,6 +5074,62 @@ export declare class PointAndFigureBars {
   batch(close: Array<number>): Array<PnfColumnValue>
   boxSize(): number
   reversal(): number
+  reset(): void
+}
+export type RangeBarsNode = RangeBars
+export declare class RangeBars {
+  constructor(range: number)
+  update(close: number): Array<RangeBarValue>
+  batch(close: Array<number>): Array<RangeBarValue>
+  range(): number
+  reset(): void
+}
+export type TickBarsNode = TickBars
+export declare class TickBars {
+  constructor(ticks: number)
+  update(open: number, high: number, low: number, close: number, volume: number): Array<TickBarValue>
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<TickBarValue>
+  ticks(): number
+  reset(): void
+}
+export type VolumeBarsNode = VolumeBars
+export declare class VolumeBars {
+  constructor(volumePerBar: number)
+  update(open: number, high: number, low: number, close: number, volume: number): Array<VolumeBarValue>
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<VolumeBarValue>
+  volumePerBar(): number
+  reset(): void
+}
+export type DollarBarsNode = DollarBars
+export declare class DollarBars {
+  constructor(dollarPerBar: number)
+  update(open: number, high: number, low: number, close: number, volume: number): Array<DollarBarValue>
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<DollarBarValue>
+  dollarPerBar(): number
+  reset(): void
+}
+export type ImbalanceBarsNode = ImbalanceBars
+export declare class ImbalanceBars {
+  constructor(threshold: number)
+  update(open: number, high: number, low: number, close: number): Array<ImbalanceBarValue>
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<ImbalanceBarValue>
+  threshold(): number
+  reset(): void
+}
+export type RunBarsNode = RunBars
+export declare class RunBars {
+  constructor(runLength: number)
+  update(open: number, high: number, low: number, close: number): Array<RunBarValue>
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<RunBarValue>
+  runLength(): number
+  reset(): void
+}
+export type ThreeLineBreakBarsNode = ThreeLineBreakBars
+export declare class ThreeLineBreakBars {
+  constructor(lines: number)
+  update(close: number): Array<LineBreakBarValue>
+  batch(close: Array<number>): Array<LineBreakBarValue>
+  lines(): number
   reset(): void
 }
 export type AlphaNode = Alpha

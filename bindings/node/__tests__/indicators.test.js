@@ -1769,3 +1769,72 @@ test('PointAndFigureBars closes a column on a 3-box reversal', () => {
   assert.equal(col[0].direction, 1);
   assert.ok(Math.abs(col[0].high - 15) < 1e-9 && Math.abs(col[0].low - 10) < 1e-9);
 });
+
+test('RangeBars prints aligned bars on an up move', () => {
+  const rb = new wickra.RangeBars(1.0);
+  assert.deepEqual(rb.update(10), []); // seed
+  const up = rb.update(13);
+  assert.equal(up.length, 3);
+  assert.ok(Math.abs(up[0].open - 10) < 1e-9 && Math.abs(up[2].close - 13) < 1e-9);
+  assert.ok(up.every((b) => b.direction === 1));
+});
+
+test('TickBars groups a fixed number of candles', () => {
+  const tb = new wickra.TickBars(2);
+  assert.deepEqual(tb.update(10, 11, 9, 10.5, 100), []);
+  const out = tb.update(10.5, 12, 10, 11, 150);
+  assert.equal(out.length, 1);
+  assert.ok(Math.abs(out[0].open - 10) < 1e-9);
+  assert.ok(Math.abs(out[0].high - 12) < 1e-9);
+  assert.ok(Math.abs(out[0].low - 9) < 1e-9);
+  assert.ok(Math.abs(out[0].close - 11) < 1e-9);
+  assert.ok(Math.abs(out[0].volume - 250) < 1e-9);
+});
+
+test('VolumeBars closes when accumulated volume crosses the threshold', () => {
+  const vb = new wickra.VolumeBars(100);
+  assert.deepEqual(vb.update(10, 10, 10, 10, 60), []);
+  const out = vb.update(10.5, 10.5, 10.5, 10.5, 60);
+  assert.equal(out.length, 1);
+  assert.ok(Math.abs(out[0].volume - 120) < 1e-9);
+});
+
+test('DollarBars closes when traded value crosses the threshold', () => {
+  const db = new wickra.DollarBars(1000);
+  assert.deepEqual(db.update(10, 10, 10, 10, 60), []);
+  const out = db.update(10, 10, 10, 10, 60);
+  assert.equal(out.length, 1);
+  assert.ok(Math.abs(out[0].dollar - 1200) < 1e-9);
+  assert.ok(Math.abs(out[0].volume - 120) < 1e-9);
+});
+
+test('ImbalanceBars closes a buy bar at the threshold', () => {
+  const ib = new wickra.ImbalanceBars(3.0);
+  ib.update(10, 10, 10, 10);
+  ib.update(11, 11, 11, 11);
+  ib.update(12, 12, 12, 12);
+  const out = ib.update(13, 13, 13, 13);
+  assert.equal(out.length, 1);
+  assert.equal(out[0].direction, 1);
+  assert.ok(Math.abs(out[0].imbalance - 3) < 1e-9);
+});
+
+test('RunBars closes a buy run at the run length', () => {
+  const rb = new wickra.RunBars(3);
+  rb.update(10, 10, 10, 10);
+  rb.update(11, 11, 11, 11);
+  rb.update(12, 12, 12, 12);
+  const out = rb.update(13, 13, 13, 13);
+  assert.equal(out.length, 1);
+  assert.equal(out[0].direction, 1);
+  assert.equal(out[0].length, 3);
+});
+
+test('ThreeLineBreakBars draws a rising line', () => {
+  const tlb = new wickra.ThreeLineBreakBars(3);
+  assert.deepEqual(tlb.update(10), []); // seed
+  const out = tlb.update(11);
+  assert.equal(out.length, 1);
+  assert.equal(out[0].direction, 1);
+  assert.ok(Math.abs(out[0].open - 10) < 1e-9 && Math.abs(out[0].close - 11) < 1e-9);
+});

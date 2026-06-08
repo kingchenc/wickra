@@ -14,7 +14,18 @@ const wickra = require('..');
 // but intentionally not isReady/warmupPeriod, so they are excluded from the
 // Indicator completeness contract below (their interface is covered by the
 // dedicated bar-builder tests).
-const BAR_BUILDERS = new Set(['RenkoBars', 'KagiBars', 'PointAndFigureBars']);
+const BAR_BUILDERS = new Set([
+  'RenkoBars',
+  'KagiBars',
+  'PointAndFigureBars',
+  'RangeBars',
+  'TickBars',
+  'VolumeBars',
+  'DollarBars',
+  'ImbalanceBars',
+  'RunBars',
+  'ThreeLineBreakBars',
+]);
 
 // An "indicator class" is an exported constructor whose prototype carries the
 // streaming `update` method. This excludes `version` (a plain function), the bar

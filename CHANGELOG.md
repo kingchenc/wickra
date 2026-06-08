@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **Three-Line Break** — Three-line-break bars (reversal needs N-line break) (`THREE_LINE_BREAK_BARS`).
+- **Run** — Run bars (consecutive same-direction tick runs) (`RUN_BARS`).
+- **Imbalance** — Imbalance bars (tick-rule signed imbalance threshold) (`IMBALANCE_BARS`).
+- **Dollar** — Dollar bars (fixed traded value per bar, Lopez de Prado) (`DOLLAR_BARS`).
+- **Volume** — Volume bars (fixed traded volume per bar) (`VOLUME_BARS`).
+- **Tick** — Tick bars (fixed candle count per bar) (`TICK_BARS`).
+- **Range** — Range bars (fixed price-range bricks) (`RANGE_BARS`).
 
 ## [0.7.3] - 2026-06-08
 - **M2Measure** — M2 measure (Modigliani; Sharpe expressed in benchmark return units) (`M2Measure`).
