@@ -53,6 +53,22 @@ jobs:
         continue-on-error: true # cache is an optimisation; never block on a stuck/slow restore
         timeout-minutes: 6
 
+      - name: Warm cargo registry (retry transient DNS/registry flakes)
+        shell: bash
+        # CARGO_NET_RETRY rides out short blips, but a longer runner DNS outage
+        # outlasts cargo's rapid in-process retries: the crates.io index fetch
+        # the first cargo step does ("Could not resolve host: index.crates.io")
+        # then fails the whole job. Pre-fetch the dependency graph here with real
+        # backoff so clippy/build/test resolve from the warmed local cache.
+        run: |
+          for attempt in 1 2 3 4 5; do
+            if cargo fetch; then exit 0; fi
+            echo "::warning::cargo fetch failed (attempt $attempt/5) — likely a registry/DNS flake; retrying in $((attempt * 20))s..."
+            sleep $((attempt * 20))
+          done
+          echo "::error::cargo fetch still failing after 5 attempts"
+          exit 1
+
       - name: Format check
         run: cargo fmt --all -- --check
 
@@ -232,6 +248,19 @@ jobs:
         continue-on-error: true # cache is an optimisation; never block on a stuck/slow restore
         timeout-minutes: 6
 
+      - name: Warm cargo registry (retry transient DNS/registry flakes)
+        shell: bash
+        # See the rust job: pre-fetch with backoff so the clippy index update
+        # can't fail the job on a transient "Could not resolve host" DNS blip.
+        run: |
+          for attempt in 1 2 3 4 5; do
+            if cargo fetch; then exit 0; fi
+            echo "::warning::cargo fetch failed (attempt $attempt/5) — likely a registry/DNS flake; retrying in $((attempt * 20))s..."
+            sleep $((attempt * 20))
+          done
+          echo "::error::cargo fetch still failing after 5 attempts"
+          exit 1
+
       - name: Clippy (bindings, all targets)
         run: cargo clippy -p wickra-node -p wickra-python --all-targets -- -D warnings
 
@@ -271,6 +300,19 @@ jobs:
         uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
         continue-on-error: true # cache is an optimisation; never block on a stuck/slow restore
         timeout-minutes: 6
+
+      - name: Warm cargo registry (retry transient DNS/registry flakes)
+        shell: bash
+        # See the rust job: pre-fetch with backoff so the first cargo step can't
+        # fail the job on a transient "Could not resolve host" DNS blip.
+        run: |
+          for attempt in 1 2 3 4 5; do
+            if cargo fetch; then exit 0; fi
+            echo "::warning::cargo fetch failed (attempt $attempt/5) — likely a registry/DNS flake; retrying in $((attempt * 20))s..."
+            sleep $((attempt * 20))
+          done
+          echo "::error::cargo fetch still failing after 5 attempts"
+          exit 1
 
       - name: Build on MSRV
         run: cargo build ${{ matrix.packages }} --verbose
