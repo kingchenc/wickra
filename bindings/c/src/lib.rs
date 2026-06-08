@@ -20,60 +20,64 @@ use core::slice;
 
 use wickra_core::{
     AbandonedBaby, Abcd, AcceleratorOscillator, AdOscillator, AdaptiveCci, AdaptiveCycle,
-    AdaptiveLaguerreFilter, AdaptiveRsi, Adl, AdvanceBlock, Adxr, Alma, Alpha, AnchoredRsi,
-    AnchoredVwap, Apo, AroonOscillator, Atr, AtrTrailingStop, Autocorrelation,
+    AdaptiveLaguerreFilter, AdaptiveRsi, Adl, AdvanceBlock, Adxr, Alma, Alpha, AmihudIlliquidity,
+    AnchoredRsi, AnchoredVwap, Apo, AroonOscillator, Atr, AtrTrailingStop, Autocorrelation,
     AutocorrelationPeriodogram, AverageDailyRange, AverageDrawdown, AvgPrice, AwesomeOscillator,
     AwesomeOscillatorHistogram, BalanceOfPower, BandpassFilter, Bat, BeltHold, Beta,
     BetaNeutralSpread, BetterVolume, BipowerVariation, BodySizePct, BollingerBandwidth, Breakaway,
-    BurkeRatio, Butterfly, CalmarRatio, Candle, Cci, CenterOfGravity, Cfo, ChaikinMoneyFlow,
-    ChaikinOscillator, ChaikinVolatility, ChoppinessIndex, CloseVsOpen, ClosingMarubozu, Cmo,
-    CoefficientOfVariation, CommonSenseRatio, ConcealingBabySwallow, ConditionalValueAtRisk,
-    ConnorsRsi, Coppock, CorrelationTrendIndicator, Counterattack, Crab, CupAndHandle,
-    CyberneticCycle, Cypher, Decycler, DecyclerOscillator, Dema, DemandIndex, DerivativeOscillator,
-    DetrendedStdDev, DisparityIndex, DistanceSsd, Doji, DojiStar, DoubleTopBottom,
-    DownsideGapThreeMethods, Dpo, DragonflyDoji, DumplingTop, Dx, DynamicMomentumIndex,
-    EaseOfMovement, EhlersStochastic, Ehma, ElderImpulse, Ema, EmpiricalModeDecomposition,
-    Engulfing, EvenBetterSinewave, EveningDojiStar, Evwma, EwmaVolatility, Expectancy,
-    FallingThreeMethods, Fama, FisherRsi, FisherTransform, FlagPennant, ForceIndex, Frama,
-    FryPanBottom, GainLossRatio, GainToPainRatio, GapSideBySideWhite, Garch11,
-    GarmanKlassVolatility, Gartley, GeneralizedDema, GeometricMa, GrangerCausality, GravestoneDoji,
-    Hammer, HangingMan, Harami, HaramiCross, HasbrouckInformationShare, HeadAndShoulders,
-    HeikinAshiOscillator, HiLoActivator, HighLowRange, HighWave, HighpassFilter, Hikkake,
-    HikkakeModified, HilbertDominantCycle, HistoricalVolatility, Hma, HoltWinters, HomingPigeon,
-    HtDcPhase, HtTrendMode, HurstExponent, IdenticalThreeCrows, InNeck, Indicator, Inertia,
-    InformationRatio, InstantaneousTrendline, IntradayIntensity, IntradayMomentumIndex,
-    InverseFisherTransform, InvertedHammer, JarqueBera, Jma, JumpIndicator, KRatio, Kama,
-    KellyCriterion, KendallTau, Kicking, KickingByLength, Kurtosis, Kvo, LadderBottom, LaguerreRsi,
-    LinRegAngle, LinRegIntercept, LinRegSlope, LinearRegression, LogReturn, LongLeggedDoji,
-    LongLine, M2Measure, MacdHistogram, MarketFacilitationIndex, MartinRatio, Marubozu, MassIndex,
-    MatHold, MatchingLow, MaxDrawdown, McGinleyDynamic, MedianAbsoluteDeviation, MedianMa,
-    MedianPrice, Mfi, MidPoint, MidPrice, MinusDi, MinusDm, Mom, MorningDojiStar,
-    MorningEveningStar, NakedPoc, Natr, NewPriceLines, Nvi, Obv, OmegaRatio, OnNeck,
-    OpeningMarubozu, OuHalfLife, OvernightGap, PainIndex, PairSpreadZScore, PairwiseBeta,
-    ParkinsonVolatility, PearsonCorrelation, PercentB, PercentageTrailingStop, Pgo,
-    PiercingDarkCloud, PivotReversal, PlusDi, PlusDm, Pmo, PolarizedFractalEfficiency, Ppo,
-    PpoHistogram, ProfileShape, ProfitFactor, ProjectionOscillator, Psar, Pvi, Qstick, RSquared,
-    RealizedVolatility, RecoveryFactor, RectangleRange, Reflex, RegimeLabel, RenkoTrailingStop,
-    RickshawMan, RisingThreeMethods, Rmi, Roc, Rocp, Rocr, Rocr100, RogersSatchellVolatility,
+    BurkeRatio, Butterfly, CalendarSpread, CalmarRatio, Candle, Cci, CenterOfGravity, Cfo,
+    ChaikinMoneyFlow, ChaikinOscillator, ChaikinVolatility, ChoppinessIndex, CloseVsOpen,
+    ClosingMarubozu, Cmo, CoefficientOfVariation, CommonSenseRatio, ConcealingBabySwallow,
+    ConditionalValueAtRisk, ConnorsRsi, Coppock, CorrelationTrendIndicator, Counterattack, Crab,
+    CumulativeVolumeDelta, CupAndHandle, CyberneticCycle, Cypher, Decycler, DecyclerOscillator,
+    Dema, DemandIndex, DerivativeOscillator, DerivativesTick, DetrendedStdDev, DisparityIndex,
+    DistanceSsd, Doji, DojiStar, DoubleTopBottom, DownsideGapThreeMethods, Dpo, DragonflyDoji,
+    DumplingTop, Dx, DynamicMomentumIndex, EaseOfMovement, EffectiveSpread, EhlersStochastic, Ehma,
+    ElderImpulse, Ema, EmpiricalModeDecomposition, Engulfing, EstimatedLeverageRatio,
+    EvenBetterSinewave, EveningDojiStar, Evwma, EwmaVolatility, Expectancy, FallingThreeMethods,
+    Fama, FisherRsi, FisherTransform, FlagPennant, ForceIndex, Frama, FryPanBottom, FundingBasis,
+    FundingImpliedApr, FundingRate, FundingRateMean, FundingRateZScore, GainLossRatio,
+    GainToPainRatio, GapSideBySideWhite, Garch11, GarmanKlassVolatility, Gartley, GeneralizedDema,
+    GeometricMa, GrangerCausality, GravestoneDoji, Hammer, HangingMan, Harami, HaramiCross,
+    HasbrouckInformationShare, HeadAndShoulders, HeikinAshiOscillator, HiLoActivator, HighLowRange,
+    HighWave, HighpassFilter, Hikkake, HikkakeModified, HilbertDominantCycle, HistoricalVolatility,
+    Hma, HoltWinters, HomingPigeon, HtDcPhase, HtTrendMode, HurstExponent, IdenticalThreeCrows,
+    InNeck, Indicator, Inertia, InformationRatio, InstantaneousTrendline, IntradayIntensity,
+    IntradayMomentumIndex, InverseFisherTransform, InvertedHammer, JarqueBera, Jma, JumpIndicator,
+    KRatio, Kama, KellyCriterion, KendallTau, Kicking, KickingByLength, Kurtosis, Kvo, KylesLambda,
+    LadderBottom, LaguerreRsi, LinRegAngle, LinRegIntercept, LinRegSlope, LinearRegression,
+    LogReturn, LongLeggedDoji, LongLine, LongShortRatio, M2Measure, MacdHistogram,
+    MarketFacilitationIndex, MartinRatio, Marubozu, MassIndex, MatHold, MatchingLow, MaxDrawdown,
+    McGinleyDynamic, MedianAbsoluteDeviation, MedianMa, MedianPrice, Mfi, MidPoint, MidPrice,
+    MinusDi, MinusDm, Mom, MorningDojiStar, MorningEveningStar, NakedPoc, Natr, NewPriceLines, Nvi,
+    OIPriceDivergence, OIWeighted, Obv, OiToVolumeRatio, OmegaRatio, OnNeck, OpenInterestDelta,
+    OpenInterestMomentum, OpeningMarubozu, OuHalfLife, OvernightGap, PainIndex, PairSpreadZScore,
+    PairwiseBeta, ParkinsonVolatility, PearsonCorrelation, PercentB, PercentageTrailingStop,
+    PerpetualPremiumIndex, Pgo, PiercingDarkCloud, Pin, PivotReversal, PlusDi, PlusDm, Pmo,
+    PolarizedFractalEfficiency, Ppo, PpoHistogram, ProfileShape, ProfitFactor,
+    ProjectionOscillator, Psar, Pvi, Qstick, RSquared, RealizedSpread, RealizedVolatility,
+    RecoveryFactor, RectangleRange, Reflex, RegimeLabel, RenkoTrailingStop, RickshawMan,
+    RisingThreeMethods, Rmi, Roc, Rocp, Rocr, Rocr100, RogersSatchellVolatility, RollMeasure,
     RollingCorrelation, RollingCovariance, RollingIqr, RollingMinMaxScaler, RollingPercentileRank,
     RollingQuantile, RollingVwap, RoofingFilter, Rsi, Rsx, Rvi, RviVolatility, SampleEntropy,
     SarExt, SeasonalZScore, SeparatingLines, SessionVwap, ShannonEntropy, Shark, SharpeRatio,
-    ShootingStar, ShortLine, SineWave, SineWeightedMa, SinglePrints, Skewness, Sma, Smi, Smma,
-    SortinoRatio, SpearmanCorrelation, SpinningTop, SpreadAr1Coefficient, SpreadHurst,
-    StalledPattern, StandardError, Stc, StdDev, StepTrailingStop, SterlingRatio, StickSandwich,
-    StochRsi, StochasticCci, SuperSmoother, TailRatio, Takuri, TasukiGap, TdCamouflage, TdClop,
-    TdClopwin, TdCombo, TdCountdown, TdDWave, TdDeMarker, TdDifferential, TdOpen, TdPressure,
-    TdPropulsion, TdRei, TdSetup, TdTrap, Tema, ThreeDrives, ThreeInside, ThreeLineBreak,
-    ThreeLineStrike, ThreeOutside, ThreeSoldiersOrCrows, ThreeStarsInSouth, Thrusting, Tii,
-    TimeBasedStop, TowerTopBottom, TradeVolumeIndex, TrendLabel, TrendStrengthIndex, Trendflex,
-    TreynorRatio, Triangle, Trima, TripleTopBottom, Tristar, Trix, TrueRange, Tsf, TsfOscillator,
-    Tsi, Tsv, TtmTrend, TurnOfMonth, Tweezer, TwiggsMoneyFlow, TwoCrows, TypicalPrice, UlcerIndex,
-    UltimateOscillator, UniqueThreeRiver, UniversalOscillator, UpsideGapThreeMethods,
-    UpsideGapTwoCrows, UpsidePotentialRatio, ValueAtRisk, Variance, VarianceRatio,
-    VerticalHorizontalFilter, Vidya, VolatilityOfVolatility, VolatilityRatio, VoltyStop,
-    VolumeOscillator, VolumePriceTrend, VolumeRsi, Vwap, Vwma, Vzo, Wad, WavePm, Wedge,
-    WeightedClose, WickRatio, WilliamsR, WinRate, Wma, YangZhangVolatility, YoyoExit, ZScore,
-    Zlema, T3,
+    ShootingStar, ShortLine, Side, SignedVolume, SineWave, SineWeightedMa, SinglePrints, Skewness,
+    Sma, Smi, Smma, SortinoRatio, SpearmanCorrelation, SpinningTop, SpreadAr1Coefficient,
+    SpreadHurst, StalledPattern, StandardError, Stc, StdDev, StepTrailingStop, SterlingRatio,
+    StickSandwich, StochRsi, StochasticCci, SuperSmoother, TailRatio, TakerBuySellRatio, Takuri,
+    TasukiGap, TdCamouflage, TdClop, TdClopwin, TdCombo, TdCountdown, TdDWave, TdDeMarker,
+    TdDifferential, TdOpen, TdPressure, TdPropulsion, TdRei, TdSetup, TdTrap, Tema,
+    TermStructureBasis, ThreeDrives, ThreeInside, ThreeLineBreak, ThreeLineStrike, ThreeOutside,
+    ThreeSoldiersOrCrows, ThreeStarsInSouth, Thrusting, Tii, TimeBasedStop, TowerTopBottom, Trade,
+    TradeImbalance, TradeQuote, TradeSignAutocorrelation, TradeVolumeIndex, TrendLabel,
+    TrendStrengthIndex, Trendflex, TreynorRatio, Triangle, Trima, TripleTopBottom, Tristar, Trix,
+    TrueRange, Tsf, TsfOscillator, Tsi, Tsv, TtmTrend, TurnOfMonth, Tweezer, TwiggsMoneyFlow,
+    TwoCrows, TypicalPrice, UlcerIndex, UltimateOscillator, UniqueThreeRiver, UniversalOscillator,
+    UpsideGapThreeMethods, UpsideGapTwoCrows, UpsidePotentialRatio, ValueAtRisk, Variance,
+    VarianceRatio, VerticalHorizontalFilter, Vidya, VolatilityOfVolatility, VolatilityRatio,
+    VoltyStop, VolumeOscillator, VolumePriceTrend, VolumeRsi, Vpin, Vwap, Vwma, Vzo, Wad, WavePm,
+    Wedge, WeightedClose, WickRatio, WilliamsR, WinRate, Wma, YangZhangVolatility, YoyoExit,
+    ZScore, Zlema, T3,
 };
 
 // ===== Scalar indicators (f64 -> f64) =====
@@ -31843,6 +31847,1824 @@ pub unsafe extern "C" fn wickra_yoyo_exit_reset(handle: *mut YoyoExit) {
 /// `handle` must have been returned by `wickra_yoyo_exit_new` and not previously freed, or `NULL`.
 #[no_mangle]
 pub unsafe extern "C" fn wickra_yoyo_exit_free(handle: *mut YoyoExit) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+// ===== Trade-input indicators (microstructure) =====
+
+/// Create a `AmihudIlliquidity` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_amihud_illiquidity_free`.
+#[no_mangle]
+pub extern "C" fn wickra_amihud_illiquidity_new(period: usize) -> *mut AmihudIlliquidity {
+    match AmihudIlliquidity::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one trade; returns the output, or `NaN` during warmup / on a `NULL` handle /
+/// if the trade is invalid (non-positive price, negative size).
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_amihud_illiquidity_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_amihud_illiquidity_update(
+    handle: *mut AmihudIlliquidity,
+    price: f64,
+    size: f64,
+    is_buy: bool,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    let side = if is_buy { Side::Buy } else { Side::Sell };
+    match Trade::new(price, size, side, timestamp) {
+        Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_amihud_illiquidity_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_amihud_illiquidity_reset(handle: *mut AmihudIlliquidity) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_amihud_illiquidity_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_amihud_illiquidity_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_amihud_illiquidity_free(handle: *mut AmihudIlliquidity) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `CumulativeVolumeDelta` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_cumulative_volume_delta_free`.
+#[no_mangle]
+pub extern "C" fn wickra_cumulative_volume_delta_new() -> *mut CumulativeVolumeDelta {
+    Box::into_raw(Box::new(CumulativeVolumeDelta::new()))
+}
+
+/// Feed one trade; returns the output, or `NaN` during warmup / on a `NULL` handle /
+/// if the trade is invalid (non-positive price, negative size).
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_cumulative_volume_delta_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cumulative_volume_delta_update(
+    handle: *mut CumulativeVolumeDelta,
+    price: f64,
+    size: f64,
+    is_buy: bool,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    let side = if is_buy { Side::Buy } else { Side::Sell };
+    match Trade::new(price, size, side, timestamp) {
+        Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cumulative_volume_delta_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cumulative_volume_delta_reset(handle: *mut CumulativeVolumeDelta) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_cumulative_volume_delta_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_cumulative_volume_delta_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cumulative_volume_delta_free(handle: *mut CumulativeVolumeDelta) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `Pin` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_pin_free`.
+#[no_mangle]
+pub extern "C" fn wickra_pin_new(window: usize) -> *mut Pin {
+    match Pin::new(window) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one trade; returns the output, or `NaN` during warmup / on a `NULL` handle /
+/// if the trade is invalid (non-positive price, negative size).
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_pin_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pin_update(
+    handle: *mut Pin,
+    price: f64,
+    size: f64,
+    is_buy: bool,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    let side = if is_buy { Side::Buy } else { Side::Sell };
+    match Trade::new(price, size, side, timestamp) {
+        Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pin_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pin_reset(handle: *mut Pin) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_pin_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_pin_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pin_free(handle: *mut Pin) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `RollMeasure` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_roll_measure_free`.
+#[no_mangle]
+pub extern "C" fn wickra_roll_measure_new(period: usize) -> *mut RollMeasure {
+    match RollMeasure::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one trade; returns the output, or `NaN` during warmup / on a `NULL` handle /
+/// if the trade is invalid (non-positive price, negative size).
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_roll_measure_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_roll_measure_update(
+    handle: *mut RollMeasure,
+    price: f64,
+    size: f64,
+    is_buy: bool,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    let side = if is_buy { Side::Buy } else { Side::Sell };
+    match Trade::new(price, size, side, timestamp) {
+        Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_roll_measure_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_roll_measure_reset(handle: *mut RollMeasure) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_roll_measure_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_roll_measure_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_roll_measure_free(handle: *mut RollMeasure) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `SignedVolume` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_signed_volume_free`.
+#[no_mangle]
+pub extern "C" fn wickra_signed_volume_new() -> *mut SignedVolume {
+    Box::into_raw(Box::new(SignedVolume::new()))
+}
+
+/// Feed one trade; returns the output, or `NaN` during warmup / on a `NULL` handle /
+/// if the trade is invalid (non-positive price, negative size).
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_signed_volume_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_signed_volume_update(
+    handle: *mut SignedVolume,
+    price: f64,
+    size: f64,
+    is_buy: bool,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    let side = if is_buy { Side::Buy } else { Side::Sell };
+    match Trade::new(price, size, side, timestamp) {
+        Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_signed_volume_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_signed_volume_reset(handle: *mut SignedVolume) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_signed_volume_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_signed_volume_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_signed_volume_free(handle: *mut SignedVolume) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `TradeImbalance` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_trade_imbalance_free`.
+#[no_mangle]
+pub extern "C" fn wickra_trade_imbalance_new(window: usize) -> *mut TradeImbalance {
+    match TradeImbalance::new(window) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one trade; returns the output, or `NaN` during warmup / on a `NULL` handle /
+/// if the trade is invalid (non-positive price, negative size).
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_trade_imbalance_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trade_imbalance_update(
+    handle: *mut TradeImbalance,
+    price: f64,
+    size: f64,
+    is_buy: bool,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    let side = if is_buy { Side::Buy } else { Side::Sell };
+    match Trade::new(price, size, side, timestamp) {
+        Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trade_imbalance_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trade_imbalance_reset(handle: *mut TradeImbalance) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_trade_imbalance_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_trade_imbalance_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trade_imbalance_free(handle: *mut TradeImbalance) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `TradeSignAutocorrelation` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_trade_sign_autocorrelation_free`.
+#[no_mangle]
+pub extern "C" fn wickra_trade_sign_autocorrelation_new(
+    period: usize,
+) -> *mut TradeSignAutocorrelation {
+    match TradeSignAutocorrelation::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one trade; returns the output, or `NaN` during warmup / on a `NULL` handle /
+/// if the trade is invalid (non-positive price, negative size).
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_trade_sign_autocorrelation_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trade_sign_autocorrelation_update(
+    handle: *mut TradeSignAutocorrelation,
+    price: f64,
+    size: f64,
+    is_buy: bool,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    let side = if is_buy { Side::Buy } else { Side::Sell };
+    match Trade::new(price, size, side, timestamp) {
+        Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trade_sign_autocorrelation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trade_sign_autocorrelation_reset(
+    handle: *mut TradeSignAutocorrelation,
+) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_trade_sign_autocorrelation_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_trade_sign_autocorrelation_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trade_sign_autocorrelation_free(
+    handle: *mut TradeSignAutocorrelation,
+) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `Vpin` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_vpin_free`.
+#[no_mangle]
+pub extern "C" fn wickra_vpin_new(bucket_volume: f64, num_buckets: usize) -> *mut Vpin {
+    match Vpin::new(bucket_volume, num_buckets) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one trade; returns the output, or `NaN` during warmup / on a `NULL` handle /
+/// if the trade is invalid (non-positive price, negative size).
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_vpin_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vpin_update(
+    handle: *mut Vpin,
+    price: f64,
+    size: f64,
+    is_buy: bool,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    let side = if is_buy { Side::Buy } else { Side::Sell };
+    match Trade::new(price, size, side, timestamp) {
+        Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vpin_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vpin_reset(handle: *mut Vpin) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_vpin_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_vpin_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vpin_free(handle: *mut Vpin) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+// ===== Trade+quote-input indicators (microstructure) =====
+
+/// Create a `EffectiveSpread` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_effective_spread_free`.
+#[no_mangle]
+pub extern "C" fn wickra_effective_spread_new() -> *mut EffectiveSpread {
+    Box::into_raw(Box::new(EffectiveSpread::new()))
+}
+
+/// Feed one trade with the prevailing mid price; returns the output, or `NaN` during
+/// warmup / on a `NULL` handle / if the trade or mid is invalid.
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_effective_spread_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_effective_spread_update(
+    handle: *mut EffectiveSpread,
+    price: f64,
+    size: f64,
+    is_buy: bool,
+    timestamp: i64,
+    mid: f64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    let side = if is_buy { Side::Buy } else { Side::Sell };
+    let Ok(trade) = Trade::new(price, size, side, timestamp) else {
+        return f64::NAN;
+    };
+    match TradeQuote::new(trade, mid) {
+        Ok(quote) => ind.update(quote).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_effective_spread_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_effective_spread_reset(handle: *mut EffectiveSpread) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_effective_spread_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_effective_spread_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_effective_spread_free(handle: *mut EffectiveSpread) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `KylesLambda` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_kyles_lambda_free`.
+#[no_mangle]
+pub extern "C" fn wickra_kyles_lambda_new(window: usize) -> *mut KylesLambda {
+    match KylesLambda::new(window) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one trade with the prevailing mid price; returns the output, or `NaN` during
+/// warmup / on a `NULL` handle / if the trade or mid is invalid.
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_kyles_lambda_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kyles_lambda_update(
+    handle: *mut KylesLambda,
+    price: f64,
+    size: f64,
+    is_buy: bool,
+    timestamp: i64,
+    mid: f64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    let side = if is_buy { Side::Buy } else { Side::Sell };
+    let Ok(trade) = Trade::new(price, size, side, timestamp) else {
+        return f64::NAN;
+    };
+    match TradeQuote::new(trade, mid) {
+        Ok(quote) => ind.update(quote).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kyles_lambda_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kyles_lambda_reset(handle: *mut KylesLambda) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_kyles_lambda_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_kyles_lambda_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kyles_lambda_free(handle: *mut KylesLambda) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `RealizedSpread` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_realized_spread_free`.
+#[no_mangle]
+pub extern "C" fn wickra_realized_spread_new(horizon: usize) -> *mut RealizedSpread {
+    match RealizedSpread::new(horizon) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one trade with the prevailing mid price; returns the output, or `NaN` during
+/// warmup / on a `NULL` handle / if the trade or mid is invalid.
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_realized_spread_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_realized_spread_update(
+    handle: *mut RealizedSpread,
+    price: f64,
+    size: f64,
+    is_buy: bool,
+    timestamp: i64,
+    mid: f64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    let side = if is_buy { Side::Buy } else { Side::Sell };
+    let Ok(trade) = Trade::new(price, size, side, timestamp) else {
+        return f64::NAN;
+    };
+    match TradeQuote::new(trade, mid) {
+        Ok(quote) => ind.update(quote).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_realized_spread_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_realized_spread_reset(handle: *mut RealizedSpread) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_realized_spread_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_realized_spread_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_realized_spread_free(handle: *mut RealizedSpread) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+// ===== Derivatives-tick-input indicators =====
+
+/// Create a `CalendarSpread` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_calendar_spread_free`.
+#[no_mangle]
+pub extern "C" fn wickra_calendar_spread_new() -> *mut CalendarSpread {
+    Box::into_raw(Box::new(CalendarSpread::new()))
+}
+
+/// Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+/// `NULL` handle / if the tick is invalid.
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_calendar_spread_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_calendar_spread_update(
+    handle: *mut CalendarSpread,
+    funding_rate: f64,
+    mark_price: f64,
+    index_price: f64,
+    futures_price: f64,
+    open_interest: f64,
+    long_size: f64,
+    short_size: f64,
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+    long_liquidation: f64,
+    short_liquidation: f64,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    match DerivativesTick::new(
+        funding_rate,
+        mark_price,
+        index_price,
+        futures_price,
+        open_interest,
+        long_size,
+        short_size,
+        taker_buy_volume,
+        taker_sell_volume,
+        long_liquidation,
+        short_liquidation,
+        timestamp,
+    ) {
+        Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_calendar_spread_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_calendar_spread_reset(handle: *mut CalendarSpread) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_calendar_spread_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_calendar_spread_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_calendar_spread_free(handle: *mut CalendarSpread) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `EstimatedLeverageRatio` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_estimated_leverage_ratio_free`.
+#[no_mangle]
+pub extern "C" fn wickra_estimated_leverage_ratio_new() -> *mut EstimatedLeverageRatio {
+    Box::into_raw(Box::new(EstimatedLeverageRatio::new()))
+}
+
+/// Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+/// `NULL` handle / if the tick is invalid.
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_estimated_leverage_ratio_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_estimated_leverage_ratio_update(
+    handle: *mut EstimatedLeverageRatio,
+    funding_rate: f64,
+    mark_price: f64,
+    index_price: f64,
+    futures_price: f64,
+    open_interest: f64,
+    long_size: f64,
+    short_size: f64,
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+    long_liquidation: f64,
+    short_liquidation: f64,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    match DerivativesTick::new(
+        funding_rate,
+        mark_price,
+        index_price,
+        futures_price,
+        open_interest,
+        long_size,
+        short_size,
+        taker_buy_volume,
+        taker_sell_volume,
+        long_liquidation,
+        short_liquidation,
+        timestamp,
+    ) {
+        Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_estimated_leverage_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_estimated_leverage_ratio_reset(
+    handle: *mut EstimatedLeverageRatio,
+) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_estimated_leverage_ratio_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_estimated_leverage_ratio_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_estimated_leverage_ratio_free(handle: *mut EstimatedLeverageRatio) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `FundingBasis` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_funding_basis_free`.
+#[no_mangle]
+pub extern "C" fn wickra_funding_basis_new() -> *mut FundingBasis {
+    Box::into_raw(Box::new(FundingBasis::new()))
+}
+
+/// Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+/// `NULL` handle / if the tick is invalid.
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_funding_basis_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_basis_update(
+    handle: *mut FundingBasis,
+    funding_rate: f64,
+    mark_price: f64,
+    index_price: f64,
+    futures_price: f64,
+    open_interest: f64,
+    long_size: f64,
+    short_size: f64,
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+    long_liquidation: f64,
+    short_liquidation: f64,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    match DerivativesTick::new(
+        funding_rate,
+        mark_price,
+        index_price,
+        futures_price,
+        open_interest,
+        long_size,
+        short_size,
+        taker_buy_volume,
+        taker_sell_volume,
+        long_liquidation,
+        short_liquidation,
+        timestamp,
+    ) {
+        Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_funding_basis_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_basis_reset(handle: *mut FundingBasis) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_funding_basis_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_funding_basis_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_basis_free(handle: *mut FundingBasis) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `FundingImpliedApr` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_funding_implied_apr_free`.
+#[no_mangle]
+pub extern "C" fn wickra_funding_implied_apr_new(
+    intervals_per_year: f64,
+) -> *mut FundingImpliedApr {
+    match FundingImpliedApr::new(intervals_per_year) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+/// `NULL` handle / if the tick is invalid.
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_funding_implied_apr_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_implied_apr_update(
+    handle: *mut FundingImpliedApr,
+    funding_rate: f64,
+    mark_price: f64,
+    index_price: f64,
+    futures_price: f64,
+    open_interest: f64,
+    long_size: f64,
+    short_size: f64,
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+    long_liquidation: f64,
+    short_liquidation: f64,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    match DerivativesTick::new(
+        funding_rate,
+        mark_price,
+        index_price,
+        futures_price,
+        open_interest,
+        long_size,
+        short_size,
+        taker_buy_volume,
+        taker_sell_volume,
+        long_liquidation,
+        short_liquidation,
+        timestamp,
+    ) {
+        Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_funding_implied_apr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_implied_apr_reset(handle: *mut FundingImpliedApr) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_funding_implied_apr_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_funding_implied_apr_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_implied_apr_free(handle: *mut FundingImpliedApr) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `FundingRate` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_funding_rate_free`.
+#[no_mangle]
+pub extern "C" fn wickra_funding_rate_new() -> *mut FundingRate {
+    Box::into_raw(Box::new(FundingRate::new()))
+}
+
+/// Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+/// `NULL` handle / if the tick is invalid.
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_funding_rate_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_update(
+    handle: *mut FundingRate,
+    funding_rate: f64,
+    mark_price: f64,
+    index_price: f64,
+    futures_price: f64,
+    open_interest: f64,
+    long_size: f64,
+    short_size: f64,
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+    long_liquidation: f64,
+    short_liquidation: f64,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    match DerivativesTick::new(
+        funding_rate,
+        mark_price,
+        index_price,
+        futures_price,
+        open_interest,
+        long_size,
+        short_size,
+        taker_buy_volume,
+        taker_sell_volume,
+        long_liquidation,
+        short_liquidation,
+        timestamp,
+    ) {
+        Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_funding_rate_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_reset(handle: *mut FundingRate) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_funding_rate_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_funding_rate_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_free(handle: *mut FundingRate) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `FundingRateMean` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_funding_rate_mean_free`.
+#[no_mangle]
+pub extern "C" fn wickra_funding_rate_mean_new(window: usize) -> *mut FundingRateMean {
+    match FundingRateMean::new(window) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+/// `NULL` handle / if the tick is invalid.
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_funding_rate_mean_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_mean_update(
+    handle: *mut FundingRateMean,
+    funding_rate: f64,
+    mark_price: f64,
+    index_price: f64,
+    futures_price: f64,
+    open_interest: f64,
+    long_size: f64,
+    short_size: f64,
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+    long_liquidation: f64,
+    short_liquidation: f64,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    match DerivativesTick::new(
+        funding_rate,
+        mark_price,
+        index_price,
+        futures_price,
+        open_interest,
+        long_size,
+        short_size,
+        taker_buy_volume,
+        taker_sell_volume,
+        long_liquidation,
+        short_liquidation,
+        timestamp,
+    ) {
+        Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_funding_rate_mean_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_mean_reset(handle: *mut FundingRateMean) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_funding_rate_mean_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_funding_rate_mean_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_mean_free(handle: *mut FundingRateMean) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `FundingRateZScore` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_funding_rate_z_score_free`.
+#[no_mangle]
+pub extern "C" fn wickra_funding_rate_z_score_new(window: usize) -> *mut FundingRateZScore {
+    match FundingRateZScore::new(window) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+/// `NULL` handle / if the tick is invalid.
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_funding_rate_z_score_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_z_score_update(
+    handle: *mut FundingRateZScore,
+    funding_rate: f64,
+    mark_price: f64,
+    index_price: f64,
+    futures_price: f64,
+    open_interest: f64,
+    long_size: f64,
+    short_size: f64,
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+    long_liquidation: f64,
+    short_liquidation: f64,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    match DerivativesTick::new(
+        funding_rate,
+        mark_price,
+        index_price,
+        futures_price,
+        open_interest,
+        long_size,
+        short_size,
+        taker_buy_volume,
+        taker_sell_volume,
+        long_liquidation,
+        short_liquidation,
+        timestamp,
+    ) {
+        Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_funding_rate_z_score_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_z_score_reset(handle: *mut FundingRateZScore) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_funding_rate_z_score_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_funding_rate_z_score_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_z_score_free(handle: *mut FundingRateZScore) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `LongShortRatio` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_long_short_ratio_free`.
+#[no_mangle]
+pub extern "C" fn wickra_long_short_ratio_new() -> *mut LongShortRatio {
+    Box::into_raw(Box::new(LongShortRatio::new()))
+}
+
+/// Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+/// `NULL` handle / if the tick is invalid.
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_long_short_ratio_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_long_short_ratio_update(
+    handle: *mut LongShortRatio,
+    funding_rate: f64,
+    mark_price: f64,
+    index_price: f64,
+    futures_price: f64,
+    open_interest: f64,
+    long_size: f64,
+    short_size: f64,
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+    long_liquidation: f64,
+    short_liquidation: f64,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    match DerivativesTick::new(
+        funding_rate,
+        mark_price,
+        index_price,
+        futures_price,
+        open_interest,
+        long_size,
+        short_size,
+        taker_buy_volume,
+        taker_sell_volume,
+        long_liquidation,
+        short_liquidation,
+        timestamp,
+    ) {
+        Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_long_short_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_long_short_ratio_reset(handle: *mut LongShortRatio) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_long_short_ratio_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_long_short_ratio_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_long_short_ratio_free(handle: *mut LongShortRatio) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `OpenInterestDelta` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_open_interest_delta_free`.
+#[no_mangle]
+pub extern "C" fn wickra_open_interest_delta_new() -> *mut OpenInterestDelta {
+    Box::into_raw(Box::new(OpenInterestDelta::new()))
+}
+
+/// Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+/// `NULL` handle / if the tick is invalid.
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_open_interest_delta_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_open_interest_delta_update(
+    handle: *mut OpenInterestDelta,
+    funding_rate: f64,
+    mark_price: f64,
+    index_price: f64,
+    futures_price: f64,
+    open_interest: f64,
+    long_size: f64,
+    short_size: f64,
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+    long_liquidation: f64,
+    short_liquidation: f64,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    match DerivativesTick::new(
+        funding_rate,
+        mark_price,
+        index_price,
+        futures_price,
+        open_interest,
+        long_size,
+        short_size,
+        taker_buy_volume,
+        taker_sell_volume,
+        long_liquidation,
+        short_liquidation,
+        timestamp,
+    ) {
+        Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_open_interest_delta_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_open_interest_delta_reset(handle: *mut OpenInterestDelta) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_open_interest_delta_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_open_interest_delta_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_open_interest_delta_free(handle: *mut OpenInterestDelta) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `OIPriceDivergence` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_oi_price_divergence_free`.
+#[no_mangle]
+pub extern "C" fn wickra_oi_price_divergence_new(window: usize) -> *mut OIPriceDivergence {
+    match OIPriceDivergence::new(window) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+/// `NULL` handle / if the tick is invalid.
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_oi_price_divergence_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_price_divergence_update(
+    handle: *mut OIPriceDivergence,
+    funding_rate: f64,
+    mark_price: f64,
+    index_price: f64,
+    futures_price: f64,
+    open_interest: f64,
+    long_size: f64,
+    short_size: f64,
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+    long_liquidation: f64,
+    short_liquidation: f64,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    match DerivativesTick::new(
+        funding_rate,
+        mark_price,
+        index_price,
+        futures_price,
+        open_interest,
+        long_size,
+        short_size,
+        taker_buy_volume,
+        taker_sell_volume,
+        long_liquidation,
+        short_liquidation,
+        timestamp,
+    ) {
+        Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_oi_price_divergence_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_price_divergence_reset(handle: *mut OIPriceDivergence) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_oi_price_divergence_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_oi_price_divergence_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_price_divergence_free(handle: *mut OIPriceDivergence) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `OiToVolumeRatio` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_oi_to_volume_ratio_free`.
+#[no_mangle]
+pub extern "C" fn wickra_oi_to_volume_ratio_new() -> *mut OiToVolumeRatio {
+    Box::into_raw(Box::new(OiToVolumeRatio::new()))
+}
+
+/// Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+/// `NULL` handle / if the tick is invalid.
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_oi_to_volume_ratio_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_to_volume_ratio_update(
+    handle: *mut OiToVolumeRatio,
+    funding_rate: f64,
+    mark_price: f64,
+    index_price: f64,
+    futures_price: f64,
+    open_interest: f64,
+    long_size: f64,
+    short_size: f64,
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+    long_liquidation: f64,
+    short_liquidation: f64,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    match DerivativesTick::new(
+        funding_rate,
+        mark_price,
+        index_price,
+        futures_price,
+        open_interest,
+        long_size,
+        short_size,
+        taker_buy_volume,
+        taker_sell_volume,
+        long_liquidation,
+        short_liquidation,
+        timestamp,
+    ) {
+        Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_oi_to_volume_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_to_volume_ratio_reset(handle: *mut OiToVolumeRatio) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_oi_to_volume_ratio_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_oi_to_volume_ratio_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_to_volume_ratio_free(handle: *mut OiToVolumeRatio) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `OIWeighted` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_oi_weighted_free`.
+#[no_mangle]
+pub extern "C" fn wickra_oi_weighted_new() -> *mut OIWeighted {
+    Box::into_raw(Box::new(OIWeighted::new()))
+}
+
+/// Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+/// `NULL` handle / if the tick is invalid.
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_oi_weighted_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_weighted_update(
+    handle: *mut OIWeighted,
+    funding_rate: f64,
+    mark_price: f64,
+    index_price: f64,
+    futures_price: f64,
+    open_interest: f64,
+    long_size: f64,
+    short_size: f64,
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+    long_liquidation: f64,
+    short_liquidation: f64,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    match DerivativesTick::new(
+        funding_rate,
+        mark_price,
+        index_price,
+        futures_price,
+        open_interest,
+        long_size,
+        short_size,
+        taker_buy_volume,
+        taker_sell_volume,
+        long_liquidation,
+        short_liquidation,
+        timestamp,
+    ) {
+        Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_oi_weighted_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_weighted_reset(handle: *mut OIWeighted) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_oi_weighted_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_oi_weighted_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_weighted_free(handle: *mut OIWeighted) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `OpenInterestMomentum` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_open_interest_momentum_free`.
+#[no_mangle]
+pub extern "C" fn wickra_open_interest_momentum_new(period: usize) -> *mut OpenInterestMomentum {
+    match OpenInterestMomentum::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+/// `NULL` handle / if the tick is invalid.
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_open_interest_momentum_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_open_interest_momentum_update(
+    handle: *mut OpenInterestMomentum,
+    funding_rate: f64,
+    mark_price: f64,
+    index_price: f64,
+    futures_price: f64,
+    open_interest: f64,
+    long_size: f64,
+    short_size: f64,
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+    long_liquidation: f64,
+    short_liquidation: f64,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    match DerivativesTick::new(
+        funding_rate,
+        mark_price,
+        index_price,
+        futures_price,
+        open_interest,
+        long_size,
+        short_size,
+        taker_buy_volume,
+        taker_sell_volume,
+        long_liquidation,
+        short_liquidation,
+        timestamp,
+    ) {
+        Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_open_interest_momentum_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_open_interest_momentum_reset(handle: *mut OpenInterestMomentum) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_open_interest_momentum_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_open_interest_momentum_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_open_interest_momentum_free(handle: *mut OpenInterestMomentum) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `PerpetualPremiumIndex` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_perpetual_premium_index_free`.
+#[no_mangle]
+pub extern "C" fn wickra_perpetual_premium_index_new() -> *mut PerpetualPremiumIndex {
+    Box::into_raw(Box::new(PerpetualPremiumIndex::new()))
+}
+
+/// Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+/// `NULL` handle / if the tick is invalid.
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_perpetual_premium_index_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_perpetual_premium_index_update(
+    handle: *mut PerpetualPremiumIndex,
+    funding_rate: f64,
+    mark_price: f64,
+    index_price: f64,
+    futures_price: f64,
+    open_interest: f64,
+    long_size: f64,
+    short_size: f64,
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+    long_liquidation: f64,
+    short_liquidation: f64,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    match DerivativesTick::new(
+        funding_rate,
+        mark_price,
+        index_price,
+        futures_price,
+        open_interest,
+        long_size,
+        short_size,
+        taker_buy_volume,
+        taker_sell_volume,
+        long_liquidation,
+        short_liquidation,
+        timestamp,
+    ) {
+        Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_perpetual_premium_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_perpetual_premium_index_reset(handle: *mut PerpetualPremiumIndex) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_perpetual_premium_index_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_perpetual_premium_index_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_perpetual_premium_index_free(handle: *mut PerpetualPremiumIndex) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `TakerBuySellRatio` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_taker_buy_sell_ratio_free`.
+#[no_mangle]
+pub extern "C" fn wickra_taker_buy_sell_ratio_new() -> *mut TakerBuySellRatio {
+    Box::into_raw(Box::new(TakerBuySellRatio::new()))
+}
+
+/// Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+/// `NULL` handle / if the tick is invalid.
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_taker_buy_sell_ratio_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_taker_buy_sell_ratio_update(
+    handle: *mut TakerBuySellRatio,
+    funding_rate: f64,
+    mark_price: f64,
+    index_price: f64,
+    futures_price: f64,
+    open_interest: f64,
+    long_size: f64,
+    short_size: f64,
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+    long_liquidation: f64,
+    short_liquidation: f64,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    match DerivativesTick::new(
+        funding_rate,
+        mark_price,
+        index_price,
+        futures_price,
+        open_interest,
+        long_size,
+        short_size,
+        taker_buy_volume,
+        taker_sell_volume,
+        long_liquidation,
+        short_liquidation,
+        timestamp,
+    ) {
+        Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_taker_buy_sell_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_taker_buy_sell_ratio_reset(handle: *mut TakerBuySellRatio) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_taker_buy_sell_ratio_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_taker_buy_sell_ratio_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_taker_buy_sell_ratio_free(handle: *mut TakerBuySellRatio) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `TermStructureBasis` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_term_structure_basis_free`.
+#[no_mangle]
+pub extern "C" fn wickra_term_structure_basis_new() -> *mut TermStructureBasis {
+    Box::into_raw(Box::new(TermStructureBasis::new()))
+}
+
+/// Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+/// `NULL` handle / if the tick is invalid.
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_term_structure_basis_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_term_structure_basis_update(
+    handle: *mut TermStructureBasis,
+    funding_rate: f64,
+    mark_price: f64,
+    index_price: f64,
+    futures_price: f64,
+    open_interest: f64,
+    long_size: f64,
+    short_size: f64,
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+    long_liquidation: f64,
+    short_liquidation: f64,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    match DerivativesTick::new(
+        funding_rate,
+        mark_price,
+        index_price,
+        futures_price,
+        open_interest,
+        long_size,
+        short_size,
+        taker_buy_volume,
+        taker_sell_volume,
+        long_liquidation,
+        short_liquidation,
+        timestamp,
+    ) {
+        Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_term_structure_basis_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_term_structure_basis_reset(handle: *mut TermStructureBasis) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_term_structure_basis_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_term_structure_basis_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_term_structure_basis_free(handle: *mut TermStructureBasis) {
     if !handle.is_null() {
         drop(Box::from_raw(handle));
     }

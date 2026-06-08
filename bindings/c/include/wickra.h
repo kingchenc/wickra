@@ -478,6 +478,37 @@ typedef struct Alma Alma;
 typedef struct Alpha Alpha;
 
 /**
+ * Amihud Illiquidity — the average absolute log return per unit of traded
+ * value over the last `period` trades (Amihud, 2002).
+ *
+ * ```text
+ * rₜ      = ln(priceₜ / priceₜ₋₁)
+ * ILLIQₜ  = |rₜ| / (priceₜ · sizeₜ)        (return per dollar of volume)
+ * Amihud  = mean of ILLIQ over the last `period` trades
+ * ```
+ *
+ * Amihud's measure captures how much the price moves for a given amount of
+ * traded value: a **high** reading means small volume already shifts the price
+ * a lot (an illiquid, easily-moved market), a **low** reading means it takes
+ * large volume to move the price (a deep, liquid market). It is the workhorse
+ * cross-sectional liquidity proxy in market-microstructure research.
+ *
+ * `Input = Trade`. Trades with zero size carry no traded value and are skipped
+ * (the ratio is undefined); the last value is returned and state is untouched.
+ * The first valid trade only seeds the reference price.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, Side, Trade, AmihudIlliquidity};
+ *
+ * let mut amihud = AmihudIlliquidity::new(20).unwrap();
+ * assert_eq!(amihud.update(Trade::new(100.0, 5.0, Side::Buy, 0).unwrap()), None);
+ * ```
+ */
+typedef struct AmihudIlliquidity AmihudIlliquidity;
+
+/**
  * Anchored RSI — a cumulative Relative Strength Index whose averaging begins at
  * a user-chosen anchor bar rather than over a fixed Wilder period.
  *
@@ -1365,6 +1396,45 @@ typedef struct BurkeRatio BurkeRatio;
 typedef struct Butterfly Butterfly;
 
 /**
+ * Calendar Spread — the relative spread between a dated (e.g. quarterly)
+ * futures price and the perpetual mark price.
+ *
+ * ```text
+ * spread = (futuresPrice − markPrice) / markPrice
+ * ```
+ *
+ * A calendar (or inter-delivery) spread trades the *near* leg against the
+ * *far* leg — here the perpetual against a dated future. The relative spread is
+ * the roll yield available between the two contracts: positive when the future
+ * trades over the perpetual (contango roll), negative when under
+ * (backwardation). Where [`TermStructureBasis`] measures the future against
+ * spot, this measures it against the perpetual — the leg a perp-vs-future
+ * basis trade actually holds. The output is a fraction; multiply by `10_000`
+ * for basis points.
+ *
+ * `Input = DerivativesTick`, `Output = f64`. Stateless; ready after the first
+ * tick.
+ *
+ * [`TermStructureBasis`]: crate::TermStructureBasis
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{CalendarSpread, DerivativesTick, Indicator};
+ *
+ * fn tick(futures: f64, mark: f64) -> DerivativesTick {
+ *     DerivativesTick::new(0.0, mark, mark, futures, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0)
+ *         .unwrap()
+ * }
+ *
+ * let mut cs = CalendarSpread::new();
+ * // futures 101 vs perpetual mark 100 -> 0.01.
+ * assert!((cs.update(tick(101.0, 100.0)).unwrap() - 0.01).abs() < 1e-12);
+ * ```
+ */
+typedef struct CalendarSpread CalendarSpread;
+
+/**
  * Rolling Calmar Ratio.
  *
  * Input is treated as a single period return. Over the trailing window of
@@ -2036,6 +2106,35 @@ typedef struct Counterattack Counterattack;
  * or `0.0`; never `None`. See `crates/wickra-core/src/indicators/crab.rs`.
  */
 typedef struct Crab Crab;
+
+/**
+ * Cumulative Volume Delta (CVD) — the running sum of [signed volume].
+ *
+ * ```text
+ * CVDₜ = CVDₜ₋₁ + sizeₜ · (+1 if buy, −1 if sell)
+ * ```
+ *
+ * CVD is an unbounded running total: a rising line signals net buying pressure
+ * over the session, a falling line net selling. Divergence between CVD and
+ * price is a classic absorption / exhaustion signal. Call [`reset`] at the
+ * start of each session to re-anchor the cumulative total at zero.
+ *
+ * `Input = Trade`, `Output = f64`. Ready after the first trade.
+ *
+ * [signed volume]: crate::SignedVolume
+ * [`reset`]: crate::Indicator::reset
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{CumulativeVolumeDelta, Indicator, Side, Trade};
+ *
+ * let mut cvd = CumulativeVolumeDelta::new();
+ * assert_eq!(cvd.update(Trade::new(100.0, 5.0, Side::Buy, 0).unwrap()), Some(5.0));
+ * assert_eq!(cvd.update(Trade::new(100.0, 2.0, Side::Sell, 1).unwrap()), Some(3.0));
+ * ```
+ */
+typedef struct CumulativeVolumeDelta CumulativeVolumeDelta;
 
 /**
  * Cup-and-Handle / Inverse — a rounded base (the cup) followed by a shallow
@@ -2788,6 +2887,48 @@ typedef struct DynamicMomentumIndex DynamicMomentumIndex;
 typedef struct EaseOfMovement EaseOfMovement;
 
 /**
+ * Effective Spread — twice the signed deviation of an executed trade price
+ * from the prevailing mid, expressed in basis points of the mid.
+ *
+ * ```text
+ * effectiveSpread = 2 · D · (tradePrice − mid) / mid · 10_000   (bps)
+ * ```
+ *
+ * where `D` is the aggressor sign (`+1` for a buy, `−1` for a sell). The
+ * factor of two scales the one-sided deviation up to a full round-trip cost so
+ * it is directly comparable to the [quoted spread]: a marketable order that
+ * fills exactly at the touch of an otherwise quoted-spread book pays an
+ * effective spread equal to the quoted spread. Trades that fill *inside* the
+ * spread (price improvement) read below the quoted spread; trades that walk
+ * the book read above it.
+ *
+ * A buy printed above the mid (`tradePrice > mid`) and a sell printed below it
+ * both yield a positive effective spread — the conventional sign, since the
+ * aggressor pays in both cases. A trade printed on the wrong side of the mid
+ * for its aggressor flag (a buy below the mid) reads negative, the signature of
+ * price improvement or a stale/mislabelled quote.
+ *
+ * `Input = TradeQuote`, `Output = f64`. Stateless; ready after the first
+ * trade-quote.
+ *
+ * [quoted spread]: crate::QuotedSpread
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{EffectiveSpread, Indicator, Side, Trade, TradeQuote};
+ *
+ * let mut es = EffectiveSpread::new();
+ * // Buy filled at 100.05 against a mid of 100.0:
+ * // 2 · (+1) · (100.05 − 100.0) / 100.0 · 10_000 = 10 bps.
+ * let trade = Trade::new(100.05, 1.0, Side::Buy, 0).unwrap();
+ * let quote = TradeQuote::new(trade, 100.0).unwrap();
+ * assert!((es.update(quote).unwrap() - 10.0).abs() < 1e-9);
+ * ```
+ */
+typedef struct EffectiveSpread EffectiveSpread;
+
+/**
  * Ehlers' Adaptive Stochastic.
  *
  * Implements the construction described in *Cycle Analytics for Traders*
@@ -2972,6 +3113,38 @@ typedef struct EmpiricalModeDecomposition EmpiricalModeDecomposition;
  * ```
  */
 typedef struct Engulfing Engulfing;
+
+/**
+ * Estimated Leverage Ratio (ELR) — open interest relative to the aggregate
+ * long+short position size, a proxy for how leveraged outstanding positions are.
+ *
+ * ```text
+ * ELR = open_interest / (long_size + short_size)
+ * ```
+ *
+ * The classic estimated leverage ratio compares open interest (the notional of
+ * outstanding contracts) to the capital backing it. With the size fields of a
+ * [`DerivativesTick`] standing in for the position base, the ratio rises when a
+ * given pool of positions controls more open interest — i.e. when the market is
+ * running hotter leverage. Spikes in ELR mark crowded, fragile conditions where a
+ * move can cascade into liquidations; a falling ELR marks deleveraging.
+ *
+ * The ratio is non-negative; a tick with zero aggregate size reports `0` rather
+ * than dividing by zero. It is stateless — each tick yields one value (no warmup).
+ * Each `update` is O(1).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{DerivativesTick, Indicator, EstimatedLeverageRatio};
+ *
+ * let mut indicator = EstimatedLeverageRatio::new();
+ * let tick = DerivativesTick::new(0.0001, 100.0, 100.0, 100.0, 1_000.0, 400.0, 600.0, 0.0, 0.0, 0.0, 0.0, 0).unwrap();
+ * let elr = indicator.update(tick).unwrap();
+ * assert!((elr - 1.0).abs() < 1e-12); // 1000 / (400 + 600)
+ * ```
+ */
+typedef struct EstimatedLeverageRatio EstimatedLeverageRatio;
 
 /**
  * Ehlers' **Even Better Sinewave** (EBSW) — a self-normalising cycle oscillator
@@ -3440,6 +3613,181 @@ typedef struct Frama Frama;
  * ```
  */
 typedef struct FryPanBottom FryPanBottom;
+
+/**
+ * Funding Basis — the relative basis between the perpetual mark price and the
+ * spot index it tracks.
+ *
+ * ```text
+ * basis = (markPrice − indexPrice) / indexPrice
+ * ```
+ *
+ * The basis is the spread that the funding mechanism continuously pulls toward
+ * zero: a positive basis (perpetual above spot) goes hand in hand with positive
+ * funding (longs pay), a negative basis with negative funding. Reading the
+ * instantaneous basis alongside the [funding rate] separates a genuine premium
+ * from a stale-funding artefact and sizes the carry available to a cash-and-carry
+ * or basis-arbitrage trade. The output is a fraction (e.g. `0.001` = 10 bps);
+ * multiply by `10_000` for basis points.
+ *
+ * `Input = DerivativesTick`, `Output = f64`. Stateless; ready after the first
+ * tick.
+ *
+ * [funding rate]: crate::FundingRate
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{DerivativesTick, FundingBasis, Indicator};
+ *
+ * let mut fb = FundingBasis::new();
+ * // mark 100.5 vs index 100.0 -> (100.5 - 100.0) / 100.0 = 0.005.
+ * let tick = DerivativesTick::new(
+ *     0.0, 100.5, 100.0, 100.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0,
+ * )
+ * .unwrap();
+ * assert!((fb.update(tick).unwrap() - 0.005).abs() < 1e-12);
+ * ```
+ */
+typedef struct FundingBasis FundingBasis;
+
+/**
+ * Funding-Implied APR — the perpetual's per-interval funding rate scaled to an
+ * annualised rate.
+ *
+ * ```text
+ * APR = funding_rate · intervals_per_year
+ * ```
+ *
+ * Funding is paid in small per-interval amounts (commonly every 8 hours, i.e.
+ * `1095` intervals per year). Annualising it converts the headline funding number
+ * into the carry cost (or yield) of holding the position for a year, which is far
+ * easier to reason about and to compare against spot lending rates, basis trades,
+ * and other yields. A large positive APR means longs pay a steep carry to shorts
+ * (and vice versa) — the economic incentive behind cash-and-carry and
+ * funding-arbitrage strategies.
+ *
+ * The output is a fraction (multiply by `100` for percent) and may be negative.
+ * It is stateless — each tick yields one value (no warmup). Each `update` is O(1).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{DerivativesTick, Indicator, FundingImpliedApr};
+ *
+ * // 0.01% per 8h funding -> 0.0001 * 1095 ≈ 10.95% APR.
+ * let mut indicator = FundingImpliedApr::new(1095.0).unwrap();
+ * let tick = DerivativesTick::new(0.0001, 100.0, 100.0, 100.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0).unwrap();
+ * let apr = indicator.update(tick).unwrap();
+ * assert!((apr - 0.1095).abs() < 1e-9);
+ * ```
+ */
+typedef struct FundingImpliedApr FundingImpliedApr;
+
+/**
+ * Funding Rate — the funding rate carried by each derivatives tick.
+ *
+ * The funding rate is the periodic payment exchanged between long and short
+ * perpetual-swap holders that tethers the perpetual mark to the spot index. A
+ * positive rate means longs pay shorts (the perpetual trades at a premium); a
+ * negative rate means shorts pay longs (a discount). This indicator simply
+ * surfaces the rate from the [`DerivativesTick`] feed so it can be charted,
+ * chained or fed to the rolling funding statistics ([`FundingRateMean`],
+ * [`FundingRateZScore`]).
+ *
+ * `Input = DerivativesTick`, `Output = f64`. Stateless; ready after the first
+ * tick.
+ *
+ * [`FundingRateMean`]: crate::FundingRateMean
+ * [`FundingRateZScore`]: crate::FundingRateZScore
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{DerivativesTick, FundingRate, Indicator};
+ *
+ * let mut fr = FundingRate::new();
+ * let tick = DerivativesTick::new(
+ *     0.0001, 100.0, 100.0, 100.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0,
+ * )
+ * .unwrap();
+ * assert_eq!(fr.update(tick), Some(0.0001));
+ * ```
+ */
+typedef struct FundingRate FundingRate;
+
+/**
+ * Funding Rate Rolling Mean — the arithmetic mean of the funding rate over the
+ * trailing window of `window` ticks.
+ *
+ * ```text
+ * mean = (1 / window) · Σ fundingRate over the last `window` ticks
+ * ```
+ *
+ * Smoothing the raw [funding rate] reveals the persistent carry regime — a
+ * sustained positive mean marks a crowded-long market paying to hold the
+ * perpetual, a sustained negative mean a crowded-short one. The indicator warms
+ * up for `window` ticks — `update` returns `None` until the window is full —
+ * then emits the rolling mean, maintained in O(1) per tick via a running sum.
+ *
+ * `Input = DerivativesTick`, `Output = f64`.
+ *
+ * [funding rate]: crate::FundingRate
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{DerivativesTick, FundingRateMean, Indicator};
+ *
+ * fn tick(rate: f64) -> DerivativesTick {
+ *     DerivativesTick::new(rate, 100.0, 100.0, 100.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0)
+ *         .unwrap()
+ * }
+ *
+ * let mut frm = FundingRateMean::new(2).unwrap();
+ * assert_eq!(frm.update(tick(0.001)), None);
+ * // Window full: (0.001 + 0.003) / 2 = 0.002.
+ * assert_eq!(frm.update(tick(0.003)), Some(0.002));
+ * ```
+ */
+typedef struct FundingRateMean FundingRateMean;
+
+/**
+ * Funding Rate Z-Score — the latest funding rate expressed in standard
+ * deviations from its rolling mean over the trailing window of `window` ticks.
+ *
+ * ```text
+ * zScore = (fundingRate − mean) / population_stddev   over the last `window` ticks
+ * ```
+ *
+ * A reading of `+2` means funding is two standard deviations richer than its
+ * recent norm — an unusually crowded long, a contrarian fade signal; `−2` is
+ * the mirror. Normalising the [funding rate] this way makes funding extremes
+ * comparable across regimes and assets. A window with zero dispersion (a flat
+ * funding series) yields `0`. The indicator warms up for `window` ticks, then
+ * emits the rolling z-score, maintained in O(1) per tick.
+ *
+ * `Input = DerivativesTick`, `Output = f64`.
+ *
+ * [funding rate]: crate::FundingRate
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{DerivativesTick, FundingRateZScore, Indicator};
+ *
+ * fn tick(rate: f64) -> DerivativesTick {
+ *     DerivativesTick::new(rate, 100.0, 100.0, 100.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0)
+ *         .unwrap()
+ * }
+ *
+ * let mut z = FundingRateZScore::new(2).unwrap();
+ * assert_eq!(z.update(tick(0.001)), None);
+ * // Window [0.001, 0.003]: mean 0.002, population stddev 0.001 -> (0.003 - 0.002) / 0.001 = 1.
+ * assert!((z.update(tick(0.003)).unwrap() - 1.0).abs() < 1e-9);
+ * ```
+ */
+typedef struct FundingRateZScore FundingRateZScore;
 
 /**
  * Rolling Gain/Loss Ratio.
@@ -5284,6 +5632,61 @@ typedef struct Kurtosis Kurtosis;
 typedef struct Kvo Kvo;
 
 /**
+ * Kyle's Lambda — the rolling ordinary-least-squares slope of mid-price changes
+ * on signed trade volume, the canonical measure of market depth / price
+ * impact.
+ *
+ * Each `update` receives a [`TradeQuote`] — a trade plus the mid prevailing at
+ * execution. Internally the indicator forms, per trade, the mid change since
+ * the previous trade (`Δmid = midₜ − midₜ₋₁`) and the signed volume
+ * (`q = size · D`, with `D` the aggressor sign), then runs a rolling OLS
+ * regression of `Δmid` on `q` over the trailing window of `window` trades:
+ *
+ * ```text
+ * cov = (1/n) · Σ q·Δmid − q̄·Δ̄mid
+ * var = (1/n) · Σ q²      − q̄²
+ * λ   = cov / var
+ * ```
+ *
+ * `λ` is the estimated price move per unit of signed volume: a deep, liquid
+ * book absorbs flow with little movement and reads a small `λ`; a thin book
+ * moves sharply per unit traded and reads a large `λ`. It is a direct,
+ * model-light proxy for the slope of the demand curve in Kyle's microstructure
+ * model.
+ *
+ * Each `update` is O(1): four running sums (`Σq`, `ΣΔmid`, `Σq²`, `Σq·Δmid`)
+ * are maintained as the window slides. A window of constant signed volume has
+ * zero variance and `λ` is undefined; the indicator returns `0` in that case
+ * rather than producing `NaN`.
+ *
+ * `Input = TradeQuote`, `Output = f64`. It warms up for `window + 1`
+ * trade-quotes: one to seed the previous mid, then `window` paired
+ * observations.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, KylesLambda, Side, Trade, TradeQuote};
+ *
+ * // A book where each trade moves the mid by exactly 0.5 per unit of signed
+ * // volume gives λ = 0.5.
+ * let mut lambda = KylesLambda::new(8).unwrap();
+ * let mut mid = 100.0;
+ * let mut last = None;
+ * for i in 0..20 {
+ *     let side = if i % 2 == 0 { Side::Buy } else { Side::Sell };
+ *     let size = 1.0 + f64::from(i % 3);
+ *     let signed = size * side.sign();
+ *     mid += 0.5 * signed;
+ *     let trade = Trade::new(mid, size, side, 0).unwrap();
+ *     last = lambda.update(TradeQuote::new(trade, mid).unwrap());
+ * }
+ * assert!((last.unwrap() - 0.5).abs() < 1e-9);
+ * ```
+ */
+typedef struct KylesLambda KylesLambda;
+
+/**
  * Ladder Bottom — a 5-bar bullish reversal. Three long black candles step the
  * market down like rungs of a ladder, a fourth black candle finally shows an
  * upper shadow (the first sign of buying), and a white candle then gaps up into
@@ -5618,6 +6021,40 @@ typedef struct LongLeggedDoji LongLeggedDoji;
  * ```
  */
 typedef struct LongLine LongLine;
+
+/**
+ * Long/Short Ratio — the aggregate long size divided by the aggregate short
+ * size carried by each tick.
+ *
+ * ```text
+ * longShortRatio = longSize / shortSize
+ * ```
+ *
+ * Exchanges publish the long/short account (or position) ratio as a crowd
+ * positioning gauge: a ratio above `1` means longs outweigh shorts, below `1`
+ * the reverse. Extremes are a contrarian signal — an overwhelmingly long crowd
+ * is fuel for a long squeeze. When the short side is zero the ratio is
+ * undefined and the indicator reports `0.0`.
+ *
+ * `Input = DerivativesTick`, `Output = f64`. Stateless; ready after the first
+ * tick.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{DerivativesTick, Indicator, LongShortRatio};
+ *
+ * fn tick(long: f64, short: f64) -> DerivativesTick {
+ *     DerivativesTick::new(0.0, 100.0, 100.0, 100.0, 0.0, long, short, 0.0, 0.0, 0.0, 0.0, 0)
+ *         .unwrap()
+ * }
+ *
+ * let mut lsr = LongShortRatio::new();
+ * // 600 longs vs 400 shorts -> 1.5.
+ * assert_eq!(lsr.update(tick(600.0, 400.0)), Some(1.5));
+ * ```
+ */
+typedef struct LongShortRatio LongShortRatio;
 
 /**
  * M² (Modigliani–Modigliani) measure over a trailing window of `period` returns.
@@ -6499,6 +6936,83 @@ typedef struct NewPriceLines NewPriceLines;
 typedef struct Nvi Nvi;
 
 /**
+ * Open-Interest / Price Divergence — the gap between how fast open interest and
+ * the mark price have moved over the trailing window of `window` ticks.
+ *
+ * ```text
+ * oiChange    = (openInterestₜ − openInterestₜ₋ₙ) / openInterestₜ₋ₙ
+ * priceChange = (markPriceₜ    − markPriceₜ₋ₙ)    / markPriceₜ₋ₙ
+ * divergence  = oiChange − priceChange                          (n = window)
+ * ```
+ *
+ * Reading the two together is a classic positioning signal: open interest
+ * rising while price falls (a positive divergence) marks fresh shorts piling
+ * in; open interest falling while price rises marks a short squeeze / unwind.
+ * A value near zero means OI and price moved in step. If the reference open
+ * interest is zero, the OI term contributes zero (no base to grow from).
+ *
+ * The indicator warms up for `window + 1` ticks — `update` returns `None` until
+ * the window spans a full `window`-tick lookback — then emits the divergence,
+ * maintained in O(1) per tick via a ring buffer.
+ *
+ * `Input = DerivativesTick`, `Output = f64`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{DerivativesTick, Indicator, OIPriceDivergence};
+ *
+ * fn tick(oi: f64, mark: f64) -> DerivativesTick {
+ *     DerivativesTick::new(0.0, mark, mark, mark, oi, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0)
+ *         .unwrap()
+ * }
+ *
+ * let mut div = OIPriceDivergence::new(1).unwrap();
+ * assert_eq!(div.update(tick(1_000.0, 100.0)), None);
+ * // OI +10% while price flat -> divergence +0.1.
+ * assert!((div.update(tick(1_100.0, 100.0)).unwrap() - 0.1).abs() < 1e-12);
+ * ```
+ */
+typedef struct OIPriceDivergence OIPriceDivergence;
+
+/**
+ * Open-Interest-Weighted Price — the running mean mark price, weighting each
+ * tick by its open interest.
+ *
+ * ```text
+ * oiWeighted = Σ(markPrice · openInterest) / Σ openInterest
+ * ```
+ *
+ * Where a plain mean treats every tick equally, the OI-weighted price pulls
+ * toward the levels at which the most contracts were actually outstanding — the
+ * price the bulk of open positioning sits around, a fair-value anchor for
+ * liquidations and mean-reversion. The accumulation runs from construction;
+ * call [`reset`] at each session boundary to re-anchor. Until any open interest
+ * has accrued the indicator returns the current mark price.
+ *
+ * `Input = DerivativesTick`, `Output = f64`. Ready after the first tick.
+ *
+ * [`reset`]: crate::Indicator::reset
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{DerivativesTick, Indicator, OIWeighted};
+ *
+ * fn tick(mark: f64, oi: f64) -> DerivativesTick {
+ *     DerivativesTick::new(0.0, mark, mark, mark, oi, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0)
+ *         .unwrap()
+ * }
+ *
+ * let mut oiw = OIWeighted::new();
+ * assert_eq!(oiw.update(tick(100.0, 10.0)), Some(100.0));
+ * // (100·10 + 110·30) / (10 + 30) = 4300 / 40 = 107.5.
+ * assert_eq!(oiw.update(tick(110.0, 30.0)), Some(107.5));
+ * ```
+ */
+typedef struct OIWeighted OIWeighted;
+
+/**
  * On-Balance Volume: a cumulative signed-volume series.
  *
  * Each candle adds `+volume`, `-volume`, or `0` depending on whether its close
@@ -6522,6 +7036,38 @@ typedef struct Nvi Nvi;
  * ```
  */
 typedef struct Obv Obv;
+
+/**
+ * OI-to-Volume Ratio — open interest divided by the tick's total taker volume, a
+ * measure of how much position is *held* versus *turned over*.
+ *
+ * ```text
+ * OIVR = open_interest / (taker_buy_volume + taker_sell_volume)
+ * ```
+ *
+ * A high ratio means open interest dwarfs the volume trading it — positions are
+ * being held, not churned (low participation, potential complacency or a coiling
+ * market). A low ratio means heavy volume relative to outstanding interest —
+ * active churn, often around breakouts or capitulation. Watching the ratio change
+ * distinguishes new-money trends (OI and volume both rising) from short-covering
+ * or position rolls.
+ *
+ * The ratio is non-negative; a tick with zero taker volume reports `0` rather than
+ * dividing by zero. It is stateless — each tick yields one value (no warmup). Each
+ * `update` is O(1).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{DerivativesTick, Indicator, OiToVolumeRatio};
+ *
+ * let mut indicator = OiToVolumeRatio::new();
+ * let tick = DerivativesTick::new(0.0, 100.0, 100.0, 100.0, 5_000.0, 0.0, 0.0, 400.0, 600.0, 0.0, 0.0, 0).unwrap();
+ * let oivr = indicator.update(tick).unwrap();
+ * assert!((oivr - 5.0).abs() < 1e-12); // 5000 / (400 + 600)
+ * ```
+ */
+typedef struct OiToVolumeRatio OiToVolumeRatio;
 
 /**
  * Rolling Omega Ratio.
@@ -6598,6 +7144,81 @@ typedef struct OmegaRatio OmegaRatio;
  * ```
  */
 typedef struct OnNeck OnNeck;
+
+/**
+ * Open-Interest Delta — the change in open interest from the previous tick.
+ *
+ * ```text
+ * delta = openInterestₜ − openInterestₜ₋₁
+ * ```
+ *
+ * Open interest is the count of outstanding contracts; its change separates new
+ * positioning from mere turnover. Read together with price, rising OI confirms
+ * a trend (fresh money entering) while falling OI flags an unwind (positions
+ * closing) — the raw input to the [OI / price divergence] signal. A positive
+ * delta is net position-building, a negative delta net liquidation/closing.
+ *
+ * The first tick only seeds the previous value and returns `None`; from the
+ * second tick on the indicator emits the delta.
+ *
+ * `Input = DerivativesTick`, `Output = f64`.
+ *
+ * [OI / price divergence]: crate::OIPriceDivergence
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{DerivativesTick, Indicator, OpenInterestDelta};
+ *
+ * fn tick(oi: f64) -> DerivativesTick {
+ *     DerivativesTick::new(0.0, 100.0, 100.0, 100.0, oi, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0)
+ *         .unwrap()
+ * }
+ *
+ * let mut oid = OpenInterestDelta::new();
+ * assert_eq!(oid.update(tick(1_000.0)), None); // seeds the previous OI
+ * assert_eq!(oid.update(tick(1_250.0)), Some(250.0));
+ * assert_eq!(oid.update(tick(1_100.0)), Some(-150.0));
+ * ```
+ */
+typedef struct OpenInterestDelta OpenInterestDelta;
+
+/**
+ * Open-Interest Momentum — the percentage rate of change of open interest over a
+ * `period`-tick lookback.
+ *
+ * ```text
+ * OIM = 100 · (OI_t − OI_{t−period}) / OI_{t−period}
+ * ```
+ *
+ * Where [`OIDelta`](crate::OIDelta) reports the single-tick change in open
+ * interest, OI Momentum measures the trend in positioning over a window: positive
+ * values mean open interest is expanding (new money entering — a position build
+ * that fuels the prevailing move), negative values mean it is contracting
+ * (positions being closed — deleveraging or short-covering). Read alongside price:
+ * rising OI with rising price is a strong new-long trend, while rising price with
+ * falling OI is a short-covering rally on borrowed time.
+ *
+ * The output is a percentage and may be negative. A zero base open interest
+ * `period` ticks ago reports `0` rather than dividing by zero. The first value
+ * lands after `period + 1` inputs. Each `update` is O(1).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{DerivativesTick, Indicator, OpenInterestMomentum};
+ *
+ * let mut indicator = OpenInterestMomentum::new(5).unwrap();
+ * let mut last = None;
+ * for i in 0..20 {
+ *     let oi = 1_000.0 + f64::from(i) * 100.0;
+ *     let tick = DerivativesTick::new(0.0, 100.0, 100.0, 100.0, oi, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0).unwrap();
+ *     last = indicator.update(tick);
+ * }
+ * assert!(last.unwrap() > 0.0); // expanding OI
+ * ```
+ */
+typedef struct OpenInterestMomentum OpenInterestMomentum;
 
 /**
  * Opening Marubozu — a single-bar strong-momentum candle with a long body and no
@@ -6980,6 +7601,40 @@ typedef struct PercentB PercentB;
 typedef struct PercentageTrailingStop PercentageTrailingStop;
 
 /**
+ * Perpetual Premium Index — the perpetual's mark price relative to the spot index
+ * it tracks, as a fraction.
+ *
+ * ```text
+ * premium = (mark_price − index_price) / index_price
+ * ```
+ *
+ * A perpetual swap is pegged to spot by the funding mechanism, but it can still
+ * trade at a premium (above spot) or discount (below). A positive premium signals
+ * net long demand willing to pay up to hold the perp — bullish positioning, and
+ * the proximate driver of positive funding; a negative premium signals the
+ * reverse. Sustained extremes flag crowded positioning ripe for a funding-driven
+ * mean reversion.
+ *
+ * The output is centred on zero and dimensionless (a fraction; multiply by `100`
+ * for percent). `index_price` is validated strictly positive on the tick, so the
+ * division is always defined. It is stateless — each tick yields one value (no
+ * warmup). Each `update` is O(1).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{DerivativesTick, Indicator, PerpetualPremiumIndex};
+ *
+ * let mut indicator = PerpetualPremiumIndex::new();
+ * // Mark 101 vs index 100 -> +1% premium.
+ * let tick = DerivativesTick::new(0.0, 101.0, 100.0, 101.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0).unwrap();
+ * let premium = indicator.update(tick).unwrap();
+ * assert!((premium - 0.01).abs() < 1e-12);
+ * ```
+ */
+typedef struct PerpetualPremiumIndex PerpetualPremiumIndex;
+
+/**
  * Mark Johnson's Pretty Good Oscillator — displacement of the close from its
  * `period`-bar `SMA`, normalised by the `period`-bar `EMA` of the True Range.
  *
@@ -7058,6 +7713,48 @@ typedef struct Pgo Pgo;
  * ```
  */
 typedef struct PiercingDarkCloud PiercingDarkCloud;
+
+/**
+ * PIN — the **Probability of Informed Trading**, estimated from the buy/sell order
+ * imbalance over a rolling window of trades.
+ *
+ * ```text
+ * over the last `window` trades: B = buys, S = sells   (B + S = window)
+ * PIN ≈ |B − S| / (B + S)        ∈ [0, 1]
+ * ```
+ *
+ * The Easley-Kiefer-O'Hara-Paperman (EKOP) model splits order flow into an
+ * uninformed component (balanced buys and sells, rate `ε` per side) and an
+ * informed component that trades one-directionally when private information
+ * arrives (rate `μ`, probability `α`). The probability that any given trade is
+ * information-motivated is `PIN = αμ / (αμ + 2ε)`. Estimated over a single window,
+ * the informed flow shows up as the **net imbalance** `|B − S|` and the uninformed
+ * flow as the balanced remainder, giving the moment estimator above. A high PIN
+ * flags a one-sided, likely-informed market; a low PIN flags balanced, uninformed
+ * flow.
+ *
+ * This is distinct from [`Vpin`](crate::Vpin), the volume-synchronised variant
+ * that buckets by volume and uses bulk-volume classification; here trades are
+ * counted in event time and classified by their tagged aggressor side. The full
+ * PIN is fit by maximum likelihood over many periods — this single-window
+ * estimator is the streaming moment approximation. The output is in `[0, 1]`; the
+ * first value lands after `window` trades.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, Pin, Side, Trade};
+ *
+ * let mut indicator = Pin::new(20).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     // All buys -> maximally one-sided -> PIN 1.
+ *     last = indicator.update(Trade::new(100.0, 1.0, Side::Buy, i).unwrap());
+ * }
+ * assert!((last.unwrap() - 1.0).abs() < 1e-9);
+ * ```
+ */
+typedef struct Pin Pin;
 
 /**
  * Pivot Reversal — emits a reversal **breakout signal** when price closes through
@@ -7554,6 +8251,52 @@ typedef struct Qstick Qstick;
 typedef struct RSquared RSquared;
 
 /**
+ * Realized Spread — twice the signed deviation of a trade price from the mid
+ * that prevails `horizon` trades *later*, expressed in basis points of the
+ * trade's contemporaneous mid.
+ *
+ * ```text
+ * realizedSpread = 2 · D · (tradePrice − mid_{t+horizon}) / mid_t · 10_000   (bps)
+ * ```
+ *
+ * where `D` is the aggressor sign (`+1` for a buy, `−1` for a sell), `mid_t`
+ * is the mid at the time of the trade, and `mid_{t+horizon}` is the mid
+ * `horizon` trade-quotes later. Where the [effective spread] measures the full
+ * cost paid by the aggressor against the contemporaneous mid, the realized
+ * spread measures the share of that cost a liquidity provider *keeps* after
+ * the mid has moved: it is the effective spread net of the price impact
+ * (`effective = realized + 2 · priceImpact`). A high realized spread means
+ * the quote was not picked off; a low or negative one is the signature of
+ * adverse selection, the trade preceding a move in its own direction.
+ *
+ * The indicator buffers each incoming trade-quote and emits the realized
+ * spread for the trade made `horizon` updates ago, once that future mid is
+ * known. It warms up for `horizon + 1` trade-quotes — `update` returns `None`
+ * until the first trade can be resolved — and then emits one value per update
+ * in O(1).
+ *
+ * `Input = TradeQuote`, `Output = f64`.
+ *
+ * [effective spread]: crate::EffectiveSpread
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, RealizedSpread, Side, Trade, TradeQuote};
+ *
+ * let mut rs = RealizedSpread::new(1).unwrap();
+ * let tq = |price: f64, side, mid| TradeQuote::new(Trade::new(price, 1.0, side, 0).unwrap(), mid).unwrap();
+ * // First trade buffered; nothing to resolve yet.
+ * assert_eq!(rs.update(tq(100.10, Side::Buy, 100.0)), None);
+ * // One trade later the mid is 100.20, resolving the first buy:
+ * // 2 · (+1) · (100.10 − 100.20) / 100.0 · 10_000 = −20 bps (adverse selection).
+ * let out = rs.update(tq(99.90, Side::Sell, 100.20)).unwrap();
+ * assert!((out - (-20.0)).abs() < 1e-9);
+ * ```
+ */
+typedef struct RealizedSpread RealizedSpread;
+
+/**
  * Realized Volatility — the square root of the sum of squared log returns over
  * the trailing `period` bars.
  *
@@ -8030,6 +8773,44 @@ typedef struct Rocr100 Rocr100;
  * ```
  */
 typedef struct RogersSatchellVolatility RogersSatchellVolatility;
+
+/**
+ * Roll Measure — the effective bid-ask spread implied by the negative
+ * first-order serial covariance of trade-price changes (Roll, 1984).
+ *
+ * ```text
+ * Δpₜ  = priceₜ − priceₜ₋₁
+ * γ    = sample lag-1 autocovariance of Δp over the last `period` changes
+ * spread = 2 · √(−γ)   if γ < 0,   else 0
+ * ```
+ *
+ * Roll's insight: in a frictionless market price changes are serially
+ * uncorrelated, but the *bid-ask bounce* — trades alternating between buying at
+ * the ask and selling at the bid — induces a **negative** autocovariance whose
+ * magnitude pins the spread. The measure recovers an effective spread from
+ * trade prices alone, with no quote data. When the serial covariance is
+ * non-negative (a trending or frictionless tape) the model implies no spread
+ * and the indicator returns `0`.
+ *
+ * `Input = Trade` (only the price is used). Each `update` is `O(period)`: the
+ * autocovariance is recomputed from the window of price changes.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, Side, Trade, RollMeasure};
+ *
+ * let mut roll = RollMeasure::new(20).unwrap();
+ * let mut last = None;
+ * // A clean bid-ask bounce of ±0.5 around 100 implies a spread near 1.0.
+ * for i in 0..40 {
+ *     let price = if i % 2 == 0 { 100.0 } else { 101.0 };
+ *     last = roll.update(Trade::new(price, 1.0, Side::Buy, 0).unwrap());
+ * }
+ * assert!(last.unwrap() > 0.0);
+ * ```
+ */
+typedef struct RollMeasure RollMeasure;
 
 /**
  * Rolling correlation of the **returns** of two synchronised series.
@@ -8779,6 +9560,33 @@ typedef struct ShootingStar ShootingStar;
  * ```
  */
 typedef struct ShortLine ShortLine;
+
+/**
+ * Signed Volume — the size of each trade signed by its aggressor side.
+ *
+ * ```text
+ * signedVolume = size · (+1 if buy, −1 if sell)
+ * ```
+ *
+ * A positive value is buyer-initiated flow, a negative value seller-initiated.
+ * It is the per-trade building block of [`crate::CumulativeVolumeDelta`] and
+ * trade-flow imbalance.
+ *
+ * `Input = Trade`, `Output = f64`. Stateless; ready after the first trade.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, SignedVolume, Side, Trade};
+ *
+ * let mut sv = SignedVolume::new();
+ * let buy = Trade::new(100.0, 2.0, Side::Buy, 0).unwrap();
+ * assert_eq!(sv.update(buy), Some(2.0));
+ * let sell = Trade::new(100.0, 3.0, Side::Sell, 1).unwrap();
+ * assert_eq!(sv.update(sell), Some(-3.0));
+ * ```
+ */
+typedef struct SignedVolume SignedVolume;
 
 /**
  * Ehlers' Sine Wave indicator (sine + leadsine).
@@ -9679,6 +10487,43 @@ typedef struct T3 T3;
 typedef struct TailRatio TailRatio;
 
 /**
+ * Taker Buy/Sell Ratio — the taker (market-order) buy volume divided by the
+ * taker sell volume carried by each tick.
+ *
+ * ```text
+ * takerBuySellRatio = takerBuyVolume / takerSellVolume
+ * ```
+ *
+ * Taker volume is the volume that crossed the spread — the aggressive flow that
+ * moves price. A ratio above `1` means buyers are lifting offers faster than
+ * sellers are hitting bids (net aggressive buying); below `1` the reverse. It
+ * is the perpetual-feed analogue of [trade imbalance], read straight off the
+ * venue's taker-volume fields. When taker sell volume is zero the ratio is
+ * undefined and the indicator reports `0.0`.
+ *
+ * `Input = DerivativesTick`, `Output = f64`. Stateless; ready after the first
+ * tick.
+ *
+ * [trade imbalance]: crate::TradeImbalance
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{DerivativesTick, Indicator, TakerBuySellRatio};
+ *
+ * fn tick(buy: f64, sell: f64) -> DerivativesTick {
+ *     DerivativesTick::new(0.0, 100.0, 100.0, 100.0, 0.0, 0.0, 0.0, buy, sell, 0.0, 0.0, 0)
+ *         .unwrap()
+ * }
+ *
+ * let mut tbs = TakerBuySellRatio::new();
+ * // 60 taker buys vs 40 taker sells -> 1.5.
+ * assert_eq!(tbs.update(tick(60.0, 40.0)), Some(1.5));
+ * ```
+ */
+typedef struct TakerBuySellRatio TakerBuySellRatio;
+
+/**
  * Takuri — a single-bar bullish reversal, a stricter Dragonfly Doji. Open, close,
  * and high sit at the very top of the bar with a negligible upper shadow, while an
  * exceptionally long lower shadow shows price was driven sharply down and then bid
@@ -9887,6 +10732,43 @@ typedef struct TdTrap TdTrap;
  * ```
  */
 typedef struct Tema Tema;
+
+/**
+ * Term-Structure Basis — the relative basis between a dated (e.g. quarterly)
+ * futures price and the spot index.
+ *
+ * ```text
+ * basis = (futuresPrice − indexPrice) / indexPrice
+ * ```
+ *
+ * Where [`FundingBasis`] measures the *perpetual*'s premium to spot, this
+ * measures a *dated future*'s — the term-structure carry that a calendar or
+ * cash-and-carry trade harvests as the contract converges to spot at expiry. A
+ * positive basis is contango (futures above spot), a negative one backwardation.
+ * The output is a fraction (e.g. `0.02` = 2%); multiply by `10_000` for basis
+ * points.
+ *
+ * `Input = DerivativesTick`, `Output = f64`. Stateless; ready after the first
+ * tick.
+ *
+ * [`FundingBasis`]: crate::FundingBasis
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{DerivativesTick, Indicator, TermStructureBasis};
+ *
+ * fn tick(futures: f64, index: f64) -> DerivativesTick {
+ *     DerivativesTick::new(0.0, index, index, futures, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0)
+ *         .unwrap()
+ * }
+ *
+ * let mut ts = TermStructureBasis::new();
+ * // futures 102 vs index 100 -> 0.02 (2% contango).
+ * assert!((ts.update(tick(102.0, 100.0)).unwrap() - 0.02).abs() < 1e-12);
+ * ```
+ */
+typedef struct TermStructureBasis TermStructureBasis;
 
 /**
  * Three Drives — a symmetric harmonic pattern of two visible drives separated
@@ -10268,6 +11150,75 @@ typedef struct TimeBasedStop TimeBasedStop;
  * Tower Top / Bottom — three-bar reversal detector.
  */
 typedef struct TowerTopBottom TowerTopBottom;
+
+/**
+ * Trade Imbalance — the signed buy/sell volume imbalance over the trailing
+ * window of `window` trades.
+ *
+ * ```text
+ * buyVol  = Σ size of buyer-initiated trades in the window
+ * sellVol = Σ size of seller-initiated trades in the window
+ * imbalance = (buyVol − sellVol) / (buyVol + sellVol)
+ * ```
+ *
+ * The output lies in `[−1, +1]`: `+1` means the window was all aggressive
+ * buying, `−1` all aggressive selling, `0` balanced (or no volume). The
+ * indicator warms up for `window` trades — `update` returns `None` until the
+ * window is full — then emits the rolling imbalance, maintained in O(1) per
+ * trade.
+ *
+ * `Input = Trade`, `Output = f64`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, Side, Trade, TradeImbalance};
+ *
+ * let mut ti = TradeImbalance::new(2).unwrap();
+ * assert_eq!(ti.update(Trade::new(100.0, 3.0, Side::Buy, 0).unwrap()), None);
+ * // Window full: buyVol 3, sellVol 1 -> (3 - 1) / 4 = 0.5.
+ * let out = ti.update(Trade::new(100.0, 1.0, Side::Sell, 1).unwrap());
+ * assert_eq!(out, Some(0.5));
+ * ```
+ */
+typedef struct TradeImbalance TradeImbalance;
+
+/**
+ * Trade-Sign Autocorrelation — the lag-1 autocorrelation of the **trade sign**
+ * (`+1` buy, `−1` sell), measuring how strongly signed order flow persists.
+ *
+ * ```text
+ * s_t  = +1 if the trade is a buy, −1 if a sell
+ * ρ1   = mean over the window of ( s_t · s_{t−1} )      ∈ [−1, +1]
+ * ```
+ *
+ * In real markets trade signs are strongly **positively** autocorrelated: a buy
+ * tends to be followed by another buy (and a sell by a sell), because large
+ * parent orders are split into many child trades and because of order-splitting
+ * and herding. A high reading therefore indicates persistent directional pressure
+ * — a footprint of informed or algorithmic execution — while a reading near zero
+ * signals balanced, uninformed flow and a negative reading signals alternating
+ * (bid-ask bounce) flow.
+ *
+ * The output is the mean product of consecutive signs, bounded in `[−1, +1]`. The
+ * first value lands after `period` trades. Each `update` is O(`period`).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, Side, Trade, TradeSignAutocorrelation};
+ *
+ * let mut indicator = TradeSignAutocorrelation::new(20).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     let side = if i % 2 == 0 { Side::Buy } else { Side::Sell };
+ *     last = indicator.update(Trade::new(100.0, 1.0, side, i).unwrap());
+ * }
+ * // Perfectly alternating signs -> autocorrelation -1.
+ * assert!((last.unwrap() + 1.0).abs() < 1e-9);
+ * ```
+ */
+typedef struct TradeSignAutocorrelation TradeSignAutocorrelation;
 
 /**
  * Trade Volume Index — a cumulative line that adds volume while price ticks up
@@ -11608,6 +12559,46 @@ typedef struct VolumePriceTrend VolumePriceTrend;
  * ```
  */
 typedef struct VolumeRsi VolumeRsi;
+
+/**
+ * VPIN — the Volume-Synchronised Probability of Informed Trading
+ * (Easley, López de Prado & O'Hara, 2012).
+ *
+ * Trades are bucketed into equal-volume buckets of size `bucket_volume`. For
+ * each completed bucket the order-flow imbalance is the absolute difference
+ * between buy and sell volume; VPIN is that imbalance averaged over the last
+ * `num_buckets` buckets and normalised by the bucket size:
+ *
+ * ```text
+ * VPIN = ( Σ |Vᴮ_τ − Vˢ_τ| ) / (num_buckets · bucket_volume)
+ * ```
+ *
+ * The aggressor [`Side`] of each [`Trade`] classifies its volume directly (no
+ * bulk-volume classification needed). A single trade may span several buckets;
+ * its volume is split across bucket boundaries. The result lies in `[0, 1]`:
+ * values near `1` signal a strongly one-sided, likely-informed flow (a toxic
+ * regime), values near `0` a balanced two-sided flow.
+ *
+ * `Input = Trade`. Because bucket completion is driven by cumulative volume,
+ * readiness is data-dependent; [`warmup_period`](Indicator::warmup_period)
+ * reports `num_buckets` as the minimum number of trades (one per bucket) and
+ * [`is_ready`](Indicator::is_ready) reflects the true bucket count.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, Side, Trade, Vpin};
+ *
+ * let mut vpin = Vpin::new(10.0, 2).unwrap();
+ * // Two buckets of pure buying => imbalance == bucket size => VPIN 1.
+ * let mut last = None;
+ * for _ in 0..4 {
+ *     last = vpin.update(Trade::new(100.0, 5.0, Side::Buy, 0).unwrap());
+ * }
+ * assert_eq!(last, Some(1.0));
+ * ```
+ */
+typedef struct Vpin Vpin;
 
 /**
  * Cumulative session VWAP. Call [`Indicator::reset`] at the start of each
@@ -29515,5 +30506,1108 @@ void wickra_yoyo_exit_reset(struct YoyoExit *handle);
  * `handle` must have been returned by `wickra_yoyo_exit_new` and not previously freed, or `NULL`.
  */
 void wickra_yoyo_exit_free(struct YoyoExit *handle);
+
+/**
+ * Create a `AmihudIlliquidity` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_amihud_illiquidity_free`.
+ */
+struct AmihudIlliquidity *wickra_amihud_illiquidity_new(uintptr_t period);
+
+/**
+ * Feed one trade; returns the output, or `NaN` during warmup / on a `NULL` handle /
+ * if the trade is invalid (non-positive price, negative size).
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_amihud_illiquidity_new` (not freed), or `NULL`.
+ */
+double wickra_amihud_illiquidity_update(struct AmihudIlliquidity *handle,
+                                        double price,
+                                        double size,
+                                        bool is_buy,
+                                        int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_amihud_illiquidity_new`, not freed), or `NULL`.
+ */
+void wickra_amihud_illiquidity_reset(struct AmihudIlliquidity *handle);
+
+/**
+ * Destroy a handle created by `wickra_amihud_illiquidity_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_amihud_illiquidity_new` and not previously freed, or `NULL`.
+ */
+void wickra_amihud_illiquidity_free(struct AmihudIlliquidity *handle);
+
+/**
+ * Create a `CumulativeVolumeDelta` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_cumulative_volume_delta_free`.
+ */
+struct CumulativeVolumeDelta *wickra_cumulative_volume_delta_new(void);
+
+/**
+ * Feed one trade; returns the output, or `NaN` during warmup / on a `NULL` handle /
+ * if the trade is invalid (non-positive price, negative size).
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_cumulative_volume_delta_new` (not freed), or `NULL`.
+ */
+double wickra_cumulative_volume_delta_update(struct CumulativeVolumeDelta *handle,
+                                             double price,
+                                             double size,
+                                             bool is_buy,
+                                             int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_cumulative_volume_delta_new`, not freed), or `NULL`.
+ */
+void wickra_cumulative_volume_delta_reset(struct CumulativeVolumeDelta *handle);
+
+/**
+ * Destroy a handle created by `wickra_cumulative_volume_delta_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_cumulative_volume_delta_new` and not previously freed, or `NULL`.
+ */
+void wickra_cumulative_volume_delta_free(struct CumulativeVolumeDelta *handle);
+
+/**
+ * Create a `Pin` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_pin_free`.
+ */
+struct Pin *wickra_pin_new(uintptr_t window);
+
+/**
+ * Feed one trade; returns the output, or `NaN` during warmup / on a `NULL` handle /
+ * if the trade is invalid (non-positive price, negative size).
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_pin_new` (not freed), or `NULL`.
+ */
+double wickra_pin_update(struct Pin *handle,
+                         double price,
+                         double size,
+                         bool is_buy,
+                         int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_pin_new`, not freed), or `NULL`.
+ */
+void wickra_pin_reset(struct Pin *handle);
+
+/**
+ * Destroy a handle created by `wickra_pin_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_pin_new` and not previously freed, or `NULL`.
+ */
+void wickra_pin_free(struct Pin *handle);
+
+/**
+ * Create a `RollMeasure` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_roll_measure_free`.
+ */
+struct RollMeasure *wickra_roll_measure_new(uintptr_t period);
+
+/**
+ * Feed one trade; returns the output, or `NaN` during warmup / on a `NULL` handle /
+ * if the trade is invalid (non-positive price, negative size).
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_roll_measure_new` (not freed), or `NULL`.
+ */
+double wickra_roll_measure_update(struct RollMeasure *handle,
+                                  double price,
+                                  double size,
+                                  bool is_buy,
+                                  int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_roll_measure_new`, not freed), or `NULL`.
+ */
+void wickra_roll_measure_reset(struct RollMeasure *handle);
+
+/**
+ * Destroy a handle created by `wickra_roll_measure_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_roll_measure_new` and not previously freed, or `NULL`.
+ */
+void wickra_roll_measure_free(struct RollMeasure *handle);
+
+/**
+ * Create a `SignedVolume` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_signed_volume_free`.
+ */
+struct SignedVolume *wickra_signed_volume_new(void);
+
+/**
+ * Feed one trade; returns the output, or `NaN` during warmup / on a `NULL` handle /
+ * if the trade is invalid (non-positive price, negative size).
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_signed_volume_new` (not freed), or `NULL`.
+ */
+double wickra_signed_volume_update(struct SignedVolume *handle,
+                                   double price,
+                                   double size,
+                                   bool is_buy,
+                                   int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_signed_volume_new`, not freed), or `NULL`.
+ */
+void wickra_signed_volume_reset(struct SignedVolume *handle);
+
+/**
+ * Destroy a handle created by `wickra_signed_volume_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_signed_volume_new` and not previously freed, or `NULL`.
+ */
+void wickra_signed_volume_free(struct SignedVolume *handle);
+
+/**
+ * Create a `TradeImbalance` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_trade_imbalance_free`.
+ */
+struct TradeImbalance *wickra_trade_imbalance_new(uintptr_t window);
+
+/**
+ * Feed one trade; returns the output, or `NaN` during warmup / on a `NULL` handle /
+ * if the trade is invalid (non-positive price, negative size).
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_trade_imbalance_new` (not freed), or `NULL`.
+ */
+double wickra_trade_imbalance_update(struct TradeImbalance *handle,
+                                     double price,
+                                     double size,
+                                     bool is_buy,
+                                     int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_trade_imbalance_new`, not freed), or `NULL`.
+ */
+void wickra_trade_imbalance_reset(struct TradeImbalance *handle);
+
+/**
+ * Destroy a handle created by `wickra_trade_imbalance_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_trade_imbalance_new` and not previously freed, or `NULL`.
+ */
+void wickra_trade_imbalance_free(struct TradeImbalance *handle);
+
+/**
+ * Create a `TradeSignAutocorrelation` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_trade_sign_autocorrelation_free`.
+ */
+struct TradeSignAutocorrelation *wickra_trade_sign_autocorrelation_new(uintptr_t period);
+
+/**
+ * Feed one trade; returns the output, or `NaN` during warmup / on a `NULL` handle /
+ * if the trade is invalid (non-positive price, negative size).
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_trade_sign_autocorrelation_new` (not freed), or `NULL`.
+ */
+double wickra_trade_sign_autocorrelation_update(struct TradeSignAutocorrelation *handle,
+                                                double price,
+                                                double size,
+                                                bool is_buy,
+                                                int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_trade_sign_autocorrelation_new`, not freed), or `NULL`.
+ */
+void wickra_trade_sign_autocorrelation_reset(struct TradeSignAutocorrelation *handle);
+
+/**
+ * Destroy a handle created by `wickra_trade_sign_autocorrelation_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_trade_sign_autocorrelation_new` and not previously freed, or `NULL`.
+ */
+void wickra_trade_sign_autocorrelation_free(struct TradeSignAutocorrelation *handle);
+
+/**
+ * Create a `Vpin` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_vpin_free`.
+ */
+struct Vpin *wickra_vpin_new(double bucket_volume, uintptr_t num_buckets);
+
+/**
+ * Feed one trade; returns the output, or `NaN` during warmup / on a `NULL` handle /
+ * if the trade is invalid (non-positive price, negative size).
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_vpin_new` (not freed), or `NULL`.
+ */
+double wickra_vpin_update(struct Vpin *handle,
+                          double price,
+                          double size,
+                          bool is_buy,
+                          int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_vpin_new`, not freed), or `NULL`.
+ */
+void wickra_vpin_reset(struct Vpin *handle);
+
+/**
+ * Destroy a handle created by `wickra_vpin_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_vpin_new` and not previously freed, or `NULL`.
+ */
+void wickra_vpin_free(struct Vpin *handle);
+
+/**
+ * Create a `EffectiveSpread` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_effective_spread_free`.
+ */
+struct EffectiveSpread *wickra_effective_spread_new(void);
+
+/**
+ * Feed one trade with the prevailing mid price; returns the output, or `NaN` during
+ * warmup / on a `NULL` handle / if the trade or mid is invalid.
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_effective_spread_new` (not freed), or `NULL`.
+ */
+double wickra_effective_spread_update(struct EffectiveSpread *handle,
+                                      double price,
+                                      double size,
+                                      bool is_buy,
+                                      int64_t timestamp,
+                                      double mid);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_effective_spread_new`, not freed), or `NULL`.
+ */
+void wickra_effective_spread_reset(struct EffectiveSpread *handle);
+
+/**
+ * Destroy a handle created by `wickra_effective_spread_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_effective_spread_new` and not previously freed, or `NULL`.
+ */
+void wickra_effective_spread_free(struct EffectiveSpread *handle);
+
+/**
+ * Create a `KylesLambda` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_kyles_lambda_free`.
+ */
+struct KylesLambda *wickra_kyles_lambda_new(uintptr_t window);
+
+/**
+ * Feed one trade with the prevailing mid price; returns the output, or `NaN` during
+ * warmup / on a `NULL` handle / if the trade or mid is invalid.
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_kyles_lambda_new` (not freed), or `NULL`.
+ */
+double wickra_kyles_lambda_update(struct KylesLambda *handle,
+                                  double price,
+                                  double size,
+                                  bool is_buy,
+                                  int64_t timestamp,
+                                  double mid);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_kyles_lambda_new`, not freed), or `NULL`.
+ */
+void wickra_kyles_lambda_reset(struct KylesLambda *handle);
+
+/**
+ * Destroy a handle created by `wickra_kyles_lambda_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_kyles_lambda_new` and not previously freed, or `NULL`.
+ */
+void wickra_kyles_lambda_free(struct KylesLambda *handle);
+
+/**
+ * Create a `RealizedSpread` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_realized_spread_free`.
+ */
+struct RealizedSpread *wickra_realized_spread_new(uintptr_t horizon);
+
+/**
+ * Feed one trade with the prevailing mid price; returns the output, or `NaN` during
+ * warmup / on a `NULL` handle / if the trade or mid is invalid.
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_realized_spread_new` (not freed), or `NULL`.
+ */
+double wickra_realized_spread_update(struct RealizedSpread *handle,
+                                     double price,
+                                     double size,
+                                     bool is_buy,
+                                     int64_t timestamp,
+                                     double mid);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_realized_spread_new`, not freed), or `NULL`.
+ */
+void wickra_realized_spread_reset(struct RealizedSpread *handle);
+
+/**
+ * Destroy a handle created by `wickra_realized_spread_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_realized_spread_new` and not previously freed, or `NULL`.
+ */
+void wickra_realized_spread_free(struct RealizedSpread *handle);
+
+/**
+ * Create a `CalendarSpread` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_calendar_spread_free`.
+ */
+struct CalendarSpread *wickra_calendar_spread_new(void);
+
+/**
+ * Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+ * `NULL` handle / if the tick is invalid.
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_calendar_spread_new` (not freed), or `NULL`.
+ */
+double wickra_calendar_spread_update(struct CalendarSpread *handle,
+                                     double funding_rate,
+                                     double mark_price,
+                                     double index_price,
+                                     double futures_price,
+                                     double open_interest,
+                                     double long_size,
+                                     double short_size,
+                                     double taker_buy_volume,
+                                     double taker_sell_volume,
+                                     double long_liquidation,
+                                     double short_liquidation,
+                                     int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_calendar_spread_new`, not freed), or `NULL`.
+ */
+void wickra_calendar_spread_reset(struct CalendarSpread *handle);
+
+/**
+ * Destroy a handle created by `wickra_calendar_spread_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_calendar_spread_new` and not previously freed, or `NULL`.
+ */
+void wickra_calendar_spread_free(struct CalendarSpread *handle);
+
+/**
+ * Create a `EstimatedLeverageRatio` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_estimated_leverage_ratio_free`.
+ */
+struct EstimatedLeverageRatio *wickra_estimated_leverage_ratio_new(void);
+
+/**
+ * Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+ * `NULL` handle / if the tick is invalid.
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_estimated_leverage_ratio_new` (not freed), or `NULL`.
+ */
+double wickra_estimated_leverage_ratio_update(struct EstimatedLeverageRatio *handle,
+                                              double funding_rate,
+                                              double mark_price,
+                                              double index_price,
+                                              double futures_price,
+                                              double open_interest,
+                                              double long_size,
+                                              double short_size,
+                                              double taker_buy_volume,
+                                              double taker_sell_volume,
+                                              double long_liquidation,
+                                              double short_liquidation,
+                                              int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_estimated_leverage_ratio_new`, not freed), or `NULL`.
+ */
+void wickra_estimated_leverage_ratio_reset(struct EstimatedLeverageRatio *handle);
+
+/**
+ * Destroy a handle created by `wickra_estimated_leverage_ratio_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_estimated_leverage_ratio_new` and not previously freed, or `NULL`.
+ */
+void wickra_estimated_leverage_ratio_free(struct EstimatedLeverageRatio *handle);
+
+/**
+ * Create a `FundingBasis` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_funding_basis_free`.
+ */
+struct FundingBasis *wickra_funding_basis_new(void);
+
+/**
+ * Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+ * `NULL` handle / if the tick is invalid.
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_funding_basis_new` (not freed), or `NULL`.
+ */
+double wickra_funding_basis_update(struct FundingBasis *handle,
+                                   double funding_rate,
+                                   double mark_price,
+                                   double index_price,
+                                   double futures_price,
+                                   double open_interest,
+                                   double long_size,
+                                   double short_size,
+                                   double taker_buy_volume,
+                                   double taker_sell_volume,
+                                   double long_liquidation,
+                                   double short_liquidation,
+                                   int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_funding_basis_new`, not freed), or `NULL`.
+ */
+void wickra_funding_basis_reset(struct FundingBasis *handle);
+
+/**
+ * Destroy a handle created by `wickra_funding_basis_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_funding_basis_new` and not previously freed, or `NULL`.
+ */
+void wickra_funding_basis_free(struct FundingBasis *handle);
+
+/**
+ * Create a `FundingImpliedApr` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_funding_implied_apr_free`.
+ */
+struct FundingImpliedApr *wickra_funding_implied_apr_new(double intervals_per_year);
+
+/**
+ * Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+ * `NULL` handle / if the tick is invalid.
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_funding_implied_apr_new` (not freed), or `NULL`.
+ */
+double wickra_funding_implied_apr_update(struct FundingImpliedApr *handle,
+                                         double funding_rate,
+                                         double mark_price,
+                                         double index_price,
+                                         double futures_price,
+                                         double open_interest,
+                                         double long_size,
+                                         double short_size,
+                                         double taker_buy_volume,
+                                         double taker_sell_volume,
+                                         double long_liquidation,
+                                         double short_liquidation,
+                                         int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_funding_implied_apr_new`, not freed), or `NULL`.
+ */
+void wickra_funding_implied_apr_reset(struct FundingImpliedApr *handle);
+
+/**
+ * Destroy a handle created by `wickra_funding_implied_apr_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_funding_implied_apr_new` and not previously freed, or `NULL`.
+ */
+void wickra_funding_implied_apr_free(struct FundingImpliedApr *handle);
+
+/**
+ * Create a `FundingRate` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_funding_rate_free`.
+ */
+struct FundingRate *wickra_funding_rate_new(void);
+
+/**
+ * Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+ * `NULL` handle / if the tick is invalid.
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_funding_rate_new` (not freed), or `NULL`.
+ */
+double wickra_funding_rate_update(struct FundingRate *handle,
+                                  double funding_rate,
+                                  double mark_price,
+                                  double index_price,
+                                  double futures_price,
+                                  double open_interest,
+                                  double long_size,
+                                  double short_size,
+                                  double taker_buy_volume,
+                                  double taker_sell_volume,
+                                  double long_liquidation,
+                                  double short_liquidation,
+                                  int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_funding_rate_new`, not freed), or `NULL`.
+ */
+void wickra_funding_rate_reset(struct FundingRate *handle);
+
+/**
+ * Destroy a handle created by `wickra_funding_rate_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_funding_rate_new` and not previously freed, or `NULL`.
+ */
+void wickra_funding_rate_free(struct FundingRate *handle);
+
+/**
+ * Create a `FundingRateMean` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_funding_rate_mean_free`.
+ */
+struct FundingRateMean *wickra_funding_rate_mean_new(uintptr_t window);
+
+/**
+ * Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+ * `NULL` handle / if the tick is invalid.
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_funding_rate_mean_new` (not freed), or `NULL`.
+ */
+double wickra_funding_rate_mean_update(struct FundingRateMean *handle,
+                                       double funding_rate,
+                                       double mark_price,
+                                       double index_price,
+                                       double futures_price,
+                                       double open_interest,
+                                       double long_size,
+                                       double short_size,
+                                       double taker_buy_volume,
+                                       double taker_sell_volume,
+                                       double long_liquidation,
+                                       double short_liquidation,
+                                       int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_funding_rate_mean_new`, not freed), or `NULL`.
+ */
+void wickra_funding_rate_mean_reset(struct FundingRateMean *handle);
+
+/**
+ * Destroy a handle created by `wickra_funding_rate_mean_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_funding_rate_mean_new` and not previously freed, or `NULL`.
+ */
+void wickra_funding_rate_mean_free(struct FundingRateMean *handle);
+
+/**
+ * Create a `FundingRateZScore` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_funding_rate_z_score_free`.
+ */
+struct FundingRateZScore *wickra_funding_rate_z_score_new(uintptr_t window);
+
+/**
+ * Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+ * `NULL` handle / if the tick is invalid.
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_funding_rate_z_score_new` (not freed), or `NULL`.
+ */
+double wickra_funding_rate_z_score_update(struct FundingRateZScore *handle,
+                                          double funding_rate,
+                                          double mark_price,
+                                          double index_price,
+                                          double futures_price,
+                                          double open_interest,
+                                          double long_size,
+                                          double short_size,
+                                          double taker_buy_volume,
+                                          double taker_sell_volume,
+                                          double long_liquidation,
+                                          double short_liquidation,
+                                          int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_funding_rate_z_score_new`, not freed), or `NULL`.
+ */
+void wickra_funding_rate_z_score_reset(struct FundingRateZScore *handle);
+
+/**
+ * Destroy a handle created by `wickra_funding_rate_z_score_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_funding_rate_z_score_new` and not previously freed, or `NULL`.
+ */
+void wickra_funding_rate_z_score_free(struct FundingRateZScore *handle);
+
+/**
+ * Create a `LongShortRatio` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_long_short_ratio_free`.
+ */
+struct LongShortRatio *wickra_long_short_ratio_new(void);
+
+/**
+ * Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+ * `NULL` handle / if the tick is invalid.
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_long_short_ratio_new` (not freed), or `NULL`.
+ */
+double wickra_long_short_ratio_update(struct LongShortRatio *handle,
+                                      double funding_rate,
+                                      double mark_price,
+                                      double index_price,
+                                      double futures_price,
+                                      double open_interest,
+                                      double long_size,
+                                      double short_size,
+                                      double taker_buy_volume,
+                                      double taker_sell_volume,
+                                      double long_liquidation,
+                                      double short_liquidation,
+                                      int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_long_short_ratio_new`, not freed), or `NULL`.
+ */
+void wickra_long_short_ratio_reset(struct LongShortRatio *handle);
+
+/**
+ * Destroy a handle created by `wickra_long_short_ratio_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_long_short_ratio_new` and not previously freed, or `NULL`.
+ */
+void wickra_long_short_ratio_free(struct LongShortRatio *handle);
+
+/**
+ * Create a `OpenInterestDelta` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_open_interest_delta_free`.
+ */
+struct OpenInterestDelta *wickra_open_interest_delta_new(void);
+
+/**
+ * Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+ * `NULL` handle / if the tick is invalid.
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_open_interest_delta_new` (not freed), or `NULL`.
+ */
+double wickra_open_interest_delta_update(struct OpenInterestDelta *handle,
+                                         double funding_rate,
+                                         double mark_price,
+                                         double index_price,
+                                         double futures_price,
+                                         double open_interest,
+                                         double long_size,
+                                         double short_size,
+                                         double taker_buy_volume,
+                                         double taker_sell_volume,
+                                         double long_liquidation,
+                                         double short_liquidation,
+                                         int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_open_interest_delta_new`, not freed), or `NULL`.
+ */
+void wickra_open_interest_delta_reset(struct OpenInterestDelta *handle);
+
+/**
+ * Destroy a handle created by `wickra_open_interest_delta_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_open_interest_delta_new` and not previously freed, or `NULL`.
+ */
+void wickra_open_interest_delta_free(struct OpenInterestDelta *handle);
+
+/**
+ * Create a `OIPriceDivergence` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_oi_price_divergence_free`.
+ */
+struct OIPriceDivergence *wickra_oi_price_divergence_new(uintptr_t window);
+
+/**
+ * Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+ * `NULL` handle / if the tick is invalid.
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_oi_price_divergence_new` (not freed), or `NULL`.
+ */
+double wickra_oi_price_divergence_update(struct OIPriceDivergence *handle,
+                                         double funding_rate,
+                                         double mark_price,
+                                         double index_price,
+                                         double futures_price,
+                                         double open_interest,
+                                         double long_size,
+                                         double short_size,
+                                         double taker_buy_volume,
+                                         double taker_sell_volume,
+                                         double long_liquidation,
+                                         double short_liquidation,
+                                         int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_oi_price_divergence_new`, not freed), or `NULL`.
+ */
+void wickra_oi_price_divergence_reset(struct OIPriceDivergence *handle);
+
+/**
+ * Destroy a handle created by `wickra_oi_price_divergence_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_oi_price_divergence_new` and not previously freed, or `NULL`.
+ */
+void wickra_oi_price_divergence_free(struct OIPriceDivergence *handle);
+
+/**
+ * Create a `OiToVolumeRatio` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_oi_to_volume_ratio_free`.
+ */
+struct OiToVolumeRatio *wickra_oi_to_volume_ratio_new(void);
+
+/**
+ * Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+ * `NULL` handle / if the tick is invalid.
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_oi_to_volume_ratio_new` (not freed), or `NULL`.
+ */
+double wickra_oi_to_volume_ratio_update(struct OiToVolumeRatio *handle,
+                                        double funding_rate,
+                                        double mark_price,
+                                        double index_price,
+                                        double futures_price,
+                                        double open_interest,
+                                        double long_size,
+                                        double short_size,
+                                        double taker_buy_volume,
+                                        double taker_sell_volume,
+                                        double long_liquidation,
+                                        double short_liquidation,
+                                        int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_oi_to_volume_ratio_new`, not freed), or `NULL`.
+ */
+void wickra_oi_to_volume_ratio_reset(struct OiToVolumeRatio *handle);
+
+/**
+ * Destroy a handle created by `wickra_oi_to_volume_ratio_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_oi_to_volume_ratio_new` and not previously freed, or `NULL`.
+ */
+void wickra_oi_to_volume_ratio_free(struct OiToVolumeRatio *handle);
+
+/**
+ * Create a `OIWeighted` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_oi_weighted_free`.
+ */
+struct OIWeighted *wickra_oi_weighted_new(void);
+
+/**
+ * Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+ * `NULL` handle / if the tick is invalid.
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_oi_weighted_new` (not freed), or `NULL`.
+ */
+double wickra_oi_weighted_update(struct OIWeighted *handle,
+                                 double funding_rate,
+                                 double mark_price,
+                                 double index_price,
+                                 double futures_price,
+                                 double open_interest,
+                                 double long_size,
+                                 double short_size,
+                                 double taker_buy_volume,
+                                 double taker_sell_volume,
+                                 double long_liquidation,
+                                 double short_liquidation,
+                                 int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_oi_weighted_new`, not freed), or `NULL`.
+ */
+void wickra_oi_weighted_reset(struct OIWeighted *handle);
+
+/**
+ * Destroy a handle created by `wickra_oi_weighted_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_oi_weighted_new` and not previously freed, or `NULL`.
+ */
+void wickra_oi_weighted_free(struct OIWeighted *handle);
+
+/**
+ * Create a `OpenInterestMomentum` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_open_interest_momentum_free`.
+ */
+struct OpenInterestMomentum *wickra_open_interest_momentum_new(uintptr_t period);
+
+/**
+ * Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+ * `NULL` handle / if the tick is invalid.
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_open_interest_momentum_new` (not freed), or `NULL`.
+ */
+double wickra_open_interest_momentum_update(struct OpenInterestMomentum *handle,
+                                            double funding_rate,
+                                            double mark_price,
+                                            double index_price,
+                                            double futures_price,
+                                            double open_interest,
+                                            double long_size,
+                                            double short_size,
+                                            double taker_buy_volume,
+                                            double taker_sell_volume,
+                                            double long_liquidation,
+                                            double short_liquidation,
+                                            int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_open_interest_momentum_new`, not freed), or `NULL`.
+ */
+void wickra_open_interest_momentum_reset(struct OpenInterestMomentum *handle);
+
+/**
+ * Destroy a handle created by `wickra_open_interest_momentum_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_open_interest_momentum_new` and not previously freed, or `NULL`.
+ */
+void wickra_open_interest_momentum_free(struct OpenInterestMomentum *handle);
+
+/**
+ * Create a `PerpetualPremiumIndex` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_perpetual_premium_index_free`.
+ */
+struct PerpetualPremiumIndex *wickra_perpetual_premium_index_new(void);
+
+/**
+ * Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+ * `NULL` handle / if the tick is invalid.
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_perpetual_premium_index_new` (not freed), or `NULL`.
+ */
+double wickra_perpetual_premium_index_update(struct PerpetualPremiumIndex *handle,
+                                             double funding_rate,
+                                             double mark_price,
+                                             double index_price,
+                                             double futures_price,
+                                             double open_interest,
+                                             double long_size,
+                                             double short_size,
+                                             double taker_buy_volume,
+                                             double taker_sell_volume,
+                                             double long_liquidation,
+                                             double short_liquidation,
+                                             int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_perpetual_premium_index_new`, not freed), or `NULL`.
+ */
+void wickra_perpetual_premium_index_reset(struct PerpetualPremiumIndex *handle);
+
+/**
+ * Destroy a handle created by `wickra_perpetual_premium_index_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_perpetual_premium_index_new` and not previously freed, or `NULL`.
+ */
+void wickra_perpetual_premium_index_free(struct PerpetualPremiumIndex *handle);
+
+/**
+ * Create a `TakerBuySellRatio` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_taker_buy_sell_ratio_free`.
+ */
+struct TakerBuySellRatio *wickra_taker_buy_sell_ratio_new(void);
+
+/**
+ * Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+ * `NULL` handle / if the tick is invalid.
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_taker_buy_sell_ratio_new` (not freed), or `NULL`.
+ */
+double wickra_taker_buy_sell_ratio_update(struct TakerBuySellRatio *handle,
+                                          double funding_rate,
+                                          double mark_price,
+                                          double index_price,
+                                          double futures_price,
+                                          double open_interest,
+                                          double long_size,
+                                          double short_size,
+                                          double taker_buy_volume,
+                                          double taker_sell_volume,
+                                          double long_liquidation,
+                                          double short_liquidation,
+                                          int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_taker_buy_sell_ratio_new`, not freed), or `NULL`.
+ */
+void wickra_taker_buy_sell_ratio_reset(struct TakerBuySellRatio *handle);
+
+/**
+ * Destroy a handle created by `wickra_taker_buy_sell_ratio_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_taker_buy_sell_ratio_new` and not previously freed, or `NULL`.
+ */
+void wickra_taker_buy_sell_ratio_free(struct TakerBuySellRatio *handle);
+
+/**
+ * Create a `TermStructureBasis` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_term_structure_basis_free`.
+ */
+struct TermStructureBasis *wickra_term_structure_basis_new(void);
+
+/**
+ * Feed one derivatives tick; returns the output, or `NaN` during warmup / on a
+ * `NULL` handle / if the tick is invalid.
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_term_structure_basis_new` (not freed), or `NULL`.
+ */
+double wickra_term_structure_basis_update(struct TermStructureBasis *handle,
+                                          double funding_rate,
+                                          double mark_price,
+                                          double index_price,
+                                          double futures_price,
+                                          double open_interest,
+                                          double long_size,
+                                          double short_size,
+                                          double taker_buy_volume,
+                                          double taker_sell_volume,
+                                          double long_liquidation,
+                                          double short_liquidation,
+                                          int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_term_structure_basis_new`, not freed), or `NULL`.
+ */
+void wickra_term_structure_basis_reset(struct TermStructureBasis *handle);
+
+/**
+ * Destroy a handle created by `wickra_term_structure_basis_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_term_structure_basis_new` and not previously freed, or `NULL`.
+ */
+void wickra_term_structure_basis_free(struct TermStructureBasis *handle);
 
 #endif  /* WICKRA_H */
