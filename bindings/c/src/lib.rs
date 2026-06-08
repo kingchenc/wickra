@@ -25,7 +25,7 @@ use wickra_core::{
     AmihudIlliquidity, AnchoredRsi, AnchoredVwap, AndrewsPitchfork, Apo, Aroon, AroonOscillator,
     Atr, AtrBands, AtrRatchet, AtrTrailingStop, AutoFib, Autocorrelation,
     AutocorrelationPeriodogram, AverageDailyRange, AverageDrawdown, AvgPrice, AwesomeOscillator,
-    AwesomeOscillatorHistogram, BalanceOfPower, BandpassFilter, Bat, BeltHold, Beta,
+    AwesomeOscillatorHistogram, BalanceOfPower, BandpassFilter, BarBuilder, Bat, BeltHold, Beta,
     BetaNeutralSpread, BetterVolume, BipowerVariation, BodySizePct, BollingerBands,
     BollingerBandwidth, BomarBands, BreadthThrust, Breakaway, BullishPercentIndex, BurkeRatio,
     Butterfly, CalendarSpread, CalmarRatio, Camarilla, Candle, CandleVolume, Cci, CenterOfGravity,
@@ -36,10 +36,10 @@ use wickra_core::{
     Counterattack, Crab, CrossSection, CumulativeVolumeDelta, CumulativeVolumeIndex, CupAndHandle,
     CyberneticCycle, Cypher, Decycler, DecyclerOscillator, Dema, DemandIndex, DemarkPivots,
     DepthSlope, DerivativeOscillator, DerivativesTick, DetrendedStdDev, DisparityIndex,
-    DistanceSsd, Doji, DojiStar, Donchian, DonchianStop, DoubleBollinger, DoubleTopBottom,
-    DownsideGapThreeMethods, Dpo, DragonflyDoji, DrawdownDuration, DumplingTop, Dx,
-    DynamicMomentumIndex, EaseOfMovement, EffectiveSpread, EhlersStochastic, Ehma, ElderImpulse,
-    ElderRay, ElderSafeZone, Ema, EmpiricalModeDecomposition, Engulfing, Equivolume,
+    DistanceSsd, Doji, DojiStar, DollarBars, Donchian, DonchianStop, DoubleBollinger,
+    DoubleTopBottom, DownsideGapThreeMethods, Dpo, DragonflyDoji, DrawdownDuration, DumplingTop,
+    Dx, DynamicMomentumIndex, EaseOfMovement, EffectiveSpread, EhlersStochastic, Ehma,
+    ElderImpulse, ElderRay, ElderSafeZone, Ema, EmpiricalModeDecomposition, Engulfing, Equivolume,
     EstimatedLeverageRatio, EvenBetterSinewave, EveningDojiStar, Evwma, EwmaVolatility, Expectancy,
     FallingThreeMethods, Fama, FibArcs, FibChannel, FibConfluence, FibExtension, FibFan,
     FibProjection, FibRetracement, FibTimeZones, FibonacciPivots, FisherRsi, FisherTransform,
@@ -51,53 +51,55 @@ use wickra_core::{
     HeikinAshiOscillator, HiLoActivator, HighLowIndex, HighLowRange, HighLowVolumeNodes, HighWave,
     HighpassFilter, Hikkake, HikkakeModified, HilbertDominantCycle, HistoricalVolatility, Hma,
     HoltWinters, HomingPigeon, HtDcPhase, HtPhasor, HtTrendMode, HurstChannel, HurstExponent,
-    Ichimoku, IdenticalThreeCrows, InNeck, Indicator, Inertia, InformationRatio, InitialBalance,
-    InstantaneousTrendline, IntradayIntensity, IntradayMomentumIndex, InverseFisherTransform,
-    InvertedHammer, JarqueBera, Jma, JumpIndicator, KRatio, KalmanHedgeRatio, Kama, KaseDevStop,
-    KasePermissionStochastic, KellyCriterion, Keltner, KendallTau, Kicking, KickingByLength, Kst,
-    Kurtosis, Kvo, KylesLambda, LadderBottom, LaguerreRsi, LeadLagCrossCorrelation, Level,
-    LinRegAngle, LinRegChannel, LinRegIntercept, LinRegSlope, LinearRegression,
-    LiquidationFeatures, LogReturn, LongLeggedDoji, LongLine, LongShortRatio, M2Measure,
-    MaEnvelope, MacdFix, MacdHistogram, MacdIndicator, Mama, MarketFacilitationIndex, MartinRatio,
-    Marubozu, MassIndex, MatHold, MatchingLow, MaxDrawdown, McClellanOscillator,
-    McClellanSummationIndex, McGinleyDynamic, MedianAbsoluteDeviation, MedianChannel, MedianMa,
-    MedianPrice, Member, Mfi, Microprice, MidPoint, MidPrice, MinusDi, MinusDm, ModifiedMaStop,
-    Mom, MorningDojiStar, MorningEveningStar, MurreyMathLines, NakedPoc, Natr, NewHighsNewLows,
-    NewPriceLines, Nrtr, Nvi, OIPriceDivergence, OIWeighted, Obv, OiToVolumeRatio, OmegaRatio,
-    OnNeck, OpenInterestDelta, OpenInterestMomentum, OpeningMarubozu, OpeningRange, OrderBook,
-    OrderBookImbalanceFull, OrderBookImbalanceTop1, OrderBookImbalanceTopN, OrderFlowImbalance,
-    OuHalfLife, OvernightGap, OvernightIntradayReturn, PainIndex, PairSpreadZScore, PairwiseBeta,
-    ParkinsonVolatility, PearsonCorrelation, PercentAboveMa, PercentB, PercentageTrailingStop,
-    PerpetualPremiumIndex, Pgo, PiercingDarkCloud, Pin, PivotReversal, PlusDi, PlusDm, Pmo,
+    Ichimoku, IdenticalThreeCrows, ImbalanceBars, InNeck, Indicator, Inertia, InformationRatio,
+    InitialBalance, InstantaneousTrendline, IntradayIntensity, IntradayMomentumIndex,
+    InverseFisherTransform, InvertedHammer, JarqueBera, Jma, JumpIndicator, KRatio, KagiBars,
+    KalmanHedgeRatio, Kama, KaseDevStop, KasePermissionStochastic, KellyCriterion, Keltner,
+    KendallTau, Kicking, KickingByLength, Kst, Kurtosis, Kvo, KylesLambda, LadderBottom,
+    LaguerreRsi, LeadLagCrossCorrelation, Level, LinRegAngle, LinRegChannel, LinRegIntercept,
+    LinRegSlope, LinearRegression, LiquidationFeatures, LogReturn, LongLeggedDoji, LongLine,
+    LongShortRatio, M2Measure, MaEnvelope, MacdFix, MacdHistogram, MacdIndicator, Mama,
+    MarketFacilitationIndex, MartinRatio, Marubozu, MassIndex, MatHold, MatchingLow, MaxDrawdown,
+    McClellanOscillator, McClellanSummationIndex, McGinleyDynamic, MedianAbsoluteDeviation,
+    MedianChannel, MedianMa, MedianPrice, Member, Mfi, Microprice, MidPoint, MidPrice, MinusDi,
+    MinusDm, ModifiedMaStop, Mom, MorningDojiStar, MorningEveningStar, MurreyMathLines, NakedPoc,
+    Natr, NewHighsNewLows, NewPriceLines, Nrtr, Nvi, OIPriceDivergence, OIWeighted, Obv,
+    OiToVolumeRatio, OmegaRatio, OnNeck, OpenInterestDelta, OpenInterestMomentum, OpeningMarubozu,
+    OpeningRange, OrderBook, OrderBookImbalanceFull, OrderBookImbalanceTop1,
+    OrderBookImbalanceTopN, OrderFlowImbalance, OuHalfLife, OvernightGap, OvernightIntradayReturn,
+    PainIndex, PairSpreadZScore, PairwiseBeta, ParkinsonVolatility, PearsonCorrelation,
+    PercentAboveMa, PercentB, PercentageTrailingStop, PerpetualPremiumIndex, Pgo,
+    PiercingDarkCloud, Pin, PivotReversal, PlusDi, PlusDm, Pmo, PointAndFigureBars,
     PolarizedFractalEfficiency, Ppo, PpoHistogram, ProfileShape, ProfitFactor, ProjectionBands,
-    ProjectionOscillator, Psar, Pvi, Qqe, Qstick, QuartileBands, QuotedSpread, RSquared,
+    ProjectionOscillator, Psar, Pvi, Qqe, Qstick, QuartileBands, QuotedSpread, RSquared, RangeBars,
     RealizedSpread, RealizedVolatility, RecoveryFactor, RectangleRange, Reflex, RegimeLabel,
-    RelativeStrengthAB, RenkoTrailingStop, RickshawMan, RisingThreeMethods, Rmi, Roc, Rocp, Rocr,
-    Rocr100, RogersSatchellVolatility, RollMeasure, RollingCorrelation, RollingCovariance,
-    RollingIqr, RollingMinMaxScaler, RollingPercentileRank, RollingQuantile, RollingVwap,
-    RoofingFilter, Rsi, Rsx, Rvi, RviVolatility, Rwi, SampleEntropy, SarExt, SeasonalZScore,
-    SeparatingLines, SessionHighLow, SessionRange, SessionVwap, ShannonEntropy, Shark, SharpeRatio,
-    ShootingStar, ShortLine, Side, SignedVolume, SineWave, SineWeightedMa, SinglePrints, Skewness,
-    Sma, Smi, Smma, SmoothedHeikinAshi, SortinoRatio, SpearmanCorrelation, SpinningTop,
-    SpreadAr1Coefficient, SpreadBollingerBands, SpreadHurst, StalledPattern, StandardError,
-    StandardErrorBands, StarcBands, Stc, StdDev, StepTrailingStop, SterlingRatio, StickSandwich,
-    StochRsi, Stochastic, StochasticCci, SuperSmoother, SuperTrend, TailRatio, TakerBuySellRatio,
-    Takuri, TasukiGap, TdCamouflage, TdClop, TdClopwin, TdCombo, TdCountdown, TdDWave, TdDeMarker,
-    TdDifferential, TdLines, TdMovingAverage, TdOpen, TdPressure, TdPropulsion, TdRangeProjection,
-    TdRei, TdRiskLevel, TdSequential, TdSetup, TdTrap, Tema, TermStructureBasis, ThreeDrives,
-    ThreeInside, ThreeLineBreak, ThreeLineStrike, ThreeOutside, ThreeSoldiersOrCrows,
-    ThreeStarsInSouth, Thrusting, TickIndex, Tii, TimeBasedStop, TowerTopBottom, Trade,
-    TradeImbalance, TradeQuote, TradeSignAutocorrelation, TradeVolumeIndex, TrendLabel,
-    TrendStrengthIndex, Trendflex, TreynorRatio, Triangle, Trima, Trin, TripleTopBottom, Tristar,
-    Trix, TrueRange, Tsf, TsfOscillator, Tsi, Tsv, TtmSqueeze, TtmTrend, TurnOfMonth, Tweezer,
-    TwiggsMoneyFlow, TwoCrows, TypicalPrice, UlcerIndex, UltimateOscillator, UniqueThreeRiver,
-    UniversalOscillator, UpDownVolumeRatio, UpsideGapThreeMethods, UpsideGapTwoCrows,
-    UpsidePotentialRatio, ValueArea, ValueAtRisk, Variance, VarianceRatio,
-    VerticalHorizontalFilter, Vidya, VolatilityCone, VolatilityOfVolatility, VolatilityRatio,
-    VoltyStop, VolumeOscillator, VolumePriceTrend, VolumeRsi, VolumeWeightedMacd, VolumeWeightedSr,
-    Vortex, Vpin, Vwap, VwapStdDevBands, Vwma, Vzo, Wad, WavePm, WaveTrend, Wedge, WeightedClose,
-    WickRatio, WilliamsFractals, WilliamsR, WinRate, Wma, WoodiePivots, YangZhangVolatility,
-    YoyoExit, ZScore, ZeroLagMacd, ZigZag, Zlema, T3,
+    RelativeStrengthAB, RenkoBars, RenkoTrailingStop, RickshawMan, RisingThreeMethods, Rmi, Roc,
+    Rocp, Rocr, Rocr100, RogersSatchellVolatility, RollMeasure, RollingCorrelation,
+    RollingCovariance, RollingIqr, RollingMinMaxScaler, RollingPercentileRank, RollingQuantile,
+    RollingVwap, RoofingFilter, Rsi, Rsx, RunBars, Rvi, RviVolatility, Rwi, SampleEntropy, SarExt,
+    SeasonalZScore, SeparatingLines, SessionHighLow, SessionRange, SessionVwap, ShannonEntropy,
+    Shark, SharpeRatio, ShootingStar, ShortLine, Side, SignedVolume, SineWave, SineWeightedMa,
+    SinglePrints, Skewness, Sma, Smi, Smma, SmoothedHeikinAshi, SortinoRatio, SpearmanCorrelation,
+    SpinningTop, SpreadAr1Coefficient, SpreadBollingerBands, SpreadHurst, StalledPattern,
+    StandardError, StandardErrorBands, StarcBands, Stc, StdDev, StepTrailingStop, SterlingRatio,
+    StickSandwich, StochRsi, Stochastic, StochasticCci, SuperSmoother, SuperTrend, TailRatio,
+    TakerBuySellRatio, Takuri, TasukiGap, TdCamouflage, TdClop, TdClopwin, TdCombo, TdCountdown,
+    TdDWave, TdDeMarker, TdDifferential, TdLines, TdMovingAverage, TdOpen, TdPressure,
+    TdPropulsion, TdRangeProjection, TdRei, TdRiskLevel, TdSequential, TdSetup, TdTrap, Tema,
+    TermStructureBasis, ThreeDrives, ThreeInside, ThreeLineBreak, ThreeLineBreakBars,
+    ThreeLineStrike, ThreeOutside, ThreeSoldiersOrCrows, ThreeStarsInSouth, Thrusting, TickBars,
+    TickIndex, Tii, TimeBasedStop, TowerTopBottom, Trade, TradeImbalance, TradeQuote,
+    TradeSignAutocorrelation, TradeVolumeIndex, TrendLabel, TrendStrengthIndex, Trendflex,
+    TreynorRatio, Triangle, Trima, Trin, TripleTopBottom, Tristar, Trix, TrueRange, Tsf,
+    TsfOscillator, Tsi, Tsv, TtmSqueeze, TtmTrend, TurnOfMonth, Tweezer, TwiggsMoneyFlow, TwoCrows,
+    TypicalPrice, UlcerIndex, UltimateOscillator, UniqueThreeRiver, UniversalOscillator,
+    UpDownVolumeRatio, UpsideGapThreeMethods, UpsideGapTwoCrows, UpsidePotentialRatio, ValueArea,
+    ValueAtRisk, Variance, VarianceRatio, VerticalHorizontalFilter, Vidya, VolatilityCone,
+    VolatilityOfVolatility, VolatilityRatio, VoltyStop, VolumeBars, VolumeOscillator,
+    VolumePriceTrend, VolumeRsi, VolumeWeightedMacd, VolumeWeightedSr, Vortex, Vpin, Vwap,
+    VwapStdDevBands, Vwma, Vzo, Wad, WavePm, WaveTrend, Wedge, WeightedClose, WickRatio,
+    WilliamsFractals, WilliamsR, WinRate, Wma, WoodiePivots, YangZhangVolatility, YoyoExit, ZScore,
+    ZeroLagMacd, ZigZag, Zlema, T3,
 };
 
 // ===== Scalar indicators (f64 -> f64) =====
@@ -42730,6 +42732,857 @@ pub unsafe extern "C" fn wickra_zig_zag_reset(handle: *mut ZigZag) {
 /// `handle` must have been returned by `wickra_zig_zag_new` and not previously freed, or `NULL`.
 #[no_mangle]
 pub unsafe extern "C" fn wickra_zig_zag_free(handle: *mut ZigZag) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+// ===== Alt-chart bar builders (BarBuilder -> bars via caller buffer + count) =====
+
+/// C-ABI view of one `DollarBar` (alt-chart bar element).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraDollarBar {
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub volume: f64,
+    pub dollar: f64,
+}
+
+/// C-ABI view of one `ImbalanceBar` (alt-chart bar element).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraImbalanceBar {
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub imbalance: f64,
+    pub direction: i8,
+}
+
+/// C-ABI view of one `KagiBar` (alt-chart bar element).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraKagiBar {
+    pub start: f64,
+    pub end: f64,
+    pub direction: i8,
+}
+
+/// C-ABI view of one `PnfColumn` (alt-chart bar element).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraPnfColumn {
+    pub direction: i8,
+    pub high: f64,
+    pub low: f64,
+}
+
+/// C-ABI view of one `RangeBar` (alt-chart bar element).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraRangeBar {
+    pub open: f64,
+    pub close: f64,
+    pub direction: i8,
+}
+
+/// C-ABI view of one `RenkoBrick` (alt-chart bar element).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraRenkoBrick {
+    pub open: f64,
+    pub close: f64,
+    pub direction: i8,
+}
+
+/// C-ABI view of one `RunBar` (alt-chart bar element).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraRunBar {
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub length: usize,
+    pub direction: i8,
+}
+
+/// C-ABI view of one `LineBreakBar` (alt-chart bar element).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraLineBreakBar {
+    pub open: f64,
+    pub close: f64,
+    pub direction: i8,
+}
+
+/// C-ABI view of one `TickBar` (alt-chart bar element).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraTickBar {
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub volume: f64,
+}
+
+/// C-ABI view of one `VolumeBar` (alt-chart bar element).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraVolumeBar {
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub volume: f64,
+}
+
+/// Create a `DollarBars` bar builder.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_dollar_bars_free`.
+#[no_mangle]
+pub extern "C" fn wickra_dollar_bars_new(dollar_per_bar: f64) -> *mut DollarBars {
+    match DollarBars::new(dollar_per_bar) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns the
+/// total number completed on this candle (0, 1, or several). If the return exceeds `cap`,
+/// the surplus is not written — enlarge `cap` (a single candle rarely completes many bars;
+/// `cap >= 64` is safe). Returns 0 on a `NULL` handle or an invalid candle.
+///
+/// # Safety
+/// `handle` (from `wickra_dollar_bars_new`, not freed) and `out` must be valid or `NULL`; when
+/// non-`NULL`, `out` must cover `cap` `WickraDollarBar` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dollar_bars_update(
+    handle: *mut DollarBars,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraDollarBar,
+    cap: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return 0;
+    };
+    let bars = builder.update(candle);
+    if !out.is_null() {
+        let slots = slice::from_raw_parts_mut(out, cap);
+        for (slot, bar) in slots.iter_mut().zip(&bars) {
+            *slot = WickraDollarBar {
+                open: bar.open,
+                high: bar.high,
+                low: bar.low,
+                close: bar.close,
+                volume: bar.volume,
+                dollar: bar.dollar,
+            };
+        }
+    }
+    bars.len()
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_dollar_bars_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dollar_bars_reset(handle: *mut DollarBars) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_dollar_bars_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_dollar_bars_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dollar_bars_free(handle: *mut DollarBars) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `ImbalanceBars` bar builder.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_imbalance_bars_free`.
+#[no_mangle]
+pub extern "C" fn wickra_imbalance_bars_new(threshold: f64) -> *mut ImbalanceBars {
+    match ImbalanceBars::new(threshold) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns the
+/// total number completed on this candle (0, 1, or several). If the return exceeds `cap`,
+/// the surplus is not written — enlarge `cap` (a single candle rarely completes many bars;
+/// `cap >= 64` is safe). Returns 0 on a `NULL` handle or an invalid candle.
+///
+/// # Safety
+/// `handle` (from `wickra_imbalance_bars_new`, not freed) and `out` must be valid or `NULL`; when
+/// non-`NULL`, `out` must cover `cap` `WickraImbalanceBar` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_imbalance_bars_update(
+    handle: *mut ImbalanceBars,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraImbalanceBar,
+    cap: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return 0;
+    };
+    let bars = builder.update(candle);
+    if !out.is_null() {
+        let slots = slice::from_raw_parts_mut(out, cap);
+        for (slot, bar) in slots.iter_mut().zip(&bars) {
+            *slot = WickraImbalanceBar {
+                open: bar.open,
+                high: bar.high,
+                low: bar.low,
+                close: bar.close,
+                imbalance: bar.imbalance,
+                direction: bar.direction,
+            };
+        }
+    }
+    bars.len()
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_imbalance_bars_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_imbalance_bars_reset(handle: *mut ImbalanceBars) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_imbalance_bars_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_imbalance_bars_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_imbalance_bars_free(handle: *mut ImbalanceBars) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `KagiBars` bar builder.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_kagi_bars_free`.
+#[no_mangle]
+pub extern "C" fn wickra_kagi_bars_new(reversal: f64) -> *mut KagiBars {
+    match KagiBars::new(reversal) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns the
+/// total number completed on this candle (0, 1, or several). If the return exceeds `cap`,
+/// the surplus is not written — enlarge `cap` (a single candle rarely completes many bars;
+/// `cap >= 64` is safe). Returns 0 on a `NULL` handle or an invalid candle.
+///
+/// # Safety
+/// `handle` (from `wickra_kagi_bars_new`, not freed) and `out` must be valid or `NULL`; when
+/// non-`NULL`, `out` must cover `cap` `WickraKagiBar` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kagi_bars_update(
+    handle: *mut KagiBars,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraKagiBar,
+    cap: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return 0;
+    };
+    let bars = builder.update(candle);
+    if !out.is_null() {
+        let slots = slice::from_raw_parts_mut(out, cap);
+        for (slot, bar) in slots.iter_mut().zip(&bars) {
+            *slot = WickraKagiBar {
+                start: bar.start,
+                end: bar.end,
+                direction: bar.direction,
+            };
+        }
+    }
+    bars.len()
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kagi_bars_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kagi_bars_reset(handle: *mut KagiBars) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_kagi_bars_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_kagi_bars_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kagi_bars_free(handle: *mut KagiBars) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `PointAndFigureBars` bar builder.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_point_and_figure_bars_free`.
+#[no_mangle]
+pub extern "C" fn wickra_point_and_figure_bars_new(
+    box_size: f64,
+    reversal: usize,
+) -> *mut PointAndFigureBars {
+    match PointAndFigureBars::new(box_size, reversal) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns the
+/// total number completed on this candle (0, 1, or several). If the return exceeds `cap`,
+/// the surplus is not written — enlarge `cap` (a single candle rarely completes many bars;
+/// `cap >= 64` is safe). Returns 0 on a `NULL` handle or an invalid candle.
+///
+/// # Safety
+/// `handle` (from `wickra_point_and_figure_bars_new`, not freed) and `out` must be valid or `NULL`; when
+/// non-`NULL`, `out` must cover `cap` `WickraPnfColumn` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_point_and_figure_bars_update(
+    handle: *mut PointAndFigureBars,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraPnfColumn,
+    cap: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return 0;
+    };
+    let bars = builder.update(candle);
+    if !out.is_null() {
+        let slots = slice::from_raw_parts_mut(out, cap);
+        for (slot, bar) in slots.iter_mut().zip(&bars) {
+            *slot = WickraPnfColumn {
+                direction: bar.direction,
+                high: bar.high,
+                low: bar.low,
+            };
+        }
+    }
+    bars.len()
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_point_and_figure_bars_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_point_and_figure_bars_reset(handle: *mut PointAndFigureBars) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_point_and_figure_bars_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_point_and_figure_bars_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_point_and_figure_bars_free(handle: *mut PointAndFigureBars) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `RangeBars` bar builder.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_range_bars_free`.
+#[no_mangle]
+pub extern "C" fn wickra_range_bars_new(range: f64) -> *mut RangeBars {
+    match RangeBars::new(range) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns the
+/// total number completed on this candle (0, 1, or several). If the return exceeds `cap`,
+/// the surplus is not written — enlarge `cap` (a single candle rarely completes many bars;
+/// `cap >= 64` is safe). Returns 0 on a `NULL` handle or an invalid candle.
+///
+/// # Safety
+/// `handle` (from `wickra_range_bars_new`, not freed) and `out` must be valid or `NULL`; when
+/// non-`NULL`, `out` must cover `cap` `WickraRangeBar` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_range_bars_update(
+    handle: *mut RangeBars,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraRangeBar,
+    cap: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return 0;
+    };
+    let bars = builder.update(candle);
+    if !out.is_null() {
+        let slots = slice::from_raw_parts_mut(out, cap);
+        for (slot, bar) in slots.iter_mut().zip(&bars) {
+            *slot = WickraRangeBar {
+                open: bar.open,
+                close: bar.close,
+                direction: bar.direction,
+            };
+        }
+    }
+    bars.len()
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_range_bars_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_range_bars_reset(handle: *mut RangeBars) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_range_bars_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_range_bars_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_range_bars_free(handle: *mut RangeBars) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `RenkoBars` bar builder.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_renko_bars_free`.
+#[no_mangle]
+pub extern "C" fn wickra_renko_bars_new(box_size: f64) -> *mut RenkoBars {
+    match RenkoBars::new(box_size) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns the
+/// total number completed on this candle (0, 1, or several). If the return exceeds `cap`,
+/// the surplus is not written — enlarge `cap` (a single candle rarely completes many bars;
+/// `cap >= 64` is safe). Returns 0 on a `NULL` handle or an invalid candle.
+///
+/// # Safety
+/// `handle` (from `wickra_renko_bars_new`, not freed) and `out` must be valid or `NULL`; when
+/// non-`NULL`, `out` must cover `cap` `WickraRenkoBrick` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_renko_bars_update(
+    handle: *mut RenkoBars,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraRenkoBrick,
+    cap: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return 0;
+    };
+    let bars = builder.update(candle);
+    if !out.is_null() {
+        let slots = slice::from_raw_parts_mut(out, cap);
+        for (slot, bar) in slots.iter_mut().zip(&bars) {
+            *slot = WickraRenkoBrick {
+                open: bar.open,
+                close: bar.close,
+                direction: bar.direction,
+            };
+        }
+    }
+    bars.len()
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_renko_bars_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_renko_bars_reset(handle: *mut RenkoBars) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_renko_bars_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_renko_bars_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_renko_bars_free(handle: *mut RenkoBars) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `RunBars` bar builder.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_run_bars_free`.
+#[no_mangle]
+pub extern "C" fn wickra_run_bars_new(run_length: usize) -> *mut RunBars {
+    match RunBars::new(run_length) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns the
+/// total number completed on this candle (0, 1, or several). If the return exceeds `cap`,
+/// the surplus is not written — enlarge `cap` (a single candle rarely completes many bars;
+/// `cap >= 64` is safe). Returns 0 on a `NULL` handle or an invalid candle.
+///
+/// # Safety
+/// `handle` (from `wickra_run_bars_new`, not freed) and `out` must be valid or `NULL`; when
+/// non-`NULL`, `out` must cover `cap` `WickraRunBar` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_run_bars_update(
+    handle: *mut RunBars,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraRunBar,
+    cap: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return 0;
+    };
+    let bars = builder.update(candle);
+    if !out.is_null() {
+        let slots = slice::from_raw_parts_mut(out, cap);
+        for (slot, bar) in slots.iter_mut().zip(&bars) {
+            *slot = WickraRunBar {
+                open: bar.open,
+                high: bar.high,
+                low: bar.low,
+                close: bar.close,
+                length: bar.length,
+                direction: bar.direction,
+            };
+        }
+    }
+    bars.len()
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_run_bars_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_run_bars_reset(handle: *mut RunBars) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_run_bars_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_run_bars_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_run_bars_free(handle: *mut RunBars) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `ThreeLineBreakBars` bar builder.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_three_line_break_bars_free`.
+#[no_mangle]
+pub extern "C" fn wickra_three_line_break_bars_new(lines: usize) -> *mut ThreeLineBreakBars {
+    match ThreeLineBreakBars::new(lines) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns the
+/// total number completed on this candle (0, 1, or several). If the return exceeds `cap`,
+/// the surplus is not written — enlarge `cap` (a single candle rarely completes many bars;
+/// `cap >= 64` is safe). Returns 0 on a `NULL` handle or an invalid candle.
+///
+/// # Safety
+/// `handle` (from `wickra_three_line_break_bars_new`, not freed) and `out` must be valid or `NULL`; when
+/// non-`NULL`, `out` must cover `cap` `WickraLineBreakBar` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_line_break_bars_update(
+    handle: *mut ThreeLineBreakBars,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraLineBreakBar,
+    cap: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return 0;
+    };
+    let bars = builder.update(candle);
+    if !out.is_null() {
+        let slots = slice::from_raw_parts_mut(out, cap);
+        for (slot, bar) in slots.iter_mut().zip(&bars) {
+            *slot = WickraLineBreakBar {
+                open: bar.open,
+                close: bar.close,
+                direction: bar.direction,
+            };
+        }
+    }
+    bars.len()
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_line_break_bars_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_line_break_bars_reset(handle: *mut ThreeLineBreakBars) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_three_line_break_bars_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_three_line_break_bars_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_line_break_bars_free(handle: *mut ThreeLineBreakBars) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `TickBars` bar builder.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_tick_bars_free`.
+#[no_mangle]
+pub extern "C" fn wickra_tick_bars_new(ticks: usize) -> *mut TickBars {
+    match TickBars::new(ticks) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns the
+/// total number completed on this candle (0, 1, or several). If the return exceeds `cap`,
+/// the surplus is not written — enlarge `cap` (a single candle rarely completes many bars;
+/// `cap >= 64` is safe). Returns 0 on a `NULL` handle or an invalid candle.
+///
+/// # Safety
+/// `handle` (from `wickra_tick_bars_new`, not freed) and `out` must be valid or `NULL`; when
+/// non-`NULL`, `out` must cover `cap` `WickraTickBar` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tick_bars_update(
+    handle: *mut TickBars,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraTickBar,
+    cap: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return 0;
+    };
+    let bars = builder.update(candle);
+    if !out.is_null() {
+        let slots = slice::from_raw_parts_mut(out, cap);
+        for (slot, bar) in slots.iter_mut().zip(&bars) {
+            *slot = WickraTickBar {
+                open: bar.open,
+                high: bar.high,
+                low: bar.low,
+                close: bar.close,
+                volume: bar.volume,
+            };
+        }
+    }
+    bars.len()
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tick_bars_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tick_bars_reset(handle: *mut TickBars) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_tick_bars_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_tick_bars_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tick_bars_free(handle: *mut TickBars) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `VolumeBars` bar builder.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_volume_bars_free`.
+#[no_mangle]
+pub extern "C" fn wickra_volume_bars_new(volume_per_bar: f64) -> *mut VolumeBars {
+    match VolumeBars::new(volume_per_bar) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one OHLCV candle; writes up to `cap` completed bars into `out` and returns the
+/// total number completed on this candle (0, 1, or several). If the return exceeds `cap`,
+/// the surplus is not written — enlarge `cap` (a single candle rarely completes many bars;
+/// `cap >= 64` is safe). Returns 0 on a `NULL` handle or an invalid candle.
+///
+/// # Safety
+/// `handle` (from `wickra_volume_bars_new`, not freed) and `out` must be valid or `NULL`; when
+/// non-`NULL`, `out` must cover `cap` `WickraVolumeBar` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_bars_update(
+    handle: *mut VolumeBars,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraVolumeBar,
+    cap: usize,
+) -> usize {
+    let Some(builder) = handle.as_mut() else {
+        return 0;
+    };
+    let Ok(candle) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return 0;
+    };
+    let bars = builder.update(candle);
+    if !out.is_null() {
+        let slots = slice::from_raw_parts_mut(out, cap);
+        for (slot, bar) in slots.iter_mut().zip(&bars) {
+            *slot = WickraVolumeBar {
+                open: bar.open,
+                high: bar.high,
+                low: bar.low,
+                close: bar.close,
+                volume: bar.volume,
+            };
+        }
+    }
+    bars.len()
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_bars_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_bars_reset(handle: *mut VolumeBars) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_volume_bars_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_volume_bars_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_bars_free(handle: *mut VolumeBars) {
     if !handle.is_null() {
         drop(Box::from_raw(handle));
     }
