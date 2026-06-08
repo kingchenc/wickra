@@ -117,6 +117,7 @@ mod downside_gap_three_methods;
 mod dpo;
 mod dragonfly_doji;
 mod drawdown_duration;
+mod dumpling_top;
 mod dx;
 mod dynamic_momentum_index;
 mod ease_of_movement;
@@ -153,6 +154,7 @@ mod footprint;
 mod force_index;
 mod fractal_chaos_bands;
 mod frama;
+mod fry_pan_bottom;
 mod funding_basis;
 mod funding_rate;
 mod funding_rate_mean;
@@ -171,6 +173,7 @@ mod gravestone_doji;
 mod hammer;
 mod hanging_man;
 mod harami;
+mod harami_cross;
 mod head_and_shoulders;
 mod heikin_ashi;
 mod heikin_ashi_oscillator;
@@ -265,6 +268,7 @@ mod morning_evening_star;
 mod murrey_math_lines;
 mod natr;
 mod new_highs_new_lows;
+mod new_price_lines;
 mod nrtr;
 mod nvi;
 mod ob_imbalance_full;
@@ -416,6 +420,7 @@ mod tick_index;
 mod tii;
 mod time_based_stop;
 mod time_of_day_return_profile;
+mod tower_top_bottom;
 mod tpo_profile;
 mod trade_imbalance;
 mod trade_volume_index;
@@ -427,6 +432,7 @@ mod triangle;
 mod trima;
 mod trin;
 mod triple_top_bottom;
+mod tristar;
 mod trix;
 mod true_range;
 mod tsf;
@@ -596,6 +602,7 @@ pub use downside_gap_three_methods::DownsideGapThreeMethods;
 pub use dpo::Dpo;
 pub use dragonfly_doji::DragonflyDoji;
 pub use drawdown_duration::DrawdownDuration;
+pub use dumpling_top::DumplingTop;
 pub use dx::Dx;
 pub use dynamic_momentum_index::DynamicMomentumIndex;
 pub use ease_of_movement::EaseOfMovement;
@@ -632,6 +639,7 @@ pub use footprint::{Footprint, FootprintLevel, FootprintOutput};
 pub use force_index::ForceIndex;
 pub use fractal_chaos_bands::{FractalChaosBands, FractalChaosBandsOutput};
 pub use frama::Frama;
+pub use fry_pan_bottom::FryPanBottom;
 pub use funding_basis::FundingBasis;
 pub use funding_rate::FundingRate;
 pub use funding_rate_mean::FundingRateMean;
@@ -650,6 +658,7 @@ pub use gravestone_doji::GravestoneDoji;
 pub use hammer::Hammer;
 pub use hanging_man::HangingMan;
 pub use harami::Harami;
+pub use harami_cross::HaramiCross;
 pub use head_and_shoulders::HeadAndShoulders;
 pub use heikin_ashi::{HeikinAshi, HeikinAshiOutput};
 pub use heikin_ashi_oscillator::HeikinAshiOscillator;
@@ -744,6 +753,7 @@ pub use morning_evening_star::MorningEveningStar;
 pub use murrey_math_lines::{MurreyMathLines, MurreyMathLinesOutput};
 pub use natr::Natr;
 pub use new_highs_new_lows::NewHighsNewLows;
+pub use new_price_lines::NewPriceLines;
 pub use nrtr::{Nrtr, NrtrOutput};
 pub use nvi::Nvi;
 pub use ob_imbalance_full::OrderBookImbalanceFull;
@@ -895,6 +905,7 @@ pub use tick_index::TickIndex;
 pub use tii::Tii;
 pub use time_based_stop::TimeBasedStop;
 pub use time_of_day_return_profile::{TimeOfDayReturnProfile, TimeOfDayReturnProfileOutput};
+pub use tower_top_bottom::TowerTopBottom;
 pub use tpo_profile::{TpoProfile, TpoProfileOutput};
 pub use trade_imbalance::TradeImbalance;
 pub use trade_volume_index::TradeVolumeIndex;
@@ -906,6 +917,7 @@ pub use triangle::Triangle;
 pub use trima::Trima;
 pub use trin::Trin;
 pub use triple_top_bottom::TripleTopBottom;
+pub use tristar::Tristar;
 pub use trix::Trix;
 pub use true_range::TrueRange;
 pub use tsf::Tsf;
@@ -1412,6 +1424,12 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "TasukiGap",
             "UniqueThreeRiver",
             "ConcealingBabySwallow",
+            "Tristar",
+            "HaramiCross",
+            "TowerTopBottom",
+            "FryPanBottom",
+            "DumplingTop",
+            "NewPriceLines",
         ],
     ),
     (
@@ -1597,6 +1615,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 479, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 485, "FAMILIES total drifted from indicator count");
     }
 }

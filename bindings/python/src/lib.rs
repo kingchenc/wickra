@@ -15705,6 +15705,186 @@ impl PyCandleVolume {
     }
 }
 
+// ============================== Frying Pan Bottom ==============================
+
+#[pyclass(name = "FryPanBottom", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyFryPanBottom {
+    inner: wc::FryPanBottom,
+}
+
+#[pymethods]
+impl PyFryPanBottom {
+    #[new]
+    #[pyo3(signature = (period=9))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::FryPanBottom::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== Dumpling Top ==============================
+
+#[pyclass(name = "DumplingTop", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyDumplingTop {
+    inner: wc::DumplingTop,
+}
+
+#[pymethods]
+impl PyDumplingTop {
+    #[new]
+    #[pyo3(signature = (period=9))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::DumplingTop::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// ============================== New Price Lines ==============================
+
+#[pyclass(name = "NewPriceLines", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyNewPriceLines {
+    inner: wc::NewPriceLines,
+}
+
+#[pymethods]
+impl PyNewPriceLines {
+    #[new]
+    #[pyo3(signature = (count=5))]
+    fn new(count: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::NewPriceLines::new(count).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 // ============================== CoefficientOfVariation ==============================
 
 #[pyclass(
@@ -18181,6 +18361,9 @@ candle_pattern_no_param!(PyTdClop, wc::TdClop, "TDClop");
 candle_pattern_no_param!(PyTdClopwin, wc::TdClopwin, "TDClopwin");
 candle_pattern_no_param!(PyTdPropulsion, wc::TdPropulsion, "TDPropulsion");
 candle_pattern_no_param!(PyTdTrap, wc::TdTrap, "TDTrap");
+candle_pattern_no_param!(PyTristar, wc::Tristar, "Tristar");
+candle_pattern_no_param!(PyHaramiCross, wc::HaramiCross, "HaramiCross");
+candle_pattern_no_param!(PyTowerTopBottom, wc::TowerTopBottom, "TowerTopBottom");
 // ============================== Microstructure: Order Book ==============================
 //
 // Order-book indicators consume a depth snapshot rather than OHLCV. Streaming
@@ -24826,5 +25009,11 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyTdClopwin>()?;
     m.add_class::<PyTdPropulsion>()?;
     m.add_class::<PyTdTrap>()?;
+    m.add_class::<PyTristar>()?;
+    m.add_class::<PyHaramiCross>()?;
+    m.add_class::<PyTowerTopBottom>()?;
+    m.add_class::<PyFryPanBottom>()?;
+    m.add_class::<PyDumplingTop>()?;
+    m.add_class::<PyNewPriceLines>()?;
     Ok(())
 }

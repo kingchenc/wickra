@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **Tristar** — a three-doji star reversal: three consecutive dojis with the middle gapped above (bearish) or below (bullish) its neighbours (`Tristar`).
+- **Harami Cross** — a Harami whose second candle is a contained doji, a stronger reversal than a plain Harami (`HaramiCross`).
+- **Tower Top/Bottom** — a tall bar, a small pause bar, then a tall opposite bar marking a reversal (`TowerTopBottom`).
+- **Frying Pan Bottom** — a rounded (U-shaped) accumulation base over the lookback window, confirmed when price recovers above the rim (`FryPanBottom`).
+- **Dumpling Top** — a rounded (dome-shaped) distribution top over the lookback window, confirmed when price breaks below the start (`DumplingTop`).
+- **New Price Lines** — flags a run of N consecutive new closing highs (+1) or lows (-1), the eight/ten-new-price-lines exhaustion gauge (`NewPriceLines`).
 
 ## [0.6.8] - 2026-06-08
 - **Smoothed Heikin-Ashi** — a Heikin-Ashi candle computed from EMA-smoothed OHLC, damping noise into a cleaner trend candle (`SmoothedHeikinAshi`).
