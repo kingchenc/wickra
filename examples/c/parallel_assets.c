@@ -116,11 +116,16 @@ int main(int argc, char **argv) {
     printf("Serial:   %8.3f s  (%llu assets, indicator=%s)\n", t_serial,
            (unsigned long long)assets, ind_name);
 
+    /* The loop variable is declared outside the `for` and the bound is a plain
+     * variable: MSVC's OpenMP 2.0 rejects an in-init declaration or a cast in
+     * the condition (error C3015). */
+    long a;
+    long asset_count = (long)assets;
     t0 = now_seconds();
 #ifdef _OPENMP
 #pragma omp parallel for schedule(static)
 #endif
-    for (long a = 0; a < (long)assets; ++a) {
+    for (a = 0; a < asset_count; ++a) {
         run_one(which, &panel[(size_t)a * bars], &parallel[(size_t)a * bars], bars);
     }
     double t_parallel = now_seconds() - t0;
