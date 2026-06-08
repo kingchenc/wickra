@@ -382,6 +382,30 @@ def test_relative_strength_streaming_matches_batch():
 # 6-tuple candle; the batch helper takes only the columns it needs.
 
 CANDLE_SCALAR = {
+    "FryPanBottom": (
+        lambda: ta.FryPanBottom(9),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
+    "NewPriceLines": (
+        lambda: ta.NewPriceLines(5),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
+    "DumplingTop": (
+        lambda: ta.DumplingTop(9),
+        lambda ind, h, l, c, v: ind.batch(h, l, c),
+    ),
+    "TowerTopBottom": (
+        lambda: ta.TowerTopBottom(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "HaramiCross": (
+        lambda: ta.HaramiCross(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
+    "Tristar": (
+        lambda: ta.Tristar(),
+        lambda ind, h, l, c, v: ind.batch(c, h, l, c),
+    ),
     "ThreeLineBreak": (
         lambda: ta.ThreeLineBreak(3),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
@@ -3277,6 +3301,27 @@ def test_equivolume_reference():
 
 def test_candle_volume_reference():
     t = ta.CandleVolume(20)
+
+
+def test_tristar_reference():
+    t = ta.Tristar()
+    assert t.update((100.0, 101.0, 99.0, 100.02, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((105.0, 106.0, 104.0, 105.02, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((100.0, 101.0, 99.0, 100.02, 1.0, 2)) == pytest.approx(-1.0)
+
+
+def test_harami_cross_reference():
+    t = ta.HaramiCross()
+    assert t.update((110.0, 110.2, 99.8, 100.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((105.0, 106.0, 104.0, 105.02, 1.0, 1)) == pytest.approx(1.0)
+
+
+def test_tower_top_bottom_reference():
+    t = ta.TowerTopBottom()
+    assert t.update((100.0, 110.1, 99.9, 110.0, 1.0, 0)) == pytest.approx(0.0)
+    assert t.update((105.0, 107.0, 103.0, 105.1, 1.0, 1)) == pytest.approx(0.0)
+    assert t.update((110.0, 110.1, 99.9, 100.0, 1.0, 2)) == pytest.approx(-1.0)
+
 
 # --- Lifecycle ------------------------------------------------------------
 

@@ -386,6 +386,12 @@ const candleScalar = {
   TDDWave: { make: () => new wickra.TDDWave(2), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   HeikinAshiOscillator: { make: () => new wickra.HeikinAshiOscillator(5), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   ThreeLineBreak: { make: () => new wickra.ThreeLineBreak(3), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  Tristar: { make: () => new wickra.Tristar(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  HaramiCross: { make: () => new wickra.HaramiCross(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  TowerTopBottom: { make: () => new wickra.TowerTopBottom(), step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
+  DumplingTop: { make: () => new wickra.DumplingTop(9), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  NewPriceLines: { make: () => new wickra.NewPriceLines(5), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  FryPanBottom: { make: () => new wickra.FryPanBottom(9), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {

@@ -3421,6 +3421,33 @@ export declare class CandleVolume {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type FryPanBottomNode = FryPanBottom
+export declare class FryPanBottom {
+  constructor(period: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type DumplingTopNode = DumplingTop
+export declare class DumplingTop {
+  constructor(period: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type NewPriceLinesNode = NewPriceLines
+export declare class NewPriceLines {
+  constructor(count: number)
+  update(high: number, low: number, close: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type ValueAreaNode = ValueArea
 export declare class ValueArea {
   constructor(period: number, binCount: number, valueAreaPct: number)
@@ -4191,6 +4218,33 @@ export declare class TDPropulsion {
 }
 export type TdTrapNode = TDTrap
 export declare class TDTrap {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TristarNode = Tristar
+export declare class Tristar {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type HaramiCrossNode = HaramiCross
+export declare class HaramiCross {
+  constructor()
+  update(open: number, high: number, low: number, close: number): number | null
+  batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TowerTopBottomNode = TowerTopBottom
+export declare class TowerTopBottom {
   constructor()
   update(open: number, high: number, low: number, close: number): number | null
   batch(open: Array<number>, high: Array<number>, low: Array<number>, close: Array<number>): Array<number>
