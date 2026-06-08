@@ -1675,6 +1675,10 @@ typedef struct WickraFootprintLevel {
     double ask_vol;
 } WickraFootprintLevel;
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 struct AdaptiveCycle *wickra_adaptive_cycle_new(void);
 
 double wickra_adaptive_cycle_update(struct AdaptiveCycle *handle, double value);
@@ -10646,5 +10650,9 @@ intptr_t wickra_footprint_update(struct Footprint *handle,
 void wickra_footprint_reset(struct Footprint *handle);
 
 void wickra_footprint_free(struct Footprint *handle);
+
+#ifdef __cplusplus
+}  // extern "C"
+#endif  // __cplusplus
 
 #endif  /* WICKRA_H */

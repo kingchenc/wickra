@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(wickra_c_examples C)
+project(wickra_c_examples C CXX)
 
 # Directory holding the compiled Wickra C library (cargo output), e.g.
 # <workspace>/target/release. Override with -DWICKRA_LIB_DIR=/path/to/target/release.
@@ -25,24 +25,29 @@ else()
     set(WICKRA_LINK_LIB "${WICKRA_LIB_DIR}/libwickra.so")
 endif()
 
-add_executable(smoke smoke.c)
-target_include_directories(smoke PRIVATE "${WICKRA_INCLUDE_DIR}")
-target_link_libraries(smoke PRIVATE "${WICKRA_LINK_LIB}")
-if(UNIX AND NOT APPLE)
-    target_link_libraries(smoke PRIVATE m)
-endif()
-
-# On Windows the DLL must sit next to the executable at run time.
-if(WIN32)
-    add_custom_command(TARGET smoke POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                "${WICKRA_RUNTIME}" "$<TARGET_FILE_DIR:smoke>")
-endif()
-
 enable_testing()
-add_test(NAME smoke COMMAND smoke)
-# Unix needs the shared library on the loader path when the test runs.
-if(NOT WIN32)
-    set_tests_properties(smoke PROPERTIES
-        ENVIRONMENT "LD_LIBRARY_PATH=${WICKRA_LIB_DIR};DYLD_LIBRARY_PATH=${WICKRA_LIB_DIR}")
-endif()
+
+# Build one example, link it to the Wickra library, run it as a ctest. On Windows
+# the DLL is copied next to the executable so the loader finds it at run time.
+function(add_wickra_example name source)
+    add_executable(${name} ${source})
+    target_include_directories(${name} PRIVATE "${WICKRA_INCLUDE_DIR}")
+    target_link_libraries(${name} PRIVATE "${WICKRA_LINK_LIB}")
+    if(UNIX AND NOT APPLE)
+        target_link_libraries(${name} PRIVATE m)
+    endif()
+    if(WIN32)
+        add_custom_command(TARGET ${name} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "${WICKRA_RUNTIME}" "$<TARGET_FILE_DIR:${name}>")
+    endif()
+    add_test(NAME ${name} COMMAND ${name})
+    if(NOT WIN32)
+        set_tests_properties(${name} PROPERTIES
+            ENVIRONMENT "LD_LIBRARY_PATH=${WICKRA_LIB_DIR};DYLD_LIBRARY_PATH=${WICKRA_LIB_DIR}")
+    endif()
+endfunction()
+
+add_wickra_example(smoke smoke.c)         # links the boundary, asserts values
+add_wickra_example(streaming streaming.c) # runnable streaming demo
+add_wickra_example(cpp_smoke smoke.cpp)   # C++ RAII wrapper (wickra.hpp)
