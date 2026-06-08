@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **Hasbrouck Information Share** — variance-ratio proxy for each venue's share of price discovery (Hasbrouck information share) (`HasbrouckInformationShare`).
+- **PIN** — probability of informed trading from rolling buy/sell imbalance (EKOP single-window estimator) (`Pin`).
+- **Trade-Sign Autocorrelation** — lag-1 autocorrelation of the signed trade aggressor (order-flow persistence) (`TradeSignAutocorrelation`).
 
 ## [0.6.9] - 2026-06-08
 - **Tristar** — a three-doji star reversal: three consecutive dojis with the middle gapped above (bearish) or below (bullish) its neighbours (`Tristar`).

@@ -667,6 +667,7 @@ const pairFactories = {
   GrangerCausality: () => new wickra.GrangerCausality(60, 1),
   SpreadAr1Coefficient: () => new wickra.SpreadAr1Coefficient(40),
   KendallTau: () => new wickra.KendallTau(20),
+  HasbrouckInformationShare: () => new wickra.HasbrouckInformationShare(2),
 };
 
 for (const [name, make] of Object.entries(pairFactories)) {
@@ -1270,7 +1271,7 @@ test('vpin / amihud / roll reference + streaming matches batch', () => {
   const price = Array.from({ length: n }, (_, i) => 100 + Math.sin(i * 0.25) * 4);
   const size = Array.from({ length: n }, (_, i) => 1 + (i % 5));
   const isBuy = Array.from({ length: n }, (_, i) => i % 2 === 0);
-  for (const make of [() => new wickra.Vpin(8, 5), () => new wickra.AmihudIlliquidity(14), () => new wickra.RollMeasure(14)]) {
+  for (const make of [() => new wickra.Vpin(8, 5), () => new wickra.AmihudIlliquidity(14), () => new wickra.RollMeasure(14), () => new wickra.TradeSignAutocorrelation(10), () => new wickra.Pin(10)]) {
     const batch = make().batch(price, size, isBuy);
     const streamer = make();
     assert.equal(batch.length, n);
@@ -1279,6 +1280,16 @@ test('vpin / amihud / roll reference + streaming matches batch', () => {
       assert.ok((Number.isNaN(batch[i]) && s === null) || Math.abs(s - batch[i]) < 1e-9, `mismatch at ${i}`);
     }
   }
+  // Trade-sign autocorrelation: alternating signs -> -1, all buys -> +1.
+  let tsac = null;
+  const tsacInd = new wickra.TradeSignAutocorrelation(10);
+  for (let i = 0; i < 20; i++) tsac = tsacInd.update(100, 1, i % 2 === 0);
+  assert.ok(Math.abs(tsac - -1.0) < 1e-12);
+  // PIN: one-sided flow -> 1, balanced flow -> 0.
+  let pin = null;
+  const pinInd = new wickra.Pin(10);
+  for (let i = 0; i < 20; i++) pin = pinInd.update(100, 1, true);
+  assert.ok(Math.abs(pin - 1.0) < 1e-12);
 });
 
 test('price-impact indicators reference values', () => {

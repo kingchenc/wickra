@@ -563,6 +563,11 @@ wasm_pair_indicator!(
     "BetaNeutralSpread",
     wc::BetaNeutralSpread
 );
+wasm_pair_indicator!(
+    WasmHasbrouckInformationShare,
+    "HasbrouckInformationShare",
+    wc::HasbrouckInformationShare
+);
 
 // ---------- PairSpreadZScore (two params) ----------
 
@@ -9261,6 +9266,66 @@ impl WasmTradeImbalance {
     pub fn new(window: usize) -> Result<WasmTradeImbalance, JsError> {
         Ok(Self {
             inner: wc::TradeImbalance::new(window).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, price: f64, size: f64, is_buy: bool) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// Trade-sign autocorrelation carries a `period` parameter, so it is hand-written.
+#[wasm_bindgen(js_name = TradeSignAutocorrelation)]
+pub struct WasmTradeSignAutocorrelation {
+    inner: wc::TradeSignAutocorrelation,
+}
+
+#[wasm_bindgen(js_class = TradeSignAutocorrelation)]
+impl WasmTradeSignAutocorrelation {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize) -> Result<WasmTradeSignAutocorrelation, JsError> {
+        Ok(Self {
+            inner: wc::TradeSignAutocorrelation::new(period).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, price: f64, size: f64, is_buy: bool) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// PIN carries a `window` parameter, so it is hand-written.
+#[wasm_bindgen(js_name = Pin)]
+pub struct WasmPin {
+    inner: wc::Pin,
+}
+
+#[wasm_bindgen(js_class = Pin)]
+impl WasmPin {
+    #[wasm_bindgen(constructor)]
+    pub fn new(window: usize) -> Result<WasmPin, JsError> {
+        Ok(Self {
+            inner: wc::Pin::new(window).map_err(map_err)?,
         })
     }
     pub fn update(&mut self, price: f64, size: f64, is_buy: bool) -> Result<Option<f64>, JsError> {

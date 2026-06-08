@@ -174,6 +174,7 @@ mod hammer;
 mod hanging_man;
 mod harami;
 mod harami_cross;
+mod hasbrouck_information_share;
 mod head_and_shoulders;
 mod heikin_ashi;
 mod heikin_ashi_oscillator;
@@ -296,6 +297,7 @@ mod percent_b;
 mod percentage_trailing_stop;
 mod pgo;
 mod piercing_dark_cloud;
+mod pin;
 mod pivot_reversal;
 mod plus_di;
 mod plus_dm;
@@ -423,6 +425,7 @@ mod time_of_day_return_profile;
 mod tower_top_bottom;
 mod tpo_profile;
 mod trade_imbalance;
+mod trade_sign_autocorrelation;
 mod trade_volume_index;
 mod trend_label;
 mod trend_strength_index;
@@ -659,6 +662,7 @@ pub use hammer::Hammer;
 pub use hanging_man::HangingMan;
 pub use harami::Harami;
 pub use harami_cross::HaramiCross;
+pub use hasbrouck_information_share::HasbrouckInformationShare;
 pub use head_and_shoulders::HeadAndShoulders;
 pub use heikin_ashi::{HeikinAshi, HeikinAshiOutput};
 pub use heikin_ashi_oscillator::HeikinAshiOscillator;
@@ -781,6 +785,7 @@ pub use percent_b::PercentB;
 pub use percentage_trailing_stop::PercentageTrailingStop;
 pub use pgo::Pgo;
 pub use piercing_dark_cloud::PiercingDarkCloud;
+pub use pin::Pin;
 pub use pivot_reversal::PivotReversal;
 pub use plus_di::PlusDi;
 pub use plus_dm::PlusDm;
@@ -908,6 +913,7 @@ pub use time_of_day_return_profile::{TimeOfDayReturnProfile, TimeOfDayReturnProf
 pub use tower_top_bottom::TowerTopBottom;
 pub use tpo_profile::{TpoProfile, TpoProfileOutput};
 pub use trade_imbalance::TradeImbalance;
+pub use trade_sign_autocorrelation::TradeSignAutocorrelation;
 pub use trade_volume_index::TradeVolumeIndex;
 pub use trend_label::TrendLabel;
 pub use trend_strength_index::TrendStrengthIndex;
@@ -1452,6 +1458,9 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "Vpin",
             "AmihudIlliquidity",
             "RollMeasure",
+            "TradeSignAutocorrelation",
+            "Pin",
+            "HasbrouckInformationShare",
         ],
     ),
     (
@@ -1615,6 +1624,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 485, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 488, "FAMILIES total drifted from indicator count");
     }
 }
