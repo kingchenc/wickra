@@ -58,7 +58,11 @@ artifacts, and (4) a healthy dependency supply chain.
 
 - *Memory safety* — the core and all bindings are written in Rust. The crates
   forbid or minimise `unsafe`, so the compiler guarantees memory and thread
-  safety for the indicator logic.
+  safety for the indicator logic. The one exception is the C ABI
+  ([`bindings/c`](bindings/c)), whose thin FFI shim is necessarily `unsafe`
+  because it dereferences caller-supplied pointers; it adds no indicator logic,
+  validates every handle for NULL, and never lets a panic cross the boundary, so
+  the safe core's guarantees still cover all computation.
 - *Input robustness* — every indicator validates its parameters and rejects
   non-finite inputs at construction; behaviour on edge cases (flat markets,
   warmup, reset) is pinned by unit tests, and the public update paths are

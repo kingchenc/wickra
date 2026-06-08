@@ -30,7 +30,7 @@ assignees: ""
 ## Environment
 
 - Wickra version:
-- Language / binding: <!-- Rust crate / Python / Node / WASM -->
+- Language / binding: <!-- Rust crate / Python / Node / WASM / C ABI -->
 - OS and architecture:
 - Rust / Python / Node version (If relevant):
 

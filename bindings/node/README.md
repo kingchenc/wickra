@@ -9,7 +9,8 @@
 prebuilt native binary, no system dependencies.**
 
 Wickra is a multi-language technical-analysis library with a Rust core and
-bindings for Python, Node.js, and WebAssembly. Every indicator is an O(1)
+bindings for Python, Node.js and WebAssembly, plus a C ABI for C/C++ and any
+other C-capable language. Every indicator is an O(1)
 streaming state machine, so live trading bots and historical backtests share
 the exact same implementation. This package is the Node.js binding (napi-rs);
 it exposes 200+ streaming-first indicators across sixteen families.
@@ -55,8 +56,9 @@ the main repository and documentation site:
 - **Docs** (quickstarts, cookbook, TA-Lib migration): <https://docs.wickra.org>
 - **Runnable examples:** [`examples/node/`](https://github.com/wickra-lib/wickra/tree/main/examples/node)
 
-Wickra ships four bindings — Python, Node.js, WebAssembly, and Rust — that all
-expose the same indicators from the shared, `unsafe`-forbidden Rust core.
+Wickra ships native bindings for Python, Node.js, WebAssembly and Rust, plus a
+C ABI hub that any C-capable language (C, C++, Go, C#, Java, R) links against —
+all exposing the same indicators from the shared, `unsafe`-forbidden Rust core.
 
 ## Disclaimer
 

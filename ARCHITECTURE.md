@@ -29,13 +29,19 @@ or replace lives behind a separate crate boundary.
                 ▲
                 │ (every binding wraps the same core)
                 │
-   ┌────────────┴───────────┬─────────────────────┐
-   │                        │                     │
-┌──▼──────┐         ┌───────▼──────┐      ┌───────▼────────┐
-│ Python  │         │     Node     │      │     WASM       │
-│ (PyO3)  │         │ (napi-rs)    │      │ (wasm-bindgen) │
-└─────────┘         └──────────────┘      └────────────────┘
+   ┌───────────┬────────────┴┬──────────────┬──────────────────────┐
+   │           │             │              │                      │
+┌──▼─────┐ ┌───▼────┐ ┌──────▼──────┐ ┌─────▼──────────────┐
+│ Python │ │  Node  │ │    WASM     │ │  C ABI (cbindgen)  │
+│ (PyO3) │ │(napi-rs)│ │(wasm-bindgen)│ │  cdylib + header   │
+└────────┘ └────────┘ └─────────────┘ └────────────────────┘
 ```
+
+Python, Node and WASM are *native* Rust bindings (PyO3 / napi-rs /
+wasm-bindgen). The C ABI is the *hub* every other C-capable language links
+against: it builds to a `cdylib`/`staticlib` plus a generated `wickra.h`, and
+C / C++ / Go / C# / Java / R consume that one artifact rather than each
+re-wrapping the core.
 
 | Crate | Path | What it owns | Public deps |
 |---|---|---|---|
@@ -45,6 +51,7 @@ or replace lives behind a separate crate boundary.
 | `wickra-python` | `bindings/python` | `_wickra` PyO3 module + Python package | `pyo3`, `numpy`, depends on `wickra-core` |
 | `wickra-node` | `bindings/node` | NAPI-RS native binding | `napi`, depends on `wickra-core` |
 | `wickra-wasm` | `bindings/wasm` | WebAssembly binding | `wasm-bindgen`, depends on `wickra-core` |
+| `wickra-c` | `bindings/c` | C ABI hub — `cdylib`/`staticlib` + generated `wickra.h` (cbindgen) | depends on `wickra-core` |
 | `wickra-examples` | `examples/rust` | runnable binary examples | depends on `wickra`, `wickra-data` |
 
 The `fuzz/` directory is **excluded** from the workspace (it has its own
