@@ -9,7 +9,7 @@ name: Sync indicator count
 #   2. GitHub repo "About" description       — synced on push to main / v* tag
 #   3. Docs site: index.md / overview.md / Indicators-Overview.md
 #      (wickra-lib/wickra-docs) — synced on push to main / v* tag*
-#   4. Marketing site count (wickra-lib/webpage: index.md /
+#   4. Marketing site count (wickra-lib/webpage: index.md / about.md /
 #      .vitepress/config.ts) — push to main / v* tag*
 #   5. org profile README count (wickra-lib/.github, profile/README.md)
 #                                            — synced on push to main / v* tag*
@@ -366,14 +366,14 @@ jobs:
             exit 0
           fi
           cd webpage-count
-          sed -i -E "s/[0-9]+ (streaming-first )?indicators/${n} \1indicators/g" index.md .vitepress/config.ts
+          sed -i -E "s/[0-9]+ (streaming-first )?indicators/${n} \1indicators/g" index.md about.md .vitepress/config.ts
           if git diff --quiet; then
             echo "Webpage indicator count unchanged."
             exit 0
           fi
           git config user.name "wickra-bot"
           git config user.email "wickra-bot@users.noreply.github.com"
-          git add index.md .vitepress/config.ts
+          git add index.md about.md .vitepress/config.ts
           git commit -m "chore: sync indicator count to ${n}"
           if ! git push 2>/dev/null; then
             echo "::warning::push to wickra-lib/webpage failed — ABOUT_SYNC_TOKEN likely lacks write (findings P10.0a)."
