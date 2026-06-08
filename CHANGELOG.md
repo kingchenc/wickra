@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.6.9] - 2026-06-08
 - **Tristar** — a three-doji star reversal: three consecutive dojis with the middle gapped above (bearish) or below (bullish) its neighbours (`Tristar`).
 - **Harami Cross** — a Harami whose second candle is a contained doji, a stronger reversal than a plain Harami (`HaramiCross`).
 - **Tower Top/Bottom** — a tall bar, a small pause bar, then a tall opposite bar marking a reversal (`TowerTopBottom`).
@@ -1375,7 +1377,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.6.8...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.6.9...HEAD
+[0.6.9]: https://github.com/wickra-lib/wickra/compare/v0.6.8...v0.6.9
 [0.6.8]: https://github.com/wickra-lib/wickra/compare/v0.6.7...v0.6.8
 [0.6.7]: https://github.com/wickra-lib/wickra/compare/v0.6.6...v0.6.7
 [0.6.6]: https://github.com/wickra-lib/wickra/compare/v0.6.5...v0.6.6
