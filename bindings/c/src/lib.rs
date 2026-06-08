@@ -19,65 +19,71 @@ use core::ptr;
 use core::slice;
 
 use wickra_core::{
-    AbandonedBaby, Abcd, AcceleratorOscillator, AdOscillator, AdaptiveCci, AdaptiveCycle,
-    AdaptiveLaguerreFilter, AdaptiveRsi, Adl, AdvanceBlock, Adxr, Alma, Alpha, AmihudIlliquidity,
-    AnchoredRsi, AnchoredVwap, Apo, AroonOscillator, Atr, AtrTrailingStop, Autocorrelation,
+    AbandonedBaby, Abcd, AbsoluteBreadthIndex, AcceleratorOscillator, AdOscillator, AdVolumeLine,
+    AdaptiveCci, AdaptiveCycle, AdaptiveLaguerreFilter, AdaptiveRsi, Adl, AdvanceBlock,
+    AdvanceDecline, AdvanceDeclineRatio, Adxr, Alma, Alpha, AmihudIlliquidity, AnchoredRsi,
+    AnchoredVwap, Apo, AroonOscillator, Atr, AtrTrailingStop, Autocorrelation,
     AutocorrelationPeriodogram, AverageDailyRange, AverageDrawdown, AvgPrice, AwesomeOscillator,
     AwesomeOscillatorHistogram, BalanceOfPower, BandpassFilter, Bat, BeltHold, Beta,
-    BetaNeutralSpread, BetterVolume, BipowerVariation, BodySizePct, BollingerBandwidth, Breakaway,
-    BurkeRatio, Butterfly, CalendarSpread, CalmarRatio, Candle, Cci, CenterOfGravity, Cfo,
-    ChaikinMoneyFlow, ChaikinOscillator, ChaikinVolatility, ChoppinessIndex, CloseVsOpen,
-    ClosingMarubozu, Cmo, CoefficientOfVariation, CommonSenseRatio, ConcealingBabySwallow,
-    ConditionalValueAtRisk, ConnorsRsi, Coppock, CorrelationTrendIndicator, Counterattack, Crab,
-    CumulativeVolumeDelta, CupAndHandle, CyberneticCycle, Cypher, Decycler, DecyclerOscillator,
-    Dema, DemandIndex, DerivativeOscillator, DerivativesTick, DetrendedStdDev, DisparityIndex,
-    DistanceSsd, Doji, DojiStar, DoubleTopBottom, DownsideGapThreeMethods, Dpo, DragonflyDoji,
-    DumplingTop, Dx, DynamicMomentumIndex, EaseOfMovement, EffectiveSpread, EhlersStochastic, Ehma,
-    ElderImpulse, Ema, EmpiricalModeDecomposition, Engulfing, EstimatedLeverageRatio,
-    EvenBetterSinewave, EveningDojiStar, Evwma, EwmaVolatility, Expectancy, FallingThreeMethods,
-    Fama, FisherRsi, FisherTransform, FlagPennant, ForceIndex, Frama, FryPanBottom, FundingBasis,
-    FundingImpliedApr, FundingRate, FundingRateMean, FundingRateZScore, GainLossRatio,
-    GainToPainRatio, GapSideBySideWhite, Garch11, GarmanKlassVolatility, Gartley, GeneralizedDema,
-    GeometricMa, GrangerCausality, GravestoneDoji, Hammer, HangingMan, Harami, HaramiCross,
-    HasbrouckInformationShare, HeadAndShoulders, HeikinAshiOscillator, HiLoActivator, HighLowRange,
-    HighWave, HighpassFilter, Hikkake, HikkakeModified, HilbertDominantCycle, HistoricalVolatility,
-    Hma, HoltWinters, HomingPigeon, HtDcPhase, HtTrendMode, HurstExponent, IdenticalThreeCrows,
-    InNeck, Indicator, Inertia, InformationRatio, InstantaneousTrendline, IntradayIntensity,
-    IntradayMomentumIndex, InverseFisherTransform, InvertedHammer, JarqueBera, Jma, JumpIndicator,
-    KRatio, Kama, KellyCriterion, KendallTau, Kicking, KickingByLength, Kurtosis, Kvo, KylesLambda,
-    LadderBottom, LaguerreRsi, LinRegAngle, LinRegIntercept, LinRegSlope, LinearRegression,
-    LogReturn, LongLeggedDoji, LongLine, LongShortRatio, M2Measure, MacdHistogram,
-    MarketFacilitationIndex, MartinRatio, Marubozu, MassIndex, MatHold, MatchingLow, MaxDrawdown,
-    McGinleyDynamic, MedianAbsoluteDeviation, MedianMa, MedianPrice, Mfi, MidPoint, MidPrice,
-    MinusDi, MinusDm, Mom, MorningDojiStar, MorningEveningStar, NakedPoc, Natr, NewPriceLines, Nvi,
-    OIPriceDivergence, OIWeighted, Obv, OiToVolumeRatio, OmegaRatio, OnNeck, OpenInterestDelta,
-    OpenInterestMomentum, OpeningMarubozu, OuHalfLife, OvernightGap, PainIndex, PairSpreadZScore,
-    PairwiseBeta, ParkinsonVolatility, PearsonCorrelation, PercentB, PercentageTrailingStop,
-    PerpetualPremiumIndex, Pgo, PiercingDarkCloud, Pin, PivotReversal, PlusDi, PlusDm, Pmo,
-    PolarizedFractalEfficiency, Ppo, PpoHistogram, ProfileShape, ProfitFactor,
-    ProjectionOscillator, Psar, Pvi, Qstick, RSquared, RealizedSpread, RealizedVolatility,
-    RecoveryFactor, RectangleRange, Reflex, RegimeLabel, RenkoTrailingStop, RickshawMan,
-    RisingThreeMethods, Rmi, Roc, Rocp, Rocr, Rocr100, RogersSatchellVolatility, RollMeasure,
-    RollingCorrelation, RollingCovariance, RollingIqr, RollingMinMaxScaler, RollingPercentileRank,
-    RollingQuantile, RollingVwap, RoofingFilter, Rsi, Rsx, Rvi, RviVolatility, SampleEntropy,
-    SarExt, SeasonalZScore, SeparatingLines, SessionVwap, ShannonEntropy, Shark, SharpeRatio,
-    ShootingStar, ShortLine, Side, SignedVolume, SineWave, SineWeightedMa, SinglePrints, Skewness,
-    Sma, Smi, Smma, SortinoRatio, SpearmanCorrelation, SpinningTop, SpreadAr1Coefficient,
-    SpreadHurst, StalledPattern, StandardError, Stc, StdDev, StepTrailingStop, SterlingRatio,
-    StickSandwich, StochRsi, StochasticCci, SuperSmoother, TailRatio, TakerBuySellRatio, Takuri,
-    TasukiGap, TdCamouflage, TdClop, TdClopwin, TdCombo, TdCountdown, TdDWave, TdDeMarker,
-    TdDifferential, TdOpen, TdPressure, TdPropulsion, TdRei, TdSetup, TdTrap, Tema,
-    TermStructureBasis, ThreeDrives, ThreeInside, ThreeLineBreak, ThreeLineStrike, ThreeOutside,
-    ThreeSoldiersOrCrows, ThreeStarsInSouth, Thrusting, Tii, TimeBasedStop, TowerTopBottom, Trade,
-    TradeImbalance, TradeQuote, TradeSignAutocorrelation, TradeVolumeIndex, TrendLabel,
-    TrendStrengthIndex, Trendflex, TreynorRatio, Triangle, Trima, TripleTopBottom, Tristar, Trix,
-    TrueRange, Tsf, TsfOscillator, Tsi, Tsv, TtmTrend, TurnOfMonth, Tweezer, TwiggsMoneyFlow,
-    TwoCrows, TypicalPrice, UlcerIndex, UltimateOscillator, UniqueThreeRiver, UniversalOscillator,
-    UpsideGapThreeMethods, UpsideGapTwoCrows, UpsidePotentialRatio, ValueAtRisk, Variance,
-    VarianceRatio, VerticalHorizontalFilter, Vidya, VolatilityOfVolatility, VolatilityRatio,
-    VoltyStop, VolumeOscillator, VolumePriceTrend, VolumeRsi, Vpin, Vwap, Vwma, Vzo, Wad, WavePm,
-    Wedge, WeightedClose, WickRatio, WilliamsR, WinRate, Wma, YangZhangVolatility, YoyoExit,
-    ZScore, Zlema, T3,
+    BetaNeutralSpread, BetterVolume, BipowerVariation, BodySizePct, BollingerBandwidth,
+    BreadthThrust, Breakaway, BullishPercentIndex, BurkeRatio, Butterfly, CalendarSpread,
+    CalmarRatio, Candle, Cci, CenterOfGravity, Cfo, ChaikinMoneyFlow, ChaikinOscillator,
+    ChaikinVolatility, ChoppinessIndex, CloseVsOpen, ClosingMarubozu, Cmo, CoefficientOfVariation,
+    CommonSenseRatio, ConcealingBabySwallow, ConditionalValueAtRisk, ConnorsRsi, Coppock,
+    CorrelationTrendIndicator, Counterattack, Crab, CrossSection, CumulativeVolumeDelta,
+    CumulativeVolumeIndex, CupAndHandle, CyberneticCycle, Cypher, Decycler, DecyclerOscillator,
+    Dema, DemandIndex, DepthSlope, DerivativeOscillator, DerivativesTick, DetrendedStdDev,
+    DisparityIndex, DistanceSsd, Doji, DojiStar, DoubleTopBottom, DownsideGapThreeMethods, Dpo,
+    DragonflyDoji, DumplingTop, Dx, DynamicMomentumIndex, EaseOfMovement, EffectiveSpread,
+    EhlersStochastic, Ehma, ElderImpulse, Ema, EmpiricalModeDecomposition, Engulfing,
+    EstimatedLeverageRatio, EvenBetterSinewave, EveningDojiStar, Evwma, EwmaVolatility, Expectancy,
+    FallingThreeMethods, Fama, FisherRsi, FisherTransform, FlagPennant, ForceIndex, Frama,
+    FryPanBottom, FundingBasis, FundingImpliedApr, FundingRate, FundingRateMean, FundingRateZScore,
+    GainLossRatio, GainToPainRatio, GapSideBySideWhite, Garch11, GarmanKlassVolatility, Gartley,
+    GeneralizedDema, GeometricMa, GrangerCausality, GravestoneDoji, Hammer, HangingMan, Harami,
+    HaramiCross, HasbrouckInformationShare, HeadAndShoulders, HeikinAshiOscillator, HiLoActivator,
+    HighLowIndex, HighLowRange, HighWave, HighpassFilter, Hikkake, HikkakeModified,
+    HilbertDominantCycle, HistoricalVolatility, Hma, HoltWinters, HomingPigeon, HtDcPhase,
+    HtTrendMode, HurstExponent, IdenticalThreeCrows, InNeck, Indicator, Inertia, InformationRatio,
+    InstantaneousTrendline, IntradayIntensity, IntradayMomentumIndex, InverseFisherTransform,
+    InvertedHammer, JarqueBera, Jma, JumpIndicator, KRatio, Kama, KellyCriterion, KendallTau,
+    Kicking, KickingByLength, Kurtosis, Kvo, KylesLambda, LadderBottom, LaguerreRsi, Level,
+    LinRegAngle, LinRegIntercept, LinRegSlope, LinearRegression, LogReturn, LongLeggedDoji,
+    LongLine, LongShortRatio, M2Measure, MacdHistogram, MarketFacilitationIndex, MartinRatio,
+    Marubozu, MassIndex, MatHold, MatchingLow, MaxDrawdown, McClellanOscillator,
+    McClellanSummationIndex, McGinleyDynamic, MedianAbsoluteDeviation, MedianMa, MedianPrice,
+    Member, Mfi, Microprice, MidPoint, MidPrice, MinusDi, MinusDm, Mom, MorningDojiStar,
+    MorningEveningStar, NakedPoc, Natr, NewHighsNewLows, NewPriceLines, Nvi, OIPriceDivergence,
+    OIWeighted, Obv, OiToVolumeRatio, OmegaRatio, OnNeck, OpenInterestDelta, OpenInterestMomentum,
+    OpeningMarubozu, OrderBook, OrderBookImbalanceFull, OrderBookImbalanceTop1,
+    OrderBookImbalanceTopN, OrderFlowImbalance, OuHalfLife, OvernightGap, PainIndex,
+    PairSpreadZScore, PairwiseBeta, ParkinsonVolatility, PearsonCorrelation, PercentAboveMa,
+    PercentB, PercentageTrailingStop, PerpetualPremiumIndex, Pgo, PiercingDarkCloud, Pin,
+    PivotReversal, PlusDi, PlusDm, Pmo, PolarizedFractalEfficiency, Ppo, PpoHistogram,
+    ProfileShape, ProfitFactor, ProjectionOscillator, Psar, Pvi, Qstick, QuotedSpread, RSquared,
+    RealizedSpread, RealizedVolatility, RecoveryFactor, RectangleRange, Reflex, RegimeLabel,
+    RenkoTrailingStop, RickshawMan, RisingThreeMethods, Rmi, Roc, Rocp, Rocr, Rocr100,
+    RogersSatchellVolatility, RollMeasure, RollingCorrelation, RollingCovariance, RollingIqr,
+    RollingMinMaxScaler, RollingPercentileRank, RollingQuantile, RollingVwap, RoofingFilter, Rsi,
+    Rsx, Rvi, RviVolatility, SampleEntropy, SarExt, SeasonalZScore, SeparatingLines, SessionVwap,
+    ShannonEntropy, Shark, SharpeRatio, ShootingStar, ShortLine, Side, SignedVolume, SineWave,
+    SineWeightedMa, SinglePrints, Skewness, Sma, Smi, Smma, SortinoRatio, SpearmanCorrelation,
+    SpinningTop, SpreadAr1Coefficient, SpreadHurst, StalledPattern, StandardError, Stc, StdDev,
+    StepTrailingStop, SterlingRatio, StickSandwich, StochRsi, StochasticCci, SuperSmoother,
+    TailRatio, TakerBuySellRatio, Takuri, TasukiGap, TdCamouflage, TdClop, TdClopwin, TdCombo,
+    TdCountdown, TdDWave, TdDeMarker, TdDifferential, TdOpen, TdPressure, TdPropulsion, TdRei,
+    TdSetup, TdTrap, Tema, TermStructureBasis, ThreeDrives, ThreeInside, ThreeLineBreak,
+    ThreeLineStrike, ThreeOutside, ThreeSoldiersOrCrows, ThreeStarsInSouth, Thrusting, TickIndex,
+    Tii, TimeBasedStop, TowerTopBottom, Trade, TradeImbalance, TradeQuote,
+    TradeSignAutocorrelation, TradeVolumeIndex, TrendLabel, TrendStrengthIndex, Trendflex,
+    TreynorRatio, Triangle, Trima, Trin, TripleTopBottom, Tristar, Trix, TrueRange, Tsf,
+    TsfOscillator, Tsi, Tsv, TtmTrend, TurnOfMonth, Tweezer, TwiggsMoneyFlow, TwoCrows,
+    TypicalPrice, UlcerIndex, UltimateOscillator, UniqueThreeRiver, UniversalOscillator,
+    UpDownVolumeRatio, UpsideGapThreeMethods, UpsideGapTwoCrows, UpsidePotentialRatio, ValueAtRisk,
+    Variance, VarianceRatio, VerticalHorizontalFilter, Vidya, VolatilityOfVolatility,
+    VolatilityRatio, VoltyStop, VolumeOscillator, VolumePriceTrend, VolumeRsi, Vpin, Vwap, Vwma,
+    Vzo, Wad, WavePm, Wedge, WeightedClose, WickRatio, WilliamsR, WinRate, Wma,
+    YangZhangVolatility, YoyoExit, ZScore, Zlema, T3,
 };
 
 // ===== Scalar indicators (f64 -> f64) =====
@@ -33665,6 +33671,1772 @@ pub unsafe extern "C" fn wickra_term_structure_basis_reset(handle: *mut TermStru
 /// `handle` must have been returned by `wickra_term_structure_basis_new` and not previously freed, or `NULL`.
 #[no_mangle]
 pub unsafe extern "C" fn wickra_term_structure_basis_free(handle: *mut TermStructureBasis) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+// ===== Order-book-input indicators (microstructure) =====
+
+/// Create a `DepthSlope` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_depth_slope_free`.
+#[no_mangle]
+pub extern "C" fn wickra_depth_slope_new() -> *mut DepthSlope {
+    Box::into_raw(Box::new(DepthSlope::new()))
+}
+
+/// Feed one order-book snapshot as parallel bid/ask price+size arrays; returns the
+/// output, or `NaN` during warmup / on a `NULL` handle / if a level or the book is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_depth_slope_new`, not freed) or `NULL`. `bid_price`/`bid_size`
+/// each cover `n_bids`; `ask_price`/`ask_size` each cover `n_asks`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_depth_slope_update(
+    handle: *mut DepthSlope,
+    bid_price: *const f64,
+    bid_size: *const f64,
+    n_bids: usize,
+    ask_price: *const f64,
+    ask_size: *const f64,
+    n_asks: usize,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if bid_price.is_null() || bid_size.is_null() || ask_price.is_null() || ask_size.is_null() {
+        return f64::NAN;
+    }
+    let bid_px = slice::from_raw_parts(bid_price, n_bids);
+    let bid_sz = slice::from_raw_parts(bid_size, n_bids);
+    let ask_px = slice::from_raw_parts(ask_price, n_asks);
+    let ask_sz = slice::from_raw_parts(ask_size, n_asks);
+    let mut bids = Vec::with_capacity(n_bids);
+    for (&px, &sz) in bid_px.iter().zip(bid_sz) {
+        let Ok(level) = Level::new(px, sz) else {
+            return f64::NAN;
+        };
+        bids.push(level);
+    }
+    let mut asks = Vec::with_capacity(n_asks);
+    for (&px, &sz) in ask_px.iter().zip(ask_sz) {
+        let Ok(level) = Level::new(px, sz) else {
+            return f64::NAN;
+        };
+        asks.push(level);
+    }
+    match OrderBook::new(bids, asks) {
+        Ok(book) => ind.update(book).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_depth_slope_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_depth_slope_reset(handle: *mut DepthSlope) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_depth_slope_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_depth_slope_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_depth_slope_free(handle: *mut DepthSlope) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `Microprice` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_microprice_free`.
+#[no_mangle]
+pub extern "C" fn wickra_microprice_new() -> *mut Microprice {
+    Box::into_raw(Box::new(Microprice::new()))
+}
+
+/// Feed one order-book snapshot as parallel bid/ask price+size arrays; returns the
+/// output, or `NaN` during warmup / on a `NULL` handle / if a level or the book is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_microprice_new`, not freed) or `NULL`. `bid_price`/`bid_size`
+/// each cover `n_bids`; `ask_price`/`ask_size` each cover `n_asks`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_microprice_update(
+    handle: *mut Microprice,
+    bid_price: *const f64,
+    bid_size: *const f64,
+    n_bids: usize,
+    ask_price: *const f64,
+    ask_size: *const f64,
+    n_asks: usize,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if bid_price.is_null() || bid_size.is_null() || ask_price.is_null() || ask_size.is_null() {
+        return f64::NAN;
+    }
+    let bid_px = slice::from_raw_parts(bid_price, n_bids);
+    let bid_sz = slice::from_raw_parts(bid_size, n_bids);
+    let ask_px = slice::from_raw_parts(ask_price, n_asks);
+    let ask_sz = slice::from_raw_parts(ask_size, n_asks);
+    let mut bids = Vec::with_capacity(n_bids);
+    for (&px, &sz) in bid_px.iter().zip(bid_sz) {
+        let Ok(level) = Level::new(px, sz) else {
+            return f64::NAN;
+        };
+        bids.push(level);
+    }
+    let mut asks = Vec::with_capacity(n_asks);
+    for (&px, &sz) in ask_px.iter().zip(ask_sz) {
+        let Ok(level) = Level::new(px, sz) else {
+            return f64::NAN;
+        };
+        asks.push(level);
+    }
+    match OrderBook::new(bids, asks) {
+        Ok(book) => ind.update(book).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_microprice_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_microprice_reset(handle: *mut Microprice) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_microprice_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_microprice_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_microprice_free(handle: *mut Microprice) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `OrderBookImbalanceFull` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_order_book_imbalance_full_free`.
+#[no_mangle]
+pub extern "C" fn wickra_order_book_imbalance_full_new() -> *mut OrderBookImbalanceFull {
+    Box::into_raw(Box::new(OrderBookImbalanceFull::new()))
+}
+
+/// Feed one order-book snapshot as parallel bid/ask price+size arrays; returns the
+/// output, or `NaN` during warmup / on a `NULL` handle / if a level or the book is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_order_book_imbalance_full_new`, not freed) or `NULL`. `bid_price`/`bid_size`
+/// each cover `n_bids`; `ask_price`/`ask_size` each cover `n_asks`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_full_update(
+    handle: *mut OrderBookImbalanceFull,
+    bid_price: *const f64,
+    bid_size: *const f64,
+    n_bids: usize,
+    ask_price: *const f64,
+    ask_size: *const f64,
+    n_asks: usize,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if bid_price.is_null() || bid_size.is_null() || ask_price.is_null() || ask_size.is_null() {
+        return f64::NAN;
+    }
+    let bid_px = slice::from_raw_parts(bid_price, n_bids);
+    let bid_sz = slice::from_raw_parts(bid_size, n_bids);
+    let ask_px = slice::from_raw_parts(ask_price, n_asks);
+    let ask_sz = slice::from_raw_parts(ask_size, n_asks);
+    let mut bids = Vec::with_capacity(n_bids);
+    for (&px, &sz) in bid_px.iter().zip(bid_sz) {
+        let Ok(level) = Level::new(px, sz) else {
+            return f64::NAN;
+        };
+        bids.push(level);
+    }
+    let mut asks = Vec::with_capacity(n_asks);
+    for (&px, &sz) in ask_px.iter().zip(ask_sz) {
+        let Ok(level) = Level::new(px, sz) else {
+            return f64::NAN;
+        };
+        asks.push(level);
+    }
+    match OrderBook::new(bids, asks) {
+        Ok(book) => ind.update(book).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_order_book_imbalance_full_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_full_reset(
+    handle: *mut OrderBookImbalanceFull,
+) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_order_book_imbalance_full_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_order_book_imbalance_full_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_full_free(
+    handle: *mut OrderBookImbalanceFull,
+) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `OrderBookImbalanceTop1` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_order_book_imbalance_top1_free`.
+#[no_mangle]
+pub extern "C" fn wickra_order_book_imbalance_top1_new() -> *mut OrderBookImbalanceTop1 {
+    Box::into_raw(Box::new(OrderBookImbalanceTop1::new()))
+}
+
+/// Feed one order-book snapshot as parallel bid/ask price+size arrays; returns the
+/// output, or `NaN` during warmup / on a `NULL` handle / if a level or the book is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_order_book_imbalance_top1_new`, not freed) or `NULL`. `bid_price`/`bid_size`
+/// each cover `n_bids`; `ask_price`/`ask_size` each cover `n_asks`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_top1_update(
+    handle: *mut OrderBookImbalanceTop1,
+    bid_price: *const f64,
+    bid_size: *const f64,
+    n_bids: usize,
+    ask_price: *const f64,
+    ask_size: *const f64,
+    n_asks: usize,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if bid_price.is_null() || bid_size.is_null() || ask_price.is_null() || ask_size.is_null() {
+        return f64::NAN;
+    }
+    let bid_px = slice::from_raw_parts(bid_price, n_bids);
+    let bid_sz = slice::from_raw_parts(bid_size, n_bids);
+    let ask_px = slice::from_raw_parts(ask_price, n_asks);
+    let ask_sz = slice::from_raw_parts(ask_size, n_asks);
+    let mut bids = Vec::with_capacity(n_bids);
+    for (&px, &sz) in bid_px.iter().zip(bid_sz) {
+        let Ok(level) = Level::new(px, sz) else {
+            return f64::NAN;
+        };
+        bids.push(level);
+    }
+    let mut asks = Vec::with_capacity(n_asks);
+    for (&px, &sz) in ask_px.iter().zip(ask_sz) {
+        let Ok(level) = Level::new(px, sz) else {
+            return f64::NAN;
+        };
+        asks.push(level);
+    }
+    match OrderBook::new(bids, asks) {
+        Ok(book) => ind.update(book).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_order_book_imbalance_top1_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_top1_reset(
+    handle: *mut OrderBookImbalanceTop1,
+) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_order_book_imbalance_top1_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_order_book_imbalance_top1_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_top1_free(
+    handle: *mut OrderBookImbalanceTop1,
+) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `OrderBookImbalanceTopN` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_order_book_imbalance_top_n_free`.
+#[no_mangle]
+pub extern "C" fn wickra_order_book_imbalance_top_n_new(
+    levels: usize,
+) -> *mut OrderBookImbalanceTopN {
+    match OrderBookImbalanceTopN::new(levels) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one order-book snapshot as parallel bid/ask price+size arrays; returns the
+/// output, or `NaN` during warmup / on a `NULL` handle / if a level or the book is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_order_book_imbalance_top_n_new`, not freed) or `NULL`. `bid_price`/`bid_size`
+/// each cover `n_bids`; `ask_price`/`ask_size` each cover `n_asks`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_top_n_update(
+    handle: *mut OrderBookImbalanceTopN,
+    bid_price: *const f64,
+    bid_size: *const f64,
+    n_bids: usize,
+    ask_price: *const f64,
+    ask_size: *const f64,
+    n_asks: usize,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if bid_price.is_null() || bid_size.is_null() || ask_price.is_null() || ask_size.is_null() {
+        return f64::NAN;
+    }
+    let bid_px = slice::from_raw_parts(bid_price, n_bids);
+    let bid_sz = slice::from_raw_parts(bid_size, n_bids);
+    let ask_px = slice::from_raw_parts(ask_price, n_asks);
+    let ask_sz = slice::from_raw_parts(ask_size, n_asks);
+    let mut bids = Vec::with_capacity(n_bids);
+    for (&px, &sz) in bid_px.iter().zip(bid_sz) {
+        let Ok(level) = Level::new(px, sz) else {
+            return f64::NAN;
+        };
+        bids.push(level);
+    }
+    let mut asks = Vec::with_capacity(n_asks);
+    for (&px, &sz) in ask_px.iter().zip(ask_sz) {
+        let Ok(level) = Level::new(px, sz) else {
+            return f64::NAN;
+        };
+        asks.push(level);
+    }
+    match OrderBook::new(bids, asks) {
+        Ok(book) => ind.update(book).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_order_book_imbalance_top_n_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_top_n_reset(
+    handle: *mut OrderBookImbalanceTopN,
+) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_order_book_imbalance_top_n_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_order_book_imbalance_top_n_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_top_n_free(
+    handle: *mut OrderBookImbalanceTopN,
+) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `OrderFlowImbalance` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_order_flow_imbalance_free`.
+#[no_mangle]
+pub extern "C" fn wickra_order_flow_imbalance_new(period: usize) -> *mut OrderFlowImbalance {
+    match OrderFlowImbalance::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one order-book snapshot as parallel bid/ask price+size arrays; returns the
+/// output, or `NaN` during warmup / on a `NULL` handle / if a level or the book is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_order_flow_imbalance_new`, not freed) or `NULL`. `bid_price`/`bid_size`
+/// each cover `n_bids`; `ask_price`/`ask_size` each cover `n_asks`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_flow_imbalance_update(
+    handle: *mut OrderFlowImbalance,
+    bid_price: *const f64,
+    bid_size: *const f64,
+    n_bids: usize,
+    ask_price: *const f64,
+    ask_size: *const f64,
+    n_asks: usize,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if bid_price.is_null() || bid_size.is_null() || ask_price.is_null() || ask_size.is_null() {
+        return f64::NAN;
+    }
+    let bid_px = slice::from_raw_parts(bid_price, n_bids);
+    let bid_sz = slice::from_raw_parts(bid_size, n_bids);
+    let ask_px = slice::from_raw_parts(ask_price, n_asks);
+    let ask_sz = slice::from_raw_parts(ask_size, n_asks);
+    let mut bids = Vec::with_capacity(n_bids);
+    for (&px, &sz) in bid_px.iter().zip(bid_sz) {
+        let Ok(level) = Level::new(px, sz) else {
+            return f64::NAN;
+        };
+        bids.push(level);
+    }
+    let mut asks = Vec::with_capacity(n_asks);
+    for (&px, &sz) in ask_px.iter().zip(ask_sz) {
+        let Ok(level) = Level::new(px, sz) else {
+            return f64::NAN;
+        };
+        asks.push(level);
+    }
+    match OrderBook::new(bids, asks) {
+        Ok(book) => ind.update(book).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_order_flow_imbalance_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_flow_imbalance_reset(handle: *mut OrderFlowImbalance) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_order_flow_imbalance_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_order_flow_imbalance_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_flow_imbalance_free(handle: *mut OrderFlowImbalance) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `QuotedSpread` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_quoted_spread_free`.
+#[no_mangle]
+pub extern "C" fn wickra_quoted_spread_new() -> *mut QuotedSpread {
+    Box::into_raw(Box::new(QuotedSpread::new()))
+}
+
+/// Feed one order-book snapshot as parallel bid/ask price+size arrays; returns the
+/// output, or `NaN` during warmup / on a `NULL` handle / if a level or the book is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_quoted_spread_new`, not freed) or `NULL`. `bid_price`/`bid_size`
+/// each cover `n_bids`; `ask_price`/`ask_size` each cover `n_asks`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_quoted_spread_update(
+    handle: *mut QuotedSpread,
+    bid_price: *const f64,
+    bid_size: *const f64,
+    n_bids: usize,
+    ask_price: *const f64,
+    ask_size: *const f64,
+    n_asks: usize,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if bid_price.is_null() || bid_size.is_null() || ask_price.is_null() || ask_size.is_null() {
+        return f64::NAN;
+    }
+    let bid_px = slice::from_raw_parts(bid_price, n_bids);
+    let bid_sz = slice::from_raw_parts(bid_size, n_bids);
+    let ask_px = slice::from_raw_parts(ask_price, n_asks);
+    let ask_sz = slice::from_raw_parts(ask_size, n_asks);
+    let mut bids = Vec::with_capacity(n_bids);
+    for (&px, &sz) in bid_px.iter().zip(bid_sz) {
+        let Ok(level) = Level::new(px, sz) else {
+            return f64::NAN;
+        };
+        bids.push(level);
+    }
+    let mut asks = Vec::with_capacity(n_asks);
+    for (&px, &sz) in ask_px.iter().zip(ask_sz) {
+        let Ok(level) = Level::new(px, sz) else {
+            return f64::NAN;
+        };
+        asks.push(level);
+    }
+    match OrderBook::new(bids, asks) {
+        Ok(book) => ind.update(book).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_quoted_spread_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_quoted_spread_reset(handle: *mut QuotedSpread) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_quoted_spread_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_quoted_spread_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_quoted_spread_free(handle: *mut QuotedSpread) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+// ===== Cross-section-input indicators (market breadth) =====
+
+/// Create a `AbsoluteBreadthIndex` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_absolute_breadth_index_free`.
+#[no_mangle]
+pub extern "C" fn wickra_absolute_breadth_index_new() -> *mut AbsoluteBreadthIndex {
+    Box::into_raw(Box::new(AbsoluteBreadthIndex::new()))
+}
+
+/// Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+/// or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_absolute_breadth_index_new`, not freed) or `NULL`. Every member array
+/// covers `n` elements.
+#[no_mangle]
+#[allow(clippy::needless_range_loop)]
+pub unsafe extern "C" fn wickra_absolute_breadth_index_update(
+    handle: *mut AbsoluteBreadthIndex,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    n: usize,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+    {
+        return f64::NAN;
+    }
+    let changes = slice::from_raw_parts(change, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let new_highs = slice::from_raw_parts(new_high, n);
+    let new_lows = slice::from_raw_parts(new_low, n);
+    let above_mas = slice::from_raw_parts(above_ma, n);
+    let on_buy_signals = slice::from_raw_parts(on_buy_signal, n);
+    let mut members = Vec::with_capacity(n);
+    for idx in 0..n {
+        let mut member = Member::new(changes[idx], volumes[idx], new_highs[idx], new_lows[idx]);
+        member.above_ma = above_mas[idx];
+        member.on_buy_signal = on_buy_signals[idx];
+        members.push(member);
+    }
+    match CrossSection::new(members, timestamp) {
+        Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_absolute_breadth_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_absolute_breadth_index_reset(handle: *mut AbsoluteBreadthIndex) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_absolute_breadth_index_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_absolute_breadth_index_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_absolute_breadth_index_free(handle: *mut AbsoluteBreadthIndex) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `AdVolumeLine` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_ad_volume_line_free`.
+#[no_mangle]
+pub extern "C" fn wickra_ad_volume_line_new() -> *mut AdVolumeLine {
+    Box::into_raw(Box::new(AdVolumeLine::new()))
+}
+
+/// Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+/// or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_ad_volume_line_new`, not freed) or `NULL`. Every member array
+/// covers `n` elements.
+#[no_mangle]
+#[allow(clippy::needless_range_loop)]
+pub unsafe extern "C" fn wickra_ad_volume_line_update(
+    handle: *mut AdVolumeLine,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    n: usize,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+    {
+        return f64::NAN;
+    }
+    let changes = slice::from_raw_parts(change, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let new_highs = slice::from_raw_parts(new_high, n);
+    let new_lows = slice::from_raw_parts(new_low, n);
+    let above_mas = slice::from_raw_parts(above_ma, n);
+    let on_buy_signals = slice::from_raw_parts(on_buy_signal, n);
+    let mut members = Vec::with_capacity(n);
+    for idx in 0..n {
+        let mut member = Member::new(changes[idx], volumes[idx], new_highs[idx], new_lows[idx]);
+        member.above_ma = above_mas[idx];
+        member.on_buy_signal = on_buy_signals[idx];
+        members.push(member);
+    }
+    match CrossSection::new(members, timestamp) {
+        Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ad_volume_line_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ad_volume_line_reset(handle: *mut AdVolumeLine) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_ad_volume_line_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_ad_volume_line_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ad_volume_line_free(handle: *mut AdVolumeLine) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `AdvanceDecline` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_advance_decline_free`.
+#[no_mangle]
+pub extern "C" fn wickra_advance_decline_new() -> *mut AdvanceDecline {
+    Box::into_raw(Box::new(AdvanceDecline::new()))
+}
+
+/// Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+/// or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_advance_decline_new`, not freed) or `NULL`. Every member array
+/// covers `n` elements.
+#[no_mangle]
+#[allow(clippy::needless_range_loop)]
+pub unsafe extern "C" fn wickra_advance_decline_update(
+    handle: *mut AdvanceDecline,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    n: usize,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+    {
+        return f64::NAN;
+    }
+    let changes = slice::from_raw_parts(change, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let new_highs = slice::from_raw_parts(new_high, n);
+    let new_lows = slice::from_raw_parts(new_low, n);
+    let above_mas = slice::from_raw_parts(above_ma, n);
+    let on_buy_signals = slice::from_raw_parts(on_buy_signal, n);
+    let mut members = Vec::with_capacity(n);
+    for idx in 0..n {
+        let mut member = Member::new(changes[idx], volumes[idx], new_highs[idx], new_lows[idx]);
+        member.above_ma = above_mas[idx];
+        member.on_buy_signal = on_buy_signals[idx];
+        members.push(member);
+    }
+    match CrossSection::new(members, timestamp) {
+        Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_advance_decline_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_advance_decline_reset(handle: *mut AdvanceDecline) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_advance_decline_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_advance_decline_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_advance_decline_free(handle: *mut AdvanceDecline) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `AdvanceDeclineRatio` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_advance_decline_ratio_free`.
+#[no_mangle]
+pub extern "C" fn wickra_advance_decline_ratio_new() -> *mut AdvanceDeclineRatio {
+    Box::into_raw(Box::new(AdvanceDeclineRatio::new()))
+}
+
+/// Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+/// or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_advance_decline_ratio_new`, not freed) or `NULL`. Every member array
+/// covers `n` elements.
+#[no_mangle]
+#[allow(clippy::needless_range_loop)]
+pub unsafe extern "C" fn wickra_advance_decline_ratio_update(
+    handle: *mut AdvanceDeclineRatio,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    n: usize,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+    {
+        return f64::NAN;
+    }
+    let changes = slice::from_raw_parts(change, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let new_highs = slice::from_raw_parts(new_high, n);
+    let new_lows = slice::from_raw_parts(new_low, n);
+    let above_mas = slice::from_raw_parts(above_ma, n);
+    let on_buy_signals = slice::from_raw_parts(on_buy_signal, n);
+    let mut members = Vec::with_capacity(n);
+    for idx in 0..n {
+        let mut member = Member::new(changes[idx], volumes[idx], new_highs[idx], new_lows[idx]);
+        member.above_ma = above_mas[idx];
+        member.on_buy_signal = on_buy_signals[idx];
+        members.push(member);
+    }
+    match CrossSection::new(members, timestamp) {
+        Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_advance_decline_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_advance_decline_ratio_reset(handle: *mut AdvanceDeclineRatio) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_advance_decline_ratio_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_advance_decline_ratio_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_advance_decline_ratio_free(handle: *mut AdvanceDeclineRatio) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `BreadthThrust` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_breadth_thrust_free`.
+#[no_mangle]
+pub extern "C" fn wickra_breadth_thrust_new(period: usize) -> *mut BreadthThrust {
+    match BreadthThrust::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+/// or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_breadth_thrust_new`, not freed) or `NULL`. Every member array
+/// covers `n` elements.
+#[no_mangle]
+#[allow(clippy::needless_range_loop)]
+pub unsafe extern "C" fn wickra_breadth_thrust_update(
+    handle: *mut BreadthThrust,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    n: usize,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+    {
+        return f64::NAN;
+    }
+    let changes = slice::from_raw_parts(change, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let new_highs = slice::from_raw_parts(new_high, n);
+    let new_lows = slice::from_raw_parts(new_low, n);
+    let above_mas = slice::from_raw_parts(above_ma, n);
+    let on_buy_signals = slice::from_raw_parts(on_buy_signal, n);
+    let mut members = Vec::with_capacity(n);
+    for idx in 0..n {
+        let mut member = Member::new(changes[idx], volumes[idx], new_highs[idx], new_lows[idx]);
+        member.above_ma = above_mas[idx];
+        member.on_buy_signal = on_buy_signals[idx];
+        members.push(member);
+    }
+    match CrossSection::new(members, timestamp) {
+        Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_breadth_thrust_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_breadth_thrust_reset(handle: *mut BreadthThrust) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_breadth_thrust_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_breadth_thrust_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_breadth_thrust_free(handle: *mut BreadthThrust) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `BullishPercentIndex` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_bullish_percent_index_free`.
+#[no_mangle]
+pub extern "C" fn wickra_bullish_percent_index_new() -> *mut BullishPercentIndex {
+    Box::into_raw(Box::new(BullishPercentIndex::new()))
+}
+
+/// Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+/// or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_bullish_percent_index_new`, not freed) or `NULL`. Every member array
+/// covers `n` elements.
+#[no_mangle]
+#[allow(clippy::needless_range_loop)]
+pub unsafe extern "C" fn wickra_bullish_percent_index_update(
+    handle: *mut BullishPercentIndex,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    n: usize,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+    {
+        return f64::NAN;
+    }
+    let changes = slice::from_raw_parts(change, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let new_highs = slice::from_raw_parts(new_high, n);
+    let new_lows = slice::from_raw_parts(new_low, n);
+    let above_mas = slice::from_raw_parts(above_ma, n);
+    let on_buy_signals = slice::from_raw_parts(on_buy_signal, n);
+    let mut members = Vec::with_capacity(n);
+    for idx in 0..n {
+        let mut member = Member::new(changes[idx], volumes[idx], new_highs[idx], new_lows[idx]);
+        member.above_ma = above_mas[idx];
+        member.on_buy_signal = on_buy_signals[idx];
+        members.push(member);
+    }
+    match CrossSection::new(members, timestamp) {
+        Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bullish_percent_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bullish_percent_index_reset(handle: *mut BullishPercentIndex) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_bullish_percent_index_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_bullish_percent_index_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bullish_percent_index_free(handle: *mut BullishPercentIndex) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `CumulativeVolumeIndex` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_cumulative_volume_index_free`.
+#[no_mangle]
+pub extern "C" fn wickra_cumulative_volume_index_new() -> *mut CumulativeVolumeIndex {
+    Box::into_raw(Box::new(CumulativeVolumeIndex::new()))
+}
+
+/// Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+/// or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_cumulative_volume_index_new`, not freed) or `NULL`. Every member array
+/// covers `n` elements.
+#[no_mangle]
+#[allow(clippy::needless_range_loop)]
+pub unsafe extern "C" fn wickra_cumulative_volume_index_update(
+    handle: *mut CumulativeVolumeIndex,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    n: usize,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+    {
+        return f64::NAN;
+    }
+    let changes = slice::from_raw_parts(change, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let new_highs = slice::from_raw_parts(new_high, n);
+    let new_lows = slice::from_raw_parts(new_low, n);
+    let above_mas = slice::from_raw_parts(above_ma, n);
+    let on_buy_signals = slice::from_raw_parts(on_buy_signal, n);
+    let mut members = Vec::with_capacity(n);
+    for idx in 0..n {
+        let mut member = Member::new(changes[idx], volumes[idx], new_highs[idx], new_lows[idx]);
+        member.above_ma = above_mas[idx];
+        member.on_buy_signal = on_buy_signals[idx];
+        members.push(member);
+    }
+    match CrossSection::new(members, timestamp) {
+        Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cumulative_volume_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cumulative_volume_index_reset(handle: *mut CumulativeVolumeIndex) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_cumulative_volume_index_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_cumulative_volume_index_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cumulative_volume_index_free(handle: *mut CumulativeVolumeIndex) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `HighLowIndex` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_high_low_index_free`.
+#[no_mangle]
+pub extern "C" fn wickra_high_low_index_new(period: usize) -> *mut HighLowIndex {
+    match HighLowIndex::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+/// or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_high_low_index_new`, not freed) or `NULL`. Every member array
+/// covers `n` elements.
+#[no_mangle]
+#[allow(clippy::needless_range_loop)]
+pub unsafe extern "C" fn wickra_high_low_index_update(
+    handle: *mut HighLowIndex,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    n: usize,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+    {
+        return f64::NAN;
+    }
+    let changes = slice::from_raw_parts(change, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let new_highs = slice::from_raw_parts(new_high, n);
+    let new_lows = slice::from_raw_parts(new_low, n);
+    let above_mas = slice::from_raw_parts(above_ma, n);
+    let on_buy_signals = slice::from_raw_parts(on_buy_signal, n);
+    let mut members = Vec::with_capacity(n);
+    for idx in 0..n {
+        let mut member = Member::new(changes[idx], volumes[idx], new_highs[idx], new_lows[idx]);
+        member.above_ma = above_mas[idx];
+        member.on_buy_signal = on_buy_signals[idx];
+        members.push(member);
+    }
+    match CrossSection::new(members, timestamp) {
+        Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_high_low_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_high_low_index_reset(handle: *mut HighLowIndex) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_high_low_index_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_high_low_index_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_high_low_index_free(handle: *mut HighLowIndex) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `McClellanOscillator` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_mc_clellan_oscillator_free`.
+#[no_mangle]
+pub extern "C" fn wickra_mc_clellan_oscillator_new() -> *mut McClellanOscillator {
+    Box::into_raw(Box::new(McClellanOscillator::new()))
+}
+
+/// Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+/// or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_mc_clellan_oscillator_new`, not freed) or `NULL`. Every member array
+/// covers `n` elements.
+#[no_mangle]
+#[allow(clippy::needless_range_loop)]
+pub unsafe extern "C" fn wickra_mc_clellan_oscillator_update(
+    handle: *mut McClellanOscillator,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    n: usize,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+    {
+        return f64::NAN;
+    }
+    let changes = slice::from_raw_parts(change, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let new_highs = slice::from_raw_parts(new_high, n);
+    let new_lows = slice::from_raw_parts(new_low, n);
+    let above_mas = slice::from_raw_parts(above_ma, n);
+    let on_buy_signals = slice::from_raw_parts(on_buy_signal, n);
+    let mut members = Vec::with_capacity(n);
+    for idx in 0..n {
+        let mut member = Member::new(changes[idx], volumes[idx], new_highs[idx], new_lows[idx]);
+        member.above_ma = above_mas[idx];
+        member.on_buy_signal = on_buy_signals[idx];
+        members.push(member);
+    }
+    match CrossSection::new(members, timestamp) {
+        Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mc_clellan_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mc_clellan_oscillator_reset(handle: *mut McClellanOscillator) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_mc_clellan_oscillator_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_mc_clellan_oscillator_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mc_clellan_oscillator_free(handle: *mut McClellanOscillator) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `McClellanSummationIndex` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_mc_clellan_summation_index_free`.
+#[no_mangle]
+pub extern "C" fn wickra_mc_clellan_summation_index_new() -> *mut McClellanSummationIndex {
+    Box::into_raw(Box::new(McClellanSummationIndex::new()))
+}
+
+/// Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+/// or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_mc_clellan_summation_index_new`, not freed) or `NULL`. Every member array
+/// covers `n` elements.
+#[no_mangle]
+#[allow(clippy::needless_range_loop)]
+pub unsafe extern "C" fn wickra_mc_clellan_summation_index_update(
+    handle: *mut McClellanSummationIndex,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    n: usize,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+    {
+        return f64::NAN;
+    }
+    let changes = slice::from_raw_parts(change, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let new_highs = slice::from_raw_parts(new_high, n);
+    let new_lows = slice::from_raw_parts(new_low, n);
+    let above_mas = slice::from_raw_parts(above_ma, n);
+    let on_buy_signals = slice::from_raw_parts(on_buy_signal, n);
+    let mut members = Vec::with_capacity(n);
+    for idx in 0..n {
+        let mut member = Member::new(changes[idx], volumes[idx], new_highs[idx], new_lows[idx]);
+        member.above_ma = above_mas[idx];
+        member.on_buy_signal = on_buy_signals[idx];
+        members.push(member);
+    }
+    match CrossSection::new(members, timestamp) {
+        Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mc_clellan_summation_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mc_clellan_summation_index_reset(
+    handle: *mut McClellanSummationIndex,
+) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_mc_clellan_summation_index_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_mc_clellan_summation_index_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mc_clellan_summation_index_free(
+    handle: *mut McClellanSummationIndex,
+) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `NewHighsNewLows` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_new_highs_new_lows_free`.
+#[no_mangle]
+pub extern "C" fn wickra_new_highs_new_lows_new() -> *mut NewHighsNewLows {
+    Box::into_raw(Box::new(NewHighsNewLows::new()))
+}
+
+/// Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+/// or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_new_highs_new_lows_new`, not freed) or `NULL`. Every member array
+/// covers `n` elements.
+#[no_mangle]
+#[allow(clippy::needless_range_loop)]
+pub unsafe extern "C" fn wickra_new_highs_new_lows_update(
+    handle: *mut NewHighsNewLows,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    n: usize,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+    {
+        return f64::NAN;
+    }
+    let changes = slice::from_raw_parts(change, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let new_highs = slice::from_raw_parts(new_high, n);
+    let new_lows = slice::from_raw_parts(new_low, n);
+    let above_mas = slice::from_raw_parts(above_ma, n);
+    let on_buy_signals = slice::from_raw_parts(on_buy_signal, n);
+    let mut members = Vec::with_capacity(n);
+    for idx in 0..n {
+        let mut member = Member::new(changes[idx], volumes[idx], new_highs[idx], new_lows[idx]);
+        member.above_ma = above_mas[idx];
+        member.on_buy_signal = on_buy_signals[idx];
+        members.push(member);
+    }
+    match CrossSection::new(members, timestamp) {
+        Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_new_highs_new_lows_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_new_highs_new_lows_reset(handle: *mut NewHighsNewLows) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_new_highs_new_lows_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_new_highs_new_lows_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_new_highs_new_lows_free(handle: *mut NewHighsNewLows) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `PercentAboveMa` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_percent_above_ma_free`.
+#[no_mangle]
+pub extern "C" fn wickra_percent_above_ma_new() -> *mut PercentAboveMa {
+    Box::into_raw(Box::new(PercentAboveMa::new()))
+}
+
+/// Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+/// or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_percent_above_ma_new`, not freed) or `NULL`. Every member array
+/// covers `n` elements.
+#[no_mangle]
+#[allow(clippy::needless_range_loop)]
+pub unsafe extern "C" fn wickra_percent_above_ma_update(
+    handle: *mut PercentAboveMa,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    n: usize,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+    {
+        return f64::NAN;
+    }
+    let changes = slice::from_raw_parts(change, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let new_highs = slice::from_raw_parts(new_high, n);
+    let new_lows = slice::from_raw_parts(new_low, n);
+    let above_mas = slice::from_raw_parts(above_ma, n);
+    let on_buy_signals = slice::from_raw_parts(on_buy_signal, n);
+    let mut members = Vec::with_capacity(n);
+    for idx in 0..n {
+        let mut member = Member::new(changes[idx], volumes[idx], new_highs[idx], new_lows[idx]);
+        member.above_ma = above_mas[idx];
+        member.on_buy_signal = on_buy_signals[idx];
+        members.push(member);
+    }
+    match CrossSection::new(members, timestamp) {
+        Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_percent_above_ma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_percent_above_ma_reset(handle: *mut PercentAboveMa) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_percent_above_ma_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_percent_above_ma_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_percent_above_ma_free(handle: *mut PercentAboveMa) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `TickIndex` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_tick_index_free`.
+#[no_mangle]
+pub extern "C" fn wickra_tick_index_new() -> *mut TickIndex {
+    Box::into_raw(Box::new(TickIndex::new()))
+}
+
+/// Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+/// or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_tick_index_new`, not freed) or `NULL`. Every member array
+/// covers `n` elements.
+#[no_mangle]
+#[allow(clippy::needless_range_loop)]
+pub unsafe extern "C" fn wickra_tick_index_update(
+    handle: *mut TickIndex,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    n: usize,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+    {
+        return f64::NAN;
+    }
+    let changes = slice::from_raw_parts(change, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let new_highs = slice::from_raw_parts(new_high, n);
+    let new_lows = slice::from_raw_parts(new_low, n);
+    let above_mas = slice::from_raw_parts(above_ma, n);
+    let on_buy_signals = slice::from_raw_parts(on_buy_signal, n);
+    let mut members = Vec::with_capacity(n);
+    for idx in 0..n {
+        let mut member = Member::new(changes[idx], volumes[idx], new_highs[idx], new_lows[idx]);
+        member.above_ma = above_mas[idx];
+        member.on_buy_signal = on_buy_signals[idx];
+        members.push(member);
+    }
+    match CrossSection::new(members, timestamp) {
+        Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tick_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tick_index_reset(handle: *mut TickIndex) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_tick_index_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_tick_index_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tick_index_free(handle: *mut TickIndex) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `Trin` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_trin_free`.
+#[no_mangle]
+pub extern "C" fn wickra_trin_new() -> *mut Trin {
+    Box::into_raw(Box::new(Trin::new()))
+}
+
+/// Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+/// or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_trin_new`, not freed) or `NULL`. Every member array
+/// covers `n` elements.
+#[no_mangle]
+#[allow(clippy::needless_range_loop)]
+pub unsafe extern "C" fn wickra_trin_update(
+    handle: *mut Trin,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    n: usize,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+    {
+        return f64::NAN;
+    }
+    let changes = slice::from_raw_parts(change, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let new_highs = slice::from_raw_parts(new_high, n);
+    let new_lows = slice::from_raw_parts(new_low, n);
+    let above_mas = slice::from_raw_parts(above_ma, n);
+    let on_buy_signals = slice::from_raw_parts(on_buy_signal, n);
+    let mut members = Vec::with_capacity(n);
+    for idx in 0..n {
+        let mut member = Member::new(changes[idx], volumes[idx], new_highs[idx], new_lows[idx]);
+        member.above_ma = above_mas[idx];
+        member.on_buy_signal = on_buy_signals[idx];
+        members.push(member);
+    }
+    match CrossSection::new(members, timestamp) {
+        Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trin_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trin_reset(handle: *mut Trin) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_trin_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_trin_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trin_free(handle: *mut Trin) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `UpDownVolumeRatio` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_up_down_volume_ratio_free`.
+#[no_mangle]
+pub extern "C" fn wickra_up_down_volume_ratio_new() -> *mut UpDownVolumeRatio {
+    Box::into_raw(Box::new(UpDownVolumeRatio::new()))
+}
+
+/// Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+/// or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+///
+/// # Safety
+/// `handle` valid (from `wickra_up_down_volume_ratio_new`, not freed) or `NULL`. Every member array
+/// covers `n` elements.
+#[no_mangle]
+#[allow(clippy::needless_range_loop)]
+pub unsafe extern "C" fn wickra_up_down_volume_ratio_update(
+    handle: *mut UpDownVolumeRatio,
+    change: *const f64,
+    volume: *const f64,
+    new_high: *const bool,
+    new_low: *const bool,
+    above_ma: *const bool,
+    on_buy_signal: *const bool,
+    n: usize,
+    timestamp: i64,
+) -> f64 {
+    let Some(ind) = handle.as_mut() else {
+        return f64::NAN;
+    };
+    if change.is_null()
+        || volume.is_null()
+        || new_high.is_null()
+        || new_low.is_null()
+        || above_ma.is_null()
+        || on_buy_signal.is_null()
+    {
+        return f64::NAN;
+    }
+    let changes = slice::from_raw_parts(change, n);
+    let volumes = slice::from_raw_parts(volume, n);
+    let new_highs = slice::from_raw_parts(new_high, n);
+    let new_lows = slice::from_raw_parts(new_low, n);
+    let above_mas = slice::from_raw_parts(above_ma, n);
+    let on_buy_signals = slice::from_raw_parts(on_buy_signal, n);
+    let mut members = Vec::with_capacity(n);
+    for idx in 0..n {
+        let mut member = Member::new(changes[idx], volumes[idx], new_highs[idx], new_lows[idx]);
+        member.above_ma = above_mas[idx];
+        member.on_buy_signal = on_buy_signals[idx];
+        members.push(member);
+    }
+    match CrossSection::new(members, timestamp) {
+        Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
+        Err(_) => f64::NAN,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_up_down_volume_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_up_down_volume_ratio_reset(handle: *mut UpDownVolumeRatio) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_up_down_volume_ratio_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_up_down_volume_ratio_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_up_down_volume_ratio_free(handle: *mut UpDownVolumeRatio) {
     if !handle.is_null() {
         drop(Box::from_raw(handle));
     }

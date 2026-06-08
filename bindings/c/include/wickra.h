@@ -69,6 +69,44 @@ typedef struct AbandonedBaby AbandonedBaby;
 typedef struct Abcd Abcd;
 
 /**
+ * Absolute Breadth Index (ABI) — the absolute value of net advancing issues,
+ * `|advancers - decliners|`.
+ *
+ * The ABI ignores the *direction* of breadth and measures only its *magnitude*:
+ * a high reading means the universe moved decisively one way or the other (high
+ * internal activity / volatility), while a low reading means advances and
+ * declines were nearly balanced (a quiet, directionless market). It is sometimes
+ * called a "market thermometer" because elevated readings often cluster around
+ * turning points.
+ *
+ * `Input = CrossSection`, `Output = f64`, `warmup_period == 1`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{AbsoluteBreadthIndex, CrossSection, Indicator, Member};
+ *
+ * let mut abi = AbsoluteBreadthIndex::new();
+ * // 2 advancers, 5 decliners -> |2 - 5| = 3.
+ * let tick = CrossSection::new(
+ *     vec![
+ *         Member::new(1.0, 10.0, false, false),
+ *         Member::new(1.0, 10.0, false, false),
+ *         Member::new(-1.0, 10.0, false, false),
+ *         Member::new(-1.0, 10.0, false, false),
+ *         Member::new(-1.0, 10.0, false, false),
+ *         Member::new(-1.0, 10.0, false, false),
+ *         Member::new(-1.0, 10.0, false, false),
+ *     ],
+ *     0,
+ * )
+ * .unwrap();
+ * assert_eq!(abi.update(tick), Some(3.0));
+ * ```
+ */
+typedef struct AbsoluteBreadthIndex AbsoluteBreadthIndex;
+
+/**
  * Accelerator Oscillator — Bill Williams' gauge of *momentum's acceleration*.
  *
  * ```text
@@ -139,6 +177,41 @@ typedef struct AcceleratorOscillator AcceleratorOscillator;
  * ```
  */
 typedef struct AdOscillator AdOscillator;
+
+/**
+ * Advance/Decline Volume Line (AD Volume Line) — the running cumulative sum of
+ * net advancing volume across a universe.
+ *
+ * On each [`CrossSection`] tick the net is `advancing volume - declining volume`,
+ * where advancing volume is the total volume of symbols with a positive change
+ * and declining volume the total volume of symbols with a negative change. The
+ * line accumulates this net over time, so a rising line means volume is flowing
+ * into advancing issues (healthy participation) while a falling line warns that
+ * declining issues are carrying the volume — the volume-weighted analogue of the
+ * plain Advance/Decline Line.
+ *
+ * `Input = CrossSection`, `Output = f64`, `warmup_period == 1` (defined from the
+ * first tick).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{AdVolumeLine, CrossSection, Indicator, Member};
+ *
+ * let mut adv = AdVolumeLine::new();
+ * // advancing volume 150, declining volume 50 -> net +100.
+ * let tick = CrossSection::new(
+ *     vec![
+ *         Member::new(1.0, 150.0, false, false),
+ *         Member::new(-1.0, 50.0, false, false),
+ *     ],
+ *     0,
+ * )
+ * .unwrap();
+ * assert_eq!(adv.update(tick), Some(100.0));
+ * ```
+ */
+typedef struct AdVolumeLine AdVolumeLine;
 
 /**
  * Adaptive CCI — Lambert's Commodity Channel Index whose centre line is an
@@ -370,6 +443,81 @@ typedef struct Adl Adl;
  * ```
  */
 typedef struct AdvanceBlock AdvanceBlock;
+
+/**
+ * Advance/Decline Line (A/D Line) — the running cumulative sum of net advancing
+ * issues across a universe.
+ *
+ * On each [`CrossSection`] tick the net breadth is `advancers - decliners`:
+ * the number of symbols with a positive price change minus the number with a
+ * negative change (unchanged symbols are ignored). The line accumulates this
+ * net value over time, so a rising line means advancers have persistently
+ * outnumbered decliners — broad participation — while a falling line warns that
+ * a rally is being carried by fewer and fewer names (a breadth divergence when
+ * the index itself is still rising).
+ *
+ * `Input = CrossSection`, `Output = f64`. The line is defined from the very
+ * first tick, so `warmup_period == 1` and the indicator is ready after one
+ * update.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{AdvanceDecline, CrossSection, Indicator, Member};
+ *
+ * let mut ad = AdvanceDecline::new();
+ * // 3 advancers, 1 decliner -> net +2.
+ * let tick = CrossSection::new(
+ *     vec![
+ *         Member::new(1.0, 10.0, false, false),
+ *         Member::new(0.5, 10.0, false, false),
+ *         Member::new(2.0, 10.0, false, false),
+ *         Member::new(-1.0, 10.0, false, false),
+ *     ],
+ *     0,
+ * )
+ * .unwrap();
+ * assert_eq!(ad.update(tick), Some(2.0));
+ * ```
+ */
+typedef struct AdvanceDecline AdvanceDecline;
+
+/**
+ * Advance/Decline Ratio (ADR) — the number of advancing symbols divided by the
+ * number of declining symbols across a universe.
+ *
+ * On each [`CrossSection`] tick the ratio is `advancers / decliners`: a reading
+ * above one means advancing issues outnumber declining ones (broad strength),
+ * while a reading below one signals broad weakness. Because it is a ratio rather
+ * than a difference, the ADR is comparable across universes of different sizes.
+ *
+ * When a tick has no declining symbols the denominator is floored to one, so the
+ * ratio degrades gracefully to the advancer count instead of dividing by zero.
+ *
+ * `Input = CrossSection`, `Output = f64`. The ratio is defined from the first
+ * tick, so `warmup_period == 1` and the indicator is ready after one update.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{AdvanceDeclineRatio, CrossSection, Indicator, Member};
+ *
+ * let mut adr = AdvanceDeclineRatio::new();
+ * // 3 advancers, 1 decliner -> ratio 3.0.
+ * let tick = CrossSection::new(
+ *     vec![
+ *         Member::new(1.0, 10.0, false, false),
+ *         Member::new(0.5, 10.0, false, false),
+ *         Member::new(2.0, 10.0, false, false),
+ *         Member::new(-1.0, 10.0, false, false),
+ *     ],
+ *     0,
+ * )
+ * .unwrap();
+ * assert_eq!(adr.update(tick), Some(3.0));
+ * ```
+ */
+typedef struct AdvanceDeclineRatio AdvanceDeclineRatio;
 
 /**
  * Wilder's Average Directional Movement Index Rating.
@@ -1284,6 +1432,36 @@ typedef struct BodySizePct BodySizePct;
 typedef struct BollingerBandwidth BollingerBandwidth;
 
 /**
+ * Breadth Thrust (Zweig) — a simple moving average of the advancing-issues
+ * share, `advancers / (advancers + decliners)`.
+ *
+ * Martin Zweig's breadth thrust smooths the fraction of participating issues
+ * that are advancing over a short window (the classic period is 10). A "thrust"
+ * fires when this average climbs from below ~0.40 (oversold, washed-out breadth)
+ * to above ~0.615 within about ten sessions — historically a rare, reliable
+ * signal that a powerful new advance has begun with broad participation.
+ *
+ * Each tick's share floors the participating count to one, so a tick with no
+ * advancing or declining issues contributes a defined `0.0` instead of dividing
+ * by zero. The reading is `None` until `period` ticks have been seen.
+ *
+ * `Input = CrossSection`, `Output = f64` (a share in `0..=1`),
+ * `warmup_period == period`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{BreadthThrust, CrossSection, Indicator, Member};
+ *
+ * let mut bt = BreadthThrust::new(2).unwrap();
+ * let up = CrossSection::new(vec![Member::new(1.0, 1.0, false, false)], 0).unwrap();
+ * assert_eq!(bt.update(up.clone()), None); // warming up
+ * assert_eq!(bt.update(up), Some(1.0)); // both ticks 100% advancing
+ * ```
+ */
+typedef struct BreadthThrust BreadthThrust;
+
+/**
  * Breakaway — a 5-bar reversal that fades an exhausted run. A trend gaps away on
  * the second bar, drifts two more bars in the same direction, then the fifth bar
  * snaps the other way and closes back inside the body gap left between the first
@@ -1338,6 +1516,44 @@ typedef struct BollingerBandwidth BollingerBandwidth;
  * ```
  */
 typedef struct Breakaway Breakaway;
+
+/**
+ * Bullish Percent Index (BPI) — the percentage of symbols in a universe that are
+ * currently on a point-and-figure buy signal.
+ *
+ * On each [`CrossSection`] tick the value is `100 * on_buy_signal_count /
+ * universe size`, read from the per-symbol `on_buy_signal` flag (the caller
+ * evaluates each symbol's point-and-figure chart when it builds the tick). It is
+ * a bounded `0..=100` gauge of how many issues are in a confirmed uptrend.
+ * Readings above 70 are considered overbought (broad strength, but a crowded
+ * market) and below 30 oversold; reversals from those zones are classic BPI
+ * buy/sell triggers.
+ *
+ * `Input = CrossSection`, `Output = f64` (a percentage in `0..=100`),
+ * `warmup_period == 1`. The universe is non-empty by construction, so the share
+ * is always defined.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{BullishPercentIndex, CrossSection, Indicator, Member};
+ *
+ * let mut bpi = BullishPercentIndex::new();
+ * // 2 of 4 symbols on a buy signal -> 50%.
+ * let tick = CrossSection::new(
+ *     vec![
+ *         Member::with_signals(1.0, 10.0, false, false, false, true),
+ *         Member::with_signals(1.0, 10.0, false, false, false, true),
+ *         Member::with_signals(-1.0, 10.0, false, false, false, false),
+ *         Member::with_signals(-1.0, 10.0, false, false, false, false),
+ *     ],
+ *     0,
+ * )
+ * .unwrap();
+ * assert_eq!(bpi.update(tick), Some(50.0));
+ * ```
+ */
+typedef struct BullishPercentIndex BullishPercentIndex;
 
 /**
  * Burke Ratio over a trailing window of `period` returns.
@@ -2137,6 +2353,45 @@ typedef struct Crab Crab;
 typedef struct CumulativeVolumeDelta CumulativeVolumeDelta;
 
 /**
+ * Cumulative Volume Index (CVI) — the running total of *volume-normalised* net
+ * advancing volume across a universe.
+ *
+ * On each [`CrossSection`] tick the increment is `(advancing volume - declining
+ * volume) / total volume`: the share of the tick's total volume that flowed,
+ * net, into advancing issues. The index accumulates this share over time. Where
+ * the raw [`AdVolumeLine`](crate::AdVolumeLine) sums *absolute* net volume — and
+ * so drifts with secular growth in trading activity — the CVI normalises each
+ * tick by its own total volume, so a one-share-net day in a thin market counts
+ * the same as in a heavy one. This keeps the index comparable across regimes of
+ * very different volume.
+ *
+ * When a tick has zero total volume the net is necessarily zero too, so the
+ * increment is zero and the index is unchanged (the divisor is floored to the
+ * smallest positive `f64` purely to keep the division defined).
+ *
+ * `Input = CrossSection`, `Output = f64`, `warmup_period == 1`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{CrossSection, CumulativeVolumeIndex, Indicator, Member};
+ *
+ * let mut cvi = CumulativeVolumeIndex::new();
+ * // adv vol 150, dec vol 50, total 200 -> (150 - 50) / 200 = 0.5.
+ * let tick = CrossSection::new(
+ *     vec![
+ *         Member::new(1.0, 150.0, false, false),
+ *         Member::new(-1.0, 50.0, false, false),
+ *     ],
+ *     0,
+ * )
+ * .unwrap();
+ * assert_eq!(cvi.update(tick), Some(0.5));
+ * ```
+ */
+typedef struct CumulativeVolumeIndex CumulativeVolumeIndex;
+
+/**
  * Cup-and-Handle / Inverse — a rounded base (the cup) followed by a shallow
  * pullback (the handle) near the rim, then a breakout in the cup's direction.
  *
@@ -2331,6 +2586,51 @@ typedef struct Dema Dema;
  * ```
  */
 typedef struct DemandIndex DemandIndex;
+
+/**
+ * Depth Slope — the average rate at which cumulative resting size grows with
+ * distance from the mid, across the bid and ask sides of the book.
+ *
+ * For each side the indicator runs an ordinary-least-squares regression of
+ * cumulative size (walking outward from the touch) on the level's distance
+ * from the mid, then reports the mean of the two slopes:
+ *
+ * ```text
+ * slope_side = OLS slope of (|priceᵢ − mid|, Σ_{j≤i} sizeⱼ)
+ * depthSlope = (slope_bid + slope_ask) / 2
+ * ```
+ *
+ * Because the response is *cumulative* size it never decreases with distance,
+ * so the slope is non-negative: it is a magnitude, not a direction. A large
+ * slope means cumulative liquidity builds quickly away from the touch — a deep
+ * book that absorbs large orders with little walking; a small slope is a thin,
+ * shallow book. A book whose size is concentrated at the touch and thins out
+ * behind it (a fragile book) reads a *smaller* slope than one of equal total
+ * depth that thickens with distance.
+ *
+ * A side with fewer than two levels carries no slope, so the indicator returns
+ * `0.0` whenever either side has fewer than two levels (including an empty
+ * book).
+ *
+ * `Input = OrderBook`, `Output = f64`. Stateless; ready after the first
+ * snapshot.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{DepthSlope, Indicator, Level, OrderBook};
+ *
+ * // Both sides thicken linearly away from the mid (sizes 1, 2, 3 …).
+ * let book = OrderBook::new(
+ *     vec![Level::new(99.0, 1.0).unwrap(), Level::new(98.0, 2.0).unwrap()],
+ *     vec![Level::new(101.0, 1.0).unwrap(), Level::new(102.0, 2.0).unwrap()],
+ * )
+ * .unwrap();
+ * let mut ds = DepthSlope::new();
+ * assert!(ds.update(book).unwrap() > 0.0);
+ * ```
+ */
+typedef struct DepthSlope DepthSlope;
 
 /**
  * Derivative Oscillator — Constance Brown's double-smoothed RSI histogram.
@@ -4425,6 +4725,36 @@ typedef struct HeikinAshiOscillator HeikinAshiOscillator;
 typedef struct HiLoActivator HiLoActivator;
 
 /**
+ * High-Low Index — a simple moving average of the *record high percent*,
+ * `100 * new_highs / (new_highs + new_lows)`.
+ *
+ * The record high percent is the share of new-extreme issues that are new
+ * *highs* rather than new *lows*; smoothing it over a window (the classic period
+ * is 10) gives the High-Low Index. Readings above 50 mean new highs dominate
+ * (a healthy, broadening trend), readings below 50 mean new lows dominate. The
+ * 30 and 70 lines are watched as oversold / overbought breadth thresholds.
+ *
+ * Each tick floors the new-extreme count to one, so a tick with no new highs or
+ * lows contributes a defined `0.0` instead of dividing by zero. The reading is
+ * `None` until `period` ticks have been seen.
+ *
+ * `Input = CrossSection`, `Output = f64` (a percentage in `0..=100`),
+ * `warmup_period == period`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{CrossSection, HighLowIndex, Indicator, Member};
+ *
+ * let mut hli = HighLowIndex::new(2).unwrap();
+ * let highs = CrossSection::new(vec![Member::new(1.0, 1.0, true, false)], 0).unwrap();
+ * assert_eq!(hli.update(highs.clone()), None); // warming up
+ * assert_eq!(hli.update(highs), Some(100.0)); // all new highs
+ * ```
+ */
+typedef struct HighLowIndex HighLowIndex;
+
+/**
  * High-Low Range — the bar's high-low range expressed as a fraction of its
  * close price.
  *
@@ -6405,6 +6735,85 @@ typedef struct MatchingLow MatchingLow;
 typedef struct MaxDrawdown MaxDrawdown;
 
 /**
+ * McClellan Oscillator — the difference between a 19-period and a 39-period
+ * exponential moving average of *ratio-adjusted net advances*.
+ *
+ * Each tick's breadth is reduced to ratio-adjusted net advances (RANA),
+ * `(advancers - decliners) / (advancers + decliners) * 1000`. Dividing by the
+ * number of participating issues makes the reading independent of universe size,
+ * so the oscillator stays comparable as the universe grows or shrinks. The
+ * oscillator is then the fast EMA minus the slow EMA of that series, using the
+ * classic McClellan smoothing constants `0.10` (19-period) and `0.05`
+ * (39-period). Both EMAs are seeded from the first tick's RANA, so the
+ * oscillator is defined from the first update (`warmup_period == 1`); it starts
+ * at `0.0` and crosses zero as breadth momentum shifts.
+ *
+ * A tick with no advancing or declining issues yields a RANA of `0.0` (the
+ * participating count is floored to one).
+ *
+ * `Input = CrossSection`, `Output = f64`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{CrossSection, Indicator, McClellanOscillator, Member};
+ *
+ * let mut osc = McClellanOscillator::new();
+ * let tick = CrossSection::new(
+ *     vec![
+ *         Member::new(1.0, 10.0, false, false),
+ *         Member::new(1.0, 10.0, false, false),
+ *         Member::new(1.0, 10.0, false, false),
+ *         Member::new(-1.0, 10.0, false, false),
+ *     ],
+ *     0,
+ * )
+ * .unwrap();
+ * // First tick seeds both EMAs to the same value -> oscillator 0.
+ * assert_eq!(osc.update(tick), Some(0.0));
+ * ```
+ */
+typedef struct McClellanOscillator McClellanOscillator;
+
+/**
+ * McClellan Summation Index — the running cumulative sum of the
+ * [`McClellanOscillator`].
+ *
+ * Where the oscillator measures the *momentum* of breadth, the summation index
+ * integrates it into a longer-term breadth trend: it rises while the oscillator
+ * is positive and falls while it is negative, so it behaves like a slow,
+ * smoothed advance/decline line. Sustained readings far above or below zero mark
+ * strong bull or bear breadth regimes, and crosses of the zero line are read as
+ * major trend changes.
+ *
+ * The index embeds a [`McClellanOscillator`] and adds its value on every tick.
+ * Because the oscillator seeds to `0.0` on the first tick, the summation index
+ * also starts at `0.0` and is defined from the first update
+ * (`warmup_period == 1`).
+ *
+ * `Input = CrossSection`, `Output = f64`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{CrossSection, Indicator, McClellanSummationIndex, Member};
+ *
+ * let mut msi = McClellanSummationIndex::new();
+ * let tick = CrossSection::new(
+ *     vec![
+ *         Member::new(1.0, 10.0, false, false),
+ *         Member::new(-1.0, 10.0, false, false),
+ *     ],
+ *     0,
+ * )
+ * .unwrap();
+ * // First tick: oscillator seeds to 0, so the summation index is 0.
+ * assert_eq!(msi.update(tick), Some(0.0));
+ * ```
+ */
+typedef struct McClellanSummationIndex McClellanSummationIndex;
+
+/**
  * John `McGinley`'s "Dynamic" — a self-adjusting moving average that speeds up
  * in downtrends and slows down in uptrends to track price more closely than
  * a fixed-period MA.
@@ -6554,6 +6963,41 @@ typedef struct MedianPrice MedianPrice;
  * ```
  */
 typedef struct Mfi Mfi;
+
+/**
+ * Microprice — the size-weighted mid of the top of book.
+ *
+ * The microprice tilts the mid toward the side that is *more likely to be
+ * hit*: it weights each touch price by the size resting on the **opposite**
+ * side, so a heavy ask (sell pressure) pulls the fair value down toward the
+ * bid, and vice versa:
+ *
+ * ```text
+ * microprice = (bidPrice₁·askSize₁ + askPrice₁·bidSize₁) / (bidSize₁ + askSize₁)
+ * ```
+ *
+ * When both top sizes are zero the weighting is undefined and the plain mid
+ * `(bidPrice₁ + askPrice₁) / 2` is returned. An empty book yields `0`.
+ *
+ * `Input = OrderBook`, `Output = f64`. Stateless; ready after the first
+ * snapshot.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, Level, Microprice, OrderBook};
+ *
+ * let book = OrderBook::new(
+ *     vec![Level::new(100.0, 1.0).unwrap()],
+ *     vec![Level::new(101.0, 3.0).unwrap()],
+ * )
+ * .unwrap();
+ * let mut mp = Microprice::new();
+ * // (100·3 + 101·1) / (1 + 3) = 401 / 4 = 100.25 — pulled toward the bid.
+ * assert_eq!(mp.update(book), Some(100.25));
+ * ```
+ */
+typedef struct Microprice Microprice;
 
 /**
  * Midpoint (`MIDPOINT`): the average of the highest and lowest value of the
@@ -6859,6 +7303,39 @@ typedef struct NakedPoc NakedPoc;
  * ```
  */
 typedef struct Natr Natr;
+
+/**
+ * New Highs − New Lows — the number of symbols printing a new period high minus
+ * the number printing a new period low across a universe.
+ *
+ * On each [`CrossSection`] tick the value is `new_highs - new_lows`, read from the
+ * per-symbol `new_high` / `new_low` flags. A persistently positive reading means
+ * fresh leadership is broad (many names making new highs); a negative reading
+ * during an index advance is a classic breadth divergence warning that the rally
+ * is narrowing.
+ *
+ * `Input = CrossSection`, `Output = f64`, `warmup_period == 1`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{CrossSection, Indicator, Member, NewHighsNewLows};
+ *
+ * let mut nhnl = NewHighsNewLows::new();
+ * // 2 new highs, 1 new low -> net +1.
+ * let tick = CrossSection::new(
+ *     vec![
+ *         Member::new(1.0, 10.0, true, false),
+ *         Member::new(1.0, 10.0, true, false),
+ *         Member::new(-1.0, 10.0, false, true),
+ *     ],
+ *     0,
+ * )
+ * .unwrap();
+ * assert_eq!(nhnl.update(tick), Some(1.0));
+ * ```
+ */
+typedef struct NewHighsNewLows NewHighsNewLows;
 
 /**
  * New Price Lines — the Japanese "shinne" (new-price) exhaustion count: when the
@@ -7262,6 +7739,148 @@ typedef struct OpenInterestMomentum OpenInterestMomentum;
 typedef struct OpeningMarubozu OpeningMarubozu;
 
 /**
+ * Order-Book Imbalance aggregated over the full visible depth of each side.
+ *
+ * Sums the resting size of every bid level and every ask level in the
+ * snapshot and compares them:
+ *
+ * ```text
+ * bidDepth  = Σ size of all bids
+ * askDepth  = Σ size of all asks
+ * imbalance = (bidDepth − askDepth) / (bidDepth + askDepth)
+ * ```
+ *
+ * The output lies in `[−1, +1]`. A book with zero total size yields `0`. Use
+ * [`crate::OrderBookImbalanceTopN`] to bound the depth to the most relevant
+ * near-touch levels instead of the full visible book.
+ *
+ * `Input = OrderBook`, `Output = f64`. Stateless; ready after the first
+ * snapshot.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, Level, OrderBook, OrderBookImbalanceFull};
+ *
+ * let book = OrderBook::new(
+ *     vec![Level::new(100.0, 2.0).unwrap(), Level::new(99.0, 1.0).unwrap()],
+ *     vec![Level::new(101.0, 0.5).unwrap(), Level::new(102.0, 0.5).unwrap()],
+ * )
+ * .unwrap();
+ * let mut obi = OrderBookImbalanceFull::new();
+ * assert_eq!(obi.update(book), Some(0.5)); // (3 − 1) / (3 + 1)
+ * ```
+ */
+typedef struct OrderBookImbalanceFull OrderBookImbalanceFull;
+
+/**
+ * Order-Book Imbalance (top-of-book).
+ *
+ * Measures the pressure between the best bid and best ask by comparing their
+ * resting sizes:
+ *
+ * ```text
+ * imbalance = (bidSize₁ − askSize₁) / (bidSize₁ + askSize₁)
+ * ```
+ *
+ * The output lies in `[−1, +1]`: `+1` means all size sits on the bid (buy
+ * pressure), `−1` means all size sits on the ask (sell pressure), `0` means a
+ * balanced top of book. A book with zero size on both top levels yields `0`.
+ *
+ * `Input = OrderBook`, `Output = f64`. The indicator is stateless and ready
+ * after the first snapshot.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, Level, OrderBook, OrderBookImbalanceTop1};
+ *
+ * let book = OrderBook::new(
+ *     vec![Level::new(100.0, 3.0).unwrap()],
+ *     vec![Level::new(101.0, 1.0).unwrap()],
+ * )
+ * .unwrap();
+ * let mut obi = OrderBookImbalanceTop1::new();
+ * assert_eq!(obi.update(book), Some(0.5)); // (3 − 1) / (3 + 1)
+ * ```
+ */
+typedef struct OrderBookImbalanceTop1 OrderBookImbalanceTop1;
+
+/**
+ * Order-Book Imbalance aggregated over the top-N levels of each side.
+ *
+ * Generalises [`crate::OrderBookImbalanceTop1`] to a configurable depth: it
+ * sums the resting size of the best `levels` bids and the best `levels` asks
+ * and compares them:
+ *
+ * ```text
+ * bidDepth  = Σ size of the best `levels` bids
+ * askDepth  = Σ size of the best `levels` asks
+ * imbalance = (bidDepth − askDepth) / (bidDepth + askDepth)
+ * ```
+ *
+ * If a side has fewer than `levels` levels, all available levels are summed.
+ * The output lies in `[−1, +1]`; a book with zero size across the summed
+ * levels yields `0`.
+ *
+ * `Input = OrderBook`, `Output = f64`. Stateless; ready after the first
+ * snapshot.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, Level, OrderBook, OrderBookImbalanceTopN};
+ *
+ * let book = OrderBook::new(
+ *     vec![Level::new(100.0, 2.0).unwrap(), Level::new(99.0, 1.0).unwrap()],
+ *     vec![Level::new(101.0, 1.0).unwrap(), Level::new(102.0, 1.0).unwrap()],
+ * )
+ * .unwrap();
+ * let mut obi = OrderBookImbalanceTopN::new(2).unwrap();
+ * assert_eq!(obi.update(book), Some(0.2)); // (3 − 2) / (3 + 2)
+ * ```
+ */
+typedef struct OrderBookImbalanceTopN OrderBookImbalanceTopN;
+
+/**
+ * Order Flow Imbalance — the rolling sum of best-level order-flow events over
+ * the last `period` order-book snapshots.
+ *
+ * Following Cont, Kukanov & Stoikov (2014), each new snapshot contributes a
+ * signed event from how the best bid and ask moved versus the previous one:
+ *
+ * ```text
+ * Δᵇ = qᵇₙ·1{Pᵇₙ ≥ Pᵇₙ₋₁} − qᵇₙ₋₁·1{Pᵇₙ ≤ Pᵇₙ₋₁}     (bid pressure)
+ * Δᵃ = qᵃₙ·1{Pᵃₙ ≤ Pᵃₙ₋₁} − qᵃₙ₋₁·1{Pᵃₙ ≥ Pᵃₙ₋₁}     (ask pressure)
+ * eₙ = Δᵇ − Δᵃ
+ * OFI = Σ eₙ  over the last `period` snapshots
+ * ```
+ *
+ * A rising bid (or replenished bid size) and a falling/depleting ask both add
+ * positive flow; the mirror subtracts. The rolling sum is a strong
+ * short-horizon predictor of price moves: a large positive `OFI` reflects net
+ * buying pressure at the top of book, a large negative `OFI` net selling.
+ *
+ * `Input = OrderBook`. Each `update` is O(1) (only the best levels are read).
+ * The first snapshot only seeds the reference quotes and emits `None`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, Level, OrderBook, OrderFlowImbalance};
+ *
+ * let mut ofi = OrderFlowImbalance::new(20).unwrap();
+ * let book = OrderBook::new(
+ *     vec![Level::new(100.0, 5.0).unwrap()],
+ *     vec![Level::new(101.0, 4.0).unwrap()],
+ * )
+ * .unwrap();
+ * assert_eq!(ofi.update(book), None); // first snapshot seeds the reference
+ * ```
+ */
+typedef struct OrderFlowImbalance OrderFlowImbalance;
+
+/**
  * Half-life of mean reversion of the spread `a − b`, from an Ornstein–Uhlenbeck
  * fit.
  *
@@ -7538,6 +8157,43 @@ typedef struct ParkinsonVolatility ParkinsonVolatility;
  * ```
  */
 typedef struct PearsonCorrelation PearsonCorrelation;
+
+/**
+ * Percent Above Moving Average — the percentage of symbols in a universe that
+ * are trading above their reference moving average.
+ *
+ * On each [`CrossSection`] tick the value is `100 * above_ma_count / universe
+ * size`, read from the per-symbol `above_ma` flag (the caller decides which MA —
+ * 50-day, 200-day — when it builds the tick). It is a bounded `0..=100` breadth
+ * gauge: readings near 100 mean almost the whole universe is in an uptrend
+ * (broad participation, but also a potential overbought extreme), readings near
+ * zero mark washouts. Crosses of the 50 line are read as bull/bear regime flips.
+ *
+ * `Input = CrossSection`, `Output = f64` (a percentage in `0..=100`),
+ * `warmup_period == 1`. The universe is non-empty by construction, so the share
+ * is always defined.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{CrossSection, Indicator, Member, PercentAboveMa};
+ *
+ * let mut pct = PercentAboveMa::new();
+ * // 3 of 4 symbols above their MA -> 75%.
+ * let tick = CrossSection::new(
+ *     vec![
+ *         Member::with_signals(1.0, 10.0, false, false, true, false),
+ *         Member::with_signals(1.0, 10.0, false, false, true, false),
+ *         Member::with_signals(-1.0, 10.0, false, false, true, false),
+ *         Member::with_signals(-1.0, 10.0, false, false, false, false),
+ *     ],
+ *     0,
+ * )
+ * .unwrap();
+ * assert_eq!(pct.update(tick), Some(75.0));
+ * ```
+ */
+typedef struct PercentAboveMa PercentAboveMa;
 
 /**
  * Bollinger %b — where price sits within the Bollinger Bands.
@@ -8204,6 +8860,40 @@ typedef struct Pvi Pvi;
  * ```
  */
 typedef struct Qstick Qstick;
+
+/**
+ * Quoted Spread — the top-of-book bid-ask spread expressed in basis points of
+ * the mid price.
+ *
+ * ```text
+ * mid           = (bidPrice₁ + askPrice₁) / 2
+ * quotedSpread  = (askPrice₁ − bidPrice₁) / mid · 10_000   (bps)
+ * ```
+ *
+ * This is the round-trip cost of crossing the spread at the touch, normalised
+ * by price so it is comparable across instruments. For a valid (uncrossed)
+ * book the result is non-negative. An empty book yields `0`.
+ *
+ * `Input = OrderBook`, `Output = f64`. Stateless; ready after the first
+ * snapshot.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, Level, OrderBook, QuotedSpread};
+ *
+ * let book = OrderBook::new(
+ *     vec![Level::new(100.0, 1.0).unwrap()],
+ *     vec![Level::new(100.5, 1.0).unwrap()],
+ * )
+ * .unwrap();
+ * let mut qs = QuotedSpread::new();
+ * // spread 0.5, mid 100.25 -> 0.5 / 100.25 * 10_000 ≈ 49.875 bps.
+ * let bps = qs.update(book).unwrap();
+ * assert!((bps - 49.875_311_72).abs() < 1e-6);
+ * ```
+ */
+typedef struct QuotedSpread QuotedSpread;
 
 /**
  * R² (coefficient of determination) of the rolling least-squares fit.
@@ -11069,6 +11759,43 @@ typedef struct ThreeStarsInSouth ThreeStarsInSouth;
 typedef struct Thrusting Thrusting;
 
 /**
+ * TICK Index — the instantaneous net of advancing minus declining issues across
+ * a universe, `advancers - decliners`.
+ *
+ * Unlike the cumulative [`AdvanceDecline`](crate::AdvanceDecline) line, the TICK
+ * is *not* accumulated: each tick reports the breadth of that snapshot alone. It
+ * oscillates around zero — strongly positive readings mean a broad surge of
+ * upticks (often an intraday overbought extreme), strongly negative readings a
+ * broad flush. Traders fade extremes and watch the zero line for intraday bias.
+ *
+ * `Input = CrossSection`, `Output = f64`, `warmup_period == 1`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{CrossSection, Indicator, Member, TickIndex};
+ *
+ * let mut tick = TickIndex::new();
+ * // 2 advancers, 5 decliners -> net -3.
+ * let snapshot = CrossSection::new(
+ *     vec![
+ *         Member::new(1.0, 10.0, false, false),
+ *         Member::new(1.0, 10.0, false, false),
+ *         Member::new(-1.0, 10.0, false, false),
+ *         Member::new(-1.0, 10.0, false, false),
+ *         Member::new(-1.0, 10.0, false, false),
+ *         Member::new(-1.0, 10.0, false, false),
+ *         Member::new(-1.0, 10.0, false, false),
+ *     ],
+ *     0,
+ * )
+ * .unwrap();
+ * assert_eq!(tick.update(snapshot), Some(-3.0));
+ * ```
+ */
+typedef struct TickIndex TickIndex;
+
+/**
  * M.H. Pee's Trend Intensity Index — a `[0, 100]` oscillator that measures
  * what fraction of the recent SMA deviations are positive.
  *
@@ -11444,6 +12171,45 @@ typedef struct Triangle Triangle;
  * ```
  */
 typedef struct Trima Trima;
+
+/**
+ * TRIN (Arms Index) — `(advancers / decliners) / (advancing volume / declining
+ * volume)`.
+ *
+ * The TRIN compares the breadth of a move in *issues* to the breadth of the move
+ * in *volume*. A value near `1.0` means advancing issues and advancing volume are
+ * in balance; a value below `1.0` is bullish (volume is concentrated in advancing
+ * issues relative to their count); a value above `1.0` is bearish (declining
+ * issues are absorbing disproportionate volume).
+ *
+ * To stay finite on degenerate ticks the decliner count is floored to one and
+ * both volume sums are floored to `1.0`, so a tick with no declining issues or no
+ * volume on one side still yields a defined reading instead of a division by
+ * zero.
+ *
+ * `Input = CrossSection`, `Output = f64`, `warmup_period == 1`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{CrossSection, Indicator, Member, Trin};
+ *
+ * let mut trin = Trin::new();
+ * // 3 advancers / 1 decliner = 3; adv vol 150 / dec vol 50 = 3; TRIN = 1.0.
+ * let tick = CrossSection::new(
+ *     vec![
+ *         Member::new(1.0, 50.0, false, false),
+ *         Member::new(1.0, 50.0, false, false),
+ *         Member::new(1.0, 50.0, false, false),
+ *         Member::new(-1.0, 50.0, false, false),
+ *     ],
+ *     0,
+ * )
+ * .unwrap();
+ * assert_eq!(trin.update(tick), Some(1.0));
+ * ```
+ */
+typedef struct Trin Trin;
 
 /**
  * Triple Top / Triple Bottom — a three-peak (or three-trough) reversal pattern,
@@ -12025,6 +12791,41 @@ typedef struct UniqueThreeRiver UniqueThreeRiver;
  * ```
  */
 typedef struct UniversalOscillator UniversalOscillator;
+
+/**
+ * Up/Down Volume Ratio — total advancing volume divided by total declining
+ * volume across a universe.
+ *
+ * On each [`CrossSection`] tick the ratio is `advancing volume / declining
+ * volume`. A reading above one means more volume is trading in advancing issues
+ * than declining ones (accumulation); a reading below one means distribution.
+ * Sustained extremes are used to flag breadth thrusts and washout bottoms.
+ *
+ * When a tick has no declining volume the denominator is floored to `1.0`, so the
+ * ratio stays finite (it degrades to the advancing-volume total) instead of
+ * dividing by zero.
+ *
+ * `Input = CrossSection`, `Output = f64`, `warmup_period == 1`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{CrossSection, Indicator, Member, UpDownVolumeRatio};
+ *
+ * let mut udv = UpDownVolumeRatio::new();
+ * // advancing volume 150, declining volume 50 -> ratio 3.0.
+ * let tick = CrossSection::new(
+ *     vec![
+ *         Member::new(1.0, 150.0, false, false),
+ *         Member::new(-1.0, 50.0, false, false),
+ *     ],
+ *     0,
+ * )
+ * .unwrap();
+ * assert_eq!(udv.update(tick), Some(3.0));
+ * ```
+ */
+typedef struct UpDownVolumeRatio UpDownVolumeRatio;
 
 /**
  * Upside Gap Three Methods — a 3-bar bullish continuation. Two white candles
@@ -31609,5 +32410,893 @@ void wickra_term_structure_basis_reset(struct TermStructureBasis *handle);
  * `handle` must have been returned by `wickra_term_structure_basis_new` and not previously freed, or `NULL`.
  */
 void wickra_term_structure_basis_free(struct TermStructureBasis *handle);
+
+/**
+ * Create a `DepthSlope` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_depth_slope_free`.
+ */
+struct DepthSlope *wickra_depth_slope_new(void);
+
+/**
+ * Feed one order-book snapshot as parallel bid/ask price+size arrays; returns the
+ * output, or `NaN` during warmup / on a `NULL` handle / if a level or the book is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_depth_slope_new`, not freed) or `NULL`. `bid_price`/`bid_size`
+ * each cover `n_bids`; `ask_price`/`ask_size` each cover `n_asks`.
+ */
+double wickra_depth_slope_update(struct DepthSlope *handle,
+                                 const double *bid_price,
+                                 const double *bid_size,
+                                 uintptr_t n_bids,
+                                 const double *ask_price,
+                                 const double *ask_size,
+                                 uintptr_t n_asks);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_depth_slope_new`, not freed), or `NULL`.
+ */
+void wickra_depth_slope_reset(struct DepthSlope *handle);
+
+/**
+ * Destroy a handle created by `wickra_depth_slope_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_depth_slope_new` and not previously freed, or `NULL`.
+ */
+void wickra_depth_slope_free(struct DepthSlope *handle);
+
+/**
+ * Create a `Microprice` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_microprice_free`.
+ */
+struct Microprice *wickra_microprice_new(void);
+
+/**
+ * Feed one order-book snapshot as parallel bid/ask price+size arrays; returns the
+ * output, or `NaN` during warmup / on a `NULL` handle / if a level or the book is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_microprice_new`, not freed) or `NULL`. `bid_price`/`bid_size`
+ * each cover `n_bids`; `ask_price`/`ask_size` each cover `n_asks`.
+ */
+double wickra_microprice_update(struct Microprice *handle,
+                                const double *bid_price,
+                                const double *bid_size,
+                                uintptr_t n_bids,
+                                const double *ask_price,
+                                const double *ask_size,
+                                uintptr_t n_asks);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_microprice_new`, not freed), or `NULL`.
+ */
+void wickra_microprice_reset(struct Microprice *handle);
+
+/**
+ * Destroy a handle created by `wickra_microprice_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_microprice_new` and not previously freed, or `NULL`.
+ */
+void wickra_microprice_free(struct Microprice *handle);
+
+/**
+ * Create a `OrderBookImbalanceFull` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_order_book_imbalance_full_free`.
+ */
+struct OrderBookImbalanceFull *wickra_order_book_imbalance_full_new(void);
+
+/**
+ * Feed one order-book snapshot as parallel bid/ask price+size arrays; returns the
+ * output, or `NaN` during warmup / on a `NULL` handle / if a level or the book is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_order_book_imbalance_full_new`, not freed) or `NULL`. `bid_price`/`bid_size`
+ * each cover `n_bids`; `ask_price`/`ask_size` each cover `n_asks`.
+ */
+double wickra_order_book_imbalance_full_update(struct OrderBookImbalanceFull *handle,
+                                               const double *bid_price,
+                                               const double *bid_size,
+                                               uintptr_t n_bids,
+                                               const double *ask_price,
+                                               const double *ask_size,
+                                               uintptr_t n_asks);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_order_book_imbalance_full_new`, not freed), or `NULL`.
+ */
+void wickra_order_book_imbalance_full_reset(struct OrderBookImbalanceFull *handle);
+
+/**
+ * Destroy a handle created by `wickra_order_book_imbalance_full_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_order_book_imbalance_full_new` and not previously freed, or `NULL`.
+ */
+void wickra_order_book_imbalance_full_free(struct OrderBookImbalanceFull *handle);
+
+/**
+ * Create a `OrderBookImbalanceTop1` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_order_book_imbalance_top1_free`.
+ */
+struct OrderBookImbalanceTop1 *wickra_order_book_imbalance_top1_new(void);
+
+/**
+ * Feed one order-book snapshot as parallel bid/ask price+size arrays; returns the
+ * output, or `NaN` during warmup / on a `NULL` handle / if a level or the book is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_order_book_imbalance_top1_new`, not freed) or `NULL`. `bid_price`/`bid_size`
+ * each cover `n_bids`; `ask_price`/`ask_size` each cover `n_asks`.
+ */
+double wickra_order_book_imbalance_top1_update(struct OrderBookImbalanceTop1 *handle,
+                                               const double *bid_price,
+                                               const double *bid_size,
+                                               uintptr_t n_bids,
+                                               const double *ask_price,
+                                               const double *ask_size,
+                                               uintptr_t n_asks);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_order_book_imbalance_top1_new`, not freed), or `NULL`.
+ */
+void wickra_order_book_imbalance_top1_reset(struct OrderBookImbalanceTop1 *handle);
+
+/**
+ * Destroy a handle created by `wickra_order_book_imbalance_top1_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_order_book_imbalance_top1_new` and not previously freed, or `NULL`.
+ */
+void wickra_order_book_imbalance_top1_free(struct OrderBookImbalanceTop1 *handle);
+
+/**
+ * Create a `OrderBookImbalanceTopN` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_order_book_imbalance_top_n_free`.
+ */
+struct OrderBookImbalanceTopN *wickra_order_book_imbalance_top_n_new(uintptr_t levels);
+
+/**
+ * Feed one order-book snapshot as parallel bid/ask price+size arrays; returns the
+ * output, or `NaN` during warmup / on a `NULL` handle / if a level or the book is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_order_book_imbalance_top_n_new`, not freed) or `NULL`. `bid_price`/`bid_size`
+ * each cover `n_bids`; `ask_price`/`ask_size` each cover `n_asks`.
+ */
+double wickra_order_book_imbalance_top_n_update(struct OrderBookImbalanceTopN *handle,
+                                                const double *bid_price,
+                                                const double *bid_size,
+                                                uintptr_t n_bids,
+                                                const double *ask_price,
+                                                const double *ask_size,
+                                                uintptr_t n_asks);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_order_book_imbalance_top_n_new`, not freed), or `NULL`.
+ */
+void wickra_order_book_imbalance_top_n_reset(struct OrderBookImbalanceTopN *handle);
+
+/**
+ * Destroy a handle created by `wickra_order_book_imbalance_top_n_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_order_book_imbalance_top_n_new` and not previously freed, or `NULL`.
+ */
+void wickra_order_book_imbalance_top_n_free(struct OrderBookImbalanceTopN *handle);
+
+/**
+ * Create a `OrderFlowImbalance` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_order_flow_imbalance_free`.
+ */
+struct OrderFlowImbalance *wickra_order_flow_imbalance_new(uintptr_t period);
+
+/**
+ * Feed one order-book snapshot as parallel bid/ask price+size arrays; returns the
+ * output, or `NaN` during warmup / on a `NULL` handle / if a level or the book is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_order_flow_imbalance_new`, not freed) or `NULL`. `bid_price`/`bid_size`
+ * each cover `n_bids`; `ask_price`/`ask_size` each cover `n_asks`.
+ */
+double wickra_order_flow_imbalance_update(struct OrderFlowImbalance *handle,
+                                          const double *bid_price,
+                                          const double *bid_size,
+                                          uintptr_t n_bids,
+                                          const double *ask_price,
+                                          const double *ask_size,
+                                          uintptr_t n_asks);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_order_flow_imbalance_new`, not freed), or `NULL`.
+ */
+void wickra_order_flow_imbalance_reset(struct OrderFlowImbalance *handle);
+
+/**
+ * Destroy a handle created by `wickra_order_flow_imbalance_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_order_flow_imbalance_new` and not previously freed, or `NULL`.
+ */
+void wickra_order_flow_imbalance_free(struct OrderFlowImbalance *handle);
+
+/**
+ * Create a `QuotedSpread` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_quoted_spread_free`.
+ */
+struct QuotedSpread *wickra_quoted_spread_new(void);
+
+/**
+ * Feed one order-book snapshot as parallel bid/ask price+size arrays; returns the
+ * output, or `NaN` during warmup / on a `NULL` handle / if a level or the book is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_quoted_spread_new`, not freed) or `NULL`. `bid_price`/`bid_size`
+ * each cover `n_bids`; `ask_price`/`ask_size` each cover `n_asks`.
+ */
+double wickra_quoted_spread_update(struct QuotedSpread *handle,
+                                   const double *bid_price,
+                                   const double *bid_size,
+                                   uintptr_t n_bids,
+                                   const double *ask_price,
+                                   const double *ask_size,
+                                   uintptr_t n_asks);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_quoted_spread_new`, not freed), or `NULL`.
+ */
+void wickra_quoted_spread_reset(struct QuotedSpread *handle);
+
+/**
+ * Destroy a handle created by `wickra_quoted_spread_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_quoted_spread_new` and not previously freed, or `NULL`.
+ */
+void wickra_quoted_spread_free(struct QuotedSpread *handle);
+
+/**
+ * Create a `AbsoluteBreadthIndex` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_absolute_breadth_index_free`.
+ */
+struct AbsoluteBreadthIndex *wickra_absolute_breadth_index_new(void);
+
+/**
+ * Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+ * or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_absolute_breadth_index_new`, not freed) or `NULL`. Every member array
+ * covers `n` elements.
+ */
+double wickra_absolute_breadth_index_update(struct AbsoluteBreadthIndex *handle,
+                                            const double *change,
+                                            const double *volume,
+                                            const bool *new_high,
+                                            const bool *new_low,
+                                            const bool *above_ma,
+                                            const bool *on_buy_signal,
+                                            uintptr_t n,
+                                            int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_absolute_breadth_index_new`, not freed), or `NULL`.
+ */
+void wickra_absolute_breadth_index_reset(struct AbsoluteBreadthIndex *handle);
+
+/**
+ * Destroy a handle created by `wickra_absolute_breadth_index_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_absolute_breadth_index_new` and not previously freed, or `NULL`.
+ */
+void wickra_absolute_breadth_index_free(struct AbsoluteBreadthIndex *handle);
+
+/**
+ * Create a `AdVolumeLine` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_ad_volume_line_free`.
+ */
+struct AdVolumeLine *wickra_ad_volume_line_new(void);
+
+/**
+ * Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+ * or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_ad_volume_line_new`, not freed) or `NULL`. Every member array
+ * covers `n` elements.
+ */
+double wickra_ad_volume_line_update(struct AdVolumeLine *handle,
+                                    const double *change,
+                                    const double *volume,
+                                    const bool *new_high,
+                                    const bool *new_low,
+                                    const bool *above_ma,
+                                    const bool *on_buy_signal,
+                                    uintptr_t n,
+                                    int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_ad_volume_line_new`, not freed), or `NULL`.
+ */
+void wickra_ad_volume_line_reset(struct AdVolumeLine *handle);
+
+/**
+ * Destroy a handle created by `wickra_ad_volume_line_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_ad_volume_line_new` and not previously freed, or `NULL`.
+ */
+void wickra_ad_volume_line_free(struct AdVolumeLine *handle);
+
+/**
+ * Create a `AdvanceDecline` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_advance_decline_free`.
+ */
+struct AdvanceDecline *wickra_advance_decline_new(void);
+
+/**
+ * Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+ * or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_advance_decline_new`, not freed) or `NULL`. Every member array
+ * covers `n` elements.
+ */
+double wickra_advance_decline_update(struct AdvanceDecline *handle,
+                                     const double *change,
+                                     const double *volume,
+                                     const bool *new_high,
+                                     const bool *new_low,
+                                     const bool *above_ma,
+                                     const bool *on_buy_signal,
+                                     uintptr_t n,
+                                     int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_advance_decline_new`, not freed), or `NULL`.
+ */
+void wickra_advance_decline_reset(struct AdvanceDecline *handle);
+
+/**
+ * Destroy a handle created by `wickra_advance_decline_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_advance_decline_new` and not previously freed, or `NULL`.
+ */
+void wickra_advance_decline_free(struct AdvanceDecline *handle);
+
+/**
+ * Create a `AdvanceDeclineRatio` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_advance_decline_ratio_free`.
+ */
+struct AdvanceDeclineRatio *wickra_advance_decline_ratio_new(void);
+
+/**
+ * Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+ * or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_advance_decline_ratio_new`, not freed) or `NULL`. Every member array
+ * covers `n` elements.
+ */
+double wickra_advance_decline_ratio_update(struct AdvanceDeclineRatio *handle,
+                                           const double *change,
+                                           const double *volume,
+                                           const bool *new_high,
+                                           const bool *new_low,
+                                           const bool *above_ma,
+                                           const bool *on_buy_signal,
+                                           uintptr_t n,
+                                           int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_advance_decline_ratio_new`, not freed), or `NULL`.
+ */
+void wickra_advance_decline_ratio_reset(struct AdvanceDeclineRatio *handle);
+
+/**
+ * Destroy a handle created by `wickra_advance_decline_ratio_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_advance_decline_ratio_new` and not previously freed, or `NULL`.
+ */
+void wickra_advance_decline_ratio_free(struct AdvanceDeclineRatio *handle);
+
+/**
+ * Create a `BreadthThrust` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_breadth_thrust_free`.
+ */
+struct BreadthThrust *wickra_breadth_thrust_new(uintptr_t period);
+
+/**
+ * Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+ * or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_breadth_thrust_new`, not freed) or `NULL`. Every member array
+ * covers `n` elements.
+ */
+double wickra_breadth_thrust_update(struct BreadthThrust *handle,
+                                    const double *change,
+                                    const double *volume,
+                                    const bool *new_high,
+                                    const bool *new_low,
+                                    const bool *above_ma,
+                                    const bool *on_buy_signal,
+                                    uintptr_t n,
+                                    int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_breadth_thrust_new`, not freed), or `NULL`.
+ */
+void wickra_breadth_thrust_reset(struct BreadthThrust *handle);
+
+/**
+ * Destroy a handle created by `wickra_breadth_thrust_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_breadth_thrust_new` and not previously freed, or `NULL`.
+ */
+void wickra_breadth_thrust_free(struct BreadthThrust *handle);
+
+/**
+ * Create a `BullishPercentIndex` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_bullish_percent_index_free`.
+ */
+struct BullishPercentIndex *wickra_bullish_percent_index_new(void);
+
+/**
+ * Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+ * or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_bullish_percent_index_new`, not freed) or `NULL`. Every member array
+ * covers `n` elements.
+ */
+double wickra_bullish_percent_index_update(struct BullishPercentIndex *handle,
+                                           const double *change,
+                                           const double *volume,
+                                           const bool *new_high,
+                                           const bool *new_low,
+                                           const bool *above_ma,
+                                           const bool *on_buy_signal,
+                                           uintptr_t n,
+                                           int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_bullish_percent_index_new`, not freed), or `NULL`.
+ */
+void wickra_bullish_percent_index_reset(struct BullishPercentIndex *handle);
+
+/**
+ * Destroy a handle created by `wickra_bullish_percent_index_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_bullish_percent_index_new` and not previously freed, or `NULL`.
+ */
+void wickra_bullish_percent_index_free(struct BullishPercentIndex *handle);
+
+/**
+ * Create a `CumulativeVolumeIndex` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_cumulative_volume_index_free`.
+ */
+struct CumulativeVolumeIndex *wickra_cumulative_volume_index_new(void);
+
+/**
+ * Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+ * or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_cumulative_volume_index_new`, not freed) or `NULL`. Every member array
+ * covers `n` elements.
+ */
+double wickra_cumulative_volume_index_update(struct CumulativeVolumeIndex *handle,
+                                             const double *change,
+                                             const double *volume,
+                                             const bool *new_high,
+                                             const bool *new_low,
+                                             const bool *above_ma,
+                                             const bool *on_buy_signal,
+                                             uintptr_t n,
+                                             int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_cumulative_volume_index_new`, not freed), or `NULL`.
+ */
+void wickra_cumulative_volume_index_reset(struct CumulativeVolumeIndex *handle);
+
+/**
+ * Destroy a handle created by `wickra_cumulative_volume_index_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_cumulative_volume_index_new` and not previously freed, or `NULL`.
+ */
+void wickra_cumulative_volume_index_free(struct CumulativeVolumeIndex *handle);
+
+/**
+ * Create a `HighLowIndex` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_high_low_index_free`.
+ */
+struct HighLowIndex *wickra_high_low_index_new(uintptr_t period);
+
+/**
+ * Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+ * or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_high_low_index_new`, not freed) or `NULL`. Every member array
+ * covers `n` elements.
+ */
+double wickra_high_low_index_update(struct HighLowIndex *handle,
+                                    const double *change,
+                                    const double *volume,
+                                    const bool *new_high,
+                                    const bool *new_low,
+                                    const bool *above_ma,
+                                    const bool *on_buy_signal,
+                                    uintptr_t n,
+                                    int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_high_low_index_new`, not freed), or `NULL`.
+ */
+void wickra_high_low_index_reset(struct HighLowIndex *handle);
+
+/**
+ * Destroy a handle created by `wickra_high_low_index_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_high_low_index_new` and not previously freed, or `NULL`.
+ */
+void wickra_high_low_index_free(struct HighLowIndex *handle);
+
+/**
+ * Create a `McClellanOscillator` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_mc_clellan_oscillator_free`.
+ */
+struct McClellanOscillator *wickra_mc_clellan_oscillator_new(void);
+
+/**
+ * Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+ * or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_mc_clellan_oscillator_new`, not freed) or `NULL`. Every member array
+ * covers `n` elements.
+ */
+double wickra_mc_clellan_oscillator_update(struct McClellanOscillator *handle,
+                                           const double *change,
+                                           const double *volume,
+                                           const bool *new_high,
+                                           const bool *new_low,
+                                           const bool *above_ma,
+                                           const bool *on_buy_signal,
+                                           uintptr_t n,
+                                           int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_mc_clellan_oscillator_new`, not freed), or `NULL`.
+ */
+void wickra_mc_clellan_oscillator_reset(struct McClellanOscillator *handle);
+
+/**
+ * Destroy a handle created by `wickra_mc_clellan_oscillator_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_mc_clellan_oscillator_new` and not previously freed, or `NULL`.
+ */
+void wickra_mc_clellan_oscillator_free(struct McClellanOscillator *handle);
+
+/**
+ * Create a `McClellanSummationIndex` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_mc_clellan_summation_index_free`.
+ */
+struct McClellanSummationIndex *wickra_mc_clellan_summation_index_new(void);
+
+/**
+ * Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+ * or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_mc_clellan_summation_index_new`, not freed) or `NULL`. Every member array
+ * covers `n` elements.
+ */
+double wickra_mc_clellan_summation_index_update(struct McClellanSummationIndex *handle,
+                                                const double *change,
+                                                const double *volume,
+                                                const bool *new_high,
+                                                const bool *new_low,
+                                                const bool *above_ma,
+                                                const bool *on_buy_signal,
+                                                uintptr_t n,
+                                                int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_mc_clellan_summation_index_new`, not freed), or `NULL`.
+ */
+void wickra_mc_clellan_summation_index_reset(struct McClellanSummationIndex *handle);
+
+/**
+ * Destroy a handle created by `wickra_mc_clellan_summation_index_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_mc_clellan_summation_index_new` and not previously freed, or `NULL`.
+ */
+void wickra_mc_clellan_summation_index_free(struct McClellanSummationIndex *handle);
+
+/**
+ * Create a `NewHighsNewLows` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_new_highs_new_lows_free`.
+ */
+struct NewHighsNewLows *wickra_new_highs_new_lows_new(void);
+
+/**
+ * Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+ * or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_new_highs_new_lows_new`, not freed) or `NULL`. Every member array
+ * covers `n` elements.
+ */
+double wickra_new_highs_new_lows_update(struct NewHighsNewLows *handle,
+                                        const double *change,
+                                        const double *volume,
+                                        const bool *new_high,
+                                        const bool *new_low,
+                                        const bool *above_ma,
+                                        const bool *on_buy_signal,
+                                        uintptr_t n,
+                                        int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_new_highs_new_lows_new`, not freed), or `NULL`.
+ */
+void wickra_new_highs_new_lows_reset(struct NewHighsNewLows *handle);
+
+/**
+ * Destroy a handle created by `wickra_new_highs_new_lows_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_new_highs_new_lows_new` and not previously freed, or `NULL`.
+ */
+void wickra_new_highs_new_lows_free(struct NewHighsNewLows *handle);
+
+/**
+ * Create a `PercentAboveMa` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_percent_above_ma_free`.
+ */
+struct PercentAboveMa *wickra_percent_above_ma_new(void);
+
+/**
+ * Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+ * or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_percent_above_ma_new`, not freed) or `NULL`. Every member array
+ * covers `n` elements.
+ */
+double wickra_percent_above_ma_update(struct PercentAboveMa *handle,
+                                      const double *change,
+                                      const double *volume,
+                                      const bool *new_high,
+                                      const bool *new_low,
+                                      const bool *above_ma,
+                                      const bool *on_buy_signal,
+                                      uintptr_t n,
+                                      int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_percent_above_ma_new`, not freed), or `NULL`.
+ */
+void wickra_percent_above_ma_reset(struct PercentAboveMa *handle);
+
+/**
+ * Destroy a handle created by `wickra_percent_above_ma_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_percent_above_ma_new` and not previously freed, or `NULL`.
+ */
+void wickra_percent_above_ma_free(struct PercentAboveMa *handle);
+
+/**
+ * Create a `TickIndex` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_tick_index_free`.
+ */
+struct TickIndex *wickra_tick_index_new(void);
+
+/**
+ * Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+ * or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_tick_index_new`, not freed) or `NULL`. Every member array
+ * covers `n` elements.
+ */
+double wickra_tick_index_update(struct TickIndex *handle,
+                                const double *change,
+                                const double *volume,
+                                const bool *new_high,
+                                const bool *new_low,
+                                const bool *above_ma,
+                                const bool *on_buy_signal,
+                                uintptr_t n,
+                                int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_tick_index_new`, not freed), or `NULL`.
+ */
+void wickra_tick_index_reset(struct TickIndex *handle);
+
+/**
+ * Destroy a handle created by `wickra_tick_index_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_tick_index_new` and not previously freed, or `NULL`.
+ */
+void wickra_tick_index_free(struct TickIndex *handle);
+
+/**
+ * Create a `Trin` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_trin_free`.
+ */
+struct Trin *wickra_trin_new(void);
+
+/**
+ * Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+ * or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_trin_new`, not freed) or `NULL`. Every member array
+ * covers `n` elements.
+ */
+double wickra_trin_update(struct Trin *handle,
+                          const double *change,
+                          const double *volume,
+                          const bool *new_high,
+                          const bool *new_low,
+                          const bool *above_ma,
+                          const bool *on_buy_signal,
+                          uintptr_t n,
+                          int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_trin_new`, not freed), or `NULL`.
+ */
+void wickra_trin_reset(struct Trin *handle);
+
+/**
+ * Destroy a handle created by `wickra_trin_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_trin_new` and not previously freed, or `NULL`.
+ */
+void wickra_trin_free(struct Trin *handle);
+
+/**
+ * Create a `UpDownVolumeRatio` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_up_down_volume_ratio_free`.
+ */
+struct UpDownVolumeRatio *wickra_up_down_volume_ratio_new(void);
+
+/**
+ * Feed one cross-sectional snapshot as parallel per-member arrays; returns the output,
+ * or `NaN` during warmup / on a `NULL` handle / if the snapshot is invalid.
+ *
+ * # Safety
+ * `handle` valid (from `wickra_up_down_volume_ratio_new`, not freed) or `NULL`. Every member array
+ * covers `n` elements.
+ */
+double wickra_up_down_volume_ratio_update(struct UpDownVolumeRatio *handle,
+                                          const double *change,
+                                          const double *volume,
+                                          const bool *new_high,
+                                          const bool *new_low,
+                                          const bool *above_ma,
+                                          const bool *on_buy_signal,
+                                          uintptr_t n,
+                                          int64_t timestamp);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_up_down_volume_ratio_new`, not freed), or `NULL`.
+ */
+void wickra_up_down_volume_ratio_reset(struct UpDownVolumeRatio *handle);
+
+/**
+ * Destroy a handle created by `wickra_up_down_volume_ratio_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_up_down_volume_ratio_new` and not previously freed, or `NULL`.
+ */
+void wickra_up_down_volume_ratio_free(struct UpDownVolumeRatio *handle);
 
 #endif  /* WICKRA_H */
