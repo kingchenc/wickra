@@ -1,0 +1,46 @@
+[package]
+name = "wickra-c"
+description = "C ABI (cdylib + staticlib) for the Wickra streaming-first technical indicators library — the hub every C-capable language (C, C++, Go, C#, Java, R) links against."
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme = "README.md"
+keywords.workspace = true
+categories.workspace = true
+publish = false
+
+[lib]
+name = "wickra"
+crate-type = ["cdylib", "staticlib"]
+
+# The C ABI inherently needs `unsafe` (raw pointers across the FFI boundary,
+# `#[export_name]` symbol control). The workspace forbids `unsafe_code`, so this
+# crate cannot inherit `workspace = true`; it mirrors every workspace lint and
+# only relaxes `unsafe_code` to `allow` (parity with how the proc-macro bindings
+# emit their unsafe). The Rust core stays `unsafe`-forbidden — this is the one
+# crate where the boundary lives.
+[lints.rust]
+unsafe_code = "allow"
+missing_debug_implementations = "warn"
+unreachable_pub = "warn"
+unused_must_use = "deny"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+cast_precision_loss = "allow"
+cast_possible_truncation = "allow"
+cast_sign_loss = "allow"
+similar_names = "allow"
+float_cmp = "allow"
+
+[dependencies]
+wickra-core = { workspace = true }

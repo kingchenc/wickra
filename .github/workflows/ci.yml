@@ -622,6 +622,56 @@ jobs:
         working-directory: bindings/node
         run: node --test __tests__/
 
+  c-abi:
+    name: C ABI on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable branch, 2026-03-27
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        continue-on-error: true # cache is an optimisation; never block on a stuck/slow restore
+        timeout-minutes: 6
+
+      - name: Install cbindgen
+        uses: taiki-e/install-action@0fd46367812ee04360509b4169d9f659d6892bb2 # v2.79.15
+        timeout-minutes: 10 # fail fast on a stuck download instead of hanging the job
+        with:
+          tool: cbindgen
+
+      - name: Build the C ABI library (cdylib + staticlib)
+        run: cargo build -p wickra-c --release
+
+      - name: Rust unit tests
+        run: cargo test -p wickra-c
+
+      # The generated header is platform-independent, so checking drift on one OS
+      # is enough — and avoids a spurious CRLF/LF diff on the Windows runner.
+      - name: Check the committed header is in sync with cbindgen
+        if: runner.os == 'Linux'
+        run: |
+          cbindgen --config bindings/c/cbindgen.toml --crate wickra-c --output bindings/c/include/wickra.h
+          git diff --exit-status bindings/c/include/wickra.h
+
+      # The real cross-language test: a foreign C consumer links the generated
+      # header + the compiled library and runs. If this passes on all three OSes,
+      # every C-capable language can link the same way.
+      - name: Build and run the C smoke example (CMake + ctest)
+        shell: bash
+        run: |
+          cmake -S examples/c -B examples/c/build
+          cmake --build examples/c/build --config Release
+          ctest --test-dir examples/c/build -C Release --output-on-failure
+
   # The cross-library benchmark has moved to a dedicated scheduled workflow
   # (.github/workflows/bench.yml) — see audit finding R10. It runs nightly
   # at 03:00 UTC and on-demand via `workflow_dispatch`, and is no longer on

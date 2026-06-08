@@ -1,3 +1,8 @@
 # Shell scripts must keep LF line endings so they run on Linux/macOS CI and
 # local shells regardless of the committer's platform autocrlf setting.
 *.sh text eol=lf
+
+# The cbindgen-generated C header is committed; pin it to LF so its CI drift
+# check (regenerate + `git diff`) never trips on a CRLF normalization.
+bindings/c/include/wickra.h text eol=lf
+

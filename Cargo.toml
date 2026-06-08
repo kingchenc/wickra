@@ -7,6 +7,7 @@ members = [
     "bindings/python",
     "bindings/wasm",
     "bindings/node",
+    "bindings/c",
     "examples/rust",
     "crates/wickra-bench",
 ]
