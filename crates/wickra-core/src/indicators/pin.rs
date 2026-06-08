@@ -100,14 +100,13 @@ impl Indicator for Pin {
         if self.sides.len() < self.window {
             return None;
         }
+        // The window is full and `window >= 1` (zero is rejected at
+        // construction), so the trade count is always positive — `|B - S| / N`
+        // needs no zero guard.
         let buys = self.buy_count as f64;
         let sells = self.window as f64 - buys;
-        let total = buys + sells;
-        let pin = if total > 0.0 {
-            (buys - sells).abs() / total
-        } else {
-            0.0
-        };
+        let total = self.window as f64;
+        let pin = (buys - sells).abs() / total;
         self.last = Some(pin);
         Some(pin)
     }
