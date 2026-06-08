@@ -12874,6 +12874,332 @@ pub struct VolumeProfileValue {
     pub bins: Vec<f64>,
 }
 
+// Naked POC: most recent untouched point-of-control level (Candle -> f64).
+#[napi(js_name = "NakedPoc")]
+pub struct NakedPocNode {
+    inner: wc::NakedPoc,
+}
+
+#[napi]
+impl NakedPocNode {
+    #[napi(constructor)]
+    pub fn new(session_len: u32, bin_count: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::NakedPoc::new(session_len as usize, bin_count as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(cnd(high, low, close, volume)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        close: Vec<f64>,
+        volume: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != close.len() || close.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "high, low, close, volume must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            out.push(
+                self.inner
+                    .update(cnd(high[i], low[i], close[i], volume[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// Single Prints: count of single-print price levels (Candle -> f64).
+#[napi(js_name = "SinglePrints")]
+pub struct SinglePrintsNode {
+    inner: wc::SinglePrints,
+}
+
+#[napi]
+impl SinglePrintsNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, bin_count: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::SinglePrints::new(period as usize, bin_count as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64) -> napi::Result<Option<f64>> {
+        let mid = f64::midpoint(high, low);
+        Ok(self
+            .inner
+            .update(wc::Candle::new(mid, high, low, mid, 0.0, 0).map_err(map_err)?))
+    }
+    #[napi]
+    pub fn batch(&mut self, high: Vec<f64>, low: Vec<f64>) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() {
+            return Err(NapiError::from_reason(
+                "high and low must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let mid = f64::midpoint(high[i], low[i]);
+            out.push(
+                self.inner
+                    .update(wc::Candle::new(mid, high[i], low[i], mid, 0.0, 0).map_err(map_err)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// Profile Shape: b/P/D classification as a numeric code (Candle -> f64).
+#[napi(js_name = "ProfileShape")]
+pub struct ProfileShapeNode {
+    inner: wc::ProfileShape,
+}
+
+#[napi]
+impl ProfileShapeNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, bin_count: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::ProfileShape::new(period as usize, bin_count as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, high: f64, low: f64, volume: f64) -> napi::Result<Option<f64>> {
+        let mid = f64::midpoint(high, low);
+        Ok(self
+            .inner
+            .update(wc::Candle::new(mid, high, low, mid, volume, 0).map_err(map_err)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        volume: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "high, low, volume must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let mid = f64::midpoint(high[i], low[i]);
+            out.push(
+                self.inner
+                    .update(
+                        wc::Candle::new(mid, high[i], low[i], mid, volume[i], 0)
+                            .map_err(map_err)?,
+                    )
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(object)]
+pub struct HighLowVolumeNodesValue {
+    pub hvn: f64,
+    pub lvn: f64,
+}
+
+// High/Low Volume Nodes: highest- and lowest-volume price nodes (Candle -> struct).
+#[napi(js_name = "HighLowVolumeNodes")]
+pub struct HighLowVolumeNodesNode {
+    inner: wc::HighLowVolumeNodes,
+}
+
+#[napi]
+impl HighLowVolumeNodesNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, bin_count: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::HighLowVolumeNodes::new(period as usize, bin_count as usize)
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        volume: f64,
+    ) -> napi::Result<Option<HighLowVolumeNodesValue>> {
+        let mid = f64::midpoint(high, low);
+        let candle = wc::Candle::new(mid, high, low, mid, volume, 0).map_err(map_err)?;
+        Ok(self.inner.update(candle).map(|o| HighLowVolumeNodesValue {
+            hvn: o.hvn,
+            lvn: o.lvn,
+        }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        volume: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "high, low, volume must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let mid = f64::midpoint(high[i], low[i]);
+            let candle =
+                wc::Candle::new(mid, high[i], low[i], mid, volume[i], 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 2] = o.hvn;
+                out[i * 2 + 1] = o.lvn;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+#[napi(object)]
+pub struct CompositeProfileValue {
+    pub poc: f64,
+    pub vah: f64,
+    pub val: f64,
+}
+
+// Composite Profile: multi-session composite volume profile (Candle -> struct).
+#[napi(js_name = "CompositeProfile")]
+pub struct CompositeProfileNode {
+    inner: wc::CompositeProfile,
+}
+
+#[napi]
+impl CompositeProfileNode {
+    #[napi(constructor)]
+    pub fn new(period: u32, bin_count: u32, value_area_pct: f64) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::CompositeProfile::new(period as usize, bin_count as usize, value_area_pct)
+                .map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        volume: f64,
+    ) -> napi::Result<Option<CompositeProfileValue>> {
+        let mid = f64::midpoint(high, low);
+        let candle = wc::Candle::new(mid, high, low, mid, volume, 0).map_err(map_err)?;
+        Ok(self.inner.update(candle).map(|o| CompositeProfileValue {
+            poc: o.poc,
+            vah: o.vah,
+            val: o.val,
+        }))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        high: Vec<f64>,
+        low: Vec<f64>,
+        volume: Vec<f64>,
+    ) -> napi::Result<Vec<f64>> {
+        if high.len() != low.len() || low.len() != volume.len() {
+            return Err(NapiError::from_reason(
+                "high, low, volume must be equal length".to_string(),
+            ));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let mid = f64::midpoint(high[i], low[i]);
+            let candle =
+                wc::Candle::new(mid, high[i], low[i], mid, volume[i], 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 3] = o.poc;
+                out[i * 3 + 1] = o.vah;
+                out[i * 3 + 2] = o.val;
+            }
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
 #[napi(js_name = "VolumeProfile")]
 pub struct VolumeProfileNode {
     inner: wc::VolumeProfile,

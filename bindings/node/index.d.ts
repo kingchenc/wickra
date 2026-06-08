@@ -409,6 +409,15 @@ export interface VolumeProfileValue {
   priceHigh: number
   bins: Array<number>
 }
+export interface HighLowVolumeNodesValue {
+  hvn: number
+  lvn: number
+}
+export interface CompositeProfileValue {
+  poc: number
+  vah: number
+  val: number
+}
 export interface TpoProfileValue {
   priceLow: number
   priceHigh: number
@@ -3469,6 +3478,51 @@ export declare class ValueArea {
   warmupPeriod(): number
   update(high: number, low: number, volume: number): ValueAreaValue | null
   batch(high: Array<number>, low: Array<number>, volume: Array<number>): Array<number>
+}
+export type NakedPocNode = NakedPoc
+export declare class NakedPoc {
+  constructor(sessionLen: number, binCount: number)
+  update(high: number, low: number, close: number, volume: number): number | null
+  batch(high: Array<number>, low: Array<number>, close: Array<number>, volume: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type SinglePrintsNode = SinglePrints
+export declare class SinglePrints {
+  constructor(period: number, binCount: number)
+  update(high: number, low: number): number | null
+  batch(high: Array<number>, low: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type ProfileShapeNode = ProfileShape
+export declare class ProfileShape {
+  constructor(period: number, binCount: number)
+  update(high: number, low: number, volume: number): number | null
+  batch(high: Array<number>, low: Array<number>, volume: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type HighLowVolumeNodesNode = HighLowVolumeNodes
+export declare class HighLowVolumeNodes {
+  constructor(period: number, binCount: number)
+  update(high: number, low: number, volume: number): HighLowVolumeNodesValue | null
+  batch(high: Array<number>, low: Array<number>, volume: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type CompositeProfileNode = CompositeProfile
+export declare class CompositeProfile {
+  constructor(period: number, binCount: number, valueAreaPct: number)
+  update(high: number, low: number, volume: number): CompositeProfileValue | null
+  batch(high: Array<number>, low: Array<number>, volume: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
 }
 export type VolumeProfileNode = VolumeProfile
 export declare class VolumeProfile {

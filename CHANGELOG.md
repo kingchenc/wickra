@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **Composite Profile** — multi-session composite volume profile exposing POC, VAH and VAL (`CompositeProfile`).
+- **High/Low Volume Nodes** — highest- and lowest-volume price nodes in the profile (`HighLowVolumeNodes`).
+- **Profile Shape** — profile shape classification (b/P/D normal) as a numeric code (`ProfileShape`).
+- **Single Prints** — count of single-print (low-activity) price levels in the profile (`SinglePrints`).
+- **Naked POC** — most recent untouched (naked) point of control level (`NakedPoc`).
 
 ## [0.7.1] - 2026-06-08
 - **Open-Interest Momentum** — rate-of-change of open interest over a rolling window (`OpenInterestMomentum`).

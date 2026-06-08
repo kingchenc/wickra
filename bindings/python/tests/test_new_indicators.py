@@ -383,6 +383,18 @@ def test_relative_strength_streaming_matches_batch():
 # 6-tuple candle; the batch helper takes only the columns it needs.
 
 CANDLE_SCALAR = {
+    "ProfileShape": (
+        lambda: ta.ProfileShape(20, 24),
+        lambda ind, h, l, c, v: ind.batch(h, l, v),
+    ),
+    "SinglePrints": (
+        lambda: ta.SinglePrints(20, 24),
+        lambda ind, h, l, c, v: ind.batch(h, l),
+    ),
+    "NakedPoc": (
+        lambda: ta.NakedPoc(20, 24),
+        lambda ind, h, l, c, v: ind.batch(h, l, c, v),
+    ),
     "FryPanBottom": (
         lambda: ta.FryPanBottom(9),
         lambda ind, h, l, c, v: ind.batch(h, l, c),
@@ -1009,6 +1021,16 @@ def test_candle_scalar_streaming_matches_batch(name, ohlcv):
 # --- Candle-input, multi-output indicators --------------------------------
 
 MULTI = {
+    "CompositeProfile": (
+        lambda: ta.CompositeProfile(20, 24, 0.7),
+        lambda ind, h, l, c, v: ind.batch(h, l, v),
+        3,
+    ),
+    "HighLowVolumeNodes": (
+        lambda: ta.HighLowVolumeNodes(20, 24),
+        lambda ind, h, l, c, v: ind.batch(h, l, v),
+        2,
+    ),
     "CandleVolume": (
         lambda: ta.CandleVolume(20),
         lambda ind, h, l, c, v: ind.batch(c, c, v),
@@ -3330,6 +3352,26 @@ def test_hasbrouck_information_share_reference():
     assert t.update(7.0, 9.0) is None
     assert t.update(7.0, 9.0) is None
     assert t.update(7.0, 9.0) == pytest.approx(0.5)
+
+
+def test_naked_poc_reference():
+    t = ta.NakedPoc(20, 24)
+
+
+def test_single_prints_reference():
+    t = ta.SinglePrints(20, 24)
+
+
+def test_profile_shape_reference():
+    t = ta.ProfileShape(20, 24)
+
+
+def test_high_low_volume_nodes_reference():
+    t = ta.HighLowVolumeNodes(20, 24)
+
+
+def test_composite_profile_reference():
+    t = ta.CompositeProfile(20, 24, 0.7)
 
 # --- Lifecycle ------------------------------------------------------------
 

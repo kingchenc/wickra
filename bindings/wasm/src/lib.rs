@@ -8526,6 +8526,298 @@ impl WasmValueArea {
     }
 }
 
+// Naked POC: most recent untouched point-of-control level (Candle -> f64).
+#[wasm_bindgen(js_name = NakedPoc)]
+pub struct WasmNakedPoc {
+    inner: wc::NakedPoc,
+}
+
+#[wasm_bindgen(js_class = NakedPoc)]
+impl WasmNakedPoc {
+    #[wasm_bindgen(constructor)]
+    pub fn new(session_len: usize, bin_count: usize) -> Result<WasmNakedPoc, JsError> {
+        Ok(Self {
+            inner: wc::NakedPoc::new(session_len, bin_count).map_err(map_err)?,
+        })
+    }
+    pub fn update(
+        &mut self,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> Result<Option<f64>, JsError> {
+        Ok(self.inner.update(make_candle(high, low, close, volume)?))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        close: &[f64],
+        volume: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != close.len() || close.len() != volume.len() {
+            return Err(JsError::new(
+                "high, low, close, volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(close.len());
+        for i in 0..close.len() {
+            out.push(
+                self.inner
+                    .update(make_candle(high[i], low[i], close[i], volume[i])?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// Single Prints: count of single-print price levels (Candle -> f64).
+#[wasm_bindgen(js_name = SinglePrints)]
+pub struct WasmSinglePrints {
+    inner: wc::SinglePrints,
+}
+
+#[wasm_bindgen(js_class = SinglePrints)]
+impl WasmSinglePrints {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, bin_count: usize) -> Result<WasmSinglePrints, JsError> {
+        Ok(Self {
+            inner: wc::SinglePrints::new(period, bin_count).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64) -> Result<Option<f64>, JsError> {
+        let mid = f64::midpoint(high, low);
+        Ok(self
+            .inner
+            .update(wc::Candle::new(mid, high, low, mid, 0.0, 0).map_err(map_err)?))
+    }
+    pub fn batch(&mut self, high: &[f64], low: &[f64]) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() {
+            return Err(JsError::new("high and low must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let mid = f64::midpoint(high[i], low[i]);
+            out.push(
+                self.inner
+                    .update(wc::Candle::new(mid, high[i], low[i], mid, 0.0, 0).map_err(map_err)?)
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// Profile Shape: b/P/D classification as a numeric code (Candle -> f64).
+#[wasm_bindgen(js_name = ProfileShape)]
+pub struct WasmProfileShape {
+    inner: wc::ProfileShape,
+}
+
+#[wasm_bindgen(js_class = ProfileShape)]
+impl WasmProfileShape {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, bin_count: usize) -> Result<WasmProfileShape, JsError> {
+        Ok(Self {
+            inner: wc::ProfileShape::new(period, bin_count).map_err(map_err)?,
+        })
+    }
+    pub fn update(&mut self, high: f64, low: f64, volume: f64) -> Result<Option<f64>, JsError> {
+        let mid = f64::midpoint(high, low);
+        Ok(self
+            .inner
+            .update(wc::Candle::new(mid, high, low, mid, volume, 0).map_err(map_err)?))
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        volume: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != volume.len() {
+            return Err(JsError::new("high, low, volume must be equal length"));
+        }
+        let mut out = Vec::with_capacity(high.len());
+        for i in 0..high.len() {
+            let mid = f64::midpoint(high[i], low[i]);
+            out.push(
+                self.inner
+                    .update(
+                        wc::Candle::new(mid, high[i], low[i], mid, volume[i], 0)
+                            .map_err(map_err)?,
+                    )
+                    .unwrap_or(f64::NAN),
+            );
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// High/Low Volume Nodes: highest- and lowest-volume price nodes (Candle -> struct).
+#[wasm_bindgen(js_name = HighLowVolumeNodes)]
+pub struct WasmHighLowVolumeNodes {
+    inner: wc::HighLowVolumeNodes,
+}
+
+#[wasm_bindgen(js_class = HighLowVolumeNodes)]
+impl WasmHighLowVolumeNodes {
+    #[wasm_bindgen(constructor)]
+    pub fn new(period: usize, bin_count: usize) -> Result<WasmHighLowVolumeNodes, JsError> {
+        Ok(Self {
+            inner: wc::HighLowVolumeNodes::new(period, bin_count).map_err(map_err)?,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        volume: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != volume.len() {
+            return Err(JsError::new("high, low, volume must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let mid = f64::midpoint(high[i], low[i]);
+            let c = wc::Candle::new(mid, high[i], low[i], mid, volume[i], 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 2] = o.hvn;
+                out[i * 2 + 1] = o.lvn;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    /// Streaming update. Returns `{ hvn, lvn }` once warm, else `null`.
+    pub fn update(&mut self, high: f64, low: f64, volume: f64) -> Result<JsValue, JsError> {
+        let mid = f64::midpoint(high, low);
+        let c = wc::Candle::new(mid, high, low, mid, volume, 0).map_err(map_err)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"hvn".into(), &o.hvn.into()).ok();
+                Reflect::set(&obj, &"lvn".into(), &o.lvn.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
+// Composite Profile: multi-session composite volume profile (Candle -> struct).
+#[wasm_bindgen(js_name = CompositeProfile)]
+pub struct WasmCompositeProfile {
+    inner: wc::CompositeProfile,
+}
+
+#[wasm_bindgen(js_class = CompositeProfile)]
+impl WasmCompositeProfile {
+    #[wasm_bindgen(constructor)]
+    pub fn new(
+        period: usize,
+        bin_count: usize,
+        value_area_pct: f64,
+    ) -> Result<WasmCompositeProfile, JsError> {
+        Ok(Self {
+            inner: wc::CompositeProfile::new(period, bin_count, value_area_pct).map_err(map_err)?,
+        })
+    }
+    pub fn batch(
+        &mut self,
+        high: &[f64],
+        low: &[f64],
+        volume: &[f64],
+    ) -> Result<Float64Array, JsError> {
+        if high.len() != low.len() || low.len() != volume.len() {
+            return Err(JsError::new("high, low, volume must be equal length"));
+        }
+        let n = high.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let mid = f64::midpoint(high[i], low[i]);
+            let c = wc::Candle::new(mid, high[i], low[i], mid, volume[i], 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(c) {
+                out[i * 3] = o.poc;
+                out[i * 3 + 1] = o.vah;
+                out[i * 3 + 2] = o.val;
+            }
+        }
+        Ok(Float64Array::from(out.as_slice()))
+    }
+    /// Streaming update. Returns `{ poc, vah, val }` once warm, else `null`.
+    pub fn update(&mut self, high: f64, low: f64, volume: f64) -> Result<JsValue, JsError> {
+        let mid = f64::midpoint(high, low);
+        let c = wc::Candle::new(mid, high, low, mid, volume, 0).map_err(map_err)?;
+        Ok(match self.inner.update(c) {
+            Some(o) => {
+                let obj = Object::new();
+                Reflect::set(&obj, &"poc".into(), &o.poc.into()).ok();
+                Reflect::set(&obj, &"vah".into(), &o.vah.into()).ok();
+                Reflect::set(&obj, &"val".into(), &o.val.into()).ok();
+                obj.into()
+            }
+            None => JsValue::NULL,
+        })
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[wasm_bindgen(js_name = isReady)]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[wasm_bindgen(js_name = warmupPeriod)]
+    pub fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+}
+
 #[wasm_bindgen(js_name = VolumeProfile)]
 pub struct WasmVolumeProfile {
     inner: wc::VolumeProfile,

@@ -350,6 +350,11 @@ from ._wickra import (
     Equivolume,
     CandleVolume,
     # Market Profile
+    CompositeProfile,
+    HighLowVolumeNodes,
+    ProfileShape,
+    SinglePrints,
+    NakedPoc,
     ValueArea,
     VolumeProfile,
     TpoProfile,
@@ -873,6 +878,11 @@ __all__ = [
     "Equivolume",
     "CandleVolume",
     # Market Profile
+    "CompositeProfile",
+    "HighLowVolumeNodes",
+    "ProfileShape",
+    "SinglePrints",
+    "NakedPoc",
     "ValueArea",
     "VolumeProfile",
     "TpoProfile",

@@ -84,6 +84,7 @@ mod cmf;
 mod cmo;
 mod coefficient_of_variation;
 mod cointegration;
+mod composite_profile;
 mod concealing_baby_swallow;
 mod conditional_value_at_risk;
 mod connors_rsi;
@@ -182,6 +183,7 @@ mod heikin_ashi;
 mod heikin_ashi_oscillator;
 mod high_low_index;
 mod high_low_range;
+mod high_low_volume_nodes;
 mod high_wave;
 mod highpass_filter;
 mod hikkake;
@@ -269,6 +271,7 @@ mod mom;
 mod morning_doji_star;
 mod morning_evening_star;
 mod murrey_math_lines;
+mod naked_poc;
 mod natr;
 mod new_highs_new_lows;
 mod new_price_lines;
@@ -311,6 +314,7 @@ mod point_and_figure_bars;
 mod polarized_fractal_efficiency;
 mod ppo;
 mod ppo_histogram;
+mod profile_shape;
 mod profit_factor;
 mod projection_bands;
 mod projection_oscillator;
@@ -366,6 +370,7 @@ mod short_line;
 mod signed_volume;
 mod sine_wave;
 mod sine_weighted_ma;
+mod single_prints;
 mod skewness;
 mod sma;
 mod smi;
@@ -577,6 +582,7 @@ pub use cmf::ChaikinMoneyFlow;
 pub use cmo::Cmo;
 pub use coefficient_of_variation::CoefficientOfVariation;
 pub use cointegration::{Cointegration, CointegrationOutput};
+pub use composite_profile::{CompositeProfile, CompositeProfileOutput};
 pub use concealing_baby_swallow::ConcealingBabySwallow;
 pub use conditional_value_at_risk::ConditionalValueAtRisk;
 pub use connors_rsi::ConnorsRsi;
@@ -675,6 +681,7 @@ pub use heikin_ashi::{HeikinAshi, HeikinAshiOutput};
 pub use heikin_ashi_oscillator::HeikinAshiOscillator;
 pub use high_low_index::HighLowIndex;
 pub use high_low_range::HighLowRange;
+pub use high_low_volume_nodes::{HighLowVolumeNodes, HighLowVolumeNodesOutput};
 pub use high_wave::HighWave;
 pub use highpass_filter::HighpassFilter;
 pub use hikkake::Hikkake;
@@ -762,6 +769,7 @@ pub use mom::Mom;
 pub use morning_doji_star::MorningDojiStar;
 pub use morning_evening_star::MorningEveningStar;
 pub use murrey_math_lines::{MurreyMathLines, MurreyMathLinesOutput};
+pub use naked_poc::NakedPoc;
 pub use natr::Natr;
 pub use new_highs_new_lows::NewHighsNewLows;
 pub use new_price_lines::NewPriceLines;
@@ -804,6 +812,7 @@ pub use point_and_figure_bars::{PnfColumn, PointAndFigureBars};
 pub use polarized_fractal_efficiency::PolarizedFractalEfficiency;
 pub use ppo::Ppo;
 pub use ppo_histogram::PpoHistogram;
+pub use profile_shape::ProfileShape;
 pub use profit_factor::ProfitFactor;
 pub use projection_bands::{ProjectionBands, ProjectionBandsOutput};
 pub use projection_oscillator::ProjectionOscillator;
@@ -859,6 +868,7 @@ pub use short_line::ShortLine;
 pub use signed_volume::SignedVolume;
 pub use sine_wave::SineWave;
 pub use sine_weighted_ma::SineWeightedMa;
+pub use single_prints::SinglePrints;
 pub use skewness::Skewness;
 pub use sma::Sma;
 pub use smi::Smi;
@@ -1503,6 +1513,11 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
             "OpeningRange",
             "VolumeProfile",
             "TpoProfile",
+            "NakedPoc",
+            "SinglePrints",
+            "ProfileShape",
+            "HighLowVolumeNodes",
+            "CompositeProfile",
         ],
     ),
     (
@@ -1639,6 +1654,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 493, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 498, "FAMILIES total drifted from indicator count");
     }
 }

@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://wickra.org"><img src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/wickra-banner.webp?v=493" alt="Wickra — streaming-first technical indicators" width="100%"></a>
+  <a href="https://wickra.org"><img src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/wickra-banner.webp?v=498" alt="Wickra — streaming-first technical indicators" width="100%"></a>
 </p>
 
 [![CI](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml/badge.svg)](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml)
@@ -48,7 +48,7 @@ Full documentation lives at **[docs.wickra.org](https://docs.wickra.org)**:
   [Node](https://docs.wickra.org/Quickstart-Node),
   [WASM](https://docs.wickra.org/Quickstart-WASM).
 - **Indicators** — a per-indicator deep dive (formula, parameters, warmup) for
-  every one of the 493 indicators; start at the
+  every one of the 498 indicators; start at the
   [indicators overview](https://docs.wickra.org/Indicators-Overview).
 - **Reference** — [warmup periods](https://docs.wickra.org/Warmup-Periods),
   [streaming vs batch](https://docs.wickra.org/Streaming-vs-Batch),
@@ -66,7 +66,7 @@ an afterthought — **live, tick-by-tick data** — without giving up the breadt
 a full batch library, and without making you reimplement your indicators four
 times to get there.
 
-- **The biggest streaming-native catalogue, period.** 493 indicators across 24
+- **The biggest streaming-native catalogue, period.** 498 indicators across 24
   families — candlesticks, harmonic & chart patterns, market profile, market
   breadth, Renko/Kagi/Point&Figure bars, Ehlers DSP cycles, risk/performance
   metrics — every single one updating in **O(1) per tick**. TA-Lib ships ~150 and
@@ -77,7 +77,7 @@ times to get there.
 - **Correct by construction, not by hope.** Every `update` validates its input,
   runs a real warmup, and returns an `Option` so a single bad tick can't silently
   poison state. `batch == streaming` is **bit-exact, fuzzed and 100 %-line-covered
-  for all 493 indicators**.
+  for all 498 indicators**.
 - **Orders of magnitude faster where it counts.** In streaming Wickra is **11–56×**
   faster than the only other incremental peer and **thousands of times** faster
   than recompute-on-every-tick libraries. On batch it wins several rows outright
@@ -95,7 +95,7 @@ Every other library forces one of those compromises. Wickra doesn't:
 
 | Library          | Install     | Streaming   | Languages                   | Indicators | Active |
 |------------------|-------------|-------------|-----------------------------|-----------:|--------|
-| **★&nbsp;Wickra**| **clean**   | **yes, O(1)** | **Python · Node · WASM · Rust** | **493** | **yes** |
+| **★&nbsp;Wickra**| **clean**   | **yes, O(1)** | **Python · Node · WASM · Rust** | **498** | **yes** |
 | kand             | clean       | yes         | Python · WASM · Rust        |       ~60  | yes    |
 | ta-rs            | clean       | yes         | Rust only                   |       ~30  | stale  |
 | yata             | clean       | partial     | Rust only                   |       ~35  | yes    |
@@ -128,7 +128,7 @@ Full tables (Rust + Python, streaming + batch) and how to reproduce them live in
 
 ## Indicators
 
-493 streaming-first indicators across twenty-four families. Every one passes the
+498 streaming-first indicators across twenty-four families. Every one passes the
 `batch == streaming` equivalence test, reference-value tests, and reset
 semantics tests. Each has a per-indicator deep dive (formula, parameters,
 warmup) at [docs.wickra.org](https://docs.wickra.org/Indicators-Overview).
@@ -155,7 +155,7 @@ warmup) at [docs.wickra.org](https://docs.wickra.org/Indicators-Overview).
 | Fibonacci            | Fibonacci Retracement, Fibonacci Extension, Fibonacci Projection, Auto-Fibonacci, Golden Pocket, Fibonacci Confluence, Fibonacci Fan, Fibonacci Arcs, Fibonacci Channel, Fibonacci Time Zones |
 | Microstructure       | Order-Book Imbalance (Top-1 / Top-N / Full), Microprice, Quoted Spread, Depth Slope, Signed Volume, Cumulative Volume Delta, Trade Imbalance, Effective Spread, Realized Spread, Kyle's Lambda, Footprint, Order Flow Imbalance, VPIN, Amihud Illiquidity, Roll Measure, Trade-Sign Autocorrelation, Hasbrouck Information Share |
 | Derivatives          | Funding Rate, Funding Rate Mean, Funding Rate Z-Score, Funding Basis, Open-Interest Delta, OI / Price Divergence, OI-Weighted Price, Long/Short Ratio, Taker Buy/Sell Ratio, Liquidation Features, Term-Structure Basis, Calendar Spread, Estimated Leverage Ratio, OI-to-Volume Ratio, Perpetual Premium Index, Funding-Implied APR, Open-Interest Momentum |
-| Market Profile       | Value Area (POC / VAH / VAL), Volume Profile (histogram), TPO Profile, Initial Balance, Opening Range |
+| Market Profile       | Value Area (POC / VAH / VAL), Volume Profile (histogram), TPO Profile, Initial Balance, Opening Range, Naked POC, Single Prints, Profile Shape, High/Low Volume Nodes, Composite Profile |
 | Market Breadth       | Advance/Decline Line, Advance/Decline Ratio, Advance/Decline Volume Line, McClellan Oscillator, McClellan Summation Index, TRIN / Arms Index, Breadth Thrust, New Highs - New Lows, High-Low Index, Percent Above Moving Average, Up/Down Volume Ratio, Bullish Percent Index, Cumulative Volume Index, Absolute Breadth Index, TICK Index |
 | Risk / Performance   | Sharpe Ratio, Sortino Ratio, Calmar Ratio, Omega Ratio, Max Drawdown, Average Drawdown, Drawdown Duration, Pain Index, Value at Risk, Conditional Value at Risk (CVaR), Profit Factor, Gain/Loss Ratio, Recovery Factor, Kelly Criterion, Treynor Ratio, Information Ratio, Alpha (Jensen) |
 | Seasonality & Session | Session VWAP, Session High/Low, Session Range, Average Daily Range, Overnight Gap, Overnight/Intraday Return, Turn-of-Month, Seasonal Z-Score, Time-of-Day Return Profile, Day-of-Week Profile, Intraday Volatility Profile, Volume-by-Time Profile |
@@ -237,7 +237,7 @@ A Python live-trading example using the public `websockets` package lives at
 ```
 wickra/
 ├── crates/
-│   ├── wickra-core/         core engine + all 493 indicators
+│   ├── wickra-core/         core engine + all 498 indicators
 │   ├── wickra/              top-level facade crate (publishes on crates.io) + benches/
 │   ├── wickra-data/         CSV reader, tick aggregator, live exchange feeds
 │   └── wickra-bench/        internal cross-library benchmark harness (not published)
