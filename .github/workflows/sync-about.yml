@@ -42,10 +42,10 @@ name: Sync indicator count
 # single source of truth for what the bindings reach.
 #
 # Design: on PRs this workflow is a READ-ONLY check. The indicator wiring
-# (ScriptHelpers/_common.py wire_readme_counter) bumps both README.md and
-# docs/README.md inside the author's code commit, so the counter is already
-# correct by the time CI runs. If it is not, the check below fails loud and
-# asks the author to re-run the wiring — it never pushes a fix-up commit.
+# bumps both README.md and docs/README.md inside the author's code commit, so
+# the counter is already correct by the time CI runs. If it is not, the check
+# below fails loud and asks the author to re-run the wiring — it never pushes a
+# fix-up commit.
 #
 # (An earlier version pushed a GITHUB_TOKEN "sync indicator count" commit to
 # the PR head. Because GITHUB_TOKEN pushes trigger no workflows, that commit

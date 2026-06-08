@@ -104,8 +104,8 @@ installed. Dependabot also keeps the `.github/requirements` pins current.
   of `update` calls.
 - **Bindings.** A change to a public indicator API must be mirrored across the
   Python, Node, and WASM bindings, including their type stubs / `.d.ts`. The C ABI
-  (`bindings/c`) is generated from the core, so regenerate it (the ScriptHelpers
-  `capi` wrapper) and commit `src/lib.rs` + `include/wickra.h`.
+  (`bindings/c`) is generated from the core, so regenerate it from the core and
+  commit `src/lib.rs` + `include/wickra.h`.
 - **Docs.** Update the relevant page on the
   [documentation site](https://docs.wickra.org) and the
   `README.md` when behaviour or the public API changes. The docs live in
