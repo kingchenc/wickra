@@ -884,6 +884,11 @@ node_pair_indicator!(
     "BetaNeutralSpread",
     wc::BetaNeutralSpread
 );
+node_pair_indicator!(
+    HasbrouckInformationShareNode,
+    "HasbrouckInformationShare",
+    wc::HasbrouckInformationShare
+);
 
 // ============================== PairSpreadZScore ==============================
 
@@ -13700,6 +13705,108 @@ impl TradeImbalanceNode {
     pub fn new(window: u32) -> napi::Result<Self> {
         Ok(Self {
             inner: wc::TradeImbalance::new(window as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, price: f64, size: f64, is_buy: bool) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        price: Vec<f64>,
+        size: Vec<f64>,
+        is_buy: Vec<bool>,
+    ) -> napi::Result<Vec<f64>> {
+        if price.len() != size.len() || size.len() != is_buy.len() {
+            return Err(NapiError::from_reason(
+                "price, size, is_buy must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            let trade = build_trade(price[i], size[i], is_buy[i])?;
+            out.push(self.inner.update(trade).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// Trade-sign autocorrelation carries a `period` parameter, so it is hand-written.
+#[napi(js_name = "TradeSignAutocorrelation")]
+pub struct TradeSignAutocorrelationNode {
+    inner: wc::TradeSignAutocorrelation,
+}
+
+#[napi]
+impl TradeSignAutocorrelationNode {
+    #[napi(constructor)]
+    pub fn new(period: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::TradeSignAutocorrelation::new(period as usize).map_err(map_err)?,
+        })
+    }
+    #[napi]
+    pub fn update(&mut self, price: f64, size: f64, is_buy: bool) -> napi::Result<Option<f64>> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    #[napi]
+    pub fn batch(
+        &mut self,
+        price: Vec<f64>,
+        size: Vec<f64>,
+        is_buy: Vec<bool>,
+    ) -> napi::Result<Vec<f64>> {
+        if price.len() != size.len() || size.len() != is_buy.len() {
+            return Err(NapiError::from_reason(
+                "price, size, is_buy must be equal length".to_string(),
+            ));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            let trade = build_trade(price[i], size[i], is_buy[i])?;
+            out.push(self.inner.update(trade).unwrap_or(f64::NAN));
+        }
+        Ok(out)
+    }
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+    #[napi(js_name = "isReady")]
+    pub fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    #[napi(js_name = "warmupPeriod")]
+    pub fn warmup_period(&self) -> u32 {
+        self.inner.warmup_period() as u32
+    }
+}
+
+// PIN carries a `window` parameter, so it is hand-written.
+#[napi(js_name = "Pin")]
+pub struct PinNode {
+    inner: wc::Pin,
+}
+
+#[napi]
+impl PinNode {
+    #[napi(constructor)]
+    pub fn new(window: u32) -> napi::Result<Self> {
+        Ok(Self {
+            inner: wc::Pin::new(window as usize).map_err(map_err)?,
         })
     }
     #[napi]

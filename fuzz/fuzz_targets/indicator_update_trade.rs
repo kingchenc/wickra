@@ -10,7 +10,7 @@
 //! would reject — the indicators must never panic, streaming or batched.
 
 use libfuzzer_sys::fuzz_target;
-use wickra_core::{AmihudIlliquidity, BatchExt, CumulativeVolumeDelta, Footprint, Indicator, RollMeasure, Side, SignedVolume, Trade, TradeImbalance, Vpin};
+use wickra_core::{AmihudIlliquidity, BatchExt, CumulativeVolumeDelta, Footprint, Indicator, Pin, RollMeasure, Side, SignedVolume, Trade, TradeImbalance, TradeSignAutocorrelation, Vpin};
 
 #[inline(never)]
 fn drive<I>(make: impl Fn() -> I, trades: &[Trade])
@@ -43,6 +43,8 @@ fuzz_target!(|data: &[u8]| {
     drive(|| Vpin::new(8.0, 5).unwrap(), &trades);
     drive(|| AmihudIlliquidity::new(20).unwrap(), &trades);
     drive(|| RollMeasure::new(20).unwrap(), &trades);
+    drive(|| TradeSignAutocorrelation::new(20).unwrap(), &trades);
+    drive(|| Pin::new(20).unwrap(), &trades);
 
     // Footprint emits a variable-length `FootprintOutput` rather than an `f64`,
     // so it is driven directly rather than through the scalar-output helper.

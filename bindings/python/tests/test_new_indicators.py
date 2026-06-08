@@ -217,6 +217,7 @@ def test_scalar_streaming_matches_batch(cls, args, sine_prices):
 # --- Two-series (asset, benchmark) indicators -----------------------------
 
 PAIR = [
+    (ta.HasbrouckInformationShare, (2,)),
     (ta.KendallTau, (20,)),
     (ta.SpreadAr1Coefficient, (40,)),
     (ta.GrangerCausality, (60, 1)),
@@ -3323,6 +3324,13 @@ def test_tower_top_bottom_reference():
     assert t.update((110.0, 110.1, 99.9, 100.0, 1.0, 2)) == pytest.approx(-1.0)
 
 
+
+def test_hasbrouck_information_share_reference():
+    t = ta.HasbrouckInformationShare(2)
+    assert t.update(7.0, 9.0) is None
+    assert t.update(7.0, 9.0) is None
+    assert t.update(7.0, 9.0) == pytest.approx(0.5)
+
 # --- Lifecycle ------------------------------------------------------------
 
 
@@ -3663,6 +3671,8 @@ def test_tradeflow_indicators_streaming_equals_batch():
         lambda: ta.Vpin(8.0, 5),
         lambda: ta.AmihudIlliquidity(14),
         lambda: ta.RollMeasure(14),
+        lambda: ta.TradeSignAutocorrelation(10),
+        lambda: ta.Pin(10),
     ):
         batch = make().batch(price, size, is_buy)
         streamer = make()
@@ -3672,6 +3682,34 @@ def test_tradeflow_indicators_streaming_equals_batch():
         )
         assert batch.shape == (n,)
         assert _eq_nan(batch, streamed)
+
+
+def test_trade_sign_autocorrelation_reference():
+    # Perfectly alternating aggressor signs -> lag-1 autocorrelation -1.
+    t = ta.TradeSignAutocorrelation(10)
+    last = None
+    for i in range(20):
+        last = t.update(100.0, 1.0, i % 2 == 0)
+    assert last == pytest.approx(-1.0)
+    # All buys -> perfectly persistent flow -> +1.
+    t2 = ta.TradeSignAutocorrelation(10)
+    for _ in range(20):
+        last2 = t2.update(100.0, 1.0, True)
+    assert last2 == pytest.approx(1.0)
+
+
+def test_pin_reference():
+    # One-sided flow (all buys) -> maximally informed -> PIN 1.
+    p = ta.Pin(10)
+    last = None
+    for _ in range(20):
+        last = p.update(100.0, 1.0, True)
+    assert last == pytest.approx(1.0)
+    # Balanced flow -> uninformed -> PIN 0.
+    p2 = ta.Pin(10)
+    for i in range(20):
+        last2 = p2.update(100.0, 1.0, i % 2 == 0)
+    assert last2 == pytest.approx(0.0)
 
 
 def test_price_impact_indicators_streaming_equals_batch():

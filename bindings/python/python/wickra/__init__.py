@@ -464,6 +464,8 @@ from ._wickra import (
     QuotedSpread,
     DepthSlope,
     # Microstructure: trade flow
+    Pin,
+    TradeSignAutocorrelation,
     RollMeasure,
     AmihudIlliquidity,
     Vpin,
@@ -471,6 +473,7 @@ from ._wickra import (
     CumulativeVolumeDelta,
     TradeImbalance,
     # Microstructure: price impact
+    HasbrouckInformationShare,
     EffectiveSpread,
     RealizedSpread,
     KylesLambda,
@@ -979,6 +982,8 @@ __all__ = [
     "QuotedSpread",
     "DepthSlope",
     # Microstructure: trade flow
+    "Pin",
+    "TradeSignAutocorrelation",
     "RollMeasure",
     "AmihudIlliquidity",
     "Vpin",
@@ -986,6 +991,7 @@ __all__ = [
     "CumulativeVolumeDelta",
     "TradeImbalance",
     # Microstructure: price impact
+    "HasbrouckInformationShare",
     "EffectiveSpread",
     "RealizedSpread",
     "KylesLambda",

@@ -16980,6 +16980,70 @@ impl PyRollingCorrelation {
     }
 }
 
+// ========================= HasbrouckInformationShare =========================
+
+#[pyclass(
+    name = "HasbrouckInformationShare",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyHasbrouckInformationShare {
+    inner: wc::HasbrouckInformationShare,
+}
+
+#[pymethods]
+impl PyHasbrouckInformationShare {
+    #[new]
+    #[pyo3(signature = (period=20))]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::HasbrouckInformationShare::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, a: f64, b: f64) -> Option<f64> {
+        self.inner.update((a, b))
+    }
+    /// Batch over two equally-sized numpy arrays: `a` and `b`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        a: PyReadonlyArray1<'py, f64>,
+        b: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let xs = a
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let ys = b
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if xs.len() != ys.len() {
+            return Err(PyValueError::new_err("a and b must be equal length"));
+        }
+        let mut out = Vec::with_capacity(xs.len());
+        for i in 0..xs.len() {
+            out.push(self.inner.update((xs[i], ys[i])).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    #[getter]
+    fn period(&self) -> usize {
+        self.inner.period()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("HasbrouckInformationShare(period={})", self.inner.period())
+    }
+}
+
 // ============================== RollingCovariance ==============================
 
 #[pyclass(
@@ -18649,6 +18713,112 @@ impl PyTradeImbalance {
     }
     fn __repr__(&self) -> String {
         format!("TradeImbalance(window={})", self.inner.window())
+    }
+}
+
+// Trade-sign autocorrelation carries a `period` parameter, so it is hand-written.
+#[pyclass(
+    name = "TradeSignAutocorrelation",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyTradeSignAutocorrelation {
+    inner: wc::TradeSignAutocorrelation,
+}
+
+#[pymethods]
+impl PyTradeSignAutocorrelation {
+    #[new]
+    fn new(period: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::TradeSignAutocorrelation::new(period).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, price: f64, size: f64, is_buy: bool) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        price: Vec<f64>,
+        size: Vec<f64>,
+        is_buy: Vec<bool>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if price.len() != size.len() || size.len() != is_buy.len() {
+            return Err(PyValueError::new_err(
+                "price, size, is_buy must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            let trade = build_trade(price[i], size[i], is_buy[i])?;
+            out.push(self.inner.update(trade).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("TradeSignAutocorrelation(period={})", self.inner.period())
+    }
+}
+
+// PIN carries a `window` parameter, so it is hand-written.
+#[pyclass(name = "Pin", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyPin {
+    inner: wc::Pin,
+}
+
+#[pymethods]
+impl PyPin {
+    #[new]
+    fn new(window: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::Pin::new(window).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, price: f64, size: f64, is_buy: bool) -> PyResult<Option<f64>> {
+        Ok(self.inner.update(build_trade(price, size, is_buy)?))
+    }
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        price: Vec<f64>,
+        size: Vec<f64>,
+        is_buy: Vec<bool>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        if price.len() != size.len() || size.len() != is_buy.len() {
+            return Err(PyValueError::new_err(
+                "price, size, is_buy must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(price.len());
+        for i in 0..price.len() {
+            let trade = build_trade(price[i], size[i], is_buy[i])?;
+            out.push(self.inner.update(trade).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        format!("Pin(window={})", self.inner.window())
     }
 }
 
@@ -24743,6 +24913,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyCointegration>()?;
     m.add_class::<PyRelativeStrengthAB>()?;
     m.add_class::<PyRollingCorrelation>()?;
+    m.add_class::<PyHasbrouckInformationShare>()?;
     m.add_class::<PyRollingCovariance>()?;
     m.add_class::<PyOuHalfLife>()?;
     m.add_class::<PySpreadHurst>()?;
@@ -24833,6 +25004,8 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PySignedVolume>()?;
     m.add_class::<PyCumulativeVolumeDelta>()?;
     m.add_class::<PyTradeImbalance>()?;
+    m.add_class::<PyTradeSignAutocorrelation>()?;
+    m.add_class::<PyPin>()?;
     m.add_class::<PyOrderFlowImbalance>()?;
     m.add_class::<PyVpin>()?;
     m.add_class::<PyAmihudIlliquidity>()?;

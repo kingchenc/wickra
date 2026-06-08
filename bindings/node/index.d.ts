@@ -1449,6 +1449,19 @@ export declare class BetaNeutralSpread {
   isReady(): boolean
   warmupPeriod(): number
 }
+export type HasbrouckInformationShareNode = HasbrouckInformationShare
+export declare class HasbrouckInformationShare {
+  constructor(period: number)
+  update(x: number, y: number): number | null
+  /**
+   * Batch over two equally-sized arrays. Returns a length-`n` array
+   * with `NaN` for warmup positions.
+   */
+  batch(x: Array<number>, y: Array<number>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
 export type PairSpreadZScoreNode = PairSpreadZScore
 /**
  * Pair spread z-score: two ctor params (`betaPeriod`, `zPeriod`), one `(a, b)`
@@ -4326,6 +4339,24 @@ export declare class CumulativeVolumeDelta {
 }
 export type TradeImbalanceNode = TradeImbalance
 export declare class TradeImbalance {
+  constructor(window: number)
+  update(price: number, size: number, isBuy: boolean): number | null
+  batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type TradeSignAutocorrelationNode = TradeSignAutocorrelation
+export declare class TradeSignAutocorrelation {
+  constructor(period: number)
+  update(price: number, size: number, isBuy: boolean): number | null
+  batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
+  reset(): void
+  isReady(): boolean
+  warmupPeriod(): number
+}
+export type PinNode = Pin
+export declare class Pin {
   constructor(window: number)
   update(price: number, size: number, isBuy: boolean): number | null
   batch(price: Array<number>, size: Array<number>, isBuy: Array<boolean>): Array<number>
