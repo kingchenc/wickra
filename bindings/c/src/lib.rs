@@ -43,22 +43,23 @@ use wickra_core::{
     Engulfing, Equivolume, EstimatedLeverageRatio, EvenBetterSinewave, EveningDojiStar, Evwma,
     EwmaVolatility, Expectancy, FallingThreeMethods, Fama, FibArcs, FibChannel, FibConfluence,
     FibExtension, FibFan, FibProjection, FibRetracement, FibTimeZones, FibonacciPivots, FisherRsi,
-    FisherTransform, FlagPennant, ForceIndex, FractalChaosBands, Frama, FryPanBottom, FundingBasis,
-    FundingImpliedApr, FundingRate, FundingRateMean, FundingRateZScore, GainLossRatio,
-    GainToPainRatio, GapSideBySideWhite, Garch11, GarmanKlassVolatility, Gartley, GatorOscillator,
-    GeneralizedDema, GeometricMa, GoldenPocket, GrangerCausality, GravestoneDoji, Hammer,
-    HangingMan, Harami, HaramiCross, HasbrouckInformationShare, HeadAndShoulders, HeikinAshi,
-    HeikinAshiOscillator, HiLoActivator, HighLowIndex, HighLowRange, HighLowVolumeNodes, HighWave,
-    HighpassFilter, Hikkake, HikkakeModified, HilbertDominantCycle, HistoricalVolatility, Hma,
-    HoltWinters, HomingPigeon, HtDcPhase, HtPhasor, HtTrendMode, HurstChannel, HurstExponent,
-    Ichimoku, IdenticalThreeCrows, ImbalanceBars, InNeck, Indicator, Inertia, InformationRatio,
-    InitialBalance, InstantaneousTrendline, IntradayIntensity, IntradayMomentumIndex,
-    IntradayVolatilityProfile, InverseFisherTransform, InvertedHammer, JarqueBera, Jma,
-    JumpIndicator, KRatio, KagiBars, KalmanHedgeRatio, Kama, KaseDevStop, KasePermissionStochastic,
-    KellyCriterion, Keltner, KendallTau, Kicking, KickingByLength, Kst, Kurtosis, Kvo, KylesLambda,
-    LadderBottom, LaguerreRsi, LeadLagCrossCorrelation, Level, LinRegAngle, LinRegChannel,
-    LinRegIntercept, LinRegSlope, LinearRegression, LiquidationFeatures, LogReturn, LongLeggedDoji,
-    LongLine, LongShortRatio, M2Measure, MaEnvelope, MacdFix, MacdHistogram, MacdIndicator, Mama,
+    FisherTransform, FlagPennant, Footprint, ForceIndex, FractalChaosBands, Frama, FryPanBottom,
+    FundingBasis, FundingImpliedApr, FundingRate, FundingRateMean, FundingRateZScore,
+    GainLossRatio, GainToPainRatio, GapSideBySideWhite, Garch11, GarmanKlassVolatility, Gartley,
+    GatorOscillator, GeneralizedDema, GeometricMa, GoldenPocket, GrangerCausality, GravestoneDoji,
+    Hammer, HangingMan, Harami, HaramiCross, HasbrouckInformationShare, HeadAndShoulders,
+    HeikinAshi, HeikinAshiOscillator, HiLoActivator, HighLowIndex, HighLowRange,
+    HighLowVolumeNodes, HighWave, HighpassFilter, Hikkake, HikkakeModified, HilbertDominantCycle,
+    HistoricalVolatility, Hma, HoltWinters, HomingPigeon, HtDcPhase, HtPhasor, HtTrendMode,
+    HurstChannel, HurstExponent, Ichimoku, IdenticalThreeCrows, ImbalanceBars, InNeck, Indicator,
+    Inertia, InformationRatio, InitialBalance, InstantaneousTrendline, IntradayIntensity,
+    IntradayMomentumIndex, IntradayVolatilityProfile, InverseFisherTransform, InvertedHammer,
+    JarqueBera, Jma, JumpIndicator, KRatio, KagiBars, KalmanHedgeRatio, Kama, KaseDevStop,
+    KasePermissionStochastic, KellyCriterion, Keltner, KendallTau, Kicking, KickingByLength, Kst,
+    Kurtosis, Kvo, KylesLambda, LadderBottom, LaguerreRsi, LeadLagCrossCorrelation, Level,
+    LinRegAngle, LinRegChannel, LinRegIntercept, LinRegSlope, LinearRegression,
+    LiquidationFeatures, LogReturn, LongLeggedDoji, LongLine, LongShortRatio, M2Measure,
+    MaEnvelope, MaType, MacdExt, MacdFix, MacdHistogram, MacdIndicator, Mama,
     MarketFacilitationIndex, MartinRatio, Marubozu, MassIndex, MatHold, MatchingLow, MaxDrawdown,
     McClellanOscillator, McClellanSummationIndex, McGinleyDynamic, MedianAbsoluteDeviation,
     MedianChannel, MedianMa, MedianPrice, Member, Mfi, Microprice, MidPoint, MidPrice, MinusDi,
@@ -44068,6 +44069,182 @@ pub unsafe extern "C" fn wickra_volume_bars_reset(handle: *mut VolumeBars) {
 /// `handle` must have been returned by `wickra_volume_bars_new` and not previously freed, or `NULL`.
 #[no_mangle]
 pub unsafe extern "C" fn wickra_volume_bars_free(handle: *mut VolumeBars) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+// ===== Bespoke wirings (MaType-enum ctor, Vec<struct> output) =====
+
+/// Moving-average selector for `wickra_macd_ext_new`: 0=SMA, 1=EMA, 2=WMA, 3=DEMA,
+/// 4=TEMA, 5=TRIMA. Any other value is rejected.
+fn ma_type_from_u8(value: u8) -> Option<MaType> {
+    match value {
+        0 => Some(MaType::Sma),
+        1 => Some(MaType::Ema),
+        2 => Some(MaType::Wma),
+        3 => Some(MaType::Dema),
+        4 => Some(MaType::Tema),
+        5 => Some(MaType::Trima),
+        _ => None,
+    }
+}
+
+/// Create a `MacdExt`. `fast_type` / `slow_type` / `signal_type` pick the moving
+/// average per `ma_type_from_u8`. Returns `NULL` on invalid parameters or an unknown
+/// MA-type code; release with `wickra_macd_ext_free`.
+#[no_mangle]
+pub extern "C" fn wickra_macd_ext_new(
+    fast: usize,
+    fast_type: u8,
+    slow: usize,
+    slow_type: u8,
+    signal: usize,
+    signal_type: u8,
+) -> *mut MacdExt {
+    let (Some(ft), Some(st), Some(gt)) = (
+        ma_type_from_u8(fast_type),
+        ma_type_from_u8(slow_type),
+        ma_type_from_u8(signal_type),
+    ) else {
+        return ptr::null_mut();
+    };
+    match MacdExt::new(fast, ft, slow, st, signal, gt) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one value; on `true` the MACD/signal/histogram triple is written to `*out`.
+/// Returns `false` during warmup, on a `NULL` handle / `out`.
+///
+/// # Safety
+/// `handle` (from `wickra_macd_ext_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_ext_update(
+    handle: *mut MacdExt,
+    value: f64,
+    out: *mut WickraMacdOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update(value) {
+        Some(out_val) => {
+            *out = WickraMacdOutput {
+                macd: out_val.macd,
+                signal: out_val.signal,
+                histogram: out_val.histogram,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_macd_ext_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_ext_reset(handle: *mut MacdExt) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_macd_ext_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_macd_ext_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_ext_free(handle: *mut MacdExt) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// C-ABI view of one `FootprintLevel` (price bucket with bid/ask volume).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraFootprintLevel {
+    pub price: f64,
+    pub bid_vol: f64,
+    pub ask_vol: f64,
+}
+
+/// Create a `Footprint` order-flow aggregator. Returns `NULL` on invalid parameters;
+/// release with `wickra_footprint_free`.
+#[no_mangle]
+pub extern "C" fn wickra_footprint_new(tick_size: f64) -> *mut Footprint {
+    match Footprint::new(tick_size) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one trade. Returns `-1` during warmup / on a `NULL` handle / invalid trade,
+/// otherwise the number of price levels in the completed footprint; up to `cap` levels
+/// are written to `out` (enlarge `cap` if the return exceeds it).
+///
+/// # Safety
+/// `handle` (from `wickra_footprint_new`, not freed) and `out` must be valid or `NULL`;
+/// when non-`NULL`, `out` must cover `cap` `WickraFootprintLevel` elements.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_footprint_update(
+    handle: *mut Footprint,
+    price: f64,
+    size: f64,
+    is_buy: bool,
+    timestamp: i64,
+    out: *mut WickraFootprintLevel,
+    cap: usize,
+) -> isize {
+    let Some(ind) = handle.as_mut() else {
+        return -1;
+    };
+    let side = if is_buy { Side::Buy } else { Side::Sell };
+    let Ok(trade) = Trade::new(price, size, side, timestamp) else {
+        return -1;
+    };
+    match ind.update(trade) {
+        Some(out_val) => {
+            if !out.is_null() {
+                let slots = slice::from_raw_parts_mut(out, cap);
+                for (slot, level) in slots.iter_mut().zip(&out_val.levels) {
+                    *slot = WickraFootprintLevel {
+                        price: level.price,
+                        bid_vol: level.bid_vol,
+                        ask_vol: level.ask_vol,
+                    };
+                }
+            }
+            isize::try_from(out_val.levels.len()).unwrap_or(isize::MAX)
+        }
+        None => -1,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_footprint_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_footprint_reset(handle: *mut Footprint) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_footprint_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_footprint_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_footprint_free(handle: *mut Footprint) {
     if !handle.is_null() {
         drop(Box::from_raw(handle));
     }

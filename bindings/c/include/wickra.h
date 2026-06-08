@@ -302,6 +302,8 @@ typedef struct FisherTransform FisherTransform;
 
 typedef struct FlagPennant FlagPennant;
 
+typedef struct Footprint Footprint;
+
 typedef struct ForceIndex ForceIndex;
 
 typedef struct FractalChaosBands FractalChaosBands;
@@ -487,6 +489,8 @@ typedef struct LongShortRatio LongShortRatio;
 typedef struct M2Measure M2Measure;
 
 typedef struct MaEnvelope MaEnvelope;
+
+typedef struct MacdExt MacdExt;
 
 typedef struct MacdFix MacdFix;
 
@@ -1664,6 +1668,12 @@ typedef struct WickraVolumeBar {
     double close;
     double volume;
 } WickraVolumeBar;
+
+typedef struct WickraFootprintLevel {
+    double price;
+    double bid_vol;
+    double ask_vol;
+} WickraFootprintLevel;
 
 struct AdaptiveCycle *wickra_adaptive_cycle_new(void);
 
@@ -10609,5 +10619,32 @@ uintptr_t wickra_volume_bars_update(struct VolumeBars *handle,
 void wickra_volume_bars_reset(struct VolumeBars *handle);
 
 void wickra_volume_bars_free(struct VolumeBars *handle);
+
+struct MacdExt *wickra_macd_ext_new(uintptr_t fast,
+                                    uint8_t fast_type,
+                                    uintptr_t slow,
+                                    uint8_t slow_type,
+                                    uintptr_t signal,
+                                    uint8_t signal_type);
+
+bool wickra_macd_ext_update(struct MacdExt *handle, double value, struct WickraMacdOutput *out);
+
+void wickra_macd_ext_reset(struct MacdExt *handle);
+
+void wickra_macd_ext_free(struct MacdExt *handle);
+
+struct Footprint *wickra_footprint_new(double tick_size);
+
+intptr_t wickra_footprint_update(struct Footprint *handle,
+                                 double price,
+                                 double size,
+                                 bool is_buy,
+                                 int64_t timestamp,
+                                 struct WickraFootprintLevel *out,
+                                 uintptr_t cap);
+
+void wickra_footprint_reset(struct Footprint *handle);
+
+void wickra_footprint_free(struct Footprint *handle);
 
 #endif  /* WICKRA_H */
