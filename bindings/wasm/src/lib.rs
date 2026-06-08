@@ -13163,6 +13163,310 @@ impl WasmPointAndFigureBars {
     }
 }
 
+#[wasm_bindgen(js_name = RangeBars)]
+pub struct WasmRangeBars {
+    inner: wc::RangeBars,
+}
+
+#[wasm_bindgen(js_class = RangeBars)]
+impl WasmRangeBars {
+    #[wasm_bindgen(constructor)]
+    pub fn new(range: f64) -> Result<WasmRangeBars, JsError> {
+        Ok(Self {
+            inner: wc::RangeBars::new(range).map_err(map_err)?,
+        })
+    }
+    /// Returns an array of `{ open, close, direction }` bars completed on this close.
+    pub fn update(&mut self, close: f64) -> Result<Array, JsError> {
+        let candle = wc::Candle::new(close, close, close, close, 1.0, 0).map_err(map_err)?;
+        let arr = Array::new();
+        for b in self.inner.update(candle) {
+            let obj = Object::new();
+            Reflect::set(&obj, &"open".into(), &b.open.into()).ok();
+            Reflect::set(&obj, &"close".into(), &b.close.into()).ok();
+            Reflect::set(&obj, &"direction".into(), &f64::from(b.direction).into()).ok();
+            arr.push(&obj);
+        }
+        Ok(arr)
+    }
+    pub fn batch(&mut self, close: &[f64]) -> Result<Array, JsError> {
+        let arr = Array::new();
+        for &price in close {
+            let candle = wc::Candle::new(price, price, price, price, 1.0, 0).map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                let obj = Object::new();
+                Reflect::set(&obj, &"open".into(), &b.open.into()).ok();
+                Reflect::set(&obj, &"close".into(), &b.close.into()).ok();
+                Reflect::set(&obj, &"direction".into(), &f64::from(b.direction).into()).ok();
+                arr.push(&obj);
+            }
+        }
+        Ok(arr)
+    }
+    pub fn range(&self) -> f64 {
+        self.inner.range()
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = TickBars)]
+pub struct WasmTickBars {
+    inner: wc::TickBars,
+}
+
+#[wasm_bindgen(js_class = TickBars)]
+impl WasmTickBars {
+    #[wasm_bindgen(constructor)]
+    pub fn new(ticks: usize) -> Result<WasmTickBars, JsError> {
+        Ok(Self {
+            inner: wc::TickBars::new(ticks).map_err(map_err)?,
+        })
+    }
+    /// Returns an array of `{ open, high, low, close, volume }` bars completed on this candle.
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> Result<Array, JsError> {
+        let candle = wc::Candle::new(open, high, low, close, volume, 0).map_err(map_err)?;
+        let arr = Array::new();
+        for b in self.inner.update(candle) {
+            let obj = Object::new();
+            Reflect::set(&obj, &"open".into(), &b.open.into()).ok();
+            Reflect::set(&obj, &"high".into(), &b.high.into()).ok();
+            Reflect::set(&obj, &"low".into(), &b.low.into()).ok();
+            Reflect::set(&obj, &"close".into(), &b.close.into()).ok();
+            Reflect::set(&obj, &"volume".into(), &b.volume.into()).ok();
+            arr.push(&obj);
+        }
+        Ok(arr)
+    }
+    pub fn ticks(&self) -> usize {
+        self.inner.ticks()
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = VolumeBars)]
+pub struct WasmVolumeBars {
+    inner: wc::VolumeBars,
+}
+
+#[wasm_bindgen(js_class = VolumeBars)]
+impl WasmVolumeBars {
+    #[wasm_bindgen(constructor)]
+    pub fn new(volume_per_bar: f64) -> Result<WasmVolumeBars, JsError> {
+        Ok(Self {
+            inner: wc::VolumeBars::new(volume_per_bar).map_err(map_err)?,
+        })
+    }
+    /// Returns an array of `{ open, high, low, close, volume }` bars completed on this candle.
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> Result<Array, JsError> {
+        let candle = wc::Candle::new(open, high, low, close, volume, 0).map_err(map_err)?;
+        let arr = Array::new();
+        for b in self.inner.update(candle) {
+            let obj = Object::new();
+            Reflect::set(&obj, &"open".into(), &b.open.into()).ok();
+            Reflect::set(&obj, &"high".into(), &b.high.into()).ok();
+            Reflect::set(&obj, &"low".into(), &b.low.into()).ok();
+            Reflect::set(&obj, &"close".into(), &b.close.into()).ok();
+            Reflect::set(&obj, &"volume".into(), &b.volume.into()).ok();
+            arr.push(&obj);
+        }
+        Ok(arr)
+    }
+    #[wasm_bindgen(js_name = volumePerBar)]
+    pub fn volume_per_bar(&self) -> f64 {
+        self.inner.volume_per_bar()
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = DollarBars)]
+pub struct WasmDollarBars {
+    inner: wc::DollarBars,
+}
+
+#[wasm_bindgen(js_class = DollarBars)]
+impl WasmDollarBars {
+    #[wasm_bindgen(constructor)]
+    pub fn new(dollar_per_bar: f64) -> Result<WasmDollarBars, JsError> {
+        Ok(Self {
+            inner: wc::DollarBars::new(dollar_per_bar).map_err(map_err)?,
+        })
+    }
+    /// Returns an array of `{ open, high, low, close, volume, dollar }` bars completed on this candle.
+    pub fn update(
+        &mut self,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: f64,
+    ) -> Result<Array, JsError> {
+        let candle = wc::Candle::new(open, high, low, close, volume, 0).map_err(map_err)?;
+        let arr = Array::new();
+        for b in self.inner.update(candle) {
+            let obj = Object::new();
+            Reflect::set(&obj, &"open".into(), &b.open.into()).ok();
+            Reflect::set(&obj, &"high".into(), &b.high.into()).ok();
+            Reflect::set(&obj, &"low".into(), &b.low.into()).ok();
+            Reflect::set(&obj, &"close".into(), &b.close.into()).ok();
+            Reflect::set(&obj, &"volume".into(), &b.volume.into()).ok();
+            Reflect::set(&obj, &"dollar".into(), &b.dollar.into()).ok();
+            arr.push(&obj);
+        }
+        Ok(arr)
+    }
+    #[wasm_bindgen(js_name = dollarPerBar)]
+    pub fn dollar_per_bar(&self) -> f64 {
+        self.inner.dollar_per_bar()
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = ImbalanceBars)]
+pub struct WasmImbalanceBars {
+    inner: wc::ImbalanceBars,
+}
+
+#[wasm_bindgen(js_class = ImbalanceBars)]
+impl WasmImbalanceBars {
+    #[wasm_bindgen(constructor)]
+    pub fn new(threshold: f64) -> Result<WasmImbalanceBars, JsError> {
+        Ok(Self {
+            inner: wc::ImbalanceBars::new(threshold).map_err(map_err)?,
+        })
+    }
+    /// Returns an array of `{ open, high, low, close, imbalance, direction }` bars completed on this candle.
+    pub fn update(&mut self, open: f64, high: f64, low: f64, close: f64) -> Result<Array, JsError> {
+        let candle = wc::Candle::new(open, high, low, close, 1.0, 0).map_err(map_err)?;
+        let arr = Array::new();
+        for b in self.inner.update(candle) {
+            let obj = Object::new();
+            Reflect::set(&obj, &"open".into(), &b.open.into()).ok();
+            Reflect::set(&obj, &"high".into(), &b.high.into()).ok();
+            Reflect::set(&obj, &"low".into(), &b.low.into()).ok();
+            Reflect::set(&obj, &"close".into(), &b.close.into()).ok();
+            Reflect::set(&obj, &"imbalance".into(), &b.imbalance.into()).ok();
+            Reflect::set(&obj, &"direction".into(), &f64::from(b.direction).into()).ok();
+            arr.push(&obj);
+        }
+        Ok(arr)
+    }
+    pub fn threshold(&self) -> f64 {
+        self.inner.threshold()
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = RunBars)]
+pub struct WasmRunBars {
+    inner: wc::RunBars,
+}
+
+#[wasm_bindgen(js_class = RunBars)]
+impl WasmRunBars {
+    #[wasm_bindgen(constructor)]
+    pub fn new(run_length: usize) -> Result<WasmRunBars, JsError> {
+        Ok(Self {
+            inner: wc::RunBars::new(run_length).map_err(map_err)?,
+        })
+    }
+    /// Returns an array of `{ open, high, low, close, length, direction }` bars completed on this candle.
+    pub fn update(&mut self, open: f64, high: f64, low: f64, close: f64) -> Result<Array, JsError> {
+        let candle = wc::Candle::new(open, high, low, close, 1.0, 0).map_err(map_err)?;
+        let arr = Array::new();
+        for b in self.inner.update(candle) {
+            let obj = Object::new();
+            Reflect::set(&obj, &"open".into(), &b.open.into()).ok();
+            Reflect::set(&obj, &"high".into(), &b.high.into()).ok();
+            Reflect::set(&obj, &"low".into(), &b.low.into()).ok();
+            Reflect::set(&obj, &"close".into(), &b.close.into()).ok();
+            #[allow(clippy::cast_precision_loss)]
+            Reflect::set(&obj, &"length".into(), &(b.length as f64).into()).ok();
+            Reflect::set(&obj, &"direction".into(), &f64::from(b.direction).into()).ok();
+            arr.push(&obj);
+        }
+        Ok(arr)
+    }
+    #[wasm_bindgen(js_name = runLength)]
+    pub fn run_length(&self) -> usize {
+        self.inner.run_length()
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = ThreeLineBreakBars)]
+pub struct WasmThreeLineBreakBars {
+    inner: wc::ThreeLineBreakBars,
+}
+
+#[wasm_bindgen(js_class = ThreeLineBreakBars)]
+impl WasmThreeLineBreakBars {
+    #[wasm_bindgen(constructor)]
+    pub fn new(lines: usize) -> Result<WasmThreeLineBreakBars, JsError> {
+        Ok(Self {
+            inner: wc::ThreeLineBreakBars::new(lines).map_err(map_err)?,
+        })
+    }
+    /// Returns an array of `{ open, close, direction }` bars completed on this close.
+    pub fn update(&mut self, close: f64) -> Result<Array, JsError> {
+        let candle = wc::Candle::new(close, close, close, close, 1.0, 0).map_err(map_err)?;
+        let arr = Array::new();
+        for b in self.inner.update(candle) {
+            let obj = Object::new();
+            Reflect::set(&obj, &"open".into(), &b.open.into()).ok();
+            Reflect::set(&obj, &"close".into(), &b.close.into()).ok();
+            Reflect::set(&obj, &"direction".into(), &f64::from(b.direction).into()).ok();
+            arr.push(&obj);
+        }
+        Ok(arr)
+    }
+    pub fn batch(&mut self, close: &[f64]) -> Result<Array, JsError> {
+        let arr = Array::new();
+        for &price in close {
+            let candle = wc::Candle::new(price, price, price, price, 1.0, 0).map_err(map_err)?;
+            for b in self.inner.update(candle) {
+                let obj = Object::new();
+                Reflect::set(&obj, &"open".into(), &b.open.into()).ok();
+                Reflect::set(&obj, &"close".into(), &b.close.into()).ok();
+                Reflect::set(&obj, &"direction".into(), &f64::from(b.direction).into()).ok();
+                arr.push(&obj);
+            }
+        }
+        Ok(arr)
+    }
+    pub fn lines(&self) -> usize {
+        self.inner.lines()
+    }
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
 #[wasm_bindgen(js_name = Alpha)]
 pub struct WasmAlpha {
     inner: wc::Alpha,

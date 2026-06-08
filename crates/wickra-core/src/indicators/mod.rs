@@ -112,6 +112,7 @@ mod disparity_index;
 mod distance_ssd;
 mod doji;
 mod doji_star;
+mod dollar_bars;
 mod donchian;
 mod donchian_stop;
 mod double_bollinger;
@@ -204,6 +205,7 @@ mod hurst_channel;
 mod hurst_exponent;
 mod ichimoku;
 mod identical_three_crows;
+mod imbalance_bars;
 mod in_neck;
 mod inertia;
 mod information_ratio;
@@ -331,6 +333,7 @@ mod qstick;
 mod quartile_bands;
 mod quoted_spread;
 mod r_squared;
+mod range_bars;
 mod realized_spread;
 mod realized_volatility;
 mod recovery_factor;
@@ -358,6 +361,7 @@ mod rolling_quantile;
 mod roofing_filter;
 mod rsi;
 mod rsx;
+mod run_bars;
 mod rvi;
 mod rvi_volatility;
 mod rwi;
@@ -431,11 +435,13 @@ mod term_structure_basis;
 mod three_drives;
 mod three_inside;
 mod three_line_break;
+mod three_line_break_bars;
 mod three_line_strike;
 mod three_outside;
 mod three_soldiers_or_crows;
 mod three_stars_in_south;
 mod thrusting;
+mod tick_bars;
 mod tick_index;
 mod tii;
 mod time_based_stop;
@@ -485,6 +491,7 @@ mod volatility_cone;
 mod volatility_of_volatility;
 mod volatility_ratio;
 mod volty_stop;
+mod volume_bars;
 mod volume_by_time_profile;
 mod volume_oscillator;
 mod volume_profile;
@@ -619,6 +626,7 @@ pub use disparity_index::DisparityIndex;
 pub use distance_ssd::DistanceSsd;
 pub use doji::Doji;
 pub use doji_star::DojiStar;
+pub use dollar_bars::{DollarBar, DollarBars};
 pub use donchian::{Donchian, DonchianOutput};
 pub use donchian_stop::{DonchianStop, DonchianStopOutput};
 pub use double_bollinger::{DoubleBollinger, DoubleBollingerOutput};
@@ -711,6 +719,7 @@ pub use hurst_channel::{HurstChannel, HurstChannelOutput};
 pub use hurst_exponent::HurstExponent;
 pub use ichimoku::{Ichimoku, IchimokuOutput};
 pub use identical_three_crows::IdenticalThreeCrows;
+pub use imbalance_bars::{ImbalanceBar, ImbalanceBars};
 pub use in_neck::InNeck;
 pub use inertia::Inertia;
 pub use information_ratio::InformationRatio;
@@ -838,6 +847,7 @@ pub use qstick::Qstick;
 pub use quartile_bands::{QuartileBands, QuartileBandsOutput};
 pub use quoted_spread::QuotedSpread;
 pub use r_squared::RSquared;
+pub use range_bars::{RangeBar, RangeBars};
 pub use realized_spread::RealizedSpread;
 pub use realized_volatility::RealizedVolatility;
 pub use recovery_factor::RecoveryFactor;
@@ -865,6 +875,7 @@ pub use rolling_quantile::RollingQuantile;
 pub use roofing_filter::RoofingFilter;
 pub use rsi::Rsi;
 pub use rsx::Rsx;
+pub use run_bars::{RunBar, RunBars};
 pub use rvi::Rvi;
 pub use rvi_volatility::RviVolatility;
 pub use rwi::{Rwi, RwiOutput};
@@ -938,11 +949,13 @@ pub use term_structure_basis::TermStructureBasis;
 pub use three_drives::ThreeDrives;
 pub use three_inside::ThreeInside;
 pub use three_line_break::ThreeLineBreak;
+pub use three_line_break_bars::{LineBreakBar, ThreeLineBreakBars};
 pub use three_line_strike::ThreeLineStrike;
 pub use three_outside::ThreeOutside;
 pub use three_soldiers_or_crows::ThreeSoldiersOrCrows;
 pub use three_stars_in_south::ThreeStarsInSouth;
 pub use thrusting::Thrusting;
+pub use tick_bars::{TickBar, TickBars};
 pub use tick_index::TickIndex;
 pub use tii::Tii;
 pub use time_based_stop::TimeBasedStop;
@@ -992,6 +1005,7 @@ pub use volatility_cone::{VolatilityCone, VolatilityConeOutput};
 pub use volatility_of_volatility::VolatilityOfVolatility;
 pub use volatility_ratio::VolatilityRatio;
 pub use volty_stop::VoltyStop;
+pub use volume_bars::{VolumeBar, VolumeBars};
 pub use volume_by_time_profile::{VolumeByTimeProfile, VolumeByTimeProfileOutput};
 pub use volume_oscillator::VolumeOscillator;
 pub use volume_profile::{VolumeProfile, VolumeProfileOutput};
@@ -1573,7 +1587,18 @@ pub const FAMILIES: &[(&str, &[&str])] = &[
     ),
     (
         "Alt-Chart Bars",
-        &["RenkoBars", "KagiBars", "PointAndFigureBars"],
+        &[
+            "RenkoBars",
+            "KagiBars",
+            "PointAndFigureBars",
+            "RangeBars",
+            "TickBars",
+            "VolumeBars",
+            "DollarBars",
+            "ImbalanceBars",
+            "RunBars",
+            "ThreeLineBreakBars",
+        ],
     ),
     (
         "Market Breadth",
@@ -1681,6 +1706,6 @@ mod family_tests {
         // the actual indicator count is the early-warning signal that an
         // indicator was added without being assigned a family.
         let total: usize = FAMILIES.iter().map(|(_, ns)| ns.len()).sum();
-        assert_eq!(total, 507, "FAMILIES total drifted from indicator count");
+        assert_eq!(total, 514, "FAMILIES total drifted from indicator count");
     }
 }
