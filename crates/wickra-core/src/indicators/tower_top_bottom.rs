@@ -195,6 +195,19 @@ mod tests {
     }
 
     #[test]
+    fn zero_range_bar_has_zero_body_fraction() {
+        // A flat bar (high == low) exercises the zero-range body-fraction branch;
+        // it counts as a small "pause" bar, so tall-flat-tall still reverses.
+        fn flat(mid: f64) -> Candle {
+            Candle::new_unchecked(mid, mid, mid, mid, 0.0, 0)
+        }
+        let mut t = TowerTopBottom::new();
+        t.update(tall(100.0, 110.0));
+        t.update(flat(110.0));
+        assert_eq!(t.update(tall(110.0, 100.0)), Some(-1.0));
+    }
+
+    #[test]
     fn batch_equals_streaming() {
         let candles: Vec<Candle> = (0..30)
             .map(|i| match i % 3 {
