@@ -190,6 +190,8 @@ typedef struct CyberneticCycle CyberneticCycle;
 
 typedef struct Cypher Cypher;
 
+typedef struct DayOfWeekProfile DayOfWeekProfile;
+
 typedef struct Decycler Decycler;
 
 typedef struct DecyclerOscillator DecyclerOscillator;
@@ -413,6 +415,8 @@ typedef struct InstantaneousTrendline InstantaneousTrendline;
 typedef struct IntradayIntensity IntradayIntensity;
 
 typedef struct IntradayMomentumIndex IntradayMomentumIndex;
+
+typedef struct IntradayVolatilityProfile IntradayVolatilityProfile;
 
 typedef struct InverseFisherTransform InverseFisherTransform;
 
@@ -876,7 +880,11 @@ typedef struct Tii Tii;
 
 typedef struct TimeBasedStop TimeBasedStop;
 
+typedef struct TimeOfDayReturnProfile TimeOfDayReturnProfile;
+
 typedef struct TowerTopBottom TowerTopBottom;
+
+typedef struct TpoProfile TpoProfile;
 
 typedef struct TradeImbalance TradeImbalance;
 
@@ -966,9 +974,13 @@ typedef struct VoltyStop VoltyStop;
 
 typedef struct VolumeBars VolumeBars;
 
+typedef struct VolumeByTimeProfile VolumeByTimeProfile;
+
 typedef struct VolumeOscillator VolumeOscillator;
 
 typedef struct VolumePriceTrend VolumePriceTrend;
+
+typedef struct VolumeProfile VolumeProfile;
 
 typedef struct VolumeRsi VolumeRsi;
 
@@ -1569,6 +1581,16 @@ typedef struct WickraZigZagOutput {
     double swing;
     double direction;
 } WickraZigZagOutput;
+
+typedef struct WickraTpoProfileOutputScalars {
+    double price_low;
+    double price_high;
+} WickraTpoProfileOutputScalars;
+
+typedef struct WickraVolumeProfileOutputScalars {
+    double price_low;
+    double price_high;
+} WickraVolumeProfileOutputScalars;
 
 typedef struct WickraDollarBar {
     double open;
@@ -10326,6 +10348,107 @@ bool wickra_zig_zag_update(struct ZigZag *handle,
 void wickra_zig_zag_reset(struct ZigZag *handle);
 
 void wickra_zig_zag_free(struct ZigZag *handle);
+
+struct DayOfWeekProfile *wickra_day_of_week_profile_new(int32_t utc_offset_minutes);
+
+intptr_t wickra_day_of_week_profile_update(struct DayOfWeekProfile *handle,
+                                           double open,
+                                           double high,
+                                           double low,
+                                           double close,
+                                           double volume,
+                                           int64_t timestamp,
+                                           double *values,
+                                           uintptr_t cap);
+
+void wickra_day_of_week_profile_reset(struct DayOfWeekProfile *handle);
+
+void wickra_day_of_week_profile_free(struct DayOfWeekProfile *handle);
+
+struct IntradayVolatilityProfile *wickra_intraday_volatility_profile_new(uintptr_t buckets,
+                                                                         int32_t utc_offset_minutes);
+
+intptr_t wickra_intraday_volatility_profile_update(struct IntradayVolatilityProfile *handle,
+                                                   double open,
+                                                   double high,
+                                                   double low,
+                                                   double close,
+                                                   double volume,
+                                                   int64_t timestamp,
+                                                   double *values,
+                                                   uintptr_t cap);
+
+void wickra_intraday_volatility_profile_reset(struct IntradayVolatilityProfile *handle);
+
+void wickra_intraday_volatility_profile_free(struct IntradayVolatilityProfile *handle);
+
+struct TimeOfDayReturnProfile *wickra_time_of_day_return_profile_new(uintptr_t buckets,
+                                                                     int32_t utc_offset_minutes);
+
+intptr_t wickra_time_of_day_return_profile_update(struct TimeOfDayReturnProfile *handle,
+                                                  double open,
+                                                  double high,
+                                                  double low,
+                                                  double close,
+                                                  double volume,
+                                                  int64_t timestamp,
+                                                  double *values,
+                                                  uintptr_t cap);
+
+void wickra_time_of_day_return_profile_reset(struct TimeOfDayReturnProfile *handle);
+
+void wickra_time_of_day_return_profile_free(struct TimeOfDayReturnProfile *handle);
+
+struct TpoProfile *wickra_tpo_profile_new(uintptr_t period, uintptr_t bin_count);
+
+intptr_t wickra_tpo_profile_update(struct TpoProfile *handle,
+                                   double open,
+                                   double high,
+                                   double low,
+                                   double close,
+                                   double volume,
+                                   int64_t timestamp,
+                                   struct WickraTpoProfileOutputScalars *scalars,
+                                   double *values,
+                                   uintptr_t cap);
+
+void wickra_tpo_profile_reset(struct TpoProfile *handle);
+
+void wickra_tpo_profile_free(struct TpoProfile *handle);
+
+struct VolumeByTimeProfile *wickra_volume_by_time_profile_new(uintptr_t buckets,
+                                                              int32_t utc_offset_minutes);
+
+intptr_t wickra_volume_by_time_profile_update(struct VolumeByTimeProfile *handle,
+                                              double open,
+                                              double high,
+                                              double low,
+                                              double close,
+                                              double volume,
+                                              int64_t timestamp,
+                                              double *values,
+                                              uintptr_t cap);
+
+void wickra_volume_by_time_profile_reset(struct VolumeByTimeProfile *handle);
+
+void wickra_volume_by_time_profile_free(struct VolumeByTimeProfile *handle);
+
+struct VolumeProfile *wickra_volume_profile_new(uintptr_t period, uintptr_t bin_count);
+
+intptr_t wickra_volume_profile_update(struct VolumeProfile *handle,
+                                      double open,
+                                      double high,
+                                      double low,
+                                      double close,
+                                      double volume,
+                                      int64_t timestamp,
+                                      struct WickraVolumeProfileOutputScalars *scalars,
+                                      double *values,
+                                      uintptr_t cap);
+
+void wickra_volume_profile_reset(struct VolumeProfile *handle);
+
+void wickra_volume_profile_free(struct VolumeProfile *handle);
 
 struct DollarBars *wickra_dollar_bars_new(double dollar_per_bar);
 

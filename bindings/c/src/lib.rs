@@ -34,16 +34,16 @@ use wickra_core::{
     Cmo, CoefficientOfVariation, Cointegration, CommonSenseRatio, CompositeProfile,
     ConcealingBabySwallow, ConditionalValueAtRisk, ConnorsRsi, Coppock, CorrelationTrendIndicator,
     Counterattack, Crab, CrossSection, CumulativeVolumeDelta, CumulativeVolumeIndex, CupAndHandle,
-    CyberneticCycle, Cypher, Decycler, DecyclerOscillator, Dema, DemandIndex, DemarkPivots,
-    DepthSlope, DerivativeOscillator, DerivativesTick, DetrendedStdDev, DisparityIndex,
-    DistanceSsd, Doji, DojiStar, DollarBars, Donchian, DonchianStop, DoubleBollinger,
-    DoubleTopBottom, DownsideGapThreeMethods, Dpo, DragonflyDoji, DrawdownDuration, DumplingTop,
-    Dx, DynamicMomentumIndex, EaseOfMovement, EffectiveSpread, EhlersStochastic, Ehma,
-    ElderImpulse, ElderRay, ElderSafeZone, Ema, EmpiricalModeDecomposition, Engulfing, Equivolume,
-    EstimatedLeverageRatio, EvenBetterSinewave, EveningDojiStar, Evwma, EwmaVolatility, Expectancy,
-    FallingThreeMethods, Fama, FibArcs, FibChannel, FibConfluence, FibExtension, FibFan,
-    FibProjection, FibRetracement, FibTimeZones, FibonacciPivots, FisherRsi, FisherTransform,
-    FlagPennant, ForceIndex, FractalChaosBands, Frama, FryPanBottom, FundingBasis,
+    CyberneticCycle, Cypher, DayOfWeekProfile, Decycler, DecyclerOscillator, Dema, DemandIndex,
+    DemarkPivots, DepthSlope, DerivativeOscillator, DerivativesTick, DetrendedStdDev,
+    DisparityIndex, DistanceSsd, Doji, DojiStar, DollarBars, Donchian, DonchianStop,
+    DoubleBollinger, DoubleTopBottom, DownsideGapThreeMethods, Dpo, DragonflyDoji,
+    DrawdownDuration, DumplingTop, Dx, DynamicMomentumIndex, EaseOfMovement, EffectiveSpread,
+    EhlersStochastic, Ehma, ElderImpulse, ElderRay, ElderSafeZone, Ema, EmpiricalModeDecomposition,
+    Engulfing, Equivolume, EstimatedLeverageRatio, EvenBetterSinewave, EveningDojiStar, Evwma,
+    EwmaVolatility, Expectancy, FallingThreeMethods, Fama, FibArcs, FibChannel, FibConfluence,
+    FibExtension, FibFan, FibProjection, FibRetracement, FibTimeZones, FibonacciPivots, FisherRsi,
+    FisherTransform, FlagPennant, ForceIndex, FractalChaosBands, Frama, FryPanBottom, FundingBasis,
     FundingImpliedApr, FundingRate, FundingRateMean, FundingRateZScore, GainLossRatio,
     GainToPainRatio, GapSideBySideWhite, Garch11, GarmanKlassVolatility, Gartley, GatorOscillator,
     GeneralizedDema, GeometricMa, GoldenPocket, GrangerCausality, GravestoneDoji, Hammer,
@@ -53,12 +53,12 @@ use wickra_core::{
     HoltWinters, HomingPigeon, HtDcPhase, HtPhasor, HtTrendMode, HurstChannel, HurstExponent,
     Ichimoku, IdenticalThreeCrows, ImbalanceBars, InNeck, Indicator, Inertia, InformationRatio,
     InitialBalance, InstantaneousTrendline, IntradayIntensity, IntradayMomentumIndex,
-    InverseFisherTransform, InvertedHammer, JarqueBera, Jma, JumpIndicator, KRatio, KagiBars,
-    KalmanHedgeRatio, Kama, KaseDevStop, KasePermissionStochastic, KellyCriterion, Keltner,
-    KendallTau, Kicking, KickingByLength, Kst, Kurtosis, Kvo, KylesLambda, LadderBottom,
-    LaguerreRsi, LeadLagCrossCorrelation, Level, LinRegAngle, LinRegChannel, LinRegIntercept,
-    LinRegSlope, LinearRegression, LiquidationFeatures, LogReturn, LongLeggedDoji, LongLine,
-    LongShortRatio, M2Measure, MaEnvelope, MacdFix, MacdHistogram, MacdIndicator, Mama,
+    IntradayVolatilityProfile, InverseFisherTransform, InvertedHammer, JarqueBera, Jma,
+    JumpIndicator, KRatio, KagiBars, KalmanHedgeRatio, Kama, KaseDevStop, KasePermissionStochastic,
+    KellyCriterion, Keltner, KendallTau, Kicking, KickingByLength, Kst, Kurtosis, Kvo, KylesLambda,
+    LadderBottom, LaguerreRsi, LeadLagCrossCorrelation, Level, LinRegAngle, LinRegChannel,
+    LinRegIntercept, LinRegSlope, LinearRegression, LiquidationFeatures, LogReturn, LongLeggedDoji,
+    LongLine, LongShortRatio, M2Measure, MaEnvelope, MacdFix, MacdHistogram, MacdIndicator, Mama,
     MarketFacilitationIndex, MartinRatio, Marubozu, MassIndex, MatHold, MatchingLow, MaxDrawdown,
     McClellanOscillator, McClellanSummationIndex, McGinleyDynamic, MedianAbsoluteDeviation,
     MedianChannel, MedianMa, MedianPrice, Member, Mfi, Microprice, MidPoint, MidPrice, MinusDi,
@@ -88,18 +88,19 @@ use wickra_core::{
     TdPropulsion, TdRangeProjection, TdRei, TdRiskLevel, TdSequential, TdSetup, TdTrap, Tema,
     TermStructureBasis, ThreeDrives, ThreeInside, ThreeLineBreak, ThreeLineBreakBars,
     ThreeLineStrike, ThreeOutside, ThreeSoldiersOrCrows, ThreeStarsInSouth, Thrusting, TickBars,
-    TickIndex, Tii, TimeBasedStop, TowerTopBottom, Trade, TradeImbalance, TradeQuote,
-    TradeSignAutocorrelation, TradeVolumeIndex, TrendLabel, TrendStrengthIndex, Trendflex,
-    TreynorRatio, Triangle, Trima, Trin, TripleTopBottom, Tristar, Trix, TrueRange, Tsf,
-    TsfOscillator, Tsi, Tsv, TtmSqueeze, TtmTrend, TurnOfMonth, Tweezer, TwiggsMoneyFlow, TwoCrows,
-    TypicalPrice, UlcerIndex, UltimateOscillator, UniqueThreeRiver, UniversalOscillator,
-    UpDownVolumeRatio, UpsideGapThreeMethods, UpsideGapTwoCrows, UpsidePotentialRatio, ValueArea,
-    ValueAtRisk, Variance, VarianceRatio, VerticalHorizontalFilter, Vidya, VolatilityCone,
-    VolatilityOfVolatility, VolatilityRatio, VoltyStop, VolumeBars, VolumeOscillator,
-    VolumePriceTrend, VolumeRsi, VolumeWeightedMacd, VolumeWeightedSr, Vortex, Vpin, Vwap,
-    VwapStdDevBands, Vwma, Vzo, Wad, WavePm, WaveTrend, Wedge, WeightedClose, WickRatio,
-    WilliamsFractals, WilliamsR, WinRate, Wma, WoodiePivots, YangZhangVolatility, YoyoExit, ZScore,
-    ZeroLagMacd, ZigZag, Zlema, T3,
+    TickIndex, Tii, TimeBasedStop, TimeOfDayReturnProfile, TowerTopBottom, TpoProfile, Trade,
+    TradeImbalance, TradeQuote, TradeSignAutocorrelation, TradeVolumeIndex, TrendLabel,
+    TrendStrengthIndex, Trendflex, TreynorRatio, Triangle, Trima, Trin, TripleTopBottom, Tristar,
+    Trix, TrueRange, Tsf, TsfOscillator, Tsi, Tsv, TtmSqueeze, TtmTrend, TurnOfMonth, Tweezer,
+    TwiggsMoneyFlow, TwoCrows, TypicalPrice, UlcerIndex, UltimateOscillator, UniqueThreeRiver,
+    UniversalOscillator, UpDownVolumeRatio, UpsideGapThreeMethods, UpsideGapTwoCrows,
+    UpsidePotentialRatio, ValueArea, ValueAtRisk, Variance, VarianceRatio,
+    VerticalHorizontalFilter, Vidya, VolatilityCone, VolatilityOfVolatility, VolatilityRatio,
+    VoltyStop, VolumeBars, VolumeByTimeProfile, VolumeOscillator, VolumePriceTrend, VolumeProfile,
+    VolumeRsi, VolumeWeightedMacd, VolumeWeightedSr, Vortex, Vpin, Vwap, VwapStdDevBands, Vwma,
+    Vzo, Wad, WavePm, WaveTrend, Wedge, WeightedClose, WickRatio, WilliamsFractals, WilliamsR,
+    WinRate, Wma, WoodiePivots, YangZhangVolatility, YoyoExit, ZScore, ZeroLagMacd, ZigZag, Zlema,
+    T3,
 };
 
 // ===== Scalar indicators (f64 -> f64) =====
@@ -42732,6 +42733,490 @@ pub unsafe extern "C" fn wickra_zig_zag_reset(handle: *mut ZigZag) {
 /// `handle` must have been returned by `wickra_zig_zag_new` and not previously freed, or `NULL`.
 #[no_mangle]
 pub unsafe extern "C" fn wickra_zig_zag_free(handle: *mut ZigZag) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+// ===== Vec<f64>-output indicators (profiles; caller buffer + length return) =====
+
+/// Scalar fields of `TpoProfileOutput` (its `Vec` payload is delivered separately).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraTpoProfileOutputScalars {
+    pub price_low: f64,
+    pub price_high: f64,
+}
+
+/// Scalar fields of `VolumeProfileOutput` (its `Vec` payload is delivered separately).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraVolumeProfileOutputScalars {
+    pub price_low: f64,
+    pub price_high: f64,
+}
+
+/// Create a `DayOfWeekProfile` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_day_of_week_profile_free`.
+#[no_mangle]
+pub extern "C" fn wickra_day_of_week_profile_new(utc_offset_minutes: i32) -> *mut DayOfWeekProfile {
+    Box::into_raw(Box::new(DayOfWeekProfile::new(utc_offset_minutes)))
+}
+
+/// Feed one input. On warmup / `NULL` handle / invalid input returns `-1`. Otherwise
+/// returns the length of the `bins` payload and writes up to `cap` of its values
+/// into `values` (enlarge `cap` if the return exceeds it); the scalar fields are written
+/// to `*scalars` when non-`NULL`.
+///
+/// # Safety
+/// `handle` (from `wickra_day_of_week_profile_new`, not freed), `scalars` and `values` must be valid
+/// or `NULL`; when non-`NULL`, `values` must cover `cap` `double`s.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_day_of_week_profile_update(
+    handle: *mut DayOfWeekProfile,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    values: *mut f64,
+    cap: usize,
+) -> isize {
+    let Some(ind) = handle.as_mut() else {
+        return -1;
+    };
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return -1;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            if !values.is_null() {
+                let slots = slice::from_raw_parts_mut(values, cap);
+                for (slot, &v) in slots.iter_mut().zip(&out_val.bins) {
+                    *slot = v;
+                }
+            }
+            isize::try_from(out_val.bins.len()).unwrap_or(isize::MAX)
+        }
+        None => -1,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_day_of_week_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_day_of_week_profile_reset(handle: *mut DayOfWeekProfile) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_day_of_week_profile_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_day_of_week_profile_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_day_of_week_profile_free(handle: *mut DayOfWeekProfile) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `IntradayVolatilityProfile` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_intraday_volatility_profile_free`.
+#[no_mangle]
+pub extern "C" fn wickra_intraday_volatility_profile_new(
+    buckets: usize,
+    utc_offset_minutes: i32,
+) -> *mut IntradayVolatilityProfile {
+    match IntradayVolatilityProfile::new(buckets, utc_offset_minutes) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input. On warmup / `NULL` handle / invalid input returns `-1`. Otherwise
+/// returns the length of the `bins` payload and writes up to `cap` of its values
+/// into `values` (enlarge `cap` if the return exceeds it); the scalar fields are written
+/// to `*scalars` when non-`NULL`.
+///
+/// # Safety
+/// `handle` (from `wickra_intraday_volatility_profile_new`, not freed), `scalars` and `values` must be valid
+/// or `NULL`; when non-`NULL`, `values` must cover `cap` `double`s.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_intraday_volatility_profile_update(
+    handle: *mut IntradayVolatilityProfile,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    values: *mut f64,
+    cap: usize,
+) -> isize {
+    let Some(ind) = handle.as_mut() else {
+        return -1;
+    };
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return -1;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            if !values.is_null() {
+                let slots = slice::from_raw_parts_mut(values, cap);
+                for (slot, &v) in slots.iter_mut().zip(&out_val.bins) {
+                    *slot = v;
+                }
+            }
+            isize::try_from(out_val.bins.len()).unwrap_or(isize::MAX)
+        }
+        None => -1,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_intraday_volatility_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_intraday_volatility_profile_reset(
+    handle: *mut IntradayVolatilityProfile,
+) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_intraday_volatility_profile_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_intraday_volatility_profile_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_intraday_volatility_profile_free(
+    handle: *mut IntradayVolatilityProfile,
+) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `TimeOfDayReturnProfile` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_time_of_day_return_profile_free`.
+#[no_mangle]
+pub extern "C" fn wickra_time_of_day_return_profile_new(
+    buckets: usize,
+    utc_offset_minutes: i32,
+) -> *mut TimeOfDayReturnProfile {
+    match TimeOfDayReturnProfile::new(buckets, utc_offset_minutes) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input. On warmup / `NULL` handle / invalid input returns `-1`. Otherwise
+/// returns the length of the `bins` payload and writes up to `cap` of its values
+/// into `values` (enlarge `cap` if the return exceeds it); the scalar fields are written
+/// to `*scalars` when non-`NULL`.
+///
+/// # Safety
+/// `handle` (from `wickra_time_of_day_return_profile_new`, not freed), `scalars` and `values` must be valid
+/// or `NULL`; when non-`NULL`, `values` must cover `cap` `double`s.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_time_of_day_return_profile_update(
+    handle: *mut TimeOfDayReturnProfile,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    values: *mut f64,
+    cap: usize,
+) -> isize {
+    let Some(ind) = handle.as_mut() else {
+        return -1;
+    };
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return -1;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            if !values.is_null() {
+                let slots = slice::from_raw_parts_mut(values, cap);
+                for (slot, &v) in slots.iter_mut().zip(&out_val.bins) {
+                    *slot = v;
+                }
+            }
+            isize::try_from(out_val.bins.len()).unwrap_or(isize::MAX)
+        }
+        None => -1,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_time_of_day_return_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_time_of_day_return_profile_reset(
+    handle: *mut TimeOfDayReturnProfile,
+) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_time_of_day_return_profile_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_time_of_day_return_profile_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_time_of_day_return_profile_free(
+    handle: *mut TimeOfDayReturnProfile,
+) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `TpoProfile` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_tpo_profile_free`.
+#[no_mangle]
+pub extern "C" fn wickra_tpo_profile_new(period: usize, bin_count: usize) -> *mut TpoProfile {
+    match TpoProfile::new(period, bin_count) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input. On warmup / `NULL` handle / invalid input returns `-1`. Otherwise
+/// returns the length of the `counts` payload and writes up to `cap` of its values
+/// into `values` (enlarge `cap` if the return exceeds it); the scalar fields are written
+/// to `*scalars` when non-`NULL`.
+///
+/// # Safety
+/// `handle` (from `wickra_tpo_profile_new`, not freed), `scalars` and `values` must be valid
+/// or `NULL`; when non-`NULL`, `values` must cover `cap` `double`s.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tpo_profile_update(
+    handle: *mut TpoProfile,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    scalars: *mut WickraTpoProfileOutputScalars,
+    values: *mut f64,
+    cap: usize,
+) -> isize {
+    let Some(ind) = handle.as_mut() else {
+        return -1;
+    };
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return -1;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            if !scalars.is_null() {
+                *scalars = WickraTpoProfileOutputScalars {
+                    price_low: out_val.price_low,
+                    price_high: out_val.price_high,
+                };
+            }
+            if !values.is_null() {
+                let slots = slice::from_raw_parts_mut(values, cap);
+                for (slot, &v) in slots.iter_mut().zip(&out_val.counts) {
+                    *slot = v;
+                }
+            }
+            isize::try_from(out_val.counts.len()).unwrap_or(isize::MAX)
+        }
+        None => -1,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tpo_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tpo_profile_reset(handle: *mut TpoProfile) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_tpo_profile_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_tpo_profile_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tpo_profile_free(handle: *mut TpoProfile) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `VolumeByTimeProfile` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_volume_by_time_profile_free`.
+#[no_mangle]
+pub extern "C" fn wickra_volume_by_time_profile_new(
+    buckets: usize,
+    utc_offset_minutes: i32,
+) -> *mut VolumeByTimeProfile {
+    match VolumeByTimeProfile::new(buckets, utc_offset_minutes) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input. On warmup / `NULL` handle / invalid input returns `-1`. Otherwise
+/// returns the length of the `bins` payload and writes up to `cap` of its values
+/// into `values` (enlarge `cap` if the return exceeds it); the scalar fields are written
+/// to `*scalars` when non-`NULL`.
+///
+/// # Safety
+/// `handle` (from `wickra_volume_by_time_profile_new`, not freed), `scalars` and `values` must be valid
+/// or `NULL`; when non-`NULL`, `values` must cover `cap` `double`s.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_by_time_profile_update(
+    handle: *mut VolumeByTimeProfile,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    values: *mut f64,
+    cap: usize,
+) -> isize {
+    let Some(ind) = handle.as_mut() else {
+        return -1;
+    };
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return -1;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            if !values.is_null() {
+                let slots = slice::from_raw_parts_mut(values, cap);
+                for (slot, &v) in slots.iter_mut().zip(&out_val.bins) {
+                    *slot = v;
+                }
+            }
+            isize::try_from(out_val.bins.len()).unwrap_or(isize::MAX)
+        }
+        None => -1,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_by_time_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_by_time_profile_reset(handle: *mut VolumeByTimeProfile) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_volume_by_time_profile_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_volume_by_time_profile_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_by_time_profile_free(handle: *mut VolumeByTimeProfile) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `VolumeProfile` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_volume_profile_free`.
+#[no_mangle]
+pub extern "C" fn wickra_volume_profile_new(period: usize, bin_count: usize) -> *mut VolumeProfile {
+    match VolumeProfile::new(period, bin_count) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input. On warmup / `NULL` handle / invalid input returns `-1`. Otherwise
+/// returns the length of the `bins` payload and writes up to `cap` of its values
+/// into `values` (enlarge `cap` if the return exceeds it); the scalar fields are written
+/// to `*scalars` when non-`NULL`.
+///
+/// # Safety
+/// `handle` (from `wickra_volume_profile_new`, not freed), `scalars` and `values` must be valid
+/// or `NULL`; when non-`NULL`, `values` must cover `cap` `double`s.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_profile_update(
+    handle: *mut VolumeProfile,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    scalars: *mut WickraVolumeProfileOutputScalars,
+    values: *mut f64,
+    cap: usize,
+) -> isize {
+    let Some(ind) = handle.as_mut() else {
+        return -1;
+    };
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return -1;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            if !scalars.is_null() {
+                *scalars = WickraVolumeProfileOutputScalars {
+                    price_low: out_val.price_low,
+                    price_high: out_val.price_high,
+                };
+            }
+            if !values.is_null() {
+                let slots = slice::from_raw_parts_mut(values, cap);
+                for (slot, &v) in slots.iter_mut().zip(&out_val.bins) {
+                    *slot = v;
+                }
+            }
+            isize::try_from(out_val.bins.len()).unwrap_or(isize::MAX)
+        }
+        None => -1,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_profile_reset(handle: *mut VolumeProfile) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_volume_profile_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_volume_profile_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_profile_free(handle: *mut VolumeProfile) {
     if !handle.is_null() {
         drop(Box::from_raw(handle));
     }
