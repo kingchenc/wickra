@@ -1,6 +1,6 @@
 {
   "name": "wickra",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Streaming-first technical indicators: incremental, fast, install-free. Node bindings powered by Rust.",
   "author": "kingchenc <support@wickra.org>",
   "main": "index.js",
@@ -47,12 +47,12 @@
     "node": ">= 18"
   },
   "optionalDependencies": {
-    "wickra-linux-x64-gnu": "0.7.1",
-    "wickra-linux-arm64-gnu": "0.7.1",
-    "wickra-darwin-x64": "0.7.1",
-    "wickra-darwin-arm64": "0.7.1",
-    "wickra-win32-x64-msvc": "0.7.1",
-    "wickra-win32-arm64-msvc": "0.7.1"
+    "wickra-linux-x64-gnu": "0.7.2",
+    "wickra-linux-arm64-gnu": "0.7.2",
+    "wickra-darwin-x64": "0.7.2",
+    "wickra-darwin-arm64": "0.7.2",
+    "wickra-win32-x64-msvc": "0.7.2",
+    "wickra-win32-arm64-msvc": "0.7.2"
   },
   "scripts": {
     "build": "napi build --platform --release",

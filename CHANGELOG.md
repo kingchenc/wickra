@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.7.2] - 2026-06-08
 - **Composite Profile** — multi-session composite volume profile exposing POC, VAH and VAL (`CompositeProfile`).
 - **High/Low Volume Nodes** — highest- and lowest-volume price nodes in the profile (`HighLowVolumeNodes`).
 - **Profile Shape** — profile shape classification (b/P/D normal) as a numeric code (`ProfileShape`).
@@ -1394,7 +1396,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.7.1...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.7.2...HEAD
+[0.7.2]: https://github.com/wickra-lib/wickra/compare/v0.7.1...v0.7.2
 [0.7.1]: https://github.com/wickra-lib/wickra/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/wickra-lib/wickra/compare/v0.6.9...v0.7.0
 [0.6.9]: https://github.com/wickra-lib/wickra/compare/v0.6.8...v0.6.9
