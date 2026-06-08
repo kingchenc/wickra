@@ -18140,6 +18140,349 @@ impl PyOpeningRange {
     }
 }
 
+// Naked POC: most recent untouched point-of-control level (Candle -> f64).
+#[pyclass(name = "NakedPoc", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyNakedPoc {
+    inner: wc::NakedPoc,
+}
+
+#[pymethods]
+impl PyNakedPoc {
+    #[new]
+    #[pyo3(signature = (session_len=20, bin_count=24))]
+    fn new(session_len: usize, bin_count: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::NakedPoc::new(session_len, bin_count).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over numpy high, low, close, volume arrays (all 1-D, equal length).
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        close: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let c = close
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != c.len() || c.len() != v.len() {
+            return Err(PyValueError::new_err(
+                "high, low, close, volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(c.len());
+        for i in 0..c.len() {
+            let candle = wc::Candle::new(c[i], h[i], l[i], c[i], v[i], 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (s, b) = self.inner.params();
+        format!("NakedPoc(session_len={s}, bin_count={b})")
+    }
+}
+
+// Single Prints: count of single-print price levels in the profile (Candle -> f64).
+#[pyclass(name = "SinglePrints", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PySinglePrints {
+    inner: wc::SinglePrints,
+}
+
+#[pymethods]
+impl PySinglePrints {
+    #[new]
+    #[pyo3(signature = (period=20, bin_count=24))]
+    fn new(period: usize, bin_count: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::SinglePrints::new(period, bin_count).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over numpy high, low arrays (1-D, equal length).
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() {
+            return Err(PyValueError::new_err("high and low must be equal length"));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let mid = f64::midpoint(h[i], l[i]);
+            let candle = wc::Candle::new(mid, h[i], l[i], mid, 0.0, 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (p, b) = self.inner.params();
+        format!("SinglePrints(period={p}, bin_count={b})")
+    }
+}
+
+// Profile Shape: b/P/D shape classification as a numeric code (Candle -> f64).
+#[pyclass(name = "ProfileShape", module = "wickra._wickra", skip_from_py_object)]
+#[derive(Clone)]
+struct PyProfileShape {
+    inner: wc::ProfileShape,
+}
+
+#[pymethods]
+impl PyProfileShape {
+    #[new]
+    #[pyo3(signature = (period=20, bin_count=24))]
+    fn new(period: usize, bin_count: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::ProfileShape::new(period, bin_count).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<f64>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c))
+    }
+    /// Batch over numpy high, low, volume arrays (1-D, equal length).
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray1<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != v.len() {
+            return Err(PyValueError::new_err(
+                "high, low, volume must be equal length",
+            ));
+        }
+        let mut out = Vec::with_capacity(h.len());
+        for i in 0..h.len() {
+            let mid = f64::midpoint(h[i], l[i]);
+            let candle = wc::Candle::new(mid, h[i], l[i], mid, v[i], 0).map_err(map_err)?;
+            out.push(self.inner.update(candle).unwrap_or(f64::NAN));
+        }
+        Ok(out.into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (p, b) = self.inner.params();
+        format!("ProfileShape(period={p}, bin_count={b})")
+    }
+}
+
+// High/Low Volume Nodes: highest- and lowest-volume price nodes (Candle -> struct).
+#[pyclass(
+    name = "HighLowVolumeNodes",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyHighLowVolumeNodes {
+    inner: wc::HighLowVolumeNodes,
+}
+
+#[pymethods]
+impl PyHighLowVolumeNodes {
+    #[new]
+    #[pyo3(signature = (period=20, bin_count=24))]
+    fn new(period: usize, bin_count: usize) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::HighLowVolumeNodes::new(period, bin_count).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.hvn, o.lvn)))
+    }
+    /// Batch over numpy high, low, volume. Returns shape `(n, 2)` `[hvn, lvn]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != v.len() {
+            return Err(PyValueError::new_err(
+                "high, low, volume must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 2];
+        for i in 0..n {
+            let mid = f64::midpoint(h[i], l[i]);
+            let candle = wc::Candle::new(mid, h[i], l[i], mid, v[i], 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 2] = o.hvn;
+                out[i * 2 + 1] = o.lvn;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 2), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (p, b) = self.inner.params();
+        format!("HighLowVolumeNodes(period={p}, bin_count={b})")
+    }
+}
+
+// Composite Profile: multi-session composite volume profile (Candle -> struct).
+#[pyclass(
+    name = "CompositeProfile",
+    module = "wickra._wickra",
+    skip_from_py_object
+)]
+#[derive(Clone)]
+struct PyCompositeProfile {
+    inner: wc::CompositeProfile,
+}
+
+#[pymethods]
+impl PyCompositeProfile {
+    #[new]
+    #[pyo3(signature = (period=20, bin_count=24, value_area_pct=0.70))]
+    fn new(period: usize, bin_count: usize, value_area_pct: f64) -> PyResult<Self> {
+        Ok(Self {
+            inner: wc::CompositeProfile::new(period, bin_count, value_area_pct).map_err(map_err)?,
+        })
+    }
+    fn update(&mut self, candle: &Bound<'_, PyAny>) -> PyResult<Option<(f64, f64, f64)>> {
+        let c = extract_candle(candle)?;
+        Ok(self.inner.update(c).map(|o| (o.poc, o.vah, o.val)))
+    }
+    /// Batch over numpy high, low, volume. Returns shape `(n, 3)` `[poc, vah, val]`.
+    fn batch<'py>(
+        &mut self,
+        py: Python<'py>,
+        high: PyReadonlyArray1<'py, f64>,
+        low: PyReadonlyArray1<'py, f64>,
+        volume: PyReadonlyArray1<'py, f64>,
+    ) -> PyResult<Bound<'py, PyArray2<f64>>> {
+        let h = high
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let l = low
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        let v = volume
+            .as_slice()
+            .map_err(|_| PyValueError::new_err(NON_CONTIGUOUS))?;
+        if h.len() != l.len() || l.len() != v.len() {
+            return Err(PyValueError::new_err(
+                "high, low, volume must be equal length",
+            ));
+        }
+        let n = h.len();
+        let mut out = vec![f64::NAN; n * 3];
+        for i in 0..n {
+            let mid = f64::midpoint(h[i], l[i]);
+            let candle = wc::Candle::new(mid, h[i], l[i], mid, v[i], 0).map_err(map_err)?;
+            if let Some(o) = self.inner.update(candle) {
+                out[i * 3] = o.poc;
+                out[i * 3 + 1] = o.vah;
+                out[i * 3 + 2] = o.val;
+            }
+        }
+        Ok(numpy::ndarray::Array2::from_shape_vec((n, 3), out)
+            .expect("shape consistent")
+            .into_pyarray(py))
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+    fn is_ready(&self) -> bool {
+        self.inner.is_ready()
+    }
+    fn warmup_period(&self) -> usize {
+        self.inner.warmup_period()
+    }
+    fn __repr__(&self) -> String {
+        let (p, b, pct) = self.inner.params();
+        format!("CompositeProfile(period={p}, bin_count={b}, value_area_pct={pct})")
+    }
+}
+
 // ============================== Candlestick Patterns ==============================
 //
 // All 15 patterns take Candles and emit a signed f64 signal per bar:
@@ -25272,6 +25615,11 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyPointAndFigureBars>()?;
     m.add_class::<PyInitialBalance>()?;
     m.add_class::<PyOpeningRange>()?;
+    m.add_class::<PyNakedPoc>()?;
+    m.add_class::<PySinglePrints>()?;
+    m.add_class::<PyProfileShape>()?;
+    m.add_class::<PyHighLowVolumeNodes>()?;
+    m.add_class::<PyCompositeProfile>()?;
     // Candlestick patterns.
     m.add_class::<PyDoji>()?;
     m.add_class::<PyHammer>()?;

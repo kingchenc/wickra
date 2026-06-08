@@ -392,6 +392,9 @@ const candleScalar = {
   DumplingTop: { make: () => new wickra.DumplingTop(9), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   NewPriceLines: { make: () => new wickra.NewPriceLines(5), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
   FryPanBottom: { make: () => new wickra.FryPanBottom(9), step: (ind, i) => ind.update(high[i], low[i], close[i]), batch: (ind) => ind.batch(high, low, close) },
+  NakedPoc: { make: () => new wickra.NakedPoc(20, 24), step: (ind, i) => ind.update(high[i], low[i], close[i], volume[i]), batch: (ind) => ind.batch(high, low, close, volume) },
+  SinglePrints: { make: () => new wickra.SinglePrints(20, 24), step: (ind, i) => ind.update(high[i], low[i]), batch: (ind) => ind.batch(high, low) },
+  ProfileShape: { make: () => new wickra.ProfileShape(20, 24), step: (ind, i) => ind.update(high[i], low[i], volume[i]), batch: (ind) => ind.batch(high, low, volume) },
 };
 
 for (const [name, d] of Object.entries(candleScalar)) {
@@ -497,6 +500,8 @@ const multi = {
   SmoothedHeikinAshi: { make: () => new wickra.SmoothedHeikinAshi(5), fields: ['open', 'high', 'low', 'close'], step: (ind, i) => ind.update(open[i], high[i], low[i], close[i]), batch: (ind) => ind.batch(open, high, low, close) },
   Equivolume: { make: () => new wickra.Equivolume(20), fields: ['height', 'width'], step: (ind, i) => ind.update(high[i], low[i], volume[i]), batch: (ind) => ind.batch(high, low, volume) },
   CandleVolume: { make: () => new wickra.CandleVolume(20), fields: ['body', 'width'], step: (ind, i) => ind.update(open[i], close[i], volume[i]), batch: (ind) => ind.batch(open, close, volume) },
+  HighLowVolumeNodes: { make: () => new wickra.HighLowVolumeNodes(20, 24), fields: ['hvn', 'lvn'], step: (ind, i) => ind.update(high[i], low[i], volume[i]), batch: (ind) => ind.batch(high, low, volume) },
+  CompositeProfile: { make: () => new wickra.CompositeProfile(20, 24, 0.7), fields: ['poc', 'vah', 'val'], step: (ind, i) => ind.update(high[i], low[i], volume[i]), batch: (ind) => ind.batch(high, low, volume) },
 };
 
 for (const [name, d] of Object.entries(multi)) {
