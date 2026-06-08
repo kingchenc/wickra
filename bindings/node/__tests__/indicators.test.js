@@ -28,6 +28,15 @@ function num(v) {
 // --- Scalar indicators: update(value) vs batch(prices) ---
 
 const scalarFactories = {
+  M2Measure: () => new wickra.M2Measure(20, 0.0, 0.02),
+  UpsidePotentialRatio: () => new wickra.UpsidePotentialRatio(20, 0.0),
+  GainToPainRatio: () => new wickra.GainToPainRatio(12),
+  CommonSenseRatio: () => new wickra.CommonSenseRatio(20),
+  KRatio: () => new wickra.KRatio(30),
+  TailRatio: () => new wickra.TailRatio(20),
+  MartinRatio: () => new wickra.MartinRatio(14),
+  BurkeRatio: () => new wickra.BurkeRatio(12),
+  SterlingRatio: () => new wickra.SterlingRatio(12),
   AUTOCORRPGRAM: () => new wickra.AUTOCORRPGRAM(10, 48),
   EVENBETTERSINE: () => new wickra.EVENBETTERSINE(40, 10),
   BANDPASS: () => new wickra.BANDPASS(20, 0.3),

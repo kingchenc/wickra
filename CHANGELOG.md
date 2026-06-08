@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- **M2Measure** — M2 measure (Modigliani; Sharpe expressed in benchmark return units) (`M2Measure`).
+- **UpsidePotentialRatio** — Upside Potential Ratio (upside mean over downside deviation) (`UpsidePotentialRatio`).
+- **GainToPainRatio** — Gain-to-Pain Ratio (sum of returns over sum of losses) (`GainToPainRatio`).
+- **CommonSenseRatio** — Common Sense Ratio (tail ratio times gain-to-pain) (`CommonSenseRatio`).
+- **KRatio** — K-Ratio (Kestner; equity-curve slope over its standard error) (`KRatio`).
+- **TailRatio** — Tail Ratio (95th over absolute 5th return percentile) (`TailRatio`).
+- **MartinRatio** — Martin Ratio (Ulcer Performance Index; return over RMS drawdown) (`MartinRatio`).
+- **BurkeRatio** — Burke Ratio (return over root-sum-squared drawdowns) (`BurkeRatio`).
+- **SterlingRatio** — Sterling Ratio (mean return over average drawdown) (`SterlingRatio`).
 
 ## [0.7.2] - 2026-06-08
 - **Composite Profile** — multi-session composite volume profile exposing POC, VAH and VAL (`CompositeProfile`).
