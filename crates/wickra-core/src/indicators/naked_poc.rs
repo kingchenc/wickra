@@ -284,4 +284,35 @@ mod tests {
         let streamed: Vec<_> = candles.iter().map(|x| b.update(*x)).collect();
         assert_eq!(batch, streamed);
     }
+
+    #[test]
+    fn flat_session_reports_price() {
+        // A session with zero high-low span returns the session price directly.
+        let mut n = NakedPoc::new(2, 4).unwrap();
+        n.update(c(50.0, 50.0, 50.0, 10.0));
+        assert_eq!(n.update(c(50.0, 50.0, 50.0, 10.0)), Some(50.0));
+    }
+
+    #[test]
+    fn zero_volume_session_is_handled() {
+        // Zero-volume candles are skipped in the histogram; a POC still emits.
+        let mut n = NakedPoc::new(2, 4).unwrap();
+        n.update(c(60.0, 40.0, 50.0, 0.0));
+        assert!(n.update(c(60.0, 40.0, 50.0, 0.0)).is_some());
+    }
+
+    #[test]
+    fn nearest_of_two_naked_pocs() {
+        // Two untouched POCs at distant prices accumulate; the one nearest the
+        // last close is reported (exercises the min-by comparison).
+        let mut n = NakedPoc::new(2, 4).unwrap();
+        n.update(c(11.0, 9.0, 10.0, 100.0));
+        n.update(c(11.0, 9.0, 10.0, 100.0)); // POC near 10
+        n.update(c(101.0, 99.0, 100.0, 100.0));
+        let v = n.update(c(101.0, 99.0, 100.0, 100.0)).unwrap(); // POC near 100
+        assert!(
+            v > 50.0,
+            "nearest to close 100 should be the upper POC, got {v}"
+        );
+    }
 }

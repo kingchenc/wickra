@@ -190,6 +190,9 @@ fuzz_target!(|data: Vec<f64>| {
     // --- Market Profile (multi-output) ---
     drive(|| CompositeProfile::new(20, 24, 0.7).unwrap(), &candles);
     drive(|| HighLowVolumeNodes::new(20, 24).unwrap(), &candles);
+    drive(|| NakedPoc::new(20, 24).unwrap(), &candles);
+    drive(|| SinglePrints::new(20, 24).unwrap(), &candles);
+    drive(|| ProfileShape::new(20, 24).unwrap(), &candles);
     drive(|| ValueArea::new(20, 50, 0.70).unwrap(), &candles);
     drive(|| VolumeProfile::new(20, 50).unwrap(), &candles);
     drive(|| TpoProfile::new(20, 50).unwrap(), &candles);

@@ -287,4 +287,21 @@ mod tests {
         let streamed: Vec<_> = candles.iter().map(|x| b.update(*x)).collect();
         assert_eq!(batch, streamed);
     }
+
+    #[test]
+    fn flat_window_is_handled() {
+        // Zero high-low span dumps all volume into bin 0 and returns early.
+        let mut h = HighLowVolumeNodes::new(2, 4).unwrap();
+        h.update(c(50.0, 50.0, 10.0));
+        assert!(h.update(c(50.0, 50.0, 10.0)).is_some());
+    }
+
+    #[test]
+    fn zero_volume_window_falls_back() {
+        // All-zero volume leaves no traded bin; the LVN falls back to the HVN.
+        let mut h = HighLowVolumeNodes::new(2, 4).unwrap();
+        h.update(c(60.0, 40.0, 0.0));
+        let out = h.update(c(60.0, 40.0, 0.0)).unwrap();
+        assert_eq!(out.hvn, out.lvn);
+    }
 }

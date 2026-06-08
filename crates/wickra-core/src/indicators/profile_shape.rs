@@ -266,4 +266,20 @@ mod tests {
         let streamed: Vec<_> = candles.iter().map(|x| b.update(*x)).collect();
         assert_eq!(batch, streamed);
     }
+
+    #[test]
+    fn flat_window_is_handled() {
+        // Zero high-low span skips the histogram pass entirely.
+        let mut p = ProfileShape::new(2, 4).unwrap();
+        p.update(c(50.0, 50.0, 10.0));
+        assert!(p.update(c(50.0, 50.0, 10.0)).is_some());
+    }
+
+    #[test]
+    fn zero_volume_window_is_handled() {
+        // Non-flat window of zero-volume candles hits the skip path.
+        let mut p = ProfileShape::new(2, 4).unwrap();
+        p.update(c(60.0, 40.0, 0.0));
+        assert!(p.update(c(60.0, 40.0, 0.0)).is_some());
+    }
 }

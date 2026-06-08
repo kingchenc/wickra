@@ -316,4 +316,32 @@ mod tests {
         let streamed: Vec<_> = candles.iter().map(|x| b.update(*x)).collect();
         assert_eq!(batch, streamed);
     }
+
+    #[test]
+    fn flat_window_collapses_to_price() {
+        // Zero high-low span returns the price for POC, VAH and VAL.
+        let mut cp = CompositeProfile::new(2, 4, 0.7).unwrap();
+        cp.update(c(50.0, 50.0, 10.0));
+        let out = cp.update(c(50.0, 50.0, 10.0)).unwrap();
+        assert_eq!(out.poc, out.vah);
+        assert_eq!(out.poc, out.val);
+    }
+
+    #[test]
+    fn zero_volume_window_is_handled() {
+        // Non-flat window of zero-volume candles hits the skip path.
+        let mut cp = CompositeProfile::new(2, 4, 0.7).unwrap();
+        cp.update(c(60.0, 40.0, 0.0));
+        assert!(cp.update(c(60.0, 40.0, 0.0)).is_some());
+    }
+
+    #[test]
+    fn value_area_expands_below_poc() {
+        // A mid-profile POC with a wide value-area target forces the value area
+        // to expand both above and below the POC bin.
+        let mut cp = CompositeProfile::new(2, 5, 0.7).unwrap();
+        cp.update(c(100.0, 0.0, 100.0)); // thin spread across all five bins
+        let out = cp.update(c(60.0, 40.0, 100.0)).unwrap(); // heavy at the middle bins
+        assert!(out.val <= out.poc && out.poc <= out.vah);
+    }
 }
