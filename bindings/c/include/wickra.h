@@ -107,6 +107,43 @@ typedef struct Abcd Abcd;
 typedef struct AbsoluteBreadthIndex AbsoluteBreadthIndex;
 
 /**
+ * Acceleration Bands (Price Headley): SMA-smoothed bands that widen with each
+ * bar's relative range `(high − low) / (high + low)`.
+ *
+ * ```text
+ * ratio  = (high − low) / (high + low)
+ * raw_up = high · (1 + factor · ratio)
+ * raw_lo = low  · (1 − factor · ratio)
+ * upper  = SMA(raw_up, period)
+ * middle = SMA(close,  period)
+ * lower  = SMA(raw_lo, period)
+ * ```
+ *
+ * Headley's reference parameters are `period = 20`, `factor = 0.001` for
+ * intraday equity markets — the geometric `ratio` term tends to scale on
+ * fractional moves, so the literal `factor` is small. The bands compress in
+ * quiet markets and flare on impulsive bars, making them a momentum-biased
+ * alternative to the volatility-driven Bollinger or Keltner envelopes.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{AccelerationBands, Candle, Indicator};
+ *
+ * let mut indicator = AccelerationBands::new(20, 0.001).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct AccelerationBands AccelerationBands;
+
+/**
  * Accelerator Oscillator — Bill Williams' gauge of *momentum's acceleration*.
  *
  * ```text
@@ -520,6 +557,32 @@ typedef struct AdvanceDecline AdvanceDecline;
 typedef struct AdvanceDeclineRatio AdvanceDeclineRatio;
 
 /**
+ * Wilder's Average Directional Index.
+ *
+ * Uses Wilder smoothing throughout. First `period` candles seed the directional
+ * movement / true range sums; the next `period` candles produce DX values that
+ * seed the ADX. The first complete `AdxOutput` is emitted after `2 * period`
+ * candles.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, Adx};
+ *
+ * let mut indicator = Adx::new(5).unwrap();
+ * let mut last = None;
+ * for i in 0..80 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct Adx Adx;
+
+/**
  * Wilder's Average Directional Movement Index Rating.
  *
  * `ADXR` smooths the [`Adx`] line by averaging its current value with the value
@@ -556,6 +619,36 @@ typedef struct AdvanceDeclineRatio AdvanceDeclineRatio;
  * ```
  */
 typedef struct Adxr Adxr;
+
+/**
+ * Bill Williams' Alligator: three `SMMA`s of the median price `(high + low) / 2`
+ * with different periods. Classic parameters are `(jaw = 13, teeth = 8, lips = 5)`.
+ *
+ * The original chart variant additionally shifts each line forward by a fixed
+ * number of bars for display (Jaw +8, Teeth +5, Lips +3). Wickra publishes the
+ * *unshifted* `SMMA` values — the consumer can apply the visual shift on the
+ * chart side. The indicator emits values once all three `SMMA`s have warmed
+ * up, i.e. after `max(jaw, teeth, lips) = jaw` candles.
+ *
+ * Reference: Bill Williams, *Trading Chaos*, 1995.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Alligator, Candle, Indicator};
+ *
+ * let mut alligator = Alligator::classic();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 1.0, base - 1.0, base, 1.0, i64::from(i)).unwrap();
+ *     last = alligator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct Alligator Alligator;
 
 /**
  * Arnaud Legoux Moving Average — a Gaussian-weighted moving average.
@@ -743,6 +836,49 @@ typedef struct AnchoredRsi AnchoredRsi;
 typedef struct AnchoredVwap AnchoredVwap;
 
 /**
+ * Andrews Pitchfork — Alan Andrews' median-line tool drawn from the three most
+ * recent **swing pivots**, projected forward to the current bar.
+ *
+ * ```text
+ * detect alternating swing highs/lows with a `strength`-bar fractal
+ * P0 = handle (oldest of the last three), P1, P2 = the next two
+ * M  = midpoint of P1 and P2
+ * median(t) = P0 + slope·(t − t0)          slope = (M − P0) / (M_t − t0)
+ * upper / lower = median(t) offset by the vertical gap to the higher / lower anchor
+ * ```
+ *
+ * The pitchfork projects a "fork" of three parallel lines: a central **median
+ * line** drawn from a starting pivot through the midpoint of a later swing, plus
+ * two parallels passing through that swing's high and low. Price tends to
+ * oscillate around the median line and find support/resistance at the parallels.
+ * This streaming version detects the pivots automatically with a symmetric
+ * fractal of half-width `strength` (so each pivot is confirmed `strength` bars
+ * late) and keeps the three most recent alternating swings.
+ *
+ * Because it depends on swing structure, readiness is **data-dependent**: the
+ * first output appears once three alternating pivots have been confirmed.
+ * `warmup_period` returns the minimum bars to confirm a single pivot. Each
+ * `update` is O(`strength`).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, AndrewsPitchfork};
+ *
+ * let mut indicator = AndrewsPitchfork::new(2).unwrap();
+ * let mut last = None;
+ * for i in 0..120 {
+ *     let base = 100.0 + (f64::from(i) * 0.4).sin() * 10.0;
+ *     let c = Candle::new(base, base + 1.0, base - 1.0, base, 1_000.0, 0).unwrap();
+ *     last = indicator.update(c);
+ * }
+ * // A swinging series eventually establishes a pitchfork.
+ * let _ = last;
+ * ```
+ */
+typedef struct AndrewsPitchfork AndrewsPitchfork;
+
+/**
  * Absolute Price Oscillator — the raw difference between a fast and a slow
  * `EMA`. This is MACD's line without the signal-EMA — useful when only the
  * momentum-direction reading is needed.
@@ -768,6 +904,28 @@ typedef struct AnchoredVwap AnchoredVwap;
  * ```
  */
 typedef struct Apo Apo;
+
+/**
+ * Aroon indicator: tracks how many bars since the highest high and lowest low
+ * inside a `period + 1`-bar window. Returned as a percentage.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, Aroon};
+ *
+ * let mut indicator = Aroon::new(5).unwrap();
+ * let mut last = None;
+ * for i in 0..80 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct Aroon Aroon;
 
 /**
  * Aroon Oscillator — the single-line difference `AroonUp − AroonDown`.
@@ -827,6 +985,76 @@ typedef struct AroonOscillator AroonOscillator;
 typedef struct Atr Atr;
 
 /**
+ * ATR Bands: a close-anchored envelope of width `multiplier · ATR`.
+ *
+ * ```text
+ * upper = close + multiplier · ATR(period)
+ * lower = close − multiplier · ATR(period)
+ * ```
+ *
+ * Unlike [`Keltner`](crate::Keltner) or [`StarcBands`](crate::StarcBands), the
+ * centerline is the *raw close* rather than a smoothed average — the band
+ * rides the price tick-for-tick. This is the standard volatility-targeting
+ * envelope traders use to set initial stop-loss and profit targets: an entry
+ * at the close sets a `multiplier · ATR` stop and the symmetric target
+ * without ever needing to wait for a moving average to warm up.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{AtrBands, Candle, Indicator};
+ *
+ * let mut indicator = AtrBands::new(14, 3.0).unwrap();
+ * let mut last = None;
+ * for i in 0..30 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct AtrBands AtrBands;
+
+/**
+ * ATR Ratchet — Perry Kaufman's time-based volatility stop that tightens by a
+ * fixed fraction of ATR **every bar**, whether or not price moves.
+ *
+ * ```text
+ * on entry (long):   stop = close − start_mult · ATR
+ * each later bar:     stop = stop + increment · ATR    (ratchets toward price)
+ * flip to short when  close < stop, reseeding stop = close + start_mult · ATR
+ * ```
+ *
+ * Most trailing stops only move when price makes a new extreme. Kaufman's ratchet
+ * instead advances the stop a little each bar — `increment · ATR` — so a trade
+ * that stalls is squeezed out over time even in a flat market. The initial
+ * distance (`start_mult · ATR`) gives the position room to breathe; the per-bar
+ * `increment` controls how aggressively the leash shortens. When price closes
+ * through the stop the system reverses and reseeds at the full initial distance.
+ *
+ * The first stop lands once ATR is ready (`atr_period` inputs). Each `update` is
+ * O(1).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, AtrRatchet};
+ *
+ * let mut indicator = AtrRatchet::new(14, 4.0, 0.1).unwrap();
+ * let mut last = None;
+ * for i in 0..60 {
+ *     let base = 100.0 + f64::from(i);
+ *     let c = Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 1_000.0, 0).unwrap();
+ *     last = indicator.update(c);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct AtrRatchet AtrRatchet;
+
+/**
  * ATR Trailing Stop — a stop level that trails price by a fixed ATR multiple
  * and ratchets in the direction of the trend.
  *
@@ -863,6 +1091,21 @@ typedef struct Atr Atr;
  * ```
  */
 typedef struct AtrTrailingStop AtrTrailingStop;
+
+/**
+ * Auto-Fibonacci (`AutoFib`).
+ *
+ * Like [`crate::indicators::FibRetracement`], but instead of always using the
+ * immediate last leg it scans the last six confirmed pivots and anchors the
+ * retracement on the single largest-magnitude leg among them — the dominant
+ * swing the market is most likely respecting.
+ *
+ * Parameter-free; construction is infallible. Returns `None` until two pivots
+ * have confirmed.
+ *
+ * See `crates/wickra-core/src/indicators/auto_fib.rs`.
+ */
+typedef struct AutoFib AutoFib;
 
 /**
  * Rolling lag-`lag` autocorrelation of the last `period` inputs.
@@ -1403,6 +1646,36 @@ typedef struct BipowerVariation BipowerVariation;
 typedef struct BodySizePct BodySizePct;
 
 /**
+ * Bollinger Bands with SMA middle band and population standard deviation envelopes.
+ *
+ * Standard parameters are `period = 20`, `multiplier = 2.0`. Bollinger's original
+ * publication uses population (not sample) standard deviation, which matches every
+ * reference implementation (TA-Lib, pandas-ta, etc.).
+ *
+ * The running `sum` and `sum_sq` are reseeded from the live window every
+ * `16 · period` updates to cap floating-point drift on long streams. This is
+ * amortised O(1), preserves bit-equivalence with the previous behaviour on
+ * inputs that did not drift, and is particularly important for `sum_sq`,
+ * where catastrophic cancellation between large add/subtract pairs can drive
+ * the computed variance negative (the `.max(0.0)` clamp below is the
+ * safety-net for the rare cases where the reseed has not happened yet).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, BollingerBands};
+ *
+ * let mut indicator = BollingerBands::new(5, 2.0).unwrap();
+ * let mut last = None;
+ * for i in 0..80 {
+ *     last = indicator.update(100.0 + f64::from(i));
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct BollingerBands BollingerBands;
+
+/**
  * Bollinger Bandwidth — the width of the Bollinger Bands relative to the
  * middle band.
  *
@@ -1430,6 +1703,48 @@ typedef struct BodySizePct BodySizePct;
  * ```
  */
 typedef struct BollingerBandwidth BollingerBandwidth;
+
+/**
+ * Bomar Bands: percentage bands whose width adapts so that a fixed `coverage`
+ * fraction of recent closes falls inside them.
+ *
+ * The Bomar Bands predate Bollinger Bands; John Bollinger cites them as an
+ * inspiration — percentage bands around a moving average, with the percentage
+ * tuned so a fixed share (classically ~85%) of price stayed within. Wickra
+ * realises that idea deterministically: the half-width is the `coverage`
+ * quantile of the relative deviations from the midline, so by construction
+ * `coverage` of the window's closes lie inside the bands.
+ *
+ * ```text
+ * middle = SMA(close, period)
+ * dev_i  = | close_i / middle − 1 |          // relative distance from midline
+ * p      = coverage-quantile of { dev_i }     // type-7 interpolation
+ * upper  = middle + |middle| · p
+ * lower  = middle − |middle| · p
+ * ```
+ *
+ * Unlike the fixed-percentage [`MaEnvelope`](crate::MaEnvelope), the offset
+ * here is data-driven: the bands widen in turbulent regimes and tighten in
+ * quiet ones without a volatility input. Unlike Bollinger Bands, the width is
+ * an order statistic of the actual deviations rather than a multiple of the
+ * standard deviation, so it is unaffected by the shape of the tails beyond the
+ * `coverage` rank. When the midline is zero the relative deviation is
+ * undefined and the bands collapse onto the midline.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{BomarBands, Indicator};
+ *
+ * let mut indicator = BomarBands::new(20, 0.85).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     last = indicator.update(100.0 + f64::from(i % 7));
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct BomarBands BomarBands;
 
 /**
  * Breadth Thrust (Zweig) — a simple moving average of the advancing-issues
@@ -1687,6 +2002,71 @@ typedef struct CalendarSpread CalendarSpread;
 typedef struct CalmarRatio CalmarRatio;
 
 /**
+ * Camarilla Pivot Points — Nick Stott's four-tier range-based level set.
+ * Anchored on the prior close rather than the typical price, with widths
+ * scaled by the constant `1.1` divided by `{12, 6, 4, 2}`.
+ *
+ * ```text
+ * PP = (H + L + C) / 3
+ * R_n = C + (H − L) · 1.1 / d_n     S_n = C − (H − L) · 1.1 / d_n
+ *   where d_1 = 12, d_2 = 6, d_3 = 4, d_4 = 2
+ * ```
+ *
+ * R3/S3 are typically used as reversal levels; R4/S4 as breakout levels. As
+ * with the other pivot variants there are no parameters and no warmup — the
+ * first candle produces the first set of levels.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Camarilla, Candle, Indicator};
+ *
+ * let prev = Candle::new(100.0, 110.0, 90.0, 105.0, 1.0, 0).unwrap();
+ * let levels = Camarilla::new().update(prev).unwrap();
+ * assert!(levels.r4 > levels.r3);
+ * assert!(levels.s4 < levels.s3);
+ * ```
+ */
+typedef struct Camarilla Camarilla;
+
+/**
+ * CandleVolume — the candlestick analogue of [`Equivolume`](crate::Equivolume):
+ * each bar's **body** (`close − open`) paired with a **width** proportional to its
+ * volume relative to the recent average.
+ *
+ * ```text
+ * body  = close − open                          (signed; + bullish, − bearish)
+ * width = volume / SMA(volume, period)          (1.0 = average volume)
+ * ```
+ *
+ * Where Equivolume uses the high-low *range* for the box height, CandleVolume uses
+ * the candlestick *body*, preserving direction: a wide bullish body (long up
+ * candle on heavy volume) is strong demand, a wide bearish body strong supply, and
+ * a narrow body on heavy volume (wide but short) is churn. The signed body plus
+ * the normalised width capture both the move's direction and the participation
+ * behind it.
+ *
+ * The first value lands after `period` inputs (to seed the volume average). Each
+ * `update` is O(1).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, CandleVolume};
+ *
+ * let mut indicator = CandleVolume::new(14).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     let base = 100.0 + f64::from(i);
+ *     let c = Candle::new(base, base + 1.0, base - 1.0, base + 0.5, 1_000.0 + f64::from(i), 0).unwrap();
+ *     last = indicator.update(c);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct CandleVolume CandleVolume;
+
+/**
  * Commodity Channel Index.
  *
  * `CCI = (TP - SMA(TP)) / (0.015 * mean absolute deviation of TP)`, where
@@ -1740,6 +2120,42 @@ typedef struct Cci Cci;
  * ```
  */
 typedef struct CenterOfGravity CenterOfGravity;
+
+/**
+ * Central Pivot Range (CPR) — the classic pivot point flanked by two "central"
+ * levels whose separation gauges the day's expected character.
+ *
+ * ```text
+ * pivot = (high + low + close) / 3
+ * bc'   = (high + low) / 2
+ * tc'   = 2·pivot − bc'
+ * TC    = max(tc', bc'),   BC = min(tc', bc')
+ * ```
+ *
+ * The CPR is computed from the **previous** period's bar (feed it completed
+ * daily/weekly bars). The width of the range `TC − BC` is the headline read: a
+ * **narrow** CPR signals a likely trending day (price has little balance area to
+ * chew through), while a **wide** CPR signals a likely range-bound, balanced
+ * day. Price opening above the whole range is bullish, below it bearish, inside
+ * it neutral. The `tc'`/`bc'` formulas are symmetric about the pivot; this
+ * implementation labels the larger as `TC` and the smaller as `BC` so `TC >= BC`
+ * always holds.
+ *
+ * There are no parameters and no warmup — each completed bar yields one CPR.
+ * Each `update` is O(1).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, CentralPivotRange};
+ *
+ * let mut indicator = CentralPivotRange::new();
+ * let prev_day = Candle::new(101.0, 110.0, 90.0, 105.0, 1_000.0, 0).unwrap();
+ * let cpr = indicator.update(prev_day).unwrap();
+ * assert!(cpr.tc >= cpr.bc);
+ * ```
+ */
+typedef struct CentralPivotRange CentralPivotRange;
 
 /**
  * Tushar Chande's Forecast Oscillator — the percentage difference between
@@ -1874,6 +2290,77 @@ typedef struct ChaikinOscillator ChaikinOscillator;
 typedef struct ChaikinVolatility ChaikinVolatility;
 
 /**
+ * Chande Kroll Stop — Tushar Chande and Stanley Kroll's two-stage ATR stop.
+ *
+ * ```text
+ * preliminary (window p = atr_period, x = atr_multiplier):
+ *   high_stop = highest_high(p) − x · ATR(p)
+ *   low_stop  = lowest_low(p)   + x · ATR(p)
+ *
+ * final (window q = stop_period):
+ *   stop_short = highest(high_stop, q)
+ *   stop_long  = lowest(low_stop,  q)
+ * ```
+ *
+ * The first stage builds an ATR stop off the recent extreme, exactly like a
+ * [`ChandelierExit`](crate::ChandelierExit); the second stage smooths it by
+ * taking the most extreme preliminary stop over a shorter window, which keeps
+ * the stop from whipsawing on a single wide bar. The classic configuration
+ * from *The New Technical Trader* is `ATR(10)`, multiplier `1.0`, smoothing
+ * window `9`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, ChandeKrollStop};
+ *
+ * let mut indicator = ChandeKrollStop::new(10, 1.0, 9).unwrap();
+ * let mut last = None;
+ * for i in 0..80 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct ChandeKrollStop ChandeKrollStop;
+
+/**
+ * Chandelier Exit — Chuck LeBeau's ATR trailing stop, hung from the highest
+ * high (for longs) or the lowest low (for shorts) of the lookback window.
+ *
+ * ```text
+ * long_stop  = highest_high(period) − multiplier · ATR(period)
+ * short_stop = lowest_low(period)   + multiplier · ATR(period)
+ * ```
+ *
+ * A long position is exited when price closes below `long_stop`; a short
+ * when it closes above `short_stop`. Because the stop hangs a fixed number
+ * of ATRs off the extreme of the window — like a chandelier off a ceiling —
+ * it follows price up but never loosens. LeBeau's classic configuration is a
+ * `22`-bar window with a `3.0` multiplier.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, ChandelierExit};
+ *
+ * let mut indicator = ChandelierExit::new(22, 3.0).unwrap();
+ * let mut last = None;
+ * for i in 0..80 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct ChandelierExit ChandelierExit;
+
+/**
  * Choppiness Index — is the market trending or just chopping sideways?
  *
  * ```text
@@ -1905,6 +2392,39 @@ typedef struct ChaikinVolatility ChaikinVolatility;
  * ```
  */
 typedef struct ChoppinessIndex ChoppinessIndex;
+
+/**
+ * Classic (Floor-Trader) Pivot Points — the standard pivot/resistance/support
+ * levels computed from a completed candle's high, low and close.
+ *
+ * ```text
+ * PP = (H + L + C) / 3
+ * R1 = 2·PP − L          S1 = 2·PP − H
+ * R2 = PP + (H − L)      S2 = PP − (H − L)
+ * R3 = H + 2·(PP − L)    S3 = L − 2·(H − PP)
+ * ```
+ *
+ * Pivots are typically computed once per session (day, week, month) from the
+ * **previous** session's bar and used as fixed reference levels for the next
+ * session. The streaming API here simply re-evaluates the formula on every
+ * candle it sees, which makes it a one-step transform you can wire to any
+ * pre-aggregated session bar. There are no parameters and no warmup — the
+ * first candle produces the first set of levels.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, ClassicPivots, Indicator};
+ *
+ * let prev = Candle::new(100.0, 110.0, 90.0, 105.0, 1.0, 0).unwrap();
+ * let mut pp = ClassicPivots::new();
+ * let levels = pp.update(prev).unwrap();
+ * assert!((levels.pp - 101.6666666666).abs() < 1e-9);
+ * assert!(levels.r1 > levels.pp);
+ * assert!(levels.s1 < levels.pp);
+ * ```
+ */
+typedef struct ClassicPivots ClassicPivots;
 
 /**
  * Close vs Open — the bar's body as a signed fraction of its open price.
@@ -2040,6 +2560,49 @@ typedef struct Cmo Cmo;
 typedef struct CoefficientOfVariation CoefficientOfVariation;
 
 /**
+ * Rolling cointegration test for a pair of assets (Engle–Granger two-step).
+ *
+ * Each `update` receives one `(a, b)` pair (price levels, or log-levels if you
+ * prefer). Over the trailing window of `period` pairs the indicator:
+ *
+ * 1. fits the **hedge ratio** `β` (and intercept `α`) by ordinary least
+ *    squares of `a` on `b`, and forms the **spread** `eₜ = aₜ − (α + β·bₜ)`;
+ * 2. runs an **augmented Dickey–Fuller** test (no constant, no trend, with
+ *    `adf_lags` lagged differences) on the spread series and reports its
+ *    `t`-statistic.
+ *
+ * A strongly negative ADF statistic means the spread reverts to its mean — the
+ * pair is cointegrated and the spread is tradeable. A statistic near zero
+ * means the spread wanders like a random walk (no cointegration). This is the
+ * classic pairs-trading screen: `β` tells you the hedge size, the spread is
+ * what you trade, and the ADF statistic tells you whether it is worth trading.
+ *
+ * Each `update` is `O(period + adf_lags³)`: the hedge ratio is maintained from
+ * running sums, while the spread series and the small ADF regression are
+ * recomputed over the window — both bounded by the fixed parameters, not the
+ * series length.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Cointegration, Indicator};
+ *
+ * let mut c = Cointegration::new(30, 1).unwrap();
+ * let mut last = None;
+ * for t in 0..60 {
+ *     let b = 100.0 + f64::from(t);
+ *     // `a` tracks 2·b with a small mean-reverting wobble ⇒ cointegrated.
+ *     let a = 2.0 * b + 5.0 + 0.5 * (f64::from(t) * 0.7).sin();
+ *     last = c.update((a, b));
+ * }
+ * let out = last.unwrap();
+ * assert!((out.hedge_ratio - 2.0).abs() < 0.1);
+ * assert!(out.adf_stat < 0.0); // mean-reverting spread
+ * ```
+ */
+typedef struct Cointegration Cointegration;
+
+/**
  * Common Sense Ratio over a trailing window of `period` returns.
  *
  * ```text
@@ -2079,6 +2642,45 @@ typedef struct CoefficientOfVariation CoefficientOfVariation;
  * ```
  */
 typedef struct CommonSenseRatio CommonSenseRatio;
+
+/**
+ * Composite Profile — a multi-session volume profile reduced to its **point of
+ * control** and **value area**, built over a long composite window.
+ *
+ * ```text
+ * build a `bins`-bucket volume profile over the last `period` candles
+ * POC = bin with the most volume
+ * expand from the POC, always adding the heavier adjacent bin, until the
+ *   accumulated volume reaches `value_area_pct` of the total
+ * VAH / VAL = the highest / lowest price included
+ * ```
+ *
+ * A composite profile merges many sessions into one structure to reveal the
+ * dominant value area and control price across a longer horizon — the levels that
+ * matter for swing positioning rather than a single day. The point of control is
+ * the fairest price (heaviest trade); the value area (classically 70% of volume)
+ * brackets where the market spent most of its time. Price inside the value area is
+ * "in balance"; acceptance outside it signals a value migration.
+ *
+ * The first value lands after `period` candles; each `update` rebuilds the
+ * profile in O(`period · bins`).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, CompositeProfile};
+ *
+ * let mut indicator = CompositeProfile::new(100, 50, 0.70).unwrap();
+ * let mut last = None;
+ * for i in 0..150 {
+ *     let base = 100.0 + (f64::from(i) * 0.1).sin() * 8.0;
+ *     let c = Candle::new(base, base + 1.0, base - 1.0, base, 1_000.0, 0).unwrap();
+ *     last = indicator.update(c);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct CompositeProfile CompositeProfile;
 
 /**
  * Concealing Baby Swallow — a rare 4-bar bullish reversal. Two black marubozu lead
@@ -2588,6 +3190,38 @@ typedef struct Dema Dema;
 typedef struct DemandIndex DemandIndex;
 
 /**
+ * `DeMark` Pivot Points — Tom `DeMark`'s conditional pivot formulation, derived
+ * from a sum `X` that depends on whether the bar closed up, down or flat.
+ *
+ * ```text
+ * X = 2·H + L + C   if C  < O   (down bar)
+ *     H + 2·L + C   if C  > O   (up bar)
+ *     H + L + 2·C   if C == O   (doji)
+ *
+ * PP = X / 4
+ * R1 = X / 2 − L
+ * S1 = X / 2 − H
+ * ```
+ *
+ * Unlike the classic pivots, only one resistance and one support are
+ * produced; `DeMark`'s intent is a tighter, condition-sensitive set rather than
+ * a multi-tier fan. The branching means a bar's open carries information that
+ * other pivot variants discard.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, DemarkPivots, Indicator};
+ *
+ * // Up bar: O=100, H=120, L=80, C=110 -> X = H + 2·L + C = 390.
+ * let up = Candle::new(100.0, 120.0, 80.0, 110.0, 1.0, 0).unwrap();
+ * let lv = DemarkPivots::new().update(up).unwrap();
+ * assert!((lv.pp - 97.5).abs() < 1e-9);
+ * ```
+ */
+typedef struct DemarkPivots DemarkPivots;
+
+/**
  * Depth Slope — the average rate at which cumulative resting size grows with
  * distance from the mid, across the bid and ask sides of the book.
  *
@@ -2883,6 +3517,98 @@ typedef struct Doji Doji;
 typedef struct DojiStar DojiStar;
 
 /**
+ * Donchian Channels: rolling highest high / lowest low envelopes.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, Donchian};
+ *
+ * let mut indicator = Donchian::new(5).unwrap();
+ * let mut last = None;
+ * for i in 0..80 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct Donchian Donchian;
+
+/**
+ * Donchian Channel Stop — the original Turtle-trader exit rule. A long is
+ * trailed at the lowest low of the last `period` bars; a short at the highest
+ * high. There is no ATR, no multiplier, and no flip-bit — the two levels are
+ * always emitted and the caller selects whichever side matches the position.
+ *
+ * ```text
+ * stop_long  = min(low,  over period bars)
+ * stop_short = max(high, over period bars)
+ * ```
+ *
+ * Richard Dennis' original Turtle System used a 20-bar entry channel and a
+ * 10-bar exit channel — feed this indicator the exit window. The first
+ * `period` candles are warmup; on the bar that fills the window it begins
+ * emitting both stops.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, DonchianStop};
+ *
+ * let mut indicator = DonchianStop::new(10).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct DonchianStop DonchianStop;
+
+/**
+ * Double Bollinger Bands: two concentric Bollinger envelopes (Kathy Lien).
+ *
+ * ```text
+ * middle      = SMA(period)
+ * sigma       = population stddev over the window
+ * upper_outer = middle + k_outer · sigma          // wide channel (often 2σ)
+ * upper_inner = middle + k_inner · sigma          // narrow channel (often 1σ)
+ * lower_inner = middle − k_inner · sigma
+ * lower_outer = middle − k_outer · sigma
+ * ```
+ *
+ * Lien's trading framework partitions price into three zones:
+ *
+ * - **Sell zone:** close below `lower_inner`.
+ * - **Neutral zone:** close between `lower_inner` and `upper_inner`.
+ * - **Buy zone:** close above `upper_inner`.
+ *
+ * A close beyond the outer band marks an extended move that traders typically
+ * fade or trail. The constructor enforces `k_outer > k_inner` so the outputs
+ * remain monotonically ordered.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{DoubleBollinger, Indicator};
+ *
+ * let mut indicator = DoubleBollinger::new(20, 1.0, 2.0).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     last = indicator.update(100.0 + (f64::from(i) * 0.3).sin() * 6.0);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct DoubleBollinger DoubleBollinger;
+
+/**
  * Double Top / Double Bottom — a two-peak (or two-trough) reversal pattern.
  *
  * The detector tracks confirmed swing pivots (a non-repainting percent-threshold
@@ -3041,6 +3767,38 @@ typedef struct Dpo Dpo;
  * ```
  */
 typedef struct DragonflyDoji DragonflyDoji;
+
+/**
+ * Cumulative drawdown duration in bars.
+ *
+ * Each `update` receives one equity-curve sample. The indicator tracks the
+ * **running all-time peak** seen since construction (or last `reset`) and
+ * reports how many bars have elapsed since that peak was set:
+ *
+ * ```text
+ * peak_t        = max(input over [0..=t])
+ * duration_t    = bars elapsed since peak_t was first set
+ * ```
+ *
+ * A new peak resets the duration to `0`. As long as the series stays under
+ * water the duration grows linearly with each bar.
+ *
+ * The indicator emits a value on every bar (no warmup beyond the first
+ * input) and runs in O(1) per `update`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{DrawdownDuration, Indicator};
+ *
+ * let mut dd = DrawdownDuration::new();
+ * assert_eq!(dd.update(100.0), Some(0));        // first bar -> new peak
+ * assert_eq!(dd.update(95.0), Some(1));         // 1 bar under water
+ * assert_eq!(dd.update(90.0), Some(2));         // 2 bars under water
+ * assert_eq!(dd.update(110.0), Some(0));        // new peak -> reset
+ * ```
+ */
+typedef struct DrawdownDuration DrawdownDuration;
 
 /**
  * Dumpling Top — the bearish mirror of the [`FryPanBottom`](crate::FryPanBottom):
@@ -3320,6 +4078,84 @@ typedef struct Ehma Ehma;
 typedef struct ElderImpulse ElderImpulse;
 
 /**
+ * Elder Ray — Alexander Elder's Bull Power / Bear Power oscillator.
+ *
+ * An EMA of the close marks the market's consensus of value; the bar's high and
+ * low relative to it measure how far the bulls and bears could push price away
+ * from that consensus:
+ *
+ * ```text
+ * ema       = EMA(close, period)
+ * BullPower = high - ema
+ * BearPower = low  - ema
+ * ```
+ *
+ * Bull Power is normally positive (the high prints above the mean) and Bear
+ * Power normally negative (the low prints below it). Their behaviour relative
+ * to zero and to the EMA's slope drives Elder's signals: e.g. in an uptrend
+ * (rising EMA), a bounce in a negative-but-rising Bear Power is a buy setup.
+ *
+ * The first reading lands once the inner EMA is seeded, at bar `period`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, ElderRay, Indicator};
+ *
+ * let mut er = ElderRay::new(13).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     let base = 100.0 + f64::from(i);
+ *     let c = Candle::new(base, base + 2.0, base - 2.0, base + 0.5, 1.0, i64::from(i)).unwrap();
+ *     last = er.update(c);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct ElderRay ElderRay;
+
+/**
+ * Elder `SafeZone` Stop — Alexander Elder's stop placed a multiple of the
+ * **average market noise** away from price.
+ *
+ * ```text
+ * long  market noise = average downside penetration = mean( prev_low − low | low < prev_low )
+ * short market noise = average upside  penetration = mean( high − prev_high | high > prev_high )
+ * long  stop = ratchet_up(   low_t  − coeff · avg_down_penetration )
+ * short stop = ratchet_down( high_t + coeff · avg_up_penetration   )
+ * ```
+ *
+ * Elder defines *noise* in an uptrend as the part of each bar that pokes below
+ * the previous bar's low (a "downside penetration"). Averaging those
+ * penetrations over a lookback and placing the stop `coeff` multiples below the
+ * current low keeps the stop just outside normal pullbacks while still exiting on
+ * a genuine reversal. The stop trails in the trend's favour and flips when price
+ * closes through it. The average uses only the bars that actually penetrated
+ * (Elder's definition), so a noiseless trend gives a tight stop at the bar's
+ * extreme.
+ *
+ * The first bar seeds the prior candle; the next `period` bars accumulate the
+ * penetration statistics, so the first stop lands after `period + 1` inputs.
+ * Each `update` is O(1).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, ElderSafeZone};
+ *
+ * let mut indicator = ElderSafeZone::new(14, 2.0).unwrap();
+ * let mut last = None;
+ * for i in 0..60 {
+ *     let base = 100.0 + f64::from(i);
+ *     let c = Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 1_000.0, 0).unwrap();
+ *     last = indicator.update(c);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct ElderSafeZone ElderSafeZone;
+
+/**
  * Exponential Moving Average with smoothing factor `alpha = 2 / (period + 1)`.
  *
  * The first value is seeded with the simple mean of the first `period` inputs
@@ -3413,6 +4249,43 @@ typedef struct EmpiricalModeDecomposition EmpiricalModeDecomposition;
  * ```
  */
 typedef struct Engulfing Engulfing;
+
+/**
+ * Equivolume — Richard Arms' charting style rendered as numbers: each bar is a
+ * "box" whose **height** is its price range and whose **width** is its volume
+ * relative to the recent average.
+ *
+ * ```text
+ * height = high − low
+ * width  = volume / SMA(volume, period)        (1.0 = average volume)
+ * ```
+ *
+ * Equivolume discards time and substitutes volume for the horizontal axis: a tall
+ * narrow box is an easy move (big range on light volume), while a short wide box
+ * is churn (small range on heavy volume) that often marks support/resistance.
+ * Reporting the two dimensions lets you reconstruct that shape programmatically:
+ * the height/width relationship is Arms' "ease of movement" read. The width is
+ * normalised by the volume SMA so it self-scales across instruments.
+ *
+ * The first value lands after `period` inputs (to seed the volume average). Each
+ * `update` is O(1).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, Equivolume};
+ *
+ * let mut indicator = Equivolume::new(14).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     let base = 100.0 + f64::from(i);
+ *     let c = Candle::new(base, base + 2.0, base - 2.0, base, 1_000.0 + f64::from(i), 0).unwrap();
+ *     last = indicator.update(c);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct Equivolume Equivolume;
 
 /**
  * Estimated Leverage Ratio (ELR) — open interest relative to the aggregate
@@ -3722,6 +4595,174 @@ typedef struct FallingThreeMethods FallingThreeMethods;
 typedef struct Fama Fama;
 
 /**
+ * Fibonacci Arcs (`FibArcs`).
+ *
+ * Three arcs centred on the end of the most recent confirmed swing leg. Time is
+ * normalised by the leg's bar-width so the construction is chart-scale-free: at
+ * the leg's end bar each arc sits exactly on its retracement level, and as time
+ * elapses the arc curves back toward the swing-end price, reaching it one leg
+ * width later.
+ *
+ * ```text
+ * u       = (cur - end_bar) / (end_bar - start_bar)
+ * arc(r)  = end + (start - end) * r * sqrt(max(0, 1 - u^2))
+ * ```
+ *
+ * Parameter-free; construction is infallible. Returns `None` until the first
+ * leg is complete.
+ *
+ * See `crates/wickra-core/src/indicators/fib_arcs.rs`.
+ */
+typedef struct FibArcs FibArcs;
+
+/**
+ * Fibonacci Channel (`FibChannel`).
+ *
+ * From the last three confirmed pivots, the two same-direction outer pivots
+ * define a sloped base trendline and the opposite middle pivot sets the channel
+ * width (its signed distance from the base line). Parallel lines are then offset
+ * by Fibonacci multiples of that width and reported at the current bar.
+ *
+ * ```text
+ * slope     = (p2 - p0) / (bar2 - bar0)
+ * base(bar) = p0 + slope * (bar - bar0)
+ * width     = p1 - base(bar1)
+ * level(r)  = base(cur) + r * width
+ * ```
+ *
+ * Parameter-free; construction is infallible. Returns `None` until three pivots
+ * have confirmed.
+ *
+ * See `crates/wickra-core/src/indicators/fib_channel.rs`.
+ */
+typedef struct FibChannel FibChannel;
+
+/**
+ * Fibonacci Confluence (`FibConfluence`).
+ *
+ * Computes the 38.2% / 50% / 61.8% retracement prices of every leg among the
+ * last six confirmed pivots, then reports the densest price cluster — where
+ * levels from different legs stack up, the zone the market is most likely to
+ * react to. `price` is the cluster mean; `strength` is how many levels it
+ * gathers.
+ *
+ * Parameter-free; construction is infallible. Returns `None` until at least two
+ * legs (three pivots) exist.
+ *
+ * See `crates/wickra-core/src/indicators/fib_confluence.rs`.
+ */
+typedef struct FibConfluence FibConfluence;
+
+/**
+ * Fibonacci Extension (`FibExtension`).
+ *
+ * Tracks confirmed swing pivots with a baked-in 5% reversal threshold and, once
+ * two pivots exist, projects the leg between them to the canonical extension
+ * ratios — the price targets a continuation of the move would reach.
+ *
+ * Parameter-free; construction is infallible. Returns `None` until the first
+ * leg is complete.
+ *
+ * See `crates/wickra-core/src/indicators/fib_extension.rs`.
+ */
+typedef struct FibExtension FibExtension;
+
+/**
+ * Fibonacci Fan (`FibFan`).
+ *
+ * Anchored at the start of the most recent confirmed swing leg, three lines fan
+ * out through the 38.2% / 50% / 61.8% retracement levels located at the leg's
+ * end bar, then extend to the current bar. Each line's price is reported as the
+ * fan opens with elapsed time.
+ *
+ * ```text
+ * line(r) = start + r * (end - start) * (cur - start_bar) / (end_bar - start_bar)
+ * ```
+ *
+ * Parameter-free; construction is infallible. Returns `None` until the first
+ * leg is complete.
+ *
+ * See `crates/wickra-core/src/indicators/fib_fan.rs`.
+ */
+typedef struct FibFan FibFan;
+
+/**
+ * Fibonacci Projection (`FibProjection`).
+ *
+ * Reads the last three confirmed swing pivots as the points A, B and C of a
+ * measured move and projects the A→B leg from C at the canonical ratios — the
+ * price targets for the C→D leg.
+ *
+ * Parameter-free; construction is infallible. Returns `None` until three
+ * pivots have confirmed.
+ *
+ * See `crates/wickra-core/src/indicators/fib_projection.rs`.
+ */
+typedef struct FibProjection FibProjection;
+
+/**
+ * Fibonacci Retracement (`FibRetracement`).
+ *
+ * Tracks confirmed swing pivots with a baked-in 5% reversal threshold (the
+ * same non-repainting logic as [`crate::indicators::ZigZag`]) and, once two
+ * pivots exist, reports the seven retracement levels of the leg between them.
+ *
+ * The levels are recomputed each time a new pivot confirms; between
+ * confirmations [`Indicator::update`] returns the locked levels of the current
+ * leg. Before the first leg is complete it returns `None`.
+ *
+ * Parameter-free: the threshold is a compile-time constant, mirroring the
+ * chart- and harmonic-pattern detectors, so construction is infallible.
+ *
+ * See `crates/wickra-core/src/indicators/fib_retracement.rs`.
+ */
+typedef struct FibRetracement FibRetracement;
+
+/**
+ * Fibonacci Time Zones (`FibTimeZones`).
+ *
+ * Anchored on the most recent confirmed swing pivot, the Fibonacci sequence
+ * `1, 2, 3, 5, 8, 13, …` marks bars at which trend changes are classically
+ * anticipated. Reports whether the current bar is on a zone and how many bars
+ * remain until the next one.
+ *
+ * Parameter-free; construction is infallible. Returns `None` until the first
+ * pivot has confirmed.
+ *
+ * See `crates/wickra-core/src/indicators/fib_time_zones.rs`.
+ */
+typedef struct FibTimeZones FibTimeZones;
+
+/**
+ * Fibonacci Pivot Points — the classic pivot plus three resistances and
+ * supports spaced by the Fibonacci ratios 0.382 / 0.618 / 1.000 applied to
+ * the prior bar's range.
+ *
+ * ```text
+ * PP = (H + L + C) / 3
+ * R1 = PP + 0.382·(H − L)   S1 = PP − 0.382·(H − L)
+ * R2 = PP + 0.618·(H − L)   S2 = PP − 0.618·(H − L)
+ * R3 = PP + 1.000·(H − L)   S3 = PP − 1.000·(H − L)
+ * ```
+ *
+ * As with [`crate::ClassicPivots`], levels are typically built from the
+ * previous session's bar. There are no parameters and no warmup.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, FibonacciPivots, Indicator};
+ *
+ * let prev = Candle::new(100.0, 110.0, 90.0, 105.0, 1.0, 0).unwrap();
+ * let levels = FibonacciPivots::new().update(prev).unwrap();
+ * assert!(levels.r3 > levels.r2);
+ * assert!(levels.r2 > levels.r1);
+ * assert!(levels.s1 > levels.s2);
+ * ```
+ */
+typedef struct FibonacciPivots FibonacciPivots;
+
+/**
  * Fisher RSI — the Fisher transform applied to a normalised [`Rsi`](crate::Rsi).
  *
  * The RSI is bounded in `[0, 100]` and its distribution piles up near the
@@ -3837,6 +4878,47 @@ typedef struct FlagPennant FlagPennant;
  * ```
  */
 typedef struct ForceIndex ForceIndex;
+
+/**
+ * Fractal Chaos Bands: a step-function envelope of the most recent Bill
+ * Williams fractal highs and lows.
+ *
+ * A bar is a **fractal high** when its high is the maximum of the window
+ * `[i − k, …, i + k]`. A **fractal low** is defined symmetrically on lows.
+ * The bands hold the high (low) of the latest confirmed fractal high (low),
+ * stepping outwards whenever a new fractal forms and otherwise staying flat:
+ *
+ * ```text
+ * confirmation_lag = k                     // the centre bar is known only k bars later
+ * upper = high of the most recent confirmed fractal high
+ * lower = low  of the most recent confirmed fractal low
+ * ```
+ *
+ * `k = 2` (5-bar fractals) is the canonical Williams setting and matches the
+ * "Fractal Chaos Bands" oscillator shipped with several chart vendors. With
+ * `k` bars of look-ahead, every band update reflects price `k` bars ago —
+ * strict streaming preserves this lag rather than peeking into the future.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, FractalChaosBands, Indicator};
+ *
+ * let mut indicator = FractalChaosBands::new(2).unwrap();
+ * let mut last = None;
+ * for i in 0..30 {
+ *     let base = 100.0 + (f64::from(i) * 0.5).sin() * 5.0;
+ *     let candle =
+ *         Candle::new(base, base + 1.0, base - 1.0, base, 10.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * // Confirmation requires `2k + 1` bars plus at least one fractal of each
+ * // kind, so `last` may legitimately be `None` on a single sweep without
+ * // both a peak and a trough in the window.
+ * let _ = last;
+ * ```
+ */
+typedef struct FractalChaosBands FractalChaosBands;
 
 /**
  * Ehlers' Fractal Adaptive Moving Average.
@@ -4299,6 +5381,41 @@ typedef struct GarmanKlassVolatility GarmanKlassVolatility;
 typedef struct Gartley Gartley;
 
 /**
+ * Bill Williams' Gator Oscillator: a convergence/divergence view of the
+ * [`Alligator`] lines. The upper bar is the absolute gap between Jaw and
+ * Teeth; the lower bar is the negated absolute gap between Teeth and Lips.
+ *
+ * ```text
+ * upper =  |jaw   - teeth|
+ * lower = -|teeth - lips |
+ * ```
+ *
+ * Widening bars mean the Alligator's mouth is opening (a trending market);
+ * shrinking bars mean it is closing (consolidation). Warmup matches the
+ * underlying Alligator — the first value appears once the slowest line (Jaw)
+ * has warmed up.
+ *
+ * Reference: Bill Williams, *Trading Chaos*, 1995.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, GatorOscillator, Indicator};
+ *
+ * let mut indicator = GatorOscillator::classic();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 1.0, base - 1.0, base, 1.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct GatorOscillator GatorOscillator;
+
+/**
  * Generalized DEMA — the building block of Tillson's [`T3`](crate::T3),
  * exposed on its own.
  *
@@ -4372,6 +5489,19 @@ typedef struct GeneralizedDema GeneralizedDema;
  * ```
  */
 typedef struct GeometricMa GeometricMa;
+
+/**
+ * Golden Pocket (`GoldenPocket`).
+ *
+ * The 0.618-0.65 retracement band of the most recent confirmed swing leg — the
+ * "optimal trade entry" zone many swing traders watch for continuation.
+ *
+ * Parameter-free; construction is infallible. Returns `None` until the first
+ * leg is complete.
+ *
+ * See `crates/wickra-core/src/indicators/golden_pocket.rs`.
+ */
+typedef struct GoldenPocket GoldenPocket;
 
 /**
  * Granger causality of `b` on `a` over a rolling window, as an F-statistic.
@@ -4647,6 +5777,27 @@ typedef struct HasbrouckInformationShare HasbrouckInformationShare;
 typedef struct HeadAndShoulders HeadAndShoulders;
 
 /**
+ * Streaming Heikin-Ashi transform.
+ *
+ * Emits a [`HeikinAshiOutput`] for every input bar starting with the very
+ * first, so `warmup_period` is 1 and `batch` returns `n` outputs for `n`
+ * inputs.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, HeikinAshi, Indicator};
+ *
+ * let mut ha = HeikinAshi::new();
+ * let c = Candle::new(10.0, 11.0, 9.0, 10.5, 0.0, 0).unwrap();
+ * let out = ha.update(c).unwrap();
+ * // First bar: ha_open = (open + close) / 2 = 10.25.
+ * assert!((out.open - 10.25).abs() < 1e-12);
+ * ```
+ */
+typedef struct HeikinAshi HeikinAshi;
+
+/**
  * Heikin-Ashi Oscillator — the body of the [`HeikinAshi`](crate::HeikinAshi)
  * candle (`ha_close − ha_open`), optionally EMA-smoothed, as an oscillator around
  * zero.
@@ -4784,6 +5935,44 @@ typedef struct HighLowIndex HighLowIndex;
  * ```
  */
 typedef struct HighLowRange HighLowRange;
+
+/**
+ * High/Low Volume Nodes — the price levels of greatest and least acceptance in a
+ * rolling volume profile.
+ *
+ * ```text
+ * build a `bins`-bucket volume profile over the last `period` candles
+ * HVN = bin centre of the bucket with the most volume
+ * LVN = bin centre of the traded bucket with the least volume
+ * ```
+ *
+ * A volume profile reveals where the market spent the most effort. A **High Volume
+ * Node** (HVN) is a price the market accepted and traded heavily — it acts as a
+ * magnet and as strong support/resistance. A **Low Volume Node** (LVN) is a price
+ * the market rejected quickly — moves tend to accelerate through LVNs and they
+ * often mark the edges between balance areas. Each candle's volume is spread
+ * across the price bins its high-low range spans (as in
+ * [`VolumeProfile`](crate::VolumeProfile)).
+ *
+ * The first value lands after `period` candles; each `update` rebuilds the profile
+ * in O(`period · bins`). A degenerate flat window puts both nodes at the price.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, HighLowVolumeNodes};
+ *
+ * let mut indicator = HighLowVolumeNodes::new(20, 24).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     let base = 100.0 + (f64::from(i) * 0.3).sin() * 5.0;
+ *     let c = Candle::new(base, base + 1.0, base - 1.0, base, 1_000.0, 0).unwrap();
+ *     last = indicator.update(c);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct HighLowVolumeNodes HighLowVolumeNodes;
 
 /**
  * High-Wave — a single-bar extreme-indecision signal. A small body with very
@@ -5132,6 +6321,33 @@ typedef struct HomingPigeon HomingPigeon;
 typedef struct HtDcPhase HtDcPhase;
 
 /**
+ * Ehlers' Hilbert Transform Phasor (`HT_PHASOR`).
+ *
+ * Runs the same adaptive Hilbert-transform engine as
+ * [`HilbertDominantCycle`](crate::HilbertDominantCycle) but reports the raw
+ * in-phase (`I1`) and quadrature (`Q1`) components of the analytic signal rather
+ * than the recovered cycle period. The two components are 90° out of phase, so
+ * their ratio tracks the instantaneous phase of the dominant cycle.
+ *
+ * From *Rocket Science for Traders* (Ehlers 2001), aligned with TA-Lib's
+ * `HT_PHASOR`. The first value is emitted once the transform's tap buffers fill.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, HtPhasor};
+ *
+ * let mut ht = HtPhasor::new();
+ * let mut last = None;
+ * for i in 0..120 {
+ *     last = ht.update(100.0 + (f64::from(i) * 0.4).sin() * 5.0);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct HtPhasor HtPhasor;
+
+/**
  * Ehlers' Hilbert Transform Trend Mode (`HT_TRENDMODE`).
  *
  * Runs the same adaptive Hilbert-transform engine as
@@ -5162,6 +6378,41 @@ typedef struct HtDcPhase HtDcPhase;
  * ```
  */
 typedef struct HtTrendMode HtTrendMode;
+
+/**
+ * Hurst Channel: an SMA centerline wrapped by a rolling high-low range.
+ *
+ * ```text
+ * middle = SMA(close, period)
+ * range  = max(high, period) − min(low, period)
+ * upper  = middle + multiplier · range
+ * lower  = middle − multiplier · range
+ * ```
+ *
+ * The Hurst Channel sizes its envelope by the *realised* high-low range of
+ * the window — a simpler, range-based volatility proxy than Bollinger's
+ * rolling stddev or Keltner's ATR. With a `multiplier` of `0.5` the channel
+ * reduces to a centerline that hugs the midpoint of the Donchian envelope;
+ * chart vendors that follow Hurst's cycle work commonly use `period = 10` and
+ * `multiplier = 0.5` for the "inner" channel.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, HurstChannel, Indicator};
+ *
+ * let mut indicator = HurstChannel::new(10, 0.5).unwrap();
+ * let mut last = None;
+ * for i in 0..30 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct HurstChannel HurstChannel;
 
 /**
  * Hurst Exponent of the last `period` values, estimated by rescaled-range
@@ -5219,6 +6470,33 @@ typedef struct HtTrendMode HtTrendMode;
  * ```
  */
 typedef struct HurstExponent HurstExponent;
+
+/**
+ * Ichimoku Kinko Hyo indicator.
+ *
+ * Standard parameters are `(9, 26, 52, 26)`. The first fully-populated output
+ * (every field `Some`) appears after `senkou_b_period + displacement - 1`
+ * candles — 77 bars at the defaults — because Senkou B needs its own 52-bar
+ * midpoint *and* a 26-bar history of those midpoints to displace from.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Ichimoku, Indicator};
+ *
+ * let mut ichi = Ichimoku::classic();
+ * for i in 0..120 {
+ *     let p = 100.0 + f64::from(i);
+ *     let candle = Candle::new(p, p + 2.0, p - 2.0, p + 1.0, 0.0, i64::from(i)).unwrap();
+ *     ichi.update(candle);
+ * }
+ * let out = ichi.value().unwrap();
+ * assert!(out.tenkan.is_some() && out.kijun.is_some());
+ * assert!(out.senkou_a.is_some() && out.senkou_b.is_some());
+ * assert!(out.chikou.is_some());
+ * ```
+ */
+typedef struct Ichimoku Ichimoku;
 
 /**
  * Identical Three Crows — a 3-bar bearish reversal: three consecutive red
@@ -5354,6 +6632,37 @@ typedef struct Inertia Inertia;
  * Each `update` is O(1).
  */
 typedef struct InformationRatio InformationRatio;
+
+/**
+ * Session Initial Balance (first N bars).
+ *
+ * `period` defaults to **12** — the canonical one-hour IB on 5-minute bars
+ * for U.S. equities. Callers MUST invoke [`Indicator::reset`] at every new
+ * session boundary; otherwise the IB locks after the first `period` bars and
+ * stays fixed for the entire lifetime of the instance.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, InitialBalance, Indicator};
+ *
+ * let mut ib = InitialBalance::new(3).unwrap();
+ * let bars = [
+ *     Candle::new(100.0, 102.0, 99.0, 101.0, 10.0, 0).unwrap(),
+ *     Candle::new(101.0, 103.0, 100.0, 102.0, 10.0, 1).unwrap(),
+ *     Candle::new(102.0, 104.0, 101.0, 103.0, 10.0, 2).unwrap(),
+ *     // Locked after period bars — subsequent bars do not modify IB.
+ *     Candle::new(103.0, 120.0, 80.0, 105.0, 10.0, 3).unwrap(),
+ * ];
+ * for b in bars {
+ *     ib.update(b);
+ * }
+ * let v = ib.value().unwrap();
+ * assert_eq!(v.high, 104.0);
+ * assert_eq!(v.low, 99.0);
+ * ```
+ */
+typedef struct InitialBalance InitialBalance;
 
 /**
  * Ehlers' Instantaneous Trendline (ITrend).
@@ -5704,6 +7013,51 @@ typedef struct JumpIndicator JumpIndicator;
 typedef struct KRatio KRatio;
 
 /**
+ * Dynamic hedge ratio between two series, estimated online with a Kalman filter.
+ *
+ * Each `update` takes one `(a, b)` price pair and treats the linear relation
+ * `aₜ = αₜ + βₜ·bₜ + noise` as a state-space model whose hidden state
+ * `[βₜ, αₜ]` follows a random walk. The filter updates the state from every
+ * observation, so the hedge ratio **adapts continuously** instead of being a
+ * flat OLS slope over a fixed window:
+ *
+ * ```text
+ * state    xₜ = [βₜ, αₜ],   drifts as a random walk with covariance Vw·I
+ * observe  aₜ = [bₜ, 1]·xₜ + εₜ,   Var(εₜ) = observation_var
+ * Vw = delta / (1 − delta)
+ * ```
+ *
+ * `delta` controls how fast the hedge ratio is allowed to move: a larger
+ * `delta` tracks regime changes faster but is noisier; a smaller `delta` is
+ * smoother but slower. `observation_var` is the measurement-noise variance.
+ * The reported `spread` (the filter's forecast error) is the mean-reverting
+ * signal a pairs trade fades — the Kalman analogue of the
+ * [`crate::Cointegration`] residual, but with a hedge ratio that breathes.
+ *
+ * The filter emits an estimate from the **first** update (warmup of one bar);
+ * early estimates are diffuse and settle as observations accumulate. Each
+ * `update` is `O(1)` over the fixed 2×2 covariance.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, KalmanHedgeRatio};
+ *
+ * let mut k = KalmanHedgeRatio::new(1e-2, 1e-3).unwrap();
+ * let mut last = None;
+ * for t in 0..400 {
+ *     // `b` sweeps a wide range so the slope and intercept are identifiable.
+ *     let b = 100.0 + (f64::from(t) * 0.5).sin() * 95.0;
+ *     last = k.update((2.0 * b + 5.0, b)); // a = 2·b + 5
+ * }
+ * let out = last.unwrap();
+ * assert!((out.hedge_ratio - 2.0).abs() < 0.05);
+ * assert!(out.spread.abs() < 0.05);
+ * ```
+ */
+typedef struct KalmanHedgeRatio KalmanHedgeRatio;
+
+/**
  * Kaufman's Adaptive Moving Average.
  *
  * KAMA adapts its smoothing constant to volatility: efficient (trending) markets
@@ -5725,6 +7079,83 @@ typedef struct KRatio KRatio;
  * ```
  */
 typedef struct Kama Kama;
+
+/**
+ * Kase `DevStop` — Cynthia Kase's volatility stop, built on the **standard
+ * deviation of the two-bar true range** rather than a single-bar ATR.
+ *
+ * ```text
+ * DTR_t = max(high_t, high_{t−1}) − min(low_t, low_{t−1})   (two-bar range)
+ * band  = mean(DTR, period) + dev · stddev(DTR, period)
+ * long  stop = ratchet_up(  highest_high_since_flip − band )
+ * short stop = ratchet_down( lowest_low_since_flip  + band )
+ * ```
+ *
+ * Kase observed that range expansion is better captured by a two-bar range than
+ * a one-bar one, and that subtracting a *standard-deviation* band (not a fixed
+ * ATR multiple) adapts the stop to changing volatility. The stop trails the
+ * extreme reached since the last reversal — ratcheting only in the trend's favour
+ * — and flips sides when price closes through it. `dev` selects which `DevStop`
+ * line to follow (`1`, `2` or `3` standard deviations are Kase's warning lines).
+ *
+ * The first bar seeds the prior candle; the next `period` two-bar ranges seed the
+ * mean and standard deviation, so the first stop lands after `period + 1` inputs.
+ * Each `update` is O(1).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, KaseDevStop};
+ *
+ * let mut indicator = KaseDevStop::new(30, 1.0).unwrap();
+ * let mut last = None;
+ * for i in 0..80 {
+ *     let base = 100.0 + f64::from(i);
+ *     let c = Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 1_000.0, 0).unwrap();
+ *     last = indicator.update(c);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct KaseDevStop KaseDevStop;
+
+/**
+ * Cynthia Kase's Permission Stochastic: a stochastic oscillator smoothed twice,
+ * whose fast/slow relationship grants or denies "permission" to trade in the
+ * direction of a higher-timeframe signal.
+ *
+ * ```text
+ * raw%K = 100 * (close - LL) / (HH - LL)     over `length` (50 when HH == LL)
+ * fast  = EMA(raw%K, smooth)
+ * slow  = EMA(fast,  smooth)
+ * ```
+ *
+ * The raw stochastic is the usual `%K`, then an EMA produces the *fast* line
+ * and a second EMA of that produces the *slow* line. Kase uses the pair as a
+ * gate: a fast line above the slow line (and rising) gives permission for
+ * longs, the reverse for shorts. When the lookback window is perfectly flat
+ * (`HH == LL`), the raw stochastic is undefined and defaults to the neutral
+ * `50`.
+ *
+ * Reference: Cynthia Kase, *Trading with the Odds*, 1996.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, KasePermissionStochastic};
+ *
+ * let mut indicator = KasePermissionStochastic::new(9, 3).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 1.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct KasePermissionStochastic KasePermissionStochastic;
 
 /**
  * Rolling Kelly Criterion fraction.
@@ -5757,6 +7188,27 @@ typedef struct Kama Kama;
  * Each `update` is O(period).
  */
 typedef struct KellyCriterion KellyCriterion;
+
+/**
+ * Keltner Channels: an EMA centerline with bands sized by ATR.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, Keltner};
+ *
+ * let mut indicator = Keltner::new(5, 5, 2.0).unwrap();
+ * let mut last = None;
+ * for i in 0..80 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct Keltner Keltner;
 
 /**
  * Kendall's tau-b — a rank correlation between two synchronised series based on
@@ -5880,6 +7332,37 @@ typedef struct Kicking Kicking;
  * ```
  */
 typedef struct KickingByLength KickingByLength;
+
+/**
+ * Pring's Know Sure Thing — a long-horizon momentum oscillator that combines
+ * four `ROC` series at different lookbacks, each smoothed by its own `SMA`,
+ * summed with Pring's fixed weights `1, 2, 3, 4`:
+ *
+ * ```text
+ * RCMA_i = SMA(ROC(close, roc_i), sma_i)        for i = 1..=4
+ * KST    = 1·RCMA_1 + 2·RCMA_2 + 3·RCMA_3 + 4·RCMA_4
+ * Signal = SMA(KST, signal_period)
+ * ```
+ *
+ * Pring's recommended defaults are
+ * `(roc1, roc2, roc3, roc4) = (10, 15, 20, 30)`,
+ * `(sma1, sma2, sma3, sma4) = (10, 10, 10, 15)`,
+ * `signal_period = 9`. `Kst::classic()` constructs that configuration.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, Kst};
+ *
+ * let mut kst = Kst::classic();
+ * let mut last = None;
+ * for i in 0..200 {
+ *     last = kst.update(100.0 + f64::from(i));
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct Kst Kst;
 
 /**
  * Rolling **excess** kurtosis of the last `period` values.
@@ -6099,6 +7582,56 @@ typedef struct LadderBottom LadderBottom;
 typedef struct LaguerreRsi LaguerreRsi;
 
 /**
+ * Rolling lead–lag cross-correlation between two synchronised series.
+ *
+ * Each `update` receives one `(a, b)` pair. The indicator keeps the most
+ * recent `window + 2·max_lag` samples of each series and, once full, reports
+ * the integer offset `k ∈ [−max_lag, +max_lag]` that maximises the absolute
+ * Pearson correlation between `a` and a copy of `b` shifted by `k`:
+ *
+ * ```text
+ * lag = argmax_k | corr( a[t], b[t+k] ) |
+ * ```
+ *
+ * This answers "does BTC lead ETH on this timescale, and by how many bars?".
+ * A positive lag means `a` leads `b`; a negative lag means `b` leads `a`. The
+ * reported `correlation` is the signed correlation at that lag, so its sign
+ * tells you whether the lead relationship is positive or inverse.
+ *
+ * The comparison is fully causal: `a`'s window is held fixed in the centre of
+ * the buffer and `b`'s window slides across it, so every lag — positive and
+ * negative — is evaluated only against data already seen. The candidate lags
+ * are scanned in order of increasing `|k|`, so ties resolve to the smallest
+ * absolute offset (lag `0` wins an exact tie).
+ *
+ * Each `update` is `O(window · max_lag)` — proportional to the fixed
+ * parameters, not the series length. A flat window in either channel makes a
+ * correlation undefined; it is reported as `0` rather than `NaN`.
+ *
+ * Feed raw prices or returns depending on your convention; lead–lag on
+ * returns is the more common choice for relating two assets.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, LeadLagCrossCorrelation};
+ *
+ * let mut ll = LeadLagCrossCorrelation::new(12, 5).unwrap();
+ * let mut last = None;
+ * for t in 0..60 {
+ *     let a = (f64::from(t) * 0.4).sin() + 0.4 * (f64::from(t) * 1.1).sin();
+ *     // `b` is `a` delayed by 3 samples, so `a` leads `b` by 3.
+ *     let b = (f64::from(t - 3) * 0.4).sin() + 0.4 * (f64::from(t - 3) * 1.1).sin();
+ *     last = ll.update((a, b));
+ * }
+ * let out = last.unwrap();
+ * assert_eq!(out.lag, 3);
+ * assert!(out.correlation > 0.99);
+ * ```
+ */
+typedef struct LeadLagCrossCorrelation LeadLagCrossCorrelation;
+
+/**
  * Linear Regression Angle — the slope of the rolling least-squares fit,
  * expressed as an angle in degrees.
  *
@@ -6126,6 +7659,41 @@ typedef struct LaguerreRsi LaguerreRsi;
  * ```
  */
 typedef struct LinRegAngle LinRegAngle;
+
+/**
+ * Linear Regression Channel: rolling least-squares line with `±k·σ` bands
+ * sized by the residuals about the fitted line.
+ *
+ * ```text
+ * fit y = a + b·x by OLS over the last `period` closes
+ * residual_i = y_i − (a + b · x_i)
+ * sigma      = sqrt( Σ residual_i² / period )      // population stddev
+ * middle     = a + b · (period − 1)                // endpoint of the line
+ * upper      = middle + multiplier · sigma
+ * lower      = middle − multiplier · sigma
+ * ```
+ *
+ * Where [`BollingerBands`](crate::BollingerBands) measures dispersion about
+ * the *mean*, the `LinReg` Channel measures it about the *trend*: detrended
+ * residuals, so a steady drift up or down does not bias the band width. The
+ * resulting envelope tracks the trend without flaring on momentum bursts —
+ * breakouts are statistically meaningful in the direction of trend, not just
+ * in absolute price.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, LinRegChannel};
+ *
+ * let mut indicator = LinRegChannel::new(20, 2.0).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     last = indicator.update(100.0 + f64::from(i));
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct LinRegChannel LinRegChannel;
 
 /**
  * Linear Regression Intercept (`LINEARREG_INTERCEPT`): the intercept `a` of the
@@ -6236,6 +7804,48 @@ typedef struct LinRegSlope LinRegSlope;
  * ```
  */
 typedef struct LinearRegression LinearRegression;
+
+/**
+ * Liquidation Features — decomposes the long- and short-side liquidation
+ * notional carried by each tick into a small feature vector.
+ *
+ * ```text
+ * net       = longLiquidation − shortLiquidation
+ * total     = longLiquidation + shortLiquidation
+ * imbalance = net / total                      (0 when total == 0)
+ * ```
+ *
+ * Liquidation cascades are a perpetual-market-specific tail risk: a wave of
+ * long liquidations forces market sells that beget more liquidations. Splitting
+ * the flow into net, total and a bounded imbalance turns the raw venue feed
+ * into model-ready features — `total` sizes the stress, `imbalance` (and its
+ * sign) says which side is being flushed. A positive imbalance means longs are
+ * being liquidated (downside cascade), a negative one shorts (upside squeeze).
+ *
+ * `Input = DerivativesTick`, `Output = LiquidationFeaturesOutput`. Stateless;
+ * ready after the first tick.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{DerivativesTick, Indicator, LiquidationFeatures};
+ *
+ * fn tick(long_liq: f64, short_liq: f64) -> DerivativesTick {
+ *     DerivativesTick::new(
+ *         0.0, 100.0, 100.0, 100.0, 0.0, 0.0, 0.0, 0.0, 0.0, long_liq, short_liq, 0,
+ *     )
+ *     .unwrap()
+ * }
+ *
+ * let mut liq = LiquidationFeatures::new();
+ * // 30 long vs 10 short liquidated: net 20, total 40, imbalance 0.5.
+ * let out = liq.update(tick(30.0, 10.0)).unwrap();
+ * assert_eq!(out.net, 20.0);
+ * assert_eq!(out.total, 40.0);
+ * assert_eq!(out.imbalance, 0.5);
+ * ```
+ */
+typedef struct LiquidationFeatures LiquidationFeatures;
 
 /**
  * Logarithmic return over a `period`-bar lag: `ln(price_t / price_{t−period})`.
@@ -6426,6 +8036,62 @@ typedef struct LongShortRatio LongShortRatio;
 typedef struct M2Measure M2Measure;
 
 /**
+ * Moving Average Envelope: an SMA centerline with constant-percent bands on
+ * each side.
+ *
+ * ```text
+ * middle = SMA(period)
+ * upper  = middle · (1 + percent)
+ * lower  = middle · (1 − percent)
+ * ```
+ *
+ * The envelope is a fixed multiplicative offset around the moving average,
+ * so the band width scales with price rather than with realised volatility
+ * (contrast Bollinger Bands, whose width is `2·k·σ`, or Keltner Channels,
+ * whose width is `2·k·ATR`). It is the oldest band-style overlay still in
+ * regular use; chart vendors typically default to `period = 20`,
+ * `percent = 0.025` (2.5 %).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, MaEnvelope};
+ *
+ * let mut indicator = MaEnvelope::new(20, 0.025).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     last = indicator.update(100.0 + f64::from(i));
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct MaEnvelope MaEnvelope;
+
+/**
+ * MACD Fix (`MACDFIX`): the classic MACD with the fast and slow EMAs fixed at
+ * 12 and 26, leaving only the signal period configurable.
+ *
+ * This is TA-Lib's `MACDFIX` — identical output to
+ * [`MacdIndicator::new(12, 26, signal)`](crate::MacdIndicator), packaged as a
+ * single-parameter constructor for the common case. The output is the usual
+ * [`MacdOutput`] triple `{ macd, signal, histogram }`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, MacdFix};
+ *
+ * let mut indicator = MacdFix::new(9).unwrap();
+ * let mut last = None;
+ * for i in 0..80 {
+ *     last = indicator.update(100.0 + f64::from(i));
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct MacdFix MacdFix;
+
+/**
  * MACD Histogram — the `macd − signal` bar of [`MacdIndicator`] as a
  * standalone scalar indicator.
  *
@@ -6460,6 +8126,60 @@ typedef struct M2Measure M2Measure;
  * ```
  */
 typedef struct MacdHistogram MacdHistogram;
+
+/**
+ * MACD = EMA(fast) − EMA(slow), with a signal EMA on top.
+ *
+ * Standard parameters are `fast = 12`, `slow = 26`, `signal = 9`. The signal EMA
+ * is seeded from the first `signal` raw MACD values, so the first full
+ * [`MacdOutput`] is emitted after `slow + signal − 1` inputs (assuming the
+ * slow EMA seeded by then).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, MacdIndicator};
+ *
+ * let mut indicator = MacdIndicator::new(3, 6, 3).unwrap();
+ * let mut last = None;
+ * for i in 0..80 {
+ *     last = indicator.update(100.0 + f64::from(i));
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct MacdIndicator MacdIndicator;
+
+/**
+ * Ehlers' MESA Adaptive Moving Average (MAMA).
+ *
+ * MAMA adapts its smoothing constant from the rate-of-change of price phase,
+ * derived via a truncated Hilbert transform — full math in "Cycle Analytics
+ * for Traders" (Ehlers 2013, ch. 8) and the original 2001 MESA paper.
+ *
+ * The two-parameter `(fast_limit, slow_limit)` is the range over which the
+ * adaptive alpha can vary; defaults `(0.5, 0.05)` match the canonical
+ * EasyLanguage implementation. The companion FAMA is `mama * 0.5 * fast_limit
+ * + fama_prev * (1 - 0.5 * fast_limit)`, lagging MAMA so crossovers signal
+ * trend reversals.
+ *
+ * The indicator emits both lines as a [`MamaOutput`]. Use the [`crate::Fama`] wrapper
+ * in this module to expose just the slow line if needed (e.g. for chaining).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, Mama};
+ *
+ * let mut mama = Mama::new(0.5, 0.05).unwrap();
+ * let mut last = None;
+ * for i in 0..100 {
+ *     last = mama.update(100.0 + (f64::from(i) * 0.2).sin() * 5.0);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct Mama Mama;
 
 /**
  * Bill Williams' Market Facilitation Index — how much price movement the
@@ -6885,6 +8605,41 @@ typedef struct McGinleyDynamic McGinleyDynamic;
 typedef struct MedianAbsoluteDeviation MedianAbsoluteDeviation;
 
 /**
+ * Median Channel: a robust analogue of Bollinger Bands built from the rolling
+ * median and the median absolute deviation (MAD).
+ *
+ * ```text
+ * middle = median(close, period)
+ * MAD    = median( | close_i − middle | )
+ * upper  = middle + multiplier · MAD
+ * lower  = middle − multiplier · MAD
+ * ```
+ *
+ * Where [`BollingerBands`](crate::BollingerBands) centre on the mean and scale
+ * by the standard deviation — both of which a single spike can drag
+ * arbitrarily far — the Median Channel uses two order statistics. The
+ * breakdown point of the median and MAD is 50%: up to half the window can be
+ * contaminated before the centre or width is materially distorted. That makes
+ * the channel well suited to noisy, gap-prone, or fat-tailed series where
+ * Bollinger Bands flare on every outlier. Both quantiles use the type-7
+ * interpolation shared with [`RollingQuantile`](crate::RollingQuantile).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, MedianChannel};
+ *
+ * let mut indicator = MedianChannel::new(20, 2.0).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     last = indicator.update(100.0 + f64::from(i % 5));
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct MedianChannel MedianChannel;
+
+/**
  * Median Moving Average — the rolling median of the last `period` inputs.
  *
  * For an odd `period` the output is the middle order statistic of the window;
@@ -7124,6 +8879,44 @@ typedef struct MinusDi MinusDi;
 typedef struct MinusDm MinusDm;
 
 /**
+ * Modified-MA Stop — a trailing stop whose line is the **Modified Moving
+ * Average** (SMMA / Wilder's RMA) of price, allowed to move only in the trend's
+ * favour.
+ *
+ * ```text
+ * ma = SMMA(close, period)                 (Modified Moving Average)
+ * long:  stop = max(prev_stop, ma);  flip short when close < stop
+ * short: stop = min(prev_stop, ma);  flip long  when close > stop
+ * ```
+ *
+ * The Modified Moving Average (also called the smoothed or running moving
+ * average) is the slow, low-lag average Wilder used throughout his systems. Using
+ * it directly as a trailing line — but **ratcheting** so the long stop never
+ * falls and the short stop never rises — turns the smooth average into a stop
+ * that hugs price in a trend and flips when price decisively crosses it. Because
+ * the SMMA lags, the stop gives trends room while still exiting clean reversals.
+ *
+ * The first stop lands once the SMMA is ready (`period` inputs). Each `update` is
+ * O(1).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, ModifiedMaStop};
+ *
+ * let mut indicator = ModifiedMaStop::new(14).unwrap();
+ * let mut last = None;
+ * for i in 0..60 {
+ *     let base = 100.0 + f64::from(i);
+ *     let c = Candle::new(base, base + 1.0, base - 1.0, base + 0.5, 1_000.0, 0).unwrap();
+ *     last = indicator.update(c);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct ModifiedMaStop ModifiedMaStop;
+
+/**
  * Momentum: the raw price change over `period` bars, `price_t − price_{t−period}`.
  *
  * Unlike [`Roc`](crate::Roc), which divides by the old price to give a
@@ -7230,6 +9023,46 @@ typedef struct MorningDojiStar MorningDojiStar;
  * ```
  */
 typedef struct MorningEveningStar MorningEveningStar;
+
+/**
+ * Murrey Math Lines — T. H. Murrey's grid that divides the recent trading range
+ * into eighths, each acting as support/resistance.
+ *
+ * ```text
+ * HH = highest high over `period`,  LL = lowest low over `period`
+ * step = (HH − LL) / 8
+ * mm{i}_8 = LL + i · step       for i = 0..8
+ * ```
+ *
+ * Murrey Math (a Gann-derived framework) holds that price gravitates to and
+ * reverses at the eighth divisions of its range. The **4/8** line is the major
+ * pivot (mean); **0/8** and **8/8** are the strongest support and resistance;
+ * **3/8** and **5/8** bound the "normal" trading range, while **1/8**/**7/8** are
+ * the weak "stall and reverse" lines. This implementation uses the price-derived
+ * eighths over a rolling high-low frame (the practical core of the method) rather
+ * than Murrey's full octave-quantised frame sizing, so the levels track the
+ * instrument's actual recent range.
+ *
+ * The first value lands after `period` inputs; each `update` rescans the frame in
+ * O(`period`). A degenerate flat frame (`HH == LL`) collapses every line onto the
+ * price.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, MurreyMathLines};
+ *
+ * let mut indicator = MurreyMathLines::new(64).unwrap();
+ * let mut last = None;
+ * for i in 0..120 {
+ *     let base = 100.0 + (f64::from(i) * 0.3).sin() * 10.0;
+ *     let c = Candle::new(base, base + 1.0, base - 1.0, base, 1_000.0, 0).unwrap();
+ *     last = indicator.update(c);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct MurreyMathLines MurreyMathLines;
 
 /**
  * Naked (Virgin) POC — the nearest **untested** point of control from a prior
@@ -7375,6 +9208,48 @@ typedef struct NewHighsNewLows NewHighsNewLows;
  * ```
  */
 typedef struct NewPriceLines NewPriceLines;
+
+/**
+ * NRTR (Nick Rypock Trailing Reverse) — a **percentage** trailing-reverse stop
+ * that follows the trend extreme and flips when price retraces by a fixed
+ * percentage.
+ *
+ * ```text
+ * uptrend:   high_water = max(high_water, close)
+ *            line       = high_water · (1 − pct/100)
+ *            flip down when close < line  (reseed low_water = close)
+ * downtrend: low_water  = min(low_water, close)
+ *            line       = low_water · (1 + pct/100)
+ *            flip up   when close > line  (reseed high_water = close)
+ * ```
+ *
+ * Unlike volatility stops (ATR, σ-of-range), NRTR uses a pure **percentage**
+ * retracement: the line trails the highest close reached in the up-leg at a
+ * fixed `pct` below it, and a close that gives back that percentage reverses the
+ * trend, handing the line to the opposite extreme. This makes it scale-free and
+ * trivially tunable — one number sets how much retracement you tolerate. It
+ * differs from a fixed percentage *stop-loss* in that it **reverses** (tracks
+ * both directions) rather than just exiting.
+ *
+ * The first bar seeds the up-trend and emits a line immediately. Each `update` is
+ * O(1).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, Nrtr};
+ *
+ * let mut indicator = Nrtr::new(2.0).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     let close = 100.0 + f64::from(i);
+ *     let c = Candle::new(close, close + 0.5, close - 0.5, close, 1_000.0, 0).unwrap();
+ *     last = indicator.update(c);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct Nrtr Nrtr;
 
 /**
  * Negative Volume Index (Paul Dysart, popularised by Norman Fosback).
@@ -7739,6 +9614,37 @@ typedef struct OpenInterestMomentum OpenInterestMomentum;
 typedef struct OpeningMarubozu OpeningMarubozu;
 
 /**
+ * Session Opening Range (first N bars + breakout distance).
+ *
+ * `period` defaults to **6** — the canonical 30-minute opening range on
+ * 5-minute bars. Callers MUST invoke [`Indicator::reset`] at session
+ * boundaries; otherwise the OR locks after the first `period` bars and
+ * stays fixed for the remainder of the instance's life.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, OpeningRange};
+ *
+ * let mut or = OpeningRange::new(2).unwrap();
+ * let bars = [
+ *     Candle::new(100.0, 102.0, 99.0, 101.0, 10.0, 0).unwrap(),
+ *     Candle::new(101.0, 103.0, 100.0, 102.0, 10.0, 1).unwrap(),
+ *     // Now locked — breakout distance reflects close - (high + low) / 2.
+ *     Candle::new(102.0, 110.0, 102.0, 105.0, 10.0, 2).unwrap(),
+ * ];
+ * for b in bars {
+ *     or.update(b);
+ * }
+ * let v = or.value().unwrap();
+ * assert_eq!(v.high, 103.0);
+ * assert_eq!(v.low, 99.0);
+ * assert_eq!(v.breakout_distance, 105.0 - (103.0 + 99.0) / 2.0);
+ * ```
+ */
+typedef struct OpeningRange OpeningRange;
+
+/**
  * Order-Book Imbalance aggregated over the full visible depth of each side.
  *
  * Sums the resting size of every bid level and every ask level in the
@@ -7949,6 +9855,32 @@ typedef struct OuHalfLife OuHalfLife;
  * ```
  */
 typedef struct OvernightGap OvernightGap;
+
+/**
+ * Overnight / intraday return decomposition, re-anchored at each local day
+ * boundary of [`Candle::timestamp`](crate::Candle) shifted by
+ * `utc_offset_minutes`.
+ *
+ * The first session yields no output (there is no prior close to anchor the
+ * overnight leg); from the second session onward every bar reports both
+ * components.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, OvernightIntradayReturn};
+ *
+ * let hour = 3_600_000;
+ * let mut oi = OvernightIntradayReturn::new(0);
+ * // Day 1 closes at 100.
+ * assert!(oi.update(Candle::new(99.0, 101.0, 98.0, 100.0, 1.0, 0).unwrap()).is_none());
+ * // Day 2 opens 110 (overnight +10%), closes 121 (intraday +10%).
+ * let v = oi.update(Candle::new(110.0, 122.0, 109.0, 121.0, 1.0, 24 * hour).unwrap()).unwrap();
+ * assert!((v.overnight - 0.10).abs() < 1e-9);
+ * assert!((v.intraday - 0.10).abs() < 1e-9);
+ * ```
+ */
+typedef struct OvernightIntradayReturn OvernightIntradayReturn;
 
 /**
  * Rolling Pain Index — Thomas Becker's continuous-pain risk measure.
@@ -8732,6 +10664,52 @@ typedef struct ProfileShape ProfileShape;
 typedef struct ProfitFactor ProfitFactor;
 
 /**
+ * Projection Bands: forward-projected high/low envelope.
+ *
+ * Mel Widner ("Projection Bands and the Projection Oscillator", *Technical
+ * Analysis of Stocks & Commodities*, May 1995) fits a separate linear
+ * regression to the highs and to the lows over the last `period` bars, then
+ * slides every bar's high and low forward to the current bar along its own
+ * slope. The upper band is the maximum of the projected highs, the lower band
+ * the minimum of the projected lows:
+ *
+ * ```text
+ * slope_h = OLS slope of (x, high) over the window
+ * slope_l = OLS slope of (x, low)  over the window
+ * // bar i (0 = oldest, period-1 = newest) is (period-1-i) bars in the past
+ * upper   = max over i of [ high_i + slope_h · (period-1-i) ]
+ * lower   = min over i of [ low_i  + slope_l · (period-1-i) ]
+ * middle  = (upper + lower) / 2
+ * ```
+ *
+ * Unlike [`LinRegChannel`](crate::LinRegChannel) and
+ * [`StandardErrorBands`](crate::StandardErrorBands) — which wrap a single
+ * close-regression endpoint by a dispersion statistic — Projection Bands are
+ * built from the *extremes*: the envelope adapts to the trend's slope yet
+ * always contains every projected high and low, so by construction price never
+ * pierces the bands within the window. A flat slope reduces the bands to the
+ * rolling highest-high / lowest-low (a Donchian channel); a steep slope tilts
+ * the whole envelope with the trend.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, ProjectionBands};
+ *
+ * let mut indicator = ProjectionBands::new(14).unwrap();
+ * let mut last = None;
+ * for i in 0..30 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct ProjectionBands ProjectionBands;
+
+/**
  * Projection Oscillator: where the close sits inside the projection bands,
  * scaled to `0..100`.
  *
@@ -8830,6 +10808,47 @@ typedef struct Psar Psar;
 typedef struct Pvi Pvi;
 
 /**
+ * QQE — Quantitative Qualitative Estimation (Igor Livshin).
+ *
+ * QQE smooths the RSI, then builds an "ATR of the RSI" trailing stop around it.
+ * Crossovers of the smoothed RSI and that trailing line give cleaner momentum
+ * signals than the raw RSI:
+ *
+ * ```text
+ * rsi_ma   = EMA(RSI(price, rsi_period), smoothing)
+ * atr_rsi  = |rsi_ma − rsi_ma_prev|
+ * ma_atr   = EMA(atr_rsi, 2·rsi_period − 1)        // Wilder length
+ * dar      = EMA(ma_atr, 2·rsi_period − 1) · factor // smoothed band width
+ *
+ * long_band  = (rsi_ma_prev > long_band_prev  && rsi_ma > long_band_prev)
+ *              ? max(long_band_prev,  rsi_ma − dar) : rsi_ma − dar
+ * short_band = (rsi_ma_prev < short_band_prev && rsi_ma < short_band_prev)
+ *              ? min(short_band_prev, rsi_ma + dar) : rsi_ma + dar
+ * trend      = cross-up of short_band → +1, cross-down of long_band → −1, else hold
+ * trailing   = trend == +1 ? long_band : short_band
+ * ```
+ *
+ * The trailing line ratchets in the trend direction (only ever tightening until
+ * the smoothed RSI crosses it), exactly like a [`SuperTrend`](crate::SuperTrend)
+ * on the RSI. Livshin's defaults are `rsi_period = 14`, `smoothing = 5`,
+ * `factor = 4.236`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, Qqe};
+ *
+ * let mut qqe = Qqe::new(14, 5, 4.236).unwrap();
+ * let mut last = None;
+ * for i in 0..200 {
+ *     last = qqe.update(100.0 + (f64::from(i) * 0.1).sin() * 8.0);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct Qqe Qqe;
+
+/**
  * Qstick: the simple moving average of the body `close - open` over `period`
  * bars.
  *
@@ -8860,6 +10879,39 @@ typedef struct Pvi Pvi;
  * ```
  */
 typedef struct Qstick Qstick;
+
+/**
+ * Quartile Bands: a distribution-based envelope drawn at the rolling quartiles.
+ *
+ * ```text
+ * lower  = Q1  = 25th percentile of the last `period` values
+ * middle = Q2  = 50th percentile (median)
+ * upper  = Q3  = 75th percentile
+ * ```
+ *
+ * Quantiles use the type-7 (`NumPy`/`R-7`) linear interpolation shared with
+ * [`RollingQuantile`](crate::RollingQuantile). Where Bollinger Bands assume an
+ * approximately normal distribution and size the envelope by the mean and
+ * standard deviation, Quartile Bands are fully **non-parametric**: the band
+ * edges are order statistics, so a single outlier shifts at most one rank
+ * rather than inflating the whole width, and the inter-quartile span between
+ * the bands is exactly the [`RollingIqr`](crate::RollingIqr). The middle line
+ * is the robust median rather than the mean, so it is unmoved by spikes.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, QuartileBands};
+ *
+ * let mut indicator = QuartileBands::new(20).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     last = indicator.update(100.0 + f64::from(i));
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct QuartileBands QuartileBands;
 
 /**
  * Quoted Spread — the top-of-book bid-ask spread expressed in basis points of
@@ -9168,6 +11220,49 @@ typedef struct Reflex Reflex;
  * ```
  */
 typedef struct RegimeLabel RegimeLabel;
+
+/**
+ * Comparative relative strength of asset `a` against asset `b`.
+ *
+ * Each `update` receives one `(a, b)` price pair and forms the **ratio line**
+ * `a / b`. The ratio is then smoothed with a simple moving average and run
+ * through an RSI, so a single indicator gives you the relative-strength level,
+ * its trend, and whether that trend is overbought or oversold:
+ *
+ * ```text
+ * ratio     = a / b
+ * ratio_ma  = SMA(ratio, ma_period)
+ * ratio_rsi = RSI(ratio, rsi_period)
+ * ```
+ *
+ * A rising ratio means `a` is outperforming `b`; `ratio_ma` shows the trend of
+ * that outperformance and `ratio_rsi` flags exhaustion (e.g. `> 70` after a
+ * strong run of `a` over `b`). This is the classic "asset-vs-asset" or
+ * "asset-vs-index" rotation screen.
+ *
+ * The first output appears once both the moving average and the RSI have
+ * warmed up; the ratio itself is computed from the first valid pair. A
+ * non-finite price or a zero denominator (`b == 0`) makes the ratio undefined
+ * and is skipped, leaving the internal averages untouched.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, RelativeStrengthAB};
+ *
+ * let mut rs = RelativeStrengthAB::new(5, 5).unwrap();
+ * let mut last = None;
+ * for _ in 0..20 {
+ *     last = rs.update((200.0, 100.0)); // ratio is a constant 2.0
+ * }
+ * let out = last.unwrap();
+ * assert!((out.ratio - 2.0).abs() < 1e-12);
+ * assert!((out.ratio_ma - 2.0).abs() < 1e-12);
+ * // A flat ratio has no gains or losses, so its RSI sits at the neutral 50.
+ * assert!((out.ratio_rsi - 50.0).abs() < 1e-9);
+ * ```
+ */
+typedef struct RelativeStrengthAB RelativeStrengthAB;
 
 /**
  * Renko Trailing Stop — a trailing stop that follows a Renko-style brick
@@ -9896,6 +11991,51 @@ typedef struct Rvi Rvi;
 typedef struct RviVolatility RviVolatility;
 
 /**
+ * Mike Poulos' Random Walk Index — a trend-vs.-random-walk indicator that
+ * asks "how many standard deviations away from a random walk is the current
+ * move?".
+ *
+ * For each lookback `i ∈ [2, period]`, RWI computes the ratio of the actual
+ * price displacement over `i` bars to the expected displacement of a random
+ * walk of the same length:
+ *
+ * ```text
+ * RWI_High_t(i) = (high_t  − low_{t-i+1})  / (ATR_i(t) * sqrt(i))
+ * RWI_Low_t(i)  = (high_{t-i+1} − low_t)   / (ATR_i(t) * sqrt(i))
+ * ```
+ *
+ * where `ATR_i(t)` is the simple average of true-range over the most recent
+ * `i` bars. The reported `RWI_High_t` / `RWI_Low_t` are the maxima of these
+ * ratios across all lookbacks `i ∈ [2, period]`.
+ *
+ * `RWI_High` crossing above `RWI_Low` and exceeding 1 (`> 2` is the typical
+ * strong-trend threshold) signals an uptrend dominating random-walk; the
+ * mirror situation flags a downtrend. When both lines are below 1, neither
+ * direction beats a random walk and the market is read as ranging.
+ *
+ * The first output is emitted after `period` candles (the second one provides
+ * the first `period = 2` lookback, so the indicator emits at index
+ * `period - 1`).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, Rwi};
+ *
+ * let mut indicator = Rwi::new(14).unwrap();
+ * let mut last = None;
+ * for i in 0..80 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct Rwi Rwi;
+
+/**
  * Sample Entropy (`SampEn`) — Richman & Moorman's measure of how *regular* (i.e.
  * predictable) a series is: the negative log conditional probability that two
  * sub-sequences similar for `m` points stay similar at the next point.
@@ -10043,6 +12183,65 @@ typedef struct SeasonalZScore SeasonalZScore;
  * ```
  */
 typedef struct SeparatingLines SeparatingLines;
+
+/**
+ * Running high / low of the current session, keyed off the wall-clock day of
+ * [`Candle::timestamp`](crate::Candle).
+ *
+ * Unlike [`crate::OpeningRange`] or [`crate::InitialBalance`], which require the
+ * caller to invoke `reset()` at every session boundary, this indicator detects
+ * the boundary itself: whenever a candle falls on a different local calendar
+ * day (after shifting by `utc_offset_minutes`) the high / low are re-anchored to
+ * that candle. `utc_offset_minutes` lets callers align the day boundary to an
+ * exchange session — `0` for UTC, `-300` for U.S. Eastern standard time.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, SessionHighLow};
+ *
+ * // One bar per hour; the day rolls over after 24 bars at UTC.
+ * let mut shl = SessionHighLow::new(0);
+ * let hour = 3_600_000;
+ * shl.update(Candle::new(100.0, 105.0, 99.0, 101.0, 1.0, 0).unwrap());
+ * let v = shl.update(Candle::new(101.0, 108.0, 100.0, 107.0, 1.0, hour).unwrap()).unwrap();
+ * assert_eq!(v.high, 108.0);
+ * assert_eq!(v.low, 99.0);
+ * // A bar on the next day re-anchors to that bar alone.
+ * let v = shl.update(Candle::new(50.0, 51.0, 49.0, 50.0, 1.0, 24 * hour).unwrap()).unwrap();
+ * assert_eq!(v.high, 51.0);
+ * assert_eq!(v.low, 49.0);
+ * ```
+ */
+typedef struct SessionHighLow SessionHighLow;
+
+/**
+ * Per-session high-low range, keyed off the wall-clock hour of
+ * [`Candle::timestamp`](crate::Candle).
+ *
+ * The local day (after shifting by `utc_offset_minutes`) is split into three
+ * eight-hour sessions: **Asia** `00:00..08:00`, **EU** `08:00..16:00`, **US**
+ * `16:00..24:00`. Each session accumulates its own high / low; the reported
+ * range is `high - low`, or `0.0` before that session has seen a bar. All three
+ * re-anchor automatically at the day boundary.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, SessionRange};
+ *
+ * let hour = 3_600_000;
+ * let mut sr = SessionRange::new(0);
+ * // 02:00 UTC — Asia session.
+ * sr.update(Candle::new(100.0, 104.0, 98.0, 101.0, 1.0, 2 * hour).unwrap());
+ * // 10:00 UTC — EU session.
+ * let v = sr.update(Candle::new(101.0, 110.0, 100.0, 109.0, 1.0, 10 * hour).unwrap()).unwrap();
+ * assert_eq!(v.asia, 6.0);
+ * assert_eq!(v.eu, 10.0);
+ * assert_eq!(v.us, 0.0);
+ * ```
+ */
+typedef struct SessionRange SessionRange;
 
 /**
  * Volume-weighted average price reset at each local day boundary.
@@ -10513,6 +12712,44 @@ typedef struct Smi Smi;
 typedef struct Smma Smma;
 
 /**
+ * Smoothed Heikin-Ashi — the [`HeikinAshi`](crate::HeikinAshi) transform applied
+ * to **EMA-smoothed** OHLC, for an even cleaner trend view.
+ *
+ * ```text
+ * eo, eh, el, ec = EMA(open|high|low|close, period)
+ * ha_close = (eo + eh + el + ec) / 4
+ * ha_open  = (prev_ha_open + prev_ha_close) / 2     (seeded with (eo + ec)/2)
+ * ha_high  = max(eh, ha_open, ha_close)
+ * ha_low   = min(el, ha_open, ha_close)
+ * ```
+ *
+ * Standard Heikin-Ashi already averages the OHLC; smoothing each input series
+ * with an EMA *before* the transform removes still more noise, producing long,
+ * uninterrupted runs of same-colour candles in a trend and crisp colour flips at
+ * turns. The trade-off is added lag proportional to `period`. The output uses the
+ * same OHLC field layout as a candle so it can be charted directly.
+ *
+ * The first value lands once the EMAs are seeded (`period` inputs). Each `update`
+ * is O(1).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, SmoothedHeikinAshi};
+ *
+ * let mut indicator = SmoothedHeikinAshi::new(10).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     let base = 100.0 + f64::from(i);
+ *     let c = Candle::new(base, base + 1.0, base - 1.0, base + 0.5, 1_000.0, 0).unwrap();
+ *     last = indicator.update(c);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct SmoothedHeikinAshi SmoothedHeikinAshi;
+
+/**
  * Rolling Sortino Ratio.
  *
  * Like the Sharpe Ratio but only penalises **downside** volatility — returns
@@ -10689,6 +12926,50 @@ typedef struct SpinningTop SpinningTop;
 typedef struct SpreadAr1Coefficient SpreadAr1Coefficient;
 
 /**
+ * Bollinger bands on the spread `a − b` of two series.
+ *
+ * Each `update` takes one `(a, b)` price pair and forms the spread
+ * `sₜ = aₜ − bₜ`. Over the trailing window of `period` spreads it builds a
+ * classic Bollinger envelope:
+ *
+ * ```text
+ * middle = mean(s)        σ = stddev(s)
+ * upper  = middle + num_std · σ
+ * lower  = middle − num_std · σ
+ * %b     = (s_now − lower) / (upper − lower)
+ * ```
+ *
+ * Applied to a spread rather than a price, the bands are a ready-made pairs
+ * mean-reversion signal: the spread riding the **upper** band is stretched
+ * rich (a short-the-spread setup), the **lower** band stretched cheap, and a
+ * return to the **middle** is the exit. `%b` compresses the location into one
+ * number for thresholding. The spread is the raw difference `a − b`, so feed
+ * already-comparable legs (e.g. a hedged pair, two yields, or log prices); pair
+ * this with [`crate::BetaNeutralSpread`] when the legs need a hedge ratio first.
+ *
+ * A flat spread yields a zero-width band; `%b` is then reported as the neutral
+ * `0.5`. Each `update` is `O(1)`: the mean and variance come from two running
+ * sums maintained as the window slides.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, SpreadBollingerBands};
+ *
+ * let mut bb = SpreadBollingerBands::new(20, 2.0).unwrap();
+ * let mut last = None;
+ * for t in 0..60 {
+ *     let b = 100.0 + f64::from(t);
+ *     let a = b + 2.0 * (f64::from(t) * 0.5).sin();
+ *     last = bb.update((a, b));
+ * }
+ * let out = last.unwrap();
+ * assert!(out.lower <= out.middle && out.middle <= out.upper);
+ * ```
+ */
+typedef struct SpreadBollingerBands SpreadBollingerBands;
+
+/**
  * Hurst exponent of the spread `a − b` over a rolling window.
  *
  * Each `update` takes one `(a, b)` price pair and forms the spread
@@ -10817,6 +13098,85 @@ typedef struct StalledPattern StalledPattern;
  * ```
  */
 typedef struct StandardError StandardError;
+
+/**
+ * Standard Error Bands: linear-regression line wrapped by the standard error
+ * of the fit.
+ *
+ * ```text
+ * fit y = a + b·x by OLS over the last `period` closes
+ * residual_i = y_i − (a + b · x_i)
+ * stderr     = sqrt( Σ residual_i² / (period − 2) )   // OLS standard error
+ * middle     = a + b · (period − 1)
+ * upper      = middle + multiplier · stderr
+ * lower      = middle − multiplier · stderr
+ * ```
+ *
+ * Standard Error Bands and [`LinRegChannel`](crate::LinRegChannel) both wrap
+ * an OLS endpoint, but use *different denominators* for the dispersion
+ * statistic:
+ *
+ * - The `LinReg` Channel uses the population standard deviation of the
+ *   residuals (denominator `n`).
+ * - Standard Error Bands use the OLS standard error (denominator `n − 2`,
+ *   one degree of freedom for the slope and one for the intercept).
+ *
+ * The `n − 2` divisor produces a slightly wider channel and is the
+ * statistically-correct band-width when the regression is interpreted as a
+ * prediction interval. Jon Andersen's original publication pairs the bands
+ * with a default `multiplier = 2.0` and a 3-bar SMA smoothing of all three
+ * outputs; this implementation reports the *raw* bands so callers can pipe
+ * them through their own smoother (e.g. [`Sma::new(3)`](crate::Sma)).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, StandardErrorBands};
+ *
+ * let mut indicator = StandardErrorBands::new(21, 2.0).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     last = indicator.update(100.0 + f64::from(i));
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct StandardErrorBands StandardErrorBands;
+
+/**
+ * STARC Bands (Stoller Average Range Channel): a close-SMA centerline with
+ * bands sized by ATR.
+ *
+ * ```text
+ * middle = SMA(close, sma_period)
+ * upper  = middle + multiplier · ATR(atr_period)
+ * lower  = middle − multiplier · ATR(atr_period)
+ * ```
+ *
+ * STARC and [`Keltner`](crate::Keltner) share the same skeleton — moving
+ * average plus an ATR offset — but Keltner's centerline is an `EMA` of the
+ * typical price while STARC uses an `SMA` of the close. The SMA gives a
+ * flatter, less reactive midline that traders use to pick the larger swing
+ * targets; Stoller's reference parameters are `SMA(6)` over the close with
+ * `ATR(15)` and a multiplier of `2.0`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, StarcBands};
+ *
+ * let mut indicator = StarcBands::new(6, 15, 2.0).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct StarcBands StarcBands;
 
 /**
  * Doug Schaff's Trend Cycle — a doubly-`Stochastic`-smoothed MACD that
@@ -11030,6 +13390,30 @@ typedef struct StickSandwich StickSandwich;
 typedef struct StochRsi StochRsi;
 
 /**
+ * Fast Stochastic Oscillator.
+ *
+ * Maintains rolling highest-high and lowest-low over the lookback period via a
+ * monotonic deque, giving O(1) amortized updates. %D is an SMA of the %K series.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, Stochastic};
+ *
+ * let mut indicator = Stochastic::new(5, 3).unwrap();
+ * let mut last = None;
+ * for i in 0..80 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct Stochastic Stochastic;
+
+/**
  * Stochastic CCI — the stochastic oscillator computed over the
  * [`Cci`](crate::Cci) instead of price.
  *
@@ -11099,6 +13483,49 @@ typedef struct StochasticCci StochasticCci;
  * ```
  */
 typedef struct SuperSmoother SuperSmoother;
+
+/**
+ * `SuperTrend` — an ATR-banded trailing stop that flips sides on a close
+ * through the band.
+ *
+ * ```text
+ * hl2          = (high + low) / 2
+ * basic_upper  = hl2 + multiplier · ATR
+ * basic_lower  = hl2 − multiplier · ATR
+ *
+ * final_upper  = basic_upper  if basic_upper < prev_final_upper or prev_close > prev_final_upper
+ *                else prev_final_upper
+ * final_lower  = basic_lower  if basic_lower > prev_final_lower or prev_close < prev_final_lower
+ *                else prev_final_lower
+ *
+ * in a downtrend: stay down while close <= final_upper, else flip up
+ * in an uptrend:  stay up   while close >= final_lower, else flip down
+ * SuperTrend   = final_lower in an uptrend, final_upper in a downtrend
+ * ```
+ *
+ * The final bands ratchet — the upper band only moves down (and the lower
+ * band only moves up) until price closes through it, which flips the trend
+ * and hands the role of trailing stop to the opposite band. The first
+ * ATR-ready bar seeds the trend as up. Wilder's classic configuration is
+ * `ATR(10)` with a `3.0` multiplier.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, SuperTrend};
+ *
+ * let mut indicator = SuperTrend::classic();
+ * let mut last = None;
+ * for i in 0..80 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct SuperTrend SuperTrend;
 
 /**
  * Tillson's T3 — a six-fold cascaded EMA recombined with a *volume factor* `v`.
@@ -11372,6 +13799,47 @@ typedef struct TdDeMarker TdDeMarker;
 typedef struct TdDifferential TdDifferential;
 
 /**
+ * TD Lines (TDST) — setup-derived horizontal support / resistance.
+ */
+typedef struct TdLines TdLines;
+
+/**
+ * Tom DeMark **TD Moving Averages** — a two-line trend ribbon (ST1 fast, ST2
+ * slow) computed on the median price, whose relationship defines the trend.
+ *
+ * ```text
+ * price = (high + low) / 2          (median price)
+ * st1   = SMA(price, period_st1)    (fast / "Sequential Trend 1")
+ * st2   = SMA(price, period_st2)    (slow / "Sequential Trend 2")
+ * ```
+ *
+ * DeMark's moving-average pair frames the trend objectively: when `st1` is above
+ * `st2` the trend is up, below it down, and the cross marks the change. Using the
+ * **median price** rather than the close de-emphasises closing noise. This is a
+ * streaming dual-SMA implementation of the ST1/ST2 ribbon; read the lines and
+ * their crossover exactly as a fast/slow moving-average system.
+ *
+ * `period_st1` must be strictly smaller than `period_st2`. The first value lands
+ * once the slow average is seeded (`period_st2` inputs). Each `update` is O(1).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, TdMovingAverage};
+ *
+ * let mut indicator = TdMovingAverage::new(5, 13).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     let base = 100.0 + f64::from(i);
+ *     let c = Candle::new(base, base + 1.0, base - 1.0, base, 1_000.0, 0).unwrap();
+ *     last = indicator.update(c);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct TdMovingAverage TdMovingAverage;
+
+/**
  * TD Open — gap-and-fade reversal detector.
  */
 typedef struct TdOpen TdOpen;
@@ -11387,9 +13855,24 @@ typedef struct TdPressure TdPressure;
 typedef struct TdPropulsion TdPropulsion;
 
 /**
+ * TD Range Projection — next-bar high/low pivot.
+ */
+typedef struct TdRangeProjection TdRangeProjection;
+
+/**
  * TD Range Expansion Index oscillator.
  */
 typedef struct TdRei TdRei;
+
+/**
+ * TD Risk Level — setup-derived protective-stop levels.
+ */
+typedef struct TdRiskLevel TdRiskLevel;
+
+/**
+ * TD Sequential state machine: combined Setup (1-9) + Countdown (1-13).
+ */
+typedef struct TdSequential TdSequential;
 
 /**
  * TD Setup state machine: counts consecutive bars meeting DeMark's setup
@@ -12426,6 +14909,47 @@ typedef struct Tsi Tsi;
 typedef struct Tsv Tsv;
 
 /**
+ * TTM Squeeze (John Carter): a Bollinger-vs-Keltner volatility squeeze paired
+ * with a detrended-close momentum reading.
+ *
+ * Carter's setup detects coiled markets (low realised volatility relative to
+ * ATR) and the *direction* of the breakout when they uncoil:
+ *
+ * ```text
+ * squeeze  = 1.0 if BollingerBands(period, bb_mult)
+ *                ⊂ KeltnerChannels-like(SMA(period), ATR(period), kc_mult)
+ *            else 0.0
+ *
+ * hl_mid   = (max(high, period) + min(low, period)) / 2
+ * detrend  = close − (hl_mid + SMA(close, period)) / 2
+ * momentum = LinearRegression(detrend, period)        // endpoint
+ * ```
+ *
+ * The "Keltner-like" envelope here uses an *SMA* centerline (not the EMA of
+ * typical price that [`Keltner`](crate::Keltner) uses) plus an ATR offset,
+ * exactly as Carter's original publication and every chart-vendor
+ * implementation define it. Common parameters: `period = 20`, `bb_mult = 2.0`,
+ * `kc_mult = 1.5`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, TtmSqueeze};
+ *
+ * let mut indicator = TtmSqueeze::new(20, 2.0, 1.5).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct TtmSqueeze TtmSqueeze;
+
+/**
  * TTM Trend: compares the current close to the simple moving average of the
  * recent median prices `(high + low) / 2`. A close above that reference colors
  * the bar as an uptrend (`+1.0`); a close at or below it as a downtrend
@@ -12949,6 +15473,26 @@ typedef struct UpsideGapTwoCrows UpsideGapTwoCrows;
 typedef struct UpsidePotentialRatio UpsidePotentialRatio;
 
 /**
+ * Rolling Value Area indicator over the last `period` candles.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, ValueArea};
+ *
+ * let mut va = ValueArea::new(5, 50, 0.70).unwrap();
+ * for i in 0..10 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base, 10.0, i64::from(i)).unwrap();
+ *     va.update(candle);
+ * }
+ * assert!(va.is_ready());
+ * ```
+ */
+typedef struct ValueArea ValueArea;
+
+/**
  * Rolling historical Value-at-Risk.
  *
  * Input is treated as a period return. Over the trailing window of `period`
@@ -13128,6 +15672,49 @@ typedef struct VerticalHorizontalFilter VerticalHorizontalFilter;
  * ```
  */
 typedef struct Vidya Vidya;
+
+/**
+ * Volatility Cone — the current realized volatility positioned within the
+ * historical range ("cone") of realized volatilities over a lookback window.
+ *
+ * ```text
+ * r_t     = ln(close_t / close_{t−1})
+ * vol_t   = stddev_sample(r over window)            (rolling realized volatility)
+ * cone    = { min, median, max, percentile } of vol over the last `lookback`
+ * ```
+ *
+ * A volatility cone (Burghardt & Lane 1990) shows whether current volatility is
+ * high or low *relative to its own history*, rather than as an absolute number.
+ * This streaming form tracks one horizon: it maintains the rolling realized
+ * volatility of log returns over `window`, then reports the latest reading
+ * (`current`) alongside the `min`, `median`, `max` and percentile rank of that
+ * volatility series over the trailing `lookback`. `current` always lies within
+ * `[min, max]` because it is itself the newest member of the lookback set.
+ *
+ * Only the candle's **close** is used (the log-return series); the high and low
+ * are ignored. The volatility is per-period (sample stddev of log returns, not
+ * annualised) — multiply by `√trading_periods` for an annual figure. Each
+ * `update` is O(`lookback log lookback`) from sorting the envelope.
+ *
+ * Non-positive closes are ignored (the log return would be undefined): the tick
+ * is dropped, state is left untouched, and the last value is returned.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, VolatilityCone};
+ *
+ * let mut indicator = VolatilityCone::new(20, 60).unwrap();
+ * let mut last = None;
+ * for i in 0..120 {
+ *     let c = 100.0 + (f64::from(i) * 0.3).sin() * 5.0;
+ *     let candle = Candle::new(c, c + 1.0, c - 1.0, c, 1_000.0, 0).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct VolatilityCone VolatilityCone;
 
 /**
  * Volatility of Volatility — the standard deviation of a rolling realized-
@@ -13362,6 +15949,119 @@ typedef struct VolumePriceTrend VolumePriceTrend;
 typedef struct VolumeRsi VolumeRsi;
 
 /**
+ * Volume-Weighted MACD — the MACD oscillator computed from **volume-weighted**
+ * moving averages instead of plain EMAs.
+ *
+ * ```text
+ * macd      = VWMA(close, fast) − VWMA(close, slow)
+ * signal    = EMA(macd, signal_period)
+ * histogram = macd − signal
+ * ```
+ *
+ * Standard [`MacdIndicator`](crate::MacdIndicator) smooths price with exponential
+ * averages that ignore volume. The volume-weighted variant (Buff Dormeier and
+ * others) replaces each average with a [`Vwma`], so heavy-volume bars dominate
+ * the trend estimate and the oscillator leans toward where real participation
+ * occurred. Crossovers backed by volume therefore appear sooner and noise from
+ * thin bars is damped. The signal line keeps a standard EMA, matching the
+ * classic histogram construction.
+ *
+ * `fast` must be strictly smaller than `slow`. The first output lands after
+ * `slow + signal − 1` inputs: `slow` to seed the slow VWMA, then `signal − 1`
+ * more to seed the signal EMA. Each `update` is O(1).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, VolumeWeightedMacd};
+ *
+ * let mut indicator = VolumeWeightedMacd::new(12, 26, 9).unwrap();
+ * let mut last = None;
+ * for i in 0..80 {
+ *     let base = 100.0 + f64::from(i);
+ *     let c = Candle::new(base, base + 1.0, base - 1.0, base + 0.5, 1_000.0, 0).unwrap();
+ *     last = indicator.update(c);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct VolumeWeightedMacd VolumeWeightedMacd;
+
+/**
+ * Volume-Weighted Support/Resistance — a band whose edges are the
+ * **volume-weighted** average of the recent highs (resistance) and lows
+ * (support), so the levels gravitate toward the prices where trading actually
+ * happened.
+ *
+ * ```text
+ * support    = Σ(low_i  · volume_i) / Σ volume_i      over the window
+ * resistance = Σ(high_i · volume_i) / Σ volume_i      over the window
+ * ```
+ *
+ * Plain high/low channels (e.g. [`Donchian`](crate::Donchian)) weight every bar
+ * equally, so a thin spike sets the boundary. Volume-weighting pulls the support
+ * and resistance toward the highs and lows that carried real volume — the prices
+ * the market agreed mattered — giving levels that tend to hold better. The
+ * distance between the two is a volume-aware range estimate. If the window's
+ * volume is all zero the band falls back to the equal-weighted average high and
+ * low.
+ *
+ * The first value lands after `period` inputs; each `update` is O(1).
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, VolumeWeightedSr};
+ *
+ * let mut indicator = VolumeWeightedSr::new(20).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     let base = 100.0 + (f64::from(i) * 0.3).sin() * 5.0;
+ *     let c = Candle::new(base, base + 2.0, base - 2.0, base, 1_000.0 + f64::from(i), 0).unwrap();
+ *     last = indicator.update(c);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct VolumeWeightedSr VolumeWeightedSr;
+
+/**
+ * Vortex Indicator — Botes & Siepman's pair of oscillators (`VI+`, `VI−`) that
+ * capture the relationship between two consecutive bars.
+ *
+ * Two "vortex movements" measure how far price travelled against the opposite
+ * extreme of the previous bar; each is normalised by the summed true range:
+ *
+ * ```text
+ * VM+_t = |high_t − low_{t−1}|
+ * VM−_t = |low_t  − high_{t−1}|
+ * VI+   = Σ VM+ over n / Σ TR over n
+ * VI−   = Σ VM− over n / Σ TR over n
+ * ```
+ *
+ * `VI+` crossing above `VI−` is a bullish signal, the reverse a bearish one;
+ * the wider the gap, the stronger the trend. A fully flat window (zero true
+ * range) reports `(0, 0)`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, Vortex};
+ *
+ * let mut indicator = Vortex::new(14).unwrap();
+ * let mut last = None;
+ * for i in 0..80 {
+ *     let base = 100.0 + i as f64;
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct Vortex Vortex;
+
+/**
  * VPIN — the Volume-Synchronised Probability of Informed Trading
  * (Easley, López de Prado & O'Hara, 2012).
  *
@@ -13422,6 +16122,43 @@ typedef struct Vpin Vpin;
  * ```
  */
 typedef struct Vwap Vwap;
+
+/**
+ * VWAP with volume-weighted standard-deviation envelopes.
+ *
+ * ```text
+ * tp_i        = typical_price(candle_i)         // (high + low + close) / 3
+ * sum_v       = Σ volume_i
+ * sum_pv      = Σ tp_i · volume_i
+ * sum_p2v     = Σ tp_i² · volume_i
+ * vwap        = sum_pv / sum_v
+ * variance    = sum_p2v / sum_v − vwap²         // volume-weighted population variance
+ * sigma       = sqrt(max(variance, 0))
+ * upper/lower = vwap ± multiplier · sigma
+ * ```
+ *
+ * The cumulative running sums make every update O(1) with no per-bar replay,
+ * matching the streaming contract of [`Vwap`](crate::Vwap). VWAP and its
+ * stddev bands are an intraday-session tool: call [`Indicator::reset`] at
+ * the start of each session boundary so the accumulators do not span the gap.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, VwapStdDevBands};
+ *
+ * let mut indicator = VwapStdDevBands::new(2.0).unwrap();
+ * let mut last = None;
+ * for i in 0..40 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct VwapStdDevBands VwapStdDevBands;
 
 /**
  * Volume-Weighted Moving Average over a rolling window of `period` candles.
@@ -13580,6 +16317,50 @@ typedef struct Wad Wad;
 typedef struct WavePm WavePm;
 
 /**
+ * `LazyBear`'s Wave Trend Oscillator — a two-line momentum gauge built from
+ * the typical price and three cascaded EMAs.
+ *
+ * For each candle let `ap_t = (high + low + close) / 3`:
+ *
+ * ```text
+ * esa_t = EMA(ap, channel_period)
+ * d_t   = EMA(|ap − esa|, channel_period)
+ * ci_t  = (ap_t − esa_t) / (0.015 * d_t)
+ * wt1_t = EMA(ci, average_period)
+ * wt2_t = SMA(wt1, signal_period)
+ * ```
+ *
+ * Bullish trigger: `wt1` crossing above `wt2` from an oversold region
+ * (typically `wt1 < -60`); bearish trigger: the mirror crossover above
+ * `+60`. The indicator is mean-reverting around zero, so it is most useful
+ * at extremes.
+ *
+ * The canonical `LazyBear` defaults are
+ * `(channel_period = 10, average_period = 21, signal_period = 4)`; warmup is
+ * `channel_period + average_period + signal_period − 2`.
+ *
+ * Non-finite `d` (a zero-volatility seed where the absolute-deviation EMA
+ * has not yet recorded any movement) collapses the channel index to zero.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, WaveTrend};
+ *
+ * let mut indicator = WaveTrend::classic().unwrap();
+ * let mut last = None;
+ * for i in 0..80 {
+ *     let base = 100.0 + f64::from(i);
+ *     let candle =
+ *         Candle::new(base, base + 2.0, base - 2.0, base + 1.0, 10.0, i64::from(i)).unwrap();
+ *     last = indicator.update(candle);
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct WaveTrend WaveTrend;
+
+/**
  * Wedge — a pattern where both trendlines slope the same way but converge,
  * signalling exhaustion of the prevailing move.
  *
@@ -13658,6 +16439,35 @@ typedef struct WeightedClose WeightedClose;
 typedef struct WickRatio WickRatio;
 
 /**
+ * Williams Fractals — Bill Williams' five-bar swing detector. A bar is an
+ * **up fractal** if its high is strictly above the highs of the two bars
+ * immediately before and the two bars immediately after. A bar is a
+ * **down fractal** if its low is strictly below the lows of those same four
+ * neighbours. Because confirmation requires two bars to the right of the
+ * candidate, the indicator inherently lags by two bars.
+ *
+ * The first output lands at the fifth candle and corresponds to the third
+ * candle (the centre of the window). Subsequent outputs slide the window by
+ * one bar.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, WilliamsFractals};
+ *
+ * let mut wf = WilliamsFractals::new();
+ * // Build a V-shape with a clear high at index 2.
+ * let highs = [1.0, 2.0, 5.0, 2.0, 1.0];
+ * for (i, &h) in highs.iter().enumerate() {
+ *     let c = Candle::new(h, h, h - 0.5, h, 1.0, i as i64).unwrap();
+ *     let _ = wf.update(c);
+ * }
+ * // At candle 5 the third bar's high of 5.0 is confirmed as an up fractal.
+ * ```
+ */
+typedef struct WilliamsFractals WilliamsFractals;
+
+/**
  * Williams %R: `-100 * (HH - close) / (HH - LL)` over the lookback window.
  *
  * Values lie in `[-100, 0]` and approximate the mirror image of the fast
@@ -13732,6 +16542,32 @@ typedef struct WinRate WinRate;
  * ```
  */
 typedef struct Wma Wma;
+
+/**
+ * Woodie Pivot Points — Tom Williams' close-weighted pivot variant.
+ *
+ * ```text
+ * PP = (H + L + 2·C) / 4
+ * R1 = 2·PP − L        S1 = 2·PP − H
+ * R2 = PP + (H − L)    S2 = PP − (H − L)
+ * ```
+ *
+ * The double-weighted close shifts the pivot toward where most of the
+ * session's activity actually settled — useful in trending markets where the
+ * close is more meaningful than the midpoint.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, WoodiePivots};
+ *
+ * let prev = Candle::new(100.0, 110.0, 90.0, 108.0, 1.0, 0).unwrap();
+ * let levels = WoodiePivots::new().update(prev).unwrap();
+ * // Close-weighted PP = (110 + 90 + 2·108)/4 = 104.
+ * assert!((levels.pp - 104.0).abs() < 1e-9);
+ * ```
+ */
+typedef struct WoodiePivots WoodiePivots;
 
 /**
  * Yang-Zhang Volatility — combines overnight, open-to-close and
@@ -13848,6 +16684,72 @@ typedef struct YoyoExit YoyoExit;
 typedef struct ZScore ZScore;
 
 /**
+ * Zero-Lag MACD — the standard `MACD` topology with `ZLEMA` substituted for
+ * `EMA` everywhere. `ZLEMA`'s de-lagged construction makes the MACD line
+ * react faster to trend changes at the cost of slightly noisier readings.
+ *
+ * ```text
+ * macd_t      = ZLEMA(close, fast)_t − ZLEMA(close, slow)_t
+ * signal_t    = ZLEMA(macd, signal_period)_t
+ * histogram_t = macd_t − signal_t
+ * ```
+ *
+ * Default parameters mirror MACD: `(fast = 12, slow = 26, signal = 9)`.
+ * `fast` must be strictly less than `slow`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Indicator, ZeroLagMacd};
+ *
+ * let mut zmacd = ZeroLagMacd::classic();
+ * let mut last = None;
+ * for i in 0..120 {
+ *     last = zmacd.update(100.0 + f64::from(i));
+ * }
+ * assert!(last.is_some());
+ * ```
+ */
+typedef struct ZeroLagMacd ZeroLagMacd;
+
+/**
+ * `ZigZag` — a non-repainting percent-threshold swing detector. Tracks the most
+ * recent extreme (high or low) and confirms a reversal once price has moved
+ * the configured percentage away from it.
+ *
+ * ```text
+ * uptrend (last swing was a low):
+ *   while highs make new highs, keep updating the pivot high
+ *   once close (or low) drops by ≥ threshold·high → confirm pivot high
+ *
+ * downtrend (last swing was a high):
+ *   while lows make new lows, keep updating the pivot low
+ *   once close (or high) rises by ≥ threshold·low  → confirm pivot low
+ * ```
+ *
+ * The indicator emits `Some(swing)` only on the bar where a reversal is
+ * confirmed, returning the price and direction of the **just-completed**
+ * extreme. Bars between confirmations return `None`. The first bar bootstraps
+ * the state — it determines an initial reference price but does not emit.
+ *
+ * The threshold is a fractional change (`0.05` ≈ 5%); it must be strictly
+ * positive and below `1.0`.
+ *
+ * # Example
+ *
+ * ```
+ * use wickra_core::{Candle, Indicator, ZigZag};
+ *
+ * let mut zz = ZigZag::new(0.10).unwrap();
+ * for (i, p) in [100.0, 105.0, 115.0, 100.0, 90.0, 100.0].iter().enumerate() {
+ *     let c = Candle::new(*p, *p + 0.5, *p - 0.5, *p, 1.0, i as i64).unwrap();
+ *     let _ = zz.update(c);
+ * }
+ * ```
+ */
+typedef struct ZigZag ZigZag;
+
+/**
  * Zero-Lag Exponential Moving Average (Ehlers & Way).
  *
  * A standard EMA applied to a *de-lagged* price series. The de-lagged input
@@ -13873,6 +16775,824 @@ typedef struct ZScore ZScore;
  * ```
  */
 typedef struct Zlema Zlema;
+
+/**
+ * C-ABI view of `AccelerationBandsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraAccelerationBandsOutput {
+    double upper;
+    double middle;
+    double lower;
+} WickraAccelerationBandsOutput;
+
+/**
+ * C-ABI view of `AdxOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraAdxOutput {
+    double plus_di;
+    double minus_di;
+    double adx;
+} WickraAdxOutput;
+
+/**
+ * C-ABI view of `AlligatorOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraAlligatorOutput {
+    double jaw;
+    double teeth;
+    double lips;
+} WickraAlligatorOutput;
+
+/**
+ * C-ABI view of `AndrewsPitchforkOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraAndrewsPitchforkOutput {
+    double median;
+    double upper;
+    double lower;
+} WickraAndrewsPitchforkOutput;
+
+/**
+ * C-ABI view of `AroonOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraAroonOutput {
+    double up;
+    double down;
+} WickraAroonOutput;
+
+/**
+ * C-ABI view of `AtrBandsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraAtrBandsOutput {
+    double upper;
+    double middle;
+    double lower;
+} WickraAtrBandsOutput;
+
+/**
+ * C-ABI view of `AtrRatchetOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraAtrRatchetOutput {
+    double value;
+    double direction;
+} WickraAtrRatchetOutput;
+
+/**
+ * C-ABI view of `AutoFibOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraAutoFibOutput {
+    double level_0;
+    double level_236;
+    double level_382;
+    double level_500;
+    double level_618;
+    double level_786;
+    double level_1000;
+} WickraAutoFibOutput;
+
+/**
+ * C-ABI view of `BollingerOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraBollingerOutput {
+    double upper;
+    double middle;
+    double lower;
+    double stddev;
+} WickraBollingerOutput;
+
+/**
+ * C-ABI view of `BomarBandsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraBomarBandsOutput {
+    double upper;
+    double middle;
+    double lower;
+} WickraBomarBandsOutput;
+
+/**
+ * C-ABI view of `CamarillaPivotsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraCamarillaPivotsOutput {
+    double pp;
+    double r1;
+    double r2;
+    double r3;
+    double r4;
+    double s1;
+    double s2;
+    double s3;
+    double s4;
+} WickraCamarillaPivotsOutput;
+
+/**
+ * C-ABI view of `CandleVolumeOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraCandleVolumeOutput {
+    double body;
+    double width;
+} WickraCandleVolumeOutput;
+
+/**
+ * C-ABI view of `CentralPivotRangeOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraCentralPivotRangeOutput {
+    double pivot;
+    double tc;
+    double bc;
+} WickraCentralPivotRangeOutput;
+
+/**
+ * C-ABI view of `ChandeKrollStopOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraChandeKrollStopOutput {
+    double stop_long;
+    double stop_short;
+} WickraChandeKrollStopOutput;
+
+/**
+ * C-ABI view of `ChandelierExitOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraChandelierExitOutput {
+    double long_stop;
+    double short_stop;
+} WickraChandelierExitOutput;
+
+/**
+ * C-ABI view of `ClassicPivotsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraClassicPivotsOutput {
+    double pp;
+    double r1;
+    double r2;
+    double r3;
+    double s1;
+    double s2;
+    double s3;
+} WickraClassicPivotsOutput;
+
+/**
+ * C-ABI view of `CointegrationOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraCointegrationOutput {
+    double hedge_ratio;
+    double spread;
+    double adf_stat;
+} WickraCointegrationOutput;
+
+/**
+ * C-ABI view of `CompositeProfileOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraCompositeProfileOutput {
+    double poc;
+    double vah;
+    double val;
+} WickraCompositeProfileOutput;
+
+/**
+ * C-ABI view of `DemarkPivotsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraDemarkPivotsOutput {
+    double pp;
+    double r1;
+    double s1;
+} WickraDemarkPivotsOutput;
+
+/**
+ * C-ABI view of `DonchianOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraDonchianOutput {
+    double upper;
+    double middle;
+    double lower;
+} WickraDonchianOutput;
+
+/**
+ * C-ABI view of `DonchianStopOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraDonchianStopOutput {
+    double stop_long;
+    double stop_short;
+} WickraDonchianStopOutput;
+
+/**
+ * C-ABI view of `DoubleBollingerOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraDoubleBollingerOutput {
+    double upper_outer;
+    double upper_inner;
+    double middle;
+    double lower_inner;
+    double lower_outer;
+} WickraDoubleBollingerOutput;
+
+/**
+ * C-ABI view of `ElderRayOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraElderRayOutput {
+    double bull_power;
+    double bear_power;
+} WickraElderRayOutput;
+
+/**
+ * C-ABI view of `ElderSafeZoneOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraElderSafeZoneOutput {
+    double value;
+    double direction;
+} WickraElderSafeZoneOutput;
+
+/**
+ * C-ABI view of `EquivolumeOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraEquivolumeOutput {
+    double height;
+    double width;
+} WickraEquivolumeOutput;
+
+/**
+ * C-ABI view of `FibArcsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraFibArcsOutput {
+    double arc_382;
+    double arc_500;
+    double arc_618;
+} WickraFibArcsOutput;
+
+/**
+ * C-ABI view of `FibChannelOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraFibChannelOutput {
+    double base;
+    double level_618;
+    double level_1000;
+    double level_1618;
+} WickraFibChannelOutput;
+
+/**
+ * C-ABI view of `FibConfluenceOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraFibConfluenceOutput {
+    double price;
+    double strength;
+} WickraFibConfluenceOutput;
+
+/**
+ * C-ABI view of `FibExtensionOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraFibExtensionOutput {
+    double level_1272;
+    double level_1414;
+    double level_1618;
+    double level_2000;
+    double level_2618;
+} WickraFibExtensionOutput;
+
+/**
+ * C-ABI view of `FibFanOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraFibFanOutput {
+    double fan_382;
+    double fan_500;
+    double fan_618;
+} WickraFibFanOutput;
+
+/**
+ * C-ABI view of `FibProjectionOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraFibProjectionOutput {
+    double level_618;
+    double level_1000;
+    double level_1618;
+    double level_2618;
+} WickraFibProjectionOutput;
+
+/**
+ * C-ABI view of `FibRetracementOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraFibRetracementOutput {
+    double level_0;
+    double level_236;
+    double level_382;
+    double level_500;
+    double level_618;
+    double level_786;
+    double level_1000;
+} WickraFibRetracementOutput;
+
+/**
+ * C-ABI view of `FibTimeZonesOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraFibTimeZonesOutput {
+    double on_zone;
+    double bars_to_next;
+} WickraFibTimeZonesOutput;
+
+/**
+ * C-ABI view of `FibonacciPivotsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraFibonacciPivotsOutput {
+    double pp;
+    double r1;
+    double r2;
+    double r3;
+    double s1;
+    double s2;
+    double s3;
+} WickraFibonacciPivotsOutput;
+
+/**
+ * C-ABI view of `FractalChaosBandsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraFractalChaosBandsOutput {
+    double upper;
+    double lower;
+} WickraFractalChaosBandsOutput;
+
+/**
+ * C-ABI view of `GatorOscillatorOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraGatorOscillatorOutput {
+    double upper;
+    double lower;
+} WickraGatorOscillatorOutput;
+
+/**
+ * C-ABI view of `GoldenPocketOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraGoldenPocketOutput {
+    double low;
+    double mid;
+    double high;
+} WickraGoldenPocketOutput;
+
+/**
+ * C-ABI view of `HeikinAshiOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraHeikinAshiOutput {
+    double open;
+    double high;
+    double low;
+    double close;
+} WickraHeikinAshiOutput;
+
+/**
+ * C-ABI view of `HighLowVolumeNodesOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraHighLowVolumeNodesOutput {
+    double hvn;
+    double lvn;
+} WickraHighLowVolumeNodesOutput;
+
+/**
+ * C-ABI view of `HtPhasorOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraHtPhasorOutput {
+    double inphase;
+    double quadrature;
+} WickraHtPhasorOutput;
+
+/**
+ * C-ABI view of `HurstChannelOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraHurstChannelOutput {
+    double upper;
+    double middle;
+    double lower;
+} WickraHurstChannelOutput;
+
+/**
+ * C-ABI view of `IchimokuOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraIchimokuOutput {
+    double tenkan;
+    double kijun;
+    double senkou_a;
+    double senkou_b;
+    double chikou;
+} WickraIchimokuOutput;
+
+/**
+ * C-ABI view of `InitialBalanceOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraInitialBalanceOutput {
+    double high;
+    double low;
+} WickraInitialBalanceOutput;
+
+/**
+ * C-ABI view of `KalmanHedgeRatioOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraKalmanHedgeRatioOutput {
+    double hedge_ratio;
+    double intercept;
+    double spread;
+} WickraKalmanHedgeRatioOutput;
+
+/**
+ * C-ABI view of `KaseDevStopOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraKaseDevStopOutput {
+    double value;
+    double direction;
+} WickraKaseDevStopOutput;
+
+/**
+ * C-ABI view of `KasePermissionStochasticOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraKasePermissionStochasticOutput {
+    double fast;
+    double slow;
+} WickraKasePermissionStochasticOutput;
+
+/**
+ * C-ABI view of `KeltnerOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraKeltnerOutput {
+    double upper;
+    double middle;
+    double lower;
+} WickraKeltnerOutput;
+
+/**
+ * C-ABI view of `KstOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraKstOutput {
+    double kst;
+    double signal;
+} WickraKstOutput;
+
+/**
+ * C-ABI view of `LeadLagCrossCorrelationOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraLeadLagCrossCorrelationOutput {
+    int64_t lag;
+    double correlation;
+} WickraLeadLagCrossCorrelationOutput;
+
+/**
+ * C-ABI view of `LinRegChannelOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraLinRegChannelOutput {
+    double upper;
+    double middle;
+    double lower;
+} WickraLinRegChannelOutput;
+
+/**
+ * C-ABI view of `LiquidationFeaturesOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraLiquidationFeaturesOutput {
+    double long_;
+    double short_;
+    double net;
+    double total;
+    double imbalance;
+} WickraLiquidationFeaturesOutput;
+
+/**
+ * C-ABI view of `MaEnvelopeOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraMaEnvelopeOutput {
+    double upper;
+    double middle;
+    double lower;
+} WickraMaEnvelopeOutput;
+
+/**
+ * C-ABI view of `MacdOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraMacdOutput {
+    double macd;
+    double signal;
+    double histogram;
+} WickraMacdOutput;
+
+/**
+ * C-ABI view of `MamaOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraMamaOutput {
+    double mama;
+    double fama;
+} WickraMamaOutput;
+
+/**
+ * C-ABI view of `MedianChannelOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraMedianChannelOutput {
+    double upper;
+    double middle;
+    double lower;
+} WickraMedianChannelOutput;
+
+/**
+ * C-ABI view of `ModifiedMaStopOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraModifiedMaStopOutput {
+    double value;
+    double direction;
+} WickraModifiedMaStopOutput;
+
+/**
+ * C-ABI view of `MurreyMathLinesOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraMurreyMathLinesOutput {
+    double mm8_8;
+    double mm7_8;
+    double mm6_8;
+    double mm5_8;
+    double mm4_8;
+    double mm3_8;
+    double mm2_8;
+    double mm1_8;
+    double mm0_8;
+} WickraMurreyMathLinesOutput;
+
+/**
+ * C-ABI view of `NrtrOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraNrtrOutput {
+    double value;
+    double direction;
+} WickraNrtrOutput;
+
+/**
+ * C-ABI view of `OpeningRangeOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraOpeningRangeOutput {
+    double high;
+    double low;
+    double breakout_distance;
+} WickraOpeningRangeOutput;
+
+/**
+ * C-ABI view of `OvernightIntradayReturnOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraOvernightIntradayReturnOutput {
+    double overnight;
+    double intraday;
+} WickraOvernightIntradayReturnOutput;
+
+/**
+ * C-ABI view of `ProjectionBandsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraProjectionBandsOutput {
+    double upper;
+    double middle;
+    double lower;
+} WickraProjectionBandsOutput;
+
+/**
+ * C-ABI view of `QqeOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraQqeOutput {
+    double rsi_ma;
+    double trailing_line;
+} WickraQqeOutput;
+
+/**
+ * C-ABI view of `QuartileBandsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraQuartileBandsOutput {
+    double upper;
+    double middle;
+    double lower;
+} WickraQuartileBandsOutput;
+
+/**
+ * C-ABI view of `RelativeStrengthOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraRelativeStrengthOutput {
+    double ratio;
+    double ratio_ma;
+    double ratio_rsi;
+} WickraRelativeStrengthOutput;
+
+/**
+ * C-ABI view of `RwiOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraRwiOutput {
+    double high;
+    double low;
+} WickraRwiOutput;
+
+/**
+ * C-ABI view of `SessionHighLowOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraSessionHighLowOutput {
+    double high;
+    double low;
+} WickraSessionHighLowOutput;
+
+/**
+ * C-ABI view of `SessionRangeOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraSessionRangeOutput {
+    double asia;
+    double eu;
+    double us;
+} WickraSessionRangeOutput;
+
+/**
+ * C-ABI view of `SmoothedHeikinAshiOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraSmoothedHeikinAshiOutput {
+    double open;
+    double high;
+    double low;
+    double close;
+} WickraSmoothedHeikinAshiOutput;
+
+/**
+ * C-ABI view of `SpreadBollingerBandsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraSpreadBollingerBandsOutput {
+    double middle;
+    double upper;
+    double lower;
+    double percent_b;
+} WickraSpreadBollingerBandsOutput;
+
+/**
+ * C-ABI view of `StandardErrorBandsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraStandardErrorBandsOutput {
+    double upper;
+    double middle;
+    double lower;
+} WickraStandardErrorBandsOutput;
+
+/**
+ * C-ABI view of `StarcBandsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraStarcBandsOutput {
+    double upper;
+    double middle;
+    double lower;
+} WickraStarcBandsOutput;
+
+/**
+ * C-ABI view of `StochasticOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraStochasticOutput {
+    double k;
+    double d;
+} WickraStochasticOutput;
+
+/**
+ * C-ABI view of `SuperTrendOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraSuperTrendOutput {
+    double value;
+    double direction;
+} WickraSuperTrendOutput;
+
+/**
+ * C-ABI view of `TdLinesOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraTdLinesOutput {
+    double resistance;
+    double support;
+} WickraTdLinesOutput;
+
+/**
+ * C-ABI view of `TdMovingAverageOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraTdMovingAverageOutput {
+    double st1;
+    double st2;
+} WickraTdMovingAverageOutput;
+
+/**
+ * C-ABI view of `TdRangeProjectionOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraTdRangeProjectionOutput {
+    double high;
+    double low;
+} WickraTdRangeProjectionOutput;
+
+/**
+ * C-ABI view of `TdRiskLevelOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraTdRiskLevelOutput {
+    double buy_risk;
+    double sell_risk;
+} WickraTdRiskLevelOutput;
+
+/**
+ * C-ABI view of `TdSequentialOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraTdSequentialOutput {
+    double setup;
+    double countdown;
+    double direction;
+} WickraTdSequentialOutput;
+
+/**
+ * C-ABI view of `TtmSqueezeOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraTtmSqueezeOutput {
+    double squeeze;
+    double momentum;
+} WickraTtmSqueezeOutput;
+
+/**
+ * C-ABI view of `ValueAreaOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraValueAreaOutput {
+    double poc;
+    double vah;
+    double val;
+} WickraValueAreaOutput;
+
+/**
+ * C-ABI view of `VolatilityConeOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraVolatilityConeOutput {
+    double current;
+    double min;
+    double median;
+    double max;
+    double percentile;
+} WickraVolatilityConeOutput;
+
+/**
+ * C-ABI view of `VolumeWeightedMacdOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraVolumeWeightedMacdOutput {
+    double macd;
+    double signal;
+    double histogram;
+} WickraVolumeWeightedMacdOutput;
+
+/**
+ * C-ABI view of `VolumeWeightedSrOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraVolumeWeightedSrOutput {
+    double support;
+    double resistance;
+} WickraVolumeWeightedSrOutput;
+
+/**
+ * C-ABI view of `VortexOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraVortexOutput {
+    double plus;
+    double minus;
+} WickraVortexOutput;
+
+/**
+ * C-ABI view of `VwapStdDevBandsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraVwapStdDevBandsOutput {
+    double upper;
+    double middle;
+    double lower;
+    double stddev;
+} WickraVwapStdDevBandsOutput;
+
+/**
+ * C-ABI view of `WaveTrendOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraWaveTrendOutput {
+    double wt1;
+    double wt2;
+} WickraWaveTrendOutput;
+
+/**
+ * C-ABI view of `WilliamsFractalsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraWilliamsFractalsOutput {
+    double up;
+    double down;
+} WickraWilliamsFractalsOutput;
+
+/**
+ * C-ABI view of `WoodiePivotsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraWoodiePivotsOutput {
+    double pp;
+    double r1;
+    double r2;
+    double s1;
+    double s2;
+} WickraWoodiePivotsOutput;
+
+/**
+ * C-ABI view of `ZeroLagMacdOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraZeroLagMacdOutput {
+    double macd;
+    double signal;
+    double histogram;
+} WickraZeroLagMacdOutput;
+
+/**
+ * C-ABI view of `ZigZagOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+ */
+typedef struct WickraZigZagOutput {
+    double swing;
+    double direction;
+} WickraZigZagOutput;
 
 /**
  * Create a `AdaptiveCycle` indicator.
@@ -15165,6 +18885,48 @@ void wickra_dpo_reset(struct Dpo *handle);
  * `handle` must have been returned by `wickra_dpo_new` and not previously freed, or `NULL`.
  */
 void wickra_dpo_free(struct Dpo *handle);
+
+/**
+ * Create a `DrawdownDuration` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_drawdown_duration_free`.
+ */
+struct DrawdownDuration *wickra_drawdown_duration_new(void);
+
+/**
+ * Feed one value; returns the output, or `NaN` during warmup / on a `NULL` handle.
+ *
+ * # Safety
+ * `handle` must be a valid pointer from `wickra_drawdown_duration_new` (not freed), or `NULL`.
+ */
+double wickra_drawdown_duration_update(struct DrawdownDuration *handle, double value);
+
+/**
+ * Run over `input[0..n]`, writing one output per input into `out[0..n]` (`NaN` at warmup).
+ *
+ * # Safety
+ * `handle` valid (from `wickra_drawdown_duration_new`, not freed); `input`/`out` cover `n` `double`s.
+ */
+void wickra_drawdown_duration_batch(struct DrawdownDuration *handle,
+                                    const double *input,
+                                    double *out,
+                                    uintptr_t n);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_drawdown_duration_new`, not freed), or `NULL`.
+ */
+void wickra_drawdown_duration_reset(struct DrawdownDuration *handle);
+
+/**
+ * Destroy a handle created by `wickra_drawdown_duration_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_drawdown_duration_new` and not previously freed, or `NULL`.
+ */
+void wickra_drawdown_duration_free(struct DrawdownDuration *handle);
 
 /**
  * Create a `DynamicMomentumIndex` indicator.
@@ -33298,5 +37060,3494 @@ void wickra_up_down_volume_ratio_reset(struct UpDownVolumeRatio *handle);
  * `handle` must have been returned by `wickra_up_down_volume_ratio_new` and not previously freed, or `NULL`.
  */
 void wickra_up_down_volume_ratio_free(struct UpDownVolumeRatio *handle);
+
+/**
+ * Create a `AccelerationBands` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_acceleration_bands_free`.
+ */
+struct AccelerationBands *wickra_acceleration_bands_new(uintptr_t period, double factor);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_acceleration_bands_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_acceleration_bands_update(struct AccelerationBands *handle,
+                                      double open,
+                                      double high,
+                                      double low,
+                                      double close,
+                                      double volume,
+                                      int64_t timestamp,
+                                      struct WickraAccelerationBandsOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_acceleration_bands_new`, not freed), or `NULL`.
+ */
+void wickra_acceleration_bands_reset(struct AccelerationBands *handle);
+
+/**
+ * Destroy a handle created by `wickra_acceleration_bands_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_acceleration_bands_new` and not previously freed, or `NULL`.
+ */
+void wickra_acceleration_bands_free(struct AccelerationBands *handle);
+
+/**
+ * Create a `Adx` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_adx_free`.
+ */
+struct Adx *wickra_adx_new(uintptr_t period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_adx_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_adx_update(struct Adx *handle,
+                       double open,
+                       double high,
+                       double low,
+                       double close,
+                       double volume,
+                       int64_t timestamp,
+                       struct WickraAdxOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_adx_new`, not freed), or `NULL`.
+ */
+void wickra_adx_reset(struct Adx *handle);
+
+/**
+ * Destroy a handle created by `wickra_adx_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_adx_new` and not previously freed, or `NULL`.
+ */
+void wickra_adx_free(struct Adx *handle);
+
+/**
+ * Create a `Alligator` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_alligator_free`.
+ */
+struct Alligator *wickra_alligator_new(uintptr_t jaw_period,
+                                       uintptr_t teeth_period,
+                                       uintptr_t lips_period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_alligator_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_alligator_update(struct Alligator *handle,
+                             double open,
+                             double high,
+                             double low,
+                             double close,
+                             double volume,
+                             int64_t timestamp,
+                             struct WickraAlligatorOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_alligator_new`, not freed), or `NULL`.
+ */
+void wickra_alligator_reset(struct Alligator *handle);
+
+/**
+ * Destroy a handle created by `wickra_alligator_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_alligator_new` and not previously freed, or `NULL`.
+ */
+void wickra_alligator_free(struct Alligator *handle);
+
+/**
+ * Create a `AndrewsPitchfork` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_andrews_pitchfork_free`.
+ */
+struct AndrewsPitchfork *wickra_andrews_pitchfork_new(uintptr_t strength);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_andrews_pitchfork_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_andrews_pitchfork_update(struct AndrewsPitchfork *handle,
+                                     double open,
+                                     double high,
+                                     double low,
+                                     double close,
+                                     double volume,
+                                     int64_t timestamp,
+                                     struct WickraAndrewsPitchforkOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_andrews_pitchfork_new`, not freed), or `NULL`.
+ */
+void wickra_andrews_pitchfork_reset(struct AndrewsPitchfork *handle);
+
+/**
+ * Destroy a handle created by `wickra_andrews_pitchfork_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_andrews_pitchfork_new` and not previously freed, or `NULL`.
+ */
+void wickra_andrews_pitchfork_free(struct AndrewsPitchfork *handle);
+
+/**
+ * Create a `Aroon` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_aroon_free`.
+ */
+struct Aroon *wickra_aroon_new(uintptr_t period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_aroon_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_aroon_update(struct Aroon *handle,
+                         double open,
+                         double high,
+                         double low,
+                         double close,
+                         double volume,
+                         int64_t timestamp,
+                         struct WickraAroonOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_aroon_new`, not freed), or `NULL`.
+ */
+void wickra_aroon_reset(struct Aroon *handle);
+
+/**
+ * Destroy a handle created by `wickra_aroon_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_aroon_new` and not previously freed, or `NULL`.
+ */
+void wickra_aroon_free(struct Aroon *handle);
+
+/**
+ * Create a `AtrBands` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_atr_bands_free`.
+ */
+struct AtrBands *wickra_atr_bands_new(uintptr_t period, double multiplier);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_atr_bands_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_atr_bands_update(struct AtrBands *handle,
+                             double open,
+                             double high,
+                             double low,
+                             double close,
+                             double volume,
+                             int64_t timestamp,
+                             struct WickraAtrBandsOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_atr_bands_new`, not freed), or `NULL`.
+ */
+void wickra_atr_bands_reset(struct AtrBands *handle);
+
+/**
+ * Destroy a handle created by `wickra_atr_bands_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_atr_bands_new` and not previously freed, or `NULL`.
+ */
+void wickra_atr_bands_free(struct AtrBands *handle);
+
+/**
+ * Create a `AtrRatchet` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_atr_ratchet_free`.
+ */
+struct AtrRatchet *wickra_atr_ratchet_new(uintptr_t atr_period,
+                                          double start_mult,
+                                          double increment);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_atr_ratchet_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_atr_ratchet_update(struct AtrRatchet *handle,
+                               double open,
+                               double high,
+                               double low,
+                               double close,
+                               double volume,
+                               int64_t timestamp,
+                               struct WickraAtrRatchetOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_atr_ratchet_new`, not freed), or `NULL`.
+ */
+void wickra_atr_ratchet_reset(struct AtrRatchet *handle);
+
+/**
+ * Destroy a handle created by `wickra_atr_ratchet_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_atr_ratchet_new` and not previously freed, or `NULL`.
+ */
+void wickra_atr_ratchet_free(struct AtrRatchet *handle);
+
+/**
+ * Create a `AutoFib` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_auto_fib_free`.
+ */
+struct AutoFib *wickra_auto_fib_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_auto_fib_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_auto_fib_update(struct AutoFib *handle,
+                            double open,
+                            double high,
+                            double low,
+                            double close,
+                            double volume,
+                            int64_t timestamp,
+                            struct WickraAutoFibOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_auto_fib_new`, not freed), or `NULL`.
+ */
+void wickra_auto_fib_reset(struct AutoFib *handle);
+
+/**
+ * Destroy a handle created by `wickra_auto_fib_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_auto_fib_new` and not previously freed, or `NULL`.
+ */
+void wickra_auto_fib_free(struct AutoFib *handle);
+
+/**
+ * Create a `BollingerBands` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_bollinger_bands_free`.
+ */
+struct BollingerBands *wickra_bollinger_bands_new(uintptr_t period, double multiplier);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_bollinger_bands_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_bollinger_bands_update(struct BollingerBands *handle,
+                                   double value,
+                                   struct WickraBollingerOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_bollinger_bands_new`, not freed), or `NULL`.
+ */
+void wickra_bollinger_bands_reset(struct BollingerBands *handle);
+
+/**
+ * Destroy a handle created by `wickra_bollinger_bands_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_bollinger_bands_new` and not previously freed, or `NULL`.
+ */
+void wickra_bollinger_bands_free(struct BollingerBands *handle);
+
+/**
+ * Create a `BomarBands` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_bomar_bands_free`.
+ */
+struct BomarBands *wickra_bomar_bands_new(uintptr_t period, double coverage);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_bomar_bands_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_bomar_bands_update(struct BomarBands *handle,
+                               double value,
+                               struct WickraBomarBandsOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_bomar_bands_new`, not freed), or `NULL`.
+ */
+void wickra_bomar_bands_reset(struct BomarBands *handle);
+
+/**
+ * Destroy a handle created by `wickra_bomar_bands_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_bomar_bands_new` and not previously freed, or `NULL`.
+ */
+void wickra_bomar_bands_free(struct BomarBands *handle);
+
+/**
+ * Create a `Camarilla` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_camarilla_free`.
+ */
+struct Camarilla *wickra_camarilla_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_camarilla_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_camarilla_update(struct Camarilla *handle,
+                             double open,
+                             double high,
+                             double low,
+                             double close,
+                             double volume,
+                             int64_t timestamp,
+                             struct WickraCamarillaPivotsOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_camarilla_new`, not freed), or `NULL`.
+ */
+void wickra_camarilla_reset(struct Camarilla *handle);
+
+/**
+ * Destroy a handle created by `wickra_camarilla_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_camarilla_new` and not previously freed, or `NULL`.
+ */
+void wickra_camarilla_free(struct Camarilla *handle);
+
+/**
+ * Create a `CandleVolume` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_candle_volume_free`.
+ */
+struct CandleVolume *wickra_candle_volume_new(uintptr_t period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_candle_volume_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_candle_volume_update(struct CandleVolume *handle,
+                                 double open,
+                                 double high,
+                                 double low,
+                                 double close,
+                                 double volume,
+                                 int64_t timestamp,
+                                 struct WickraCandleVolumeOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_candle_volume_new`, not freed), or `NULL`.
+ */
+void wickra_candle_volume_reset(struct CandleVolume *handle);
+
+/**
+ * Destroy a handle created by `wickra_candle_volume_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_candle_volume_new` and not previously freed, or `NULL`.
+ */
+void wickra_candle_volume_free(struct CandleVolume *handle);
+
+/**
+ * Create a `CentralPivotRange` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_central_pivot_range_free`.
+ */
+struct CentralPivotRange *wickra_central_pivot_range_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_central_pivot_range_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_central_pivot_range_update(struct CentralPivotRange *handle,
+                                       double open,
+                                       double high,
+                                       double low,
+                                       double close,
+                                       double volume,
+                                       int64_t timestamp,
+                                       struct WickraCentralPivotRangeOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_central_pivot_range_new`, not freed), or `NULL`.
+ */
+void wickra_central_pivot_range_reset(struct CentralPivotRange *handle);
+
+/**
+ * Destroy a handle created by `wickra_central_pivot_range_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_central_pivot_range_new` and not previously freed, or `NULL`.
+ */
+void wickra_central_pivot_range_free(struct CentralPivotRange *handle);
+
+/**
+ * Create a `ChandeKrollStop` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_chande_kroll_stop_free`.
+ */
+struct ChandeKrollStop *wickra_chande_kroll_stop_new(uintptr_t atr_period,
+                                                     double atr_multiplier,
+                                                     uintptr_t stop_period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_chande_kroll_stop_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_chande_kroll_stop_update(struct ChandeKrollStop *handle,
+                                     double open,
+                                     double high,
+                                     double low,
+                                     double close,
+                                     double volume,
+                                     int64_t timestamp,
+                                     struct WickraChandeKrollStopOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_chande_kroll_stop_new`, not freed), or `NULL`.
+ */
+void wickra_chande_kroll_stop_reset(struct ChandeKrollStop *handle);
+
+/**
+ * Destroy a handle created by `wickra_chande_kroll_stop_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_chande_kroll_stop_new` and not previously freed, or `NULL`.
+ */
+void wickra_chande_kroll_stop_free(struct ChandeKrollStop *handle);
+
+/**
+ * Create a `ChandelierExit` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_chandelier_exit_free`.
+ */
+struct ChandelierExit *wickra_chandelier_exit_new(uintptr_t period, double multiplier);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_chandelier_exit_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_chandelier_exit_update(struct ChandelierExit *handle,
+                                   double open,
+                                   double high,
+                                   double low,
+                                   double close,
+                                   double volume,
+                                   int64_t timestamp,
+                                   struct WickraChandelierExitOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_chandelier_exit_new`, not freed), or `NULL`.
+ */
+void wickra_chandelier_exit_reset(struct ChandelierExit *handle);
+
+/**
+ * Destroy a handle created by `wickra_chandelier_exit_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_chandelier_exit_new` and not previously freed, or `NULL`.
+ */
+void wickra_chandelier_exit_free(struct ChandelierExit *handle);
+
+/**
+ * Create a `ClassicPivots` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_classic_pivots_free`.
+ */
+struct ClassicPivots *wickra_classic_pivots_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_classic_pivots_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_classic_pivots_update(struct ClassicPivots *handle,
+                                  double open,
+                                  double high,
+                                  double low,
+                                  double close,
+                                  double volume,
+                                  int64_t timestamp,
+                                  struct WickraClassicPivotsOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_classic_pivots_new`, not freed), or `NULL`.
+ */
+void wickra_classic_pivots_reset(struct ClassicPivots *handle);
+
+/**
+ * Destroy a handle created by `wickra_classic_pivots_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_classic_pivots_new` and not previously freed, or `NULL`.
+ */
+void wickra_classic_pivots_free(struct ClassicPivots *handle);
+
+/**
+ * Create a `Cointegration` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_cointegration_free`.
+ */
+struct Cointegration *wickra_cointegration_new(uintptr_t period, uintptr_t adf_lags);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_cointegration_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_cointegration_update(struct Cointegration *handle,
+                                 double x,
+                                 double y,
+                                 struct WickraCointegrationOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_cointegration_new`, not freed), or `NULL`.
+ */
+void wickra_cointegration_reset(struct Cointegration *handle);
+
+/**
+ * Destroy a handle created by `wickra_cointegration_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_cointegration_new` and not previously freed, or `NULL`.
+ */
+void wickra_cointegration_free(struct Cointegration *handle);
+
+/**
+ * Create a `CompositeProfile` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_composite_profile_free`.
+ */
+struct CompositeProfile *wickra_composite_profile_new(uintptr_t period,
+                                                      uintptr_t bins,
+                                                      double value_area_pct);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_composite_profile_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_composite_profile_update(struct CompositeProfile *handle,
+                                     double open,
+                                     double high,
+                                     double low,
+                                     double close,
+                                     double volume,
+                                     int64_t timestamp,
+                                     struct WickraCompositeProfileOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_composite_profile_new`, not freed), or `NULL`.
+ */
+void wickra_composite_profile_reset(struct CompositeProfile *handle);
+
+/**
+ * Destroy a handle created by `wickra_composite_profile_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_composite_profile_new` and not previously freed, or `NULL`.
+ */
+void wickra_composite_profile_free(struct CompositeProfile *handle);
+
+/**
+ * Create a `DemarkPivots` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_demark_pivots_free`.
+ */
+struct DemarkPivots *wickra_demark_pivots_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_demark_pivots_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_demark_pivots_update(struct DemarkPivots *handle,
+                                 double open,
+                                 double high,
+                                 double low,
+                                 double close,
+                                 double volume,
+                                 int64_t timestamp,
+                                 struct WickraDemarkPivotsOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_demark_pivots_new`, not freed), or `NULL`.
+ */
+void wickra_demark_pivots_reset(struct DemarkPivots *handle);
+
+/**
+ * Destroy a handle created by `wickra_demark_pivots_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_demark_pivots_new` and not previously freed, or `NULL`.
+ */
+void wickra_demark_pivots_free(struct DemarkPivots *handle);
+
+/**
+ * Create a `Donchian` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_donchian_free`.
+ */
+struct Donchian *wickra_donchian_new(uintptr_t period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_donchian_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_donchian_update(struct Donchian *handle,
+                            double open,
+                            double high,
+                            double low,
+                            double close,
+                            double volume,
+                            int64_t timestamp,
+                            struct WickraDonchianOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_donchian_new`, not freed), or `NULL`.
+ */
+void wickra_donchian_reset(struct Donchian *handle);
+
+/**
+ * Destroy a handle created by `wickra_donchian_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_donchian_new` and not previously freed, or `NULL`.
+ */
+void wickra_donchian_free(struct Donchian *handle);
+
+/**
+ * Create a `DonchianStop` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_donchian_stop_free`.
+ */
+struct DonchianStop *wickra_donchian_stop_new(uintptr_t period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_donchian_stop_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_donchian_stop_update(struct DonchianStop *handle,
+                                 double open,
+                                 double high,
+                                 double low,
+                                 double close,
+                                 double volume,
+                                 int64_t timestamp,
+                                 struct WickraDonchianStopOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_donchian_stop_new`, not freed), or `NULL`.
+ */
+void wickra_donchian_stop_reset(struct DonchianStop *handle);
+
+/**
+ * Destroy a handle created by `wickra_donchian_stop_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_donchian_stop_new` and not previously freed, or `NULL`.
+ */
+void wickra_donchian_stop_free(struct DonchianStop *handle);
+
+/**
+ * Create a `DoubleBollinger` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_double_bollinger_free`.
+ */
+struct DoubleBollinger *wickra_double_bollinger_new(uintptr_t period,
+                                                    double k_inner,
+                                                    double k_outer);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_double_bollinger_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_double_bollinger_update(struct DoubleBollinger *handle,
+                                    double value,
+                                    struct WickraDoubleBollingerOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_double_bollinger_new`, not freed), or `NULL`.
+ */
+void wickra_double_bollinger_reset(struct DoubleBollinger *handle);
+
+/**
+ * Destroy a handle created by `wickra_double_bollinger_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_double_bollinger_new` and not previously freed, or `NULL`.
+ */
+void wickra_double_bollinger_free(struct DoubleBollinger *handle);
+
+/**
+ * Create a `ElderRay` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_elder_ray_free`.
+ */
+struct ElderRay *wickra_elder_ray_new(uintptr_t period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_elder_ray_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_elder_ray_update(struct ElderRay *handle,
+                             double open,
+                             double high,
+                             double low,
+                             double close,
+                             double volume,
+                             int64_t timestamp,
+                             struct WickraElderRayOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_elder_ray_new`, not freed), or `NULL`.
+ */
+void wickra_elder_ray_reset(struct ElderRay *handle);
+
+/**
+ * Destroy a handle created by `wickra_elder_ray_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_elder_ray_new` and not previously freed, or `NULL`.
+ */
+void wickra_elder_ray_free(struct ElderRay *handle);
+
+/**
+ * Create a `ElderSafeZone` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_elder_safe_zone_free`.
+ */
+struct ElderSafeZone *wickra_elder_safe_zone_new(uintptr_t period, double coeff);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_elder_safe_zone_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_elder_safe_zone_update(struct ElderSafeZone *handle,
+                                   double open,
+                                   double high,
+                                   double low,
+                                   double close,
+                                   double volume,
+                                   int64_t timestamp,
+                                   struct WickraElderSafeZoneOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_elder_safe_zone_new`, not freed), or `NULL`.
+ */
+void wickra_elder_safe_zone_reset(struct ElderSafeZone *handle);
+
+/**
+ * Destroy a handle created by `wickra_elder_safe_zone_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_elder_safe_zone_new` and not previously freed, or `NULL`.
+ */
+void wickra_elder_safe_zone_free(struct ElderSafeZone *handle);
+
+/**
+ * Create a `Equivolume` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_equivolume_free`.
+ */
+struct Equivolume *wickra_equivolume_new(uintptr_t period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_equivolume_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_equivolume_update(struct Equivolume *handle,
+                              double open,
+                              double high,
+                              double low,
+                              double close,
+                              double volume,
+                              int64_t timestamp,
+                              struct WickraEquivolumeOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_equivolume_new`, not freed), or `NULL`.
+ */
+void wickra_equivolume_reset(struct Equivolume *handle);
+
+/**
+ * Destroy a handle created by `wickra_equivolume_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_equivolume_new` and not previously freed, or `NULL`.
+ */
+void wickra_equivolume_free(struct Equivolume *handle);
+
+/**
+ * Create a `FibArcs` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_fib_arcs_free`.
+ */
+struct FibArcs *wickra_fib_arcs_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_fib_arcs_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_fib_arcs_update(struct FibArcs *handle,
+                            double open,
+                            double high,
+                            double low,
+                            double close,
+                            double volume,
+                            int64_t timestamp,
+                            struct WickraFibArcsOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_fib_arcs_new`, not freed), or `NULL`.
+ */
+void wickra_fib_arcs_reset(struct FibArcs *handle);
+
+/**
+ * Destroy a handle created by `wickra_fib_arcs_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_fib_arcs_new` and not previously freed, or `NULL`.
+ */
+void wickra_fib_arcs_free(struct FibArcs *handle);
+
+/**
+ * Create a `FibChannel` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_fib_channel_free`.
+ */
+struct FibChannel *wickra_fib_channel_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_fib_channel_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_fib_channel_update(struct FibChannel *handle,
+                               double open,
+                               double high,
+                               double low,
+                               double close,
+                               double volume,
+                               int64_t timestamp,
+                               struct WickraFibChannelOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_fib_channel_new`, not freed), or `NULL`.
+ */
+void wickra_fib_channel_reset(struct FibChannel *handle);
+
+/**
+ * Destroy a handle created by `wickra_fib_channel_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_fib_channel_new` and not previously freed, or `NULL`.
+ */
+void wickra_fib_channel_free(struct FibChannel *handle);
+
+/**
+ * Create a `FibConfluence` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_fib_confluence_free`.
+ */
+struct FibConfluence *wickra_fib_confluence_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_fib_confluence_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_fib_confluence_update(struct FibConfluence *handle,
+                                  double open,
+                                  double high,
+                                  double low,
+                                  double close,
+                                  double volume,
+                                  int64_t timestamp,
+                                  struct WickraFibConfluenceOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_fib_confluence_new`, not freed), or `NULL`.
+ */
+void wickra_fib_confluence_reset(struct FibConfluence *handle);
+
+/**
+ * Destroy a handle created by `wickra_fib_confluence_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_fib_confluence_new` and not previously freed, or `NULL`.
+ */
+void wickra_fib_confluence_free(struct FibConfluence *handle);
+
+/**
+ * Create a `FibExtension` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_fib_extension_free`.
+ */
+struct FibExtension *wickra_fib_extension_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_fib_extension_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_fib_extension_update(struct FibExtension *handle,
+                                 double open,
+                                 double high,
+                                 double low,
+                                 double close,
+                                 double volume,
+                                 int64_t timestamp,
+                                 struct WickraFibExtensionOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_fib_extension_new`, not freed), or `NULL`.
+ */
+void wickra_fib_extension_reset(struct FibExtension *handle);
+
+/**
+ * Destroy a handle created by `wickra_fib_extension_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_fib_extension_new` and not previously freed, or `NULL`.
+ */
+void wickra_fib_extension_free(struct FibExtension *handle);
+
+/**
+ * Create a `FibFan` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_fib_fan_free`.
+ */
+struct FibFan *wickra_fib_fan_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_fib_fan_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_fib_fan_update(struct FibFan *handle,
+                           double open,
+                           double high,
+                           double low,
+                           double close,
+                           double volume,
+                           int64_t timestamp,
+                           struct WickraFibFanOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_fib_fan_new`, not freed), or `NULL`.
+ */
+void wickra_fib_fan_reset(struct FibFan *handle);
+
+/**
+ * Destroy a handle created by `wickra_fib_fan_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_fib_fan_new` and not previously freed, or `NULL`.
+ */
+void wickra_fib_fan_free(struct FibFan *handle);
+
+/**
+ * Create a `FibProjection` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_fib_projection_free`.
+ */
+struct FibProjection *wickra_fib_projection_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_fib_projection_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_fib_projection_update(struct FibProjection *handle,
+                                  double open,
+                                  double high,
+                                  double low,
+                                  double close,
+                                  double volume,
+                                  int64_t timestamp,
+                                  struct WickraFibProjectionOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_fib_projection_new`, not freed), or `NULL`.
+ */
+void wickra_fib_projection_reset(struct FibProjection *handle);
+
+/**
+ * Destroy a handle created by `wickra_fib_projection_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_fib_projection_new` and not previously freed, or `NULL`.
+ */
+void wickra_fib_projection_free(struct FibProjection *handle);
+
+/**
+ * Create a `FibRetracement` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_fib_retracement_free`.
+ */
+struct FibRetracement *wickra_fib_retracement_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_fib_retracement_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_fib_retracement_update(struct FibRetracement *handle,
+                                   double open,
+                                   double high,
+                                   double low,
+                                   double close,
+                                   double volume,
+                                   int64_t timestamp,
+                                   struct WickraFibRetracementOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_fib_retracement_new`, not freed), or `NULL`.
+ */
+void wickra_fib_retracement_reset(struct FibRetracement *handle);
+
+/**
+ * Destroy a handle created by `wickra_fib_retracement_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_fib_retracement_new` and not previously freed, or `NULL`.
+ */
+void wickra_fib_retracement_free(struct FibRetracement *handle);
+
+/**
+ * Create a `FibTimeZones` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_fib_time_zones_free`.
+ */
+struct FibTimeZones *wickra_fib_time_zones_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_fib_time_zones_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_fib_time_zones_update(struct FibTimeZones *handle,
+                                  double open,
+                                  double high,
+                                  double low,
+                                  double close,
+                                  double volume,
+                                  int64_t timestamp,
+                                  struct WickraFibTimeZonesOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_fib_time_zones_new`, not freed), or `NULL`.
+ */
+void wickra_fib_time_zones_reset(struct FibTimeZones *handle);
+
+/**
+ * Destroy a handle created by `wickra_fib_time_zones_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_fib_time_zones_new` and not previously freed, or `NULL`.
+ */
+void wickra_fib_time_zones_free(struct FibTimeZones *handle);
+
+/**
+ * Create a `FibonacciPivots` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_fibonacci_pivots_free`.
+ */
+struct FibonacciPivots *wickra_fibonacci_pivots_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_fibonacci_pivots_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_fibonacci_pivots_update(struct FibonacciPivots *handle,
+                                    double open,
+                                    double high,
+                                    double low,
+                                    double close,
+                                    double volume,
+                                    int64_t timestamp,
+                                    struct WickraFibonacciPivotsOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_fibonacci_pivots_new`, not freed), or `NULL`.
+ */
+void wickra_fibonacci_pivots_reset(struct FibonacciPivots *handle);
+
+/**
+ * Destroy a handle created by `wickra_fibonacci_pivots_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_fibonacci_pivots_new` and not previously freed, or `NULL`.
+ */
+void wickra_fibonacci_pivots_free(struct FibonacciPivots *handle);
+
+/**
+ * Create a `FractalChaosBands` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_fractal_chaos_bands_free`.
+ */
+struct FractalChaosBands *wickra_fractal_chaos_bands_new(uintptr_t k);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_fractal_chaos_bands_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_fractal_chaos_bands_update(struct FractalChaosBands *handle,
+                                       double open,
+                                       double high,
+                                       double low,
+                                       double close,
+                                       double volume,
+                                       int64_t timestamp,
+                                       struct WickraFractalChaosBandsOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_fractal_chaos_bands_new`, not freed), or `NULL`.
+ */
+void wickra_fractal_chaos_bands_reset(struct FractalChaosBands *handle);
+
+/**
+ * Destroy a handle created by `wickra_fractal_chaos_bands_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_fractal_chaos_bands_new` and not previously freed, or `NULL`.
+ */
+void wickra_fractal_chaos_bands_free(struct FractalChaosBands *handle);
+
+/**
+ * Create a `GatorOscillator` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_gator_oscillator_free`.
+ */
+struct GatorOscillator *wickra_gator_oscillator_new(uintptr_t jaw_period,
+                                                    uintptr_t teeth_period,
+                                                    uintptr_t lips_period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_gator_oscillator_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_gator_oscillator_update(struct GatorOscillator *handle,
+                                    double open,
+                                    double high,
+                                    double low,
+                                    double close,
+                                    double volume,
+                                    int64_t timestamp,
+                                    struct WickraGatorOscillatorOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_gator_oscillator_new`, not freed), or `NULL`.
+ */
+void wickra_gator_oscillator_reset(struct GatorOscillator *handle);
+
+/**
+ * Destroy a handle created by `wickra_gator_oscillator_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_gator_oscillator_new` and not previously freed, or `NULL`.
+ */
+void wickra_gator_oscillator_free(struct GatorOscillator *handle);
+
+/**
+ * Create a `GoldenPocket` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_golden_pocket_free`.
+ */
+struct GoldenPocket *wickra_golden_pocket_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_golden_pocket_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_golden_pocket_update(struct GoldenPocket *handle,
+                                 double open,
+                                 double high,
+                                 double low,
+                                 double close,
+                                 double volume,
+                                 int64_t timestamp,
+                                 struct WickraGoldenPocketOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_golden_pocket_new`, not freed), or `NULL`.
+ */
+void wickra_golden_pocket_reset(struct GoldenPocket *handle);
+
+/**
+ * Destroy a handle created by `wickra_golden_pocket_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_golden_pocket_new` and not previously freed, or `NULL`.
+ */
+void wickra_golden_pocket_free(struct GoldenPocket *handle);
+
+/**
+ * Create a `HeikinAshi` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_heikin_ashi_free`.
+ */
+struct HeikinAshi *wickra_heikin_ashi_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_heikin_ashi_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_heikin_ashi_update(struct HeikinAshi *handle,
+                               double open,
+                               double high,
+                               double low,
+                               double close,
+                               double volume,
+                               int64_t timestamp,
+                               struct WickraHeikinAshiOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_heikin_ashi_new`, not freed), or `NULL`.
+ */
+void wickra_heikin_ashi_reset(struct HeikinAshi *handle);
+
+/**
+ * Destroy a handle created by `wickra_heikin_ashi_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_heikin_ashi_new` and not previously freed, or `NULL`.
+ */
+void wickra_heikin_ashi_free(struct HeikinAshi *handle);
+
+/**
+ * Create a `HighLowVolumeNodes` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_high_low_volume_nodes_free`.
+ */
+struct HighLowVolumeNodes *wickra_high_low_volume_nodes_new(uintptr_t period, uintptr_t bins);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_high_low_volume_nodes_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_high_low_volume_nodes_update(struct HighLowVolumeNodes *handle,
+                                         double open,
+                                         double high,
+                                         double low,
+                                         double close,
+                                         double volume,
+                                         int64_t timestamp,
+                                         struct WickraHighLowVolumeNodesOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_high_low_volume_nodes_new`, not freed), or `NULL`.
+ */
+void wickra_high_low_volume_nodes_reset(struct HighLowVolumeNodes *handle);
+
+/**
+ * Destroy a handle created by `wickra_high_low_volume_nodes_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_high_low_volume_nodes_new` and not previously freed, or `NULL`.
+ */
+void wickra_high_low_volume_nodes_free(struct HighLowVolumeNodes *handle);
+
+/**
+ * Create a `HtPhasor` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_ht_phasor_free`.
+ */
+struct HtPhasor *wickra_ht_phasor_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_ht_phasor_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_ht_phasor_update(struct HtPhasor *handle,
+                             double value,
+                             struct WickraHtPhasorOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_ht_phasor_new`, not freed), or `NULL`.
+ */
+void wickra_ht_phasor_reset(struct HtPhasor *handle);
+
+/**
+ * Destroy a handle created by `wickra_ht_phasor_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_ht_phasor_new` and not previously freed, or `NULL`.
+ */
+void wickra_ht_phasor_free(struct HtPhasor *handle);
+
+/**
+ * Create a `HurstChannel` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_hurst_channel_free`.
+ */
+struct HurstChannel *wickra_hurst_channel_new(uintptr_t period, double multiplier);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_hurst_channel_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_hurst_channel_update(struct HurstChannel *handle,
+                                 double open,
+                                 double high,
+                                 double low,
+                                 double close,
+                                 double volume,
+                                 int64_t timestamp,
+                                 struct WickraHurstChannelOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_hurst_channel_new`, not freed), or `NULL`.
+ */
+void wickra_hurst_channel_reset(struct HurstChannel *handle);
+
+/**
+ * Destroy a handle created by `wickra_hurst_channel_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_hurst_channel_new` and not previously freed, or `NULL`.
+ */
+void wickra_hurst_channel_free(struct HurstChannel *handle);
+
+/**
+ * Create a `Ichimoku` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_ichimoku_free`.
+ */
+struct Ichimoku *wickra_ichimoku_new(uintptr_t tenkan_period,
+                                     uintptr_t kijun_period,
+                                     uintptr_t senkou_b_period,
+                                     uintptr_t displacement);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_ichimoku_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_ichimoku_update(struct Ichimoku *handle,
+                            double open,
+                            double high,
+                            double low,
+                            double close,
+                            double volume,
+                            int64_t timestamp,
+                            struct WickraIchimokuOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_ichimoku_new`, not freed), or `NULL`.
+ */
+void wickra_ichimoku_reset(struct Ichimoku *handle);
+
+/**
+ * Destroy a handle created by `wickra_ichimoku_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_ichimoku_new` and not previously freed, or `NULL`.
+ */
+void wickra_ichimoku_free(struct Ichimoku *handle);
+
+/**
+ * Create a `InitialBalance` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_initial_balance_free`.
+ */
+struct InitialBalance *wickra_initial_balance_new(uintptr_t period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_initial_balance_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_initial_balance_update(struct InitialBalance *handle,
+                                   double open,
+                                   double high,
+                                   double low,
+                                   double close,
+                                   double volume,
+                                   int64_t timestamp,
+                                   struct WickraInitialBalanceOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_initial_balance_new`, not freed), or `NULL`.
+ */
+void wickra_initial_balance_reset(struct InitialBalance *handle);
+
+/**
+ * Destroy a handle created by `wickra_initial_balance_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_initial_balance_new` and not previously freed, or `NULL`.
+ */
+void wickra_initial_balance_free(struct InitialBalance *handle);
+
+/**
+ * Create a `KalmanHedgeRatio` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_kalman_hedge_ratio_free`.
+ */
+struct KalmanHedgeRatio *wickra_kalman_hedge_ratio_new(double delta, double observation_var);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_kalman_hedge_ratio_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_kalman_hedge_ratio_update(struct KalmanHedgeRatio *handle,
+                                      double x,
+                                      double y,
+                                      struct WickraKalmanHedgeRatioOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_kalman_hedge_ratio_new`, not freed), or `NULL`.
+ */
+void wickra_kalman_hedge_ratio_reset(struct KalmanHedgeRatio *handle);
+
+/**
+ * Destroy a handle created by `wickra_kalman_hedge_ratio_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_kalman_hedge_ratio_new` and not previously freed, or `NULL`.
+ */
+void wickra_kalman_hedge_ratio_free(struct KalmanHedgeRatio *handle);
+
+/**
+ * Create a `KaseDevStop` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_kase_dev_stop_free`.
+ */
+struct KaseDevStop *wickra_kase_dev_stop_new(uintptr_t period, double dev);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_kase_dev_stop_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_kase_dev_stop_update(struct KaseDevStop *handle,
+                                 double open,
+                                 double high,
+                                 double low,
+                                 double close,
+                                 double volume,
+                                 int64_t timestamp,
+                                 struct WickraKaseDevStopOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_kase_dev_stop_new`, not freed), or `NULL`.
+ */
+void wickra_kase_dev_stop_reset(struct KaseDevStop *handle);
+
+/**
+ * Destroy a handle created by `wickra_kase_dev_stop_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_kase_dev_stop_new` and not previously freed, or `NULL`.
+ */
+void wickra_kase_dev_stop_free(struct KaseDevStop *handle);
+
+/**
+ * Create a `KasePermissionStochastic` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_kase_permission_stochastic_free`.
+ */
+struct KasePermissionStochastic *wickra_kase_permission_stochastic_new(uintptr_t length,
+                                                                       uintptr_t smooth);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_kase_permission_stochastic_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_kase_permission_stochastic_update(struct KasePermissionStochastic *handle,
+                                              double open,
+                                              double high,
+                                              double low,
+                                              double close,
+                                              double volume,
+                                              int64_t timestamp,
+                                              struct WickraKasePermissionStochasticOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_kase_permission_stochastic_new`, not freed), or `NULL`.
+ */
+void wickra_kase_permission_stochastic_reset(struct KasePermissionStochastic *handle);
+
+/**
+ * Destroy a handle created by `wickra_kase_permission_stochastic_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_kase_permission_stochastic_new` and not previously freed, or `NULL`.
+ */
+void wickra_kase_permission_stochastic_free(struct KasePermissionStochastic *handle);
+
+/**
+ * Create a `Keltner` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_keltner_free`.
+ */
+struct Keltner *wickra_keltner_new(uintptr_t ema_period, uintptr_t atr_period, double multiplier);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_keltner_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_keltner_update(struct Keltner *handle,
+                           double open,
+                           double high,
+                           double low,
+                           double close,
+                           double volume,
+                           int64_t timestamp,
+                           struct WickraKeltnerOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_keltner_new`, not freed), or `NULL`.
+ */
+void wickra_keltner_reset(struct Keltner *handle);
+
+/**
+ * Destroy a handle created by `wickra_keltner_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_keltner_new` and not previously freed, or `NULL`.
+ */
+void wickra_keltner_free(struct Keltner *handle);
+
+/**
+ * Create a `Kst` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_kst_free`.
+ */
+struct Kst *wickra_kst_new(uintptr_t roc1,
+                           uintptr_t roc2,
+                           uintptr_t roc3,
+                           uintptr_t roc4,
+                           uintptr_t sma1,
+                           uintptr_t sma2,
+                           uintptr_t sma3,
+                           uintptr_t sma4,
+                           uintptr_t signal);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_kst_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_kst_update(struct Kst *handle, double value, struct WickraKstOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_kst_new`, not freed), or `NULL`.
+ */
+void wickra_kst_reset(struct Kst *handle);
+
+/**
+ * Destroy a handle created by `wickra_kst_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_kst_new` and not previously freed, or `NULL`.
+ */
+void wickra_kst_free(struct Kst *handle);
+
+/**
+ * Create a `LeadLagCrossCorrelation` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_lead_lag_cross_correlation_free`.
+ */
+struct LeadLagCrossCorrelation *wickra_lead_lag_cross_correlation_new(uintptr_t window,
+                                                                      uintptr_t max_lag);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_lead_lag_cross_correlation_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_lead_lag_cross_correlation_update(struct LeadLagCrossCorrelation *handle,
+                                              double x,
+                                              double y,
+                                              struct WickraLeadLagCrossCorrelationOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_lead_lag_cross_correlation_new`, not freed), or `NULL`.
+ */
+void wickra_lead_lag_cross_correlation_reset(struct LeadLagCrossCorrelation *handle);
+
+/**
+ * Destroy a handle created by `wickra_lead_lag_cross_correlation_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_lead_lag_cross_correlation_new` and not previously freed, or `NULL`.
+ */
+void wickra_lead_lag_cross_correlation_free(struct LeadLagCrossCorrelation *handle);
+
+/**
+ * Create a `LinRegChannel` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_lin_reg_channel_free`.
+ */
+struct LinRegChannel *wickra_lin_reg_channel_new(uintptr_t period, double multiplier);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_lin_reg_channel_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_lin_reg_channel_update(struct LinRegChannel *handle,
+                                   double value,
+                                   struct WickraLinRegChannelOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_lin_reg_channel_new`, not freed), or `NULL`.
+ */
+void wickra_lin_reg_channel_reset(struct LinRegChannel *handle);
+
+/**
+ * Destroy a handle created by `wickra_lin_reg_channel_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_lin_reg_channel_new` and not previously freed, or `NULL`.
+ */
+void wickra_lin_reg_channel_free(struct LinRegChannel *handle);
+
+/**
+ * Create a `LiquidationFeatures` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_liquidation_features_free`.
+ */
+struct LiquidationFeatures *wickra_liquidation_features_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_liquidation_features_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_liquidation_features_update(struct LiquidationFeatures *handle,
+                                        double funding_rate,
+                                        double mark_price,
+                                        double index_price,
+                                        double futures_price,
+                                        double open_interest,
+                                        double long_size,
+                                        double short_size,
+                                        double taker_buy_volume,
+                                        double taker_sell_volume,
+                                        double long_liquidation,
+                                        double short_liquidation,
+                                        int64_t timestamp,
+                                        struct WickraLiquidationFeaturesOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_liquidation_features_new`, not freed), or `NULL`.
+ */
+void wickra_liquidation_features_reset(struct LiquidationFeatures *handle);
+
+/**
+ * Destroy a handle created by `wickra_liquidation_features_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_liquidation_features_new` and not previously freed, or `NULL`.
+ */
+void wickra_liquidation_features_free(struct LiquidationFeatures *handle);
+
+/**
+ * Create a `MaEnvelope` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_ma_envelope_free`.
+ */
+struct MaEnvelope *wickra_ma_envelope_new(uintptr_t period, double percent);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_ma_envelope_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_ma_envelope_update(struct MaEnvelope *handle,
+                               double value,
+                               struct WickraMaEnvelopeOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_ma_envelope_new`, not freed), or `NULL`.
+ */
+void wickra_ma_envelope_reset(struct MaEnvelope *handle);
+
+/**
+ * Destroy a handle created by `wickra_ma_envelope_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_ma_envelope_new` and not previously freed, or `NULL`.
+ */
+void wickra_ma_envelope_free(struct MaEnvelope *handle);
+
+/**
+ * Create a `MacdIndicator` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_macd_indicator_free`.
+ */
+struct MacdIndicator *wickra_macd_indicator_new(uintptr_t fast, uintptr_t slow, uintptr_t signal);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_macd_indicator_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_macd_indicator_update(struct MacdIndicator *handle,
+                                  double value,
+                                  struct WickraMacdOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_macd_indicator_new`, not freed), or `NULL`.
+ */
+void wickra_macd_indicator_reset(struct MacdIndicator *handle);
+
+/**
+ * Destroy a handle created by `wickra_macd_indicator_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_macd_indicator_new` and not previously freed, or `NULL`.
+ */
+void wickra_macd_indicator_free(struct MacdIndicator *handle);
+
+/**
+ * Create a `MacdFix` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_macd_fix_free`.
+ */
+struct MacdFix *wickra_macd_fix_new(uintptr_t signal);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_macd_fix_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_macd_fix_update(struct MacdFix *handle, double value, struct WickraMacdOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_macd_fix_new`, not freed), or `NULL`.
+ */
+void wickra_macd_fix_reset(struct MacdFix *handle);
+
+/**
+ * Destroy a handle created by `wickra_macd_fix_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_macd_fix_new` and not previously freed, or `NULL`.
+ */
+void wickra_macd_fix_free(struct MacdFix *handle);
+
+/**
+ * Create a `Mama` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_mama_free`.
+ */
+struct Mama *wickra_mama_new(double fast_limit, double slow_limit);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_mama_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_mama_update(struct Mama *handle, double value, struct WickraMamaOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_mama_new`, not freed), or `NULL`.
+ */
+void wickra_mama_reset(struct Mama *handle);
+
+/**
+ * Destroy a handle created by `wickra_mama_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_mama_new` and not previously freed, or `NULL`.
+ */
+void wickra_mama_free(struct Mama *handle);
+
+/**
+ * Create a `MedianChannel` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_median_channel_free`.
+ */
+struct MedianChannel *wickra_median_channel_new(uintptr_t period, double multiplier);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_median_channel_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_median_channel_update(struct MedianChannel *handle,
+                                  double value,
+                                  struct WickraMedianChannelOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_median_channel_new`, not freed), or `NULL`.
+ */
+void wickra_median_channel_reset(struct MedianChannel *handle);
+
+/**
+ * Destroy a handle created by `wickra_median_channel_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_median_channel_new` and not previously freed, or `NULL`.
+ */
+void wickra_median_channel_free(struct MedianChannel *handle);
+
+/**
+ * Create a `ModifiedMaStop` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_modified_ma_stop_free`.
+ */
+struct ModifiedMaStop *wickra_modified_ma_stop_new(uintptr_t period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_modified_ma_stop_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_modified_ma_stop_update(struct ModifiedMaStop *handle,
+                                    double open,
+                                    double high,
+                                    double low,
+                                    double close,
+                                    double volume,
+                                    int64_t timestamp,
+                                    struct WickraModifiedMaStopOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_modified_ma_stop_new`, not freed), or `NULL`.
+ */
+void wickra_modified_ma_stop_reset(struct ModifiedMaStop *handle);
+
+/**
+ * Destroy a handle created by `wickra_modified_ma_stop_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_modified_ma_stop_new` and not previously freed, or `NULL`.
+ */
+void wickra_modified_ma_stop_free(struct ModifiedMaStop *handle);
+
+/**
+ * Create a `MurreyMathLines` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_murrey_math_lines_free`.
+ */
+struct MurreyMathLines *wickra_murrey_math_lines_new(uintptr_t period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_murrey_math_lines_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_murrey_math_lines_update(struct MurreyMathLines *handle,
+                                     double open,
+                                     double high,
+                                     double low,
+                                     double close,
+                                     double volume,
+                                     int64_t timestamp,
+                                     struct WickraMurreyMathLinesOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_murrey_math_lines_new`, not freed), or `NULL`.
+ */
+void wickra_murrey_math_lines_reset(struct MurreyMathLines *handle);
+
+/**
+ * Destroy a handle created by `wickra_murrey_math_lines_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_murrey_math_lines_new` and not previously freed, or `NULL`.
+ */
+void wickra_murrey_math_lines_free(struct MurreyMathLines *handle);
+
+/**
+ * Create a `Nrtr` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_nrtr_free`.
+ */
+struct Nrtr *wickra_nrtr_new(double pct);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_nrtr_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_nrtr_update(struct Nrtr *handle,
+                        double open,
+                        double high,
+                        double low,
+                        double close,
+                        double volume,
+                        int64_t timestamp,
+                        struct WickraNrtrOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_nrtr_new`, not freed), or `NULL`.
+ */
+void wickra_nrtr_reset(struct Nrtr *handle);
+
+/**
+ * Destroy a handle created by `wickra_nrtr_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_nrtr_new` and not previously freed, or `NULL`.
+ */
+void wickra_nrtr_free(struct Nrtr *handle);
+
+/**
+ * Create a `OpeningRange` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_opening_range_free`.
+ */
+struct OpeningRange *wickra_opening_range_new(uintptr_t period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_opening_range_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_opening_range_update(struct OpeningRange *handle,
+                                 double open,
+                                 double high,
+                                 double low,
+                                 double close,
+                                 double volume,
+                                 int64_t timestamp,
+                                 struct WickraOpeningRangeOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_opening_range_new`, not freed), or `NULL`.
+ */
+void wickra_opening_range_reset(struct OpeningRange *handle);
+
+/**
+ * Destroy a handle created by `wickra_opening_range_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_opening_range_new` and not previously freed, or `NULL`.
+ */
+void wickra_opening_range_free(struct OpeningRange *handle);
+
+/**
+ * Create a `OvernightIntradayReturn` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_overnight_intraday_return_free`.
+ */
+struct OvernightIntradayReturn *wickra_overnight_intraday_return_new(int32_t utc_offset_minutes);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_overnight_intraday_return_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_overnight_intraday_return_update(struct OvernightIntradayReturn *handle,
+                                             double open,
+                                             double high,
+                                             double low,
+                                             double close,
+                                             double volume,
+                                             int64_t timestamp,
+                                             struct WickraOvernightIntradayReturnOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_overnight_intraday_return_new`, not freed), or `NULL`.
+ */
+void wickra_overnight_intraday_return_reset(struct OvernightIntradayReturn *handle);
+
+/**
+ * Destroy a handle created by `wickra_overnight_intraday_return_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_overnight_intraday_return_new` and not previously freed, or `NULL`.
+ */
+void wickra_overnight_intraday_return_free(struct OvernightIntradayReturn *handle);
+
+/**
+ * Create a `ProjectionBands` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_projection_bands_free`.
+ */
+struct ProjectionBands *wickra_projection_bands_new(uintptr_t period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_projection_bands_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_projection_bands_update(struct ProjectionBands *handle,
+                                    double open,
+                                    double high,
+                                    double low,
+                                    double close,
+                                    double volume,
+                                    int64_t timestamp,
+                                    struct WickraProjectionBandsOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_projection_bands_new`, not freed), or `NULL`.
+ */
+void wickra_projection_bands_reset(struct ProjectionBands *handle);
+
+/**
+ * Destroy a handle created by `wickra_projection_bands_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_projection_bands_new` and not previously freed, or `NULL`.
+ */
+void wickra_projection_bands_free(struct ProjectionBands *handle);
+
+/**
+ * Create a `Qqe` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_qqe_free`.
+ */
+struct Qqe *wickra_qqe_new(uintptr_t rsi_period, uintptr_t smoothing, double factor);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_qqe_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_qqe_update(struct Qqe *handle, double value, struct WickraQqeOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_qqe_new`, not freed), or `NULL`.
+ */
+void wickra_qqe_reset(struct Qqe *handle);
+
+/**
+ * Destroy a handle created by `wickra_qqe_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_qqe_new` and not previously freed, or `NULL`.
+ */
+void wickra_qqe_free(struct Qqe *handle);
+
+/**
+ * Create a `QuartileBands` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_quartile_bands_free`.
+ */
+struct QuartileBands *wickra_quartile_bands_new(uintptr_t period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_quartile_bands_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_quartile_bands_update(struct QuartileBands *handle,
+                                  double value,
+                                  struct WickraQuartileBandsOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_quartile_bands_new`, not freed), or `NULL`.
+ */
+void wickra_quartile_bands_reset(struct QuartileBands *handle);
+
+/**
+ * Destroy a handle created by `wickra_quartile_bands_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_quartile_bands_new` and not previously freed, or `NULL`.
+ */
+void wickra_quartile_bands_free(struct QuartileBands *handle);
+
+/**
+ * Create a `RelativeStrengthAB` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_relative_strength_ab_free`.
+ */
+struct RelativeStrengthAB *wickra_relative_strength_ab_new(uintptr_t ma_period,
+                                                           uintptr_t rsi_period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_relative_strength_ab_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_relative_strength_ab_update(struct RelativeStrengthAB *handle,
+                                        double x,
+                                        double y,
+                                        struct WickraRelativeStrengthOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_relative_strength_ab_new`, not freed), or `NULL`.
+ */
+void wickra_relative_strength_ab_reset(struct RelativeStrengthAB *handle);
+
+/**
+ * Destroy a handle created by `wickra_relative_strength_ab_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_relative_strength_ab_new` and not previously freed, or `NULL`.
+ */
+void wickra_relative_strength_ab_free(struct RelativeStrengthAB *handle);
+
+/**
+ * Create a `Rwi` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_rwi_free`.
+ */
+struct Rwi *wickra_rwi_new(uintptr_t period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_rwi_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_rwi_update(struct Rwi *handle,
+                       double open,
+                       double high,
+                       double low,
+                       double close,
+                       double volume,
+                       int64_t timestamp,
+                       struct WickraRwiOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_rwi_new`, not freed), or `NULL`.
+ */
+void wickra_rwi_reset(struct Rwi *handle);
+
+/**
+ * Destroy a handle created by `wickra_rwi_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_rwi_new` and not previously freed, or `NULL`.
+ */
+void wickra_rwi_free(struct Rwi *handle);
+
+/**
+ * Create a `SessionHighLow` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_session_high_low_free`.
+ */
+struct SessionHighLow *wickra_session_high_low_new(int32_t utc_offset_minutes);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_session_high_low_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_session_high_low_update(struct SessionHighLow *handle,
+                                    double open,
+                                    double high,
+                                    double low,
+                                    double close,
+                                    double volume,
+                                    int64_t timestamp,
+                                    struct WickraSessionHighLowOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_session_high_low_new`, not freed), or `NULL`.
+ */
+void wickra_session_high_low_reset(struct SessionHighLow *handle);
+
+/**
+ * Destroy a handle created by `wickra_session_high_low_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_session_high_low_new` and not previously freed, or `NULL`.
+ */
+void wickra_session_high_low_free(struct SessionHighLow *handle);
+
+/**
+ * Create a `SessionRange` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_session_range_free`.
+ */
+struct SessionRange *wickra_session_range_new(int32_t utc_offset_minutes);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_session_range_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_session_range_update(struct SessionRange *handle,
+                                 double open,
+                                 double high,
+                                 double low,
+                                 double close,
+                                 double volume,
+                                 int64_t timestamp,
+                                 struct WickraSessionRangeOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_session_range_new`, not freed), or `NULL`.
+ */
+void wickra_session_range_reset(struct SessionRange *handle);
+
+/**
+ * Destroy a handle created by `wickra_session_range_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_session_range_new` and not previously freed, or `NULL`.
+ */
+void wickra_session_range_free(struct SessionRange *handle);
+
+/**
+ * Create a `SmoothedHeikinAshi` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_smoothed_heikin_ashi_free`.
+ */
+struct SmoothedHeikinAshi *wickra_smoothed_heikin_ashi_new(uintptr_t period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_smoothed_heikin_ashi_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_smoothed_heikin_ashi_update(struct SmoothedHeikinAshi *handle,
+                                        double open,
+                                        double high,
+                                        double low,
+                                        double close,
+                                        double volume,
+                                        int64_t timestamp,
+                                        struct WickraSmoothedHeikinAshiOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_smoothed_heikin_ashi_new`, not freed), or `NULL`.
+ */
+void wickra_smoothed_heikin_ashi_reset(struct SmoothedHeikinAshi *handle);
+
+/**
+ * Destroy a handle created by `wickra_smoothed_heikin_ashi_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_smoothed_heikin_ashi_new` and not previously freed, or `NULL`.
+ */
+void wickra_smoothed_heikin_ashi_free(struct SmoothedHeikinAshi *handle);
+
+/**
+ * Create a `SpreadBollingerBands` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_spread_bollinger_bands_free`.
+ */
+struct SpreadBollingerBands *wickra_spread_bollinger_bands_new(uintptr_t period, double num_std);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_spread_bollinger_bands_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_spread_bollinger_bands_update(struct SpreadBollingerBands *handle,
+                                          double x,
+                                          double y,
+                                          struct WickraSpreadBollingerBandsOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_spread_bollinger_bands_new`, not freed), or `NULL`.
+ */
+void wickra_spread_bollinger_bands_reset(struct SpreadBollingerBands *handle);
+
+/**
+ * Destroy a handle created by `wickra_spread_bollinger_bands_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_spread_bollinger_bands_new` and not previously freed, or `NULL`.
+ */
+void wickra_spread_bollinger_bands_free(struct SpreadBollingerBands *handle);
+
+/**
+ * Create a `StandardErrorBands` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_standard_error_bands_free`.
+ */
+struct StandardErrorBands *wickra_standard_error_bands_new(uintptr_t period, double multiplier);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_standard_error_bands_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_standard_error_bands_update(struct StandardErrorBands *handle,
+                                        double value,
+                                        struct WickraStandardErrorBandsOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_standard_error_bands_new`, not freed), or `NULL`.
+ */
+void wickra_standard_error_bands_reset(struct StandardErrorBands *handle);
+
+/**
+ * Destroy a handle created by `wickra_standard_error_bands_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_standard_error_bands_new` and not previously freed, or `NULL`.
+ */
+void wickra_standard_error_bands_free(struct StandardErrorBands *handle);
+
+/**
+ * Create a `StarcBands` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_starc_bands_free`.
+ */
+struct StarcBands *wickra_starc_bands_new(uintptr_t sma_period,
+                                          uintptr_t atr_period,
+                                          double multiplier);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_starc_bands_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_starc_bands_update(struct StarcBands *handle,
+                               double open,
+                               double high,
+                               double low,
+                               double close,
+                               double volume,
+                               int64_t timestamp,
+                               struct WickraStarcBandsOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_starc_bands_new`, not freed), or `NULL`.
+ */
+void wickra_starc_bands_reset(struct StarcBands *handle);
+
+/**
+ * Destroy a handle created by `wickra_starc_bands_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_starc_bands_new` and not previously freed, or `NULL`.
+ */
+void wickra_starc_bands_free(struct StarcBands *handle);
+
+/**
+ * Create a `Stochastic` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_stochastic_free`.
+ */
+struct Stochastic *wickra_stochastic_new(uintptr_t k_period, uintptr_t d_period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_stochastic_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_stochastic_update(struct Stochastic *handle,
+                              double open,
+                              double high,
+                              double low,
+                              double close,
+                              double volume,
+                              int64_t timestamp,
+                              struct WickraStochasticOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_stochastic_new`, not freed), or `NULL`.
+ */
+void wickra_stochastic_reset(struct Stochastic *handle);
+
+/**
+ * Destroy a handle created by `wickra_stochastic_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_stochastic_new` and not previously freed, or `NULL`.
+ */
+void wickra_stochastic_free(struct Stochastic *handle);
+
+/**
+ * Create a `SuperTrend` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_super_trend_free`.
+ */
+struct SuperTrend *wickra_super_trend_new(uintptr_t atr_period, double multiplier);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_super_trend_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_super_trend_update(struct SuperTrend *handle,
+                               double open,
+                               double high,
+                               double low,
+                               double close,
+                               double volume,
+                               int64_t timestamp,
+                               struct WickraSuperTrendOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_super_trend_new`, not freed), or `NULL`.
+ */
+void wickra_super_trend_reset(struct SuperTrend *handle);
+
+/**
+ * Destroy a handle created by `wickra_super_trend_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_super_trend_new` and not previously freed, or `NULL`.
+ */
+void wickra_super_trend_free(struct SuperTrend *handle);
+
+/**
+ * Create a `TdLines` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_td_lines_free`.
+ */
+struct TdLines *wickra_td_lines_new(uintptr_t lookback, uintptr_t target);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_td_lines_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_td_lines_update(struct TdLines *handle,
+                            double open,
+                            double high,
+                            double low,
+                            double close,
+                            double volume,
+                            int64_t timestamp,
+                            struct WickraTdLinesOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_td_lines_new`, not freed), or `NULL`.
+ */
+void wickra_td_lines_reset(struct TdLines *handle);
+
+/**
+ * Destroy a handle created by `wickra_td_lines_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_td_lines_new` and not previously freed, or `NULL`.
+ */
+void wickra_td_lines_free(struct TdLines *handle);
+
+/**
+ * Create a `TdMovingAverage` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_td_moving_average_free`.
+ */
+struct TdMovingAverage *wickra_td_moving_average_new(uintptr_t period_st1, uintptr_t period_st2);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_td_moving_average_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_td_moving_average_update(struct TdMovingAverage *handle,
+                                     double open,
+                                     double high,
+                                     double low,
+                                     double close,
+                                     double volume,
+                                     int64_t timestamp,
+                                     struct WickraTdMovingAverageOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_td_moving_average_new`, not freed), or `NULL`.
+ */
+void wickra_td_moving_average_reset(struct TdMovingAverage *handle);
+
+/**
+ * Destroy a handle created by `wickra_td_moving_average_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_td_moving_average_new` and not previously freed, or `NULL`.
+ */
+void wickra_td_moving_average_free(struct TdMovingAverage *handle);
+
+/**
+ * Create a `TdRangeProjection` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_td_range_projection_free`.
+ */
+struct TdRangeProjection *wickra_td_range_projection_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_td_range_projection_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_td_range_projection_update(struct TdRangeProjection *handle,
+                                       double open,
+                                       double high,
+                                       double low,
+                                       double close,
+                                       double volume,
+                                       int64_t timestamp,
+                                       struct WickraTdRangeProjectionOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_td_range_projection_new`, not freed), or `NULL`.
+ */
+void wickra_td_range_projection_reset(struct TdRangeProjection *handle);
+
+/**
+ * Destroy a handle created by `wickra_td_range_projection_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_td_range_projection_new` and not previously freed, or `NULL`.
+ */
+void wickra_td_range_projection_free(struct TdRangeProjection *handle);
+
+/**
+ * Create a `TdRiskLevel` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_td_risk_level_free`.
+ */
+struct TdRiskLevel *wickra_td_risk_level_new(uintptr_t lookback, uintptr_t target);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_td_risk_level_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_td_risk_level_update(struct TdRiskLevel *handle,
+                                 double open,
+                                 double high,
+                                 double low,
+                                 double close,
+                                 double volume,
+                                 int64_t timestamp,
+                                 struct WickraTdRiskLevelOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_td_risk_level_new`, not freed), or `NULL`.
+ */
+void wickra_td_risk_level_reset(struct TdRiskLevel *handle);
+
+/**
+ * Destroy a handle created by `wickra_td_risk_level_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_td_risk_level_new` and not previously freed, or `NULL`.
+ */
+void wickra_td_risk_level_free(struct TdRiskLevel *handle);
+
+/**
+ * Create a `TdSequential` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_td_sequential_free`.
+ */
+struct TdSequential *wickra_td_sequential_new(uintptr_t setup_lookback,
+                                              uintptr_t setup_target,
+                                              uintptr_t countdown_lookback,
+                                              uintptr_t countdown_target);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_td_sequential_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_td_sequential_update(struct TdSequential *handle,
+                                 double open,
+                                 double high,
+                                 double low,
+                                 double close,
+                                 double volume,
+                                 int64_t timestamp,
+                                 struct WickraTdSequentialOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_td_sequential_new`, not freed), or `NULL`.
+ */
+void wickra_td_sequential_reset(struct TdSequential *handle);
+
+/**
+ * Destroy a handle created by `wickra_td_sequential_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_td_sequential_new` and not previously freed, or `NULL`.
+ */
+void wickra_td_sequential_free(struct TdSequential *handle);
+
+/**
+ * Create a `TtmSqueeze` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_ttm_squeeze_free`.
+ */
+struct TtmSqueeze *wickra_ttm_squeeze_new(uintptr_t period, double bb_mult, double kc_mult);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_ttm_squeeze_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_ttm_squeeze_update(struct TtmSqueeze *handle,
+                               double open,
+                               double high,
+                               double low,
+                               double close,
+                               double volume,
+                               int64_t timestamp,
+                               struct WickraTtmSqueezeOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_ttm_squeeze_new`, not freed), or `NULL`.
+ */
+void wickra_ttm_squeeze_reset(struct TtmSqueeze *handle);
+
+/**
+ * Destroy a handle created by `wickra_ttm_squeeze_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_ttm_squeeze_new` and not previously freed, or `NULL`.
+ */
+void wickra_ttm_squeeze_free(struct TtmSqueeze *handle);
+
+/**
+ * Create a `ValueArea` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_value_area_free`.
+ */
+struct ValueArea *wickra_value_area_new(uintptr_t period,
+                                        uintptr_t bin_count,
+                                        double value_area_pct);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_value_area_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_value_area_update(struct ValueArea *handle,
+                              double open,
+                              double high,
+                              double low,
+                              double close,
+                              double volume,
+                              int64_t timestamp,
+                              struct WickraValueAreaOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_value_area_new`, not freed), or `NULL`.
+ */
+void wickra_value_area_reset(struct ValueArea *handle);
+
+/**
+ * Destroy a handle created by `wickra_value_area_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_value_area_new` and not previously freed, or `NULL`.
+ */
+void wickra_value_area_free(struct ValueArea *handle);
+
+/**
+ * Create a `VolatilityCone` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_volatility_cone_free`.
+ */
+struct VolatilityCone *wickra_volatility_cone_new(uintptr_t window, uintptr_t lookback);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_volatility_cone_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_volatility_cone_update(struct VolatilityCone *handle,
+                                   double open,
+                                   double high,
+                                   double low,
+                                   double close,
+                                   double volume,
+                                   int64_t timestamp,
+                                   struct WickraVolatilityConeOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_volatility_cone_new`, not freed), or `NULL`.
+ */
+void wickra_volatility_cone_reset(struct VolatilityCone *handle);
+
+/**
+ * Destroy a handle created by `wickra_volatility_cone_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_volatility_cone_new` and not previously freed, or `NULL`.
+ */
+void wickra_volatility_cone_free(struct VolatilityCone *handle);
+
+/**
+ * Create a `VolumeWeightedMacd` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_volume_weighted_macd_free`.
+ */
+struct VolumeWeightedMacd *wickra_volume_weighted_macd_new(uintptr_t fast,
+                                                           uintptr_t slow,
+                                                           uintptr_t signal);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_volume_weighted_macd_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_volume_weighted_macd_update(struct VolumeWeightedMacd *handle,
+                                        double open,
+                                        double high,
+                                        double low,
+                                        double close,
+                                        double volume,
+                                        int64_t timestamp,
+                                        struct WickraVolumeWeightedMacdOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_volume_weighted_macd_new`, not freed), or `NULL`.
+ */
+void wickra_volume_weighted_macd_reset(struct VolumeWeightedMacd *handle);
+
+/**
+ * Destroy a handle created by `wickra_volume_weighted_macd_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_volume_weighted_macd_new` and not previously freed, or `NULL`.
+ */
+void wickra_volume_weighted_macd_free(struct VolumeWeightedMacd *handle);
+
+/**
+ * Create a `VolumeWeightedSr` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_volume_weighted_sr_free`.
+ */
+struct VolumeWeightedSr *wickra_volume_weighted_sr_new(uintptr_t period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_volume_weighted_sr_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_volume_weighted_sr_update(struct VolumeWeightedSr *handle,
+                                      double open,
+                                      double high,
+                                      double low,
+                                      double close,
+                                      double volume,
+                                      int64_t timestamp,
+                                      struct WickraVolumeWeightedSrOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_volume_weighted_sr_new`, not freed), or `NULL`.
+ */
+void wickra_volume_weighted_sr_reset(struct VolumeWeightedSr *handle);
+
+/**
+ * Destroy a handle created by `wickra_volume_weighted_sr_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_volume_weighted_sr_new` and not previously freed, or `NULL`.
+ */
+void wickra_volume_weighted_sr_free(struct VolumeWeightedSr *handle);
+
+/**
+ * Create a `Vortex` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_vortex_free`.
+ */
+struct Vortex *wickra_vortex_new(uintptr_t period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_vortex_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_vortex_update(struct Vortex *handle,
+                          double open,
+                          double high,
+                          double low,
+                          double close,
+                          double volume,
+                          int64_t timestamp,
+                          struct WickraVortexOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_vortex_new`, not freed), or `NULL`.
+ */
+void wickra_vortex_reset(struct Vortex *handle);
+
+/**
+ * Destroy a handle created by `wickra_vortex_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_vortex_new` and not previously freed, or `NULL`.
+ */
+void wickra_vortex_free(struct Vortex *handle);
+
+/**
+ * Create a `VwapStdDevBands` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_vwap_std_dev_bands_free`.
+ */
+struct VwapStdDevBands *wickra_vwap_std_dev_bands_new(double multiplier);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_vwap_std_dev_bands_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_vwap_std_dev_bands_update(struct VwapStdDevBands *handle,
+                                      double open,
+                                      double high,
+                                      double low,
+                                      double close,
+                                      double volume,
+                                      int64_t timestamp,
+                                      struct WickraVwapStdDevBandsOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_vwap_std_dev_bands_new`, not freed), or `NULL`.
+ */
+void wickra_vwap_std_dev_bands_reset(struct VwapStdDevBands *handle);
+
+/**
+ * Destroy a handle created by `wickra_vwap_std_dev_bands_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_vwap_std_dev_bands_new` and not previously freed, or `NULL`.
+ */
+void wickra_vwap_std_dev_bands_free(struct VwapStdDevBands *handle);
+
+/**
+ * Create a `WaveTrend` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_wave_trend_free`.
+ */
+struct WaveTrend *wickra_wave_trend_new(uintptr_t channel_period,
+                                        uintptr_t average_period,
+                                        uintptr_t signal_period);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_wave_trend_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_wave_trend_update(struct WaveTrend *handle,
+                              double open,
+                              double high,
+                              double low,
+                              double close,
+                              double volume,
+                              int64_t timestamp,
+                              struct WickraWaveTrendOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_wave_trend_new`, not freed), or `NULL`.
+ */
+void wickra_wave_trend_reset(struct WaveTrend *handle);
+
+/**
+ * Destroy a handle created by `wickra_wave_trend_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_wave_trend_new` and not previously freed, or `NULL`.
+ */
+void wickra_wave_trend_free(struct WaveTrend *handle);
+
+/**
+ * Create a `WilliamsFractals` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_williams_fractals_free`.
+ */
+struct WilliamsFractals *wickra_williams_fractals_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_williams_fractals_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_williams_fractals_update(struct WilliamsFractals *handle,
+                                     double open,
+                                     double high,
+                                     double low,
+                                     double close,
+                                     double volume,
+                                     int64_t timestamp,
+                                     struct WickraWilliamsFractalsOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_williams_fractals_new`, not freed), or `NULL`.
+ */
+void wickra_williams_fractals_reset(struct WilliamsFractals *handle);
+
+/**
+ * Destroy a handle created by `wickra_williams_fractals_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_williams_fractals_new` and not previously freed, or `NULL`.
+ */
+void wickra_williams_fractals_free(struct WilliamsFractals *handle);
+
+/**
+ * Create a `WoodiePivots` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_woodie_pivots_free`.
+ */
+struct WoodiePivots *wickra_woodie_pivots_new(void);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_woodie_pivots_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_woodie_pivots_update(struct WoodiePivots *handle,
+                                 double open,
+                                 double high,
+                                 double low,
+                                 double close,
+                                 double volume,
+                                 int64_t timestamp,
+                                 struct WickraWoodiePivotsOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_woodie_pivots_new`, not freed), or `NULL`.
+ */
+void wickra_woodie_pivots_reset(struct WoodiePivots *handle);
+
+/**
+ * Destroy a handle created by `wickra_woodie_pivots_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_woodie_pivots_new` and not previously freed, or `NULL`.
+ */
+void wickra_woodie_pivots_free(struct WoodiePivots *handle);
+
+/**
+ * Create a `ZeroLagMacd` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_zero_lag_macd_free`.
+ */
+struct ZeroLagMacd *wickra_zero_lag_macd_new(uintptr_t fast, uintptr_t slow, uintptr_t signal);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_zero_lag_macd_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_zero_lag_macd_update(struct ZeroLagMacd *handle,
+                                 double value,
+                                 struct WickraZeroLagMacdOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_zero_lag_macd_new`, not freed), or `NULL`.
+ */
+void wickra_zero_lag_macd_reset(struct ZeroLagMacd *handle);
+
+/**
+ * Destroy a handle created by `wickra_zero_lag_macd_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_zero_lag_macd_new` and not previously freed, or `NULL`.
+ */
+void wickra_zero_lag_macd_free(struct ZeroLagMacd *handle);
+
+/**
+ * Create a `ZigZag` indicator.
+ *
+ * Returns `NULL` on invalid parameters; release with `wickra_zig_zag_free`.
+ */
+struct ZigZag *wickra_zig_zag_new(double threshold);
+
+/**
+ * Feed one input; on `true` the freshly computed multi-field output is written to
+ * `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+ *
+ * # Safety
+ * `handle` (from `wickra_zig_zag_new`, not freed) and `out` must be valid or `NULL`.
+ */
+bool wickra_zig_zag_update(struct ZigZag *handle,
+                           double open,
+                           double high,
+                           double low,
+                           double close,
+                           double volume,
+                           int64_t timestamp,
+                           struct WickraZigZagOutput *out);
+
+/**
+ * Reset all internal state. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must be valid (from `wickra_zig_zag_new`, not freed), or `NULL`.
+ */
+void wickra_zig_zag_reset(struct ZigZag *handle);
+
+/**
+ * Destroy a handle created by `wickra_zig_zag_new`. No-op if `handle` is `NULL`.
+ *
+ * # Safety
+ * `handle` must have been returned by `wickra_zig_zag_new` and not previously freed, or `NULL`.
+ */
+void wickra_zig_zag_free(struct ZigZag *handle);
 
 #endif  /* WICKRA_H */

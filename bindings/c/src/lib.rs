@@ -19,71 +19,85 @@ use core::ptr;
 use core::slice;
 
 use wickra_core::{
-    AbandonedBaby, Abcd, AbsoluteBreadthIndex, AcceleratorOscillator, AdOscillator, AdVolumeLine,
-    AdaptiveCci, AdaptiveCycle, AdaptiveLaguerreFilter, AdaptiveRsi, Adl, AdvanceBlock,
-    AdvanceDecline, AdvanceDeclineRatio, Adxr, Alma, Alpha, AmihudIlliquidity, AnchoredRsi,
-    AnchoredVwap, Apo, AroonOscillator, Atr, AtrTrailingStop, Autocorrelation,
+    AbandonedBaby, Abcd, AbsoluteBreadthIndex, AccelerationBands, AcceleratorOscillator,
+    AdOscillator, AdVolumeLine, AdaptiveCci, AdaptiveCycle, AdaptiveLaguerreFilter, AdaptiveRsi,
+    Adl, AdvanceBlock, AdvanceDecline, AdvanceDeclineRatio, Adx, Adxr, Alligator, Alma, Alpha,
+    AmihudIlliquidity, AnchoredRsi, AnchoredVwap, AndrewsPitchfork, Apo, Aroon, AroonOscillator,
+    Atr, AtrBands, AtrRatchet, AtrTrailingStop, AutoFib, Autocorrelation,
     AutocorrelationPeriodogram, AverageDailyRange, AverageDrawdown, AvgPrice, AwesomeOscillator,
     AwesomeOscillatorHistogram, BalanceOfPower, BandpassFilter, Bat, BeltHold, Beta,
-    BetaNeutralSpread, BetterVolume, BipowerVariation, BodySizePct, BollingerBandwidth,
-    BreadthThrust, Breakaway, BullishPercentIndex, BurkeRatio, Butterfly, CalendarSpread,
-    CalmarRatio, Candle, Cci, CenterOfGravity, Cfo, ChaikinMoneyFlow, ChaikinOscillator,
-    ChaikinVolatility, ChoppinessIndex, CloseVsOpen, ClosingMarubozu, Cmo, CoefficientOfVariation,
-    CommonSenseRatio, ConcealingBabySwallow, ConditionalValueAtRisk, ConnorsRsi, Coppock,
-    CorrelationTrendIndicator, Counterattack, Crab, CrossSection, CumulativeVolumeDelta,
-    CumulativeVolumeIndex, CupAndHandle, CyberneticCycle, Cypher, Decycler, DecyclerOscillator,
-    Dema, DemandIndex, DepthSlope, DerivativeOscillator, DerivativesTick, DetrendedStdDev,
-    DisparityIndex, DistanceSsd, Doji, DojiStar, DoubleTopBottom, DownsideGapThreeMethods, Dpo,
-    DragonflyDoji, DumplingTop, Dx, DynamicMomentumIndex, EaseOfMovement, EffectiveSpread,
-    EhlersStochastic, Ehma, ElderImpulse, Ema, EmpiricalModeDecomposition, Engulfing,
+    BetaNeutralSpread, BetterVolume, BipowerVariation, BodySizePct, BollingerBands,
+    BollingerBandwidth, BomarBands, BreadthThrust, Breakaway, BullishPercentIndex, BurkeRatio,
+    Butterfly, CalendarSpread, CalmarRatio, Camarilla, Candle, CandleVolume, Cci, CenterOfGravity,
+    CentralPivotRange, Cfo, ChaikinMoneyFlow, ChaikinOscillator, ChaikinVolatility,
+    ChandeKrollStop, ChandelierExit, ChoppinessIndex, ClassicPivots, CloseVsOpen, ClosingMarubozu,
+    Cmo, CoefficientOfVariation, Cointegration, CommonSenseRatio, CompositeProfile,
+    ConcealingBabySwallow, ConditionalValueAtRisk, ConnorsRsi, Coppock, CorrelationTrendIndicator,
+    Counterattack, Crab, CrossSection, CumulativeVolumeDelta, CumulativeVolumeIndex, CupAndHandle,
+    CyberneticCycle, Cypher, Decycler, DecyclerOscillator, Dema, DemandIndex, DemarkPivots,
+    DepthSlope, DerivativeOscillator, DerivativesTick, DetrendedStdDev, DisparityIndex,
+    DistanceSsd, Doji, DojiStar, Donchian, DonchianStop, DoubleBollinger, DoubleTopBottom,
+    DownsideGapThreeMethods, Dpo, DragonflyDoji, DrawdownDuration, DumplingTop, Dx,
+    DynamicMomentumIndex, EaseOfMovement, EffectiveSpread, EhlersStochastic, Ehma, ElderImpulse,
+    ElderRay, ElderSafeZone, Ema, EmpiricalModeDecomposition, Engulfing, Equivolume,
     EstimatedLeverageRatio, EvenBetterSinewave, EveningDojiStar, Evwma, EwmaVolatility, Expectancy,
-    FallingThreeMethods, Fama, FisherRsi, FisherTransform, FlagPennant, ForceIndex, Frama,
-    FryPanBottom, FundingBasis, FundingImpliedApr, FundingRate, FundingRateMean, FundingRateZScore,
-    GainLossRatio, GainToPainRatio, GapSideBySideWhite, Garch11, GarmanKlassVolatility, Gartley,
-    GeneralizedDema, GeometricMa, GrangerCausality, GravestoneDoji, Hammer, HangingMan, Harami,
-    HaramiCross, HasbrouckInformationShare, HeadAndShoulders, HeikinAshiOscillator, HiLoActivator,
-    HighLowIndex, HighLowRange, HighWave, HighpassFilter, Hikkake, HikkakeModified,
-    HilbertDominantCycle, HistoricalVolatility, Hma, HoltWinters, HomingPigeon, HtDcPhase,
-    HtTrendMode, HurstExponent, IdenticalThreeCrows, InNeck, Indicator, Inertia, InformationRatio,
+    FallingThreeMethods, Fama, FibArcs, FibChannel, FibConfluence, FibExtension, FibFan,
+    FibProjection, FibRetracement, FibTimeZones, FibonacciPivots, FisherRsi, FisherTransform,
+    FlagPennant, ForceIndex, FractalChaosBands, Frama, FryPanBottom, FundingBasis,
+    FundingImpliedApr, FundingRate, FundingRateMean, FundingRateZScore, GainLossRatio,
+    GainToPainRatio, GapSideBySideWhite, Garch11, GarmanKlassVolatility, Gartley, GatorOscillator,
+    GeneralizedDema, GeometricMa, GoldenPocket, GrangerCausality, GravestoneDoji, Hammer,
+    HangingMan, Harami, HaramiCross, HasbrouckInformationShare, HeadAndShoulders, HeikinAshi,
+    HeikinAshiOscillator, HiLoActivator, HighLowIndex, HighLowRange, HighLowVolumeNodes, HighWave,
+    HighpassFilter, Hikkake, HikkakeModified, HilbertDominantCycle, HistoricalVolatility, Hma,
+    HoltWinters, HomingPigeon, HtDcPhase, HtPhasor, HtTrendMode, HurstChannel, HurstExponent,
+    Ichimoku, IdenticalThreeCrows, InNeck, Indicator, Inertia, InformationRatio, InitialBalance,
     InstantaneousTrendline, IntradayIntensity, IntradayMomentumIndex, InverseFisherTransform,
-    InvertedHammer, JarqueBera, Jma, JumpIndicator, KRatio, Kama, KellyCriterion, KendallTau,
-    Kicking, KickingByLength, Kurtosis, Kvo, KylesLambda, LadderBottom, LaguerreRsi, Level,
-    LinRegAngle, LinRegIntercept, LinRegSlope, LinearRegression, LogReturn, LongLeggedDoji,
-    LongLine, LongShortRatio, M2Measure, MacdHistogram, MarketFacilitationIndex, MartinRatio,
+    InvertedHammer, JarqueBera, Jma, JumpIndicator, KRatio, KalmanHedgeRatio, Kama, KaseDevStop,
+    KasePermissionStochastic, KellyCriterion, Keltner, KendallTau, Kicking, KickingByLength, Kst,
+    Kurtosis, Kvo, KylesLambda, LadderBottom, LaguerreRsi, LeadLagCrossCorrelation, Level,
+    LinRegAngle, LinRegChannel, LinRegIntercept, LinRegSlope, LinearRegression,
+    LiquidationFeatures, LogReturn, LongLeggedDoji, LongLine, LongShortRatio, M2Measure,
+    MaEnvelope, MacdFix, MacdHistogram, MacdIndicator, Mama, MarketFacilitationIndex, MartinRatio,
     Marubozu, MassIndex, MatHold, MatchingLow, MaxDrawdown, McClellanOscillator,
-    McClellanSummationIndex, McGinleyDynamic, MedianAbsoluteDeviation, MedianMa, MedianPrice,
-    Member, Mfi, Microprice, MidPoint, MidPrice, MinusDi, MinusDm, Mom, MorningDojiStar,
-    MorningEveningStar, NakedPoc, Natr, NewHighsNewLows, NewPriceLines, Nvi, OIPriceDivergence,
-    OIWeighted, Obv, OiToVolumeRatio, OmegaRatio, OnNeck, OpenInterestDelta, OpenInterestMomentum,
-    OpeningMarubozu, OrderBook, OrderBookImbalanceFull, OrderBookImbalanceTop1,
-    OrderBookImbalanceTopN, OrderFlowImbalance, OuHalfLife, OvernightGap, PainIndex,
-    PairSpreadZScore, PairwiseBeta, ParkinsonVolatility, PearsonCorrelation, PercentAboveMa,
-    PercentB, PercentageTrailingStop, PerpetualPremiumIndex, Pgo, PiercingDarkCloud, Pin,
-    PivotReversal, PlusDi, PlusDm, Pmo, PolarizedFractalEfficiency, Ppo, PpoHistogram,
-    ProfileShape, ProfitFactor, ProjectionOscillator, Psar, Pvi, Qstick, QuotedSpread, RSquared,
+    McClellanSummationIndex, McGinleyDynamic, MedianAbsoluteDeviation, MedianChannel, MedianMa,
+    MedianPrice, Member, Mfi, Microprice, MidPoint, MidPrice, MinusDi, MinusDm, ModifiedMaStop,
+    Mom, MorningDojiStar, MorningEveningStar, MurreyMathLines, NakedPoc, Natr, NewHighsNewLows,
+    NewPriceLines, Nrtr, Nvi, OIPriceDivergence, OIWeighted, Obv, OiToVolumeRatio, OmegaRatio,
+    OnNeck, OpenInterestDelta, OpenInterestMomentum, OpeningMarubozu, OpeningRange, OrderBook,
+    OrderBookImbalanceFull, OrderBookImbalanceTop1, OrderBookImbalanceTopN, OrderFlowImbalance,
+    OuHalfLife, OvernightGap, OvernightIntradayReturn, PainIndex, PairSpreadZScore, PairwiseBeta,
+    ParkinsonVolatility, PearsonCorrelation, PercentAboveMa, PercentB, PercentageTrailingStop,
+    PerpetualPremiumIndex, Pgo, PiercingDarkCloud, Pin, PivotReversal, PlusDi, PlusDm, Pmo,
+    PolarizedFractalEfficiency, Ppo, PpoHistogram, ProfileShape, ProfitFactor, ProjectionBands,
+    ProjectionOscillator, Psar, Pvi, Qqe, Qstick, QuartileBands, QuotedSpread, RSquared,
     RealizedSpread, RealizedVolatility, RecoveryFactor, RectangleRange, Reflex, RegimeLabel,
-    RenkoTrailingStop, RickshawMan, RisingThreeMethods, Rmi, Roc, Rocp, Rocr, Rocr100,
-    RogersSatchellVolatility, RollMeasure, RollingCorrelation, RollingCovariance, RollingIqr,
-    RollingMinMaxScaler, RollingPercentileRank, RollingQuantile, RollingVwap, RoofingFilter, Rsi,
-    Rsx, Rvi, RviVolatility, SampleEntropy, SarExt, SeasonalZScore, SeparatingLines, SessionVwap,
-    ShannonEntropy, Shark, SharpeRatio, ShootingStar, ShortLine, Side, SignedVolume, SineWave,
-    SineWeightedMa, SinglePrints, Skewness, Sma, Smi, Smma, SortinoRatio, SpearmanCorrelation,
-    SpinningTop, SpreadAr1Coefficient, SpreadHurst, StalledPattern, StandardError, Stc, StdDev,
-    StepTrailingStop, SterlingRatio, StickSandwich, StochRsi, StochasticCci, SuperSmoother,
-    TailRatio, TakerBuySellRatio, Takuri, TasukiGap, TdCamouflage, TdClop, TdClopwin, TdCombo,
-    TdCountdown, TdDWave, TdDeMarker, TdDifferential, TdOpen, TdPressure, TdPropulsion, TdRei,
-    TdSetup, TdTrap, Tema, TermStructureBasis, ThreeDrives, ThreeInside, ThreeLineBreak,
-    ThreeLineStrike, ThreeOutside, ThreeSoldiersOrCrows, ThreeStarsInSouth, Thrusting, TickIndex,
-    Tii, TimeBasedStop, TowerTopBottom, Trade, TradeImbalance, TradeQuote,
-    TradeSignAutocorrelation, TradeVolumeIndex, TrendLabel, TrendStrengthIndex, Trendflex,
-    TreynorRatio, Triangle, Trima, Trin, TripleTopBottom, Tristar, Trix, TrueRange, Tsf,
-    TsfOscillator, Tsi, Tsv, TtmTrend, TurnOfMonth, Tweezer, TwiggsMoneyFlow, TwoCrows,
-    TypicalPrice, UlcerIndex, UltimateOscillator, UniqueThreeRiver, UniversalOscillator,
-    UpDownVolumeRatio, UpsideGapThreeMethods, UpsideGapTwoCrows, UpsidePotentialRatio, ValueAtRisk,
-    Variance, VarianceRatio, VerticalHorizontalFilter, Vidya, VolatilityOfVolatility,
-    VolatilityRatio, VoltyStop, VolumeOscillator, VolumePriceTrend, VolumeRsi, Vpin, Vwap, Vwma,
-    Vzo, Wad, WavePm, Wedge, WeightedClose, WickRatio, WilliamsR, WinRate, Wma,
-    YangZhangVolatility, YoyoExit, ZScore, Zlema, T3,
+    RelativeStrengthAB, RenkoTrailingStop, RickshawMan, RisingThreeMethods, Rmi, Roc, Rocp, Rocr,
+    Rocr100, RogersSatchellVolatility, RollMeasure, RollingCorrelation, RollingCovariance,
+    RollingIqr, RollingMinMaxScaler, RollingPercentileRank, RollingQuantile, RollingVwap,
+    RoofingFilter, Rsi, Rsx, Rvi, RviVolatility, Rwi, SampleEntropy, SarExt, SeasonalZScore,
+    SeparatingLines, SessionHighLow, SessionRange, SessionVwap, ShannonEntropy, Shark, SharpeRatio,
+    ShootingStar, ShortLine, Side, SignedVolume, SineWave, SineWeightedMa, SinglePrints, Skewness,
+    Sma, Smi, Smma, SmoothedHeikinAshi, SortinoRatio, SpearmanCorrelation, SpinningTop,
+    SpreadAr1Coefficient, SpreadBollingerBands, SpreadHurst, StalledPattern, StandardError,
+    StandardErrorBands, StarcBands, Stc, StdDev, StepTrailingStop, SterlingRatio, StickSandwich,
+    StochRsi, Stochastic, StochasticCci, SuperSmoother, SuperTrend, TailRatio, TakerBuySellRatio,
+    Takuri, TasukiGap, TdCamouflage, TdClop, TdClopwin, TdCombo, TdCountdown, TdDWave, TdDeMarker,
+    TdDifferential, TdLines, TdMovingAverage, TdOpen, TdPressure, TdPropulsion, TdRangeProjection,
+    TdRei, TdRiskLevel, TdSequential, TdSetup, TdTrap, Tema, TermStructureBasis, ThreeDrives,
+    ThreeInside, ThreeLineBreak, ThreeLineStrike, ThreeOutside, ThreeSoldiersOrCrows,
+    ThreeStarsInSouth, Thrusting, TickIndex, Tii, TimeBasedStop, TowerTopBottom, Trade,
+    TradeImbalance, TradeQuote, TradeSignAutocorrelation, TradeVolumeIndex, TrendLabel,
+    TrendStrengthIndex, Trendflex, TreynorRatio, Triangle, Trima, Trin, TripleTopBottom, Tristar,
+    Trix, TrueRange, Tsf, TsfOscillator, Tsi, Tsv, TtmSqueeze, TtmTrend, TurnOfMonth, Tweezer,
+    TwiggsMoneyFlow, TwoCrows, TypicalPrice, UlcerIndex, UltimateOscillator, UniqueThreeRiver,
+    UniversalOscillator, UpDownVolumeRatio, UpsideGapThreeMethods, UpsideGapTwoCrows,
+    UpsidePotentialRatio, ValueArea, ValueAtRisk, Variance, VarianceRatio,
+    VerticalHorizontalFilter, Vidya, VolatilityCone, VolatilityOfVolatility, VolatilityRatio,
+    VoltyStop, VolumeOscillator, VolumePriceTrend, VolumeRsi, VolumeWeightedMacd, VolumeWeightedSr,
+    Vortex, Vpin, Vwap, VwapStdDevBands, Vwma, Vzo, Wad, WavePm, WaveTrend, Wedge, WeightedClose,
+    WickRatio, WilliamsFractals, WilliamsR, WinRate, Wma, WoodiePivots, YangZhangVolatility,
+    YoyoExit, ZScore, ZeroLagMacd, ZigZag, Zlema, T3,
 };
 
 // ===== Scalar indicators (f64 -> f64) =====
@@ -2255,6 +2269,73 @@ pub unsafe extern "C" fn wickra_dpo_reset(handle: *mut Dpo) {
 /// `handle` must have been returned by `wickra_dpo_new` and not previously freed, or `NULL`.
 #[no_mangle]
 pub unsafe extern "C" fn wickra_dpo_free(handle: *mut Dpo) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `DrawdownDuration` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_drawdown_duration_free`.
+#[no_mangle]
+pub extern "C" fn wickra_drawdown_duration_new() -> *mut DrawdownDuration {
+    Box::into_raw(Box::new(DrawdownDuration::new()))
+}
+
+/// Feed one value; returns the output, or `NaN` during warmup / on a `NULL` handle.
+///
+/// # Safety
+/// `handle` must be a valid pointer from `wickra_drawdown_duration_new` (not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_drawdown_duration_update(
+    handle: *mut DrawdownDuration,
+    value: f64,
+) -> f64 {
+    match handle.as_mut() {
+        Some(ind) => ind.update(value).map_or(f64::NAN, f64::from),
+        None => f64::NAN,
+    }
+}
+
+/// Run over `input[0..n]`, writing one output per input into `out[0..n]` (`NaN` at warmup).
+///
+/// # Safety
+/// `handle` valid (from `wickra_drawdown_duration_new`, not freed); `input`/`out` cover `n` `double`s.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_drawdown_duration_batch(
+    handle: *mut DrawdownDuration,
+    input: *const f64,
+    out: *mut f64,
+    n: usize,
+) {
+    if handle.is_null() || input.is_null() || out.is_null() {
+        return;
+    }
+    let ind = &mut *handle;
+    let inputs = slice::from_raw_parts(input, n);
+    let outputs = slice::from_raw_parts_mut(out, n);
+    for (slot, &value) in outputs.iter_mut().zip(inputs) {
+        *slot = ind.update(value).map_or(f64::NAN, f64::from);
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_drawdown_duration_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_drawdown_duration_reset(handle: *mut DrawdownDuration) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_drawdown_duration_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_drawdown_duration_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_drawdown_duration_free(handle: *mut DrawdownDuration) {
     if !handle.is_null() {
         drop(Box::from_raw(handle));
     }
@@ -35437,6 +35518,7218 @@ pub unsafe extern "C" fn wickra_up_down_volume_ratio_reset(handle: *mut UpDownVo
 /// `handle` must have been returned by `wickra_up_down_volume_ratio_new` and not previously freed, or `NULL`.
 #[no_mangle]
 pub unsafe extern "C" fn wickra_up_down_volume_ratio_free(handle: *mut UpDownVolumeRatio) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+// ===== Multi-output indicators (fixed-size struct via out-param) =====
+
+/// C-ABI view of `AccelerationBandsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraAccelerationBandsOutput {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+/// C-ABI view of `AdxOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraAdxOutput {
+    pub plus_di: f64,
+    pub minus_di: f64,
+    pub adx: f64,
+}
+
+/// C-ABI view of `AlligatorOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraAlligatorOutput {
+    pub jaw: f64,
+    pub teeth: f64,
+    pub lips: f64,
+}
+
+/// C-ABI view of `AndrewsPitchforkOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraAndrewsPitchforkOutput {
+    pub median: f64,
+    pub upper: f64,
+    pub lower: f64,
+}
+
+/// C-ABI view of `AroonOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraAroonOutput {
+    pub up: f64,
+    pub down: f64,
+}
+
+/// C-ABI view of `AtrBandsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraAtrBandsOutput {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+/// C-ABI view of `AtrRatchetOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraAtrRatchetOutput {
+    pub value: f64,
+    pub direction: f64,
+}
+
+/// C-ABI view of `AutoFibOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraAutoFibOutput {
+    pub level_0: f64,
+    pub level_236: f64,
+    pub level_382: f64,
+    pub level_500: f64,
+    pub level_618: f64,
+    pub level_786: f64,
+    pub level_1000: f64,
+}
+
+/// C-ABI view of `BollingerOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraBollingerOutput {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+    pub stddev: f64,
+}
+
+/// C-ABI view of `BomarBandsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraBomarBandsOutput {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+/// C-ABI view of `CamarillaPivotsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraCamarillaPivotsOutput {
+    pub pp: f64,
+    pub r1: f64,
+    pub r2: f64,
+    pub r3: f64,
+    pub r4: f64,
+    pub s1: f64,
+    pub s2: f64,
+    pub s3: f64,
+    pub s4: f64,
+}
+
+/// C-ABI view of `CandleVolumeOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraCandleVolumeOutput {
+    pub body: f64,
+    pub width: f64,
+}
+
+/// C-ABI view of `CentralPivotRangeOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraCentralPivotRangeOutput {
+    pub pivot: f64,
+    pub tc: f64,
+    pub bc: f64,
+}
+
+/// C-ABI view of `ChandeKrollStopOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraChandeKrollStopOutput {
+    pub stop_long: f64,
+    pub stop_short: f64,
+}
+
+/// C-ABI view of `ChandelierExitOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraChandelierExitOutput {
+    pub long_stop: f64,
+    pub short_stop: f64,
+}
+
+/// C-ABI view of `ClassicPivotsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraClassicPivotsOutput {
+    pub pp: f64,
+    pub r1: f64,
+    pub r2: f64,
+    pub r3: f64,
+    pub s1: f64,
+    pub s2: f64,
+    pub s3: f64,
+}
+
+/// C-ABI view of `CointegrationOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraCointegrationOutput {
+    pub hedge_ratio: f64,
+    pub spread: f64,
+    pub adf_stat: f64,
+}
+
+/// C-ABI view of `CompositeProfileOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraCompositeProfileOutput {
+    pub poc: f64,
+    pub vah: f64,
+    pub val: f64,
+}
+
+/// C-ABI view of `DemarkPivotsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraDemarkPivotsOutput {
+    pub pp: f64,
+    pub r1: f64,
+    pub s1: f64,
+}
+
+/// C-ABI view of `DonchianOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraDonchianOutput {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+/// C-ABI view of `DonchianStopOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraDonchianStopOutput {
+    pub stop_long: f64,
+    pub stop_short: f64,
+}
+
+/// C-ABI view of `DoubleBollingerOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraDoubleBollingerOutput {
+    pub upper_outer: f64,
+    pub upper_inner: f64,
+    pub middle: f64,
+    pub lower_inner: f64,
+    pub lower_outer: f64,
+}
+
+/// C-ABI view of `ElderRayOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraElderRayOutput {
+    pub bull_power: f64,
+    pub bear_power: f64,
+}
+
+/// C-ABI view of `ElderSafeZoneOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraElderSafeZoneOutput {
+    pub value: f64,
+    pub direction: f64,
+}
+
+/// C-ABI view of `EquivolumeOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraEquivolumeOutput {
+    pub height: f64,
+    pub width: f64,
+}
+
+/// C-ABI view of `FibArcsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraFibArcsOutput {
+    pub arc_382: f64,
+    pub arc_500: f64,
+    pub arc_618: f64,
+}
+
+/// C-ABI view of `FibChannelOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraFibChannelOutput {
+    pub base: f64,
+    pub level_618: f64,
+    pub level_1000: f64,
+    pub level_1618: f64,
+}
+
+/// C-ABI view of `FibConfluenceOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraFibConfluenceOutput {
+    pub price: f64,
+    pub strength: f64,
+}
+
+/// C-ABI view of `FibExtensionOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraFibExtensionOutput {
+    pub level_1272: f64,
+    pub level_1414: f64,
+    pub level_1618: f64,
+    pub level_2000: f64,
+    pub level_2618: f64,
+}
+
+/// C-ABI view of `FibFanOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraFibFanOutput {
+    pub fan_382: f64,
+    pub fan_500: f64,
+    pub fan_618: f64,
+}
+
+/// C-ABI view of `FibProjectionOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraFibProjectionOutput {
+    pub level_618: f64,
+    pub level_1000: f64,
+    pub level_1618: f64,
+    pub level_2618: f64,
+}
+
+/// C-ABI view of `FibRetracementOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraFibRetracementOutput {
+    pub level_0: f64,
+    pub level_236: f64,
+    pub level_382: f64,
+    pub level_500: f64,
+    pub level_618: f64,
+    pub level_786: f64,
+    pub level_1000: f64,
+}
+
+/// C-ABI view of `FibTimeZonesOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraFibTimeZonesOutput {
+    pub on_zone: f64,
+    pub bars_to_next: f64,
+}
+
+/// C-ABI view of `FibonacciPivotsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraFibonacciPivotsOutput {
+    pub pp: f64,
+    pub r1: f64,
+    pub r2: f64,
+    pub r3: f64,
+    pub s1: f64,
+    pub s2: f64,
+    pub s3: f64,
+}
+
+/// C-ABI view of `FractalChaosBandsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraFractalChaosBandsOutput {
+    pub upper: f64,
+    pub lower: f64,
+}
+
+/// C-ABI view of `GatorOscillatorOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraGatorOscillatorOutput {
+    pub upper: f64,
+    pub lower: f64,
+}
+
+/// C-ABI view of `GoldenPocketOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraGoldenPocketOutput {
+    pub low: f64,
+    pub mid: f64,
+    pub high: f64,
+}
+
+/// C-ABI view of `HeikinAshiOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraHeikinAshiOutput {
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+}
+
+/// C-ABI view of `HighLowVolumeNodesOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraHighLowVolumeNodesOutput {
+    pub hvn: f64,
+    pub lvn: f64,
+}
+
+/// C-ABI view of `HtPhasorOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraHtPhasorOutput {
+    pub inphase: f64,
+    pub quadrature: f64,
+}
+
+/// C-ABI view of `HurstChannelOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraHurstChannelOutput {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+/// C-ABI view of `IchimokuOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraIchimokuOutput {
+    pub tenkan: f64,
+    pub kijun: f64,
+    pub senkou_a: f64,
+    pub senkou_b: f64,
+    pub chikou: f64,
+}
+
+/// C-ABI view of `InitialBalanceOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraInitialBalanceOutput {
+    pub high: f64,
+    pub low: f64,
+}
+
+/// C-ABI view of `KalmanHedgeRatioOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraKalmanHedgeRatioOutput {
+    pub hedge_ratio: f64,
+    pub intercept: f64,
+    pub spread: f64,
+}
+
+/// C-ABI view of `KaseDevStopOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraKaseDevStopOutput {
+    pub value: f64,
+    pub direction: f64,
+}
+
+/// C-ABI view of `KasePermissionStochasticOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraKasePermissionStochasticOutput {
+    pub fast: f64,
+    pub slow: f64,
+}
+
+/// C-ABI view of `KeltnerOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraKeltnerOutput {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+/// C-ABI view of `KstOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraKstOutput {
+    pub kst: f64,
+    pub signal: f64,
+}
+
+/// C-ABI view of `LeadLagCrossCorrelationOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraLeadLagCrossCorrelationOutput {
+    pub lag: i64,
+    pub correlation: f64,
+}
+
+/// C-ABI view of `LinRegChannelOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraLinRegChannelOutput {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+/// C-ABI view of `LiquidationFeaturesOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraLiquidationFeaturesOutput {
+    pub long: f64,
+    pub short: f64,
+    pub net: f64,
+    pub total: f64,
+    pub imbalance: f64,
+}
+
+/// C-ABI view of `MaEnvelopeOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraMaEnvelopeOutput {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+/// C-ABI view of `MacdOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraMacdOutput {
+    pub macd: f64,
+    pub signal: f64,
+    pub histogram: f64,
+}
+
+/// C-ABI view of `MamaOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraMamaOutput {
+    pub mama: f64,
+    pub fama: f64,
+}
+
+/// C-ABI view of `MedianChannelOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraMedianChannelOutput {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+/// C-ABI view of `ModifiedMaStopOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraModifiedMaStopOutput {
+    pub value: f64,
+    pub direction: f64,
+}
+
+/// C-ABI view of `MurreyMathLinesOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraMurreyMathLinesOutput {
+    pub mm8_8: f64,
+    pub mm7_8: f64,
+    pub mm6_8: f64,
+    pub mm5_8: f64,
+    pub mm4_8: f64,
+    pub mm3_8: f64,
+    pub mm2_8: f64,
+    pub mm1_8: f64,
+    pub mm0_8: f64,
+}
+
+/// C-ABI view of `NrtrOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraNrtrOutput {
+    pub value: f64,
+    pub direction: f64,
+}
+
+/// C-ABI view of `OpeningRangeOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraOpeningRangeOutput {
+    pub high: f64,
+    pub low: f64,
+    pub breakout_distance: f64,
+}
+
+/// C-ABI view of `OvernightIntradayReturnOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraOvernightIntradayReturnOutput {
+    pub overnight: f64,
+    pub intraday: f64,
+}
+
+/// C-ABI view of `ProjectionBandsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraProjectionBandsOutput {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+/// C-ABI view of `QqeOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraQqeOutput {
+    pub rsi_ma: f64,
+    pub trailing_line: f64,
+}
+
+/// C-ABI view of `QuartileBandsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraQuartileBandsOutput {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+/// C-ABI view of `RelativeStrengthOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraRelativeStrengthOutput {
+    pub ratio: f64,
+    pub ratio_ma: f64,
+    pub ratio_rsi: f64,
+}
+
+/// C-ABI view of `RwiOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraRwiOutput {
+    pub high: f64,
+    pub low: f64,
+}
+
+/// C-ABI view of `SessionHighLowOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraSessionHighLowOutput {
+    pub high: f64,
+    pub low: f64,
+}
+
+/// C-ABI view of `SessionRangeOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraSessionRangeOutput {
+    pub asia: f64,
+    pub eu: f64,
+    pub us: f64,
+}
+
+/// C-ABI view of `SmoothedHeikinAshiOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraSmoothedHeikinAshiOutput {
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+}
+
+/// C-ABI view of `SpreadBollingerBandsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraSpreadBollingerBandsOutput {
+    pub middle: f64,
+    pub upper: f64,
+    pub lower: f64,
+    pub percent_b: f64,
+}
+
+/// C-ABI view of `StandardErrorBandsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraStandardErrorBandsOutput {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+/// C-ABI view of `StarcBandsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraStarcBandsOutput {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+}
+
+/// C-ABI view of `StochasticOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraStochasticOutput {
+    pub k: f64,
+    pub d: f64,
+}
+
+/// C-ABI view of `SuperTrendOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraSuperTrendOutput {
+    pub value: f64,
+    pub direction: f64,
+}
+
+/// C-ABI view of `TdLinesOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraTdLinesOutput {
+    pub resistance: f64,
+    pub support: f64,
+}
+
+/// C-ABI view of `TdMovingAverageOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraTdMovingAverageOutput {
+    pub st1: f64,
+    pub st2: f64,
+}
+
+/// C-ABI view of `TdRangeProjectionOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraTdRangeProjectionOutput {
+    pub high: f64,
+    pub low: f64,
+}
+
+/// C-ABI view of `TdRiskLevelOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraTdRiskLevelOutput {
+    pub buy_risk: f64,
+    pub sell_risk: f64,
+}
+
+/// C-ABI view of `TdSequentialOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraTdSequentialOutput {
+    pub setup: f64,
+    pub countdown: f64,
+    pub direction: f64,
+}
+
+/// C-ABI view of `TtmSqueezeOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraTtmSqueezeOutput {
+    pub squeeze: f64,
+    pub momentum: f64,
+}
+
+/// C-ABI view of `ValueAreaOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraValueAreaOutput {
+    pub poc: f64,
+    pub vah: f64,
+    pub val: f64,
+}
+
+/// C-ABI view of `VolatilityConeOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraVolatilityConeOutput {
+    pub current: f64,
+    pub min: f64,
+    pub median: f64,
+    pub max: f64,
+    pub percentile: f64,
+}
+
+/// C-ABI view of `VolumeWeightedMacdOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraVolumeWeightedMacdOutput {
+    pub macd: f64,
+    pub signal: f64,
+    pub histogram: f64,
+}
+
+/// C-ABI view of `VolumeWeightedSrOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraVolumeWeightedSrOutput {
+    pub support: f64,
+    pub resistance: f64,
+}
+
+/// C-ABI view of `VortexOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraVortexOutput {
+    pub plus: f64,
+    pub minus: f64,
+}
+
+/// C-ABI view of `VwapStdDevBandsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraVwapStdDevBandsOutput {
+    pub upper: f64,
+    pub middle: f64,
+    pub lower: f64,
+    pub stddev: f64,
+}
+
+/// C-ABI view of `WaveTrendOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraWaveTrendOutput {
+    pub wt1: f64,
+    pub wt2: f64,
+}
+
+/// C-ABI view of `WilliamsFractalsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraWilliamsFractalsOutput {
+    pub up: f64,
+    pub down: f64,
+}
+
+/// C-ABI view of `WoodiePivotsOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraWoodiePivotsOutput {
+    pub pp: f64,
+    pub r1: f64,
+    pub r2: f64,
+    pub s1: f64,
+    pub s2: f64,
+}
+
+/// C-ABI view of `ZeroLagMacdOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraZeroLagMacdOutput {
+    pub macd: f64,
+    pub signal: f64,
+    pub histogram: f64,
+}
+
+/// C-ABI view of `ZigZagOutput` (fixed-size; `Option<f64>` fields surface as `NaN`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct WickraZigZagOutput {
+    pub swing: f64,
+    pub direction: f64,
+}
+
+/// Create a `AccelerationBands` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_acceleration_bands_free`.
+#[no_mangle]
+pub extern "C" fn wickra_acceleration_bands_new(
+    period: usize,
+    factor: f64,
+) -> *mut AccelerationBands {
+    match AccelerationBands::new(period, factor) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_acceleration_bands_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_acceleration_bands_update(
+    handle: *mut AccelerationBands,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraAccelerationBandsOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraAccelerationBandsOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_acceleration_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_acceleration_bands_reset(handle: *mut AccelerationBands) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_acceleration_bands_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_acceleration_bands_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_acceleration_bands_free(handle: *mut AccelerationBands) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `Adx` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_adx_free`.
+#[no_mangle]
+pub extern "C" fn wickra_adx_new(period: usize) -> *mut Adx {
+    match Adx::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_adx_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adx_update(
+    handle: *mut Adx,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraAdxOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraAdxOutput {
+                plus_di: out_val.plus_di,
+                minus_di: out_val.minus_di,
+                adx: out_val.adx,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adx_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adx_reset(handle: *mut Adx) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_adx_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_adx_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adx_free(handle: *mut Adx) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `Alligator` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_alligator_free`.
+#[no_mangle]
+pub extern "C" fn wickra_alligator_new(
+    jaw_period: usize,
+    teeth_period: usize,
+    lips_period: usize,
+) -> *mut Alligator {
+    match Alligator::new(jaw_period, teeth_period, lips_period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_alligator_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_alligator_update(
+    handle: *mut Alligator,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraAlligatorOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraAlligatorOutput {
+                jaw: out_val.jaw,
+                teeth: out_val.teeth,
+                lips: out_val.lips,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_alligator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_alligator_reset(handle: *mut Alligator) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_alligator_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_alligator_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_alligator_free(handle: *mut Alligator) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `AndrewsPitchfork` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_andrews_pitchfork_free`.
+#[no_mangle]
+pub extern "C" fn wickra_andrews_pitchfork_new(strength: usize) -> *mut AndrewsPitchfork {
+    match AndrewsPitchfork::new(strength) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_andrews_pitchfork_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_andrews_pitchfork_update(
+    handle: *mut AndrewsPitchfork,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraAndrewsPitchforkOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraAndrewsPitchforkOutput {
+                median: out_val.median,
+                upper: out_val.upper,
+                lower: out_val.lower,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_andrews_pitchfork_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_andrews_pitchfork_reset(handle: *mut AndrewsPitchfork) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_andrews_pitchfork_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_andrews_pitchfork_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_andrews_pitchfork_free(handle: *mut AndrewsPitchfork) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `Aroon` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_aroon_free`.
+#[no_mangle]
+pub extern "C" fn wickra_aroon_new(period: usize) -> *mut Aroon {
+    match Aroon::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_aroon_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_aroon_update(
+    handle: *mut Aroon,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraAroonOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraAroonOutput {
+                up: out_val.up,
+                down: out_val.down,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_aroon_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_aroon_reset(handle: *mut Aroon) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_aroon_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_aroon_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_aroon_free(handle: *mut Aroon) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `AtrBands` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_atr_bands_free`.
+#[no_mangle]
+pub extern "C" fn wickra_atr_bands_new(period: usize, multiplier: f64) -> *mut AtrBands {
+    match AtrBands::new(period, multiplier) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_atr_bands_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_atr_bands_update(
+    handle: *mut AtrBands,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraAtrBandsOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraAtrBandsOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_atr_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_atr_bands_reset(handle: *mut AtrBands) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_atr_bands_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_atr_bands_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_atr_bands_free(handle: *mut AtrBands) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `AtrRatchet` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_atr_ratchet_free`.
+#[no_mangle]
+pub extern "C" fn wickra_atr_ratchet_new(
+    atr_period: usize,
+    start_mult: f64,
+    increment: f64,
+) -> *mut AtrRatchet {
+    match AtrRatchet::new(atr_period, start_mult, increment) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_atr_ratchet_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_atr_ratchet_update(
+    handle: *mut AtrRatchet,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraAtrRatchetOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraAtrRatchetOutput {
+                value: out_val.value,
+                direction: out_val.direction,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_atr_ratchet_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_atr_ratchet_reset(handle: *mut AtrRatchet) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_atr_ratchet_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_atr_ratchet_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_atr_ratchet_free(handle: *mut AtrRatchet) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `AutoFib` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_auto_fib_free`.
+#[no_mangle]
+pub extern "C" fn wickra_auto_fib_new() -> *mut AutoFib {
+    Box::into_raw(Box::new(AutoFib::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_auto_fib_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_auto_fib_update(
+    handle: *mut AutoFib,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraAutoFibOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraAutoFibOutput {
+                level_0: out_val.level_0,
+                level_236: out_val.level_236,
+                level_382: out_val.level_382,
+                level_500: out_val.level_500,
+                level_618: out_val.level_618,
+                level_786: out_val.level_786,
+                level_1000: out_val.level_1000,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_auto_fib_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_auto_fib_reset(handle: *mut AutoFib) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_auto_fib_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_auto_fib_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_auto_fib_free(handle: *mut AutoFib) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `BollingerBands` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_bollinger_bands_free`.
+#[no_mangle]
+pub extern "C" fn wickra_bollinger_bands_new(
+    period: usize,
+    multiplier: f64,
+) -> *mut BollingerBands {
+    match BollingerBands::new(period, multiplier) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_bollinger_bands_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bollinger_bands_update(
+    handle: *mut BollingerBands,
+    value: f64,
+    out: *mut WickraBollingerOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update(value) {
+        Some(out_val) => {
+            *out = WickraBollingerOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+                stddev: out_val.stddev,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bollinger_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bollinger_bands_reset(handle: *mut BollingerBands) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_bollinger_bands_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_bollinger_bands_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bollinger_bands_free(handle: *mut BollingerBands) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `BomarBands` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_bomar_bands_free`.
+#[no_mangle]
+pub extern "C" fn wickra_bomar_bands_new(period: usize, coverage: f64) -> *mut BomarBands {
+    match BomarBands::new(period, coverage) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_bomar_bands_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bomar_bands_update(
+    handle: *mut BomarBands,
+    value: f64,
+    out: *mut WickraBomarBandsOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update(value) {
+        Some(out_val) => {
+            *out = WickraBomarBandsOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bomar_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bomar_bands_reset(handle: *mut BomarBands) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_bomar_bands_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_bomar_bands_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bomar_bands_free(handle: *mut BomarBands) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `Camarilla` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_camarilla_free`.
+#[no_mangle]
+pub extern "C" fn wickra_camarilla_new() -> *mut Camarilla {
+    Box::into_raw(Box::new(Camarilla::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_camarilla_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_camarilla_update(
+    handle: *mut Camarilla,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraCamarillaPivotsOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraCamarillaPivotsOutput {
+                pp: out_val.pp,
+                r1: out_val.r1,
+                r2: out_val.r2,
+                r3: out_val.r3,
+                r4: out_val.r4,
+                s1: out_val.s1,
+                s2: out_val.s2,
+                s3: out_val.s3,
+                s4: out_val.s4,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_camarilla_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_camarilla_reset(handle: *mut Camarilla) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_camarilla_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_camarilla_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_camarilla_free(handle: *mut Camarilla) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `CandleVolume` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_candle_volume_free`.
+#[no_mangle]
+pub extern "C" fn wickra_candle_volume_new(period: usize) -> *mut CandleVolume {
+    match CandleVolume::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_candle_volume_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_candle_volume_update(
+    handle: *mut CandleVolume,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraCandleVolumeOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraCandleVolumeOutput {
+                body: out_val.body,
+                width: out_val.width,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_candle_volume_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_candle_volume_reset(handle: *mut CandleVolume) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_candle_volume_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_candle_volume_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_candle_volume_free(handle: *mut CandleVolume) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `CentralPivotRange` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_central_pivot_range_free`.
+#[no_mangle]
+pub extern "C" fn wickra_central_pivot_range_new() -> *mut CentralPivotRange {
+    Box::into_raw(Box::new(CentralPivotRange::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_central_pivot_range_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_central_pivot_range_update(
+    handle: *mut CentralPivotRange,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraCentralPivotRangeOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraCentralPivotRangeOutput {
+                pivot: out_val.pivot,
+                tc: out_val.tc,
+                bc: out_val.bc,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_central_pivot_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_central_pivot_range_reset(handle: *mut CentralPivotRange) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_central_pivot_range_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_central_pivot_range_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_central_pivot_range_free(handle: *mut CentralPivotRange) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `ChandeKrollStop` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_chande_kroll_stop_free`.
+#[no_mangle]
+pub extern "C" fn wickra_chande_kroll_stop_new(
+    atr_period: usize,
+    atr_multiplier: f64,
+    stop_period: usize,
+) -> *mut ChandeKrollStop {
+    match ChandeKrollStop::new(atr_period, atr_multiplier, stop_period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_chande_kroll_stop_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chande_kroll_stop_update(
+    handle: *mut ChandeKrollStop,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraChandeKrollStopOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraChandeKrollStopOutput {
+                stop_long: out_val.stop_long,
+                stop_short: out_val.stop_short,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_chande_kroll_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chande_kroll_stop_reset(handle: *mut ChandeKrollStop) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_chande_kroll_stop_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_chande_kroll_stop_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chande_kroll_stop_free(handle: *mut ChandeKrollStop) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `ChandelierExit` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_chandelier_exit_free`.
+#[no_mangle]
+pub extern "C" fn wickra_chandelier_exit_new(
+    period: usize,
+    multiplier: f64,
+) -> *mut ChandelierExit {
+    match ChandelierExit::new(period, multiplier) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_chandelier_exit_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chandelier_exit_update(
+    handle: *mut ChandelierExit,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraChandelierExitOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraChandelierExitOutput {
+                long_stop: out_val.long_stop,
+                short_stop: out_val.short_stop,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_chandelier_exit_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chandelier_exit_reset(handle: *mut ChandelierExit) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_chandelier_exit_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_chandelier_exit_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chandelier_exit_free(handle: *mut ChandelierExit) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `ClassicPivots` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_classic_pivots_free`.
+#[no_mangle]
+pub extern "C" fn wickra_classic_pivots_new() -> *mut ClassicPivots {
+    Box::into_raw(Box::new(ClassicPivots::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_classic_pivots_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_classic_pivots_update(
+    handle: *mut ClassicPivots,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraClassicPivotsOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraClassicPivotsOutput {
+                pp: out_val.pp,
+                r1: out_val.r1,
+                r2: out_val.r2,
+                r3: out_val.r3,
+                s1: out_val.s1,
+                s2: out_val.s2,
+                s3: out_val.s3,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_classic_pivots_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_classic_pivots_reset(handle: *mut ClassicPivots) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_classic_pivots_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_classic_pivots_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_classic_pivots_free(handle: *mut ClassicPivots) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `Cointegration` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_cointegration_free`.
+#[no_mangle]
+pub extern "C" fn wickra_cointegration_new(period: usize, adf_lags: usize) -> *mut Cointegration {
+    match Cointegration::new(period, adf_lags) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_cointegration_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cointegration_update(
+    handle: *mut Cointegration,
+    x: f64,
+    y: f64,
+    out: *mut WickraCointegrationOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update((x, y)) {
+        Some(out_val) => {
+            *out = WickraCointegrationOutput {
+                hedge_ratio: out_val.hedge_ratio,
+                spread: out_val.spread,
+                adf_stat: out_val.adf_stat,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cointegration_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cointegration_reset(handle: *mut Cointegration) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_cointegration_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_cointegration_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cointegration_free(handle: *mut Cointegration) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `CompositeProfile` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_composite_profile_free`.
+#[no_mangle]
+pub extern "C" fn wickra_composite_profile_new(
+    period: usize,
+    bins: usize,
+    value_area_pct: f64,
+) -> *mut CompositeProfile {
+    match CompositeProfile::new(period, bins, value_area_pct) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_composite_profile_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_composite_profile_update(
+    handle: *mut CompositeProfile,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraCompositeProfileOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraCompositeProfileOutput {
+                poc: out_val.poc,
+                vah: out_val.vah,
+                val: out_val.val,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_composite_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_composite_profile_reset(handle: *mut CompositeProfile) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_composite_profile_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_composite_profile_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_composite_profile_free(handle: *mut CompositeProfile) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `DemarkPivots` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_demark_pivots_free`.
+#[no_mangle]
+pub extern "C" fn wickra_demark_pivots_new() -> *mut DemarkPivots {
+    Box::into_raw(Box::new(DemarkPivots::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_demark_pivots_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_demark_pivots_update(
+    handle: *mut DemarkPivots,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraDemarkPivotsOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraDemarkPivotsOutput {
+                pp: out_val.pp,
+                r1: out_val.r1,
+                s1: out_val.s1,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_demark_pivots_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_demark_pivots_reset(handle: *mut DemarkPivots) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_demark_pivots_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_demark_pivots_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_demark_pivots_free(handle: *mut DemarkPivots) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `Donchian` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_donchian_free`.
+#[no_mangle]
+pub extern "C" fn wickra_donchian_new(period: usize) -> *mut Donchian {
+    match Donchian::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_donchian_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_donchian_update(
+    handle: *mut Donchian,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraDonchianOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraDonchianOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_donchian_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_donchian_reset(handle: *mut Donchian) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_donchian_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_donchian_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_donchian_free(handle: *mut Donchian) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `DonchianStop` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_donchian_stop_free`.
+#[no_mangle]
+pub extern "C" fn wickra_donchian_stop_new(period: usize) -> *mut DonchianStop {
+    match DonchianStop::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_donchian_stop_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_donchian_stop_update(
+    handle: *mut DonchianStop,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraDonchianStopOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraDonchianStopOutput {
+                stop_long: out_val.stop_long,
+                stop_short: out_val.stop_short,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_donchian_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_donchian_stop_reset(handle: *mut DonchianStop) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_donchian_stop_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_donchian_stop_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_donchian_stop_free(handle: *mut DonchianStop) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `DoubleBollinger` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_double_bollinger_free`.
+#[no_mangle]
+pub extern "C" fn wickra_double_bollinger_new(
+    period: usize,
+    k_inner: f64,
+    k_outer: f64,
+) -> *mut DoubleBollinger {
+    match DoubleBollinger::new(period, k_inner, k_outer) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_double_bollinger_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_double_bollinger_update(
+    handle: *mut DoubleBollinger,
+    value: f64,
+    out: *mut WickraDoubleBollingerOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update(value) {
+        Some(out_val) => {
+            *out = WickraDoubleBollingerOutput {
+                upper_outer: out_val.upper_outer,
+                upper_inner: out_val.upper_inner,
+                middle: out_val.middle,
+                lower_inner: out_val.lower_inner,
+                lower_outer: out_val.lower_outer,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_double_bollinger_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_double_bollinger_reset(handle: *mut DoubleBollinger) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_double_bollinger_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_double_bollinger_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_double_bollinger_free(handle: *mut DoubleBollinger) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `ElderRay` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_elder_ray_free`.
+#[no_mangle]
+pub extern "C" fn wickra_elder_ray_new(period: usize) -> *mut ElderRay {
+    match ElderRay::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_elder_ray_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_elder_ray_update(
+    handle: *mut ElderRay,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraElderRayOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraElderRayOutput {
+                bull_power: out_val.bull_power,
+                bear_power: out_val.bear_power,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_elder_ray_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_elder_ray_reset(handle: *mut ElderRay) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_elder_ray_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_elder_ray_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_elder_ray_free(handle: *mut ElderRay) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `ElderSafeZone` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_elder_safe_zone_free`.
+#[no_mangle]
+pub extern "C" fn wickra_elder_safe_zone_new(period: usize, coeff: f64) -> *mut ElderSafeZone {
+    match ElderSafeZone::new(period, coeff) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_elder_safe_zone_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_elder_safe_zone_update(
+    handle: *mut ElderSafeZone,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraElderSafeZoneOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraElderSafeZoneOutput {
+                value: out_val.value,
+                direction: out_val.direction,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_elder_safe_zone_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_elder_safe_zone_reset(handle: *mut ElderSafeZone) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_elder_safe_zone_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_elder_safe_zone_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_elder_safe_zone_free(handle: *mut ElderSafeZone) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `Equivolume` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_equivolume_free`.
+#[no_mangle]
+pub extern "C" fn wickra_equivolume_new(period: usize) -> *mut Equivolume {
+    match Equivolume::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_equivolume_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_equivolume_update(
+    handle: *mut Equivolume,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraEquivolumeOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraEquivolumeOutput {
+                height: out_val.height,
+                width: out_val.width,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_equivolume_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_equivolume_reset(handle: *mut Equivolume) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_equivolume_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_equivolume_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_equivolume_free(handle: *mut Equivolume) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `FibArcs` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_fib_arcs_free`.
+#[no_mangle]
+pub extern "C" fn wickra_fib_arcs_new() -> *mut FibArcs {
+    Box::into_raw(Box::new(FibArcs::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_fib_arcs_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_arcs_update(
+    handle: *mut FibArcs,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraFibArcsOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraFibArcsOutput {
+                arc_382: out_val.arc_382,
+                arc_500: out_val.arc_500,
+                arc_618: out_val.arc_618,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_arcs_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_arcs_reset(handle: *mut FibArcs) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_fib_arcs_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_fib_arcs_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_arcs_free(handle: *mut FibArcs) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `FibChannel` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_fib_channel_free`.
+#[no_mangle]
+pub extern "C" fn wickra_fib_channel_new() -> *mut FibChannel {
+    Box::into_raw(Box::new(FibChannel::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_fib_channel_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_channel_update(
+    handle: *mut FibChannel,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraFibChannelOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraFibChannelOutput {
+                base: out_val.base,
+                level_618: out_val.level_618,
+                level_1000: out_val.level_1000,
+                level_1618: out_val.level_1618,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_channel_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_channel_reset(handle: *mut FibChannel) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_fib_channel_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_fib_channel_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_channel_free(handle: *mut FibChannel) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `FibConfluence` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_fib_confluence_free`.
+#[no_mangle]
+pub extern "C" fn wickra_fib_confluence_new() -> *mut FibConfluence {
+    Box::into_raw(Box::new(FibConfluence::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_fib_confluence_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_confluence_update(
+    handle: *mut FibConfluence,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraFibConfluenceOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraFibConfluenceOutput {
+                price: out_val.price,
+                strength: out_val.strength,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_confluence_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_confluence_reset(handle: *mut FibConfluence) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_fib_confluence_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_fib_confluence_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_confluence_free(handle: *mut FibConfluence) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `FibExtension` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_fib_extension_free`.
+#[no_mangle]
+pub extern "C" fn wickra_fib_extension_new() -> *mut FibExtension {
+    Box::into_raw(Box::new(FibExtension::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_fib_extension_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_extension_update(
+    handle: *mut FibExtension,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraFibExtensionOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraFibExtensionOutput {
+                level_1272: out_val.level_1272,
+                level_1414: out_val.level_1414,
+                level_1618: out_val.level_1618,
+                level_2000: out_val.level_2000,
+                level_2618: out_val.level_2618,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_extension_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_extension_reset(handle: *mut FibExtension) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_fib_extension_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_fib_extension_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_extension_free(handle: *mut FibExtension) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `FibFan` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_fib_fan_free`.
+#[no_mangle]
+pub extern "C" fn wickra_fib_fan_new() -> *mut FibFan {
+    Box::into_raw(Box::new(FibFan::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_fib_fan_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_fan_update(
+    handle: *mut FibFan,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraFibFanOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraFibFanOutput {
+                fan_382: out_val.fan_382,
+                fan_500: out_val.fan_500,
+                fan_618: out_val.fan_618,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_fan_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_fan_reset(handle: *mut FibFan) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_fib_fan_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_fib_fan_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_fan_free(handle: *mut FibFan) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `FibProjection` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_fib_projection_free`.
+#[no_mangle]
+pub extern "C" fn wickra_fib_projection_new() -> *mut FibProjection {
+    Box::into_raw(Box::new(FibProjection::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_fib_projection_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_projection_update(
+    handle: *mut FibProjection,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraFibProjectionOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraFibProjectionOutput {
+                level_618: out_val.level_618,
+                level_1000: out_val.level_1000,
+                level_1618: out_val.level_1618,
+                level_2618: out_val.level_2618,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_projection_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_projection_reset(handle: *mut FibProjection) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_fib_projection_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_fib_projection_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_projection_free(handle: *mut FibProjection) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `FibRetracement` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_fib_retracement_free`.
+#[no_mangle]
+pub extern "C" fn wickra_fib_retracement_new() -> *mut FibRetracement {
+    Box::into_raw(Box::new(FibRetracement::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_fib_retracement_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_retracement_update(
+    handle: *mut FibRetracement,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraFibRetracementOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraFibRetracementOutput {
+                level_0: out_val.level_0,
+                level_236: out_val.level_236,
+                level_382: out_val.level_382,
+                level_500: out_val.level_500,
+                level_618: out_val.level_618,
+                level_786: out_val.level_786,
+                level_1000: out_val.level_1000,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_retracement_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_retracement_reset(handle: *mut FibRetracement) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_fib_retracement_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_fib_retracement_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_retracement_free(handle: *mut FibRetracement) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `FibTimeZones` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_fib_time_zones_free`.
+#[no_mangle]
+pub extern "C" fn wickra_fib_time_zones_new() -> *mut FibTimeZones {
+    Box::into_raw(Box::new(FibTimeZones::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_fib_time_zones_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_time_zones_update(
+    handle: *mut FibTimeZones,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraFibTimeZonesOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraFibTimeZonesOutput {
+                on_zone: out_val.on_zone,
+                bars_to_next: out_val.bars_to_next,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_time_zones_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_time_zones_reset(handle: *mut FibTimeZones) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_fib_time_zones_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_fib_time_zones_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_time_zones_free(handle: *mut FibTimeZones) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `FibonacciPivots` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_fibonacci_pivots_free`.
+#[no_mangle]
+pub extern "C" fn wickra_fibonacci_pivots_new() -> *mut FibonacciPivots {
+    Box::into_raw(Box::new(FibonacciPivots::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_fibonacci_pivots_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fibonacci_pivots_update(
+    handle: *mut FibonacciPivots,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraFibonacciPivotsOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraFibonacciPivotsOutput {
+                pp: out_val.pp,
+                r1: out_val.r1,
+                r2: out_val.r2,
+                r3: out_val.r3,
+                s1: out_val.s1,
+                s2: out_val.s2,
+                s3: out_val.s3,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fibonacci_pivots_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fibonacci_pivots_reset(handle: *mut FibonacciPivots) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_fibonacci_pivots_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_fibonacci_pivots_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fibonacci_pivots_free(handle: *mut FibonacciPivots) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `FractalChaosBands` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_fractal_chaos_bands_free`.
+#[no_mangle]
+pub extern "C" fn wickra_fractal_chaos_bands_new(k: usize) -> *mut FractalChaosBands {
+    match FractalChaosBands::new(k) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_fractal_chaos_bands_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fractal_chaos_bands_update(
+    handle: *mut FractalChaosBands,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraFractalChaosBandsOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraFractalChaosBandsOutput {
+                upper: out_val.upper,
+                lower: out_val.lower,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fractal_chaos_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fractal_chaos_bands_reset(handle: *mut FractalChaosBands) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_fractal_chaos_bands_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_fractal_chaos_bands_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fractal_chaos_bands_free(handle: *mut FractalChaosBands) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `GatorOscillator` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_gator_oscillator_free`.
+#[no_mangle]
+pub extern "C" fn wickra_gator_oscillator_new(
+    jaw_period: usize,
+    teeth_period: usize,
+    lips_period: usize,
+) -> *mut GatorOscillator {
+    match GatorOscillator::new(jaw_period, teeth_period, lips_period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_gator_oscillator_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gator_oscillator_update(
+    handle: *mut GatorOscillator,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraGatorOscillatorOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraGatorOscillatorOutput {
+                upper: out_val.upper,
+                lower: out_val.lower,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_gator_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gator_oscillator_reset(handle: *mut GatorOscillator) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_gator_oscillator_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_gator_oscillator_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gator_oscillator_free(handle: *mut GatorOscillator) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `GoldenPocket` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_golden_pocket_free`.
+#[no_mangle]
+pub extern "C" fn wickra_golden_pocket_new() -> *mut GoldenPocket {
+    Box::into_raw(Box::new(GoldenPocket::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_golden_pocket_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_golden_pocket_update(
+    handle: *mut GoldenPocket,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraGoldenPocketOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraGoldenPocketOutput {
+                low: out_val.low,
+                mid: out_val.mid,
+                high: out_val.high,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_golden_pocket_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_golden_pocket_reset(handle: *mut GoldenPocket) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_golden_pocket_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_golden_pocket_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_golden_pocket_free(handle: *mut GoldenPocket) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `HeikinAshi` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_heikin_ashi_free`.
+#[no_mangle]
+pub extern "C" fn wickra_heikin_ashi_new() -> *mut HeikinAshi {
+    Box::into_raw(Box::new(HeikinAshi::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_heikin_ashi_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_heikin_ashi_update(
+    handle: *mut HeikinAshi,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraHeikinAshiOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraHeikinAshiOutput {
+                open: out_val.open,
+                high: out_val.high,
+                low: out_val.low,
+                close: out_val.close,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_heikin_ashi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_heikin_ashi_reset(handle: *mut HeikinAshi) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_heikin_ashi_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_heikin_ashi_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_heikin_ashi_free(handle: *mut HeikinAshi) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `HighLowVolumeNodes` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_high_low_volume_nodes_free`.
+#[no_mangle]
+pub extern "C" fn wickra_high_low_volume_nodes_new(
+    period: usize,
+    bins: usize,
+) -> *mut HighLowVolumeNodes {
+    match HighLowVolumeNodes::new(period, bins) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_high_low_volume_nodes_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_high_low_volume_nodes_update(
+    handle: *mut HighLowVolumeNodes,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraHighLowVolumeNodesOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraHighLowVolumeNodesOutput {
+                hvn: out_val.hvn,
+                lvn: out_val.lvn,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_high_low_volume_nodes_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_high_low_volume_nodes_reset(handle: *mut HighLowVolumeNodes) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_high_low_volume_nodes_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_high_low_volume_nodes_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_high_low_volume_nodes_free(handle: *mut HighLowVolumeNodes) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `HtPhasor` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_ht_phasor_free`.
+#[no_mangle]
+pub extern "C" fn wickra_ht_phasor_new() -> *mut HtPhasor {
+    Box::into_raw(Box::new(HtPhasor::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_ht_phasor_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ht_phasor_update(
+    handle: *mut HtPhasor,
+    value: f64,
+    out: *mut WickraHtPhasorOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update(value) {
+        Some(out_val) => {
+            *out = WickraHtPhasorOutput {
+                inphase: out_val.inphase,
+                quadrature: out_val.quadrature,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ht_phasor_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ht_phasor_reset(handle: *mut HtPhasor) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_ht_phasor_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_ht_phasor_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ht_phasor_free(handle: *mut HtPhasor) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `HurstChannel` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_hurst_channel_free`.
+#[no_mangle]
+pub extern "C" fn wickra_hurst_channel_new(period: usize, multiplier: f64) -> *mut HurstChannel {
+    match HurstChannel::new(period, multiplier) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_hurst_channel_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hurst_channel_update(
+    handle: *mut HurstChannel,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraHurstChannelOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraHurstChannelOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hurst_channel_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hurst_channel_reset(handle: *mut HurstChannel) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_hurst_channel_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_hurst_channel_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hurst_channel_free(handle: *mut HurstChannel) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `Ichimoku` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_ichimoku_free`.
+#[no_mangle]
+pub extern "C" fn wickra_ichimoku_new(
+    tenkan_period: usize,
+    kijun_period: usize,
+    senkou_b_period: usize,
+    displacement: usize,
+) -> *mut Ichimoku {
+    match Ichimoku::new(tenkan_period, kijun_period, senkou_b_period, displacement) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_ichimoku_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ichimoku_update(
+    handle: *mut Ichimoku,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraIchimokuOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraIchimokuOutput {
+                tenkan: out_val.tenkan.unwrap_or(f64::NAN),
+                kijun: out_val.kijun.unwrap_or(f64::NAN),
+                senkou_a: out_val.senkou_a.unwrap_or(f64::NAN),
+                senkou_b: out_val.senkou_b.unwrap_or(f64::NAN),
+                chikou: out_val.chikou.unwrap_or(f64::NAN),
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ichimoku_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ichimoku_reset(handle: *mut Ichimoku) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_ichimoku_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_ichimoku_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ichimoku_free(handle: *mut Ichimoku) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `InitialBalance` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_initial_balance_free`.
+#[no_mangle]
+pub extern "C" fn wickra_initial_balance_new(period: usize) -> *mut InitialBalance {
+    match InitialBalance::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_initial_balance_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_initial_balance_update(
+    handle: *mut InitialBalance,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraInitialBalanceOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraInitialBalanceOutput {
+                high: out_val.high,
+                low: out_val.low,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_initial_balance_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_initial_balance_reset(handle: *mut InitialBalance) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_initial_balance_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_initial_balance_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_initial_balance_free(handle: *mut InitialBalance) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `KalmanHedgeRatio` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_kalman_hedge_ratio_free`.
+#[no_mangle]
+pub extern "C" fn wickra_kalman_hedge_ratio_new(
+    delta: f64,
+    observation_var: f64,
+) -> *mut KalmanHedgeRatio {
+    match KalmanHedgeRatio::new(delta, observation_var) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_kalman_hedge_ratio_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kalman_hedge_ratio_update(
+    handle: *mut KalmanHedgeRatio,
+    x: f64,
+    y: f64,
+    out: *mut WickraKalmanHedgeRatioOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update((x, y)) {
+        Some(out_val) => {
+            *out = WickraKalmanHedgeRatioOutput {
+                hedge_ratio: out_val.hedge_ratio,
+                intercept: out_val.intercept,
+                spread: out_val.spread,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kalman_hedge_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kalman_hedge_ratio_reset(handle: *mut KalmanHedgeRatio) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_kalman_hedge_ratio_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_kalman_hedge_ratio_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kalman_hedge_ratio_free(handle: *mut KalmanHedgeRatio) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `KaseDevStop` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_kase_dev_stop_free`.
+#[no_mangle]
+pub extern "C" fn wickra_kase_dev_stop_new(period: usize, dev: f64) -> *mut KaseDevStop {
+    match KaseDevStop::new(period, dev) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_kase_dev_stop_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kase_dev_stop_update(
+    handle: *mut KaseDevStop,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraKaseDevStopOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraKaseDevStopOutput {
+                value: out_val.value,
+                direction: out_val.direction,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kase_dev_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kase_dev_stop_reset(handle: *mut KaseDevStop) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_kase_dev_stop_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_kase_dev_stop_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kase_dev_stop_free(handle: *mut KaseDevStop) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `KasePermissionStochastic` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_kase_permission_stochastic_free`.
+#[no_mangle]
+pub extern "C" fn wickra_kase_permission_stochastic_new(
+    length: usize,
+    smooth: usize,
+) -> *mut KasePermissionStochastic {
+    match KasePermissionStochastic::new(length, smooth) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_kase_permission_stochastic_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kase_permission_stochastic_update(
+    handle: *mut KasePermissionStochastic,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraKasePermissionStochasticOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraKasePermissionStochasticOutput {
+                fast: out_val.fast,
+                slow: out_val.slow,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kase_permission_stochastic_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kase_permission_stochastic_reset(
+    handle: *mut KasePermissionStochastic,
+) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_kase_permission_stochastic_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_kase_permission_stochastic_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kase_permission_stochastic_free(
+    handle: *mut KasePermissionStochastic,
+) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `Keltner` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_keltner_free`.
+#[no_mangle]
+pub extern "C" fn wickra_keltner_new(
+    ema_period: usize,
+    atr_period: usize,
+    multiplier: f64,
+) -> *mut Keltner {
+    match Keltner::new(ema_period, atr_period, multiplier) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_keltner_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_keltner_update(
+    handle: *mut Keltner,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraKeltnerOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraKeltnerOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_keltner_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_keltner_reset(handle: *mut Keltner) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_keltner_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_keltner_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_keltner_free(handle: *mut Keltner) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `Kst` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_kst_free`.
+#[no_mangle]
+pub extern "C" fn wickra_kst_new(
+    roc1: usize,
+    roc2: usize,
+    roc3: usize,
+    roc4: usize,
+    sma1: usize,
+    sma2: usize,
+    sma3: usize,
+    sma4: usize,
+    signal: usize,
+) -> *mut Kst {
+    match Kst::new(roc1, roc2, roc3, roc4, sma1, sma2, sma3, sma4, signal) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_kst_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kst_update(
+    handle: *mut Kst,
+    value: f64,
+    out: *mut WickraKstOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update(value) {
+        Some(out_val) => {
+            *out = WickraKstOutput {
+                kst: out_val.kst,
+                signal: out_val.signal,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kst_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kst_reset(handle: *mut Kst) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_kst_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_kst_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kst_free(handle: *mut Kst) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `LeadLagCrossCorrelation` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_lead_lag_cross_correlation_free`.
+#[no_mangle]
+pub extern "C" fn wickra_lead_lag_cross_correlation_new(
+    window: usize,
+    max_lag: usize,
+) -> *mut LeadLagCrossCorrelation {
+    match LeadLagCrossCorrelation::new(window, max_lag) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_lead_lag_cross_correlation_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lead_lag_cross_correlation_update(
+    handle: *mut LeadLagCrossCorrelation,
+    x: f64,
+    y: f64,
+    out: *mut WickraLeadLagCrossCorrelationOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update((x, y)) {
+        Some(out_val) => {
+            *out = WickraLeadLagCrossCorrelationOutput {
+                lag: out_val.lag,
+                correlation: out_val.correlation,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_lead_lag_cross_correlation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lead_lag_cross_correlation_reset(
+    handle: *mut LeadLagCrossCorrelation,
+) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_lead_lag_cross_correlation_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_lead_lag_cross_correlation_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lead_lag_cross_correlation_free(
+    handle: *mut LeadLagCrossCorrelation,
+) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `LinRegChannel` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_lin_reg_channel_free`.
+#[no_mangle]
+pub extern "C" fn wickra_lin_reg_channel_new(period: usize, multiplier: f64) -> *mut LinRegChannel {
+    match LinRegChannel::new(period, multiplier) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_lin_reg_channel_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lin_reg_channel_update(
+    handle: *mut LinRegChannel,
+    value: f64,
+    out: *mut WickraLinRegChannelOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update(value) {
+        Some(out_val) => {
+            *out = WickraLinRegChannelOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_lin_reg_channel_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lin_reg_channel_reset(handle: *mut LinRegChannel) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_lin_reg_channel_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_lin_reg_channel_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lin_reg_channel_free(handle: *mut LinRegChannel) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `LiquidationFeatures` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_liquidation_features_free`.
+#[no_mangle]
+pub extern "C" fn wickra_liquidation_features_new() -> *mut LiquidationFeatures {
+    Box::into_raw(Box::new(LiquidationFeatures::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_liquidation_features_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_liquidation_features_update(
+    handle: *mut LiquidationFeatures,
+    funding_rate: f64,
+    mark_price: f64,
+    index_price: f64,
+    futures_price: f64,
+    open_interest: f64,
+    long_size: f64,
+    short_size: f64,
+    taker_buy_volume: f64,
+    taker_sell_volume: f64,
+    long_liquidation: f64,
+    short_liquidation: f64,
+    timestamp: i64,
+    out: *mut WickraLiquidationFeaturesOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = DerivativesTick::new(
+        funding_rate,
+        mark_price,
+        index_price,
+        futures_price,
+        open_interest,
+        long_size,
+        short_size,
+        taker_buy_volume,
+        taker_sell_volume,
+        long_liquidation,
+        short_liquidation,
+        timestamp,
+    ) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraLiquidationFeaturesOutput {
+                long: out_val.long,
+                short: out_val.short,
+                net: out_val.net,
+                total: out_val.total,
+                imbalance: out_val.imbalance,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_liquidation_features_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_liquidation_features_reset(handle: *mut LiquidationFeatures) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_liquidation_features_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_liquidation_features_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_liquidation_features_free(handle: *mut LiquidationFeatures) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `MaEnvelope` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_ma_envelope_free`.
+#[no_mangle]
+pub extern "C" fn wickra_ma_envelope_new(period: usize, percent: f64) -> *mut MaEnvelope {
+    match MaEnvelope::new(period, percent) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_ma_envelope_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ma_envelope_update(
+    handle: *mut MaEnvelope,
+    value: f64,
+    out: *mut WickraMaEnvelopeOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update(value) {
+        Some(out_val) => {
+            *out = WickraMaEnvelopeOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ma_envelope_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ma_envelope_reset(handle: *mut MaEnvelope) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_ma_envelope_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_ma_envelope_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ma_envelope_free(handle: *mut MaEnvelope) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `MacdIndicator` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_macd_indicator_free`.
+#[no_mangle]
+pub extern "C" fn wickra_macd_indicator_new(
+    fast: usize,
+    slow: usize,
+    signal: usize,
+) -> *mut MacdIndicator {
+    match MacdIndicator::new(fast, slow, signal) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_macd_indicator_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_indicator_update(
+    handle: *mut MacdIndicator,
+    value: f64,
+    out: *mut WickraMacdOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update(value) {
+        Some(out_val) => {
+            *out = WickraMacdOutput {
+                macd: out_val.macd,
+                signal: out_val.signal,
+                histogram: out_val.histogram,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_macd_indicator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_indicator_reset(handle: *mut MacdIndicator) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_macd_indicator_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_macd_indicator_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_indicator_free(handle: *mut MacdIndicator) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `MacdFix` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_macd_fix_free`.
+#[no_mangle]
+pub extern "C" fn wickra_macd_fix_new(signal: usize) -> *mut MacdFix {
+    match MacdFix::new(signal) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_macd_fix_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_fix_update(
+    handle: *mut MacdFix,
+    value: f64,
+    out: *mut WickraMacdOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update(value) {
+        Some(out_val) => {
+            *out = WickraMacdOutput {
+                macd: out_val.macd,
+                signal: out_val.signal,
+                histogram: out_val.histogram,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_macd_fix_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_fix_reset(handle: *mut MacdFix) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_macd_fix_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_macd_fix_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_fix_free(handle: *mut MacdFix) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `Mama` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_mama_free`.
+#[no_mangle]
+pub extern "C" fn wickra_mama_new(fast_limit: f64, slow_limit: f64) -> *mut Mama {
+    match Mama::new(fast_limit, slow_limit) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_mama_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mama_update(
+    handle: *mut Mama,
+    value: f64,
+    out: *mut WickraMamaOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update(value) {
+        Some(out_val) => {
+            *out = WickraMamaOutput {
+                mama: out_val.mama,
+                fama: out_val.fama,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mama_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mama_reset(handle: *mut Mama) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_mama_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_mama_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mama_free(handle: *mut Mama) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `MedianChannel` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_median_channel_free`.
+#[no_mangle]
+pub extern "C" fn wickra_median_channel_new(period: usize, multiplier: f64) -> *mut MedianChannel {
+    match MedianChannel::new(period, multiplier) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_median_channel_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_median_channel_update(
+    handle: *mut MedianChannel,
+    value: f64,
+    out: *mut WickraMedianChannelOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update(value) {
+        Some(out_val) => {
+            *out = WickraMedianChannelOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_median_channel_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_median_channel_reset(handle: *mut MedianChannel) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_median_channel_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_median_channel_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_median_channel_free(handle: *mut MedianChannel) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `ModifiedMaStop` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_modified_ma_stop_free`.
+#[no_mangle]
+pub extern "C" fn wickra_modified_ma_stop_new(period: usize) -> *mut ModifiedMaStop {
+    match ModifiedMaStop::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_modified_ma_stop_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_modified_ma_stop_update(
+    handle: *mut ModifiedMaStop,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraModifiedMaStopOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraModifiedMaStopOutput {
+                value: out_val.value,
+                direction: out_val.direction,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_modified_ma_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_modified_ma_stop_reset(handle: *mut ModifiedMaStop) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_modified_ma_stop_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_modified_ma_stop_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_modified_ma_stop_free(handle: *mut ModifiedMaStop) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `MurreyMathLines` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_murrey_math_lines_free`.
+#[no_mangle]
+pub extern "C" fn wickra_murrey_math_lines_new(period: usize) -> *mut MurreyMathLines {
+    match MurreyMathLines::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_murrey_math_lines_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_murrey_math_lines_update(
+    handle: *mut MurreyMathLines,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraMurreyMathLinesOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraMurreyMathLinesOutput {
+                mm8_8: out_val.mm8_8,
+                mm7_8: out_val.mm7_8,
+                mm6_8: out_val.mm6_8,
+                mm5_8: out_val.mm5_8,
+                mm4_8: out_val.mm4_8,
+                mm3_8: out_val.mm3_8,
+                mm2_8: out_val.mm2_8,
+                mm1_8: out_val.mm1_8,
+                mm0_8: out_val.mm0_8,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_murrey_math_lines_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_murrey_math_lines_reset(handle: *mut MurreyMathLines) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_murrey_math_lines_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_murrey_math_lines_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_murrey_math_lines_free(handle: *mut MurreyMathLines) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `Nrtr` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_nrtr_free`.
+#[no_mangle]
+pub extern "C" fn wickra_nrtr_new(pct: f64) -> *mut Nrtr {
+    match Nrtr::new(pct) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_nrtr_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_nrtr_update(
+    handle: *mut Nrtr,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraNrtrOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraNrtrOutput {
+                value: out_val.value,
+                direction: out_val.direction,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_nrtr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_nrtr_reset(handle: *mut Nrtr) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_nrtr_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_nrtr_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_nrtr_free(handle: *mut Nrtr) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `OpeningRange` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_opening_range_free`.
+#[no_mangle]
+pub extern "C" fn wickra_opening_range_new(period: usize) -> *mut OpeningRange {
+    match OpeningRange::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_opening_range_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_opening_range_update(
+    handle: *mut OpeningRange,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraOpeningRangeOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraOpeningRangeOutput {
+                high: out_val.high,
+                low: out_val.low,
+                breakout_distance: out_val.breakout_distance,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_opening_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_opening_range_reset(handle: *mut OpeningRange) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_opening_range_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_opening_range_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_opening_range_free(handle: *mut OpeningRange) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `OvernightIntradayReturn` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_overnight_intraday_return_free`.
+#[no_mangle]
+pub extern "C" fn wickra_overnight_intraday_return_new(
+    utc_offset_minutes: i32,
+) -> *mut OvernightIntradayReturn {
+    Box::into_raw(Box::new(OvernightIntradayReturn::new(utc_offset_minutes)))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_overnight_intraday_return_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_overnight_intraday_return_update(
+    handle: *mut OvernightIntradayReturn,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraOvernightIntradayReturnOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraOvernightIntradayReturnOutput {
+                overnight: out_val.overnight,
+                intraday: out_val.intraday,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_overnight_intraday_return_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_overnight_intraday_return_reset(
+    handle: *mut OvernightIntradayReturn,
+) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_overnight_intraday_return_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_overnight_intraday_return_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_overnight_intraday_return_free(
+    handle: *mut OvernightIntradayReturn,
+) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `ProjectionBands` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_projection_bands_free`.
+#[no_mangle]
+pub extern "C" fn wickra_projection_bands_new(period: usize) -> *mut ProjectionBands {
+    match ProjectionBands::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_projection_bands_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_projection_bands_update(
+    handle: *mut ProjectionBands,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraProjectionBandsOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraProjectionBandsOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_projection_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_projection_bands_reset(handle: *mut ProjectionBands) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_projection_bands_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_projection_bands_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_projection_bands_free(handle: *mut ProjectionBands) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `Qqe` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_qqe_free`.
+#[no_mangle]
+pub extern "C" fn wickra_qqe_new(rsi_period: usize, smoothing: usize, factor: f64) -> *mut Qqe {
+    match Qqe::new(rsi_period, smoothing, factor) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_qqe_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_qqe_update(
+    handle: *mut Qqe,
+    value: f64,
+    out: *mut WickraQqeOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update(value) {
+        Some(out_val) => {
+            *out = WickraQqeOutput {
+                rsi_ma: out_val.rsi_ma,
+                trailing_line: out_val.trailing_line,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_qqe_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_qqe_reset(handle: *mut Qqe) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_qqe_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_qqe_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_qqe_free(handle: *mut Qqe) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `QuartileBands` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_quartile_bands_free`.
+#[no_mangle]
+pub extern "C" fn wickra_quartile_bands_new(period: usize) -> *mut QuartileBands {
+    match QuartileBands::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_quartile_bands_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_quartile_bands_update(
+    handle: *mut QuartileBands,
+    value: f64,
+    out: *mut WickraQuartileBandsOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update(value) {
+        Some(out_val) => {
+            *out = WickraQuartileBandsOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_quartile_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_quartile_bands_reset(handle: *mut QuartileBands) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_quartile_bands_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_quartile_bands_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_quartile_bands_free(handle: *mut QuartileBands) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `RelativeStrengthAB` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_relative_strength_ab_free`.
+#[no_mangle]
+pub extern "C" fn wickra_relative_strength_ab_new(
+    ma_period: usize,
+    rsi_period: usize,
+) -> *mut RelativeStrengthAB {
+    match RelativeStrengthAB::new(ma_period, rsi_period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_relative_strength_ab_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_relative_strength_ab_update(
+    handle: *mut RelativeStrengthAB,
+    x: f64,
+    y: f64,
+    out: *mut WickraRelativeStrengthOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update((x, y)) {
+        Some(out_val) => {
+            *out = WickraRelativeStrengthOutput {
+                ratio: out_val.ratio,
+                ratio_ma: out_val.ratio_ma,
+                ratio_rsi: out_val.ratio_rsi,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_relative_strength_ab_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_relative_strength_ab_reset(handle: *mut RelativeStrengthAB) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_relative_strength_ab_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_relative_strength_ab_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_relative_strength_ab_free(handle: *mut RelativeStrengthAB) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `Rwi` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_rwi_free`.
+#[no_mangle]
+pub extern "C" fn wickra_rwi_new(period: usize) -> *mut Rwi {
+    match Rwi::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_rwi_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rwi_update(
+    handle: *mut Rwi,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraRwiOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraRwiOutput {
+                high: out_val.high,
+                low: out_val.low,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rwi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rwi_reset(handle: *mut Rwi) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_rwi_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_rwi_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rwi_free(handle: *mut Rwi) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `SessionHighLow` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_session_high_low_free`.
+#[no_mangle]
+pub extern "C" fn wickra_session_high_low_new(utc_offset_minutes: i32) -> *mut SessionHighLow {
+    Box::into_raw(Box::new(SessionHighLow::new(utc_offset_minutes)))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_session_high_low_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_session_high_low_update(
+    handle: *mut SessionHighLow,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraSessionHighLowOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraSessionHighLowOutput {
+                high: out_val.high,
+                low: out_val.low,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_session_high_low_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_session_high_low_reset(handle: *mut SessionHighLow) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_session_high_low_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_session_high_low_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_session_high_low_free(handle: *mut SessionHighLow) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `SessionRange` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_session_range_free`.
+#[no_mangle]
+pub extern "C" fn wickra_session_range_new(utc_offset_minutes: i32) -> *mut SessionRange {
+    Box::into_raw(Box::new(SessionRange::new(utc_offset_minutes)))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_session_range_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_session_range_update(
+    handle: *mut SessionRange,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraSessionRangeOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraSessionRangeOutput {
+                asia: out_val.asia,
+                eu: out_val.eu,
+                us: out_val.us,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_session_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_session_range_reset(handle: *mut SessionRange) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_session_range_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_session_range_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_session_range_free(handle: *mut SessionRange) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `SmoothedHeikinAshi` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_smoothed_heikin_ashi_free`.
+#[no_mangle]
+pub extern "C" fn wickra_smoothed_heikin_ashi_new(period: usize) -> *mut SmoothedHeikinAshi {
+    match SmoothedHeikinAshi::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_smoothed_heikin_ashi_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_smoothed_heikin_ashi_update(
+    handle: *mut SmoothedHeikinAshi,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraSmoothedHeikinAshiOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraSmoothedHeikinAshiOutput {
+                open: out_val.open,
+                high: out_val.high,
+                low: out_val.low,
+                close: out_val.close,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_smoothed_heikin_ashi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_smoothed_heikin_ashi_reset(handle: *mut SmoothedHeikinAshi) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_smoothed_heikin_ashi_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_smoothed_heikin_ashi_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_smoothed_heikin_ashi_free(handle: *mut SmoothedHeikinAshi) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `SpreadBollingerBands` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_spread_bollinger_bands_free`.
+#[no_mangle]
+pub extern "C" fn wickra_spread_bollinger_bands_new(
+    period: usize,
+    num_std: f64,
+) -> *mut SpreadBollingerBands {
+    match SpreadBollingerBands::new(period, num_std) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_spread_bollinger_bands_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_spread_bollinger_bands_update(
+    handle: *mut SpreadBollingerBands,
+    x: f64,
+    y: f64,
+    out: *mut WickraSpreadBollingerBandsOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update((x, y)) {
+        Some(out_val) => {
+            *out = WickraSpreadBollingerBandsOutput {
+                middle: out_val.middle,
+                upper: out_val.upper,
+                lower: out_val.lower,
+                percent_b: out_val.percent_b,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_spread_bollinger_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_spread_bollinger_bands_reset(handle: *mut SpreadBollingerBands) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_spread_bollinger_bands_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_spread_bollinger_bands_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_spread_bollinger_bands_free(handle: *mut SpreadBollingerBands) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `StandardErrorBands` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_standard_error_bands_free`.
+#[no_mangle]
+pub extern "C" fn wickra_standard_error_bands_new(
+    period: usize,
+    multiplier: f64,
+) -> *mut StandardErrorBands {
+    match StandardErrorBands::new(period, multiplier) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_standard_error_bands_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_standard_error_bands_update(
+    handle: *mut StandardErrorBands,
+    value: f64,
+    out: *mut WickraStandardErrorBandsOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update(value) {
+        Some(out_val) => {
+            *out = WickraStandardErrorBandsOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_standard_error_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_standard_error_bands_reset(handle: *mut StandardErrorBands) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_standard_error_bands_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_standard_error_bands_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_standard_error_bands_free(handle: *mut StandardErrorBands) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `StarcBands` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_starc_bands_free`.
+#[no_mangle]
+pub extern "C" fn wickra_starc_bands_new(
+    sma_period: usize,
+    atr_period: usize,
+    multiplier: f64,
+) -> *mut StarcBands {
+    match StarcBands::new(sma_period, atr_period, multiplier) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_starc_bands_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_starc_bands_update(
+    handle: *mut StarcBands,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraStarcBandsOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraStarcBandsOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_starc_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_starc_bands_reset(handle: *mut StarcBands) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_starc_bands_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_starc_bands_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_starc_bands_free(handle: *mut StarcBands) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `Stochastic` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_stochastic_free`.
+#[no_mangle]
+pub extern "C" fn wickra_stochastic_new(k_period: usize, d_period: usize) -> *mut Stochastic {
+    match Stochastic::new(k_period, d_period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_stochastic_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stochastic_update(
+    handle: *mut Stochastic,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraStochasticOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraStochasticOutput {
+                k: out_val.k,
+                d: out_val.d,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_stochastic_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stochastic_reset(handle: *mut Stochastic) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_stochastic_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_stochastic_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stochastic_free(handle: *mut Stochastic) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `SuperTrend` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_super_trend_free`.
+#[no_mangle]
+pub extern "C" fn wickra_super_trend_new(atr_period: usize, multiplier: f64) -> *mut SuperTrend {
+    match SuperTrend::new(atr_period, multiplier) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_super_trend_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_super_trend_update(
+    handle: *mut SuperTrend,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraSuperTrendOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraSuperTrendOutput {
+                value: out_val.value,
+                direction: out_val.direction,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_super_trend_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_super_trend_reset(handle: *mut SuperTrend) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_super_trend_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_super_trend_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_super_trend_free(handle: *mut SuperTrend) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `TdLines` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_td_lines_free`.
+#[no_mangle]
+pub extern "C" fn wickra_td_lines_new(lookback: usize, target: usize) -> *mut TdLines {
+    match TdLines::new(lookback, target) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_td_lines_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_lines_update(
+    handle: *mut TdLines,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraTdLinesOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraTdLinesOutput {
+                resistance: out_val.resistance,
+                support: out_val.support,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_lines_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_lines_reset(handle: *mut TdLines) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_td_lines_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_td_lines_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_lines_free(handle: *mut TdLines) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `TdMovingAverage` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_td_moving_average_free`.
+#[no_mangle]
+pub extern "C" fn wickra_td_moving_average_new(
+    period_st1: usize,
+    period_st2: usize,
+) -> *mut TdMovingAverage {
+    match TdMovingAverage::new(period_st1, period_st2) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_td_moving_average_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_moving_average_update(
+    handle: *mut TdMovingAverage,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraTdMovingAverageOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraTdMovingAverageOutput {
+                st1: out_val.st1,
+                st2: out_val.st2,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_moving_average_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_moving_average_reset(handle: *mut TdMovingAverage) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_td_moving_average_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_td_moving_average_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_moving_average_free(handle: *mut TdMovingAverage) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `TdRangeProjection` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_td_range_projection_free`.
+#[no_mangle]
+pub extern "C" fn wickra_td_range_projection_new() -> *mut TdRangeProjection {
+    Box::into_raw(Box::new(TdRangeProjection::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_td_range_projection_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_range_projection_update(
+    handle: *mut TdRangeProjection,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraTdRangeProjectionOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraTdRangeProjectionOutput {
+                high: out_val.high,
+                low: out_val.low,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_range_projection_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_range_projection_reset(handle: *mut TdRangeProjection) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_td_range_projection_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_td_range_projection_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_range_projection_free(handle: *mut TdRangeProjection) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `TdRiskLevel` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_td_risk_level_free`.
+#[no_mangle]
+pub extern "C" fn wickra_td_risk_level_new(lookback: usize, target: usize) -> *mut TdRiskLevel {
+    match TdRiskLevel::new(lookback, target) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_td_risk_level_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_risk_level_update(
+    handle: *mut TdRiskLevel,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraTdRiskLevelOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraTdRiskLevelOutput {
+                buy_risk: out_val.buy_risk,
+                sell_risk: out_val.sell_risk,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_risk_level_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_risk_level_reset(handle: *mut TdRiskLevel) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_td_risk_level_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_td_risk_level_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_risk_level_free(handle: *mut TdRiskLevel) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `TdSequential` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_td_sequential_free`.
+#[no_mangle]
+pub extern "C" fn wickra_td_sequential_new(
+    setup_lookback: usize,
+    setup_target: usize,
+    countdown_lookback: usize,
+    countdown_target: usize,
+) -> *mut TdSequential {
+    match TdSequential::new(
+        setup_lookback,
+        setup_target,
+        countdown_lookback,
+        countdown_target,
+    ) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_td_sequential_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_sequential_update(
+    handle: *mut TdSequential,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraTdSequentialOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraTdSequentialOutput {
+                setup: out_val.setup,
+                countdown: out_val.countdown,
+                direction: out_val.direction,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_sequential_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_sequential_reset(handle: *mut TdSequential) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_td_sequential_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_td_sequential_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_sequential_free(handle: *mut TdSequential) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `TtmSqueeze` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_ttm_squeeze_free`.
+#[no_mangle]
+pub extern "C" fn wickra_ttm_squeeze_new(
+    period: usize,
+    bb_mult: f64,
+    kc_mult: f64,
+) -> *mut TtmSqueeze {
+    match TtmSqueeze::new(period, bb_mult, kc_mult) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_ttm_squeeze_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ttm_squeeze_update(
+    handle: *mut TtmSqueeze,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraTtmSqueezeOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraTtmSqueezeOutput {
+                squeeze: out_val.squeeze,
+                momentum: out_val.momentum,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ttm_squeeze_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ttm_squeeze_reset(handle: *mut TtmSqueeze) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_ttm_squeeze_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_ttm_squeeze_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ttm_squeeze_free(handle: *mut TtmSqueeze) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `ValueArea` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_value_area_free`.
+#[no_mangle]
+pub extern "C" fn wickra_value_area_new(
+    period: usize,
+    bin_count: usize,
+    value_area_pct: f64,
+) -> *mut ValueArea {
+    match ValueArea::new(period, bin_count, value_area_pct) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_value_area_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_value_area_update(
+    handle: *mut ValueArea,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraValueAreaOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraValueAreaOutput {
+                poc: out_val.poc,
+                vah: out_val.vah,
+                val: out_val.val,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_value_area_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_value_area_reset(handle: *mut ValueArea) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_value_area_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_value_area_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_value_area_free(handle: *mut ValueArea) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `VolatilityCone` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_volatility_cone_free`.
+#[no_mangle]
+pub extern "C" fn wickra_volatility_cone_new(
+    window: usize,
+    lookback: usize,
+) -> *mut VolatilityCone {
+    match VolatilityCone::new(window, lookback) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_volatility_cone_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volatility_cone_update(
+    handle: *mut VolatilityCone,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraVolatilityConeOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraVolatilityConeOutput {
+                current: out_val.current,
+                min: out_val.min,
+                median: out_val.median,
+                max: out_val.max,
+                percentile: out_val.percentile,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volatility_cone_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volatility_cone_reset(handle: *mut VolatilityCone) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_volatility_cone_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_volatility_cone_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volatility_cone_free(handle: *mut VolatilityCone) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `VolumeWeightedMacd` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_volume_weighted_macd_free`.
+#[no_mangle]
+pub extern "C" fn wickra_volume_weighted_macd_new(
+    fast: usize,
+    slow: usize,
+    signal: usize,
+) -> *mut VolumeWeightedMacd {
+    match VolumeWeightedMacd::new(fast, slow, signal) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_volume_weighted_macd_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_weighted_macd_update(
+    handle: *mut VolumeWeightedMacd,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraVolumeWeightedMacdOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraVolumeWeightedMacdOutput {
+                macd: out_val.macd,
+                signal: out_val.signal,
+                histogram: out_val.histogram,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_weighted_macd_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_weighted_macd_reset(handle: *mut VolumeWeightedMacd) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_volume_weighted_macd_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_volume_weighted_macd_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_weighted_macd_free(handle: *mut VolumeWeightedMacd) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `VolumeWeightedSr` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_volume_weighted_sr_free`.
+#[no_mangle]
+pub extern "C" fn wickra_volume_weighted_sr_new(period: usize) -> *mut VolumeWeightedSr {
+    match VolumeWeightedSr::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_volume_weighted_sr_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_weighted_sr_update(
+    handle: *mut VolumeWeightedSr,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraVolumeWeightedSrOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraVolumeWeightedSrOutput {
+                support: out_val.support,
+                resistance: out_val.resistance,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_weighted_sr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_weighted_sr_reset(handle: *mut VolumeWeightedSr) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_volume_weighted_sr_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_volume_weighted_sr_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_weighted_sr_free(handle: *mut VolumeWeightedSr) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `Vortex` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_vortex_free`.
+#[no_mangle]
+pub extern "C" fn wickra_vortex_new(period: usize) -> *mut Vortex {
+    match Vortex::new(period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_vortex_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vortex_update(
+    handle: *mut Vortex,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraVortexOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraVortexOutput {
+                plus: out_val.plus,
+                minus: out_val.minus,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vortex_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vortex_reset(handle: *mut Vortex) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_vortex_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_vortex_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vortex_free(handle: *mut Vortex) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `VwapStdDevBands` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_vwap_std_dev_bands_free`.
+#[no_mangle]
+pub extern "C" fn wickra_vwap_std_dev_bands_new(multiplier: f64) -> *mut VwapStdDevBands {
+    match VwapStdDevBands::new(multiplier) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_vwap_std_dev_bands_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vwap_std_dev_bands_update(
+    handle: *mut VwapStdDevBands,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraVwapStdDevBandsOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraVwapStdDevBandsOutput {
+                upper: out_val.upper,
+                middle: out_val.middle,
+                lower: out_val.lower,
+                stddev: out_val.stddev,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vwap_std_dev_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vwap_std_dev_bands_reset(handle: *mut VwapStdDevBands) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_vwap_std_dev_bands_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_vwap_std_dev_bands_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vwap_std_dev_bands_free(handle: *mut VwapStdDevBands) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `WaveTrend` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_wave_trend_free`.
+#[no_mangle]
+pub extern "C" fn wickra_wave_trend_new(
+    channel_period: usize,
+    average_period: usize,
+    signal_period: usize,
+) -> *mut WaveTrend {
+    match WaveTrend::new(channel_period, average_period, signal_period) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_wave_trend_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wave_trend_update(
+    handle: *mut WaveTrend,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraWaveTrendOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraWaveTrendOutput {
+                wt1: out_val.wt1,
+                wt2: out_val.wt2,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_wave_trend_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wave_trend_reset(handle: *mut WaveTrend) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_wave_trend_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_wave_trend_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wave_trend_free(handle: *mut WaveTrend) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `WilliamsFractals` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_williams_fractals_free`.
+#[no_mangle]
+pub extern "C" fn wickra_williams_fractals_new() -> *mut WilliamsFractals {
+    Box::into_raw(Box::new(WilliamsFractals::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_williams_fractals_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_williams_fractals_update(
+    handle: *mut WilliamsFractals,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraWilliamsFractalsOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraWilliamsFractalsOutput {
+                up: out_val.up.unwrap_or(f64::NAN),
+                down: out_val.down.unwrap_or(f64::NAN),
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_williams_fractals_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_williams_fractals_reset(handle: *mut WilliamsFractals) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_williams_fractals_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_williams_fractals_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_williams_fractals_free(handle: *mut WilliamsFractals) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `WoodiePivots` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_woodie_pivots_free`.
+#[no_mangle]
+pub extern "C" fn wickra_woodie_pivots_new() -> *mut WoodiePivots {
+    Box::into_raw(Box::new(WoodiePivots::new()))
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_woodie_pivots_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_woodie_pivots_update(
+    handle: *mut WoodiePivots,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraWoodiePivotsOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraWoodiePivotsOutput {
+                pp: out_val.pp,
+                r1: out_val.r1,
+                r2: out_val.r2,
+                s1: out_val.s1,
+                s2: out_val.s2,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_woodie_pivots_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_woodie_pivots_reset(handle: *mut WoodiePivots) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_woodie_pivots_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_woodie_pivots_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_woodie_pivots_free(handle: *mut WoodiePivots) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `ZeroLagMacd` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_zero_lag_macd_free`.
+#[no_mangle]
+pub extern "C" fn wickra_zero_lag_macd_new(
+    fast: usize,
+    slow: usize,
+    signal: usize,
+) -> *mut ZeroLagMacd {
+    match ZeroLagMacd::new(fast, slow, signal) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_zero_lag_macd_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_zero_lag_macd_update(
+    handle: *mut ZeroLagMacd,
+    value: f64,
+    out: *mut WickraZeroLagMacdOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    match ind.update(value) {
+        Some(out_val) => {
+            *out = WickraZeroLagMacdOutput {
+                macd: out_val.macd,
+                signal: out_val.signal,
+                histogram: out_val.histogram,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_zero_lag_macd_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_zero_lag_macd_reset(handle: *mut ZeroLagMacd) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_zero_lag_macd_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_zero_lag_macd_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_zero_lag_macd_free(handle: *mut ZeroLagMacd) {
+    if !handle.is_null() {
+        drop(Box::from_raw(handle));
+    }
+}
+
+/// Create a `ZigZag` indicator.
+///
+/// Returns `NULL` on invalid parameters; release with `wickra_zig_zag_free`.
+#[no_mangle]
+pub extern "C" fn wickra_zig_zag_new(threshold: f64) -> *mut ZigZag {
+    match ZigZag::new(threshold) {
+        Ok(ind) => Box::into_raw(Box::new(ind)),
+        Err(_) => ptr::null_mut(),
+    }
+}
+
+/// Feed one input; on `true` the freshly computed multi-field output is written to
+/// `*out`. Returns `false` during warmup, on a `NULL` handle / `out`, or on invalid input.
+///
+/// # Safety
+/// `handle` (from `wickra_zig_zag_new`, not freed) and `out` must be valid or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_zig_zag_update(
+    handle: *mut ZigZag,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
+    timestamp: i64,
+    out: *mut WickraZigZagOutput,
+) -> bool {
+    let Some(ind) = handle.as_mut() else {
+        return false;
+    };
+    if out.is_null() {
+        return false;
+    }
+    let Ok(input) = Candle::new(open, high, low, close, volume, timestamp) else {
+        return false;
+    };
+    match ind.update(input) {
+        Some(out_val) => {
+            *out = WickraZigZagOutput {
+                swing: out_val.swing,
+                direction: out_val.direction,
+            };
+            true
+        }
+        None => false,
+    }
+}
+
+/// Reset all internal state. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_zig_zag_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_zig_zag_reset(handle: *mut ZigZag) {
+    if let Some(ind) = handle.as_mut() {
+        ind.reset();
+    }
+}
+
+/// Destroy a handle created by `wickra_zig_zag_new`. No-op if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must have been returned by `wickra_zig_zag_new` and not previously freed, or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_zig_zag_free(handle: *mut ZigZag) {
     if !handle.is_null() {
         drop(Box::from_raw(handle));
     }
