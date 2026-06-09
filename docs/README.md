@@ -10,7 +10,8 @@ That includes:
   [WASM](https://docs.wickra.org/Quickstart-WASM),
   [C](https://docs.wickra.org/Quickstart-C),
   [C#](https://docs.wickra.org/Quickstart-CSharp),
-  [Go](https://docs.wickra.org/Quickstart-Go), and
+  [Go](https://docs.wickra.org/Quickstart-Go),
+  [Java](https://docs.wickra.org/Quickstart-Java), and
   [R](https://docs.wickra.org/Quickstart-R).
 - A per-indicator deep dive for every one of the **514 indicators** across
   the sixteen families (Moving Averages, Momentum Oscillators, Trend &

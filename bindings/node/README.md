@@ -9,7 +9,7 @@
 prebuilt native binary, no system dependencies.**
 
 Wickra is a multi-language technical-analysis library with a Rust core and
-bindings for Python, Node.js and WebAssembly, plus a C ABI for C/C++, C#, Go, R and any
+bindings for Python, Node.js and WebAssembly, plus a C ABI for C/C++, C#, Go, Java, R and any
 other C-capable language. Every indicator is an O(1)
 streaming state machine, so live trading bots and historical backtests share
 the exact same implementation. This package is the Node.js binding (napi-rs);

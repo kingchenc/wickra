@@ -25,6 +25,7 @@ licensed as above, without any additional terms or conditions.
 | `bindings/csharp` | .NET binding over the C ABI (`Wickra` on NuGet) — `[LibraryImport]` P/Invoke generated from `wickra.h`. |
 | `bindings/go` | Go binding over the C ABI via cgo (module tag `bindings/go/vX.Y.Z`) — wrappers generated from `wickra.h`. |
 | `bindings/r` | R binding over the C ABI via `.Call` (R package) — C glue + R wrappers generated from `wickra.h`. |
+| `bindings/java` | Java binding over the C ABI via the FFM API (Panama, Maven Central) — wrappers generated from `wickra.h`. |
 | `examples/` | Runnable examples. |
 | `docs/` | Pointer to the documentation site (docs.wickra.org); the docs live in the `wickra-lib/wickra-docs` repo. |
 
@@ -113,7 +114,9 @@ installed. Dependabot also keeps the `.github/requirements` pins current.
   The Go binding (`bindings/go`) is likewise generated from `wickra.h`, so
   regenerate and commit `indicators_gen.go` (`gofmt`-clean). The R binding
   (`bindings/r`) is generated from `wickra.h` too, so regenerate and commit
-  `src/wickra.c` + `R/indicators.R`.
+  `src/wickra.c` + `R/indicators.R`. The Java binding (`bindings/java`) is
+  generated from `wickra.h` as well, so regenerate and commit its
+  `src/main/java/org/wickra/*.java`.
 - **Docs.** Update the relevant page on the
   [documentation site](https://docs.wickra.org) and the
   `README.md` when behaviour or the public API changes. The docs live in
