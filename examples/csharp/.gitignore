@@ -1,0 +1,7 @@
+# .NET build output
+bin/
+obj/
+*.user
+
+# Data fetched at runtime by fetch_btcusdt
+**/data/

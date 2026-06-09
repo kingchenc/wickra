@@ -1,0 +1,19 @@
+<Project>
+
+  <!-- Shared settings + references for every C# example. Each example project
+       only declares <OutputType>Exe</OutputType>. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\bindings\csharp\Wickra\Wickra.csproj" />
+    <Compile Include="..\_common\MarketData.cs" Link="_common\MarketData.cs" />
+    <Compile Include="..\_common\Backtest.cs" Link="_common\Backtest.cs" />
+  </ItemGroup>
+
+</Project>
