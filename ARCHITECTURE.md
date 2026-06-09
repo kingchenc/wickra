@@ -27,21 +27,26 @@ or replace lives behind a separate crate boundary.
    │   no I/O, no deps    │            │  optional features │
    └──────────────────────┘            └────────────────────┘
                 ▲
-                │ (every binding wraps the same core)
-                │
-   ┌───────────┬────────────┴┬──────────────┬──────────────────────┐
-   │           │             │              │                      │
-┌──▼─────┐ ┌───▼────┐ ┌──────▼──────┐ ┌─────▼──────────────┐
-│ Python │ │  Node  │ │    WASM     │ │  C ABI (cbindgen)  │
-│ (PyO3) │ │(napi-rs)│ │(wasm-bindgen)│ │  cdylib + header   │
-└────────┘ └────────┘ └─────────────┘ └────────────────────┘
+                │  every binding wraps the same core
+   ┌────────────┼────────────┬────────────────┐
+   │            │            │                │
+┌──▼───────┐ ┌──▼───────┐ ┌──▼───────────┐ ┌──▼──────────────────┐
+│  Python  │ │   Node   │ │     WASM     │ │  C ABI (cbindgen)   │
+│  (PyO3)  │ │ (napi-rs)│ │(wasm-bindgen)│ │   cdylib + header   │
+└──────────┘ └──────────┘ └──────────────┘ └─────────┬───────────┘
+                                                     │  linked by
+                                          ┌──────────▼──────────┐
+                                          │  C · C++ · C# · Go  │
+                                          │     · Java · R      │
+                                          └─────────────────────┘
 ```
 
 Python, Node and WASM are *native* Rust bindings (PyO3 / napi-rs /
 wasm-bindgen). The C ABI is the *hub* every other C-capable language links
 against: it builds to a `cdylib`/`staticlib` plus a generated `wickra.h`, and
-C / C++ / Go / C# / Java / R consume that one artifact rather than each
-re-wrapping the core.
+downstream languages link that one artifact rather than each re-wrapping the
+core. C and C++ link it directly; the **C# / .NET** binding (`bindings/csharp`,
+on NuGet) is generated from `wickra.h`, with Go / Java / R planned the same way.
 
 | Crate | Path | What it owns | Public deps |
 |---|---|---|---|

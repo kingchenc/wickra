@@ -7,8 +7,8 @@ Thanks for using Wickra! Here is where to get help, depending on what you need.
 Most questions are answered in the documentation:
 
 - **Docs site:** <https://docs.wickra.org> — quickstarts for Rust, Python,
-  Node.js and WebAssembly, a per-indicator reference, warmup periods, the data
-  layer, and an FAQ.
+  Node.js, WebAssembly, C and C#, a per-indicator reference, warmup periods, the
+  data layer, and an FAQ.
 - **README:** <https://github.com/wickra-lib/wickra#readme> — installation and a
   quick overview.
 - **API docs (Rust):** <https://docs.rs/wickra>.

@@ -48,6 +48,27 @@ three `strategy_*`) build against the bundled datasets and run under `ctest`.
 run in CI; run them by hand. `parallel_assets` links OpenMP when the toolchain
 provides it and falls back to a single-threaded run otherwise.
 
+## C# / .NET — `examples/csharp/`
+
+Build the C ABI library first (`cargo build -p wickra-c --release`), then run any
+example with the .NET 8 SDK; the binding resolves the native library automatically.
+
+| Example | What it does | Run |
+| --- | --- | --- |
+| `streaming` | Feed a synthetic price series through SMA / EMA / RSI / MACD tick by tick. | `dotnet run --project examples/csharp/streaming` |
+| `backtest` | Basket of indicators over an OHLCV series (CSV arg or synthetic). | `dotnet run --project examples/csharp/backtest -- <ohlcv.csv>` |
+| `multi_timeframe` | Resample a 1-minute series to 5m / 15m and print an indicator per timeframe. | `dotnet run --project examples/csharp/multi_timeframe` |
+| `parallel_assets` | SMA(20) batch over a panel, serial vs `Parallel.For`, with speedup. | `dotnet run -c Release --project examples/csharp/parallel_assets` |
+| `strategy_rsi_mean_reversion` | RSI(14) mean-reversion with PnL / Sharpe / max-DD summary. | `dotnet run -c Release --project examples/csharp/strategy_rsi_mean_reversion` |
+| `strategy_macd_adx` | Trend-follower: MACD crossover entries gated by ADX(14) > 20. | `dotnet run -c Release --project examples/csharp/strategy_macd_adx` |
+| `strategy_bollinger_squeeze` | Bollinger-squeeze breakout with an ATR(14) trailing stop. | `dotnet run -c Release --project examples/csharp/strategy_bollinger_squeeze` |
+| `fetch_btcusdt` | Download real BTCUSDT klines from the Binance REST API into a CSV. | `dotnet run --project examples/csharp/fetch_btcusdt` |
+| `live_binance` | Stream live Binance klines through EMA(20) over a WebSocket. | `dotnet run --project examples/csharp/live_binance` |
+
+The offline examples run on deterministic synthetic data (and under CI on all
+three OSes); `fetch_btcusdt` and `live_binance` reach the network and are built
+but not run in CI.
+
 ## Python — `examples/python/`
 
 | Example | What it does | Run |

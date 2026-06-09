@@ -26,7 +26,7 @@ assignees: []
 | Binding version      | `e.g. python 0.4.2 / node 0.4.2`       |
 | OS / arch            | `e.g. Windows 11 x86_64, Linux glibc`  |
 | Rust toolchain       | `rustc --version` (If building from source) |
-| Python / Node version | `python --version` / `node --version` |
+| Python / Node / .NET version | `python --version` / `node --version` / `dotnet --version` |
 
 ## Minimal reproducer
 

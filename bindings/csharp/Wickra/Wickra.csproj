@@ -1,0 +1,57 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RootNamespace>Wickra</RootNamespace>
+    <AssemblyName>Wickra</AssemblyName>
+
+    <!-- NuGet package metadata -->
+    <PackageId>Wickra</PackageId>
+    <Version>0.7.5</Version>
+    <Authors>kingchenc</Authors>
+    <Description>High-performance streaming technical-analysis indicators (514 indicators) for .NET, backed by the native Rust core via the Wickra C ABI.</Description>
+    <PackageLicenseExpression>MIT OR Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/wickra-lib/wickra</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/wickra-lib/wickra</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>technical-analysis;indicators;trading;finance;streaming;ffi;native</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- A managed package carrying per-RID native assets; not built per-RID itself. -->
+    <IncludeBuildOutput>true</IncludeBuildOutput>
+    <!-- NU5128: managed package carrying only per-RID native assets.
+         CS1591: generated members are self-descriptive; hand-written API is documented. -->
+    <NoWarn>$(NoWarn);NU5128;CS1591</NoWarn>
+  </PropertyGroup>
+
+  <!--
+    Supported native runtime identifiers. The release pipeline builds the C ABI
+    per target triple and stages the libraries under
+    Wickra/runtimes/<rid>/native/ before `dotnet pack`:
+      win-x64   win-arm64   linux-x64   linux-arm64   osx-x64   osx-arm64
+  -->
+  <PropertyGroup>
+    <WickraRuntimeIdentifiers>win-x64;win-arm64;linux-x64;linux-arm64;osx-x64;osx-arm64</WickraRuntimeIdentifiers>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <!--
+    Native libraries are packed under runtimes/<rid>/native/ by the release pipeline,
+    which unpacks the wickra-c-<triple>.tar.gz assets into the matching RID folders.
+    For local development and tests the natives are resolved from the cargo target dir
+    via WickraNative's DllImportResolver.
+  -->
+  <ItemGroup>
+    <None Include="runtimes/**/native/*" Pack="true" PackagePath="runtimes" Condition="Exists('runtimes')" />
+  </ItemGroup>
+
+</Project>

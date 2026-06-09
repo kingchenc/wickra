@@ -2,24 +2,25 @@
   <a href="https://wickra.org"><img src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/wickra-banner.webp?v=514" alt="Wickra — streaming-first technical indicators" width="100%"></a>
 </p>
 
-[![CI](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml/badge.svg)](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/wickra-lib/wickra/actions/workflows/codeql.yml/badge.svg)](https://github.com/wickra-lib/wickra/actions/workflows/codeql.yml)
-[![codecov](https://codecov.io/gh/wickra-lib/wickra/branch/main/graph/badge.svg)](https://codecov.io/gh/wickra-lib/wickra)
-[![GitHub release](https://img.shields.io/github/v/release/wickra-lib/wickra?logo=github&color=green)](https://github.com/wickra-lib/wickra/releases/latest)
-[![crates.io](https://img.shields.io/crates/v/wickra.svg?logo=rust&color=orange)](https://crates.io/crates/wickra)
-[![PyPI](https://img.shields.io/pypi/v/wickra.svg?logo=pypi&color=blue)](https://pypi.org/project/wickra/)
-[![npm](https://img.shields.io/npm/v/wickra.svg?logo=npm&color=red)](https://www.npmjs.com/package/wickra)
-[![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT_OR_Apache--2.0-blue)](#license)
-[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/wickra-lib/wickra/badge)](https://scorecard.dev/viewer/?uri=github.com/wickra-lib/wickra)
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13094/badge)](https://www.bestpractices.dev/projects/13094)
-[![Build provenance](https://img.shields.io/badge/provenance-attested-brightgreen?logo=github)](https://github.com/wickra-lib/wickra/attestations)
-[![Docs](https://img.shields.io/badge/docs-docs.wickra.org-0ea5e9?logo=readthedocs&logoColor=white)](https://docs.wickra.org)
+[![CI](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/ci.svg)](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml)
+[![CodeQL](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/codeql.svg)](https://github.com/wickra-lib/wickra/actions/workflows/codeql.yml)
+[![codecov](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/codecov.svg)](https://codecov.io/gh/wickra-lib/wickra)
+[![GitHub release](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/release.svg)](https://github.com/wickra-lib/wickra/releases/latest)
+[![crates.io](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/crates.svg)](https://crates.io/crates/wickra)
+[![PyPI](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/pypi.svg)](https://pypi.org/project/wickra/)
+[![npm](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/npm.svg)](https://www.npmjs.com/package/wickra)
+[![NuGet](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/nuget.svg)](https://www.nuget.org/packages/Wickra)
+[![License: MIT OR Apache-2.0](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/license.svg)](#license)
+[![OpenSSF Scorecard](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/scorecard.svg)](https://scorecard.dev/viewer/?uri=github.com/wickra-lib/wickra)
+[![OpenSSF Best Practices](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/best-practices.svg)](https://www.bestpractices.dev/projects/13094)
+[![Build provenance](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/provenance.svg)](https://github.com/wickra-lib/wickra/attestations)
+[![Docs](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/docs.svg)](https://docs.wickra.org)
 
 **Streaming-first technical indicators. Install with `pip install wickra` — no system dependencies.**
 
 Wickra is a multi-language technical-analysis library with a Rust core and
-native bindings for Python, Node.js and WebAssembly, plus a C ABI that any
-C-capable language (C, C++, and beyond) links against. Every indicator is a
+native bindings for Python, Node.js and WebAssembly, plus a C ABI that C, C++,
+C# / .NET and any other C-capable language links against. Every indicator is a
 state machine that updates in O(1) per new data point, so live trading bots and
 historical backtests share the exact same implementation.
 
@@ -47,7 +48,9 @@ Full documentation lives at **[docs.wickra.org](https://docs.wickra.org)**:
 - **Quickstarts** — [Rust](https://docs.wickra.org/Quickstart-Rust),
   [Python](https://docs.wickra.org/Quickstart-Python),
   [Node](https://docs.wickra.org/Quickstart-Node),
-  [WASM](https://docs.wickra.org/Quickstart-WASM).
+  [WASM](https://docs.wickra.org/Quickstart-WASM),
+  [C](https://docs.wickra.org/Quickstart-C),
+  [C#](https://docs.wickra.org/Quickstart-CSharp).
 - **Indicators** — a per-indicator deep dive (formula, parameters, warmup) for
   every one of the 514 indicators; start at the
   [indicators overview](https://docs.wickra.org/Indicators-Overview).
@@ -73,7 +76,7 @@ times to get there.
   metrics — every single one updating in **O(1) per tick**. TA-Lib ships ~150 and
   none of them stream.
 - **One Rust core, five first-class targets.** Native **Python · Node.js ·
-  WebAssembly · Rust** plus a **C ABI** for C / C++ and any C-capable language —
+  WebAssembly · Rust** plus a **C ABI** for C / C++, C# / .NET and any other C-capable language —
   identical math, identical results, zero per-language reimplementation and zero
   GIL bottleneck.
 - **Correct by construction, not by hope.** Every `update` validates its input,
@@ -97,7 +100,8 @@ Every other library forces one of those compromises. Wickra doesn't:
 
 | Library          | Install     | Streaming   | Languages                   | Indicators | Active |
 |------------------|-------------|-------------|-----------------------------|-----------:|--------|
-| **★&nbsp;Wickra**| **clean**   | **yes, O(1)** | **Python · Node · WASM · Rust · C** | **514** | **yes** |
+| **★&nbsp;Wickra**| **clean**   | **yes, O(1)** | **Rust · Python · Node · WASM** | **514** | **yes** |
+|                  |             |               | **C · C#**                      |            |        |
 | kand             | clean       | yes         | Python · WASM · Rust        |       ~60  | yes    |
 | ta-rs            | clean       | yes         | Rust only                   |       ~30  | stale  |
 | yata             | clean       | partial     | Rust only                   |       ~35  | yes    |
@@ -168,8 +172,9 @@ as one column each. `Doji` is direction-less by default (`+1.0` / `0.0`);
 construct it in signed mode (`Doji::new().signed()`, `Doji(signed=True)`,
 `new Doji(true)`) for a dragonfly / gravestone `±1` reading.
 
-Adding a new indicator means implementing one trait in Rust; all five bindings
-inherit it automatically (the C ABI is generated from the core).
+Adding a new indicator means implementing one trait in Rust; every binding
+inherits it automatically (the C ABI — and the C# binding generated from it —
+regenerate from the core).
 
 ## Languages
 
@@ -180,6 +185,7 @@ inherit it automatically (the C ABI is generated from the core).
 | Browser / WASM    | `npm install wickra-wasm`                     | `examples/wasm/index.html` |
 | Rust              | `cargo add wickra`                            | `examples/rust/src/bin/backtest.rs` |
 | C / C++ (C ABI)   | header + library, see [`bindings/c`](bindings/c) | `examples/c/streaming.c` |
+| C# / .NET (C ABI) | `dotnet add package Wickra`, see [`bindings/csharp`](bindings/csharp) | `examples/csharp/streaming` |
 
 Each binding ships several runnable examples (streaming, backtest, live feed);
 [`examples/README.md`](examples/README.md) is the full cross-language index.
@@ -249,14 +255,16 @@ wickra/
 │   ├── python/              PyO3 + maturin (publishes on PyPI)
 │   ├── node/                napi-rs (publishes on npm)
 │   ├── wasm/                wasm-bindgen (browsers, bundlers, Node)
-│   └── c/                   C ABI (cdylib + staticlib) + generated include/wickra.h
+│   ├── c/                   C ABI (cdylib + staticlib) + generated include/wickra.h
+│   └── csharp/              .NET binding over the C ABI (publishes on NuGet)
 ├── examples/                examples/README.md indexes every language
 │   ├── data/                real BTCUSDT OHLCV datasets, one per timeframe
 │   ├── rust/                Rust workspace member (`wickra-examples`)
 │   ├── python/              backtest, live trading, parallel assets, multi-tf
 │   ├── node/                streaming, backtest, live trading (load `wickra`)
 │   ├── wasm/                browser demo for `wickra-wasm`
-│   └── c/                   C smoke + streaming, C++ RAII wrapper
+│   ├── c/                   C smoke + streaming, C++ RAII wrapper
+│   └── csharp/              streaming, backtest, strategies (load `Wickra`)
 └── .github/workflows/       CI and release pipelines
 ```
 
@@ -289,6 +297,9 @@ cd bindings/node && npm install && npm run build && npm test
 cargo build -p wickra-c --release
 cmake -S examples/c -B examples/c/build -DWICKRA_LIB_DIR="$PWD/target/release"
 cmake --build examples/c/build && ctest --test-dir examples/c/build --output-on-failure
+
+# C# / .NET binding (requires the .NET 8 SDK; links the C ABI above)
+dotnet test bindings/csharp/Wickra.Tests/Wickra.Tests.csproj
 ```
 
 ## Testing

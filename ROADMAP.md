@@ -21,8 +21,9 @@ minor releases; breaking changes are called out in the changelog.
   versioning stability for a 1.0 release.
 - **Performance.** Keep per-tick updates O(1) and maintain the benchmark suite;
   investigate further allocation and cache improvements.
-- **Bindings parity.** Keep the Python, Node.js and WebAssembly bindings in
-  lockstep with the Rust core, including type stubs and platform coverage.
+- **Bindings parity.** Keep the Python, Node.js and WebAssembly bindings — plus
+  the C ABI and the C# / .NET binding generated from it — in lockstep with the
+  Rust core, including type stubs and platform coverage.
 - **Documentation.** Maintain a deep-dive page per indicator on
   <https://docs.wickra.org>, plus quickstarts and cookbook material.
 - **Project health.** Maintain test coverage, static and dynamic analysis,

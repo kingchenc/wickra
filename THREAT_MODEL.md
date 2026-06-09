@@ -3,7 +3,8 @@
 This document describes Wickra's attack surface and the threats considered,
 together with their mitigations. It complements the security assurance case in
 [`SECURITY.md`](SECURITY.md). Wickra is a computational technical-analysis
-library (a Rust core with Python, Node.js and WebAssembly bindings plus a C ABI),
+library (a Rust core with Python, Node.js and WebAssembly bindings plus a C ABI
+and the .NET binding built on it),
 not a network service or trading system; the attack surface is correspondingly
 small.
 

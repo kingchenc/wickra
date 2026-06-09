@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- **C# / .NET binding (`bindings/csharp`)** — the first language stecker on the
+  C ABI hub. Exposes all 514 indicators as idiomatic `IDisposable` classes via
+  `[LibraryImport]` source-generated P/Invoke, generated from `wickra.h`. Ships
+  on NuGet as `Wickra` with prebuilt native libraries for six target triples
+  (win/linux/osx × x64/arm64), plus a full example suite mirroring the C examples.
 
 ## [0.7.5] - 2026-06-09
 ### Added
