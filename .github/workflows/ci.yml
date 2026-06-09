@@ -826,6 +826,70 @@ jobs:
             go run "./$d"
           done
 
+  r:
+    name: R on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    env:
+      WICKRA_INCLUDE_DIR: ${{ github.workspace }}/bindings/c/include
+      WICKRA_LIB_DIR: ${{ github.workspace }}/target/release
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable branch, 2026-03-27
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        continue-on-error: true
+        timeout-minutes: 6
+
+      # The binding compiles a thin .Call glue layer against the C ABI hub; build
+      # the library first. On Windows configure.win bundles a renamed copy
+      # (wickra_abi.dll) so the package's own wickra.dll does not collide with it.
+      - name: Build the C ABI library
+        run: cargo build -p wickra-c --release
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@a51a8012b0aab7c32ef9d19bf54da93f3254335e # v2
+        with:
+          r-version: "release"
+          use-public-rspm: true
+
+      - name: Install test dependency
+        run: Rscript -e 'install.packages("testthat", repos = "https://cloud.r-project.org")'
+
+      - name: Install and test the R binding
+        shell: bash
+        # On Linux/macOS the rpath points at WICKRA_LIB_DIR; export the loader path
+        # too as a belt-and-suspenders. On Windows the package bundles the DLL.
+        run: |
+          export LD_LIBRARY_PATH="$WICKRA_LIB_DIR:$LD_LIBRARY_PATH"
+          export DYLD_LIBRARY_PATH="$WICKRA_LIB_DIR:$DYLD_LIBRARY_PATH"
+          R CMD INSTALL bindings/r
+          Rscript -e 'library(testthat); library(wickra); test_dir("bindings/r/tests/testthat", stop_on_failure = TRUE)'
+
+      - name: Run the offline R examples
+        shell: bash
+        run: |
+          export LD_LIBRARY_PATH="$WICKRA_LIB_DIR:$LD_LIBRARY_PATH"
+          export DYLD_LIBRARY_PATH="$WICKRA_LIB_DIR:$DYLD_LIBRARY_PATH"
+          cd examples/r
+          for f in streaming backtest multi_timeframe parallel_assets \
+                   strategy_rsi_mean_reversion strategy_macd_adx strategy_bollinger_squeeze; do
+            Rscript "$f.R"
+          done
+
+      # fetch_btcusdt / live_binance need the network (and jsonlite / websocket);
+      # build-check that they parse without running them.
+      - name: Parse the network R examples
+        run: Rscript -e 'invisible(lapply(c("examples/r/fetch_btcusdt.R", "examples/r/live_binance.R"), parse)); cat("network R examples parse OK\n")'
+
   # The cross-library benchmark has moved to a dedicated scheduled workflow
   # (.github/workflows/bench.yml) — see audit finding R10. It runs nightly
   # at 03:00 UTC and on-demand via `workflow_dispatch`, and is no longer on
