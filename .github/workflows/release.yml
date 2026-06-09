@@ -808,6 +808,8 @@ jobs:
           cp bindings/go/*.go "$out/"
           cp bindings/go/include/wickra.h "$out/include/"
           cp bindings/go/README.md "$out/"
+          # Ship the dual license so pkg.go.dev detects a redistributable license.
+          cp LICENSE-MIT LICENSE-APACHE "$out/"
           # Standalone module path (the in-repo go.mod points at the subdir).
           printf 'module github.com/wickra-lib/wickra-go\n\ngo 1.23\n' > "$out/go.mod"
           # Point install instructions at the standalone module path.
