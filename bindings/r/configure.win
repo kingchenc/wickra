@@ -4,9 +4,35 @@
 # itself). Stage a renamed copy, wickra_abi.dll, into src/ and build a mingw
 # import library that references it by that name (objdump + dlltool, both shipped
 # with Rtools — no gendef/pexports needed). install.libs.R then bundles the DLL.
+#
+# Self-contained by default: download the prebuilt wickra-c-<triple>.tar.gz
+# release asset matching this package's version. Set WICKRA_INCLUDE_DIR +
+# WICKRA_LIB_DIR to build against a locally built C ABI instead (dev override).
 set -e
-: "${WICKRA_LIB_DIR:?set WICKRA_LIB_DIR to the directory containing wickra.dll}"
-cp "${WICKRA_LIB_DIR}/wickra.dll" src/wickra_abi.dll
+
+if [ -n "${WICKRA_INCLUDE_DIR}" ] && [ -n "${WICKRA_LIB_DIR}" ]; then
+  echo "wickra: using C ABI from WICKRA_INCLUDE_DIR / WICKRA_LIB_DIR (dev override)"
+  inc="${WICKRA_INCLUDE_DIR}"
+  lib="${WICKRA_LIB_DIR}"
+else
+  version=$(sed -n 's/^Version:[[:space:]]*//p' DESCRIPTION)
+  arch=$(uname -m)
+  case "${arch}" in
+    x86_64) triple="x86_64-pc-windows-msvc" ;;
+    aarch64 | arm64) triple="aarch64-pc-windows-msvc" ;;
+    *) echo "wickra: unsupported Windows arch '${arch}' — set WICKRA_INCLUDE_DIR/WICKRA_LIB_DIR"; exit 1 ;;
+  esac
+  url="https://github.com/wickra-lib/wickra/releases/download/v${version}/wickra-c-${triple}.tar.gz"
+  echo "wickra: downloading C ABI ${triple} for v${version}"
+  "${R_HOME}/bin/Rscript" -e "download.file('${url}', 'src/wickra-c.tar.gz', mode = 'wb', quiet = TRUE)" \
+    || { echo "wickra: failed to download ${url}"; exit 1; }
+  "${R_HOME}/bin/Rscript" -e "untar('src/wickra-c.tar.gz', exdir = 'src/wickra-c')"
+  inc="src/wickra-c/wickra-c-${triple}/include"
+  lib="src/wickra-c/wickra-c-${triple}/lib"
+fi
+
+cp "${inc}/wickra.h" src/wickra.h
+cp "${lib}/wickra.dll" src/wickra_abi.dll
 {
   echo 'LIBRARY wickra_abi.dll'
   echo 'EXPORTS'

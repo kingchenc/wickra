@@ -1,0 +1,82 @@
+#!/bin/sh
+# Resolve the Wickra C ABI (header + shared library) for the Unix build.
+#
+# Self-contained by default: download the prebuilt wickra-c-<triple>.tar.gz
+# release asset that matches this package's version and stage the shared library
+# into src/ so the compiled wickra.so links against it and bundles it (via
+# install.libs.R), found post-install through an rpath ($ORIGIN on Linux,
+# @loader_path on macOS). Set WICKRA_INCLUDE_DIR + WICKRA_LIB_DIR to build
+# against a locally built C ABI instead (dev override; e.g.
+# `cargo build -p wickra-c --release`). Download/extract uses base R (always
+# present at build time), so there is no curl/wget system dependency.
+set -e
+
+inc=""
+lib=""
+if [ -n "${WICKRA_INCLUDE_DIR}" ] && [ -n "${WICKRA_LIB_DIR}" ]; then
+  echo "wickra: using C ABI from WICKRA_INCLUDE_DIR / WICKRA_LIB_DIR (dev override)"
+  inc="${WICKRA_INCLUDE_DIR}"
+  lib="${WICKRA_LIB_DIR}"
+else
+  version=$(sed -n 's/^Version:[[:space:]]*//p' DESCRIPTION)
+  os=$(uname -s)
+  arch=$(uname -m)
+  case "${os}" in
+    Linux)
+      case "${arch}" in
+        x86_64) triple="x86_64-unknown-linux-gnu" ;;
+        aarch64 | arm64) triple="aarch64-unknown-linux-gnu" ;;
+        *) echo "wickra: unsupported Linux arch '${arch}' — set WICKRA_INCLUDE_DIR/WICKRA_LIB_DIR"; exit 1 ;;
+      esac
+      ;;
+    Darwin)
+      case "${arch}" in
+        x86_64) triple="x86_64-apple-darwin" ;;
+        arm64 | aarch64) triple="aarch64-apple-darwin" ;;
+        *) echo "wickra: unsupported macOS arch '${arch}' — set WICKRA_INCLUDE_DIR/WICKRA_LIB_DIR"; exit 1 ;;
+      esac
+      ;;
+    *)
+      echo "wickra: unsupported OS '${os}' — set WICKRA_INCLUDE_DIR/WICKRA_LIB_DIR"
+      exit 1
+      ;;
+  esac
+  url="https://github.com/wickra-lib/wickra/releases/download/v${version}/wickra-c-${triple}.tar.gz"
+  echo "wickra: downloading C ABI ${triple} for v${version}"
+  "${R_HOME}/bin/Rscript" -e "download.file('${url}', 'src/wickra-c.tar.gz', mode = 'wb', quiet = TRUE)" \
+    || { echo "wickra: failed to download ${url}"; exit 1; }
+  "${R_HOME}/bin/Rscript" -e "untar('src/wickra-c.tar.gz', exdir = 'src/wickra-c')"
+  inc="src/wickra-c/wickra-c-${triple}/include"
+  lib="src/wickra-c/wickra-c-${triple}/lib"
+fi
+
+# Stage the header and the platform shared library into src/ so the package
+# object links with -L. -lwickra and install.libs.R bundles the lib.
+cp "${inc}/wickra.h" src/wickra.h
+staged=""
+for f in libwickra.so libwickra.dylib; do
+  if [ -f "${lib}/${f}" ]; then
+    cp "${lib}/${f}" "src/${f}"
+    staged="${f}"
+  fi
+done
+if [ -z "${staged}" ]; then
+  echo "wickra: no libwickra.so/.dylib found under ${lib}"
+  exit 1
+fi
+
+# rpath so the bundled lib is found next to wickra.so after install.
+case "$(uname -s)" in
+  Darwin)
+    rpath="-Wl,-rpath,@loader_path"
+    # Normalise the dylib id to @rpath so @loader_path resolution applies.
+    install_name_tool -id "@rpath/${staged}" "src/${staged}" 2>/dev/null || true
+    ;;
+  *)
+    rpath="-Wl,-rpath,'\$\$ORIGIN'"
+    ;;
+esac
+
+sed "s|@WICKRA_RPATH@|${rpath}|" src/Makevars.in > src/Makevars
+echo "wickra: configured (bundled ${staged})"
+exit 0
