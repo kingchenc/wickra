@@ -9,6 +9,7 @@
 [![crates.io](https://img.shields.io/crates/v/wickra.svg?logo=rust&color=orange)](https://crates.io/crates/wickra)
 [![PyPI](https://img.shields.io/pypi/v/wickra.svg?logo=pypi&color=blue)](https://pypi.org/project/wickra/)
 [![npm](https://img.shields.io/npm/v/wickra.svg?logo=npm&color=red)](https://www.npmjs.com/package/wickra)
+[![NuGet](https://img.shields.io/nuget/v/Wickra.svg?logo=nuget&color=blue)](https://www.nuget.org/packages/Wickra)
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT_OR_Apache--2.0-blue)](#license)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/wickra-lib/wickra/badge)](https://scorecard.dev/viewer/?uri=github.com/wickra-lib/wickra)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13094/badge)](https://www.bestpractices.dev/projects/13094)
