@@ -13,6 +13,36 @@ set -e
 
 inc=""
 lib=""
+
+# WebAssembly (r-universe / webR): there is no prebuilt wasm C ABI to download,
+# but the build image ships cargo (/usr/local/cargo/bin) and emscripten
+# (EMSDK on PATH), so build the C ABI staticlib from source for
+# wasm32-unknown-emscripten right here. Building it in the same image with the
+# same emscripten avoids any ABI/version mismatch a prebuilt lib would risk.
+# rayon (threads) is dropped via --no-default-features; the indicators are pure
+# computation, so the serial path is functionally identical.
+if [ "$(uname -s)" = "Emscripten" ]; then
+  version=$(sed -n 's/^Version:[[:space:]]*//p' DESCRIPTION)
+  echo "wickra: building C ABI from source for wasm32-unknown-emscripten (v${version})"
+  build=$(mktemp -d)
+  url="https://github.com/wickra-lib/wickra/archive/refs/tags/v${version}.tar.gz"
+  "${R_HOME}/bin/Rscript" -e "download.file('${url}', '${build}/src.tar.gz', mode = 'wb', quiet = TRUE)" \
+    || { echo "wickra: failed to download source ${url}"; exit 1; }
+  "${R_HOME}/bin/Rscript" -e "untar('${build}/src.tar.gz', exdir = '${build}')"
+  root="${build}/wickra-${version}"
+  rustup target add wasm32-unknown-emscripten 2>/dev/null || true
+  ( cd "${root}" && cargo build -p wickra-c --release \
+      --target wasm32-unknown-emscripten --no-default-features ) \
+    || { echo "wickra: cargo wasm build failed"; exit 1; }
+  cp "${root}/bindings/c/include/wickra.h" src/wickra.h
+  cp "${root}/target/wasm32-unknown-emscripten/release/libwickra.a" src/libwickra.a
+  rm -rf "${build}"
+  # The static archive is linked into the package object; no shared lib to
+  # bundle and no rpath needed.
+  sed "s|@WICKRA_RPATH@||" src/Makevars.in > src/Makevars
+  exit 0
+fi
+
 if [ -n "${WICKRA_INCLUDE_DIR}" ] && [ -n "${WICKRA_LIB_DIR}" ]; then
   echo "wickra: using C ABI from WICKRA_INCLUDE_DIR / WICKRA_LIB_DIR (dev override)"
   inc="${WICKRA_INCLUDE_DIR}"
