@@ -1,0 +1,12 @@
+# .NET build output
+bin/
+obj/
+*.user
+
+# NuGet packaging output
+*.nupkg
+*.snupkg
+
+# Native libraries staged for packaging (produced by the release pipeline from
+# the wickra-c-<triple>.tar.gz assets; never committed to source).
+Wickra/runtimes/

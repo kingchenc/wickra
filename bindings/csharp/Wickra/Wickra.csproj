@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RootNamespace>Wickra</RootNamespace>
+    <AssemblyName>Wickra</AssemblyName>
+
+    <!-- NuGet package metadata -->
+    <PackageId>Wickra</PackageId>
+    <Authors>kingchenc</Authors>
+    <Description>High-performance streaming technical-analysis indicators (514 indicators) for .NET, backed by the native Rust core via the Wickra C ABI.</Description>
+    <PackageLicenseExpression>MIT OR Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/wickra-lib/wickra</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/wickra-lib/wickra</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>technical-analysis;indicators;trading;finance;streaming;ffi;native</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" Condition="Exists('README.md')" />
+  </ItemGroup>
+
+  <!--
+    Native libraries are packed under runtimes/<rid>/native/ by the release pipeline,
+    which unpacks the wickra-c-<triple>.tar.gz assets into the matching RID folders.
+    For local development and tests the natives are resolved from the cargo target dir
+    via WickraNative's DllImportResolver.
+  -->
+  <ItemGroup>
+    <None Include="runtimes/**/native/*" Pack="true" PackagePath="runtimes" Condition="Exists('runtimes')" />
+  </ItemGroup>
+
+</Project>
