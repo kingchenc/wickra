@@ -149,7 +149,7 @@ jobs:
           # actually live (Cloudflare Pages, P8.1); merging this PR is therefore
           # gated on the domain resolving, otherwise the About link would 404.
           homepage="https://docs.wickra.org"
-          desc="Streaming-first technical indicators with a Rust core and Python, Node.js, WebAssembly, and C ABI bindings. ${n} indicators, O(1) per-tick updates, no system dependencies. Drop-in TA-Lib replacement."
+          desc="Streaming-first technical indicators with a Rust core and Python, Node.js, WebAssembly, C ABI, and .NET bindings. ${n} indicators, O(1) per-tick updates, no system dependencies. Drop-in TA-Lib replacement."
           # Enforce the homepage unconditionally — it is a constant, so this both
           # corrects the stale kingchenc URL and self-heals any future drift.
           # Same Administration-write permission as --description (no extra scope).

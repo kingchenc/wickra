@@ -18,8 +18,8 @@
 **Streaming-first technical indicators. Install with `pip install wickra` — no system dependencies.**
 
 Wickra is a multi-language technical-analysis library with a Rust core and
-native bindings for Python, Node.js and WebAssembly, plus a C ABI that any
-C-capable language (C, C++, and beyond) links against. Every indicator is a
+native bindings for Python, Node.js and WebAssembly, plus a C ABI that C, C++,
+C# / .NET and any other C-capable language links against. Every indicator is a
 state machine that updates in O(1) per new data point, so live trading bots and
 historical backtests share the exact same implementation.
 
@@ -168,8 +168,9 @@ as one column each. `Doji` is direction-less by default (`+1.0` / `0.0`);
 construct it in signed mode (`Doji::new().signed()`, `Doji(signed=True)`,
 `new Doji(true)`) for a dragonfly / gravestone `±1` reading.
 
-Adding a new indicator means implementing one trait in Rust; all five bindings
-inherit it automatically (the C ABI is generated from the core).
+Adding a new indicator means implementing one trait in Rust; every binding
+inherits it automatically (the C ABI — and the C# binding generated from it —
+regenerate from the core).
 
 ## Languages
 
@@ -180,6 +181,7 @@ inherit it automatically (the C ABI is generated from the core).
 | Browser / WASM    | `npm install wickra-wasm`                     | `examples/wasm/index.html` |
 | Rust              | `cargo add wickra`                            | `examples/rust/src/bin/backtest.rs` |
 | C / C++ (C ABI)   | header + library, see [`bindings/c`](bindings/c) | `examples/c/streaming.c` |
+| C# / .NET (C ABI) | `dotnet add package Wickra`, see [`bindings/csharp`](bindings/csharp) | `examples/csharp/streaming` |
 
 Each binding ships several runnable examples (streaming, backtest, live feed);
 [`examples/README.md`](examples/README.md) is the full cross-language index.
@@ -249,14 +251,16 @@ wickra/
 │   ├── python/              PyO3 + maturin (publishes on PyPI)
 │   ├── node/                napi-rs (publishes on npm)
 │   ├── wasm/                wasm-bindgen (browsers, bundlers, Node)
-│   └── c/                   C ABI (cdylib + staticlib) + generated include/wickra.h
+│   ├── c/                   C ABI (cdylib + staticlib) + generated include/wickra.h
+│   └── csharp/              .NET binding over the C ABI (publishes on NuGet)
 ├── examples/                examples/README.md indexes every language
 │   ├── data/                real BTCUSDT OHLCV datasets, one per timeframe
 │   ├── rust/                Rust workspace member (`wickra-examples`)
 │   ├── python/              backtest, live trading, parallel assets, multi-tf
 │   ├── node/                streaming, backtest, live trading (load `wickra`)
 │   ├── wasm/                browser demo for `wickra-wasm`
-│   └── c/                   C smoke + streaming, C++ RAII wrapper
+│   ├── c/                   C smoke + streaming, C++ RAII wrapper
+│   └── csharp/              streaming, backtest, strategies (load `Wickra`)
 └── .github/workflows/       CI and release pipelines
 ```
 
@@ -289,6 +293,9 @@ cd bindings/node && npm install && npm run build && npm test
 cargo build -p wickra-c --release
 cmake -S examples/c -B examples/c/build -DWICKRA_LIB_DIR="$PWD/target/release"
 cmake --build examples/c/build && ctest --test-dir examples/c/build --output-on-failure
+
+# C# / .NET binding (requires the .NET 8 SDK; links the C ABI above)
+dotnet test bindings/csharp/Wickra.Tests/Wickra.Tests.csproj
 ```
 
 ## Testing

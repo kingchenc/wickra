@@ -22,6 +22,7 @@ licensed as above, without any additional terms or conditions.
 | `bindings/node` | napi-rs bindings (`wickra` on npm). |
 | `bindings/wasm` | wasm-bindgen bindings (`wickra-wasm` on npm). |
 | `bindings/c` | C ABI — `cdylib` + `staticlib` + generated `include/wickra.h`. The hub for C / C++ and any C-capable language. |
+| `bindings/csharp` | .NET binding over the C ABI (`Wickra` on NuGet) — `[LibraryImport]` P/Invoke generated from `wickra.h`. |
 | `examples/` | Runnable examples. |
 | `docs/` | Pointer to the documentation site (docs.wickra.org); the docs live in the `wickra-lib/wickra-docs` repo. |
 
@@ -105,7 +106,8 @@ installed. Dependabot also keeps the `.github/requirements` pins current.
 - **Bindings.** A change to a public indicator API must be mirrored across the
   Python, Node, and WASM bindings, including their type stubs / `.d.ts`. The C ABI
   (`bindings/c`) is generated from the core, so regenerate it from the core and
-  commit `src/lib.rs` + `include/wickra.h`.
+  commit `src/lib.rs` + `include/wickra.h`. The C# binding (`bindings/csharp`) is
+  generated from `wickra.h`, so regenerate and commit its `Generated/*.g.cs` too.
 - **Docs.** Update the relevant page on the
   [documentation site](https://docs.wickra.org) and the
   `README.md` when behaviour or the public API changes. The docs live in

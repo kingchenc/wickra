@@ -6,3 +6,7 @@
 # check (regenerate + `git diff`) never trips on a CRLF normalization.
 bindings/c/include/wickra.h text eol=lf
 
+# C# sources (including the generated binding) are pinned to LF so the committed
+# files stay stable regardless of the committer's autocrlf setting.
+*.cs text eol=lf
+
