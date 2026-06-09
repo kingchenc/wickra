@@ -332,12 +332,14 @@ jobs:
             exit 0
           fi
           cd docs-ver
-          # Published-versions table rows (crates.io / PyPI / npm): replace only the
-          # version number, leaving the trailing padding + pipe intact. The '.' in
-          # the quickstart pattern matches the literal backtick around the version
-          # without needing a backtick in this shell string. Historical "since
-          # X.Y.Z" references contain no such anchor and are never matched.
-          sed -i -E "s/^(\| (crates\.io|PyPI|npm) .*\| )[0-9]+\.[0-9]+\.[0-9]+/\1${version}/" overview.md
+          # Published-versions table rows (all registries): replace only the
+          # version number, leaving the trailing padding + pipe intact. The
+          # registry name is matched whether plain or wrapped in a markdown link
+          # (\[?...\]?). The '.' in the quickstart pattern matches the literal
+          # backtick around the version without needing a backtick in this shell
+          # string. Historical "since X.Y.Z" references contain no such anchor and
+          # are never matched.
+          sed -i -E "s/^(\| \[?(crates\.io|PyPI|npm|NuGet|Maven Central|Go|r-universe)\]?.*\| )[0-9]+\.[0-9]+\.[0-9]+/\1${version}/" overview.md
           sed -i -E "s/(published crate is at version .)[0-9]+\.[0-9]+\.[0-9]+/\1${version}/" Quickstart-Rust.md
           if git diff --quiet; then
             echo "Docs version already at ${version}."
