@@ -861,8 +861,10 @@ jobs:
           r-version: "release"
           use-public-rspm: true
 
+      # Use the repos configured by setup-r (use-public-rspm) so Linux installs
+      # binary packages — building testthat's deps from source is slow and flaky.
       - name: Install test dependency
-        run: Rscript -e 'install.packages("testthat", repos = "https://cloud.r-project.org")'
+        run: Rscript -e 'install.packages("testthat")'
 
       - name: Install and test the R binding
         shell: bash
