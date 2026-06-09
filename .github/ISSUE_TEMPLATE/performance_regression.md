@@ -13,7 +13,7 @@ assignees: []
 ## Affected code path
 
 - Indicator / API: `e.g. EMA.update`
-- Binding: `Rust / Python / Node / Wasm / C ABI / C# (.NET)`
+- Binding: `Rust / Python / Node / Wasm / C ABI / C# (.NET) / Go`
 - Hot loop or one-shot call?
 
 ## Versions compared

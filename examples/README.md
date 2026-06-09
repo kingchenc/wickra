@@ -69,6 +69,28 @@ The offline examples run on deterministic synthetic data (and under CI on all
 three OSes); `fetch_btcusdt` and `live_binance` reach the network and are built
 but not run in CI.
 
+## Go — `examples/go/`
+
+Build the C ABI library first (`cargo build -p wickra-c --release`) and stage it
+under `bindings/go/lib/` (see the [Go binding README](../bindings/go)), then run
+any example from the `examples/go` module.
+
+| Example | What it does | Run |
+| --- | --- | --- |
+| `streaming` | Feed a synthetic price series through SMA / EMA / RSI / MACD tick by tick. | `go run ./streaming` |
+| `backtest` | Basket of indicators over an OHLCV series (CSV arg or synthetic). | `go run ./backtest <ohlcv.csv>` |
+| `multi_timeframe` | Resample a 1-minute series to 5m / 15m and print an indicator per timeframe. | `go run ./multi_timeframe` |
+| `parallel_assets` | SMA(20) batch over a panel, serial vs goroutine fan-out, with speedup. | `go run ./parallel_assets 200 5000` |
+| `strategy_rsi_mean_reversion` | RSI(14) mean-reversion with PnL / Sharpe / max-DD summary. | `go run ./strategy_rsi_mean_reversion` |
+| `strategy_macd_adx` | Trend-follower: MACD crossover entries gated by ADX(14) > 20. | `go run ./strategy_macd_adx` |
+| `strategy_bollinger_squeeze` | Bollinger-squeeze breakout with an ATR(14) trailing stop. | `go run ./strategy_bollinger_squeeze` |
+| `fetch_btcusdt` | Download real BTCUSDT klines from the Binance REST API into a CSV. | `go run ./fetch_btcusdt` |
+| `live_binance` | Stream live Binance klines through EMA(20) over a WebSocket. | `go run ./live_binance` |
+
+The offline examples run on deterministic synthetic data (and under CI on all
+three OSes); `fetch_btcusdt` and `live_binance` reach the network and are built
+but not run in CI.
+
 ## Python — `examples/python/`
 
 | Example | What it does | Run |

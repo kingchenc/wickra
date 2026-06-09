@@ -9,7 +9,7 @@
 wickra-wasm` — pure WebAssembly, runs anywhere a modern JS engine does.**
 
 Wickra is a multi-language technical-analysis library with a Rust core and
-bindings for Python, Node.js and WebAssembly, plus a C ABI for C/C++, C# and any
+bindings for Python, Node.js and WebAssembly, plus a C ABI for C/C++, C#, Go and any
 other C-capable language. Every indicator is an O(1)
 streaming state machine, so live trading dashboards and historical backtests
 share the exact same implementation. This package is the WebAssembly binding
