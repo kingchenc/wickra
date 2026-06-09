@@ -1,0 +1,3 @@
+# Data fetched at runtime by fetch_btcusdt.R
+data/
+*.Rout
