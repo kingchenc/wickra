@@ -33,4 +33,4 @@ import wickra as ta
 ## Environment (Only if relevant)
 
 - Wickra version: `e.g. 0.4.2`
-- Binding: `Rust / Python / Node / Wasm`
+- Binding: `Rust / Python / Node / Wasm / C ABI`

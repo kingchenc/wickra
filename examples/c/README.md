@@ -50,6 +50,28 @@ Expected output:
 OK: wickra C ABI smoke passed (SMA streaming + batch + reset + NULL-safety + free)
 ```
 
+## The examples
+
+| Example | What it does |
+|---------|--------------|
+| `smoke.c` | Links the boundary and asserts SMA streaming / batch / reset / NULL-safety values. |
+| `streaming.c` | Feeds a synthetic price series through SMA / EMA / RSI / MACD tick by tick. |
+| `backtest.c` | Runs an indicator basket over an OHLCV CSV (defaults to the bundled daily dataset). |
+| `multi_timeframe.c` | Resamples the bundled 1-minute CSV to 5m / 15m / 1h / 4h / 1d and prints indicators per timeframe. |
+| `parallel_assets.c` | Serial vs OpenMP fan-out over a synthetic panel (one handle per asset), with speedup. |
+| `strategy_rsi_mean_reversion.c` | Hourly RSI(14) mean-reversion with a PnL / Sharpe / max-drawdown summary. |
+| `strategy_macd_adx.c` | Hourly MACD crossover gated by ADX(14) > 20. |
+| `strategy_bollinger_squeeze.c` | Daily Bollinger-squeeze breakout with an ATR(14) stop. |
+| `fetch_btcusdt.c` | Downloads BTCUSDT klines from the Binance REST API into `examples/data/` (shells out to `curl`). |
+| `live_binance.c` | Polls the Binance REST klines endpoint via `curl` and streams closed candles through RSI(14). |
+| `smoke.cpp` | C++ RAII via `wickra::Handle` from [`wickra.hpp`](../../bindings/c/include/wickra.hpp). |
+
+`ctest` builds and runs every example except `fetch_btcusdt` and `live_binance`,
+which reach the network and are built only — run those two by hand. The C ABI
+exposes only the indicators, not the `wickra-data` IO layer, so the examples read
+CSV ([`wickra_csv.h`](wickra_csv.h)) and resample themselves; the network ones
+shell out to the system `curl` rather than adding an HTTP/TLS dependency.
+
 ## Usage shape
 
 Every indicator follows the same five-function pattern over an opaque handle:

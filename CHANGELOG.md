@@ -10,8 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **C ABI (`bindings/c`)** — a `cdylib` + `staticlib` plus a generated
   `include/wickra.h` exposing all 514 indicators and 10 bar builders over an
   opaque-handle C ABI: the hub any C-capable language (C, C++, Go, C#, Java, R)
-  links against, complementing the native Python/Node/WASM bindings. Ships C
-  smoke + streaming examples and an optional `wickra.hpp` C++ RAII wrapper.
+  links against, complementing the native Python/Node/WASM bindings. Ships a
+  full example suite (streaming, backtest, multi-timeframe, OpenMP parallel
+  fan-out, three educational strategies, and Binance fetch/live over `curl`)
+  mirroring the other bindings, plus an optional `wickra.hpp` C++ RAII wrapper.
 
 ## [0.7.4] - 2026-06-08
 - **Three-Line Break** — Three-line-break bars (reversal needs N-line break) (`THREE_LINE_BREAK_BARS`).

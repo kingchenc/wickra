@@ -22,7 +22,7 @@
 - [ ] `cargo clippy --workspace --all-targets -- -D warnings` is clean.
 - [ ] `cargo test --workspace` passes.
 - [ ] New behaviour has tests; bug fixes have a regression test.
-- [ ] Public API changes are mirrored in the Python / Node / WASM bindings
+- [ ] Public API changes are mirrored in the Python / Node / WASM bindings and the C ABI is regenerated
       and their type stubs (If applicable).
 - [ ] The relevant page on the [documentation site](https://docs.wickra.org)
       and the `README.md` are updated (If applicable). Docs edits go to a

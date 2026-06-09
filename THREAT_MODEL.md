@@ -3,8 +3,9 @@
 This document describes Wickra's attack surface and the threats considered,
 together with their mitigations. It complements the security assurance case in
 [`SECURITY.md`](SECURITY.md). Wickra is a computational technical-analysis
-library (a Rust core with Python, Node.js and WebAssembly bindings), not a
-network service or trading system; the attack surface is correspondingly small.
+library (a Rust core with Python, Node.js and WebAssembly bindings plus a C ABI),
+not a network service or trading system; the attack surface is correspondingly
+small.
 
 ## Assets
 
@@ -31,6 +32,7 @@ network service or trading system; the attack surface is correspondingly small.
 | Threat | Mitigation |
 | --- | --- |
 | Memory-safety exploit (buffer overflow, UAF) via crafted input | Pure safe Rust; `unsafe` is forbidden/minimised, so the compiler precludes these classes. |
+| Misuse of the C ABI FFI boundary (invalid/dangling handle, undersized batch buffer) | The C ABI (`bindings/c`) is the sole `unsafe` surface. Its shim adds no logic, NULL-checks every handle (returning `NaN`/no-op), writes only into caller-sized buffers, and catches panics so none cross the boundary. A caller passing a non-NULL but dangling pointer is undefined behaviour by C's own contract — out of scope, the same as any C library. |
 | Denial of service via malformed/degenerate input (NaN, infinities, extreme magnitudes) | Indicators reject non-finite inputs and validate parameters at construction; update paths are exercised by coverage-guided fuzzing and unit tests for edge cases. |
 | Silently incorrect results | 100% line coverage on the core crate; reference-value tests against known-good sources; streaming/batch parity tests. |
 | Integer overflow / panics | `clippy::pedantic` with `-D warnings`; debug assertions and overflow checks enabled in test/fuzz builds. |

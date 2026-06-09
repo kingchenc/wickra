@@ -31,8 +31,22 @@ the examples via CMake:
 | Example | What it does | CMake target |
 | --- | --- | --- |
 | `smoke.c` | Links the generated header + library and asserts SMA streaming / batch values across the boundary. | `smoke` |
-| `streaming.c` | Feed a tick stream through an EMA, printing each value (NaN during warmup). | `streaming` |
+| `streaming.c` | Feed a synthetic price series through SMA / EMA / RSI / MACD tick by tick. | `streaming` |
+| `backtest.c` | Basket of indicators over an OHLCV CSV; defaults to the bundled BTCUSDT daily dataset. | `backtest` |
+| `multi_timeframe.c` | Resample the bundled 1-minute CSV to 5m / 15m / 1h / 4h / 1d and print indicators per timeframe. | `multi_timeframe` |
+| `parallel_assets.c` | Serial vs OpenMP fan-out over a synthetic panel (one handle per asset), with speedup. | `parallel_assets` |
+| `strategy_rsi_mean_reversion.c` | Hourly BTCUSDT mean-reversion using RSI(14) thresholds, with PnL / Sharpe / max-DD summary. | `strategy_rsi_mean_reversion` |
+| `strategy_macd_adx.c` | Hourly BTCUSDT trend-follower: MACD crossover entries gated by ADX(14) > 20. | `strategy_macd_adx` |
+| `strategy_bollinger_squeeze.c` | Daily BTCUSDT Bollinger-squeeze breakout with ATR(14) stop. | `strategy_bollinger_squeeze` |
+| `fetch_btcusdt.c` | Download real BTCUSDT klines from the Binance REST API into `examples/data/` (shells out to `curl`). | `fetch_btcusdt` |
+| `live_binance.c` | Poll the Binance REST klines endpoint via `curl` and stream closed candles through RSI(14). | `live_binance` |
 | `smoke.cpp` | C++ RAII via `wickra::Handle` from [`wickra.hpp`](../bindings/c/include/wickra.hpp): construct, move, auto-free. | `cpp_smoke` |
+
+The data-driven examples (`backtest`, `multi_timeframe`, `parallel_assets`, the
+three `strategy_*`) build against the bundled datasets and run under `ctest`.
+`fetch_btcusdt` and `live_binance` reach the network, so they are built but not
+run in CI; run them by hand. `parallel_assets` links OpenMP when the toolchain
+provides it and falls back to a single-threaded run otherwise.
 
 ## Python — `examples/python/`
 
