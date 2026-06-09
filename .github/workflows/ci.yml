@@ -868,23 +868,24 @@ jobs:
 
       - name: Install and test the R binding
         shell: bash
-        # github.workspace is a backslash path on Windows; configure.win (sh) and
-        # mingw need forward slashes. On Linux/macOS the rpath points at
-        # WICKRA_LIB_DIR; export the loader path too as a belt-and-suspenders.
+        # github.workspace is a backslash path on Windows; configure(.win) (sh) and
+        # mingw need forward slashes. WICKRA_*_DIR makes configure use the locally
+        # built C ABI (dev override) instead of downloading the release asset, so
+        # CI is version-independent. Deliberately do NOT set LD_LIBRARY_PATH /
+        # DYLD_LIBRARY_PATH: the lib is bundled into the package and must resolve
+        # via the rpath ($ORIGIN / @loader_path) baked by configure — that is the
+        # self-contained install path real users (and r-universe) get.
         run: |
           export WICKRA_INCLUDE_DIR="${WICKRA_INCLUDE_DIR//\\//}"
           export WICKRA_LIB_DIR="${WICKRA_LIB_DIR//\\//}"
-          export LD_LIBRARY_PATH="$WICKRA_LIB_DIR:$LD_LIBRARY_PATH"
-          export DYLD_LIBRARY_PATH="$WICKRA_LIB_DIR:$DYLD_LIBRARY_PATH"
           R CMD INSTALL bindings/r
           Rscript -e 'library(testthat); library(wickra); test_dir("bindings/r/tests/testthat", stop_on_failure = TRUE)'
 
       - name: Run the offline R examples
         shell: bash
+        # No loader-path exports: the installed package is self-contained (bundled
+        # lib + rpath), so the examples exercise exactly what end users run.
         run: |
-          export WICKRA_LIB_DIR="${WICKRA_LIB_DIR//\\//}"
-          export LD_LIBRARY_PATH="$WICKRA_LIB_DIR:$LD_LIBRARY_PATH"
-          export DYLD_LIBRARY_PATH="$WICKRA_LIB_DIR:$DYLD_LIBRARY_PATH"
           cd examples/r
           for f in streaming backtest multi_timeframe parallel_assets \
                    strategy_rsi_mean_reversion strategy_macd_adx strategy_bollinger_squeeze; do

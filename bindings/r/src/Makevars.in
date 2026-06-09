@@ -1,0 +1,6 @@
+# Generated into src/Makevars by ../configure (the @WICKRA_RPATH@ token is
+# substituted per-OS: $ORIGIN on Linux, @loader_path on macOS). The C ABI header
+# (wickra.h) and shared library (libwickra.so/.dylib) are staged into src/ by
+# configure, so the package object links against the bundled lib.
+PKG_CPPFLAGS = -I.
+PKG_LIBS = -L. -lwickra @WICKRA_RPATH@

@@ -1,5 +1,5 @@
 # Link the import library built by configure.win (references wickra_abi.dll, not
-# the package's own wickra.dll). The C ABI header dir is passed via
-# WICKRA_INCLUDE_DIR at build time.
-PKG_CPPFLAGS = -I$(WICKRA_INCLUDE_DIR)
+# the package's own wickra.dll). The C ABI header (wickra.h) is staged into src/
+# by configure.win, so the include path is the source dir itself.
+PKG_CPPFLAGS = -I.
 PKG_LIBS = libwickra_abi.dll.a
