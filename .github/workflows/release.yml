@@ -624,6 +624,75 @@ jobs:
           path: wickra-c-${{ matrix.target }}.tar.gz
           if-no-files-found: error
 
+  # Pack and publish the .NET binding to NuGet. Independent of the GitHub-release
+  # job so a C# hiccup never blocks the C/C++ asset release. The push step is
+  # gated on the NUGET_API_KEY secret, so until it is configured this job still
+  # packs (and uploads the package as an artifact) but does not publish.
+  csharp-publish:
+    name: Publish to NuGet
+    needs: c-abi-build
+    runs-on: ubuntu-latest
+    environment: release
+    env:
+      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Download the C ABI native libraries
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: c-abi-*
+          path: c-abi-artifacts
+
+      - name: Stage native libraries into runtimes/<rid>/native
+        shell: bash
+        run: |
+          set -e
+          declare -A RID=(
+            [x86_64-unknown-linux-gnu]=linux-x64
+            [aarch64-unknown-linux-gnu]=linux-arm64
+            [x86_64-apple-darwin]=osx-x64
+            [aarch64-apple-darwin]=osx-arm64
+            [x86_64-pc-windows-msvc]=win-x64
+            [aarch64-pc-windows-msvc]=win-arm64
+          )
+          base=bindings/csharp/Wickra/runtimes
+          for target in "${!RID[@]}"; do
+            archive=$(find c-abi-artifacts -name "wickra-c-$target.tar.gz" | head -1)
+            if [ -z "$archive" ]; then
+              echo "::error::missing native artifact for $target"; exit 1
+            fi
+            tmp=$(mktemp -d); tar -xzf "$archive" -C "$tmp"
+            dest="$base/${RID[$target]}/native"; mkdir -p "$dest"
+            for f in libwickra.so libwickra.dylib wickra.dll; do
+              src=$(find "$tmp" -name "$f" | head -1)
+              [ -n "$src" ] && cp "$src" "$dest/"
+            done
+            echo "staged ${RID[$target]}:"; ls -l "$dest"
+          done
+
+      - name: Pack
+        shell: bash
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          dotnet pack bindings/csharp/Wickra/Wickra.csproj -c Release -p:Version="$version" -o nupkg
+
+      - name: Push to NuGet
+        if: ${{ env.NUGET_API_KEY != '' }}
+        shell: bash
+        run: |
+          dotnet nuget push "nupkg/*.nupkg" --api-key "$NUGET_API_KEY" \
+            --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+      - name: Upload the NuGet package as a build artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: nuget-package
+          path: nupkg/*.nupkg
+          if-no-files-found: error
+
   github-release:
     name: Attach assets to the draft GitHub Release
     needs: [cargo-publish, python-publish, node-publish, wasm-publish, c-abi-build]

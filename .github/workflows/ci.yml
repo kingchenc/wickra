@@ -677,6 +677,56 @@ jobs:
           cmake --build examples/c/build --config Release
           ctest --test-dir examples/c/build -C Release --output-on-failure
 
+  csharp:
+    name: C# on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable branch, 2026-03-27
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        continue-on-error: true # cache is an optimisation; never block on a stuck/slow restore
+        timeout-minutes: 6
+
+      # The binding links against the C ABI hub at runtime; build it first so the
+      # DllImportResolver finds target/release/wickra.{dll,so,dylib}. .NET 8 SDK is
+      # preinstalled on the GitHub runners, so no setup-dotnet step is needed.
+      - name: Build the C ABI library
+        run: cargo build -p wickra-c --release
+
+      - name: .NET info
+        run: dotnet --info
+
+      - name: Test the C# binding
+        run: dotnet test bindings/csharp/Wickra.Tests/Wickra.Tests.csproj -c Release
+
+      - name: Build the C# examples
+        shell: bash
+        run: |
+          for d in streaming backtest multi_timeframe parallel_assets \
+                   strategy_rsi_mean_reversion strategy_macd_adx strategy_bollinger_squeeze \
+                   fetch_btcusdt live_binance; do
+            dotnet build "examples/csharp/$d" -c Release
+          done
+
+      # Run only the offline examples (fetch_btcusdt / live_binance need network).
+      - name: Run the offline C# examples
+        shell: bash
+        run: |
+          for d in streaming backtest multi_timeframe parallel_assets \
+                   strategy_rsi_mean_reversion strategy_macd_adx strategy_bollinger_squeeze; do
+            dotnet run --project "examples/csharp/$d" -c Release --no-build
+          done
+
   # The cross-library benchmark has moved to a dedicated scheduled workflow
   # (.github/workflows/bench.yml) — see audit finding R10. It runs nightly
   # at 03:00 UTC and on-demand via `workflow_dispatch`, and is no longer on
