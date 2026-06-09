@@ -866,9 +866,12 @@ jobs:
 
       - name: Install and test the R binding
         shell: bash
-        # On Linux/macOS the rpath points at WICKRA_LIB_DIR; export the loader path
-        # too as a belt-and-suspenders. On Windows the package bundles the DLL.
+        # github.workspace is a backslash path on Windows; configure.win (sh) and
+        # mingw need forward slashes. On Linux/macOS the rpath points at
+        # WICKRA_LIB_DIR; export the loader path too as a belt-and-suspenders.
         run: |
+          export WICKRA_INCLUDE_DIR="${WICKRA_INCLUDE_DIR//\\//}"
+          export WICKRA_LIB_DIR="${WICKRA_LIB_DIR//\\//}"
           export LD_LIBRARY_PATH="$WICKRA_LIB_DIR:$LD_LIBRARY_PATH"
           export DYLD_LIBRARY_PATH="$WICKRA_LIB_DIR:$DYLD_LIBRARY_PATH"
           R CMD INSTALL bindings/r
@@ -877,6 +880,7 @@ jobs:
       - name: Run the offline R examples
         shell: bash
         run: |
+          export WICKRA_LIB_DIR="${WICKRA_LIB_DIR//\\//}"
           export LD_LIBRARY_PATH="$WICKRA_LIB_DIR:$LD_LIBRARY_PATH"
           export DYLD_LIBRARY_PATH="$WICKRA_LIB_DIR:$DYLD_LIBRARY_PATH"
           cd examples/r
