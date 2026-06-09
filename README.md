@@ -97,7 +97,8 @@ Every other library forces one of those compromises. Wickra doesn't:
 
 | Library          | Install     | Streaming   | Languages                   | Indicators | Active |
 |------------------|-------------|-------------|-----------------------------|-----------:|--------|
-| **★&nbsp;Wickra**| **clean**   | **yes, O(1)** | **Python · Node · WASM · Rust · C** | **514** | **yes** |
+| **★&nbsp;Wickra**| **clean**   | **yes, O(1)** | **Rust · Python · Node · WASM** | **514** | **yes** |
+|                  |             |               | **C · C#**                      |            |        |
 | kand             | clean       | yes         | Python · WASM · Rust        |       ~60  | yes    |
 | ta-rs            | clean       | yes         | Rust only                   |       ~30  | stale  |
 | yata             | clean       | partial     | Rust only                   |       ~35  | yes    |
