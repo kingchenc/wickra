@@ -10,6 +10,9 @@
 [![PyPI](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/pypi.svg)](https://pypi.org/project/wickra/)
 [![npm](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/npm.svg)](https://www.npmjs.com/package/wickra)
 [![NuGet](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/nuget.svg)](https://www.nuget.org/packages/Wickra)
+[![Maven Central](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/maven.svg)](https://central.sonatype.com/artifact/org.wickra/wickra)
+[![Go module](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/go.svg)](https://pkg.go.dev/github.com/wickra-lib/wickra-go)
+[![R-universe](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/r-universe.svg)](https://wickra-lib.r-universe.dev)
 [![License: MIT OR Apache-2.0](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/license.svg)](#license)
 [![OpenSSF Scorecard](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/scorecard.svg)](https://scorecard.dev/viewer/?uri=github.com/wickra-lib/wickra)
 [![OpenSSF Best Practices](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/best-practices.svg)](https://www.bestpractices.dev/projects/13094)
@@ -52,6 +55,7 @@ Full documentation lives at **[docs.wickra.org](https://docs.wickra.org)**:
   [C](https://docs.wickra.org/Quickstart-C),
   [C#](https://docs.wickra.org/Quickstart-CSharp),
   [Go](https://docs.wickra.org/Quickstart-Go),
+  [Java](https://docs.wickra.org/Quickstart-Java),
   [R](https://docs.wickra.org/Quickstart-R).
 - **Indicators** — a per-indicator deep dive (formula, parameters, warmup) for
   every one of the 514 indicators; start at the
@@ -102,8 +106,7 @@ Every other library forces one of those compromises. Wickra doesn't:
 
 | Library          | Install     | Streaming   | Languages                   | Indicators | Active |
 |------------------|-------------|-------------|-----------------------------|-----------:|--------|
-| **★&nbsp;Wickra**| **clean**   | **yes, O(1)** | **Rust · Python · Node · WASM** | **514** | **yes** |
-|                  |             |               | **C · C# · Go · Java · R**          |            |        |
+| **★&nbsp;Wickra**| **clean**   | **yes, O(1)** | **Rust · Python · Node · WASM · C · C# · Go · Java · R** | **514** | **yes** |
 | kand             | clean       | yes         | Python · WASM · Rust        |       ~60  | yes    |
 | ta-rs            | clean       | yes         | Rust only                   |       ~30  | stale  |
 | yata             | clean       | partial     | Rust only                   |       ~35  | yes    |
