@@ -16,23 +16,37 @@ cgo and exposes all 514 streaming-first indicators as idiomatic types.
 
 ## Install
 
+Use the published **`wickra-go`** module, which bundles the prebuilt C ABI
+library for every platform, so `go get` + `go build` works with no extra steps
+(a C compiler is still required, as the binding uses cgo):
+
 ```bash
-go get github.com/wickra-lib/wickra/bindings/go
+go get github.com/wickra-lib/wickra-go
 ```
 
-The binding uses cgo, so a C compiler is required, and it links against the
-prebuilt Wickra C ABI library. Build that library from the workspace and stage
-it under this package's `lib/` directory:
+```go
+import wickra "github.com/wickra-lib/wickra-go"
+```
+
+`wickra-go` is generated from this directory by the release pipeline: it mirrors
+the Go sources, the vendored C ABI header (`include/wickra.h`) and the prebuilt
+libraries under `lib/<goos>_<goarch>/`. On Linux/macOS the library path is baked
+in via rpath; on Windows the DLL must be discoverable at run time (next to the
+executable or on `PATH`).
+
+### Building from this repository (contributors)
+
+This `bindings/go` directory is the development source. To build it directly,
+compile the C ABI and stage the library into the per-platform directory cgo
+links against:
 
 ```bash
 cargo build -p wickra-c --release
-cp target/release/libwickra.so    bindings/go/lib/   # Linux
-cp target/release/libwickra.dylib bindings/go/lib/   # macOS
-cp target/release/wickra.dll      bindings/go/lib/   # Windows (also on PATH at run time)
+mkdir -p bindings/go/lib/linux_amd64                 # match your GOOS_GOARCH
+cp target/release/libwickra.so    bindings/go/lib/linux_amd64/    # Linux
+cp target/release/libwickra.dylib bindings/go/lib/darwin_arm64/   # macOS (arm64)
+cp target/release/wickra.dll      bindings/go/lib/windows_amd64/  # Windows
 ```
-
-On Linux and macOS the library path is baked in via rpath; on Windows the DLL
-must be discoverable at run time (next to the executable or on `PATH`).
 
 ## Quick start
 

@@ -11,10 +11,13 @@ bindings/c/include/wickra.h text eol=lf
 *.cs text eol=lf
 
 # Go sources (including the generated binding) are pinned to LF so gofmt's CI
-# check never trips on a CRLF checkout on Windows.
+# check never trips on a CRLF checkout on Windows. The vendored C ABI header is
+# a committed copy of bindings/c/include/wickra.h (the parent dir is outside the
+# Go module), pinned to LF so the drift check never trips on CRLF.
 *.go text eol=lf
 go.mod text eol=lf
 go.sum text eol=lf
+bindings/go/include/wickra.h text eol=lf
 
 # Java sources (including the generated binding) are pinned to LF so the
 # committed files stay stable regardless of the committer's autocrlf setting.
