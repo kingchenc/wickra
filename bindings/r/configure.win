@@ -1,0 +1,17 @@
+#!/bin/sh
+# Windows build: the package compiles to wickra.dll, which would collide with the
+# C ABI's own wickra.dll (the loader would resolve the import to the package
+# itself). Stage a renamed copy, wickra_abi.dll, into src/ and build a mingw
+# import library that references it by that name (objdump + dlltool, both shipped
+# with Rtools — no gendef/pexports needed). install.libs.R then bundles the DLL.
+set -e
+: "${WICKRA_LIB_DIR:?set WICKRA_LIB_DIR to the directory containing wickra.dll}"
+cp "${WICKRA_LIB_DIR}/wickra.dll" src/wickra_abi.dll
+{
+  echo 'LIBRARY wickra_abi.dll'
+  echo 'EXPORTS'
+  objdump -p src/wickra_abi.dll | awk '/\[ *[0-9]+\]/ {print $NF}' | grep '^wickra_'
+} > src/wickra_abi.def
+dlltool --input-def src/wickra_abi.def --dllname wickra_abi.dll \
+  --output-lib src/libwickra_abi.dll.a
+exit 0

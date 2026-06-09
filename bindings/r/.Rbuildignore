@@ -1,0 +1,8 @@
+^src/wickra_abi\.dll$
+^src/wickra_abi\.def$
+^src/libwickra_abi\.dll\.a$
+^src/.*\.o$
+^src/wickra\.dll$
+^src/wickra\.so$
+^src/symbols\.rds$
+^\.gitignore$

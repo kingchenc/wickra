@@ -1,0 +1,7 @@
+# Build artifacts and the configure.win-generated C ABI import shims.
+*.o
+*.so
+*.dll
+*.dll.a
+wickra_abi.def
+symbols.rds
