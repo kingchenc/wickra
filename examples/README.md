@@ -21,6 +21,19 @@ The Rust examples live in the `wickra-examples` workspace member crate.
 | `strategy_macd_adx.rs` | Hourly BTCUSDT trend-follower: MACD crossover entries gated by ADX(14) > 20. | `cargo run --release -p wickra-examples --bin strategy_macd_adx` |
 | `strategy_bollinger_squeeze.rs` | Daily BTCUSDT Bollinger-squeeze breakout with ATR(14) trailing stop. | `cargo run --release -p wickra-examples --bin strategy_bollinger_squeeze` |
 
+## C / C++ — `examples/c/`
+
+Build the library first (`cargo build -p wickra-c --release`), then build and run
+the examples via CMake:
+`cmake -S examples/c -B examples/c/build -DWICKRA_LIB_DIR="$PWD/target/release"` →
+`cmake --build examples/c/build` → `ctest --test-dir examples/c/build`.
+
+| Example | What it does | CMake target |
+| --- | --- | --- |
+| `smoke.c` | Links the generated header + library and asserts SMA streaming / batch values across the boundary. | `smoke` |
+| `streaming.c` | Feed a tick stream through an EMA, printing each value (NaN during warmup). | `streaming` |
+| `smoke.cpp` | C++ RAII via `wickra::Handle` from [`wickra.hpp`](../bindings/c/include/wickra.hpp): construct, move, auto-free. | `cpp_smoke` |
+
 ## Python — `examples/python/`
 
 | Example | What it does | Run |

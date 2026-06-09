@@ -1966,6 +1966,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "wickra-c"
+version = "0.7.4"
+dependencies = [
+ "wickra-core",
+]
+
+[[package]]
 name = "wickra-core"
 version = "0.7.4"
 dependencies = [

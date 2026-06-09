@@ -18,8 +18,9 @@
 **Streaming-first technical indicators. Install with `pip install wickra` — no system dependencies.**
 
 Wickra is a multi-language technical-analysis library with a Rust core and
-bindings for Python, Node.js, and WebAssembly. Every indicator is a state
-machine that updates in O(1) per new data point, so live trading bots and
+native bindings for Python, Node.js and WebAssembly, plus a C ABI that any
+C-capable language (C, C++, and beyond) links against. Every indicator is a
+state machine that updates in O(1) per new data point, so live trading bots and
 historical backtests share the exact same implementation.
 
 ```python
@@ -71,9 +72,10 @@ times to get there.
   breadth, Renko/Kagi/Point&Figure bars, Ehlers DSP cycles, risk/performance
   metrics — every single one updating in **O(1) per tick**. TA-Lib ships ~150 and
   none of them stream.
-- **One Rust core, four first-class targets.** Native **Python · Node.js ·
-  WebAssembly · Rust** — identical math, identical results, zero per-language
-  reimplementation and zero GIL bottleneck.
+- **One Rust core, five first-class targets.** Native **Python · Node.js ·
+  WebAssembly · Rust** plus a **C ABI** for C / C++ and any C-capable language —
+  identical math, identical results, zero per-language reimplementation and zero
+  GIL bottleneck.
 - **Correct by construction, not by hope.** Every `update` validates its input,
   runs a real warmup, and returns an `Option` so a single bad tick can't silently
   poison state. `batch == streaming` is **bit-exact, fuzzed and 100 %-line-covered
@@ -95,7 +97,7 @@ Every other library forces one of those compromises. Wickra doesn't:
 
 | Library          | Install     | Streaming   | Languages                   | Indicators | Active |
 |------------------|-------------|-------------|-----------------------------|-----------:|--------|
-| **★&nbsp;Wickra**| **clean**   | **yes, O(1)** | **Python · Node · WASM · Rust** | **514** | **yes** |
+| **★&nbsp;Wickra**| **clean**   | **yes, O(1)** | **Python · Node · WASM · Rust · C** | **514** | **yes** |
 | kand             | clean       | yes         | Python · WASM · Rust        |       ~60  | yes    |
 | ta-rs            | clean       | yes         | Rust only                   |       ~30  | stale  |
 | yata             | clean       | partial     | Rust only                   |       ~35  | yes    |
@@ -166,8 +168,8 @@ as one column each. `Doji` is direction-less by default (`+1.0` / `0.0`);
 construct it in signed mode (`Doji::new().signed()`, `Doji(signed=True)`,
 `new Doji(true)`) for a dragonfly / gravestone `±1` reading.
 
-Adding a new indicator means implementing one trait in Rust; all four bindings
-inherit it automatically.
+Adding a new indicator means implementing one trait in Rust; all five bindings
+inherit it automatically (the C ABI is generated from the core).
 
 ## Languages
 
@@ -177,12 +179,14 @@ inherit it automatically.
 | Node.js (napi-rs) | `npm install wickra`                          | `examples/node/backtest.js` |
 | Browser / WASM    | `npm install wickra-wasm`                     | `examples/wasm/index.html` |
 | Rust              | `cargo add wickra`                            | `examples/rust/src/bin/backtest.rs` |
+| C / C++ (C ABI)   | header + library, see [`bindings/c`](bindings/c) | `examples/c/streaming.c` |
 
 Each binding ships several runnable examples (streaming, backtest, live feed);
 [`examples/README.md`](examples/README.md) is the full cross-language index.
 
-The wickra-core crate is `unsafe`-forbidden, so every binding inherits a
-memory-safe implementation.
+The wickra-core crate is `unsafe`-forbidden, so the native bindings are
+memory-safe end to end. The C ABI runs the same safe core; only its thin FFI
+boundary uses `unsafe`, and the caller owns handle lifetimes (`_new` / `_free`).
 
 ## Rust API
 
@@ -244,13 +248,15 @@ wickra/
 ├── bindings/
 │   ├── python/              PyO3 + maturin (publishes on PyPI)
 │   ├── node/                napi-rs (publishes on npm)
-│   └── wasm/                wasm-bindgen (browsers, bundlers, Node)
+│   ├── wasm/                wasm-bindgen (browsers, bundlers, Node)
+│   └── c/                   C ABI (cdylib + staticlib) + generated include/wickra.h
 ├── examples/                examples/README.md indexes every language
 │   ├── data/                real BTCUSDT OHLCV datasets, one per timeframe
 │   ├── rust/                Rust workspace member (`wickra-examples`)
 │   ├── python/              backtest, live trading, parallel assets, multi-tf
 │   ├── node/                streaming, backtest, live trading (load `wickra`)
-│   └── wasm/                browser demo for `wickra-wasm`
+│   ├── wasm/                browser demo for `wickra-wasm`
+│   └── c/                   C smoke + streaming, C++ RAII wrapper
 └── .github/workflows/       CI and release pipelines
 ```
 
@@ -278,6 +284,11 @@ wasm-pack build bindings/wasm --target web --release --features panic-hook
 
 # Node binding (requires @napi-rs/cli)
 cd bindings/node && npm install && npm run build && npm test
+
+# C ABI (cdylib + staticlib + generated header)
+cargo build -p wickra-c --release
+cmake -S examples/c -B examples/c/build -DWICKRA_LIB_DIR="$PWD/target/release"
+cmake --build examples/c/build && ctest --test-dir examples/c/build --output-on-failure
 ```
 
 ## Testing

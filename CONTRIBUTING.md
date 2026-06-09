@@ -21,6 +21,7 @@ licensed as above, without any additional terms or conditions.
 | `bindings/python` | PyO3 bindings (`wickra` on PyPI). |
 | `bindings/node` | napi-rs bindings (`wickra` on npm). |
 | `bindings/wasm` | wasm-bindgen bindings (`wickra-wasm` on npm). |
+| `bindings/c` | C ABI — `cdylib` + `staticlib` + generated `include/wickra.h`. The hub for C / C++ and any C-capable language. |
 | `examples/` | Runnable examples. |
 | `docs/` | Pointer to the documentation site (docs.wickra.org); the docs live in the `wickra-lib/wickra-docs` repo. |
 
@@ -102,7 +103,9 @@ installed. Dependabot also keeps the `.github/requirements` pins current.
 - **Streaming parity.** An indicator's `batch` output must equal the sequence
   of `update` calls.
 - **Bindings.** A change to a public indicator API must be mirrored across the
-  Python, Node, and WASM bindings, including their type stubs / `.d.ts`.
+  Python, Node, and WASM bindings, including their type stubs / `.d.ts`. The C ABI
+  (`bindings/c`) is generated from the core, so regenerate it (the ScriptHelpers
+  `capi` wrapper) and commit `src/lib.rs` + `include/wickra.h`.
 - **Docs.** Update the relevant page on the
   [documentation site](https://docs.wickra.org) and the
   `README.md` when behaviour or the public API changes. The docs live in
