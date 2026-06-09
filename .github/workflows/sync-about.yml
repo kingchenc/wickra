@@ -86,10 +86,17 @@ jobs:
       # merge ref) so the counter check validates exactly what will land. On
       # push events we check out the default ref. No push is made, so a shallow
       # checkout is enough.
+      #
+      # Check out by head SHA, not head ref (branch name): a fast `gh pr merge
+      # --squash --delete-branch` deletes the head branch the moment the PR
+      # merges, often before this queued read-only check reaches its checkout.
+      # Fetching the now-gone `refs/heads/<branch>` then fails the run (exit 1).
+      # The head SHA stays reachable via `refs/pull/N/head` after the branch is
+      # gone, so the checkout — and the run — survives an instant merge.
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref }}
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
           repository: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name || github.repository }}
 
       - name: Count indicators
