@@ -5,6 +5,23 @@ All notable changes to Wickra are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-06-09
+### Added
+- **Standalone `wickra-go` module** — the Go binding is now mirrored to a
+  dedicated `github.com/wickra-lib/wickra-go` repository on every release, with
+  the prebuilt C ABI libraries committed per platform under
+  `lib/<goos>_<goarch>/` and the C ABI header vendored alongside the source, so
+  `go get github.com/wickra-lib/wickra-go` builds with no extra steps. The
+  in-repo `bindings/go` module is unchanged for repo-clone workflows.
+
+### Changed
+- **Go binding (`bindings/go`) is self-contained** — the C ABI header is now
+  vendored inside the module (`bindings/go/include/wickra.h`) instead of being
+  referenced from the parent `bindings/c` directory, and the cgo link flags
+  resolve the prebuilt library per `GOOS`/`GOARCH` under `lib/<goos>_<goarch>/`.
+  This removes the dependency on a full repository checkout for building the
+  module.
+
 ## [0.7.9] - 2026-06-09
 ### Added
 - **Java binding (`bindings/java`)** — a Java binding reaching the C ABI hub
@@ -1461,7 +1478,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.7.9...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/wickra-lib/wickra/compare/v0.7.9...v0.8.0
 [0.7.9]: https://github.com/wickra-lib/wickra/compare/v0.7.8...v0.7.9
 [0.7.8]: https://github.com/wickra-lib/wickra/compare/v0.7.7...v0.7.8
 [0.7.7]: https://github.com/wickra-lib/wickra/compare/v0.7.6...v0.7.7
