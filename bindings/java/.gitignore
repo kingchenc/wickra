@@ -1,0 +1,6 @@
+# Maven build output
+target/
+
+# Native libraries staged for packaging (produced by the release pipeline from
+# the wickra-c-<triple>.tar.gz assets; never committed to source).
+src/main/resources/native/
