@@ -25,6 +25,8 @@ assignees: ""
 - [ ] Should be exposed in the Python binding
 - [ ] Should be exposed in the Node binding
 - [ ] Should be exposed in the WASM binding
+- [ ] Should be exposed in the C ABI
+- [ ] Should be exposed in the C# / .NET binding
 
 ## Additional context
 

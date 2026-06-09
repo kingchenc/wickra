@@ -23,6 +23,8 @@ Please fill in the sections below. Delete any that don't apply.
 - [ ] Python binding (`bindings/python`)
 - [ ] Node.js binding (`bindings/node`)
 - [ ] WebAssembly binding (`bindings/wasm`)
+- [ ] C ABI (`bindings/c`)
+- [ ] C# / .NET binding (`bindings/csharp`)
 - [ ] Examples / docs
 
 ## Linked issues

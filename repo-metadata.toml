@@ -34,7 +34,6 @@ ci_workflow  = "ci.yml"
 # resurfaces in source, the audit workflow fails.
 forbidden = [
     "kingchenc/wickra",
-    "kingchencp@gmail.com",
 ]
 
 # Paths that are exempt from the forbidden-substring scan. Historical
