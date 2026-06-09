@@ -1,0 +1,5 @@
+# Maven build output
+target/
+
+# Data fetched at runtime by fetch_btcusdt
+data/

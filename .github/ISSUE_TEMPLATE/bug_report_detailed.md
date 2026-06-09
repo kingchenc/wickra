@@ -16,6 +16,11 @@ assignees: []
 - [ ] Python (`pip install wickra`)
 - [ ] Node.js (`npm install wickra`)
 - [ ] WebAssembly
+- [ ] C ABI (`bindings/c`)
+- [ ] C# / .NET (`Wickra` on NuGet)
+- [ ] Go (`bindings/go`)
+- [ ] Java (`org.wickra:wickra` on Maven Central)
+- [ ] R (`bindings/r`)
 - [ ] Docs / examples only
 
 ## Environment

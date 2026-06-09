@@ -7,7 +7,7 @@
 **Streaming-first technical indicators for R, over the Wickra C ABI hub via `.Call`.**
 
 Wickra is a multi-language technical-analysis library with a Rust core and
-bindings for Python, Node.js and WebAssembly, plus a C ABI for C/C++, C#, Go, R
+bindings for Python, Node.js and WebAssembly, plus a C ABI for C/C++, C#, Go, Java, R
 and any other C-capable language. Every indicator is an O(1) streaming state
 machine, so live trading and historical backtests share the exact same
 implementation. This package is the R binding; it reaches the C ABI hub through

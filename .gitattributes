@@ -16,6 +16,10 @@ bindings/c/include/wickra.h text eol=lf
 go.mod text eol=lf
 go.sum text eol=lf
 
+# Java sources (including the generated binding) are pinned to LF so the
+# committed files stay stable regardless of the committer's autocrlf setting.
+*.java text eol=lf
+
 # R binding: `R CMD check` requires LF in sources, Makevars and shell scripts.
 *.R text eol=lf
 *.Rd text eol=lf

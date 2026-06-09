@@ -5,6 +5,17 @@ All notable changes to Wickra are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Added
+- **Java binding (`bindings/java`)** — a Java binding reaching the C ABI hub
+  through the Java Foreign Function & Memory API (Panama, `java.lang.foreign`,
+  final in Java 22) rather than JNI or jextract, exposing all 514 indicators as
+  idiomatic `AutoCloseable` classes. The downcall handles, per-indicator
+  wrappers and output records are generated from `wickra.h`; the opaque handle is
+  a `MemorySegment` freed by a `java.lang.ref.Cleaner` action. Ships a full
+  example suite mirroring the C, C#, Go and R examples; published to Maven
+  Central as `org.wickra:wickra`.
+
 ## [0.7.8] - 2026-06-09
 ### Added
 - **R binding (`bindings/r`)** — an R package reaching the C ABI hub through R's

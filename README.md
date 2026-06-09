@@ -20,7 +20,7 @@
 
 Wickra is a multi-language technical-analysis library with a Rust core and
 native bindings for Python, Node.js and WebAssembly, plus a C ABI that C, C++,
-C# / .NET, Go, R and any other C-capable language links against. Every indicator is a
+C# / .NET, Go, Java, R and any other C-capable language links against. Every indicator is a
 state machine that updates in O(1) per new data point, so live trading bots and
 historical backtests share the exact same implementation.
 
@@ -78,7 +78,7 @@ times to get there.
   metrics — every single one updating in **O(1) per tick**. TA-Lib ships ~150 and
   none of them stream.
 - **One Rust core, five first-class targets.** Native **Python · Node.js ·
-  WebAssembly · Rust** plus a **C ABI** for C / C++, C# / .NET, Go, R and any other C-capable language —
+  WebAssembly · Rust** plus a **C ABI** for C / C++, C# / .NET, Go, Java, R and any other C-capable language —
   identical math, identical results, zero per-language reimplementation and zero
   GIL bottleneck.
 - **Correct by construction, not by hope.** Every `update` validates its input,
@@ -103,7 +103,7 @@ Every other library forces one of those compromises. Wickra doesn't:
 | Library          | Install     | Streaming   | Languages                   | Indicators | Active |
 |------------------|-------------|-------------|-----------------------------|-----------:|--------|
 | **★&nbsp;Wickra**| **clean**   | **yes, O(1)** | **Rust · Python · Node · WASM** | **514** | **yes** |
-|                  |             |               | **C · C# · Go · R**                 |            |        |
+|                  |             |               | **C · C# · Go · Java · R**          |            |        |
 | kand             | clean       | yes         | Python · WASM · Rust        |       ~60  | yes    |
 | ta-rs            | clean       | yes         | Rust only                   |       ~30  | stale  |
 | yata             | clean       | partial     | Rust only                   |       ~35  | yes    |
@@ -175,7 +175,7 @@ construct it in signed mode (`Doji::new().signed()`, `Doji(signed=True)`,
 `new Doji(true)`) for a dragonfly / gravestone `±1` reading.
 
 Adding a new indicator means implementing one trait in Rust; every binding
-inherits it automatically (the C ABI — and the C#, Go and R bindings generated from
+inherits it automatically (the C ABI — and the C#, Go, Java and R bindings generated from
 it — regenerate from the core).
 
 ## Languages
@@ -189,6 +189,7 @@ it — regenerate from the core).
 | C / C++ (C ABI)   | header + library, see [`bindings/c`](bindings/c) | `examples/c/streaming.c` |
 | C# / .NET (C ABI) | `dotnet add package Wickra`, see [`bindings/csharp`](bindings/csharp) | `examples/csharp/streaming` |
 | Go (cgo, C ABI)   | `go get github.com/wickra-lib/wickra/bindings/go`, see [`bindings/go`](bindings/go) | `examples/go/streaming` |
+| Java (FFM, C ABI)  | Maven Central `org.wickra:wickra`, see [`bindings/java`](bindings/java) | `examples/java` (`Streaming`) |
 | R (`.Call`, C ABI) | `R CMD INSTALL bindings/r`, see [`bindings/r`](bindings/r) | `examples/r/streaming.R` |
 
 Each binding ships several runnable examples (streaming, backtest, live feed);
@@ -262,7 +263,8 @@ wickra/
 │   ├── c/                   C ABI (cdylib + staticlib) + generated include/wickra.h
 │   ├── csharp/              .NET binding over the C ABI (publishes on NuGet)
 │   ├── go/                  Go binding over the C ABI via cgo (module tag)
-│   └── r/                   R binding over the C ABI via .Call (R package)
+│   ├── r/                   R binding over the C ABI via .Call (R package)
+│   └── java/                Java binding over the C ABI via the FFM API (Maven Central)
 ├── examples/                examples/README.md indexes every language
 │   ├── data/                real BTCUSDT OHLCV datasets, one per timeframe
 │   ├── rust/                Rust workspace member (`wickra-examples`)
@@ -272,7 +274,8 @@ wickra/
 │   ├── c/                   C smoke + streaming, C++ RAII wrapper
 │   ├── csharp/              streaming, backtest, strategies (load `Wickra`)
 │   ├── go/                  streaming, backtest, strategies (cgo binding)
-│   └── r/                   streaming, backtest, strategies (.Call binding)
+│   ├── r/                   streaming, backtest, strategies (.Call binding)
+│   └── java/                streaming, backtest, strategies (FFM binding)
 └── .github/workflows/       CI and release pipelines
 ```
 
@@ -316,6 +319,9 @@ cd bindings/go && go test ./...
 # R binding (requires a C toolchain / Rtools; links the C ABI above)
 WICKRA_INCLUDE_DIR="$PWD/bindings/c/include" WICKRA_LIB_DIR="$PWD/target/release" \
   R CMD INSTALL bindings/r
+
+# Java binding (requires JDK 22+ and Maven; links the C ABI above)
+mvn -f bindings/java test
 ```
 
 ## Testing
@@ -339,6 +345,8 @@ Every layer is covered; run the suites with the commands in
   (scalar/batch, multi-output, bars, profile, array input), reset, and lifecycle.
 - `bindings/r`: `testthat` cases covering one indicator per FFI archetype
   (scalar/batch, multi-output, bars, profile, array input), reset, and validation.
+- `bindings/java`: JUnit cases covering one indicator per FFI archetype
+  (scalar/batch, multi-output, bars, profile, array input) plus batch equivalence.
 
 ## Contributing
 

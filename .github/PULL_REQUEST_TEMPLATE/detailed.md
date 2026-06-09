@@ -26,6 +26,7 @@ Please fill in the sections below. Delete any that don't apply.
 - [ ] C ABI (`bindings/c`)
 - [ ] C# / .NET binding (`bindings/csharp`)
 - [ ] Go binding (`bindings/go`)
+- [ ] Java binding (`bindings/java`)
 - [ ] R binding (`bindings/r`)
 - [ ] Examples / docs
 

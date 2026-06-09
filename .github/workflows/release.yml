@@ -706,6 +706,75 @@ jobs:
           path: nupkg/*.nupkg
           if-no-files-found: error
 
+  # Publish the Java binding to Maven Central. Independent of the GitHub-release
+  # job so a Java hiccup never blocks the C/C++ asset release. The Maven Central
+  # namespace (org.wickra) is verified; authentication uses the Sonatype Central
+  # Portal token (CENTRAL_USERNAME / CENTRAL_PASSWORD) and artifacts are signed
+  # with the GPG key (GPG_PRIVATE_KEY / GPG_PASSPHRASE). The pom version must
+  # match the release tag (kept in sync by the version-bump checklist).
+  java-publish:
+    name: Publish to Maven Central
+    needs: c-abi-build
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Download the C ABI native libraries
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: c-abi-*
+          path: c-abi-artifacts
+
+      - name: Stage native libraries into resources/native/<os>-<arch>
+        shell: bash
+        run: |
+          set -e
+          declare -A PLAT=(
+            [x86_64-unknown-linux-gnu]=linux-x64
+            [aarch64-unknown-linux-gnu]=linux-arm64
+            [x86_64-apple-darwin]=osx-x64
+            [aarch64-apple-darwin]=osx-arm64
+            [x86_64-pc-windows-msvc]=win-x64
+            [aarch64-pc-windows-msvc]=win-arm64
+          )
+          base=bindings/java/src/main/resources/native
+          for target in "${!PLAT[@]}"; do
+            archive=$(find c-abi-artifacts -name "wickra-c-$target.tar.gz" | head -1)
+            if [ -z "$archive" ]; then
+              echo "::error::missing native artifact for $target"; exit 1
+            fi
+            tmp=$(mktemp -d); tar -xzf "$archive" -C "$tmp"
+            dest="$base/${PLAT[$target]}"; mkdir -p "$dest"
+            for f in libwickra.so libwickra.dylib wickra.dll; do
+              src=$(find "$tmp" -name "$f" | head -1)
+              [ -n "$src" ] && cp "$src" "$dest/"
+            done
+            echo "staged ${PLAT[$target]}:"; ls -l "$dest"
+          done
+
+      # setup-java writes a settings.xml with the 'central' server credentials
+      # (mapped from the env vars below) and imports the GPG signing key.
+      - name: Set up JDK 22 + Maven Central credentials + GPG
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
+        with:
+          distribution: temurin
+          java-version: "22"
+          server-id: central
+          server-username: CENTRAL_USERNAME
+          server-password: CENTRAL_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
+
+      - name: Deploy to Maven Central
+        env:
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: mvn -B -f bindings/java -Prelease deploy -DskipTests
+
   github-release:
     name: Attach assets to the draft GitHub Release
     needs: [cargo-publish, python-publish, node-publish, wasm-publish, c-abi-build]

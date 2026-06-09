@@ -113,6 +113,29 @@ The offline examples run on deterministic synthetic data (and under CI on all
 three OSes); `fetch_btcusdt.R` and `live_binance.R` reach the network and are
 parse-checked but not run in CI.
 
+## Java — `examples/java/`
+
+Build the C ABI library first (`cargo build -p wickra-c --release`) and install
+the binding (`mvn -f bindings/java install -DskipTests`), then run any example
+from this directory. The `exec` goal forks a JVM with
+`--enable-native-access=ALL-UNNAMED`.
+
+| Example | What it does | Run |
+| --- | --- | --- |
+| `Streaming` | Feed a synthetic price series through SMA / EMA / RSI / MACD tick by tick. | `mvn exec:exec -Dexec.mainClass=org.wickra.examples.Streaming` |
+| `Backtest` | Basket of indicators over an OHLCV series (CSV arg or synthetic). | `mvn exec:exec -Dexec.mainClass=org.wickra.examples.Backtest` |
+| `MultiTimeframe` | Resample a 1-minute series to 5m / 15m and print an indicator per timeframe. | `mvn exec:exec -Dexec.mainClass=org.wickra.examples.MultiTimeframe` |
+| `ParallelAssets` | SMA(20) batch over a panel, serial vs parallel streams, with speedup. | `mvn exec:exec -Dexec.mainClass=org.wickra.examples.ParallelAssets` |
+| `StrategyRsiMeanReversion` | RSI(14) mean-reversion with PnL / Sharpe / max-DD summary. | `mvn exec:exec -Dexec.mainClass=org.wickra.examples.StrategyRsiMeanReversion` |
+| `StrategyMacdAdx` | Trend-follower: MACD crossover entries gated by ADX(14) > 20. | `mvn exec:exec -Dexec.mainClass=org.wickra.examples.StrategyMacdAdx` |
+| `StrategyBollingerSqueeze` | Bollinger-squeeze breakout with an ATR(14) trailing stop. | `mvn exec:exec -Dexec.mainClass=org.wickra.examples.StrategyBollingerSqueeze` |
+| `FetchBtcusdt` | Download real BTCUSDT klines from the Binance REST API into a CSV. | `mvn exec:exec -Dexec.mainClass=org.wickra.examples.FetchBtcusdt` |
+| `LiveBinance` | Stream live Binance klines through EMA(20) over a WebSocket. | `mvn exec:exec -Dexec.mainClass=org.wickra.examples.LiveBinance` |
+
+The offline examples run on deterministic synthetic data (and under CI on all
+three OSes); `FetchBtcusdt` and `LiveBinance` reach the network and are
+build-checked but not run in CI.
+
 ## Python — `examples/python/`
 
 | Example | What it does | Run |
