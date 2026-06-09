@@ -42,5 +42,18 @@ cast_sign_loss = "allow"
 similar_names = "allow"
 float_cmp = "allow"
 
+[features]
+# `parallel` (rayon-backed batch in wickra-core) is on by default for native
+# builds. The wasm32-unknown-emscripten target has no threads, so the R
+# package's wasm build (r-universe / webR) compiles this crate with
+# --no-default-features to drop rayon; wickra-core falls back to its serial
+# batch path, which is cfg-gated behind the same feature.
+default = ["parallel"]
+parallel = ["wickra-core/parallel"]
+
 [dependencies]
-wickra-core = { workspace = true }
+# Direct path dep rather than `workspace = true`: a member-level
+# `default-features = false` is ignored when inheriting a workspace dep that
+# does not set it, which would leave rayon in the wasm build. wickra-c is
+# `publish = false`, so no version pin is needed (and none to keep in sync).
+wickra-core = { path = "../../crates/wickra-core", default-features = false }
