@@ -778,15 +778,36 @@ jobs:
       - name: Build the C ABI library
         run: cargo build -p wickra-c --release
 
+      - name: Vendored header in sync with the C ABI
+        shell: bash
+        # bindings/go/include/wickra.h is a committed copy of the cbindgen header
+        # (the parent ../c/include is outside the Go module, so it must be
+        # vendored). Fail if it drifts from the source of truth.
+        run: |
+          if ! diff -u bindings/c/include/wickra.h bindings/go/include/wickra.h; then
+            echo "::error::bindings/go/include/wickra.h is stale — copy bindings/c/include/wickra.h over it"
+            exit 1
+          fi
+
       - name: Stage the native library
         shell: bash
+        # Stage into lib/<goos>_<goarch>/ to match the per-platform cgo LDFLAGS.
+        # CI builds the host target, so RUNNER_OS/ARCH give the right directory
+        # (note macos-latest is arm64).
         run: |
-          mkdir -p bindings/go/lib
-          case "$RUNNER_OS" in
-            Linux)   cp target/release/libwickra.so    bindings/go/lib/ ;;
-            macOS)   cp target/release/libwickra.dylib  bindings/go/lib/ ;;
-            Windows) cp target/release/wickra.dll       bindings/go/lib/ ;;
+          case "$RUNNER_ARCH" in
+            X64) arch=amd64 ;;
+            ARM64) arch=arm64 ;;
+            *) echo "::error::unsupported RUNNER_ARCH '$RUNNER_ARCH'"; exit 1 ;;
           esac
+          case "$RUNNER_OS" in
+            Linux)   dir="linux_$arch";   lib=target/release/libwickra.so ;;
+            macOS)   dir="darwin_$arch";  lib=target/release/libwickra.dylib ;;
+            Windows) dir="windows_$arch"; lib=target/release/wickra.dll ;;
+          esac
+          mkdir -p "bindings/go/lib/$dir"
+          cp "$lib" "bindings/go/lib/$dir/"
+          echo "WICKRA_GO_LIBDIR=$PWD/bindings/go/lib/$dir" >> "$GITHUB_ENV"
 
       - name: Go info
         run: go version
@@ -801,9 +822,11 @@ jobs:
 
       - name: Vet and test the Go binding
         shell: bash
-        # On Windows there is no rpath; the loader resolves wickra.dll via PATH.
+        # On Windows there is no rpath; the loader resolves wickra.dll via PATH
+        # (WICKRA_GO_LIBDIR is the per-platform staged lib dir). Linux/macOS use
+        # the rpath baked by the per-platform cgo LDFLAGS.
         run: |
-          export PATH="$PWD/bindings/go/lib:$PATH"
+          export PATH="$WICKRA_GO_LIBDIR:$PATH"
           cd bindings/go
           go vet ./...
           go test ./...
@@ -811,7 +834,7 @@ jobs:
       - name: Build the Go examples
         shell: bash
         run: |
-          export PATH="$PWD/bindings/go/lib:$PATH"
+          export PATH="$WICKRA_GO_LIBDIR:$PATH"
           cd examples/go
           go build ./...
 
@@ -819,7 +842,7 @@ jobs:
       - name: Run the offline Go examples
         shell: bash
         run: |
-          export PATH="$PWD/bindings/go/lib:$PATH"
+          export PATH="$WICKRA_GO_LIBDIR:$PATH"
           cd examples/go
           for d in streaming backtest multi_timeframe parallel_assets \
                    strategy_rsi_mean_reversion strategy_macd_adx strategy_bollinger_squeeze; do

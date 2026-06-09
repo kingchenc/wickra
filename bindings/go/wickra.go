@@ -4,16 +4,21 @@
 // Each indicator is an opaque-handle type with a New<Indicator> constructor and
 // Update/Batch/Reset/Close methods. Handles are freed by Close and, as a
 // backstop, by a finalizer; call Close explicitly to release native memory
-// promptly. The binding links against the prebuilt Wickra C ABI library
-// (libwickra.so/.dylib or wickra.dll) staged under ./lib — see the package
-// README for how to provision it.
+// promptly. The binding links against the prebuilt Wickra C ABI library, staged
+// per platform under ./lib/<goos>_<goarch>/, with the C ABI header vendored
+// under ./include. For distribution the libraries are committed alongside the
+// source in the wickra-go module, so `go get` + `go build` works with no extra
+// steps — see the package README.
 package wickra
 
 /*
-#cgo CFLAGS: -I${SRCDIR}/../c/include
-#cgo linux LDFLAGS: -L${SRCDIR}/lib -lwickra -Wl,-rpath,${SRCDIR}/lib
-#cgo darwin LDFLAGS: -L${SRCDIR}/lib -lwickra -Wl,-rpath,${SRCDIR}/lib
-#cgo windows LDFLAGS: -L${SRCDIR}/lib -l:wickra.dll
+#cgo CFLAGS: -I${SRCDIR}/include
+#cgo linux,amd64 LDFLAGS: -L${SRCDIR}/lib/linux_amd64 -lwickra -Wl,-rpath,${SRCDIR}/lib/linux_amd64
+#cgo linux,arm64 LDFLAGS: -L${SRCDIR}/lib/linux_arm64 -lwickra -Wl,-rpath,${SRCDIR}/lib/linux_arm64
+#cgo darwin,amd64 LDFLAGS: -L${SRCDIR}/lib/darwin_amd64 -lwickra -Wl,-rpath,${SRCDIR}/lib/darwin_amd64
+#cgo darwin,arm64 LDFLAGS: -L${SRCDIR}/lib/darwin_arm64 -lwickra -Wl,-rpath,${SRCDIR}/lib/darwin_arm64
+#cgo windows,amd64 LDFLAGS: -L${SRCDIR}/lib/windows_amd64 -l:wickra.dll
+#cgo windows,arm64 LDFLAGS: -L${SRCDIR}/lib/windows_arm64 -l:wickra.dll
 #include "wickra.h"
 */
 import "C"
