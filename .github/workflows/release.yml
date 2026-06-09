@@ -625,16 +625,18 @@ jobs:
           if-no-files-found: error
 
   # Pack and publish the .NET binding to NuGet. Independent of the GitHub-release
-  # job so a C# hiccup never blocks the C/C++ asset release. The push step is
-  # gated on the NUGET_API_KEY secret, so until it is configured this job still
-  # packs (and uploads the package as an artifact) but does not publish.
+  # job so a C# hiccup never blocks the C/C++ asset release. Authentication uses
+  # NuGet Trusted Publishing (OIDC) — no long-lived API key. The 'wickra-release'
+  # trusted-publishing policy on nuget.org (owner KingchenC, repo wickra-lib/wickra,
+  # workflow release.yml) exchanges the GitHub OIDC token for a short-lived key.
   csharp-publish:
     name: Publish to NuGet
     needs: c-abi-build
     runs-on: ubuntu-latest
     environment: release
-    env:
-      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+    permissions:
+      contents: read
+      id-token: write # request the GitHub OIDC token for trusted publishing
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -679,11 +681,18 @@ jobs:
           version="${GITHUB_REF_NAME#v}"
           dotnet pack bindings/csharp/Wickra/Wickra.csproj -c Release -p:Version="$version" -o nupkg
 
+      # Exchange the GitHub OIDC token for a short-lived (~1h) NuGet API key.
+      # 'user' is the nuget.org profile name (the package owner), not an email.
+      - name: NuGet login (OIDC -> temporary API key)
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        id: nuget_login
+        with:
+          user: KingchenC
+
       - name: Push to NuGet
-        if: ${{ env.NUGET_API_KEY != '' }}
         shell: bash
         run: |
-          dotnet nuget push "nupkg/*.nupkg" --api-key "$NUGET_API_KEY" \
+          dotnet nuget push "nupkg/*.nupkg" --api-key "${{ steps.nuget_login.outputs.NUGET_API_KEY }}" \
             --source https://api.nuget.org/v3/index.json --skip-duplicate
 
       - name: Upload the NuGet package as a build artifact

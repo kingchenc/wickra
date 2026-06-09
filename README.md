@@ -73,7 +73,7 @@ times to get there.
   metrics — every single one updating in **O(1) per tick**. TA-Lib ships ~150 and
   none of them stream.
 - **One Rust core, five first-class targets.** Native **Python · Node.js ·
-  WebAssembly · Rust** plus a **C ABI** for C / C++ and any C-capable language —
+  WebAssembly · Rust** plus a **C ABI** for C / C++, C# / .NET and any other C-capable language —
   identical math, identical results, zero per-language reimplementation and zero
   GIL bottleneck.
 - **Correct by construction, not by hope.** Every `update` validates its input,
