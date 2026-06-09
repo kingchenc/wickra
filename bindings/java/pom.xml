@@ -142,6 +142,14 @@
                 <id>sign-artifacts</id>
                 <phase>verify</phase>
                 <goals><goal>sign</goal></goals>
+                <configuration>
+                  <!-- Non-interactive signing on CI: modern GPG needs loopback
+                       pinentry to take the passphrase from the env without a TTY. -->
+                  <gpgArguments>
+                    <arg>--pinentry-mode</arg>
+                    <arg>loopback</arg>
+                  </gpgArguments>
+                </configuration>
               </execution>
             </executions>
           </plugin>

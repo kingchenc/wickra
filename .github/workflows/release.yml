@@ -707,17 +707,14 @@ jobs:
           if-no-files-found: error
 
   # Publish the Java binding to Maven Central. Independent of the GitHub-release
-  # job so a Java hiccup never blocks the C/C++ asset release. Gated on the
-  # JAVA_PUBLISH_ENABLED repository variable: until the Maven Central namespace
-  # (org.wickra) is verified and the publishing token + GPG signing key are
-  # added, the job is skipped. Required secrets: CENTRAL_TOKEN_USERNAME,
-  # CENTRAL_TOKEN_PASSWORD (Sonatype Central Portal token), MAVEN_GPG_PRIVATE_KEY,
-  # MAVEN_GPG_PASSPHRASE (the artifact-signing key). The pom version must match
-  # the release tag (kept in sync by the version-bump checklist).
+  # job so a Java hiccup never blocks the C/C++ asset release. The Maven Central
+  # namespace (org.wickra) is verified; authentication uses the Sonatype Central
+  # Portal token (CENTRAL_USERNAME / CENTRAL_PASSWORD) and artifacts are signed
+  # with the GPG key (GPG_PRIVATE_KEY / GPG_PASSPHRASE). The pom version must
+  # match the release tag (kept in sync by the version-bump checklist).
   java-publish:
     name: Publish to Maven Central
     needs: c-abi-build
-    if: vars.JAVA_PUBLISH_ENABLED == 'true'
     runs-on: ubuntu-latest
     environment: release
     steps:
@@ -766,16 +763,16 @@ jobs:
           distribution: temurin
           java-version: "22"
           server-id: central
-          server-username: CENTRAL_TOKEN_USERNAME
-          server-password: CENTRAL_TOKEN_PASSWORD
-          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+          server-username: CENTRAL_USERNAME
+          server-password: CENTRAL_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
 
       - name: Deploy to Maven Central
         env:
-          CENTRAL_TOKEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
-          CENTRAL_TOKEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: mvn -B -f bindings/java -Prelease deploy -DskipTests
 
   github-release:
