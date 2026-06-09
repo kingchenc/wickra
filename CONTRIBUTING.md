@@ -24,6 +24,7 @@ licensed as above, without any additional terms or conditions.
 | `bindings/c` | C ABI — `cdylib` + `staticlib` + generated `include/wickra.h`. The hub for C / C++ and any C-capable language. |
 | `bindings/csharp` | .NET binding over the C ABI (`Wickra` on NuGet) — `[LibraryImport]` P/Invoke generated from `wickra.h`. |
 | `bindings/go` | Go binding over the C ABI via cgo (module tag `bindings/go/vX.Y.Z`) — wrappers generated from `wickra.h`. |
+| `bindings/r` | R binding over the C ABI via `.Call` (R package) — C glue + R wrappers generated from `wickra.h`. |
 | `examples/` | Runnable examples. |
 | `docs/` | Pointer to the documentation site (docs.wickra.org); the docs live in the `wickra-lib/wickra-docs` repo. |
 
@@ -110,7 +111,9 @@ installed. Dependabot also keeps the `.github/requirements` pins current.
   commit `src/lib.rs` + `include/wickra.h`. The C# binding (`bindings/csharp`) is
   generated from `wickra.h`, so regenerate and commit its `Generated/*.g.cs` too.
   The Go binding (`bindings/go`) is likewise generated from `wickra.h`, so
-  regenerate and commit `indicators_gen.go` (`gofmt`-clean).
+  regenerate and commit `indicators_gen.go` (`gofmt`-clean). The R binding
+  (`bindings/r`) is generated from `wickra.h` too, so regenerate and commit
+  `src/wickra.c` + `R/indicators.R`.
 - **Docs.** Update the relevant page on the
   [documentation site](https://docs.wickra.org) and the
   `README.md` when behaviour or the public API changes. The docs live in

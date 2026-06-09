@@ -9,8 +9,9 @@ That includes:
   [Node](https://docs.wickra.org/Quickstart-Node),
   [WASM](https://docs.wickra.org/Quickstart-WASM),
   [C](https://docs.wickra.org/Quickstart-C),
-  [C#](https://docs.wickra.org/Quickstart-CSharp), and
-  [Go](https://docs.wickra.org/Quickstart-Go).
+  [C#](https://docs.wickra.org/Quickstart-CSharp),
+  [Go](https://docs.wickra.org/Quickstart-Go), and
+  [R](https://docs.wickra.org/Quickstart-R).
 - A per-indicator deep dive for every one of the **514 indicators** across
   the sixteen families (Moving Averages, Momentum Oscillators, Trend &
   Directional, Price Oscillators, Volatility & Bands, Bands & Channels,
