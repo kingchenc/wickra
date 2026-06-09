@@ -739,6 +739,31 @@ jobs:
         with:
           persist-credentials: false
 
+      # Go is not reliably on PATH on every runner image, so install it
+      # explicitly. cache: false — the cargo build dominates and the modules
+      # have no external Go deps worth caching.
+      - name: Set up Go
+        id: setup-go
+        continue-on-error: true
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version: "stable"
+          cache: false
+
+      - name: Retry Go setup (CDN flake)
+        if: steps.setup-go.outcome == 'failure'
+        shell: bash
+        run: |
+          echo "::warning::setup-go failed (likely CDN flake), waiting 30s before retry..."
+          sleep 30
+
+      - name: Set up Go (retry)
+        if: steps.setup-go.outcome == 'failure'
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version: "stable"
+          cache: false
+
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable branch, 2026-03-27
 

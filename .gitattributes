@@ -10,3 +10,9 @@ bindings/c/include/wickra.h text eol=lf
 # files stay stable regardless of the committer's autocrlf setting.
 *.cs text eol=lf
 
+# Go sources (including the generated binding) are pinned to LF so gofmt's CI
+# check never trips on a CRLF checkout on Windows.
+*.go text eol=lf
+go.mod text eol=lf
+go.sum text eol=lf
+
