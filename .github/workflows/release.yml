@@ -775,6 +775,95 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: mvn -B -f bindings/java -Prelease deploy -DskipTests
 
+  # Mirror the in-repo Go module (bindings/go) to the standalone wickra-go
+  # repository so `go get github.com/wickra-lib/wickra-go` builds with no extra
+  # steps. The in-repo module keeps the prebuilt libraries git-ignored; the
+  # mirror commits them per platform under lib/<goos>_<goarch>/ alongside the
+  # vendored header. Independent of the GitHub-release job so a Go hiccup never
+  # blocks the C/C++ asset release. The push uses a fine-grained PAT
+  # (WICKRA_GO_MIRROR_TOKEN, contents:write on wickra-go); the mirror is a
+  # derived artifact, so its bot commit is intentionally unsigned.
+  go-mirror:
+    name: Mirror the Go module to wickra-go
+    needs: c-abi-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Download the C ABI native libraries
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: c-abi-*
+          path: c-abi-artifacts
+
+      - name: Assemble the wickra-go module tree
+        shell: bash
+        run: |
+          set -e
+          out=wickra-go-module
+          mkdir -p "$out/include" "$out/lib"
+          # Single-package Go source + vendored C ABI header.
+          cp bindings/go/*.go "$out/"
+          cp bindings/go/include/wickra.h "$out/include/"
+          cp bindings/go/README.md "$out/"
+          # Standalone module path (the in-repo go.mod points at the subdir).
+          printf 'module github.com/wickra-lib/wickra-go\n\ngo 1.23\n' > "$out/go.mod"
+          # Point install instructions at the standalone module path.
+          sed -i 's#github.com/wickra-lib/wickra/bindings/go#github.com/wickra-lib/wickra-go#g' \
+            "$out/README.md" "$out"/*.go
+          # Stage each prebuilt library under lib/<goos>_<goarch>/ (committed in
+          # the mirror, unlike the in-repo lib/.gitignore). "<dir> <libfile>".
+          declare -A GO=(
+            [x86_64-unknown-linux-gnu]="linux_amd64 libwickra.so"
+            [aarch64-unknown-linux-gnu]="linux_arm64 libwickra.so"
+            [x86_64-apple-darwin]="darwin_amd64 libwickra.dylib"
+            [aarch64-apple-darwin]="darwin_arm64 libwickra.dylib"
+            [x86_64-pc-windows-msvc]="windows_amd64 wickra.dll"
+            [aarch64-pc-windows-msvc]="windows_arm64 wickra.dll"
+          )
+          for target in "${!GO[@]}"; do
+            read -r dir libfile <<< "${GO[$target]}"
+            archive=$(find c-abi-artifacts -name "wickra-c-$target.tar.gz" | head -1)
+            if [ -z "$archive" ]; then
+              echo "::error::missing native artifact for $target"; exit 1
+            fi
+            tmp=$(mktemp -d); tar -xzf "$archive" -C "$tmp"
+            src=$(find "$tmp" -name "$libfile" | head -1)
+            if [ -z "$src" ]; then
+              echo "::error::missing $libfile for $target"; exit 1
+            fi
+            mkdir -p "$out/lib/$dir"; cp "$src" "$out/lib/$dir/"
+          done
+          echo "assembled module:"; find "$out" -type f | sort
+
+      - name: Push to wickra-go and tag the release
+        shell: bash
+        env:
+          MIRROR_TOKEN: ${{ secrets.WICKRA_GO_MIRROR_TOKEN }}
+        run: |
+          set -e
+          version="${GITHUB_REF_NAME#v}"
+          remote="https://x-access-token:${MIRROR_TOKEN}@github.com/wickra-lib/wickra-go.git"
+          git clone -q "$remote" mirror-repo
+          cd mirror-repo
+          git config user.name "wickra-bot"
+          git config user.email "support@wickra.org"
+          git symbolic-ref HEAD refs/heads/main
+          # Replace all tracked content with the freshly assembled tree.
+          find . -mindepth 1 -maxdepth 1 -not -name .git -exec rm -rf {} +
+          cp -r ../wickra-go-module/. .
+          git add -A
+          if git diff --cached --quiet; then
+            echo "wickra-go already up to date; tagging only"
+          else
+            git -c commit.gpgsign=false commit -q -m "Release v$version"
+          fi
+          git push origin HEAD:refs/heads/main
+          git tag "v$version"
+          git push origin "v$version"
+
   github-release:
     name: Attach assets to the draft GitHub Release
     needs: [cargo-publish, python-publish, node-publish, wasm-publish, c-abi-build]
