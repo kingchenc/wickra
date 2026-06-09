@@ -25,6 +25,7 @@ Please fill in the sections below. Delete any that don't apply.
 - [ ] WebAssembly binding (`bindings/wasm`)
 - [ ] C ABI (`bindings/c`)
 - [ ] C# / .NET binding (`bindings/csharp`)
+- [ ] Go binding (`bindings/go`)
 - [ ] Examples / docs
 
 ## Linked issues

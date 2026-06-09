@@ -1,0 +1,14 @@
+# Data fetched at runtime by fetch_btcusdt
+**/data/
+
+# Compiled example binaries
+/streaming/streaming
+/backtest/backtest
+/multi_timeframe/multi_timeframe
+/parallel_assets/parallel_assets
+/strategy_rsi_mean_reversion/strategy_rsi_mean_reversion
+/strategy_macd_adx/strategy_macd_adx
+/strategy_bollinger_squeeze/strategy_bollinger_squeeze
+/fetch_btcusdt/fetch_btcusdt
+/live_binance/live_binance
+*.exe

@@ -1,0 +1,7 @@
+# Prebuilt Wickra C ABI libraries are provisioned locally / in CI, not committed.
+*.so
+*.dylib
+*.dll
+*.a
+*.lib
+*.exp

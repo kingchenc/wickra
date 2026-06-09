@@ -727,6 +727,105 @@ jobs:
             dotnet run --project "examples/csharp/$d" -c Release --no-build
           done
 
+  go:
+    name: Go on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      # Go is not reliably on PATH on every runner image, so install it
+      # explicitly. cache: false — the cargo build dominates and the modules
+      # have no external Go deps worth caching.
+      - name: Set up Go
+        id: setup-go
+        continue-on-error: true
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version: "stable"
+          cache: false
+
+      - name: Retry Go setup (CDN flake)
+        if: steps.setup-go.outcome == 'failure'
+        shell: bash
+        run: |
+          echo "::warning::setup-go failed (likely CDN flake), waiting 30s before retry..."
+          sleep 30
+
+      - name: Set up Go (retry)
+        if: steps.setup-go.outcome == 'failure'
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version: "stable"
+          cache: false
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable branch, 2026-03-27
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        continue-on-error: true # cache is an optimisation; never block on a stuck/slow restore
+        timeout-minutes: 6
+
+      # The binding links against the C ABI hub via cgo; build it first and stage
+      # the platform library under bindings/go/lib so cgo's LDFLAGS find it. Go is
+      # preinstalled on the GitHub runners, so no setup-go step is needed.
+      - name: Build the C ABI library
+        run: cargo build -p wickra-c --release
+
+      - name: Stage the native library
+        shell: bash
+        run: |
+          mkdir -p bindings/go/lib
+          case "$RUNNER_OS" in
+            Linux)   cp target/release/libwickra.so    bindings/go/lib/ ;;
+            macOS)   cp target/release/libwickra.dylib  bindings/go/lib/ ;;
+            Windows) cp target/release/wickra.dll       bindings/go/lib/ ;;
+          esac
+
+      - name: Go info
+        run: go version
+
+      - name: Check gofmt
+        shell: bash
+        run: |
+          unformatted="$(gofmt -l bindings/go examples/go)"
+          if [ -n "$unformatted" ]; then
+            echo "gofmt needed on:"; echo "$unformatted"; exit 1
+          fi
+
+      - name: Vet and test the Go binding
+        shell: bash
+        # On Windows there is no rpath; the loader resolves wickra.dll via PATH.
+        run: |
+          export PATH="$PWD/bindings/go/lib:$PATH"
+          cd bindings/go
+          go vet ./...
+          go test ./...
+
+      - name: Build the Go examples
+        shell: bash
+        run: |
+          export PATH="$PWD/bindings/go/lib:$PATH"
+          cd examples/go
+          go build ./...
+
+      # Run only the offline examples (fetch_btcusdt / live_binance need network).
+      - name: Run the offline Go examples
+        shell: bash
+        run: |
+          export PATH="$PWD/bindings/go/lib:$PATH"
+          cd examples/go
+          for d in streaming backtest multi_timeframe parallel_assets \
+                   strategy_rsi_mean_reversion strategy_macd_adx strategy_bollinger_squeeze; do
+            go run "./$d"
+          done
+
   # The cross-library benchmark has moved to a dedicated scheduled workflow
   # (.github/workflows/bench.yml) — see audit finding R10. It runs nightly
   # at 03:00 UTC and on-demand via `workflow_dispatch`, and is no longer on
