@@ -1,0 +1,18342 @@
+/* Generated from bindings/c/include/wickra.h. DO NOT EDIT. */
+#include <R.h>
+#include <Rinternals.h>
+#include <R_ext/Rdynload.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include "wickra.h"
+
+static void abandoned_baby_fin(SEXP e) {
+  struct AbandonedBaby *h = (struct AbandonedBaby *)R_ExternalPtrAddr(e);
+  if (h) wickra_abandoned_baby_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_abandoned_baby_new(void) {
+  struct AbandonedBaby *h = wickra_abandoned_baby_new();
+  if (!h) Rf_error("invalid AbandonedBaby parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, abandoned_baby_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_abandoned_baby_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AbandonedBaby *h = (struct AbandonedBaby *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_abandoned_baby_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_abandoned_baby_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AbandonedBaby *h = (struct AbandonedBaby *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_abandoned_baby_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_abandoned_baby_reset(SEXP e) {
+  struct AbandonedBaby *h = (struct AbandonedBaby *)R_ExternalPtrAddr(e);
+  wickra_abandoned_baby_reset(h);
+  return R_NilValue;
+}
+
+static void abcd_fin(SEXP e) {
+  struct Abcd *h = (struct Abcd *)R_ExternalPtrAddr(e);
+  if (h) wickra_abcd_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_abcd_new(void) {
+  struct Abcd *h = wickra_abcd_new();
+  if (!h) Rf_error("invalid Abcd parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, abcd_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_abcd_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Abcd *h = (struct Abcd *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_abcd_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_abcd_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Abcd *h = (struct Abcd *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_abcd_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_abcd_reset(SEXP e) {
+  struct Abcd *h = (struct Abcd *)R_ExternalPtrAddr(e);
+  wickra_abcd_reset(h);
+  return R_NilValue;
+}
+
+static void absolute_breadth_index_fin(SEXP e) {
+  struct AbsoluteBreadthIndex *h = (struct AbsoluteBreadthIndex *)R_ExternalPtrAddr(e);
+  if (h) wickra_absolute_breadth_index_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_absolute_breadth_index_new(void) {
+  struct AbsoluteBreadthIndex *h = wickra_absolute_breadth_index_new();
+  if (!h) Rf_error("invalid AbsoluteBreadthIndex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, absolute_breadth_index_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_absolute_breadth_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
+  struct AbsoluteBreadthIndex *h = (struct AbsoluteBreadthIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_absolute_breadth_index_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_absolute_breadth_index_reset(SEXP e) {
+  struct AbsoluteBreadthIndex *h = (struct AbsoluteBreadthIndex *)R_ExternalPtrAddr(e);
+  wickra_absolute_breadth_index_reset(h);
+  return R_NilValue;
+}
+
+static void acceleration_bands_fin(SEXP e) {
+  struct AccelerationBands *h = (struct AccelerationBands *)R_ExternalPtrAddr(e);
+  if (h) wickra_acceleration_bands_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_acceleration_bands_new(SEXP a0, SEXP a1) {
+  struct AccelerationBands *h = wickra_acceleration_bands_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid AccelerationBands parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, acceleration_bands_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_acceleration_bands_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AccelerationBands *h = (struct AccelerationBands *)R_ExternalPtrAddr(e);
+  struct WickraAccelerationBandsOutput out;
+  int ok = wickra_acceleration_bands_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.upper : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.middle : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.lower : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("lower"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_acceleration_bands_reset(SEXP e) {
+  struct AccelerationBands *h = (struct AccelerationBands *)R_ExternalPtrAddr(e);
+  wickra_acceleration_bands_reset(h);
+  return R_NilValue;
+}
+
+static void accelerator_oscillator_fin(SEXP e) {
+  struct AcceleratorOscillator *h = (struct AcceleratorOscillator *)R_ExternalPtrAddr(e);
+  if (h) wickra_accelerator_oscillator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_accelerator_oscillator_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct AcceleratorOscillator *h = wickra_accelerator_oscillator_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2));
+  if (!h) Rf_error("invalid AcceleratorOscillator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, accelerator_oscillator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_accelerator_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AcceleratorOscillator *h = (struct AcceleratorOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_accelerator_oscillator_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_accelerator_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AcceleratorOscillator *h = (struct AcceleratorOscillator *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_accelerator_oscillator_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_accelerator_oscillator_reset(SEXP e) {
+  struct AcceleratorOscillator *h = (struct AcceleratorOscillator *)R_ExternalPtrAddr(e);
+  wickra_accelerator_oscillator_reset(h);
+  return R_NilValue;
+}
+
+static void ad_oscillator_fin(SEXP e) {
+  struct AdOscillator *h = (struct AdOscillator *)R_ExternalPtrAddr(e);
+  if (h) wickra_ad_oscillator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_ad_oscillator_new(void) {
+  struct AdOscillator *h = wickra_ad_oscillator_new();
+  if (!h) Rf_error("invalid AdOscillator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, ad_oscillator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_ad_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AdOscillator *h = (struct AdOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_ad_oscillator_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_ad_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AdOscillator *h = (struct AdOscillator *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_ad_oscillator_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_ad_oscillator_reset(SEXP e) {
+  struct AdOscillator *h = (struct AdOscillator *)R_ExternalPtrAddr(e);
+  wickra_ad_oscillator_reset(h);
+  return R_NilValue;
+}
+
+static void ad_volume_line_fin(SEXP e) {
+  struct AdVolumeLine *h = (struct AdVolumeLine *)R_ExternalPtrAddr(e);
+  if (h) wickra_ad_volume_line_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_ad_volume_line_new(void) {
+  struct AdVolumeLine *h = wickra_ad_volume_line_new();
+  if (!h) Rf_error("invalid AdVolumeLine parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, ad_volume_line_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_ad_volume_line_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
+  struct AdVolumeLine *h = (struct AdVolumeLine *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_ad_volume_line_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_ad_volume_line_reset(SEXP e) {
+  struct AdVolumeLine *h = (struct AdVolumeLine *)R_ExternalPtrAddr(e);
+  wickra_ad_volume_line_reset(h);
+  return R_NilValue;
+}
+
+static void adaptive_cci_fin(SEXP e) {
+  struct AdaptiveCci *h = (struct AdaptiveCci *)R_ExternalPtrAddr(e);
+  if (h) wickra_adaptive_cci_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_adaptive_cci_new(SEXP a0) {
+  struct AdaptiveCci *h = wickra_adaptive_cci_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid AdaptiveCci parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, adaptive_cci_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_adaptive_cci_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AdaptiveCci *h = (struct AdaptiveCci *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_adaptive_cci_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_adaptive_cci_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AdaptiveCci *h = (struct AdaptiveCci *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_adaptive_cci_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_adaptive_cci_reset(SEXP e) {
+  struct AdaptiveCci *h = (struct AdaptiveCci *)R_ExternalPtrAddr(e);
+  wickra_adaptive_cci_reset(h);
+  return R_NilValue;
+}
+
+static void adaptive_cycle_fin(SEXP e) {
+  struct AdaptiveCycle *h = (struct AdaptiveCycle *)R_ExternalPtrAddr(e);
+  if (h) wickra_adaptive_cycle_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_adaptive_cycle_new(void) {
+  struct AdaptiveCycle *h = wickra_adaptive_cycle_new();
+  if (!h) Rf_error("invalid AdaptiveCycle parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, adaptive_cycle_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_adaptive_cycle_update(SEXP e, SEXP a0) {
+  struct AdaptiveCycle *h = (struct AdaptiveCycle *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_adaptive_cycle_update(h, Rf_asReal(a0)));
+}
+SEXP wk_adaptive_cycle_batch(SEXP e, SEXP a0) {
+  struct AdaptiveCycle *h = (struct AdaptiveCycle *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_adaptive_cycle_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_adaptive_cycle_reset(SEXP e) {
+  struct AdaptiveCycle *h = (struct AdaptiveCycle *)R_ExternalPtrAddr(e);
+  wickra_adaptive_cycle_reset(h);
+  return R_NilValue;
+}
+
+static void adaptive_laguerre_filter_fin(SEXP e) {
+  struct AdaptiveLaguerreFilter *h = (struct AdaptiveLaguerreFilter *)R_ExternalPtrAddr(e);
+  if (h) wickra_adaptive_laguerre_filter_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_adaptive_laguerre_filter_new(SEXP a0) {
+  struct AdaptiveLaguerreFilter *h = wickra_adaptive_laguerre_filter_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid AdaptiveLaguerreFilter parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, adaptive_laguerre_filter_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_adaptive_laguerre_filter_update(SEXP e, SEXP a0) {
+  struct AdaptiveLaguerreFilter *h = (struct AdaptiveLaguerreFilter *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_adaptive_laguerre_filter_update(h, Rf_asReal(a0)));
+}
+SEXP wk_adaptive_laguerre_filter_batch(SEXP e, SEXP a0) {
+  struct AdaptiveLaguerreFilter *h = (struct AdaptiveLaguerreFilter *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_adaptive_laguerre_filter_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_adaptive_laguerre_filter_reset(SEXP e) {
+  struct AdaptiveLaguerreFilter *h = (struct AdaptiveLaguerreFilter *)R_ExternalPtrAddr(e);
+  wickra_adaptive_laguerre_filter_reset(h);
+  return R_NilValue;
+}
+
+static void adaptive_rsi_fin(SEXP e) {
+  struct AdaptiveRsi *h = (struct AdaptiveRsi *)R_ExternalPtrAddr(e);
+  if (h) wickra_adaptive_rsi_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_adaptive_rsi_new(SEXP a0) {
+  struct AdaptiveRsi *h = wickra_adaptive_rsi_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid AdaptiveRsi parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, adaptive_rsi_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_adaptive_rsi_update(SEXP e, SEXP a0) {
+  struct AdaptiveRsi *h = (struct AdaptiveRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_adaptive_rsi_update(h, Rf_asReal(a0)));
+}
+SEXP wk_adaptive_rsi_batch(SEXP e, SEXP a0) {
+  struct AdaptiveRsi *h = (struct AdaptiveRsi *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_adaptive_rsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_adaptive_rsi_reset(SEXP e) {
+  struct AdaptiveRsi *h = (struct AdaptiveRsi *)R_ExternalPtrAddr(e);
+  wickra_adaptive_rsi_reset(h);
+  return R_NilValue;
+}
+
+static void adl_fin(SEXP e) {
+  struct Adl *h = (struct Adl *)R_ExternalPtrAddr(e);
+  if (h) wickra_adl_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_adl_new(void) {
+  struct Adl *h = wickra_adl_new();
+  if (!h) Rf_error("invalid Adl parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, adl_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_adl_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Adl *h = (struct Adl *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_adl_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_adl_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Adl *h = (struct Adl *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_adl_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_adl_reset(SEXP e) {
+  struct Adl *h = (struct Adl *)R_ExternalPtrAddr(e);
+  wickra_adl_reset(h);
+  return R_NilValue;
+}
+
+static void advance_block_fin(SEXP e) {
+  struct AdvanceBlock *h = (struct AdvanceBlock *)R_ExternalPtrAddr(e);
+  if (h) wickra_advance_block_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_advance_block_new(void) {
+  struct AdvanceBlock *h = wickra_advance_block_new();
+  if (!h) Rf_error("invalid AdvanceBlock parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, advance_block_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_advance_block_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AdvanceBlock *h = (struct AdvanceBlock *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_advance_block_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_advance_block_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AdvanceBlock *h = (struct AdvanceBlock *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_advance_block_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_advance_block_reset(SEXP e) {
+  struct AdvanceBlock *h = (struct AdvanceBlock *)R_ExternalPtrAddr(e);
+  wickra_advance_block_reset(h);
+  return R_NilValue;
+}
+
+static void advance_decline_fin(SEXP e) {
+  struct AdvanceDecline *h = (struct AdvanceDecline *)R_ExternalPtrAddr(e);
+  if (h) wickra_advance_decline_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_advance_decline_new(void) {
+  struct AdvanceDecline *h = wickra_advance_decline_new();
+  if (!h) Rf_error("invalid AdvanceDecline parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, advance_decline_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_advance_decline_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
+  struct AdvanceDecline *h = (struct AdvanceDecline *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_advance_decline_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_advance_decline_reset(SEXP e) {
+  struct AdvanceDecline *h = (struct AdvanceDecline *)R_ExternalPtrAddr(e);
+  wickra_advance_decline_reset(h);
+  return R_NilValue;
+}
+
+static void advance_decline_ratio_fin(SEXP e) {
+  struct AdvanceDeclineRatio *h = (struct AdvanceDeclineRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_advance_decline_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_advance_decline_ratio_new(void) {
+  struct AdvanceDeclineRatio *h = wickra_advance_decline_ratio_new();
+  if (!h) Rf_error("invalid AdvanceDeclineRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, advance_decline_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_advance_decline_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
+  struct AdvanceDeclineRatio *h = (struct AdvanceDeclineRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_advance_decline_ratio_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_advance_decline_ratio_reset(SEXP e) {
+  struct AdvanceDeclineRatio *h = (struct AdvanceDeclineRatio *)R_ExternalPtrAddr(e);
+  wickra_advance_decline_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void adx_fin(SEXP e) {
+  struct Adx *h = (struct Adx *)R_ExternalPtrAddr(e);
+  if (h) wickra_adx_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_adx_new(SEXP a0) {
+  struct Adx *h = wickra_adx_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Adx parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, adx_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_adx_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Adx *h = (struct Adx *)R_ExternalPtrAddr(e);
+  struct WickraAdxOutput out;
+  int ok = wickra_adx_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.plus_di : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.minus_di : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.adx : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("plus_di"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("minus_di"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("adx"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_adx_reset(SEXP e) {
+  struct Adx *h = (struct Adx *)R_ExternalPtrAddr(e);
+  wickra_adx_reset(h);
+  return R_NilValue;
+}
+
+static void adxr_fin(SEXP e) {
+  struct Adxr *h = (struct Adxr *)R_ExternalPtrAddr(e);
+  if (h) wickra_adxr_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_adxr_new(SEXP a0) {
+  struct Adxr *h = wickra_adxr_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Adxr parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, adxr_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_adxr_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Adxr *h = (struct Adxr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_adxr_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_adxr_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Adxr *h = (struct Adxr *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_adxr_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_adxr_reset(SEXP e) {
+  struct Adxr *h = (struct Adxr *)R_ExternalPtrAddr(e);
+  wickra_adxr_reset(h);
+  return R_NilValue;
+}
+
+static void alligator_fin(SEXP e) {
+  struct Alligator *h = (struct Alligator *)R_ExternalPtrAddr(e);
+  if (h) wickra_alligator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_alligator_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct Alligator *h = wickra_alligator_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2));
+  if (!h) Rf_error("invalid Alligator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, alligator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_alligator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Alligator *h = (struct Alligator *)R_ExternalPtrAddr(e);
+  struct WickraAlligatorOutput out;
+  int ok = wickra_alligator_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.jaw : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.teeth : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.lips : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("jaw"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("teeth"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("lips"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_alligator_reset(SEXP e) {
+  struct Alligator *h = (struct Alligator *)R_ExternalPtrAddr(e);
+  wickra_alligator_reset(h);
+  return R_NilValue;
+}
+
+static void alma_fin(SEXP e) {
+  struct Alma *h = (struct Alma *)R_ExternalPtrAddr(e);
+  if (h) wickra_alma_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_alma_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct Alma *h = wickra_alma_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2));
+  if (!h) Rf_error("invalid Alma parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, alma_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_alma_update(SEXP e, SEXP a0) {
+  struct Alma *h = (struct Alma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_alma_update(h, Rf_asReal(a0)));
+}
+SEXP wk_alma_batch(SEXP e, SEXP a0) {
+  struct Alma *h = (struct Alma *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_alma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_alma_reset(SEXP e) {
+  struct Alma *h = (struct Alma *)R_ExternalPtrAddr(e);
+  wickra_alma_reset(h);
+  return R_NilValue;
+}
+
+static void alpha_fin(SEXP e) {
+  struct Alpha *h = (struct Alpha *)R_ExternalPtrAddr(e);
+  if (h) wickra_alpha_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_alpha_new(SEXP a0, SEXP a1) {
+  struct Alpha *h = wickra_alpha_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid Alpha parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, alpha_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_alpha_update(SEXP e, SEXP a0, SEXP a1) {
+  struct Alpha *h = (struct Alpha *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_alpha_update(h, Rf_asReal(a0), Rf_asReal(a1)));
+}
+SEXP wk_alpha_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct Alpha *h = (struct Alpha *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_alpha_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_alpha_reset(SEXP e) {
+  struct Alpha *h = (struct Alpha *)R_ExternalPtrAddr(e);
+  wickra_alpha_reset(h);
+  return R_NilValue;
+}
+
+static void amihud_illiquidity_fin(SEXP e) {
+  struct AmihudIlliquidity *h = (struct AmihudIlliquidity *)R_ExternalPtrAddr(e);
+  if (h) wickra_amihud_illiquidity_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_amihud_illiquidity_new(SEXP a0) {
+  struct AmihudIlliquidity *h = wickra_amihud_illiquidity_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid AmihudIlliquidity parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, amihud_illiquidity_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_amihud_illiquidity_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct AmihudIlliquidity *h = (struct AmihudIlliquidity *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_amihud_illiquidity_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
+}
+SEXP wk_amihud_illiquidity_reset(SEXP e) {
+  struct AmihudIlliquidity *h = (struct AmihudIlliquidity *)R_ExternalPtrAddr(e);
+  wickra_amihud_illiquidity_reset(h);
+  return R_NilValue;
+}
+
+static void anchored_rsi_fin(SEXP e) {
+  struct AnchoredRsi *h = (struct AnchoredRsi *)R_ExternalPtrAddr(e);
+  if (h) wickra_anchored_rsi_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_anchored_rsi_new(void) {
+  struct AnchoredRsi *h = wickra_anchored_rsi_new();
+  if (!h) Rf_error("invalid AnchoredRsi parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, anchored_rsi_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_anchored_rsi_update(SEXP e, SEXP a0) {
+  struct AnchoredRsi *h = (struct AnchoredRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_anchored_rsi_update(h, Rf_asReal(a0)));
+}
+SEXP wk_anchored_rsi_batch(SEXP e, SEXP a0) {
+  struct AnchoredRsi *h = (struct AnchoredRsi *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_anchored_rsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_anchored_rsi_reset(SEXP e) {
+  struct AnchoredRsi *h = (struct AnchoredRsi *)R_ExternalPtrAddr(e);
+  wickra_anchored_rsi_reset(h);
+  return R_NilValue;
+}
+
+static void anchored_vwap_fin(SEXP e) {
+  struct AnchoredVwap *h = (struct AnchoredVwap *)R_ExternalPtrAddr(e);
+  if (h) wickra_anchored_vwap_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_anchored_vwap_new(void) {
+  struct AnchoredVwap *h = wickra_anchored_vwap_new();
+  if (!h) Rf_error("invalid AnchoredVwap parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, anchored_vwap_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_anchored_vwap_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AnchoredVwap *h = (struct AnchoredVwap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_anchored_vwap_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_anchored_vwap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AnchoredVwap *h = (struct AnchoredVwap *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_anchored_vwap_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_anchored_vwap_reset(SEXP e) {
+  struct AnchoredVwap *h = (struct AnchoredVwap *)R_ExternalPtrAddr(e);
+  wickra_anchored_vwap_reset(h);
+  return R_NilValue;
+}
+
+static void andrews_pitchfork_fin(SEXP e) {
+  struct AndrewsPitchfork *h = (struct AndrewsPitchfork *)R_ExternalPtrAddr(e);
+  if (h) wickra_andrews_pitchfork_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_andrews_pitchfork_new(SEXP a0) {
+  struct AndrewsPitchfork *h = wickra_andrews_pitchfork_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid AndrewsPitchfork parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, andrews_pitchfork_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_andrews_pitchfork_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AndrewsPitchfork *h = (struct AndrewsPitchfork *)R_ExternalPtrAddr(e);
+  struct WickraAndrewsPitchforkOutput out;
+  int ok = wickra_andrews_pitchfork_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.median : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.upper : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.lower : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("median"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("upper"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("lower"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_andrews_pitchfork_reset(SEXP e) {
+  struct AndrewsPitchfork *h = (struct AndrewsPitchfork *)R_ExternalPtrAddr(e);
+  wickra_andrews_pitchfork_reset(h);
+  return R_NilValue;
+}
+
+static void apo_fin(SEXP e) {
+  struct Apo *h = (struct Apo *)R_ExternalPtrAddr(e);
+  if (h) wickra_apo_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_apo_new(SEXP a0, SEXP a1) {
+  struct Apo *h = wickra_apo_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid Apo parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, apo_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_apo_update(SEXP e, SEXP a0) {
+  struct Apo *h = (struct Apo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_apo_update(h, Rf_asReal(a0)));
+}
+SEXP wk_apo_batch(SEXP e, SEXP a0) {
+  struct Apo *h = (struct Apo *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_apo_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_apo_reset(SEXP e) {
+  struct Apo *h = (struct Apo *)R_ExternalPtrAddr(e);
+  wickra_apo_reset(h);
+  return R_NilValue;
+}
+
+static void aroon_fin(SEXP e) {
+  struct Aroon *h = (struct Aroon *)R_ExternalPtrAddr(e);
+  if (h) wickra_aroon_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_aroon_new(SEXP a0) {
+  struct Aroon *h = wickra_aroon_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Aroon parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, aroon_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_aroon_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Aroon *h = (struct Aroon *)R_ExternalPtrAddr(e);
+  struct WickraAroonOutput out;
+  int ok = wickra_aroon_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.up : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.down : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("up"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("down"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_aroon_reset(SEXP e) {
+  struct Aroon *h = (struct Aroon *)R_ExternalPtrAddr(e);
+  wickra_aroon_reset(h);
+  return R_NilValue;
+}
+
+static void aroon_oscillator_fin(SEXP e) {
+  struct AroonOscillator *h = (struct AroonOscillator *)R_ExternalPtrAddr(e);
+  if (h) wickra_aroon_oscillator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_aroon_oscillator_new(SEXP a0) {
+  struct AroonOscillator *h = wickra_aroon_oscillator_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid AroonOscillator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, aroon_oscillator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_aroon_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AroonOscillator *h = (struct AroonOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_aroon_oscillator_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_aroon_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AroonOscillator *h = (struct AroonOscillator *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_aroon_oscillator_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_aroon_oscillator_reset(SEXP e) {
+  struct AroonOscillator *h = (struct AroonOscillator *)R_ExternalPtrAddr(e);
+  wickra_aroon_oscillator_reset(h);
+  return R_NilValue;
+}
+
+static void atr_fin(SEXP e) {
+  struct Atr *h = (struct Atr *)R_ExternalPtrAddr(e);
+  if (h) wickra_atr_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_atr_new(SEXP a0) {
+  struct Atr *h = wickra_atr_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Atr parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, atr_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_atr_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Atr *h = (struct Atr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_atr_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_atr_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Atr *h = (struct Atr *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_atr_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_atr_reset(SEXP e) {
+  struct Atr *h = (struct Atr *)R_ExternalPtrAddr(e);
+  wickra_atr_reset(h);
+  return R_NilValue;
+}
+
+static void atr_bands_fin(SEXP e) {
+  struct AtrBands *h = (struct AtrBands *)R_ExternalPtrAddr(e);
+  if (h) wickra_atr_bands_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_atr_bands_new(SEXP a0, SEXP a1) {
+  struct AtrBands *h = wickra_atr_bands_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid AtrBands parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, atr_bands_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_atr_bands_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AtrBands *h = (struct AtrBands *)R_ExternalPtrAddr(e);
+  struct WickraAtrBandsOutput out;
+  int ok = wickra_atr_bands_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.upper : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.middle : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.lower : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("lower"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_atr_bands_reset(SEXP e) {
+  struct AtrBands *h = (struct AtrBands *)R_ExternalPtrAddr(e);
+  wickra_atr_bands_reset(h);
+  return R_NilValue;
+}
+
+static void atr_ratchet_fin(SEXP e) {
+  struct AtrRatchet *h = (struct AtrRatchet *)R_ExternalPtrAddr(e);
+  if (h) wickra_atr_ratchet_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_atr_ratchet_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct AtrRatchet *h = wickra_atr_ratchet_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2));
+  if (!h) Rf_error("invalid AtrRatchet parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, atr_ratchet_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_atr_ratchet_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AtrRatchet *h = (struct AtrRatchet *)R_ExternalPtrAddr(e);
+  struct WickraAtrRatchetOutput out;
+  int ok = wickra_atr_ratchet_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.value : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.direction : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("value"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("direction"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_atr_ratchet_reset(SEXP e) {
+  struct AtrRatchet *h = (struct AtrRatchet *)R_ExternalPtrAddr(e);
+  wickra_atr_ratchet_reset(h);
+  return R_NilValue;
+}
+
+static void atr_trailing_stop_fin(SEXP e) {
+  struct AtrTrailingStop *h = (struct AtrTrailingStop *)R_ExternalPtrAddr(e);
+  if (h) wickra_atr_trailing_stop_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_atr_trailing_stop_new(SEXP a0, SEXP a1) {
+  struct AtrTrailingStop *h = wickra_atr_trailing_stop_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid AtrTrailingStop parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, atr_trailing_stop_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_atr_trailing_stop_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AtrTrailingStop *h = (struct AtrTrailingStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_atr_trailing_stop_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_atr_trailing_stop_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AtrTrailingStop *h = (struct AtrTrailingStop *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_atr_trailing_stop_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_atr_trailing_stop_reset(SEXP e) {
+  struct AtrTrailingStop *h = (struct AtrTrailingStop *)R_ExternalPtrAddr(e);
+  wickra_atr_trailing_stop_reset(h);
+  return R_NilValue;
+}
+
+static void auto_fib_fin(SEXP e) {
+  struct AutoFib *h = (struct AutoFib *)R_ExternalPtrAddr(e);
+  if (h) wickra_auto_fib_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_auto_fib_new(void) {
+  struct AutoFib *h = wickra_auto_fib_new();
+  if (!h) Rf_error("invalid AutoFib parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, auto_fib_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_auto_fib_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AutoFib *h = (struct AutoFib *)R_ExternalPtrAddr(e);
+  struct WickraAutoFibOutput out;
+  int ok = wickra_auto_fib_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 7));
+  REAL(r)[0] = ok ? (double)out.level_0 : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.level_236 : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.level_382 : NA_REAL;
+  REAL(r)[3] = ok ? (double)out.level_500 : NA_REAL;
+  REAL(r)[4] = ok ? (double)out.level_618 : NA_REAL;
+  REAL(r)[5] = ok ? (double)out.level_786 : NA_REAL;
+  REAL(r)[6] = ok ? (double)out.level_1000 : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 7));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("level_0"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("level_236"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("level_382"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("level_500"));
+  SET_STRING_ELT(nm, 4, Rf_mkChar("level_618"));
+  SET_STRING_ELT(nm, 5, Rf_mkChar("level_786"));
+  SET_STRING_ELT(nm, 6, Rf_mkChar("level_1000"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_auto_fib_reset(SEXP e) {
+  struct AutoFib *h = (struct AutoFib *)R_ExternalPtrAddr(e);
+  wickra_auto_fib_reset(h);
+  return R_NilValue;
+}
+
+static void autocorrelation_fin(SEXP e) {
+  struct Autocorrelation *h = (struct Autocorrelation *)R_ExternalPtrAddr(e);
+  if (h) wickra_autocorrelation_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_autocorrelation_new(SEXP a0, SEXP a1) {
+  struct Autocorrelation *h = wickra_autocorrelation_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid Autocorrelation parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, autocorrelation_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_autocorrelation_update(SEXP e, SEXP a0) {
+  struct Autocorrelation *h = (struct Autocorrelation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_autocorrelation_update(h, Rf_asReal(a0)));
+}
+SEXP wk_autocorrelation_batch(SEXP e, SEXP a0) {
+  struct Autocorrelation *h = (struct Autocorrelation *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_autocorrelation_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_autocorrelation_reset(SEXP e) {
+  struct Autocorrelation *h = (struct Autocorrelation *)R_ExternalPtrAddr(e);
+  wickra_autocorrelation_reset(h);
+  return R_NilValue;
+}
+
+static void autocorrelation_periodogram_fin(SEXP e) {
+  struct AutocorrelationPeriodogram *h = (struct AutocorrelationPeriodogram *)R_ExternalPtrAddr(e);
+  if (h) wickra_autocorrelation_periodogram_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_autocorrelation_periodogram_new(SEXP a0, SEXP a1) {
+  struct AutocorrelationPeriodogram *h = wickra_autocorrelation_periodogram_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid AutocorrelationPeriodogram parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, autocorrelation_periodogram_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_autocorrelation_periodogram_update(SEXP e, SEXP a0) {
+  struct AutocorrelationPeriodogram *h = (struct AutocorrelationPeriodogram *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_autocorrelation_periodogram_update(h, Rf_asReal(a0)));
+}
+SEXP wk_autocorrelation_periodogram_batch(SEXP e, SEXP a0) {
+  struct AutocorrelationPeriodogram *h = (struct AutocorrelationPeriodogram *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_autocorrelation_periodogram_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_autocorrelation_periodogram_reset(SEXP e) {
+  struct AutocorrelationPeriodogram *h = (struct AutocorrelationPeriodogram *)R_ExternalPtrAddr(e);
+  wickra_autocorrelation_periodogram_reset(h);
+  return R_NilValue;
+}
+
+static void average_daily_range_fin(SEXP e) {
+  struct AverageDailyRange *h = (struct AverageDailyRange *)R_ExternalPtrAddr(e);
+  if (h) wickra_average_daily_range_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_average_daily_range_new(SEXP a0, SEXP a1) {
+  struct AverageDailyRange *h = wickra_average_daily_range_new((uintptr_t)Rf_asReal(a0), (int32_t)Rf_asInteger(a1));
+  if (!h) Rf_error("invalid AverageDailyRange parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, average_daily_range_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_average_daily_range_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AverageDailyRange *h = (struct AverageDailyRange *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_average_daily_range_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_average_daily_range_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AverageDailyRange *h = (struct AverageDailyRange *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_average_daily_range_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_average_daily_range_reset(SEXP e) {
+  struct AverageDailyRange *h = (struct AverageDailyRange *)R_ExternalPtrAddr(e);
+  wickra_average_daily_range_reset(h);
+  return R_NilValue;
+}
+
+static void average_drawdown_fin(SEXP e) {
+  struct AverageDrawdown *h = (struct AverageDrawdown *)R_ExternalPtrAddr(e);
+  if (h) wickra_average_drawdown_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_average_drawdown_new(SEXP a0) {
+  struct AverageDrawdown *h = wickra_average_drawdown_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid AverageDrawdown parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, average_drawdown_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_average_drawdown_update(SEXP e, SEXP a0) {
+  struct AverageDrawdown *h = (struct AverageDrawdown *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_average_drawdown_update(h, Rf_asReal(a0)));
+}
+SEXP wk_average_drawdown_batch(SEXP e, SEXP a0) {
+  struct AverageDrawdown *h = (struct AverageDrawdown *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_average_drawdown_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_average_drawdown_reset(SEXP e) {
+  struct AverageDrawdown *h = (struct AverageDrawdown *)R_ExternalPtrAddr(e);
+  wickra_average_drawdown_reset(h);
+  return R_NilValue;
+}
+
+static void avg_price_fin(SEXP e) {
+  struct AvgPrice *h = (struct AvgPrice *)R_ExternalPtrAddr(e);
+  if (h) wickra_avg_price_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_avg_price_new(void) {
+  struct AvgPrice *h = wickra_avg_price_new();
+  if (!h) Rf_error("invalid AvgPrice parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, avg_price_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_avg_price_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AvgPrice *h = (struct AvgPrice *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_avg_price_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_avg_price_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AvgPrice *h = (struct AvgPrice *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_avg_price_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_avg_price_reset(SEXP e) {
+  struct AvgPrice *h = (struct AvgPrice *)R_ExternalPtrAddr(e);
+  wickra_avg_price_reset(h);
+  return R_NilValue;
+}
+
+static void awesome_oscillator_fin(SEXP e) {
+  struct AwesomeOscillator *h = (struct AwesomeOscillator *)R_ExternalPtrAddr(e);
+  if (h) wickra_awesome_oscillator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_awesome_oscillator_new(SEXP a0, SEXP a1) {
+  struct AwesomeOscillator *h = wickra_awesome_oscillator_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid AwesomeOscillator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, awesome_oscillator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_awesome_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AwesomeOscillator *h = (struct AwesomeOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_awesome_oscillator_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_awesome_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AwesomeOscillator *h = (struct AwesomeOscillator *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_awesome_oscillator_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_awesome_oscillator_reset(SEXP e) {
+  struct AwesomeOscillator *h = (struct AwesomeOscillator *)R_ExternalPtrAddr(e);
+  wickra_awesome_oscillator_reset(h);
+  return R_NilValue;
+}
+
+static void awesome_oscillator_histogram_fin(SEXP e) {
+  struct AwesomeOscillatorHistogram *h = (struct AwesomeOscillatorHistogram *)R_ExternalPtrAddr(e);
+  if (h) wickra_awesome_oscillator_histogram_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_awesome_oscillator_histogram_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct AwesomeOscillatorHistogram *h = wickra_awesome_oscillator_histogram_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2));
+  if (!h) Rf_error("invalid AwesomeOscillatorHistogram parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, awesome_oscillator_histogram_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_awesome_oscillator_histogram_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AwesomeOscillatorHistogram *h = (struct AwesomeOscillatorHistogram *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_awesome_oscillator_histogram_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_awesome_oscillator_histogram_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct AwesomeOscillatorHistogram *h = (struct AwesomeOscillatorHistogram *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_awesome_oscillator_histogram_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_awesome_oscillator_histogram_reset(SEXP e) {
+  struct AwesomeOscillatorHistogram *h = (struct AwesomeOscillatorHistogram *)R_ExternalPtrAddr(e);
+  wickra_awesome_oscillator_histogram_reset(h);
+  return R_NilValue;
+}
+
+static void balance_of_power_fin(SEXP e) {
+  struct BalanceOfPower *h = (struct BalanceOfPower *)R_ExternalPtrAddr(e);
+  if (h) wickra_balance_of_power_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_balance_of_power_new(void) {
+  struct BalanceOfPower *h = wickra_balance_of_power_new();
+  if (!h) Rf_error("invalid BalanceOfPower parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, balance_of_power_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_balance_of_power_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct BalanceOfPower *h = (struct BalanceOfPower *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_balance_of_power_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_balance_of_power_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct BalanceOfPower *h = (struct BalanceOfPower *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_balance_of_power_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_balance_of_power_reset(SEXP e) {
+  struct BalanceOfPower *h = (struct BalanceOfPower *)R_ExternalPtrAddr(e);
+  wickra_balance_of_power_reset(h);
+  return R_NilValue;
+}
+
+static void bandpass_filter_fin(SEXP e) {
+  struct BandpassFilter *h = (struct BandpassFilter *)R_ExternalPtrAddr(e);
+  if (h) wickra_bandpass_filter_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_bandpass_filter_new(SEXP a0, SEXP a1) {
+  struct BandpassFilter *h = wickra_bandpass_filter_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid BandpassFilter parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, bandpass_filter_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_bandpass_filter_update(SEXP e, SEXP a0) {
+  struct BandpassFilter *h = (struct BandpassFilter *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_bandpass_filter_update(h, Rf_asReal(a0)));
+}
+SEXP wk_bandpass_filter_batch(SEXP e, SEXP a0) {
+  struct BandpassFilter *h = (struct BandpassFilter *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_bandpass_filter_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_bandpass_filter_reset(SEXP e) {
+  struct BandpassFilter *h = (struct BandpassFilter *)R_ExternalPtrAddr(e);
+  wickra_bandpass_filter_reset(h);
+  return R_NilValue;
+}
+
+static void bat_fin(SEXP e) {
+  struct Bat *h = (struct Bat *)R_ExternalPtrAddr(e);
+  if (h) wickra_bat_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_bat_new(void) {
+  struct Bat *h = wickra_bat_new();
+  if (!h) Rf_error("invalid Bat parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, bat_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_bat_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Bat *h = (struct Bat *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_bat_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_bat_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Bat *h = (struct Bat *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_bat_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_bat_reset(SEXP e) {
+  struct Bat *h = (struct Bat *)R_ExternalPtrAddr(e);
+  wickra_bat_reset(h);
+  return R_NilValue;
+}
+
+static void belt_hold_fin(SEXP e) {
+  struct BeltHold *h = (struct BeltHold *)R_ExternalPtrAddr(e);
+  if (h) wickra_belt_hold_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_belt_hold_new(void) {
+  struct BeltHold *h = wickra_belt_hold_new();
+  if (!h) Rf_error("invalid BeltHold parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, belt_hold_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_belt_hold_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct BeltHold *h = (struct BeltHold *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_belt_hold_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_belt_hold_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct BeltHold *h = (struct BeltHold *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_belt_hold_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_belt_hold_reset(SEXP e) {
+  struct BeltHold *h = (struct BeltHold *)R_ExternalPtrAddr(e);
+  wickra_belt_hold_reset(h);
+  return R_NilValue;
+}
+
+static void beta_fin(SEXP e) {
+  struct Beta *h = (struct Beta *)R_ExternalPtrAddr(e);
+  if (h) wickra_beta_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_beta_new(SEXP a0) {
+  struct Beta *h = wickra_beta_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Beta parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, beta_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_beta_update(SEXP e, SEXP a0, SEXP a1) {
+  struct Beta *h = (struct Beta *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_beta_update(h, Rf_asReal(a0), Rf_asReal(a1)));
+}
+SEXP wk_beta_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct Beta *h = (struct Beta *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_beta_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_beta_reset(SEXP e) {
+  struct Beta *h = (struct Beta *)R_ExternalPtrAddr(e);
+  wickra_beta_reset(h);
+  return R_NilValue;
+}
+
+static void beta_neutral_spread_fin(SEXP e) {
+  struct BetaNeutralSpread *h = (struct BetaNeutralSpread *)R_ExternalPtrAddr(e);
+  if (h) wickra_beta_neutral_spread_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_beta_neutral_spread_new(SEXP a0) {
+  struct BetaNeutralSpread *h = wickra_beta_neutral_spread_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid BetaNeutralSpread parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, beta_neutral_spread_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_beta_neutral_spread_update(SEXP e, SEXP a0, SEXP a1) {
+  struct BetaNeutralSpread *h = (struct BetaNeutralSpread *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_beta_neutral_spread_update(h, Rf_asReal(a0), Rf_asReal(a1)));
+}
+SEXP wk_beta_neutral_spread_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct BetaNeutralSpread *h = (struct BetaNeutralSpread *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_beta_neutral_spread_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_beta_neutral_spread_reset(SEXP e) {
+  struct BetaNeutralSpread *h = (struct BetaNeutralSpread *)R_ExternalPtrAddr(e);
+  wickra_beta_neutral_spread_reset(h);
+  return R_NilValue;
+}
+
+static void better_volume_fin(SEXP e) {
+  struct BetterVolume *h = (struct BetterVolume *)R_ExternalPtrAddr(e);
+  if (h) wickra_better_volume_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_better_volume_new(SEXP a0) {
+  struct BetterVolume *h = wickra_better_volume_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid BetterVolume parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, better_volume_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_better_volume_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct BetterVolume *h = (struct BetterVolume *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_better_volume_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_better_volume_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct BetterVolume *h = (struct BetterVolume *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_better_volume_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_better_volume_reset(SEXP e) {
+  struct BetterVolume *h = (struct BetterVolume *)R_ExternalPtrAddr(e);
+  wickra_better_volume_reset(h);
+  return R_NilValue;
+}
+
+static void bipower_variation_fin(SEXP e) {
+  struct BipowerVariation *h = (struct BipowerVariation *)R_ExternalPtrAddr(e);
+  if (h) wickra_bipower_variation_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_bipower_variation_new(SEXP a0) {
+  struct BipowerVariation *h = wickra_bipower_variation_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid BipowerVariation parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, bipower_variation_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_bipower_variation_update(SEXP e, SEXP a0) {
+  struct BipowerVariation *h = (struct BipowerVariation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_bipower_variation_update(h, Rf_asReal(a0)));
+}
+SEXP wk_bipower_variation_batch(SEXP e, SEXP a0) {
+  struct BipowerVariation *h = (struct BipowerVariation *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_bipower_variation_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_bipower_variation_reset(SEXP e) {
+  struct BipowerVariation *h = (struct BipowerVariation *)R_ExternalPtrAddr(e);
+  wickra_bipower_variation_reset(h);
+  return R_NilValue;
+}
+
+static void body_size_pct_fin(SEXP e) {
+  struct BodySizePct *h = (struct BodySizePct *)R_ExternalPtrAddr(e);
+  if (h) wickra_body_size_pct_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_body_size_pct_new(void) {
+  struct BodySizePct *h = wickra_body_size_pct_new();
+  if (!h) Rf_error("invalid BodySizePct parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, body_size_pct_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_body_size_pct_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct BodySizePct *h = (struct BodySizePct *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_body_size_pct_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_body_size_pct_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct BodySizePct *h = (struct BodySizePct *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_body_size_pct_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_body_size_pct_reset(SEXP e) {
+  struct BodySizePct *h = (struct BodySizePct *)R_ExternalPtrAddr(e);
+  wickra_body_size_pct_reset(h);
+  return R_NilValue;
+}
+
+static void bollinger_bands_fin(SEXP e) {
+  struct BollingerBands *h = (struct BollingerBands *)R_ExternalPtrAddr(e);
+  if (h) wickra_bollinger_bands_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_bollinger_bands_new(SEXP a0, SEXP a1) {
+  struct BollingerBands *h = wickra_bollinger_bands_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid BollingerBands parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, bollinger_bands_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_bollinger_bands_update(SEXP e, SEXP a0) {
+  struct BollingerBands *h = (struct BollingerBands *)R_ExternalPtrAddr(e);
+  struct WickraBollingerOutput out;
+  int ok = wickra_bollinger_bands_update(h, Rf_asReal(a0), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 4));
+  REAL(r)[0] = ok ? (double)out.upper : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.middle : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.lower : NA_REAL;
+  REAL(r)[3] = ok ? (double)out.stddev : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 4));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("lower"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("stddev"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_bollinger_bands_reset(SEXP e) {
+  struct BollingerBands *h = (struct BollingerBands *)R_ExternalPtrAddr(e);
+  wickra_bollinger_bands_reset(h);
+  return R_NilValue;
+}
+
+static void bollinger_bandwidth_fin(SEXP e) {
+  struct BollingerBandwidth *h = (struct BollingerBandwidth *)R_ExternalPtrAddr(e);
+  if (h) wickra_bollinger_bandwidth_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_bollinger_bandwidth_new(SEXP a0, SEXP a1) {
+  struct BollingerBandwidth *h = wickra_bollinger_bandwidth_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid BollingerBandwidth parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, bollinger_bandwidth_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_bollinger_bandwidth_update(SEXP e, SEXP a0) {
+  struct BollingerBandwidth *h = (struct BollingerBandwidth *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_bollinger_bandwidth_update(h, Rf_asReal(a0)));
+}
+SEXP wk_bollinger_bandwidth_batch(SEXP e, SEXP a0) {
+  struct BollingerBandwidth *h = (struct BollingerBandwidth *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_bollinger_bandwidth_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_bollinger_bandwidth_reset(SEXP e) {
+  struct BollingerBandwidth *h = (struct BollingerBandwidth *)R_ExternalPtrAddr(e);
+  wickra_bollinger_bandwidth_reset(h);
+  return R_NilValue;
+}
+
+static void bomar_bands_fin(SEXP e) {
+  struct BomarBands *h = (struct BomarBands *)R_ExternalPtrAddr(e);
+  if (h) wickra_bomar_bands_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_bomar_bands_new(SEXP a0, SEXP a1) {
+  struct BomarBands *h = wickra_bomar_bands_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid BomarBands parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, bomar_bands_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_bomar_bands_update(SEXP e, SEXP a0) {
+  struct BomarBands *h = (struct BomarBands *)R_ExternalPtrAddr(e);
+  struct WickraBomarBandsOutput out;
+  int ok = wickra_bomar_bands_update(h, Rf_asReal(a0), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.upper : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.middle : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.lower : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("lower"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_bomar_bands_reset(SEXP e) {
+  struct BomarBands *h = (struct BomarBands *)R_ExternalPtrAddr(e);
+  wickra_bomar_bands_reset(h);
+  return R_NilValue;
+}
+
+static void breadth_thrust_fin(SEXP e) {
+  struct BreadthThrust *h = (struct BreadthThrust *)R_ExternalPtrAddr(e);
+  if (h) wickra_breadth_thrust_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_breadth_thrust_new(SEXP a0) {
+  struct BreadthThrust *h = wickra_breadth_thrust_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid BreadthThrust parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, breadth_thrust_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_breadth_thrust_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
+  struct BreadthThrust *h = (struct BreadthThrust *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_breadth_thrust_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_breadth_thrust_reset(SEXP e) {
+  struct BreadthThrust *h = (struct BreadthThrust *)R_ExternalPtrAddr(e);
+  wickra_breadth_thrust_reset(h);
+  return R_NilValue;
+}
+
+static void breakaway_fin(SEXP e) {
+  struct Breakaway *h = (struct Breakaway *)R_ExternalPtrAddr(e);
+  if (h) wickra_breakaway_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_breakaway_new(void) {
+  struct Breakaway *h = wickra_breakaway_new();
+  if (!h) Rf_error("invalid Breakaway parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, breakaway_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_breakaway_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Breakaway *h = (struct Breakaway *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_breakaway_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_breakaway_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Breakaway *h = (struct Breakaway *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_breakaway_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_breakaway_reset(SEXP e) {
+  struct Breakaway *h = (struct Breakaway *)R_ExternalPtrAddr(e);
+  wickra_breakaway_reset(h);
+  return R_NilValue;
+}
+
+static void bullish_percent_index_fin(SEXP e) {
+  struct BullishPercentIndex *h = (struct BullishPercentIndex *)R_ExternalPtrAddr(e);
+  if (h) wickra_bullish_percent_index_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_bullish_percent_index_new(void) {
+  struct BullishPercentIndex *h = wickra_bullish_percent_index_new();
+  if (!h) Rf_error("invalid BullishPercentIndex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, bullish_percent_index_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_bullish_percent_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
+  struct BullishPercentIndex *h = (struct BullishPercentIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_bullish_percent_index_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_bullish_percent_index_reset(SEXP e) {
+  struct BullishPercentIndex *h = (struct BullishPercentIndex *)R_ExternalPtrAddr(e);
+  wickra_bullish_percent_index_reset(h);
+  return R_NilValue;
+}
+
+static void burke_ratio_fin(SEXP e) {
+  struct BurkeRatio *h = (struct BurkeRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_burke_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_burke_ratio_new(SEXP a0) {
+  struct BurkeRatio *h = wickra_burke_ratio_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid BurkeRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, burke_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_burke_ratio_update(SEXP e, SEXP a0) {
+  struct BurkeRatio *h = (struct BurkeRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_burke_ratio_update(h, Rf_asReal(a0)));
+}
+SEXP wk_burke_ratio_batch(SEXP e, SEXP a0) {
+  struct BurkeRatio *h = (struct BurkeRatio *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_burke_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_burke_ratio_reset(SEXP e) {
+  struct BurkeRatio *h = (struct BurkeRatio *)R_ExternalPtrAddr(e);
+  wickra_burke_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void butterfly_fin(SEXP e) {
+  struct Butterfly *h = (struct Butterfly *)R_ExternalPtrAddr(e);
+  if (h) wickra_butterfly_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_butterfly_new(void) {
+  struct Butterfly *h = wickra_butterfly_new();
+  if (!h) Rf_error("invalid Butterfly parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, butterfly_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_butterfly_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Butterfly *h = (struct Butterfly *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_butterfly_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_butterfly_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Butterfly *h = (struct Butterfly *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_butterfly_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_butterfly_reset(SEXP e) {
+  struct Butterfly *h = (struct Butterfly *)R_ExternalPtrAddr(e);
+  wickra_butterfly_reset(h);
+  return R_NilValue;
+}
+
+static void calendar_spread_fin(SEXP e) {
+  struct CalendarSpread *h = (struct CalendarSpread *)R_ExternalPtrAddr(e);
+  if (h) wickra_calendar_spread_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_calendar_spread_new(void) {
+  struct CalendarSpread *h = wickra_calendar_spread_new();
+  if (!h) Rf_error("invalid CalendarSpread parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, calendar_spread_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_calendar_spread_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct CalendarSpread *h = (struct CalendarSpread *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_calendar_spread_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_calendar_spread_reset(SEXP e) {
+  struct CalendarSpread *h = (struct CalendarSpread *)R_ExternalPtrAddr(e);
+  wickra_calendar_spread_reset(h);
+  return R_NilValue;
+}
+
+static void calmar_ratio_fin(SEXP e) {
+  struct CalmarRatio *h = (struct CalmarRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_calmar_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_calmar_ratio_new(SEXP a0) {
+  struct CalmarRatio *h = wickra_calmar_ratio_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid CalmarRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, calmar_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_calmar_ratio_update(SEXP e, SEXP a0) {
+  struct CalmarRatio *h = (struct CalmarRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_calmar_ratio_update(h, Rf_asReal(a0)));
+}
+SEXP wk_calmar_ratio_batch(SEXP e, SEXP a0) {
+  struct CalmarRatio *h = (struct CalmarRatio *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_calmar_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_calmar_ratio_reset(SEXP e) {
+  struct CalmarRatio *h = (struct CalmarRatio *)R_ExternalPtrAddr(e);
+  wickra_calmar_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void camarilla_fin(SEXP e) {
+  struct Camarilla *h = (struct Camarilla *)R_ExternalPtrAddr(e);
+  if (h) wickra_camarilla_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_camarilla_new(void) {
+  struct Camarilla *h = wickra_camarilla_new();
+  if (!h) Rf_error("invalid Camarilla parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, camarilla_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_camarilla_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Camarilla *h = (struct Camarilla *)R_ExternalPtrAddr(e);
+  struct WickraCamarillaPivotsOutput out;
+  int ok = wickra_camarilla_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 9));
+  REAL(r)[0] = ok ? (double)out.pp : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.r1 : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.r2 : NA_REAL;
+  REAL(r)[3] = ok ? (double)out.r3 : NA_REAL;
+  REAL(r)[4] = ok ? (double)out.r4 : NA_REAL;
+  REAL(r)[5] = ok ? (double)out.s1 : NA_REAL;
+  REAL(r)[6] = ok ? (double)out.s2 : NA_REAL;
+  REAL(r)[7] = ok ? (double)out.s3 : NA_REAL;
+  REAL(r)[8] = ok ? (double)out.s4 : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 9));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("pp"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("r1"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("r2"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("r3"));
+  SET_STRING_ELT(nm, 4, Rf_mkChar("r4"));
+  SET_STRING_ELT(nm, 5, Rf_mkChar("s1"));
+  SET_STRING_ELT(nm, 6, Rf_mkChar("s2"));
+  SET_STRING_ELT(nm, 7, Rf_mkChar("s3"));
+  SET_STRING_ELT(nm, 8, Rf_mkChar("s4"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_camarilla_reset(SEXP e) {
+  struct Camarilla *h = (struct Camarilla *)R_ExternalPtrAddr(e);
+  wickra_camarilla_reset(h);
+  return R_NilValue;
+}
+
+static void candle_volume_fin(SEXP e) {
+  struct CandleVolume *h = (struct CandleVolume *)R_ExternalPtrAddr(e);
+  if (h) wickra_candle_volume_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_candle_volume_new(SEXP a0) {
+  struct CandleVolume *h = wickra_candle_volume_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid CandleVolume parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, candle_volume_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_candle_volume_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct CandleVolume *h = (struct CandleVolume *)R_ExternalPtrAddr(e);
+  struct WickraCandleVolumeOutput out;
+  int ok = wickra_candle_volume_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.body : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.width : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("body"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("width"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_candle_volume_reset(SEXP e) {
+  struct CandleVolume *h = (struct CandleVolume *)R_ExternalPtrAddr(e);
+  wickra_candle_volume_reset(h);
+  return R_NilValue;
+}
+
+static void cci_fin(SEXP e) {
+  struct Cci *h = (struct Cci *)R_ExternalPtrAddr(e);
+  if (h) wickra_cci_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_cci_new(SEXP a0) {
+  struct Cci *h = wickra_cci_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Cci parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, cci_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_cci_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Cci *h = (struct Cci *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_cci_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_cci_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Cci *h = (struct Cci *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_cci_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_cci_reset(SEXP e) {
+  struct Cci *h = (struct Cci *)R_ExternalPtrAddr(e);
+  wickra_cci_reset(h);
+  return R_NilValue;
+}
+
+static void center_of_gravity_fin(SEXP e) {
+  struct CenterOfGravity *h = (struct CenterOfGravity *)R_ExternalPtrAddr(e);
+  if (h) wickra_center_of_gravity_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_center_of_gravity_new(SEXP a0) {
+  struct CenterOfGravity *h = wickra_center_of_gravity_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid CenterOfGravity parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, center_of_gravity_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_center_of_gravity_update(SEXP e, SEXP a0) {
+  struct CenterOfGravity *h = (struct CenterOfGravity *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_center_of_gravity_update(h, Rf_asReal(a0)));
+}
+SEXP wk_center_of_gravity_batch(SEXP e, SEXP a0) {
+  struct CenterOfGravity *h = (struct CenterOfGravity *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_center_of_gravity_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_center_of_gravity_reset(SEXP e) {
+  struct CenterOfGravity *h = (struct CenterOfGravity *)R_ExternalPtrAddr(e);
+  wickra_center_of_gravity_reset(h);
+  return R_NilValue;
+}
+
+static void central_pivot_range_fin(SEXP e) {
+  struct CentralPivotRange *h = (struct CentralPivotRange *)R_ExternalPtrAddr(e);
+  if (h) wickra_central_pivot_range_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_central_pivot_range_new(void) {
+  struct CentralPivotRange *h = wickra_central_pivot_range_new();
+  if (!h) Rf_error("invalid CentralPivotRange parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, central_pivot_range_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_central_pivot_range_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct CentralPivotRange *h = (struct CentralPivotRange *)R_ExternalPtrAddr(e);
+  struct WickraCentralPivotRangeOutput out;
+  int ok = wickra_central_pivot_range_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.pivot : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.tc : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.bc : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("pivot"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("tc"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("bc"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_central_pivot_range_reset(SEXP e) {
+  struct CentralPivotRange *h = (struct CentralPivotRange *)R_ExternalPtrAddr(e);
+  wickra_central_pivot_range_reset(h);
+  return R_NilValue;
+}
+
+static void cfo_fin(SEXP e) {
+  struct Cfo *h = (struct Cfo *)R_ExternalPtrAddr(e);
+  if (h) wickra_cfo_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_cfo_new(SEXP a0) {
+  struct Cfo *h = wickra_cfo_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Cfo parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, cfo_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_cfo_update(SEXP e, SEXP a0) {
+  struct Cfo *h = (struct Cfo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_cfo_update(h, Rf_asReal(a0)));
+}
+SEXP wk_cfo_batch(SEXP e, SEXP a0) {
+  struct Cfo *h = (struct Cfo *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_cfo_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_cfo_reset(SEXP e) {
+  struct Cfo *h = (struct Cfo *)R_ExternalPtrAddr(e);
+  wickra_cfo_reset(h);
+  return R_NilValue;
+}
+
+static void chaikin_money_flow_fin(SEXP e) {
+  struct ChaikinMoneyFlow *h = (struct ChaikinMoneyFlow *)R_ExternalPtrAddr(e);
+  if (h) wickra_chaikin_money_flow_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_chaikin_money_flow_new(SEXP a0) {
+  struct ChaikinMoneyFlow *h = wickra_chaikin_money_flow_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid ChaikinMoneyFlow parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, chaikin_money_flow_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_chaikin_money_flow_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ChaikinMoneyFlow *h = (struct ChaikinMoneyFlow *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_chaikin_money_flow_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_chaikin_money_flow_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ChaikinMoneyFlow *h = (struct ChaikinMoneyFlow *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_chaikin_money_flow_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_chaikin_money_flow_reset(SEXP e) {
+  struct ChaikinMoneyFlow *h = (struct ChaikinMoneyFlow *)R_ExternalPtrAddr(e);
+  wickra_chaikin_money_flow_reset(h);
+  return R_NilValue;
+}
+
+static void chaikin_oscillator_fin(SEXP e) {
+  struct ChaikinOscillator *h = (struct ChaikinOscillator *)R_ExternalPtrAddr(e);
+  if (h) wickra_chaikin_oscillator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_chaikin_oscillator_new(SEXP a0, SEXP a1) {
+  struct ChaikinOscillator *h = wickra_chaikin_oscillator_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid ChaikinOscillator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, chaikin_oscillator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_chaikin_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ChaikinOscillator *h = (struct ChaikinOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_chaikin_oscillator_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_chaikin_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ChaikinOscillator *h = (struct ChaikinOscillator *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_chaikin_oscillator_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_chaikin_oscillator_reset(SEXP e) {
+  struct ChaikinOscillator *h = (struct ChaikinOscillator *)R_ExternalPtrAddr(e);
+  wickra_chaikin_oscillator_reset(h);
+  return R_NilValue;
+}
+
+static void chaikin_volatility_fin(SEXP e) {
+  struct ChaikinVolatility *h = (struct ChaikinVolatility *)R_ExternalPtrAddr(e);
+  if (h) wickra_chaikin_volatility_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_chaikin_volatility_new(SEXP a0, SEXP a1) {
+  struct ChaikinVolatility *h = wickra_chaikin_volatility_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid ChaikinVolatility parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, chaikin_volatility_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_chaikin_volatility_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ChaikinVolatility *h = (struct ChaikinVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_chaikin_volatility_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_chaikin_volatility_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ChaikinVolatility *h = (struct ChaikinVolatility *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_chaikin_volatility_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_chaikin_volatility_reset(SEXP e) {
+  struct ChaikinVolatility *h = (struct ChaikinVolatility *)R_ExternalPtrAddr(e);
+  wickra_chaikin_volatility_reset(h);
+  return R_NilValue;
+}
+
+static void chande_kroll_stop_fin(SEXP e) {
+  struct ChandeKrollStop *h = (struct ChandeKrollStop *)R_ExternalPtrAddr(e);
+  if (h) wickra_chande_kroll_stop_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_chande_kroll_stop_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct ChandeKrollStop *h = wickra_chande_kroll_stop_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1), (uintptr_t)Rf_asReal(a2));
+  if (!h) Rf_error("invalid ChandeKrollStop parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, chande_kroll_stop_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_chande_kroll_stop_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ChandeKrollStop *h = (struct ChandeKrollStop *)R_ExternalPtrAddr(e);
+  struct WickraChandeKrollStopOutput out;
+  int ok = wickra_chande_kroll_stop_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.stop_long : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.stop_short : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("stop_long"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("stop_short"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_chande_kroll_stop_reset(SEXP e) {
+  struct ChandeKrollStop *h = (struct ChandeKrollStop *)R_ExternalPtrAddr(e);
+  wickra_chande_kroll_stop_reset(h);
+  return R_NilValue;
+}
+
+static void chandelier_exit_fin(SEXP e) {
+  struct ChandelierExit *h = (struct ChandelierExit *)R_ExternalPtrAddr(e);
+  if (h) wickra_chandelier_exit_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_chandelier_exit_new(SEXP a0, SEXP a1) {
+  struct ChandelierExit *h = wickra_chandelier_exit_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid ChandelierExit parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, chandelier_exit_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_chandelier_exit_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ChandelierExit *h = (struct ChandelierExit *)R_ExternalPtrAddr(e);
+  struct WickraChandelierExitOutput out;
+  int ok = wickra_chandelier_exit_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.long_stop : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.short_stop : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("long_stop"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("short_stop"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_chandelier_exit_reset(SEXP e) {
+  struct ChandelierExit *h = (struct ChandelierExit *)R_ExternalPtrAddr(e);
+  wickra_chandelier_exit_reset(h);
+  return R_NilValue;
+}
+
+static void choppiness_index_fin(SEXP e) {
+  struct ChoppinessIndex *h = (struct ChoppinessIndex *)R_ExternalPtrAddr(e);
+  if (h) wickra_choppiness_index_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_choppiness_index_new(SEXP a0) {
+  struct ChoppinessIndex *h = wickra_choppiness_index_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid ChoppinessIndex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, choppiness_index_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_choppiness_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ChoppinessIndex *h = (struct ChoppinessIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_choppiness_index_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_choppiness_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ChoppinessIndex *h = (struct ChoppinessIndex *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_choppiness_index_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_choppiness_index_reset(SEXP e) {
+  struct ChoppinessIndex *h = (struct ChoppinessIndex *)R_ExternalPtrAddr(e);
+  wickra_choppiness_index_reset(h);
+  return R_NilValue;
+}
+
+static void classic_pivots_fin(SEXP e) {
+  struct ClassicPivots *h = (struct ClassicPivots *)R_ExternalPtrAddr(e);
+  if (h) wickra_classic_pivots_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_classic_pivots_new(void) {
+  struct ClassicPivots *h = wickra_classic_pivots_new();
+  if (!h) Rf_error("invalid ClassicPivots parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, classic_pivots_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_classic_pivots_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ClassicPivots *h = (struct ClassicPivots *)R_ExternalPtrAddr(e);
+  struct WickraClassicPivotsOutput out;
+  int ok = wickra_classic_pivots_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 7));
+  REAL(r)[0] = ok ? (double)out.pp : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.r1 : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.r2 : NA_REAL;
+  REAL(r)[3] = ok ? (double)out.r3 : NA_REAL;
+  REAL(r)[4] = ok ? (double)out.s1 : NA_REAL;
+  REAL(r)[5] = ok ? (double)out.s2 : NA_REAL;
+  REAL(r)[6] = ok ? (double)out.s3 : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 7));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("pp"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("r1"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("r2"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("r3"));
+  SET_STRING_ELT(nm, 4, Rf_mkChar("s1"));
+  SET_STRING_ELT(nm, 5, Rf_mkChar("s2"));
+  SET_STRING_ELT(nm, 6, Rf_mkChar("s3"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_classic_pivots_reset(SEXP e) {
+  struct ClassicPivots *h = (struct ClassicPivots *)R_ExternalPtrAddr(e);
+  wickra_classic_pivots_reset(h);
+  return R_NilValue;
+}
+
+static void close_vs_open_fin(SEXP e) {
+  struct CloseVsOpen *h = (struct CloseVsOpen *)R_ExternalPtrAddr(e);
+  if (h) wickra_close_vs_open_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_close_vs_open_new(void) {
+  struct CloseVsOpen *h = wickra_close_vs_open_new();
+  if (!h) Rf_error("invalid CloseVsOpen parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, close_vs_open_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_close_vs_open_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct CloseVsOpen *h = (struct CloseVsOpen *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_close_vs_open_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_close_vs_open_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct CloseVsOpen *h = (struct CloseVsOpen *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_close_vs_open_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_close_vs_open_reset(SEXP e) {
+  struct CloseVsOpen *h = (struct CloseVsOpen *)R_ExternalPtrAddr(e);
+  wickra_close_vs_open_reset(h);
+  return R_NilValue;
+}
+
+static void closing_marubozu_fin(SEXP e) {
+  struct ClosingMarubozu *h = (struct ClosingMarubozu *)R_ExternalPtrAddr(e);
+  if (h) wickra_closing_marubozu_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_closing_marubozu_new(void) {
+  struct ClosingMarubozu *h = wickra_closing_marubozu_new();
+  if (!h) Rf_error("invalid ClosingMarubozu parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, closing_marubozu_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_closing_marubozu_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ClosingMarubozu *h = (struct ClosingMarubozu *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_closing_marubozu_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_closing_marubozu_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ClosingMarubozu *h = (struct ClosingMarubozu *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_closing_marubozu_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_closing_marubozu_reset(SEXP e) {
+  struct ClosingMarubozu *h = (struct ClosingMarubozu *)R_ExternalPtrAddr(e);
+  wickra_closing_marubozu_reset(h);
+  return R_NilValue;
+}
+
+static void cmo_fin(SEXP e) {
+  struct Cmo *h = (struct Cmo *)R_ExternalPtrAddr(e);
+  if (h) wickra_cmo_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_cmo_new(SEXP a0) {
+  struct Cmo *h = wickra_cmo_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Cmo parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, cmo_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_cmo_update(SEXP e, SEXP a0) {
+  struct Cmo *h = (struct Cmo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_cmo_update(h, Rf_asReal(a0)));
+}
+SEXP wk_cmo_batch(SEXP e, SEXP a0) {
+  struct Cmo *h = (struct Cmo *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_cmo_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_cmo_reset(SEXP e) {
+  struct Cmo *h = (struct Cmo *)R_ExternalPtrAddr(e);
+  wickra_cmo_reset(h);
+  return R_NilValue;
+}
+
+static void coefficient_of_variation_fin(SEXP e) {
+  struct CoefficientOfVariation *h = (struct CoefficientOfVariation *)R_ExternalPtrAddr(e);
+  if (h) wickra_coefficient_of_variation_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_coefficient_of_variation_new(SEXP a0) {
+  struct CoefficientOfVariation *h = wickra_coefficient_of_variation_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid CoefficientOfVariation parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, coefficient_of_variation_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_coefficient_of_variation_update(SEXP e, SEXP a0) {
+  struct CoefficientOfVariation *h = (struct CoefficientOfVariation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_coefficient_of_variation_update(h, Rf_asReal(a0)));
+}
+SEXP wk_coefficient_of_variation_batch(SEXP e, SEXP a0) {
+  struct CoefficientOfVariation *h = (struct CoefficientOfVariation *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_coefficient_of_variation_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_coefficient_of_variation_reset(SEXP e) {
+  struct CoefficientOfVariation *h = (struct CoefficientOfVariation *)R_ExternalPtrAddr(e);
+  wickra_coefficient_of_variation_reset(h);
+  return R_NilValue;
+}
+
+static void cointegration_fin(SEXP e) {
+  struct Cointegration *h = (struct Cointegration *)R_ExternalPtrAddr(e);
+  if (h) wickra_cointegration_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_cointegration_new(SEXP a0, SEXP a1) {
+  struct Cointegration *h = wickra_cointegration_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid Cointegration parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, cointegration_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_cointegration_update(SEXP e, SEXP a0, SEXP a1) {
+  struct Cointegration *h = (struct Cointegration *)R_ExternalPtrAddr(e);
+  struct WickraCointegrationOutput out;
+  int ok = wickra_cointegration_update(h, Rf_asReal(a0), Rf_asReal(a1), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.hedge_ratio : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.spread : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.adf_stat : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("hedge_ratio"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("spread"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("adf_stat"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_cointegration_reset(SEXP e) {
+  struct Cointegration *h = (struct Cointegration *)R_ExternalPtrAddr(e);
+  wickra_cointegration_reset(h);
+  return R_NilValue;
+}
+
+static void common_sense_ratio_fin(SEXP e) {
+  struct CommonSenseRatio *h = (struct CommonSenseRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_common_sense_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_common_sense_ratio_new(SEXP a0) {
+  struct CommonSenseRatio *h = wickra_common_sense_ratio_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid CommonSenseRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, common_sense_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_common_sense_ratio_update(SEXP e, SEXP a0) {
+  struct CommonSenseRatio *h = (struct CommonSenseRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_common_sense_ratio_update(h, Rf_asReal(a0)));
+}
+SEXP wk_common_sense_ratio_batch(SEXP e, SEXP a0) {
+  struct CommonSenseRatio *h = (struct CommonSenseRatio *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_common_sense_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_common_sense_ratio_reset(SEXP e) {
+  struct CommonSenseRatio *h = (struct CommonSenseRatio *)R_ExternalPtrAddr(e);
+  wickra_common_sense_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void composite_profile_fin(SEXP e) {
+  struct CompositeProfile *h = (struct CompositeProfile *)R_ExternalPtrAddr(e);
+  if (h) wickra_composite_profile_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_composite_profile_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct CompositeProfile *h = wickra_composite_profile_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), Rf_asReal(a2));
+  if (!h) Rf_error("invalid CompositeProfile parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, composite_profile_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_composite_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct CompositeProfile *h = (struct CompositeProfile *)R_ExternalPtrAddr(e);
+  struct WickraCompositeProfileOutput out;
+  int ok = wickra_composite_profile_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.poc : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.vah : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.val : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("poc"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("vah"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("val"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_composite_profile_reset(SEXP e) {
+  struct CompositeProfile *h = (struct CompositeProfile *)R_ExternalPtrAddr(e);
+  wickra_composite_profile_reset(h);
+  return R_NilValue;
+}
+
+static void concealing_baby_swallow_fin(SEXP e) {
+  struct ConcealingBabySwallow *h = (struct ConcealingBabySwallow *)R_ExternalPtrAddr(e);
+  if (h) wickra_concealing_baby_swallow_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_concealing_baby_swallow_new(void) {
+  struct ConcealingBabySwallow *h = wickra_concealing_baby_swallow_new();
+  if (!h) Rf_error("invalid ConcealingBabySwallow parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, concealing_baby_swallow_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_concealing_baby_swallow_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ConcealingBabySwallow *h = (struct ConcealingBabySwallow *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_concealing_baby_swallow_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_concealing_baby_swallow_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ConcealingBabySwallow *h = (struct ConcealingBabySwallow *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_concealing_baby_swallow_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_concealing_baby_swallow_reset(SEXP e) {
+  struct ConcealingBabySwallow *h = (struct ConcealingBabySwallow *)R_ExternalPtrAddr(e);
+  wickra_concealing_baby_swallow_reset(h);
+  return R_NilValue;
+}
+
+static void conditional_value_at_risk_fin(SEXP e) {
+  struct ConditionalValueAtRisk *h = (struct ConditionalValueAtRisk *)R_ExternalPtrAddr(e);
+  if (h) wickra_conditional_value_at_risk_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_conditional_value_at_risk_new(SEXP a0, SEXP a1) {
+  struct ConditionalValueAtRisk *h = wickra_conditional_value_at_risk_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid ConditionalValueAtRisk parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, conditional_value_at_risk_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_conditional_value_at_risk_update(SEXP e, SEXP a0) {
+  struct ConditionalValueAtRisk *h = (struct ConditionalValueAtRisk *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_conditional_value_at_risk_update(h, Rf_asReal(a0)));
+}
+SEXP wk_conditional_value_at_risk_batch(SEXP e, SEXP a0) {
+  struct ConditionalValueAtRisk *h = (struct ConditionalValueAtRisk *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_conditional_value_at_risk_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_conditional_value_at_risk_reset(SEXP e) {
+  struct ConditionalValueAtRisk *h = (struct ConditionalValueAtRisk *)R_ExternalPtrAddr(e);
+  wickra_conditional_value_at_risk_reset(h);
+  return R_NilValue;
+}
+
+static void connors_rsi_fin(SEXP e) {
+  struct ConnorsRsi *h = (struct ConnorsRsi *)R_ExternalPtrAddr(e);
+  if (h) wickra_connors_rsi_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_connors_rsi_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct ConnorsRsi *h = wickra_connors_rsi_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2));
+  if (!h) Rf_error("invalid ConnorsRsi parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, connors_rsi_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_connors_rsi_update(SEXP e, SEXP a0) {
+  struct ConnorsRsi *h = (struct ConnorsRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_connors_rsi_update(h, Rf_asReal(a0)));
+}
+SEXP wk_connors_rsi_batch(SEXP e, SEXP a0) {
+  struct ConnorsRsi *h = (struct ConnorsRsi *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_connors_rsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_connors_rsi_reset(SEXP e) {
+  struct ConnorsRsi *h = (struct ConnorsRsi *)R_ExternalPtrAddr(e);
+  wickra_connors_rsi_reset(h);
+  return R_NilValue;
+}
+
+static void coppock_fin(SEXP e) {
+  struct Coppock *h = (struct Coppock *)R_ExternalPtrAddr(e);
+  if (h) wickra_coppock_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_coppock_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct Coppock *h = wickra_coppock_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2));
+  if (!h) Rf_error("invalid Coppock parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, coppock_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_coppock_update(SEXP e, SEXP a0) {
+  struct Coppock *h = (struct Coppock *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_coppock_update(h, Rf_asReal(a0)));
+}
+SEXP wk_coppock_batch(SEXP e, SEXP a0) {
+  struct Coppock *h = (struct Coppock *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_coppock_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_coppock_reset(SEXP e) {
+  struct Coppock *h = (struct Coppock *)R_ExternalPtrAddr(e);
+  wickra_coppock_reset(h);
+  return R_NilValue;
+}
+
+static void correlation_trend_indicator_fin(SEXP e) {
+  struct CorrelationTrendIndicator *h = (struct CorrelationTrendIndicator *)R_ExternalPtrAddr(e);
+  if (h) wickra_correlation_trend_indicator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_correlation_trend_indicator_new(SEXP a0) {
+  struct CorrelationTrendIndicator *h = wickra_correlation_trend_indicator_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid CorrelationTrendIndicator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, correlation_trend_indicator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_correlation_trend_indicator_update(SEXP e, SEXP a0) {
+  struct CorrelationTrendIndicator *h = (struct CorrelationTrendIndicator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_correlation_trend_indicator_update(h, Rf_asReal(a0)));
+}
+SEXP wk_correlation_trend_indicator_batch(SEXP e, SEXP a0) {
+  struct CorrelationTrendIndicator *h = (struct CorrelationTrendIndicator *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_correlation_trend_indicator_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_correlation_trend_indicator_reset(SEXP e) {
+  struct CorrelationTrendIndicator *h = (struct CorrelationTrendIndicator *)R_ExternalPtrAddr(e);
+  wickra_correlation_trend_indicator_reset(h);
+  return R_NilValue;
+}
+
+static void counterattack_fin(SEXP e) {
+  struct Counterattack *h = (struct Counterattack *)R_ExternalPtrAddr(e);
+  if (h) wickra_counterattack_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_counterattack_new(void) {
+  struct Counterattack *h = wickra_counterattack_new();
+  if (!h) Rf_error("invalid Counterattack parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, counterattack_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_counterattack_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Counterattack *h = (struct Counterattack *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_counterattack_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_counterattack_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Counterattack *h = (struct Counterattack *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_counterattack_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_counterattack_reset(SEXP e) {
+  struct Counterattack *h = (struct Counterattack *)R_ExternalPtrAddr(e);
+  wickra_counterattack_reset(h);
+  return R_NilValue;
+}
+
+static void crab_fin(SEXP e) {
+  struct Crab *h = (struct Crab *)R_ExternalPtrAddr(e);
+  if (h) wickra_crab_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_crab_new(void) {
+  struct Crab *h = wickra_crab_new();
+  if (!h) Rf_error("invalid Crab parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, crab_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_crab_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Crab *h = (struct Crab *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_crab_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_crab_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Crab *h = (struct Crab *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_crab_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_crab_reset(SEXP e) {
+  struct Crab *h = (struct Crab *)R_ExternalPtrAddr(e);
+  wickra_crab_reset(h);
+  return R_NilValue;
+}
+
+static void cumulative_volume_delta_fin(SEXP e) {
+  struct CumulativeVolumeDelta *h = (struct CumulativeVolumeDelta *)R_ExternalPtrAddr(e);
+  if (h) wickra_cumulative_volume_delta_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_cumulative_volume_delta_new(void) {
+  struct CumulativeVolumeDelta *h = wickra_cumulative_volume_delta_new();
+  if (!h) Rf_error("invalid CumulativeVolumeDelta parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, cumulative_volume_delta_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_cumulative_volume_delta_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct CumulativeVolumeDelta *h = (struct CumulativeVolumeDelta *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_cumulative_volume_delta_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
+}
+SEXP wk_cumulative_volume_delta_reset(SEXP e) {
+  struct CumulativeVolumeDelta *h = (struct CumulativeVolumeDelta *)R_ExternalPtrAddr(e);
+  wickra_cumulative_volume_delta_reset(h);
+  return R_NilValue;
+}
+
+static void cumulative_volume_index_fin(SEXP e) {
+  struct CumulativeVolumeIndex *h = (struct CumulativeVolumeIndex *)R_ExternalPtrAddr(e);
+  if (h) wickra_cumulative_volume_index_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_cumulative_volume_index_new(void) {
+  struct CumulativeVolumeIndex *h = wickra_cumulative_volume_index_new();
+  if (!h) Rf_error("invalid CumulativeVolumeIndex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, cumulative_volume_index_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_cumulative_volume_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
+  struct CumulativeVolumeIndex *h = (struct CumulativeVolumeIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_cumulative_volume_index_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_cumulative_volume_index_reset(SEXP e) {
+  struct CumulativeVolumeIndex *h = (struct CumulativeVolumeIndex *)R_ExternalPtrAddr(e);
+  wickra_cumulative_volume_index_reset(h);
+  return R_NilValue;
+}
+
+static void cup_and_handle_fin(SEXP e) {
+  struct CupAndHandle *h = (struct CupAndHandle *)R_ExternalPtrAddr(e);
+  if (h) wickra_cup_and_handle_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_cup_and_handle_new(void) {
+  struct CupAndHandle *h = wickra_cup_and_handle_new();
+  if (!h) Rf_error("invalid CupAndHandle parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, cup_and_handle_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_cup_and_handle_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct CupAndHandle *h = (struct CupAndHandle *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_cup_and_handle_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_cup_and_handle_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct CupAndHandle *h = (struct CupAndHandle *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_cup_and_handle_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_cup_and_handle_reset(SEXP e) {
+  struct CupAndHandle *h = (struct CupAndHandle *)R_ExternalPtrAddr(e);
+  wickra_cup_and_handle_reset(h);
+  return R_NilValue;
+}
+
+static void cybernetic_cycle_fin(SEXP e) {
+  struct CyberneticCycle *h = (struct CyberneticCycle *)R_ExternalPtrAddr(e);
+  if (h) wickra_cybernetic_cycle_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_cybernetic_cycle_new(SEXP a0) {
+  struct CyberneticCycle *h = wickra_cybernetic_cycle_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid CyberneticCycle parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, cybernetic_cycle_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_cybernetic_cycle_update(SEXP e, SEXP a0) {
+  struct CyberneticCycle *h = (struct CyberneticCycle *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_cybernetic_cycle_update(h, Rf_asReal(a0)));
+}
+SEXP wk_cybernetic_cycle_batch(SEXP e, SEXP a0) {
+  struct CyberneticCycle *h = (struct CyberneticCycle *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_cybernetic_cycle_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_cybernetic_cycle_reset(SEXP e) {
+  struct CyberneticCycle *h = (struct CyberneticCycle *)R_ExternalPtrAddr(e);
+  wickra_cybernetic_cycle_reset(h);
+  return R_NilValue;
+}
+
+static void cypher_fin(SEXP e) {
+  struct Cypher *h = (struct Cypher *)R_ExternalPtrAddr(e);
+  if (h) wickra_cypher_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_cypher_new(void) {
+  struct Cypher *h = wickra_cypher_new();
+  if (!h) Rf_error("invalid Cypher parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, cypher_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_cypher_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Cypher *h = (struct Cypher *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_cypher_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_cypher_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Cypher *h = (struct Cypher *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_cypher_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_cypher_reset(SEXP e) {
+  struct Cypher *h = (struct Cypher *)R_ExternalPtrAddr(e);
+  wickra_cypher_reset(h);
+  return R_NilValue;
+}
+
+static void day_of_week_profile_fin(SEXP e) {
+  struct DayOfWeekProfile *h = (struct DayOfWeekProfile *)R_ExternalPtrAddr(e);
+  if (h) wickra_day_of_week_profile_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_day_of_week_profile_new(SEXP a0) {
+  struct DayOfWeekProfile *h = wickra_day_of_week_profile_new((int32_t)Rf_asInteger(a0));
+  if (!h) Rf_error("invalid DayOfWeekProfile parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, day_of_week_profile_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_day_of_week_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP capn) {
+  struct DayOfWeekProfile *h = (struct DayOfWeekProfile *)R_ExternalPtrAddr(e);
+  int cap = Rf_asInteger(capn);
+  SEXP values = PROTECT(Rf_allocVector(REALSXP, cap));
+  R_xlen_t n = wickra_day_of_week_profile_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), REAL(values), (uintptr_t)cap);
+  if (n < 0) { UNPROTECT(1); return R_NilValue; }
+  SEXP vv = PROTECT(Rf_allocVector(REALSXP, n));
+  for (R_xlen_t i = 0; i < n; i++) REAL(vv)[i] = REAL(values)[i];
+  UNPROTECT(2);
+  return vv;
+}
+SEXP wk_day_of_week_profile_reset(SEXP e) {
+  struct DayOfWeekProfile *h = (struct DayOfWeekProfile *)R_ExternalPtrAddr(e);
+  wickra_day_of_week_profile_reset(h);
+  return R_NilValue;
+}
+
+static void decycler_fin(SEXP e) {
+  struct Decycler *h = (struct Decycler *)R_ExternalPtrAddr(e);
+  if (h) wickra_decycler_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_decycler_new(SEXP a0) {
+  struct Decycler *h = wickra_decycler_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Decycler parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, decycler_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_decycler_update(SEXP e, SEXP a0) {
+  struct Decycler *h = (struct Decycler *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_decycler_update(h, Rf_asReal(a0)));
+}
+SEXP wk_decycler_batch(SEXP e, SEXP a0) {
+  struct Decycler *h = (struct Decycler *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_decycler_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_decycler_reset(SEXP e) {
+  struct Decycler *h = (struct Decycler *)R_ExternalPtrAddr(e);
+  wickra_decycler_reset(h);
+  return R_NilValue;
+}
+
+static void decycler_oscillator_fin(SEXP e) {
+  struct DecyclerOscillator *h = (struct DecyclerOscillator *)R_ExternalPtrAddr(e);
+  if (h) wickra_decycler_oscillator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_decycler_oscillator_new(SEXP a0, SEXP a1) {
+  struct DecyclerOscillator *h = wickra_decycler_oscillator_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid DecyclerOscillator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, decycler_oscillator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_decycler_oscillator_update(SEXP e, SEXP a0) {
+  struct DecyclerOscillator *h = (struct DecyclerOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_decycler_oscillator_update(h, Rf_asReal(a0)));
+}
+SEXP wk_decycler_oscillator_batch(SEXP e, SEXP a0) {
+  struct DecyclerOscillator *h = (struct DecyclerOscillator *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_decycler_oscillator_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_decycler_oscillator_reset(SEXP e) {
+  struct DecyclerOscillator *h = (struct DecyclerOscillator *)R_ExternalPtrAddr(e);
+  wickra_decycler_oscillator_reset(h);
+  return R_NilValue;
+}
+
+static void dema_fin(SEXP e) {
+  struct Dema *h = (struct Dema *)R_ExternalPtrAddr(e);
+  if (h) wickra_dema_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_dema_new(SEXP a0) {
+  struct Dema *h = wickra_dema_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Dema parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, dema_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_dema_update(SEXP e, SEXP a0) {
+  struct Dema *h = (struct Dema *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_dema_update(h, Rf_asReal(a0)));
+}
+SEXP wk_dema_batch(SEXP e, SEXP a0) {
+  struct Dema *h = (struct Dema *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_dema_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_dema_reset(SEXP e) {
+  struct Dema *h = (struct Dema *)R_ExternalPtrAddr(e);
+  wickra_dema_reset(h);
+  return R_NilValue;
+}
+
+static void demand_index_fin(SEXP e) {
+  struct DemandIndex *h = (struct DemandIndex *)R_ExternalPtrAddr(e);
+  if (h) wickra_demand_index_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_demand_index_new(SEXP a0) {
+  struct DemandIndex *h = wickra_demand_index_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid DemandIndex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, demand_index_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_demand_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct DemandIndex *h = (struct DemandIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_demand_index_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_demand_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct DemandIndex *h = (struct DemandIndex *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_demand_index_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_demand_index_reset(SEXP e) {
+  struct DemandIndex *h = (struct DemandIndex *)R_ExternalPtrAddr(e);
+  wickra_demand_index_reset(h);
+  return R_NilValue;
+}
+
+static void demark_pivots_fin(SEXP e) {
+  struct DemarkPivots *h = (struct DemarkPivots *)R_ExternalPtrAddr(e);
+  if (h) wickra_demark_pivots_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_demark_pivots_new(void) {
+  struct DemarkPivots *h = wickra_demark_pivots_new();
+  if (!h) Rf_error("invalid DemarkPivots parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, demark_pivots_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_demark_pivots_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct DemarkPivots *h = (struct DemarkPivots *)R_ExternalPtrAddr(e);
+  struct WickraDemarkPivotsOutput out;
+  int ok = wickra_demark_pivots_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.pp : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.r1 : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.s1 : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("pp"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("r1"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("s1"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_demark_pivots_reset(SEXP e) {
+  struct DemarkPivots *h = (struct DemarkPivots *)R_ExternalPtrAddr(e);
+  wickra_demark_pivots_reset(h);
+  return R_NilValue;
+}
+
+static void depth_slope_fin(SEXP e) {
+  struct DepthSlope *h = (struct DepthSlope *)R_ExternalPtrAddr(e);
+  if (h) wickra_depth_slope_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_depth_slope_new(void) {
+  struct DepthSlope *h = wickra_depth_slope_new();
+  if (!h) Rf_error("invalid DepthSlope parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, depth_slope_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_depth_slope_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct DepthSlope *h = (struct DepthSlope *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_depth_slope_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
+}
+SEXP wk_depth_slope_reset(SEXP e) {
+  struct DepthSlope *h = (struct DepthSlope *)R_ExternalPtrAddr(e);
+  wickra_depth_slope_reset(h);
+  return R_NilValue;
+}
+
+static void derivative_oscillator_fin(SEXP e) {
+  struct DerivativeOscillator *h = (struct DerivativeOscillator *)R_ExternalPtrAddr(e);
+  if (h) wickra_derivative_oscillator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_derivative_oscillator_new(SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct DerivativeOscillator *h = wickra_derivative_oscillator_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2), (uintptr_t)Rf_asReal(a3));
+  if (!h) Rf_error("invalid DerivativeOscillator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, derivative_oscillator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_derivative_oscillator_update(SEXP e, SEXP a0) {
+  struct DerivativeOscillator *h = (struct DerivativeOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_derivative_oscillator_update(h, Rf_asReal(a0)));
+}
+SEXP wk_derivative_oscillator_batch(SEXP e, SEXP a0) {
+  struct DerivativeOscillator *h = (struct DerivativeOscillator *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_derivative_oscillator_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_derivative_oscillator_reset(SEXP e) {
+  struct DerivativeOscillator *h = (struct DerivativeOscillator *)R_ExternalPtrAddr(e);
+  wickra_derivative_oscillator_reset(h);
+  return R_NilValue;
+}
+
+static void detrended_std_dev_fin(SEXP e) {
+  struct DetrendedStdDev *h = (struct DetrendedStdDev *)R_ExternalPtrAddr(e);
+  if (h) wickra_detrended_std_dev_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_detrended_std_dev_new(SEXP a0) {
+  struct DetrendedStdDev *h = wickra_detrended_std_dev_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid DetrendedStdDev parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, detrended_std_dev_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_detrended_std_dev_update(SEXP e, SEXP a0) {
+  struct DetrendedStdDev *h = (struct DetrendedStdDev *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_detrended_std_dev_update(h, Rf_asReal(a0)));
+}
+SEXP wk_detrended_std_dev_batch(SEXP e, SEXP a0) {
+  struct DetrendedStdDev *h = (struct DetrendedStdDev *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_detrended_std_dev_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_detrended_std_dev_reset(SEXP e) {
+  struct DetrendedStdDev *h = (struct DetrendedStdDev *)R_ExternalPtrAddr(e);
+  wickra_detrended_std_dev_reset(h);
+  return R_NilValue;
+}
+
+static void disparity_index_fin(SEXP e) {
+  struct DisparityIndex *h = (struct DisparityIndex *)R_ExternalPtrAddr(e);
+  if (h) wickra_disparity_index_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_disparity_index_new(SEXP a0) {
+  struct DisparityIndex *h = wickra_disparity_index_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid DisparityIndex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, disparity_index_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_disparity_index_update(SEXP e, SEXP a0) {
+  struct DisparityIndex *h = (struct DisparityIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_disparity_index_update(h, Rf_asReal(a0)));
+}
+SEXP wk_disparity_index_batch(SEXP e, SEXP a0) {
+  struct DisparityIndex *h = (struct DisparityIndex *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_disparity_index_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_disparity_index_reset(SEXP e) {
+  struct DisparityIndex *h = (struct DisparityIndex *)R_ExternalPtrAddr(e);
+  wickra_disparity_index_reset(h);
+  return R_NilValue;
+}
+
+static void distance_ssd_fin(SEXP e) {
+  struct DistanceSsd *h = (struct DistanceSsd *)R_ExternalPtrAddr(e);
+  if (h) wickra_distance_ssd_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_distance_ssd_new(SEXP a0) {
+  struct DistanceSsd *h = wickra_distance_ssd_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid DistanceSsd parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, distance_ssd_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_distance_ssd_update(SEXP e, SEXP a0, SEXP a1) {
+  struct DistanceSsd *h = (struct DistanceSsd *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_distance_ssd_update(h, Rf_asReal(a0), Rf_asReal(a1)));
+}
+SEXP wk_distance_ssd_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct DistanceSsd *h = (struct DistanceSsd *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_distance_ssd_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_distance_ssd_reset(SEXP e) {
+  struct DistanceSsd *h = (struct DistanceSsd *)R_ExternalPtrAddr(e);
+  wickra_distance_ssd_reset(h);
+  return R_NilValue;
+}
+
+static void doji_fin(SEXP e) {
+  struct Doji *h = (struct Doji *)R_ExternalPtrAddr(e);
+  if (h) wickra_doji_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_doji_new(void) {
+  struct Doji *h = wickra_doji_new();
+  if (!h) Rf_error("invalid Doji parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, doji_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_doji_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Doji *h = (struct Doji *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_doji_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_doji_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Doji *h = (struct Doji *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_doji_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_doji_reset(SEXP e) {
+  struct Doji *h = (struct Doji *)R_ExternalPtrAddr(e);
+  wickra_doji_reset(h);
+  return R_NilValue;
+}
+
+static void doji_star_fin(SEXP e) {
+  struct DojiStar *h = (struct DojiStar *)R_ExternalPtrAddr(e);
+  if (h) wickra_doji_star_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_doji_star_new(void) {
+  struct DojiStar *h = wickra_doji_star_new();
+  if (!h) Rf_error("invalid DojiStar parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, doji_star_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_doji_star_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct DojiStar *h = (struct DojiStar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_doji_star_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_doji_star_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct DojiStar *h = (struct DojiStar *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_doji_star_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_doji_star_reset(SEXP e) {
+  struct DojiStar *h = (struct DojiStar *)R_ExternalPtrAddr(e);
+  wickra_doji_star_reset(h);
+  return R_NilValue;
+}
+
+static void dollar_bars_fin(SEXP e) {
+  struct DollarBars *h = (struct DollarBars *)R_ExternalPtrAddr(e);
+  if (h) wickra_dollar_bars_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_dollar_bars_new(SEXP a0) {
+  struct DollarBars *h = wickra_dollar_bars_new(Rf_asReal(a0));
+  if (!h) Rf_error("invalid DollarBars parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, dollar_bars_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_dollar_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct DollarBars *h = (struct DollarBars *)R_ExternalPtrAddr(e);
+  struct WickraDollarBar buf[64];
+  size_t n = wickra_dollar_bars_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), buf, 64);
+  SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 6));
+  for (size_t i = 0; i < n; i++) {
+    REAL(r)[i + n * 0] = (double)buf[i].open;
+    REAL(r)[i + n * 1] = (double)buf[i].high;
+    REAL(r)[i + n * 2] = (double)buf[i].low;
+    REAL(r)[i + n * 3] = (double)buf[i].close;
+    REAL(r)[i + n * 4] = (double)buf[i].volume;
+    REAL(r)[i + n * 5] = (double)buf[i].dollar;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 6));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("high"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("low"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("close"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("volume"));
+  SET_STRING_ELT(cn, 5, Rf_mkChar("dollar"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(r, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return r;
+}
+SEXP wk_dollar_bars_reset(SEXP e) {
+  struct DollarBars *h = (struct DollarBars *)R_ExternalPtrAddr(e);
+  wickra_dollar_bars_reset(h);
+  return R_NilValue;
+}
+
+static void donchian_fin(SEXP e) {
+  struct Donchian *h = (struct Donchian *)R_ExternalPtrAddr(e);
+  if (h) wickra_donchian_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_donchian_new(SEXP a0) {
+  struct Donchian *h = wickra_donchian_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Donchian parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, donchian_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_donchian_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Donchian *h = (struct Donchian *)R_ExternalPtrAddr(e);
+  struct WickraDonchianOutput out;
+  int ok = wickra_donchian_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.upper : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.middle : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.lower : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("lower"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_donchian_reset(SEXP e) {
+  struct Donchian *h = (struct Donchian *)R_ExternalPtrAddr(e);
+  wickra_donchian_reset(h);
+  return R_NilValue;
+}
+
+static void donchian_stop_fin(SEXP e) {
+  struct DonchianStop *h = (struct DonchianStop *)R_ExternalPtrAddr(e);
+  if (h) wickra_donchian_stop_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_donchian_stop_new(SEXP a0) {
+  struct DonchianStop *h = wickra_donchian_stop_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid DonchianStop parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, donchian_stop_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_donchian_stop_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct DonchianStop *h = (struct DonchianStop *)R_ExternalPtrAddr(e);
+  struct WickraDonchianStopOutput out;
+  int ok = wickra_donchian_stop_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.stop_long : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.stop_short : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("stop_long"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("stop_short"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_donchian_stop_reset(SEXP e) {
+  struct DonchianStop *h = (struct DonchianStop *)R_ExternalPtrAddr(e);
+  wickra_donchian_stop_reset(h);
+  return R_NilValue;
+}
+
+static void double_bollinger_fin(SEXP e) {
+  struct DoubleBollinger *h = (struct DoubleBollinger *)R_ExternalPtrAddr(e);
+  if (h) wickra_double_bollinger_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_double_bollinger_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct DoubleBollinger *h = wickra_double_bollinger_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2));
+  if (!h) Rf_error("invalid DoubleBollinger parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, double_bollinger_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_double_bollinger_update(SEXP e, SEXP a0) {
+  struct DoubleBollinger *h = (struct DoubleBollinger *)R_ExternalPtrAddr(e);
+  struct WickraDoubleBollingerOutput out;
+  int ok = wickra_double_bollinger_update(h, Rf_asReal(a0), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 5));
+  REAL(r)[0] = ok ? (double)out.upper_outer : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.upper_inner : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.middle : NA_REAL;
+  REAL(r)[3] = ok ? (double)out.lower_inner : NA_REAL;
+  REAL(r)[4] = ok ? (double)out.lower_outer : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 5));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("upper_outer"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("upper_inner"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("middle"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("lower_inner"));
+  SET_STRING_ELT(nm, 4, Rf_mkChar("lower_outer"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_double_bollinger_reset(SEXP e) {
+  struct DoubleBollinger *h = (struct DoubleBollinger *)R_ExternalPtrAddr(e);
+  wickra_double_bollinger_reset(h);
+  return R_NilValue;
+}
+
+static void double_top_bottom_fin(SEXP e) {
+  struct DoubleTopBottom *h = (struct DoubleTopBottom *)R_ExternalPtrAddr(e);
+  if (h) wickra_double_top_bottom_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_double_top_bottom_new(void) {
+  struct DoubleTopBottom *h = wickra_double_top_bottom_new();
+  if (!h) Rf_error("invalid DoubleTopBottom parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, double_top_bottom_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_double_top_bottom_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct DoubleTopBottom *h = (struct DoubleTopBottom *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_double_top_bottom_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_double_top_bottom_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct DoubleTopBottom *h = (struct DoubleTopBottom *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_double_top_bottom_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_double_top_bottom_reset(SEXP e) {
+  struct DoubleTopBottom *h = (struct DoubleTopBottom *)R_ExternalPtrAddr(e);
+  wickra_double_top_bottom_reset(h);
+  return R_NilValue;
+}
+
+static void downside_gap_three_methods_fin(SEXP e) {
+  struct DownsideGapThreeMethods *h = (struct DownsideGapThreeMethods *)R_ExternalPtrAddr(e);
+  if (h) wickra_downside_gap_three_methods_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_downside_gap_three_methods_new(void) {
+  struct DownsideGapThreeMethods *h = wickra_downside_gap_three_methods_new();
+  if (!h) Rf_error("invalid DownsideGapThreeMethods parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, downside_gap_three_methods_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_downside_gap_three_methods_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct DownsideGapThreeMethods *h = (struct DownsideGapThreeMethods *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_downside_gap_three_methods_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_downside_gap_three_methods_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct DownsideGapThreeMethods *h = (struct DownsideGapThreeMethods *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_downside_gap_three_methods_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_downside_gap_three_methods_reset(SEXP e) {
+  struct DownsideGapThreeMethods *h = (struct DownsideGapThreeMethods *)R_ExternalPtrAddr(e);
+  wickra_downside_gap_three_methods_reset(h);
+  return R_NilValue;
+}
+
+static void dpo_fin(SEXP e) {
+  struct Dpo *h = (struct Dpo *)R_ExternalPtrAddr(e);
+  if (h) wickra_dpo_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_dpo_new(SEXP a0) {
+  struct Dpo *h = wickra_dpo_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Dpo parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, dpo_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_dpo_update(SEXP e, SEXP a0) {
+  struct Dpo *h = (struct Dpo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_dpo_update(h, Rf_asReal(a0)));
+}
+SEXP wk_dpo_batch(SEXP e, SEXP a0) {
+  struct Dpo *h = (struct Dpo *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_dpo_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_dpo_reset(SEXP e) {
+  struct Dpo *h = (struct Dpo *)R_ExternalPtrAddr(e);
+  wickra_dpo_reset(h);
+  return R_NilValue;
+}
+
+static void dragonfly_doji_fin(SEXP e) {
+  struct DragonflyDoji *h = (struct DragonflyDoji *)R_ExternalPtrAddr(e);
+  if (h) wickra_dragonfly_doji_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_dragonfly_doji_new(void) {
+  struct DragonflyDoji *h = wickra_dragonfly_doji_new();
+  if (!h) Rf_error("invalid DragonflyDoji parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, dragonfly_doji_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_dragonfly_doji_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct DragonflyDoji *h = (struct DragonflyDoji *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_dragonfly_doji_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_dragonfly_doji_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct DragonflyDoji *h = (struct DragonflyDoji *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_dragonfly_doji_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_dragonfly_doji_reset(SEXP e) {
+  struct DragonflyDoji *h = (struct DragonflyDoji *)R_ExternalPtrAddr(e);
+  wickra_dragonfly_doji_reset(h);
+  return R_NilValue;
+}
+
+static void drawdown_duration_fin(SEXP e) {
+  struct DrawdownDuration *h = (struct DrawdownDuration *)R_ExternalPtrAddr(e);
+  if (h) wickra_drawdown_duration_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_drawdown_duration_new(void) {
+  struct DrawdownDuration *h = wickra_drawdown_duration_new();
+  if (!h) Rf_error("invalid DrawdownDuration parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, drawdown_duration_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_drawdown_duration_update(SEXP e, SEXP a0) {
+  struct DrawdownDuration *h = (struct DrawdownDuration *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_drawdown_duration_update(h, Rf_asReal(a0)));
+}
+SEXP wk_drawdown_duration_batch(SEXP e, SEXP a0) {
+  struct DrawdownDuration *h = (struct DrawdownDuration *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_drawdown_duration_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_drawdown_duration_reset(SEXP e) {
+  struct DrawdownDuration *h = (struct DrawdownDuration *)R_ExternalPtrAddr(e);
+  wickra_drawdown_duration_reset(h);
+  return R_NilValue;
+}
+
+static void dumpling_top_fin(SEXP e) {
+  struct DumplingTop *h = (struct DumplingTop *)R_ExternalPtrAddr(e);
+  if (h) wickra_dumpling_top_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_dumpling_top_new(SEXP a0) {
+  struct DumplingTop *h = wickra_dumpling_top_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid DumplingTop parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, dumpling_top_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_dumpling_top_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct DumplingTop *h = (struct DumplingTop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_dumpling_top_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_dumpling_top_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct DumplingTop *h = (struct DumplingTop *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_dumpling_top_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_dumpling_top_reset(SEXP e) {
+  struct DumplingTop *h = (struct DumplingTop *)R_ExternalPtrAddr(e);
+  wickra_dumpling_top_reset(h);
+  return R_NilValue;
+}
+
+static void dx_fin(SEXP e) {
+  struct Dx *h = (struct Dx *)R_ExternalPtrAddr(e);
+  if (h) wickra_dx_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_dx_new(SEXP a0) {
+  struct Dx *h = wickra_dx_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Dx parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, dx_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_dx_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Dx *h = (struct Dx *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_dx_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_dx_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Dx *h = (struct Dx *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_dx_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_dx_reset(SEXP e) {
+  struct Dx *h = (struct Dx *)R_ExternalPtrAddr(e);
+  wickra_dx_reset(h);
+  return R_NilValue;
+}
+
+static void dynamic_momentum_index_fin(SEXP e) {
+  struct DynamicMomentumIndex *h = (struct DynamicMomentumIndex *)R_ExternalPtrAddr(e);
+  if (h) wickra_dynamic_momentum_index_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_dynamic_momentum_index_new(SEXP a0) {
+  struct DynamicMomentumIndex *h = wickra_dynamic_momentum_index_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid DynamicMomentumIndex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, dynamic_momentum_index_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_dynamic_momentum_index_update(SEXP e, SEXP a0) {
+  struct DynamicMomentumIndex *h = (struct DynamicMomentumIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_dynamic_momentum_index_update(h, Rf_asReal(a0)));
+}
+SEXP wk_dynamic_momentum_index_batch(SEXP e, SEXP a0) {
+  struct DynamicMomentumIndex *h = (struct DynamicMomentumIndex *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_dynamic_momentum_index_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_dynamic_momentum_index_reset(SEXP e) {
+  struct DynamicMomentumIndex *h = (struct DynamicMomentumIndex *)R_ExternalPtrAddr(e);
+  wickra_dynamic_momentum_index_reset(h);
+  return R_NilValue;
+}
+
+static void ease_of_movement_fin(SEXP e) {
+  struct EaseOfMovement *h = (struct EaseOfMovement *)R_ExternalPtrAddr(e);
+  if (h) wickra_ease_of_movement_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_ease_of_movement_new(SEXP a0) {
+  struct EaseOfMovement *h = wickra_ease_of_movement_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid EaseOfMovement parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, ease_of_movement_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_ease_of_movement_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct EaseOfMovement *h = (struct EaseOfMovement *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_ease_of_movement_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_ease_of_movement_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct EaseOfMovement *h = (struct EaseOfMovement *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_ease_of_movement_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_ease_of_movement_reset(SEXP e) {
+  struct EaseOfMovement *h = (struct EaseOfMovement *)R_ExternalPtrAddr(e);
+  wickra_ease_of_movement_reset(h);
+  return R_NilValue;
+}
+
+static void effective_spread_fin(SEXP e) {
+  struct EffectiveSpread *h = (struct EffectiveSpread *)R_ExternalPtrAddr(e);
+  if (h) wickra_effective_spread_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_effective_spread_new(void) {
+  struct EffectiveSpread *h = wickra_effective_spread_new();
+  if (!h) Rf_error("invalid EffectiveSpread parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, effective_spread_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_effective_spread_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4) {
+  struct EffectiveSpread *h = (struct EffectiveSpread *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_effective_spread_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3), Rf_asReal(a4)));
+}
+SEXP wk_effective_spread_reset(SEXP e) {
+  struct EffectiveSpread *h = (struct EffectiveSpread *)R_ExternalPtrAddr(e);
+  wickra_effective_spread_reset(h);
+  return R_NilValue;
+}
+
+static void ehlers_stochastic_fin(SEXP e) {
+  struct EhlersStochastic *h = (struct EhlersStochastic *)R_ExternalPtrAddr(e);
+  if (h) wickra_ehlers_stochastic_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_ehlers_stochastic_new(SEXP a0) {
+  struct EhlersStochastic *h = wickra_ehlers_stochastic_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid EhlersStochastic parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, ehlers_stochastic_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_ehlers_stochastic_update(SEXP e, SEXP a0) {
+  struct EhlersStochastic *h = (struct EhlersStochastic *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_ehlers_stochastic_update(h, Rf_asReal(a0)));
+}
+SEXP wk_ehlers_stochastic_batch(SEXP e, SEXP a0) {
+  struct EhlersStochastic *h = (struct EhlersStochastic *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_ehlers_stochastic_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_ehlers_stochastic_reset(SEXP e) {
+  struct EhlersStochastic *h = (struct EhlersStochastic *)R_ExternalPtrAddr(e);
+  wickra_ehlers_stochastic_reset(h);
+  return R_NilValue;
+}
+
+static void ehma_fin(SEXP e) {
+  struct Ehma *h = (struct Ehma *)R_ExternalPtrAddr(e);
+  if (h) wickra_ehma_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_ehma_new(SEXP a0) {
+  struct Ehma *h = wickra_ehma_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Ehma parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, ehma_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_ehma_update(SEXP e, SEXP a0) {
+  struct Ehma *h = (struct Ehma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_ehma_update(h, Rf_asReal(a0)));
+}
+SEXP wk_ehma_batch(SEXP e, SEXP a0) {
+  struct Ehma *h = (struct Ehma *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_ehma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_ehma_reset(SEXP e) {
+  struct Ehma *h = (struct Ehma *)R_ExternalPtrAddr(e);
+  wickra_ehma_reset(h);
+  return R_NilValue;
+}
+
+static void elder_impulse_fin(SEXP e) {
+  struct ElderImpulse *h = (struct ElderImpulse *)R_ExternalPtrAddr(e);
+  if (h) wickra_elder_impulse_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_elder_impulse_new(SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct ElderImpulse *h = wickra_elder_impulse_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2), (uintptr_t)Rf_asReal(a3));
+  if (!h) Rf_error("invalid ElderImpulse parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, elder_impulse_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_elder_impulse_update(SEXP e, SEXP a0) {
+  struct ElderImpulse *h = (struct ElderImpulse *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_elder_impulse_update(h, Rf_asReal(a0)));
+}
+SEXP wk_elder_impulse_batch(SEXP e, SEXP a0) {
+  struct ElderImpulse *h = (struct ElderImpulse *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_elder_impulse_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_elder_impulse_reset(SEXP e) {
+  struct ElderImpulse *h = (struct ElderImpulse *)R_ExternalPtrAddr(e);
+  wickra_elder_impulse_reset(h);
+  return R_NilValue;
+}
+
+static void elder_ray_fin(SEXP e) {
+  struct ElderRay *h = (struct ElderRay *)R_ExternalPtrAddr(e);
+  if (h) wickra_elder_ray_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_elder_ray_new(SEXP a0) {
+  struct ElderRay *h = wickra_elder_ray_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid ElderRay parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, elder_ray_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_elder_ray_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ElderRay *h = (struct ElderRay *)R_ExternalPtrAddr(e);
+  struct WickraElderRayOutput out;
+  int ok = wickra_elder_ray_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.bull_power : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.bear_power : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("bull_power"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("bear_power"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_elder_ray_reset(SEXP e) {
+  struct ElderRay *h = (struct ElderRay *)R_ExternalPtrAddr(e);
+  wickra_elder_ray_reset(h);
+  return R_NilValue;
+}
+
+static void elder_safe_zone_fin(SEXP e) {
+  struct ElderSafeZone *h = (struct ElderSafeZone *)R_ExternalPtrAddr(e);
+  if (h) wickra_elder_safe_zone_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_elder_safe_zone_new(SEXP a0, SEXP a1) {
+  struct ElderSafeZone *h = wickra_elder_safe_zone_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid ElderSafeZone parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, elder_safe_zone_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_elder_safe_zone_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ElderSafeZone *h = (struct ElderSafeZone *)R_ExternalPtrAddr(e);
+  struct WickraElderSafeZoneOutput out;
+  int ok = wickra_elder_safe_zone_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.value : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.direction : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("value"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("direction"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_elder_safe_zone_reset(SEXP e) {
+  struct ElderSafeZone *h = (struct ElderSafeZone *)R_ExternalPtrAddr(e);
+  wickra_elder_safe_zone_reset(h);
+  return R_NilValue;
+}
+
+static void ema_fin(SEXP e) {
+  struct Ema *h = (struct Ema *)R_ExternalPtrAddr(e);
+  if (h) wickra_ema_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_ema_new(SEXP a0) {
+  struct Ema *h = wickra_ema_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Ema parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, ema_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_ema_update(SEXP e, SEXP a0) {
+  struct Ema *h = (struct Ema *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_ema_update(h, Rf_asReal(a0)));
+}
+SEXP wk_ema_batch(SEXP e, SEXP a0) {
+  struct Ema *h = (struct Ema *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_ema_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_ema_reset(SEXP e) {
+  struct Ema *h = (struct Ema *)R_ExternalPtrAddr(e);
+  wickra_ema_reset(h);
+  return R_NilValue;
+}
+
+static void empirical_mode_decomposition_fin(SEXP e) {
+  struct EmpiricalModeDecomposition *h = (struct EmpiricalModeDecomposition *)R_ExternalPtrAddr(e);
+  if (h) wickra_empirical_mode_decomposition_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_empirical_mode_decomposition_new(SEXP a0, SEXP a1) {
+  struct EmpiricalModeDecomposition *h = wickra_empirical_mode_decomposition_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid EmpiricalModeDecomposition parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, empirical_mode_decomposition_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_empirical_mode_decomposition_update(SEXP e, SEXP a0) {
+  struct EmpiricalModeDecomposition *h = (struct EmpiricalModeDecomposition *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_empirical_mode_decomposition_update(h, Rf_asReal(a0)));
+}
+SEXP wk_empirical_mode_decomposition_batch(SEXP e, SEXP a0) {
+  struct EmpiricalModeDecomposition *h = (struct EmpiricalModeDecomposition *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_empirical_mode_decomposition_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_empirical_mode_decomposition_reset(SEXP e) {
+  struct EmpiricalModeDecomposition *h = (struct EmpiricalModeDecomposition *)R_ExternalPtrAddr(e);
+  wickra_empirical_mode_decomposition_reset(h);
+  return R_NilValue;
+}
+
+static void engulfing_fin(SEXP e) {
+  struct Engulfing *h = (struct Engulfing *)R_ExternalPtrAddr(e);
+  if (h) wickra_engulfing_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_engulfing_new(void) {
+  struct Engulfing *h = wickra_engulfing_new();
+  if (!h) Rf_error("invalid Engulfing parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, engulfing_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_engulfing_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Engulfing *h = (struct Engulfing *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_engulfing_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_engulfing_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Engulfing *h = (struct Engulfing *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_engulfing_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_engulfing_reset(SEXP e) {
+  struct Engulfing *h = (struct Engulfing *)R_ExternalPtrAddr(e);
+  wickra_engulfing_reset(h);
+  return R_NilValue;
+}
+
+static void equivolume_fin(SEXP e) {
+  struct Equivolume *h = (struct Equivolume *)R_ExternalPtrAddr(e);
+  if (h) wickra_equivolume_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_equivolume_new(SEXP a0) {
+  struct Equivolume *h = wickra_equivolume_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Equivolume parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, equivolume_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_equivolume_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Equivolume *h = (struct Equivolume *)R_ExternalPtrAddr(e);
+  struct WickraEquivolumeOutput out;
+  int ok = wickra_equivolume_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.height : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.width : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("height"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("width"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_equivolume_reset(SEXP e) {
+  struct Equivolume *h = (struct Equivolume *)R_ExternalPtrAddr(e);
+  wickra_equivolume_reset(h);
+  return R_NilValue;
+}
+
+static void estimated_leverage_ratio_fin(SEXP e) {
+  struct EstimatedLeverageRatio *h = (struct EstimatedLeverageRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_estimated_leverage_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_estimated_leverage_ratio_new(void) {
+  struct EstimatedLeverageRatio *h = wickra_estimated_leverage_ratio_new();
+  if (!h) Rf_error("invalid EstimatedLeverageRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, estimated_leverage_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_estimated_leverage_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct EstimatedLeverageRatio *h = (struct EstimatedLeverageRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_estimated_leverage_ratio_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_estimated_leverage_ratio_reset(SEXP e) {
+  struct EstimatedLeverageRatio *h = (struct EstimatedLeverageRatio *)R_ExternalPtrAddr(e);
+  wickra_estimated_leverage_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void even_better_sinewave_fin(SEXP e) {
+  struct EvenBetterSinewave *h = (struct EvenBetterSinewave *)R_ExternalPtrAddr(e);
+  if (h) wickra_even_better_sinewave_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_even_better_sinewave_new(SEXP a0, SEXP a1) {
+  struct EvenBetterSinewave *h = wickra_even_better_sinewave_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid EvenBetterSinewave parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, even_better_sinewave_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_even_better_sinewave_update(SEXP e, SEXP a0) {
+  struct EvenBetterSinewave *h = (struct EvenBetterSinewave *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_even_better_sinewave_update(h, Rf_asReal(a0)));
+}
+SEXP wk_even_better_sinewave_batch(SEXP e, SEXP a0) {
+  struct EvenBetterSinewave *h = (struct EvenBetterSinewave *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_even_better_sinewave_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_even_better_sinewave_reset(SEXP e) {
+  struct EvenBetterSinewave *h = (struct EvenBetterSinewave *)R_ExternalPtrAddr(e);
+  wickra_even_better_sinewave_reset(h);
+  return R_NilValue;
+}
+
+static void evening_doji_star_fin(SEXP e) {
+  struct EveningDojiStar *h = (struct EveningDojiStar *)R_ExternalPtrAddr(e);
+  if (h) wickra_evening_doji_star_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_evening_doji_star_new(void) {
+  struct EveningDojiStar *h = wickra_evening_doji_star_new();
+  if (!h) Rf_error("invalid EveningDojiStar parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, evening_doji_star_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_evening_doji_star_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct EveningDojiStar *h = (struct EveningDojiStar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_evening_doji_star_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_evening_doji_star_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct EveningDojiStar *h = (struct EveningDojiStar *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_evening_doji_star_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_evening_doji_star_reset(SEXP e) {
+  struct EveningDojiStar *h = (struct EveningDojiStar *)R_ExternalPtrAddr(e);
+  wickra_evening_doji_star_reset(h);
+  return R_NilValue;
+}
+
+static void evwma_fin(SEXP e) {
+  struct Evwma *h = (struct Evwma *)R_ExternalPtrAddr(e);
+  if (h) wickra_evwma_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_evwma_new(SEXP a0) {
+  struct Evwma *h = wickra_evwma_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Evwma parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, evwma_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_evwma_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Evwma *h = (struct Evwma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_evwma_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_evwma_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Evwma *h = (struct Evwma *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_evwma_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_evwma_reset(SEXP e) {
+  struct Evwma *h = (struct Evwma *)R_ExternalPtrAddr(e);
+  wickra_evwma_reset(h);
+  return R_NilValue;
+}
+
+static void ewma_volatility_fin(SEXP e) {
+  struct EwmaVolatility *h = (struct EwmaVolatility *)R_ExternalPtrAddr(e);
+  if (h) wickra_ewma_volatility_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_ewma_volatility_new(SEXP a0) {
+  struct EwmaVolatility *h = wickra_ewma_volatility_new(Rf_asReal(a0));
+  if (!h) Rf_error("invalid EwmaVolatility parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, ewma_volatility_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_ewma_volatility_update(SEXP e, SEXP a0) {
+  struct EwmaVolatility *h = (struct EwmaVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_ewma_volatility_update(h, Rf_asReal(a0)));
+}
+SEXP wk_ewma_volatility_batch(SEXP e, SEXP a0) {
+  struct EwmaVolatility *h = (struct EwmaVolatility *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_ewma_volatility_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_ewma_volatility_reset(SEXP e) {
+  struct EwmaVolatility *h = (struct EwmaVolatility *)R_ExternalPtrAddr(e);
+  wickra_ewma_volatility_reset(h);
+  return R_NilValue;
+}
+
+static void expectancy_fin(SEXP e) {
+  struct Expectancy *h = (struct Expectancy *)R_ExternalPtrAddr(e);
+  if (h) wickra_expectancy_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_expectancy_new(SEXP a0) {
+  struct Expectancy *h = wickra_expectancy_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Expectancy parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, expectancy_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_expectancy_update(SEXP e, SEXP a0) {
+  struct Expectancy *h = (struct Expectancy *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_expectancy_update(h, Rf_asReal(a0)));
+}
+SEXP wk_expectancy_batch(SEXP e, SEXP a0) {
+  struct Expectancy *h = (struct Expectancy *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_expectancy_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_expectancy_reset(SEXP e) {
+  struct Expectancy *h = (struct Expectancy *)R_ExternalPtrAddr(e);
+  wickra_expectancy_reset(h);
+  return R_NilValue;
+}
+
+static void falling_three_methods_fin(SEXP e) {
+  struct FallingThreeMethods *h = (struct FallingThreeMethods *)R_ExternalPtrAddr(e);
+  if (h) wickra_falling_three_methods_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_falling_three_methods_new(void) {
+  struct FallingThreeMethods *h = wickra_falling_three_methods_new();
+  if (!h) Rf_error("invalid FallingThreeMethods parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, falling_three_methods_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_falling_three_methods_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FallingThreeMethods *h = (struct FallingThreeMethods *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_falling_three_methods_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_falling_three_methods_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FallingThreeMethods *h = (struct FallingThreeMethods *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_falling_three_methods_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_falling_three_methods_reset(SEXP e) {
+  struct FallingThreeMethods *h = (struct FallingThreeMethods *)R_ExternalPtrAddr(e);
+  wickra_falling_three_methods_reset(h);
+  return R_NilValue;
+}
+
+static void fama_fin(SEXP e) {
+  struct Fama *h = (struct Fama *)R_ExternalPtrAddr(e);
+  if (h) wickra_fama_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_fama_new(SEXP a0, SEXP a1) {
+  struct Fama *h = wickra_fama_new(Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid Fama parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, fama_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_fama_update(SEXP e, SEXP a0) {
+  struct Fama *h = (struct Fama *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_fama_update(h, Rf_asReal(a0)));
+}
+SEXP wk_fama_batch(SEXP e, SEXP a0) {
+  struct Fama *h = (struct Fama *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_fama_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_fama_reset(SEXP e) {
+  struct Fama *h = (struct Fama *)R_ExternalPtrAddr(e);
+  wickra_fama_reset(h);
+  return R_NilValue;
+}
+
+static void fib_arcs_fin(SEXP e) {
+  struct FibArcs *h = (struct FibArcs *)R_ExternalPtrAddr(e);
+  if (h) wickra_fib_arcs_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_fib_arcs_new(void) {
+  struct FibArcs *h = wickra_fib_arcs_new();
+  if (!h) Rf_error("invalid FibArcs parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, fib_arcs_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_fib_arcs_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FibArcs *h = (struct FibArcs *)R_ExternalPtrAddr(e);
+  struct WickraFibArcsOutput out;
+  int ok = wickra_fib_arcs_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.arc_382 : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.arc_500 : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.arc_618 : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("arc_382"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("arc_500"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("arc_618"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_fib_arcs_reset(SEXP e) {
+  struct FibArcs *h = (struct FibArcs *)R_ExternalPtrAddr(e);
+  wickra_fib_arcs_reset(h);
+  return R_NilValue;
+}
+
+static void fib_channel_fin(SEXP e) {
+  struct FibChannel *h = (struct FibChannel *)R_ExternalPtrAddr(e);
+  if (h) wickra_fib_channel_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_fib_channel_new(void) {
+  struct FibChannel *h = wickra_fib_channel_new();
+  if (!h) Rf_error("invalid FibChannel parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, fib_channel_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_fib_channel_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FibChannel *h = (struct FibChannel *)R_ExternalPtrAddr(e);
+  struct WickraFibChannelOutput out;
+  int ok = wickra_fib_channel_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 4));
+  REAL(r)[0] = ok ? (double)out.base : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.level_618 : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.level_1000 : NA_REAL;
+  REAL(r)[3] = ok ? (double)out.level_1618 : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 4));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("base"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("level_618"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("level_1000"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("level_1618"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_fib_channel_reset(SEXP e) {
+  struct FibChannel *h = (struct FibChannel *)R_ExternalPtrAddr(e);
+  wickra_fib_channel_reset(h);
+  return R_NilValue;
+}
+
+static void fib_confluence_fin(SEXP e) {
+  struct FibConfluence *h = (struct FibConfluence *)R_ExternalPtrAddr(e);
+  if (h) wickra_fib_confluence_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_fib_confluence_new(void) {
+  struct FibConfluence *h = wickra_fib_confluence_new();
+  if (!h) Rf_error("invalid FibConfluence parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, fib_confluence_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_fib_confluence_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FibConfluence *h = (struct FibConfluence *)R_ExternalPtrAddr(e);
+  struct WickraFibConfluenceOutput out;
+  int ok = wickra_fib_confluence_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.price : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.strength : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("price"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("strength"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_fib_confluence_reset(SEXP e) {
+  struct FibConfluence *h = (struct FibConfluence *)R_ExternalPtrAddr(e);
+  wickra_fib_confluence_reset(h);
+  return R_NilValue;
+}
+
+static void fib_extension_fin(SEXP e) {
+  struct FibExtension *h = (struct FibExtension *)R_ExternalPtrAddr(e);
+  if (h) wickra_fib_extension_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_fib_extension_new(void) {
+  struct FibExtension *h = wickra_fib_extension_new();
+  if (!h) Rf_error("invalid FibExtension parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, fib_extension_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_fib_extension_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FibExtension *h = (struct FibExtension *)R_ExternalPtrAddr(e);
+  struct WickraFibExtensionOutput out;
+  int ok = wickra_fib_extension_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 5));
+  REAL(r)[0] = ok ? (double)out.level_1272 : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.level_1414 : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.level_1618 : NA_REAL;
+  REAL(r)[3] = ok ? (double)out.level_2000 : NA_REAL;
+  REAL(r)[4] = ok ? (double)out.level_2618 : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 5));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("level_1272"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("level_1414"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("level_1618"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("level_2000"));
+  SET_STRING_ELT(nm, 4, Rf_mkChar("level_2618"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_fib_extension_reset(SEXP e) {
+  struct FibExtension *h = (struct FibExtension *)R_ExternalPtrAddr(e);
+  wickra_fib_extension_reset(h);
+  return R_NilValue;
+}
+
+static void fib_fan_fin(SEXP e) {
+  struct FibFan *h = (struct FibFan *)R_ExternalPtrAddr(e);
+  if (h) wickra_fib_fan_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_fib_fan_new(void) {
+  struct FibFan *h = wickra_fib_fan_new();
+  if (!h) Rf_error("invalid FibFan parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, fib_fan_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_fib_fan_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FibFan *h = (struct FibFan *)R_ExternalPtrAddr(e);
+  struct WickraFibFanOutput out;
+  int ok = wickra_fib_fan_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.fan_382 : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.fan_500 : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.fan_618 : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("fan_382"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("fan_500"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("fan_618"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_fib_fan_reset(SEXP e) {
+  struct FibFan *h = (struct FibFan *)R_ExternalPtrAddr(e);
+  wickra_fib_fan_reset(h);
+  return R_NilValue;
+}
+
+static void fib_projection_fin(SEXP e) {
+  struct FibProjection *h = (struct FibProjection *)R_ExternalPtrAddr(e);
+  if (h) wickra_fib_projection_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_fib_projection_new(void) {
+  struct FibProjection *h = wickra_fib_projection_new();
+  if (!h) Rf_error("invalid FibProjection parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, fib_projection_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_fib_projection_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FibProjection *h = (struct FibProjection *)R_ExternalPtrAddr(e);
+  struct WickraFibProjectionOutput out;
+  int ok = wickra_fib_projection_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 4));
+  REAL(r)[0] = ok ? (double)out.level_618 : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.level_1000 : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.level_1618 : NA_REAL;
+  REAL(r)[3] = ok ? (double)out.level_2618 : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 4));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("level_618"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("level_1000"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("level_1618"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("level_2618"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_fib_projection_reset(SEXP e) {
+  struct FibProjection *h = (struct FibProjection *)R_ExternalPtrAddr(e);
+  wickra_fib_projection_reset(h);
+  return R_NilValue;
+}
+
+static void fib_retracement_fin(SEXP e) {
+  struct FibRetracement *h = (struct FibRetracement *)R_ExternalPtrAddr(e);
+  if (h) wickra_fib_retracement_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_fib_retracement_new(void) {
+  struct FibRetracement *h = wickra_fib_retracement_new();
+  if (!h) Rf_error("invalid FibRetracement parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, fib_retracement_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_fib_retracement_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FibRetracement *h = (struct FibRetracement *)R_ExternalPtrAddr(e);
+  struct WickraFibRetracementOutput out;
+  int ok = wickra_fib_retracement_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 7));
+  REAL(r)[0] = ok ? (double)out.level_0 : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.level_236 : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.level_382 : NA_REAL;
+  REAL(r)[3] = ok ? (double)out.level_500 : NA_REAL;
+  REAL(r)[4] = ok ? (double)out.level_618 : NA_REAL;
+  REAL(r)[5] = ok ? (double)out.level_786 : NA_REAL;
+  REAL(r)[6] = ok ? (double)out.level_1000 : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 7));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("level_0"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("level_236"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("level_382"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("level_500"));
+  SET_STRING_ELT(nm, 4, Rf_mkChar("level_618"));
+  SET_STRING_ELT(nm, 5, Rf_mkChar("level_786"));
+  SET_STRING_ELT(nm, 6, Rf_mkChar("level_1000"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_fib_retracement_reset(SEXP e) {
+  struct FibRetracement *h = (struct FibRetracement *)R_ExternalPtrAddr(e);
+  wickra_fib_retracement_reset(h);
+  return R_NilValue;
+}
+
+static void fib_time_zones_fin(SEXP e) {
+  struct FibTimeZones *h = (struct FibTimeZones *)R_ExternalPtrAddr(e);
+  if (h) wickra_fib_time_zones_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_fib_time_zones_new(void) {
+  struct FibTimeZones *h = wickra_fib_time_zones_new();
+  if (!h) Rf_error("invalid FibTimeZones parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, fib_time_zones_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_fib_time_zones_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FibTimeZones *h = (struct FibTimeZones *)R_ExternalPtrAddr(e);
+  struct WickraFibTimeZonesOutput out;
+  int ok = wickra_fib_time_zones_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.on_zone : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.bars_to_next : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("on_zone"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("bars_to_next"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_fib_time_zones_reset(SEXP e) {
+  struct FibTimeZones *h = (struct FibTimeZones *)R_ExternalPtrAddr(e);
+  wickra_fib_time_zones_reset(h);
+  return R_NilValue;
+}
+
+static void fibonacci_pivots_fin(SEXP e) {
+  struct FibonacciPivots *h = (struct FibonacciPivots *)R_ExternalPtrAddr(e);
+  if (h) wickra_fibonacci_pivots_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_fibonacci_pivots_new(void) {
+  struct FibonacciPivots *h = wickra_fibonacci_pivots_new();
+  if (!h) Rf_error("invalid FibonacciPivots parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, fibonacci_pivots_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_fibonacci_pivots_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FibonacciPivots *h = (struct FibonacciPivots *)R_ExternalPtrAddr(e);
+  struct WickraFibonacciPivotsOutput out;
+  int ok = wickra_fibonacci_pivots_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 7));
+  REAL(r)[0] = ok ? (double)out.pp : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.r1 : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.r2 : NA_REAL;
+  REAL(r)[3] = ok ? (double)out.r3 : NA_REAL;
+  REAL(r)[4] = ok ? (double)out.s1 : NA_REAL;
+  REAL(r)[5] = ok ? (double)out.s2 : NA_REAL;
+  REAL(r)[6] = ok ? (double)out.s3 : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 7));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("pp"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("r1"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("r2"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("r3"));
+  SET_STRING_ELT(nm, 4, Rf_mkChar("s1"));
+  SET_STRING_ELT(nm, 5, Rf_mkChar("s2"));
+  SET_STRING_ELT(nm, 6, Rf_mkChar("s3"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_fibonacci_pivots_reset(SEXP e) {
+  struct FibonacciPivots *h = (struct FibonacciPivots *)R_ExternalPtrAddr(e);
+  wickra_fibonacci_pivots_reset(h);
+  return R_NilValue;
+}
+
+static void fisher_rsi_fin(SEXP e) {
+  struct FisherRsi *h = (struct FisherRsi *)R_ExternalPtrAddr(e);
+  if (h) wickra_fisher_rsi_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_fisher_rsi_new(SEXP a0) {
+  struct FisherRsi *h = wickra_fisher_rsi_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid FisherRsi parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, fisher_rsi_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_fisher_rsi_update(SEXP e, SEXP a0) {
+  struct FisherRsi *h = (struct FisherRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_fisher_rsi_update(h, Rf_asReal(a0)));
+}
+SEXP wk_fisher_rsi_batch(SEXP e, SEXP a0) {
+  struct FisherRsi *h = (struct FisherRsi *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_fisher_rsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_fisher_rsi_reset(SEXP e) {
+  struct FisherRsi *h = (struct FisherRsi *)R_ExternalPtrAddr(e);
+  wickra_fisher_rsi_reset(h);
+  return R_NilValue;
+}
+
+static void fisher_transform_fin(SEXP e) {
+  struct FisherTransform *h = (struct FisherTransform *)R_ExternalPtrAddr(e);
+  if (h) wickra_fisher_transform_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_fisher_transform_new(SEXP a0) {
+  struct FisherTransform *h = wickra_fisher_transform_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid FisherTransform parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, fisher_transform_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_fisher_transform_update(SEXP e, SEXP a0) {
+  struct FisherTransform *h = (struct FisherTransform *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_fisher_transform_update(h, Rf_asReal(a0)));
+}
+SEXP wk_fisher_transform_batch(SEXP e, SEXP a0) {
+  struct FisherTransform *h = (struct FisherTransform *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_fisher_transform_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_fisher_transform_reset(SEXP e) {
+  struct FisherTransform *h = (struct FisherTransform *)R_ExternalPtrAddr(e);
+  wickra_fisher_transform_reset(h);
+  return R_NilValue;
+}
+
+static void flag_pennant_fin(SEXP e) {
+  struct FlagPennant *h = (struct FlagPennant *)R_ExternalPtrAddr(e);
+  if (h) wickra_flag_pennant_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_flag_pennant_new(void) {
+  struct FlagPennant *h = wickra_flag_pennant_new();
+  if (!h) Rf_error("invalid FlagPennant parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, flag_pennant_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_flag_pennant_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FlagPennant *h = (struct FlagPennant *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_flag_pennant_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_flag_pennant_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FlagPennant *h = (struct FlagPennant *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_flag_pennant_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_flag_pennant_reset(SEXP e) {
+  struct FlagPennant *h = (struct FlagPennant *)R_ExternalPtrAddr(e);
+  wickra_flag_pennant_reset(h);
+  return R_NilValue;
+}
+
+static void footprint_fin(SEXP e) {
+  struct Footprint *h = (struct Footprint *)R_ExternalPtrAddr(e);
+  if (h) wickra_footprint_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_footprint_new(SEXP a0) {
+  struct Footprint *h = wickra_footprint_new(Rf_asReal(a0));
+  if (!h) Rf_error("invalid Footprint parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, footprint_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_footprint_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct Footprint *h = (struct Footprint *)R_ExternalPtrAddr(e);
+  struct WickraFootprintLevel buf[64];
+  size_t n = wickra_footprint_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3), buf, 64);
+  SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (size_t i = 0; i < n; i++) {
+    REAL(r)[i + n * 0] = (double)buf[i].price;
+    REAL(r)[i + n * 1] = (double)buf[i].bid_vol;
+    REAL(r)[i + n * 2] = (double)buf[i].ask_vol;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("price"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("bid_vol"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("ask_vol"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(r, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return r;
+}
+SEXP wk_footprint_reset(SEXP e) {
+  struct Footprint *h = (struct Footprint *)R_ExternalPtrAddr(e);
+  wickra_footprint_reset(h);
+  return R_NilValue;
+}
+
+static void force_index_fin(SEXP e) {
+  struct ForceIndex *h = (struct ForceIndex *)R_ExternalPtrAddr(e);
+  if (h) wickra_force_index_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_force_index_new(SEXP a0) {
+  struct ForceIndex *h = wickra_force_index_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid ForceIndex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, force_index_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_force_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ForceIndex *h = (struct ForceIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_force_index_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_force_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ForceIndex *h = (struct ForceIndex *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_force_index_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_force_index_reset(SEXP e) {
+  struct ForceIndex *h = (struct ForceIndex *)R_ExternalPtrAddr(e);
+  wickra_force_index_reset(h);
+  return R_NilValue;
+}
+
+static void fractal_chaos_bands_fin(SEXP e) {
+  struct FractalChaosBands *h = (struct FractalChaosBands *)R_ExternalPtrAddr(e);
+  if (h) wickra_fractal_chaos_bands_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_fractal_chaos_bands_new(SEXP a0) {
+  struct FractalChaosBands *h = wickra_fractal_chaos_bands_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid FractalChaosBands parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, fractal_chaos_bands_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_fractal_chaos_bands_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FractalChaosBands *h = (struct FractalChaosBands *)R_ExternalPtrAddr(e);
+  struct WickraFractalChaosBandsOutput out;
+  int ok = wickra_fractal_chaos_bands_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.upper : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.lower : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("lower"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_fractal_chaos_bands_reset(SEXP e) {
+  struct FractalChaosBands *h = (struct FractalChaosBands *)R_ExternalPtrAddr(e);
+  wickra_fractal_chaos_bands_reset(h);
+  return R_NilValue;
+}
+
+static void frama_fin(SEXP e) {
+  struct Frama *h = (struct Frama *)R_ExternalPtrAddr(e);
+  if (h) wickra_frama_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_frama_new(SEXP a0) {
+  struct Frama *h = wickra_frama_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Frama parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, frama_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_frama_update(SEXP e, SEXP a0) {
+  struct Frama *h = (struct Frama *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_frama_update(h, Rf_asReal(a0)));
+}
+SEXP wk_frama_batch(SEXP e, SEXP a0) {
+  struct Frama *h = (struct Frama *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_frama_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_frama_reset(SEXP e) {
+  struct Frama *h = (struct Frama *)R_ExternalPtrAddr(e);
+  wickra_frama_reset(h);
+  return R_NilValue;
+}
+
+static void fry_pan_bottom_fin(SEXP e) {
+  struct FryPanBottom *h = (struct FryPanBottom *)R_ExternalPtrAddr(e);
+  if (h) wickra_fry_pan_bottom_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_fry_pan_bottom_new(SEXP a0) {
+  struct FryPanBottom *h = wickra_fry_pan_bottom_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid FryPanBottom parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, fry_pan_bottom_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_fry_pan_bottom_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FryPanBottom *h = (struct FryPanBottom *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_fry_pan_bottom_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_fry_pan_bottom_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct FryPanBottom *h = (struct FryPanBottom *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_fry_pan_bottom_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_fry_pan_bottom_reset(SEXP e) {
+  struct FryPanBottom *h = (struct FryPanBottom *)R_ExternalPtrAddr(e);
+  wickra_fry_pan_bottom_reset(h);
+  return R_NilValue;
+}
+
+static void funding_basis_fin(SEXP e) {
+  struct FundingBasis *h = (struct FundingBasis *)R_ExternalPtrAddr(e);
+  if (h) wickra_funding_basis_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_funding_basis_new(void) {
+  struct FundingBasis *h = wickra_funding_basis_new();
+  if (!h) Rf_error("invalid FundingBasis parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, funding_basis_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_funding_basis_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct FundingBasis *h = (struct FundingBasis *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_funding_basis_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_funding_basis_reset(SEXP e) {
+  struct FundingBasis *h = (struct FundingBasis *)R_ExternalPtrAddr(e);
+  wickra_funding_basis_reset(h);
+  return R_NilValue;
+}
+
+static void funding_implied_apr_fin(SEXP e) {
+  struct FundingImpliedApr *h = (struct FundingImpliedApr *)R_ExternalPtrAddr(e);
+  if (h) wickra_funding_implied_apr_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_funding_implied_apr_new(SEXP a0) {
+  struct FundingImpliedApr *h = wickra_funding_implied_apr_new(Rf_asReal(a0));
+  if (!h) Rf_error("invalid FundingImpliedApr parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, funding_implied_apr_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_funding_implied_apr_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct FundingImpliedApr *h = (struct FundingImpliedApr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_funding_implied_apr_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_funding_implied_apr_reset(SEXP e) {
+  struct FundingImpliedApr *h = (struct FundingImpliedApr *)R_ExternalPtrAddr(e);
+  wickra_funding_implied_apr_reset(h);
+  return R_NilValue;
+}
+
+static void funding_rate_fin(SEXP e) {
+  struct FundingRate *h = (struct FundingRate *)R_ExternalPtrAddr(e);
+  if (h) wickra_funding_rate_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_funding_rate_new(void) {
+  struct FundingRate *h = wickra_funding_rate_new();
+  if (!h) Rf_error("invalid FundingRate parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, funding_rate_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_funding_rate_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct FundingRate *h = (struct FundingRate *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_funding_rate_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_funding_rate_reset(SEXP e) {
+  struct FundingRate *h = (struct FundingRate *)R_ExternalPtrAddr(e);
+  wickra_funding_rate_reset(h);
+  return R_NilValue;
+}
+
+static void funding_rate_mean_fin(SEXP e) {
+  struct FundingRateMean *h = (struct FundingRateMean *)R_ExternalPtrAddr(e);
+  if (h) wickra_funding_rate_mean_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_funding_rate_mean_new(SEXP a0) {
+  struct FundingRateMean *h = wickra_funding_rate_mean_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid FundingRateMean parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, funding_rate_mean_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_funding_rate_mean_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct FundingRateMean *h = (struct FundingRateMean *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_funding_rate_mean_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_funding_rate_mean_reset(SEXP e) {
+  struct FundingRateMean *h = (struct FundingRateMean *)R_ExternalPtrAddr(e);
+  wickra_funding_rate_mean_reset(h);
+  return R_NilValue;
+}
+
+static void funding_rate_z_score_fin(SEXP e) {
+  struct FundingRateZScore *h = (struct FundingRateZScore *)R_ExternalPtrAddr(e);
+  if (h) wickra_funding_rate_z_score_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_funding_rate_z_score_new(SEXP a0) {
+  struct FundingRateZScore *h = wickra_funding_rate_z_score_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid FundingRateZScore parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, funding_rate_z_score_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_funding_rate_z_score_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct FundingRateZScore *h = (struct FundingRateZScore *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_funding_rate_z_score_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_funding_rate_z_score_reset(SEXP e) {
+  struct FundingRateZScore *h = (struct FundingRateZScore *)R_ExternalPtrAddr(e);
+  wickra_funding_rate_z_score_reset(h);
+  return R_NilValue;
+}
+
+static void gain_loss_ratio_fin(SEXP e) {
+  struct GainLossRatio *h = (struct GainLossRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_gain_loss_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_gain_loss_ratio_new(SEXP a0) {
+  struct GainLossRatio *h = wickra_gain_loss_ratio_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid GainLossRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, gain_loss_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_gain_loss_ratio_update(SEXP e, SEXP a0) {
+  struct GainLossRatio *h = (struct GainLossRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_gain_loss_ratio_update(h, Rf_asReal(a0)));
+}
+SEXP wk_gain_loss_ratio_batch(SEXP e, SEXP a0) {
+  struct GainLossRatio *h = (struct GainLossRatio *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_gain_loss_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_gain_loss_ratio_reset(SEXP e) {
+  struct GainLossRatio *h = (struct GainLossRatio *)R_ExternalPtrAddr(e);
+  wickra_gain_loss_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void gain_to_pain_ratio_fin(SEXP e) {
+  struct GainToPainRatio *h = (struct GainToPainRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_gain_to_pain_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_gain_to_pain_ratio_new(SEXP a0) {
+  struct GainToPainRatio *h = wickra_gain_to_pain_ratio_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid GainToPainRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, gain_to_pain_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_gain_to_pain_ratio_update(SEXP e, SEXP a0) {
+  struct GainToPainRatio *h = (struct GainToPainRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_gain_to_pain_ratio_update(h, Rf_asReal(a0)));
+}
+SEXP wk_gain_to_pain_ratio_batch(SEXP e, SEXP a0) {
+  struct GainToPainRatio *h = (struct GainToPainRatio *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_gain_to_pain_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_gain_to_pain_ratio_reset(SEXP e) {
+  struct GainToPainRatio *h = (struct GainToPainRatio *)R_ExternalPtrAddr(e);
+  wickra_gain_to_pain_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void gap_side_by_side_white_fin(SEXP e) {
+  struct GapSideBySideWhite *h = (struct GapSideBySideWhite *)R_ExternalPtrAddr(e);
+  if (h) wickra_gap_side_by_side_white_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_gap_side_by_side_white_new(void) {
+  struct GapSideBySideWhite *h = wickra_gap_side_by_side_white_new();
+  if (!h) Rf_error("invalid GapSideBySideWhite parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, gap_side_by_side_white_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_gap_side_by_side_white_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct GapSideBySideWhite *h = (struct GapSideBySideWhite *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_gap_side_by_side_white_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_gap_side_by_side_white_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct GapSideBySideWhite *h = (struct GapSideBySideWhite *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_gap_side_by_side_white_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_gap_side_by_side_white_reset(SEXP e) {
+  struct GapSideBySideWhite *h = (struct GapSideBySideWhite *)R_ExternalPtrAddr(e);
+  wickra_gap_side_by_side_white_reset(h);
+  return R_NilValue;
+}
+
+static void garch11_fin(SEXP e) {
+  struct Garch11 *h = (struct Garch11 *)R_ExternalPtrAddr(e);
+  if (h) wickra_garch11_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_garch11_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct Garch11 *h = wickra_garch11_new(Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2));
+  if (!h) Rf_error("invalid Garch11 parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, garch11_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_garch11_update(SEXP e, SEXP a0) {
+  struct Garch11 *h = (struct Garch11 *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_garch11_update(h, Rf_asReal(a0)));
+}
+SEXP wk_garch11_batch(SEXP e, SEXP a0) {
+  struct Garch11 *h = (struct Garch11 *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_garch11_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_garch11_reset(SEXP e) {
+  struct Garch11 *h = (struct Garch11 *)R_ExternalPtrAddr(e);
+  wickra_garch11_reset(h);
+  return R_NilValue;
+}
+
+static void garman_klass_volatility_fin(SEXP e) {
+  struct GarmanKlassVolatility *h = (struct GarmanKlassVolatility *)R_ExternalPtrAddr(e);
+  if (h) wickra_garman_klass_volatility_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_garman_klass_volatility_new(SEXP a0, SEXP a1) {
+  struct GarmanKlassVolatility *h = wickra_garman_klass_volatility_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid GarmanKlassVolatility parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, garman_klass_volatility_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_garman_klass_volatility_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct GarmanKlassVolatility *h = (struct GarmanKlassVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_garman_klass_volatility_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_garman_klass_volatility_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct GarmanKlassVolatility *h = (struct GarmanKlassVolatility *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_garman_klass_volatility_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_garman_klass_volatility_reset(SEXP e) {
+  struct GarmanKlassVolatility *h = (struct GarmanKlassVolatility *)R_ExternalPtrAddr(e);
+  wickra_garman_klass_volatility_reset(h);
+  return R_NilValue;
+}
+
+static void gartley_fin(SEXP e) {
+  struct Gartley *h = (struct Gartley *)R_ExternalPtrAddr(e);
+  if (h) wickra_gartley_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_gartley_new(void) {
+  struct Gartley *h = wickra_gartley_new();
+  if (!h) Rf_error("invalid Gartley parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, gartley_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_gartley_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Gartley *h = (struct Gartley *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_gartley_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_gartley_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Gartley *h = (struct Gartley *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_gartley_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_gartley_reset(SEXP e) {
+  struct Gartley *h = (struct Gartley *)R_ExternalPtrAddr(e);
+  wickra_gartley_reset(h);
+  return R_NilValue;
+}
+
+static void gator_oscillator_fin(SEXP e) {
+  struct GatorOscillator *h = (struct GatorOscillator *)R_ExternalPtrAddr(e);
+  if (h) wickra_gator_oscillator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_gator_oscillator_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct GatorOscillator *h = wickra_gator_oscillator_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2));
+  if (!h) Rf_error("invalid GatorOscillator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, gator_oscillator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_gator_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct GatorOscillator *h = (struct GatorOscillator *)R_ExternalPtrAddr(e);
+  struct WickraGatorOscillatorOutput out;
+  int ok = wickra_gator_oscillator_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.upper : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.lower : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("lower"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_gator_oscillator_reset(SEXP e) {
+  struct GatorOscillator *h = (struct GatorOscillator *)R_ExternalPtrAddr(e);
+  wickra_gator_oscillator_reset(h);
+  return R_NilValue;
+}
+
+static void generalized_dema_fin(SEXP e) {
+  struct GeneralizedDema *h = (struct GeneralizedDema *)R_ExternalPtrAddr(e);
+  if (h) wickra_generalized_dema_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_generalized_dema_new(SEXP a0, SEXP a1) {
+  struct GeneralizedDema *h = wickra_generalized_dema_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid GeneralizedDema parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, generalized_dema_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_generalized_dema_update(SEXP e, SEXP a0) {
+  struct GeneralizedDema *h = (struct GeneralizedDema *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_generalized_dema_update(h, Rf_asReal(a0)));
+}
+SEXP wk_generalized_dema_batch(SEXP e, SEXP a0) {
+  struct GeneralizedDema *h = (struct GeneralizedDema *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_generalized_dema_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_generalized_dema_reset(SEXP e) {
+  struct GeneralizedDema *h = (struct GeneralizedDema *)R_ExternalPtrAddr(e);
+  wickra_generalized_dema_reset(h);
+  return R_NilValue;
+}
+
+static void geometric_ma_fin(SEXP e) {
+  struct GeometricMa *h = (struct GeometricMa *)R_ExternalPtrAddr(e);
+  if (h) wickra_geometric_ma_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_geometric_ma_new(SEXP a0) {
+  struct GeometricMa *h = wickra_geometric_ma_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid GeometricMa parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, geometric_ma_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_geometric_ma_update(SEXP e, SEXP a0) {
+  struct GeometricMa *h = (struct GeometricMa *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_geometric_ma_update(h, Rf_asReal(a0)));
+}
+SEXP wk_geometric_ma_batch(SEXP e, SEXP a0) {
+  struct GeometricMa *h = (struct GeometricMa *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_geometric_ma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_geometric_ma_reset(SEXP e) {
+  struct GeometricMa *h = (struct GeometricMa *)R_ExternalPtrAddr(e);
+  wickra_geometric_ma_reset(h);
+  return R_NilValue;
+}
+
+static void golden_pocket_fin(SEXP e) {
+  struct GoldenPocket *h = (struct GoldenPocket *)R_ExternalPtrAddr(e);
+  if (h) wickra_golden_pocket_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_golden_pocket_new(void) {
+  struct GoldenPocket *h = wickra_golden_pocket_new();
+  if (!h) Rf_error("invalid GoldenPocket parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, golden_pocket_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_golden_pocket_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct GoldenPocket *h = (struct GoldenPocket *)R_ExternalPtrAddr(e);
+  struct WickraGoldenPocketOutput out;
+  int ok = wickra_golden_pocket_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.low : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.mid : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.high : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("low"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("mid"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("high"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_golden_pocket_reset(SEXP e) {
+  struct GoldenPocket *h = (struct GoldenPocket *)R_ExternalPtrAddr(e);
+  wickra_golden_pocket_reset(h);
+  return R_NilValue;
+}
+
+static void granger_causality_fin(SEXP e) {
+  struct GrangerCausality *h = (struct GrangerCausality *)R_ExternalPtrAddr(e);
+  if (h) wickra_granger_causality_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_granger_causality_new(SEXP a0, SEXP a1) {
+  struct GrangerCausality *h = wickra_granger_causality_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid GrangerCausality parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, granger_causality_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_granger_causality_update(SEXP e, SEXP a0, SEXP a1) {
+  struct GrangerCausality *h = (struct GrangerCausality *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_granger_causality_update(h, Rf_asReal(a0), Rf_asReal(a1)));
+}
+SEXP wk_granger_causality_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct GrangerCausality *h = (struct GrangerCausality *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_granger_causality_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_granger_causality_reset(SEXP e) {
+  struct GrangerCausality *h = (struct GrangerCausality *)R_ExternalPtrAddr(e);
+  wickra_granger_causality_reset(h);
+  return R_NilValue;
+}
+
+static void gravestone_doji_fin(SEXP e) {
+  struct GravestoneDoji *h = (struct GravestoneDoji *)R_ExternalPtrAddr(e);
+  if (h) wickra_gravestone_doji_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_gravestone_doji_new(void) {
+  struct GravestoneDoji *h = wickra_gravestone_doji_new();
+  if (!h) Rf_error("invalid GravestoneDoji parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, gravestone_doji_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_gravestone_doji_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct GravestoneDoji *h = (struct GravestoneDoji *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_gravestone_doji_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_gravestone_doji_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct GravestoneDoji *h = (struct GravestoneDoji *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_gravestone_doji_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_gravestone_doji_reset(SEXP e) {
+  struct GravestoneDoji *h = (struct GravestoneDoji *)R_ExternalPtrAddr(e);
+  wickra_gravestone_doji_reset(h);
+  return R_NilValue;
+}
+
+static void hammer_fin(SEXP e) {
+  struct Hammer *h = (struct Hammer *)R_ExternalPtrAddr(e);
+  if (h) wickra_hammer_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_hammer_new(void) {
+  struct Hammer *h = wickra_hammer_new();
+  if (!h) Rf_error("invalid Hammer parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, hammer_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_hammer_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Hammer *h = (struct Hammer *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_hammer_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_hammer_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Hammer *h = (struct Hammer *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_hammer_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_hammer_reset(SEXP e) {
+  struct Hammer *h = (struct Hammer *)R_ExternalPtrAddr(e);
+  wickra_hammer_reset(h);
+  return R_NilValue;
+}
+
+static void hanging_man_fin(SEXP e) {
+  struct HangingMan *h = (struct HangingMan *)R_ExternalPtrAddr(e);
+  if (h) wickra_hanging_man_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_hanging_man_new(void) {
+  struct HangingMan *h = wickra_hanging_man_new();
+  if (!h) Rf_error("invalid HangingMan parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, hanging_man_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_hanging_man_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HangingMan *h = (struct HangingMan *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_hanging_man_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_hanging_man_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HangingMan *h = (struct HangingMan *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_hanging_man_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_hanging_man_reset(SEXP e) {
+  struct HangingMan *h = (struct HangingMan *)R_ExternalPtrAddr(e);
+  wickra_hanging_man_reset(h);
+  return R_NilValue;
+}
+
+static void harami_fin(SEXP e) {
+  struct Harami *h = (struct Harami *)R_ExternalPtrAddr(e);
+  if (h) wickra_harami_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_harami_new(void) {
+  struct Harami *h = wickra_harami_new();
+  if (!h) Rf_error("invalid Harami parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, harami_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_harami_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Harami *h = (struct Harami *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_harami_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_harami_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Harami *h = (struct Harami *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_harami_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_harami_reset(SEXP e) {
+  struct Harami *h = (struct Harami *)R_ExternalPtrAddr(e);
+  wickra_harami_reset(h);
+  return R_NilValue;
+}
+
+static void harami_cross_fin(SEXP e) {
+  struct HaramiCross *h = (struct HaramiCross *)R_ExternalPtrAddr(e);
+  if (h) wickra_harami_cross_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_harami_cross_new(void) {
+  struct HaramiCross *h = wickra_harami_cross_new();
+  if (!h) Rf_error("invalid HaramiCross parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, harami_cross_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_harami_cross_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HaramiCross *h = (struct HaramiCross *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_harami_cross_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_harami_cross_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HaramiCross *h = (struct HaramiCross *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_harami_cross_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_harami_cross_reset(SEXP e) {
+  struct HaramiCross *h = (struct HaramiCross *)R_ExternalPtrAddr(e);
+  wickra_harami_cross_reset(h);
+  return R_NilValue;
+}
+
+static void hasbrouck_information_share_fin(SEXP e) {
+  struct HasbrouckInformationShare *h = (struct HasbrouckInformationShare *)R_ExternalPtrAddr(e);
+  if (h) wickra_hasbrouck_information_share_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_hasbrouck_information_share_new(SEXP a0) {
+  struct HasbrouckInformationShare *h = wickra_hasbrouck_information_share_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid HasbrouckInformationShare parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, hasbrouck_information_share_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_hasbrouck_information_share_update(SEXP e, SEXP a0, SEXP a1) {
+  struct HasbrouckInformationShare *h = (struct HasbrouckInformationShare *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_hasbrouck_information_share_update(h, Rf_asReal(a0), Rf_asReal(a1)));
+}
+SEXP wk_hasbrouck_information_share_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct HasbrouckInformationShare *h = (struct HasbrouckInformationShare *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_hasbrouck_information_share_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_hasbrouck_information_share_reset(SEXP e) {
+  struct HasbrouckInformationShare *h = (struct HasbrouckInformationShare *)R_ExternalPtrAddr(e);
+  wickra_hasbrouck_information_share_reset(h);
+  return R_NilValue;
+}
+
+static void head_and_shoulders_fin(SEXP e) {
+  struct HeadAndShoulders *h = (struct HeadAndShoulders *)R_ExternalPtrAddr(e);
+  if (h) wickra_head_and_shoulders_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_head_and_shoulders_new(void) {
+  struct HeadAndShoulders *h = wickra_head_and_shoulders_new();
+  if (!h) Rf_error("invalid HeadAndShoulders parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, head_and_shoulders_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_head_and_shoulders_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HeadAndShoulders *h = (struct HeadAndShoulders *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_head_and_shoulders_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_head_and_shoulders_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HeadAndShoulders *h = (struct HeadAndShoulders *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_head_and_shoulders_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_head_and_shoulders_reset(SEXP e) {
+  struct HeadAndShoulders *h = (struct HeadAndShoulders *)R_ExternalPtrAddr(e);
+  wickra_head_and_shoulders_reset(h);
+  return R_NilValue;
+}
+
+static void heikin_ashi_fin(SEXP e) {
+  struct HeikinAshi *h = (struct HeikinAshi *)R_ExternalPtrAddr(e);
+  if (h) wickra_heikin_ashi_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_heikin_ashi_new(void) {
+  struct HeikinAshi *h = wickra_heikin_ashi_new();
+  if (!h) Rf_error("invalid HeikinAshi parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, heikin_ashi_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_heikin_ashi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HeikinAshi *h = (struct HeikinAshi *)R_ExternalPtrAddr(e);
+  struct WickraHeikinAshiOutput out;
+  int ok = wickra_heikin_ashi_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 4));
+  REAL(r)[0] = ok ? (double)out.open : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.high : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.low : NA_REAL;
+  REAL(r)[3] = ok ? (double)out.close : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 4));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("high"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("low"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("close"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_heikin_ashi_reset(SEXP e) {
+  struct HeikinAshi *h = (struct HeikinAshi *)R_ExternalPtrAddr(e);
+  wickra_heikin_ashi_reset(h);
+  return R_NilValue;
+}
+
+static void heikin_ashi_oscillator_fin(SEXP e) {
+  struct HeikinAshiOscillator *h = (struct HeikinAshiOscillator *)R_ExternalPtrAddr(e);
+  if (h) wickra_heikin_ashi_oscillator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_heikin_ashi_oscillator_new(SEXP a0) {
+  struct HeikinAshiOscillator *h = wickra_heikin_ashi_oscillator_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid HeikinAshiOscillator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, heikin_ashi_oscillator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_heikin_ashi_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HeikinAshiOscillator *h = (struct HeikinAshiOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_heikin_ashi_oscillator_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_heikin_ashi_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HeikinAshiOscillator *h = (struct HeikinAshiOscillator *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_heikin_ashi_oscillator_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_heikin_ashi_oscillator_reset(SEXP e) {
+  struct HeikinAshiOscillator *h = (struct HeikinAshiOscillator *)R_ExternalPtrAddr(e);
+  wickra_heikin_ashi_oscillator_reset(h);
+  return R_NilValue;
+}
+
+static void hi_lo_activator_fin(SEXP e) {
+  struct HiLoActivator *h = (struct HiLoActivator *)R_ExternalPtrAddr(e);
+  if (h) wickra_hi_lo_activator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_hi_lo_activator_new(SEXP a0) {
+  struct HiLoActivator *h = wickra_hi_lo_activator_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid HiLoActivator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, hi_lo_activator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_hi_lo_activator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HiLoActivator *h = (struct HiLoActivator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_hi_lo_activator_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_hi_lo_activator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HiLoActivator *h = (struct HiLoActivator *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_hi_lo_activator_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_hi_lo_activator_reset(SEXP e) {
+  struct HiLoActivator *h = (struct HiLoActivator *)R_ExternalPtrAddr(e);
+  wickra_hi_lo_activator_reset(h);
+  return R_NilValue;
+}
+
+static void high_low_index_fin(SEXP e) {
+  struct HighLowIndex *h = (struct HighLowIndex *)R_ExternalPtrAddr(e);
+  if (h) wickra_high_low_index_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_high_low_index_new(SEXP a0) {
+  struct HighLowIndex *h = wickra_high_low_index_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid HighLowIndex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, high_low_index_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_high_low_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
+  struct HighLowIndex *h = (struct HighLowIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_high_low_index_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_high_low_index_reset(SEXP e) {
+  struct HighLowIndex *h = (struct HighLowIndex *)R_ExternalPtrAddr(e);
+  wickra_high_low_index_reset(h);
+  return R_NilValue;
+}
+
+static void high_low_range_fin(SEXP e) {
+  struct HighLowRange *h = (struct HighLowRange *)R_ExternalPtrAddr(e);
+  if (h) wickra_high_low_range_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_high_low_range_new(void) {
+  struct HighLowRange *h = wickra_high_low_range_new();
+  if (!h) Rf_error("invalid HighLowRange parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, high_low_range_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_high_low_range_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HighLowRange *h = (struct HighLowRange *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_high_low_range_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_high_low_range_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HighLowRange *h = (struct HighLowRange *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_high_low_range_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_high_low_range_reset(SEXP e) {
+  struct HighLowRange *h = (struct HighLowRange *)R_ExternalPtrAddr(e);
+  wickra_high_low_range_reset(h);
+  return R_NilValue;
+}
+
+static void high_low_volume_nodes_fin(SEXP e) {
+  struct HighLowVolumeNodes *h = (struct HighLowVolumeNodes *)R_ExternalPtrAddr(e);
+  if (h) wickra_high_low_volume_nodes_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_high_low_volume_nodes_new(SEXP a0, SEXP a1) {
+  struct HighLowVolumeNodes *h = wickra_high_low_volume_nodes_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid HighLowVolumeNodes parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, high_low_volume_nodes_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_high_low_volume_nodes_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HighLowVolumeNodes *h = (struct HighLowVolumeNodes *)R_ExternalPtrAddr(e);
+  struct WickraHighLowVolumeNodesOutput out;
+  int ok = wickra_high_low_volume_nodes_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.hvn : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.lvn : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("hvn"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("lvn"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_high_low_volume_nodes_reset(SEXP e) {
+  struct HighLowVolumeNodes *h = (struct HighLowVolumeNodes *)R_ExternalPtrAddr(e);
+  wickra_high_low_volume_nodes_reset(h);
+  return R_NilValue;
+}
+
+static void high_wave_fin(SEXP e) {
+  struct HighWave *h = (struct HighWave *)R_ExternalPtrAddr(e);
+  if (h) wickra_high_wave_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_high_wave_new(void) {
+  struct HighWave *h = wickra_high_wave_new();
+  if (!h) Rf_error("invalid HighWave parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, high_wave_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_high_wave_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HighWave *h = (struct HighWave *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_high_wave_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_high_wave_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HighWave *h = (struct HighWave *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_high_wave_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_high_wave_reset(SEXP e) {
+  struct HighWave *h = (struct HighWave *)R_ExternalPtrAddr(e);
+  wickra_high_wave_reset(h);
+  return R_NilValue;
+}
+
+static void highpass_filter_fin(SEXP e) {
+  struct HighpassFilter *h = (struct HighpassFilter *)R_ExternalPtrAddr(e);
+  if (h) wickra_highpass_filter_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_highpass_filter_new(SEXP a0) {
+  struct HighpassFilter *h = wickra_highpass_filter_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid HighpassFilter parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, highpass_filter_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_highpass_filter_update(SEXP e, SEXP a0) {
+  struct HighpassFilter *h = (struct HighpassFilter *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_highpass_filter_update(h, Rf_asReal(a0)));
+}
+SEXP wk_highpass_filter_batch(SEXP e, SEXP a0) {
+  struct HighpassFilter *h = (struct HighpassFilter *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_highpass_filter_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_highpass_filter_reset(SEXP e) {
+  struct HighpassFilter *h = (struct HighpassFilter *)R_ExternalPtrAddr(e);
+  wickra_highpass_filter_reset(h);
+  return R_NilValue;
+}
+
+static void hikkake_fin(SEXP e) {
+  struct Hikkake *h = (struct Hikkake *)R_ExternalPtrAddr(e);
+  if (h) wickra_hikkake_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_hikkake_new(void) {
+  struct Hikkake *h = wickra_hikkake_new();
+  if (!h) Rf_error("invalid Hikkake parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, hikkake_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_hikkake_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Hikkake *h = (struct Hikkake *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_hikkake_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_hikkake_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Hikkake *h = (struct Hikkake *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_hikkake_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_hikkake_reset(SEXP e) {
+  struct Hikkake *h = (struct Hikkake *)R_ExternalPtrAddr(e);
+  wickra_hikkake_reset(h);
+  return R_NilValue;
+}
+
+static void hikkake_modified_fin(SEXP e) {
+  struct HikkakeModified *h = (struct HikkakeModified *)R_ExternalPtrAddr(e);
+  if (h) wickra_hikkake_modified_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_hikkake_modified_new(void) {
+  struct HikkakeModified *h = wickra_hikkake_modified_new();
+  if (!h) Rf_error("invalid HikkakeModified parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, hikkake_modified_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_hikkake_modified_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HikkakeModified *h = (struct HikkakeModified *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_hikkake_modified_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_hikkake_modified_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HikkakeModified *h = (struct HikkakeModified *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_hikkake_modified_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_hikkake_modified_reset(SEXP e) {
+  struct HikkakeModified *h = (struct HikkakeModified *)R_ExternalPtrAddr(e);
+  wickra_hikkake_modified_reset(h);
+  return R_NilValue;
+}
+
+static void hilbert_dominant_cycle_fin(SEXP e) {
+  struct HilbertDominantCycle *h = (struct HilbertDominantCycle *)R_ExternalPtrAddr(e);
+  if (h) wickra_hilbert_dominant_cycle_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_hilbert_dominant_cycle_new(void) {
+  struct HilbertDominantCycle *h = wickra_hilbert_dominant_cycle_new();
+  if (!h) Rf_error("invalid HilbertDominantCycle parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, hilbert_dominant_cycle_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_hilbert_dominant_cycle_update(SEXP e, SEXP a0) {
+  struct HilbertDominantCycle *h = (struct HilbertDominantCycle *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_hilbert_dominant_cycle_update(h, Rf_asReal(a0)));
+}
+SEXP wk_hilbert_dominant_cycle_batch(SEXP e, SEXP a0) {
+  struct HilbertDominantCycle *h = (struct HilbertDominantCycle *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_hilbert_dominant_cycle_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_hilbert_dominant_cycle_reset(SEXP e) {
+  struct HilbertDominantCycle *h = (struct HilbertDominantCycle *)R_ExternalPtrAddr(e);
+  wickra_hilbert_dominant_cycle_reset(h);
+  return R_NilValue;
+}
+
+static void historical_volatility_fin(SEXP e) {
+  struct HistoricalVolatility *h = (struct HistoricalVolatility *)R_ExternalPtrAddr(e);
+  if (h) wickra_historical_volatility_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_historical_volatility_new(SEXP a0, SEXP a1) {
+  struct HistoricalVolatility *h = wickra_historical_volatility_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid HistoricalVolatility parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, historical_volatility_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_historical_volatility_update(SEXP e, SEXP a0) {
+  struct HistoricalVolatility *h = (struct HistoricalVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_historical_volatility_update(h, Rf_asReal(a0)));
+}
+SEXP wk_historical_volatility_batch(SEXP e, SEXP a0) {
+  struct HistoricalVolatility *h = (struct HistoricalVolatility *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_historical_volatility_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_historical_volatility_reset(SEXP e) {
+  struct HistoricalVolatility *h = (struct HistoricalVolatility *)R_ExternalPtrAddr(e);
+  wickra_historical_volatility_reset(h);
+  return R_NilValue;
+}
+
+static void hma_fin(SEXP e) {
+  struct Hma *h = (struct Hma *)R_ExternalPtrAddr(e);
+  if (h) wickra_hma_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_hma_new(SEXP a0) {
+  struct Hma *h = wickra_hma_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Hma parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, hma_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_hma_update(SEXP e, SEXP a0) {
+  struct Hma *h = (struct Hma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_hma_update(h, Rf_asReal(a0)));
+}
+SEXP wk_hma_batch(SEXP e, SEXP a0) {
+  struct Hma *h = (struct Hma *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_hma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_hma_reset(SEXP e) {
+  struct Hma *h = (struct Hma *)R_ExternalPtrAddr(e);
+  wickra_hma_reset(h);
+  return R_NilValue;
+}
+
+static void holt_winters_fin(SEXP e) {
+  struct HoltWinters *h = (struct HoltWinters *)R_ExternalPtrAddr(e);
+  if (h) wickra_holt_winters_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_holt_winters_new(SEXP a0, SEXP a1) {
+  struct HoltWinters *h = wickra_holt_winters_new(Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid HoltWinters parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, holt_winters_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_holt_winters_update(SEXP e, SEXP a0) {
+  struct HoltWinters *h = (struct HoltWinters *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_holt_winters_update(h, Rf_asReal(a0)));
+}
+SEXP wk_holt_winters_batch(SEXP e, SEXP a0) {
+  struct HoltWinters *h = (struct HoltWinters *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_holt_winters_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_holt_winters_reset(SEXP e) {
+  struct HoltWinters *h = (struct HoltWinters *)R_ExternalPtrAddr(e);
+  wickra_holt_winters_reset(h);
+  return R_NilValue;
+}
+
+static void homing_pigeon_fin(SEXP e) {
+  struct HomingPigeon *h = (struct HomingPigeon *)R_ExternalPtrAddr(e);
+  if (h) wickra_homing_pigeon_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_homing_pigeon_new(void) {
+  struct HomingPigeon *h = wickra_homing_pigeon_new();
+  if (!h) Rf_error("invalid HomingPigeon parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, homing_pigeon_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_homing_pigeon_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HomingPigeon *h = (struct HomingPigeon *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_homing_pigeon_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_homing_pigeon_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HomingPigeon *h = (struct HomingPigeon *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_homing_pigeon_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_homing_pigeon_reset(SEXP e) {
+  struct HomingPigeon *h = (struct HomingPigeon *)R_ExternalPtrAddr(e);
+  wickra_homing_pigeon_reset(h);
+  return R_NilValue;
+}
+
+static void ht_dc_phase_fin(SEXP e) {
+  struct HtDcPhase *h = (struct HtDcPhase *)R_ExternalPtrAddr(e);
+  if (h) wickra_ht_dc_phase_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_ht_dc_phase_new(void) {
+  struct HtDcPhase *h = wickra_ht_dc_phase_new();
+  if (!h) Rf_error("invalid HtDcPhase parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, ht_dc_phase_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_ht_dc_phase_update(SEXP e, SEXP a0) {
+  struct HtDcPhase *h = (struct HtDcPhase *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_ht_dc_phase_update(h, Rf_asReal(a0)));
+}
+SEXP wk_ht_dc_phase_batch(SEXP e, SEXP a0) {
+  struct HtDcPhase *h = (struct HtDcPhase *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_ht_dc_phase_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_ht_dc_phase_reset(SEXP e) {
+  struct HtDcPhase *h = (struct HtDcPhase *)R_ExternalPtrAddr(e);
+  wickra_ht_dc_phase_reset(h);
+  return R_NilValue;
+}
+
+static void ht_phasor_fin(SEXP e) {
+  struct HtPhasor *h = (struct HtPhasor *)R_ExternalPtrAddr(e);
+  if (h) wickra_ht_phasor_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_ht_phasor_new(void) {
+  struct HtPhasor *h = wickra_ht_phasor_new();
+  if (!h) Rf_error("invalid HtPhasor parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, ht_phasor_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_ht_phasor_update(SEXP e, SEXP a0) {
+  struct HtPhasor *h = (struct HtPhasor *)R_ExternalPtrAddr(e);
+  struct WickraHtPhasorOutput out;
+  int ok = wickra_ht_phasor_update(h, Rf_asReal(a0), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.inphase : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.quadrature : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("inphase"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("quadrature"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_ht_phasor_reset(SEXP e) {
+  struct HtPhasor *h = (struct HtPhasor *)R_ExternalPtrAddr(e);
+  wickra_ht_phasor_reset(h);
+  return R_NilValue;
+}
+
+static void ht_trend_mode_fin(SEXP e) {
+  struct HtTrendMode *h = (struct HtTrendMode *)R_ExternalPtrAddr(e);
+  if (h) wickra_ht_trend_mode_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_ht_trend_mode_new(void) {
+  struct HtTrendMode *h = wickra_ht_trend_mode_new();
+  if (!h) Rf_error("invalid HtTrendMode parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, ht_trend_mode_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_ht_trend_mode_update(SEXP e, SEXP a0) {
+  struct HtTrendMode *h = (struct HtTrendMode *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_ht_trend_mode_update(h, Rf_asReal(a0)));
+}
+SEXP wk_ht_trend_mode_batch(SEXP e, SEXP a0) {
+  struct HtTrendMode *h = (struct HtTrendMode *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_ht_trend_mode_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_ht_trend_mode_reset(SEXP e) {
+  struct HtTrendMode *h = (struct HtTrendMode *)R_ExternalPtrAddr(e);
+  wickra_ht_trend_mode_reset(h);
+  return R_NilValue;
+}
+
+static void hurst_channel_fin(SEXP e) {
+  struct HurstChannel *h = (struct HurstChannel *)R_ExternalPtrAddr(e);
+  if (h) wickra_hurst_channel_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_hurst_channel_new(SEXP a0, SEXP a1) {
+  struct HurstChannel *h = wickra_hurst_channel_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid HurstChannel parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, hurst_channel_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_hurst_channel_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct HurstChannel *h = (struct HurstChannel *)R_ExternalPtrAddr(e);
+  struct WickraHurstChannelOutput out;
+  int ok = wickra_hurst_channel_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.upper : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.middle : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.lower : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("lower"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_hurst_channel_reset(SEXP e) {
+  struct HurstChannel *h = (struct HurstChannel *)R_ExternalPtrAddr(e);
+  wickra_hurst_channel_reset(h);
+  return R_NilValue;
+}
+
+static void hurst_exponent_fin(SEXP e) {
+  struct HurstExponent *h = (struct HurstExponent *)R_ExternalPtrAddr(e);
+  if (h) wickra_hurst_exponent_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_hurst_exponent_new(SEXP a0, SEXP a1) {
+  struct HurstExponent *h = wickra_hurst_exponent_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid HurstExponent parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, hurst_exponent_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_hurst_exponent_update(SEXP e, SEXP a0) {
+  struct HurstExponent *h = (struct HurstExponent *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_hurst_exponent_update(h, Rf_asReal(a0)));
+}
+SEXP wk_hurst_exponent_batch(SEXP e, SEXP a0) {
+  struct HurstExponent *h = (struct HurstExponent *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_hurst_exponent_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_hurst_exponent_reset(SEXP e) {
+  struct HurstExponent *h = (struct HurstExponent *)R_ExternalPtrAddr(e);
+  wickra_hurst_exponent_reset(h);
+  return R_NilValue;
+}
+
+static void ichimoku_fin(SEXP e) {
+  struct Ichimoku *h = (struct Ichimoku *)R_ExternalPtrAddr(e);
+  if (h) wickra_ichimoku_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_ichimoku_new(SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct Ichimoku *h = wickra_ichimoku_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2), (uintptr_t)Rf_asReal(a3));
+  if (!h) Rf_error("invalid Ichimoku parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, ichimoku_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_ichimoku_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Ichimoku *h = (struct Ichimoku *)R_ExternalPtrAddr(e);
+  struct WickraIchimokuOutput out;
+  int ok = wickra_ichimoku_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 5));
+  REAL(r)[0] = ok ? (double)out.tenkan : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.kijun : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.senkou_a : NA_REAL;
+  REAL(r)[3] = ok ? (double)out.senkou_b : NA_REAL;
+  REAL(r)[4] = ok ? (double)out.chikou : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 5));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("tenkan"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("kijun"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("senkou_a"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("senkou_b"));
+  SET_STRING_ELT(nm, 4, Rf_mkChar("chikou"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_ichimoku_reset(SEXP e) {
+  struct Ichimoku *h = (struct Ichimoku *)R_ExternalPtrAddr(e);
+  wickra_ichimoku_reset(h);
+  return R_NilValue;
+}
+
+static void identical_three_crows_fin(SEXP e) {
+  struct IdenticalThreeCrows *h = (struct IdenticalThreeCrows *)R_ExternalPtrAddr(e);
+  if (h) wickra_identical_three_crows_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_identical_three_crows_new(void) {
+  struct IdenticalThreeCrows *h = wickra_identical_three_crows_new();
+  if (!h) Rf_error("invalid IdenticalThreeCrows parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, identical_three_crows_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_identical_three_crows_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct IdenticalThreeCrows *h = (struct IdenticalThreeCrows *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_identical_three_crows_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_identical_three_crows_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct IdenticalThreeCrows *h = (struct IdenticalThreeCrows *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_identical_three_crows_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_identical_three_crows_reset(SEXP e) {
+  struct IdenticalThreeCrows *h = (struct IdenticalThreeCrows *)R_ExternalPtrAddr(e);
+  wickra_identical_three_crows_reset(h);
+  return R_NilValue;
+}
+
+static void imbalance_bars_fin(SEXP e) {
+  struct ImbalanceBars *h = (struct ImbalanceBars *)R_ExternalPtrAddr(e);
+  if (h) wickra_imbalance_bars_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_imbalance_bars_new(SEXP a0) {
+  struct ImbalanceBars *h = wickra_imbalance_bars_new(Rf_asReal(a0));
+  if (!h) Rf_error("invalid ImbalanceBars parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, imbalance_bars_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_imbalance_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ImbalanceBars *h = (struct ImbalanceBars *)R_ExternalPtrAddr(e);
+  struct WickraImbalanceBar buf[64];
+  size_t n = wickra_imbalance_bars_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), buf, 64);
+  SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 6));
+  for (size_t i = 0; i < n; i++) {
+    REAL(r)[i + n * 0] = (double)buf[i].open;
+    REAL(r)[i + n * 1] = (double)buf[i].high;
+    REAL(r)[i + n * 2] = (double)buf[i].low;
+    REAL(r)[i + n * 3] = (double)buf[i].close;
+    REAL(r)[i + n * 4] = (double)buf[i].imbalance;
+    REAL(r)[i + n * 5] = (double)buf[i].direction;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 6));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("high"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("low"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("close"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("imbalance"));
+  SET_STRING_ELT(cn, 5, Rf_mkChar("direction"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(r, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return r;
+}
+SEXP wk_imbalance_bars_reset(SEXP e) {
+  struct ImbalanceBars *h = (struct ImbalanceBars *)R_ExternalPtrAddr(e);
+  wickra_imbalance_bars_reset(h);
+  return R_NilValue;
+}
+
+static void in_neck_fin(SEXP e) {
+  struct InNeck *h = (struct InNeck *)R_ExternalPtrAddr(e);
+  if (h) wickra_in_neck_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_in_neck_new(void) {
+  struct InNeck *h = wickra_in_neck_new();
+  if (!h) Rf_error("invalid InNeck parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, in_neck_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_in_neck_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct InNeck *h = (struct InNeck *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_in_neck_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_in_neck_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct InNeck *h = (struct InNeck *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_in_neck_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_in_neck_reset(SEXP e) {
+  struct InNeck *h = (struct InNeck *)R_ExternalPtrAddr(e);
+  wickra_in_neck_reset(h);
+  return R_NilValue;
+}
+
+static void inertia_fin(SEXP e) {
+  struct Inertia *h = (struct Inertia *)R_ExternalPtrAddr(e);
+  if (h) wickra_inertia_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_inertia_new(SEXP a0, SEXP a1) {
+  struct Inertia *h = wickra_inertia_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid Inertia parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, inertia_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_inertia_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Inertia *h = (struct Inertia *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_inertia_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_inertia_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Inertia *h = (struct Inertia *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_inertia_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_inertia_reset(SEXP e) {
+  struct Inertia *h = (struct Inertia *)R_ExternalPtrAddr(e);
+  wickra_inertia_reset(h);
+  return R_NilValue;
+}
+
+static void information_ratio_fin(SEXP e) {
+  struct InformationRatio *h = (struct InformationRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_information_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_information_ratio_new(SEXP a0) {
+  struct InformationRatio *h = wickra_information_ratio_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid InformationRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, information_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_information_ratio_update(SEXP e, SEXP a0, SEXP a1) {
+  struct InformationRatio *h = (struct InformationRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_information_ratio_update(h, Rf_asReal(a0), Rf_asReal(a1)));
+}
+SEXP wk_information_ratio_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct InformationRatio *h = (struct InformationRatio *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_information_ratio_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_information_ratio_reset(SEXP e) {
+  struct InformationRatio *h = (struct InformationRatio *)R_ExternalPtrAddr(e);
+  wickra_information_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void initial_balance_fin(SEXP e) {
+  struct InitialBalance *h = (struct InitialBalance *)R_ExternalPtrAddr(e);
+  if (h) wickra_initial_balance_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_initial_balance_new(SEXP a0) {
+  struct InitialBalance *h = wickra_initial_balance_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid InitialBalance parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, initial_balance_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_initial_balance_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct InitialBalance *h = (struct InitialBalance *)R_ExternalPtrAddr(e);
+  struct WickraInitialBalanceOutput out;
+  int ok = wickra_initial_balance_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.high : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.low : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("high"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("low"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_initial_balance_reset(SEXP e) {
+  struct InitialBalance *h = (struct InitialBalance *)R_ExternalPtrAddr(e);
+  wickra_initial_balance_reset(h);
+  return R_NilValue;
+}
+
+static void instantaneous_trendline_fin(SEXP e) {
+  struct InstantaneousTrendline *h = (struct InstantaneousTrendline *)R_ExternalPtrAddr(e);
+  if (h) wickra_instantaneous_trendline_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_instantaneous_trendline_new(SEXP a0) {
+  struct InstantaneousTrendline *h = wickra_instantaneous_trendline_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid InstantaneousTrendline parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, instantaneous_trendline_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_instantaneous_trendline_update(SEXP e, SEXP a0) {
+  struct InstantaneousTrendline *h = (struct InstantaneousTrendline *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_instantaneous_trendline_update(h, Rf_asReal(a0)));
+}
+SEXP wk_instantaneous_trendline_batch(SEXP e, SEXP a0) {
+  struct InstantaneousTrendline *h = (struct InstantaneousTrendline *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_instantaneous_trendline_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_instantaneous_trendline_reset(SEXP e) {
+  struct InstantaneousTrendline *h = (struct InstantaneousTrendline *)R_ExternalPtrAddr(e);
+  wickra_instantaneous_trendline_reset(h);
+  return R_NilValue;
+}
+
+static void intraday_intensity_fin(SEXP e) {
+  struct IntradayIntensity *h = (struct IntradayIntensity *)R_ExternalPtrAddr(e);
+  if (h) wickra_intraday_intensity_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_intraday_intensity_new(void) {
+  struct IntradayIntensity *h = wickra_intraday_intensity_new();
+  if (!h) Rf_error("invalid IntradayIntensity parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, intraday_intensity_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_intraday_intensity_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct IntradayIntensity *h = (struct IntradayIntensity *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_intraday_intensity_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_intraday_intensity_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct IntradayIntensity *h = (struct IntradayIntensity *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_intraday_intensity_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_intraday_intensity_reset(SEXP e) {
+  struct IntradayIntensity *h = (struct IntradayIntensity *)R_ExternalPtrAddr(e);
+  wickra_intraday_intensity_reset(h);
+  return R_NilValue;
+}
+
+static void intraday_momentum_index_fin(SEXP e) {
+  struct IntradayMomentumIndex *h = (struct IntradayMomentumIndex *)R_ExternalPtrAddr(e);
+  if (h) wickra_intraday_momentum_index_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_intraday_momentum_index_new(SEXP a0) {
+  struct IntradayMomentumIndex *h = wickra_intraday_momentum_index_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid IntradayMomentumIndex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, intraday_momentum_index_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_intraday_momentum_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct IntradayMomentumIndex *h = (struct IntradayMomentumIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_intraday_momentum_index_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_intraday_momentum_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct IntradayMomentumIndex *h = (struct IntradayMomentumIndex *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_intraday_momentum_index_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_intraday_momentum_index_reset(SEXP e) {
+  struct IntradayMomentumIndex *h = (struct IntradayMomentumIndex *)R_ExternalPtrAddr(e);
+  wickra_intraday_momentum_index_reset(h);
+  return R_NilValue;
+}
+
+static void intraday_volatility_profile_fin(SEXP e) {
+  struct IntradayVolatilityProfile *h = (struct IntradayVolatilityProfile *)R_ExternalPtrAddr(e);
+  if (h) wickra_intraday_volatility_profile_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_intraday_volatility_profile_new(SEXP a0, SEXP a1) {
+  struct IntradayVolatilityProfile *h = wickra_intraday_volatility_profile_new((uintptr_t)Rf_asReal(a0), (int32_t)Rf_asInteger(a1));
+  if (!h) Rf_error("invalid IntradayVolatilityProfile parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, intraday_volatility_profile_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_intraday_volatility_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP capn) {
+  struct IntradayVolatilityProfile *h = (struct IntradayVolatilityProfile *)R_ExternalPtrAddr(e);
+  int cap = Rf_asInteger(capn);
+  SEXP values = PROTECT(Rf_allocVector(REALSXP, cap));
+  R_xlen_t n = wickra_intraday_volatility_profile_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), REAL(values), (uintptr_t)cap);
+  if (n < 0) { UNPROTECT(1); return R_NilValue; }
+  SEXP vv = PROTECT(Rf_allocVector(REALSXP, n));
+  for (R_xlen_t i = 0; i < n; i++) REAL(vv)[i] = REAL(values)[i];
+  UNPROTECT(2);
+  return vv;
+}
+SEXP wk_intraday_volatility_profile_reset(SEXP e) {
+  struct IntradayVolatilityProfile *h = (struct IntradayVolatilityProfile *)R_ExternalPtrAddr(e);
+  wickra_intraday_volatility_profile_reset(h);
+  return R_NilValue;
+}
+
+static void inverse_fisher_transform_fin(SEXP e) {
+  struct InverseFisherTransform *h = (struct InverseFisherTransform *)R_ExternalPtrAddr(e);
+  if (h) wickra_inverse_fisher_transform_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_inverse_fisher_transform_new(SEXP a0) {
+  struct InverseFisherTransform *h = wickra_inverse_fisher_transform_new(Rf_asReal(a0));
+  if (!h) Rf_error("invalid InverseFisherTransform parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, inverse_fisher_transform_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_inverse_fisher_transform_update(SEXP e, SEXP a0) {
+  struct InverseFisherTransform *h = (struct InverseFisherTransform *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_inverse_fisher_transform_update(h, Rf_asReal(a0)));
+}
+SEXP wk_inverse_fisher_transform_batch(SEXP e, SEXP a0) {
+  struct InverseFisherTransform *h = (struct InverseFisherTransform *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_inverse_fisher_transform_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_inverse_fisher_transform_reset(SEXP e) {
+  struct InverseFisherTransform *h = (struct InverseFisherTransform *)R_ExternalPtrAddr(e);
+  wickra_inverse_fisher_transform_reset(h);
+  return R_NilValue;
+}
+
+static void inverted_hammer_fin(SEXP e) {
+  struct InvertedHammer *h = (struct InvertedHammer *)R_ExternalPtrAddr(e);
+  if (h) wickra_inverted_hammer_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_inverted_hammer_new(void) {
+  struct InvertedHammer *h = wickra_inverted_hammer_new();
+  if (!h) Rf_error("invalid InvertedHammer parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, inverted_hammer_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_inverted_hammer_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct InvertedHammer *h = (struct InvertedHammer *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_inverted_hammer_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_inverted_hammer_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct InvertedHammer *h = (struct InvertedHammer *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_inverted_hammer_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_inverted_hammer_reset(SEXP e) {
+  struct InvertedHammer *h = (struct InvertedHammer *)R_ExternalPtrAddr(e);
+  wickra_inverted_hammer_reset(h);
+  return R_NilValue;
+}
+
+static void jarque_bera_fin(SEXP e) {
+  struct JarqueBera *h = (struct JarqueBera *)R_ExternalPtrAddr(e);
+  if (h) wickra_jarque_bera_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_jarque_bera_new(SEXP a0) {
+  struct JarqueBera *h = wickra_jarque_bera_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid JarqueBera parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, jarque_bera_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_jarque_bera_update(SEXP e, SEXP a0) {
+  struct JarqueBera *h = (struct JarqueBera *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_jarque_bera_update(h, Rf_asReal(a0)));
+}
+SEXP wk_jarque_bera_batch(SEXP e, SEXP a0) {
+  struct JarqueBera *h = (struct JarqueBera *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_jarque_bera_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_jarque_bera_reset(SEXP e) {
+  struct JarqueBera *h = (struct JarqueBera *)R_ExternalPtrAddr(e);
+  wickra_jarque_bera_reset(h);
+  return R_NilValue;
+}
+
+static void jma_fin(SEXP e) {
+  struct Jma *h = (struct Jma *)R_ExternalPtrAddr(e);
+  if (h) wickra_jma_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_jma_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct Jma *h = wickra_jma_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1), (uint32_t)Rf_asInteger(a2));
+  if (!h) Rf_error("invalid Jma parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, jma_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_jma_update(SEXP e, SEXP a0) {
+  struct Jma *h = (struct Jma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_jma_update(h, Rf_asReal(a0)));
+}
+SEXP wk_jma_batch(SEXP e, SEXP a0) {
+  struct Jma *h = (struct Jma *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_jma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_jma_reset(SEXP e) {
+  struct Jma *h = (struct Jma *)R_ExternalPtrAddr(e);
+  wickra_jma_reset(h);
+  return R_NilValue;
+}
+
+static void jump_indicator_fin(SEXP e) {
+  struct JumpIndicator *h = (struct JumpIndicator *)R_ExternalPtrAddr(e);
+  if (h) wickra_jump_indicator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_jump_indicator_new(SEXP a0, SEXP a1) {
+  struct JumpIndicator *h = wickra_jump_indicator_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid JumpIndicator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, jump_indicator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_jump_indicator_update(SEXP e, SEXP a0) {
+  struct JumpIndicator *h = (struct JumpIndicator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_jump_indicator_update(h, Rf_asReal(a0)));
+}
+SEXP wk_jump_indicator_batch(SEXP e, SEXP a0) {
+  struct JumpIndicator *h = (struct JumpIndicator *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_jump_indicator_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_jump_indicator_reset(SEXP e) {
+  struct JumpIndicator *h = (struct JumpIndicator *)R_ExternalPtrAddr(e);
+  wickra_jump_indicator_reset(h);
+  return R_NilValue;
+}
+
+static void k_ratio_fin(SEXP e) {
+  struct KRatio *h = (struct KRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_k_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_k_ratio_new(SEXP a0) {
+  struct KRatio *h = wickra_k_ratio_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid KRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, k_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_k_ratio_update(SEXP e, SEXP a0) {
+  struct KRatio *h = (struct KRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_k_ratio_update(h, Rf_asReal(a0)));
+}
+SEXP wk_k_ratio_batch(SEXP e, SEXP a0) {
+  struct KRatio *h = (struct KRatio *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_k_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_k_ratio_reset(SEXP e) {
+  struct KRatio *h = (struct KRatio *)R_ExternalPtrAddr(e);
+  wickra_k_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void kagi_bars_fin(SEXP e) {
+  struct KagiBars *h = (struct KagiBars *)R_ExternalPtrAddr(e);
+  if (h) wickra_kagi_bars_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_kagi_bars_new(SEXP a0) {
+  struct KagiBars *h = wickra_kagi_bars_new(Rf_asReal(a0));
+  if (!h) Rf_error("invalid KagiBars parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, kagi_bars_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_kagi_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct KagiBars *h = (struct KagiBars *)R_ExternalPtrAddr(e);
+  struct WickraKagiBar buf[64];
+  size_t n = wickra_kagi_bars_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), buf, 64);
+  SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (size_t i = 0; i < n; i++) {
+    REAL(r)[i + n * 0] = (double)buf[i].start;
+    REAL(r)[i + n * 1] = (double)buf[i].end;
+    REAL(r)[i + n * 2] = (double)buf[i].direction;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("start"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("end"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("direction"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(r, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return r;
+}
+SEXP wk_kagi_bars_reset(SEXP e) {
+  struct KagiBars *h = (struct KagiBars *)R_ExternalPtrAddr(e);
+  wickra_kagi_bars_reset(h);
+  return R_NilValue;
+}
+
+static void kalman_hedge_ratio_fin(SEXP e) {
+  struct KalmanHedgeRatio *h = (struct KalmanHedgeRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_kalman_hedge_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_kalman_hedge_ratio_new(SEXP a0, SEXP a1) {
+  struct KalmanHedgeRatio *h = wickra_kalman_hedge_ratio_new(Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid KalmanHedgeRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, kalman_hedge_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_kalman_hedge_ratio_update(SEXP e, SEXP a0, SEXP a1) {
+  struct KalmanHedgeRatio *h = (struct KalmanHedgeRatio *)R_ExternalPtrAddr(e);
+  struct WickraKalmanHedgeRatioOutput out;
+  int ok = wickra_kalman_hedge_ratio_update(h, Rf_asReal(a0), Rf_asReal(a1), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.hedge_ratio : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.intercept : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.spread : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("hedge_ratio"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("intercept"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("spread"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_kalman_hedge_ratio_reset(SEXP e) {
+  struct KalmanHedgeRatio *h = (struct KalmanHedgeRatio *)R_ExternalPtrAddr(e);
+  wickra_kalman_hedge_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void kama_fin(SEXP e) {
+  struct Kama *h = (struct Kama *)R_ExternalPtrAddr(e);
+  if (h) wickra_kama_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_kama_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct Kama *h = wickra_kama_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2));
+  if (!h) Rf_error("invalid Kama parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, kama_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_kama_update(SEXP e, SEXP a0) {
+  struct Kama *h = (struct Kama *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_kama_update(h, Rf_asReal(a0)));
+}
+SEXP wk_kama_batch(SEXP e, SEXP a0) {
+  struct Kama *h = (struct Kama *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_kama_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_kama_reset(SEXP e) {
+  struct Kama *h = (struct Kama *)R_ExternalPtrAddr(e);
+  wickra_kama_reset(h);
+  return R_NilValue;
+}
+
+static void kase_dev_stop_fin(SEXP e) {
+  struct KaseDevStop *h = (struct KaseDevStop *)R_ExternalPtrAddr(e);
+  if (h) wickra_kase_dev_stop_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_kase_dev_stop_new(SEXP a0, SEXP a1) {
+  struct KaseDevStop *h = wickra_kase_dev_stop_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid KaseDevStop parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, kase_dev_stop_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_kase_dev_stop_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct KaseDevStop *h = (struct KaseDevStop *)R_ExternalPtrAddr(e);
+  struct WickraKaseDevStopOutput out;
+  int ok = wickra_kase_dev_stop_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.value : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.direction : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("value"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("direction"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_kase_dev_stop_reset(SEXP e) {
+  struct KaseDevStop *h = (struct KaseDevStop *)R_ExternalPtrAddr(e);
+  wickra_kase_dev_stop_reset(h);
+  return R_NilValue;
+}
+
+static void kase_permission_stochastic_fin(SEXP e) {
+  struct KasePermissionStochastic *h = (struct KasePermissionStochastic *)R_ExternalPtrAddr(e);
+  if (h) wickra_kase_permission_stochastic_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_kase_permission_stochastic_new(SEXP a0, SEXP a1) {
+  struct KasePermissionStochastic *h = wickra_kase_permission_stochastic_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid KasePermissionStochastic parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, kase_permission_stochastic_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_kase_permission_stochastic_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct KasePermissionStochastic *h = (struct KasePermissionStochastic *)R_ExternalPtrAddr(e);
+  struct WickraKasePermissionStochasticOutput out;
+  int ok = wickra_kase_permission_stochastic_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.fast : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.slow : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("fast"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("slow"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_kase_permission_stochastic_reset(SEXP e) {
+  struct KasePermissionStochastic *h = (struct KasePermissionStochastic *)R_ExternalPtrAddr(e);
+  wickra_kase_permission_stochastic_reset(h);
+  return R_NilValue;
+}
+
+static void kelly_criterion_fin(SEXP e) {
+  struct KellyCriterion *h = (struct KellyCriterion *)R_ExternalPtrAddr(e);
+  if (h) wickra_kelly_criterion_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_kelly_criterion_new(SEXP a0) {
+  struct KellyCriterion *h = wickra_kelly_criterion_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid KellyCriterion parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, kelly_criterion_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_kelly_criterion_update(SEXP e, SEXP a0) {
+  struct KellyCriterion *h = (struct KellyCriterion *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_kelly_criterion_update(h, Rf_asReal(a0)));
+}
+SEXP wk_kelly_criterion_batch(SEXP e, SEXP a0) {
+  struct KellyCriterion *h = (struct KellyCriterion *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_kelly_criterion_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_kelly_criterion_reset(SEXP e) {
+  struct KellyCriterion *h = (struct KellyCriterion *)R_ExternalPtrAddr(e);
+  wickra_kelly_criterion_reset(h);
+  return R_NilValue;
+}
+
+static void keltner_fin(SEXP e) {
+  struct Keltner *h = (struct Keltner *)R_ExternalPtrAddr(e);
+  if (h) wickra_keltner_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_keltner_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct Keltner *h = wickra_keltner_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), Rf_asReal(a2));
+  if (!h) Rf_error("invalid Keltner parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, keltner_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_keltner_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Keltner *h = (struct Keltner *)R_ExternalPtrAddr(e);
+  struct WickraKeltnerOutput out;
+  int ok = wickra_keltner_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.upper : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.middle : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.lower : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("lower"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_keltner_reset(SEXP e) {
+  struct Keltner *h = (struct Keltner *)R_ExternalPtrAddr(e);
+  wickra_keltner_reset(h);
+  return R_NilValue;
+}
+
+static void kendall_tau_fin(SEXP e) {
+  struct KendallTau *h = (struct KendallTau *)R_ExternalPtrAddr(e);
+  if (h) wickra_kendall_tau_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_kendall_tau_new(SEXP a0) {
+  struct KendallTau *h = wickra_kendall_tau_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid KendallTau parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, kendall_tau_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_kendall_tau_update(SEXP e, SEXP a0, SEXP a1) {
+  struct KendallTau *h = (struct KendallTau *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_kendall_tau_update(h, Rf_asReal(a0), Rf_asReal(a1)));
+}
+SEXP wk_kendall_tau_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct KendallTau *h = (struct KendallTau *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_kendall_tau_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_kendall_tau_reset(SEXP e) {
+  struct KendallTau *h = (struct KendallTau *)R_ExternalPtrAddr(e);
+  wickra_kendall_tau_reset(h);
+  return R_NilValue;
+}
+
+static void kicking_fin(SEXP e) {
+  struct Kicking *h = (struct Kicking *)R_ExternalPtrAddr(e);
+  if (h) wickra_kicking_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_kicking_new(void) {
+  struct Kicking *h = wickra_kicking_new();
+  if (!h) Rf_error("invalid Kicking parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, kicking_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_kicking_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Kicking *h = (struct Kicking *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_kicking_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_kicking_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Kicking *h = (struct Kicking *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_kicking_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_kicking_reset(SEXP e) {
+  struct Kicking *h = (struct Kicking *)R_ExternalPtrAddr(e);
+  wickra_kicking_reset(h);
+  return R_NilValue;
+}
+
+static void kicking_by_length_fin(SEXP e) {
+  struct KickingByLength *h = (struct KickingByLength *)R_ExternalPtrAddr(e);
+  if (h) wickra_kicking_by_length_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_kicking_by_length_new(void) {
+  struct KickingByLength *h = wickra_kicking_by_length_new();
+  if (!h) Rf_error("invalid KickingByLength parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, kicking_by_length_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_kicking_by_length_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct KickingByLength *h = (struct KickingByLength *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_kicking_by_length_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_kicking_by_length_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct KickingByLength *h = (struct KickingByLength *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_kicking_by_length_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_kicking_by_length_reset(SEXP e) {
+  struct KickingByLength *h = (struct KickingByLength *)R_ExternalPtrAddr(e);
+  wickra_kicking_by_length_reset(h);
+  return R_NilValue;
+}
+
+static void kst_fin(SEXP e) {
+  struct Kst *h = (struct Kst *)R_ExternalPtrAddr(e);
+  if (h) wickra_kst_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_kst_new(SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8) {
+  struct Kst *h = wickra_kst_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2), (uintptr_t)Rf_asReal(a3), (uintptr_t)Rf_asReal(a4), (uintptr_t)Rf_asReal(a5), (uintptr_t)Rf_asReal(a6), (uintptr_t)Rf_asReal(a7), (uintptr_t)Rf_asReal(a8));
+  if (!h) Rf_error("invalid Kst parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, kst_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_kst_update(SEXP e, SEXP a0) {
+  struct Kst *h = (struct Kst *)R_ExternalPtrAddr(e);
+  struct WickraKstOutput out;
+  int ok = wickra_kst_update(h, Rf_asReal(a0), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.kst : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.signal : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("kst"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("signal"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_kst_reset(SEXP e) {
+  struct Kst *h = (struct Kst *)R_ExternalPtrAddr(e);
+  wickra_kst_reset(h);
+  return R_NilValue;
+}
+
+static void kurtosis_fin(SEXP e) {
+  struct Kurtosis *h = (struct Kurtosis *)R_ExternalPtrAddr(e);
+  if (h) wickra_kurtosis_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_kurtosis_new(SEXP a0) {
+  struct Kurtosis *h = wickra_kurtosis_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Kurtosis parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, kurtosis_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_kurtosis_update(SEXP e, SEXP a0) {
+  struct Kurtosis *h = (struct Kurtosis *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_kurtosis_update(h, Rf_asReal(a0)));
+}
+SEXP wk_kurtosis_batch(SEXP e, SEXP a0) {
+  struct Kurtosis *h = (struct Kurtosis *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_kurtosis_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_kurtosis_reset(SEXP e) {
+  struct Kurtosis *h = (struct Kurtosis *)R_ExternalPtrAddr(e);
+  wickra_kurtosis_reset(h);
+  return R_NilValue;
+}
+
+static void kvo_fin(SEXP e) {
+  struct Kvo *h = (struct Kvo *)R_ExternalPtrAddr(e);
+  if (h) wickra_kvo_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_kvo_new(SEXP a0, SEXP a1) {
+  struct Kvo *h = wickra_kvo_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid Kvo parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, kvo_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_kvo_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Kvo *h = (struct Kvo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_kvo_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_kvo_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Kvo *h = (struct Kvo *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_kvo_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_kvo_reset(SEXP e) {
+  struct Kvo *h = (struct Kvo *)R_ExternalPtrAddr(e);
+  wickra_kvo_reset(h);
+  return R_NilValue;
+}
+
+static void kyles_lambda_fin(SEXP e) {
+  struct KylesLambda *h = (struct KylesLambda *)R_ExternalPtrAddr(e);
+  if (h) wickra_kyles_lambda_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_kyles_lambda_new(SEXP a0) {
+  struct KylesLambda *h = wickra_kyles_lambda_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid KylesLambda parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, kyles_lambda_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_kyles_lambda_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4) {
+  struct KylesLambda *h = (struct KylesLambda *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_kyles_lambda_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3), Rf_asReal(a4)));
+}
+SEXP wk_kyles_lambda_reset(SEXP e) {
+  struct KylesLambda *h = (struct KylesLambda *)R_ExternalPtrAddr(e);
+  wickra_kyles_lambda_reset(h);
+  return R_NilValue;
+}
+
+static void ladder_bottom_fin(SEXP e) {
+  struct LadderBottom *h = (struct LadderBottom *)R_ExternalPtrAddr(e);
+  if (h) wickra_ladder_bottom_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_ladder_bottom_new(void) {
+  struct LadderBottom *h = wickra_ladder_bottom_new();
+  if (!h) Rf_error("invalid LadderBottom parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, ladder_bottom_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_ladder_bottom_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct LadderBottom *h = (struct LadderBottom *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_ladder_bottom_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_ladder_bottom_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct LadderBottom *h = (struct LadderBottom *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_ladder_bottom_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_ladder_bottom_reset(SEXP e) {
+  struct LadderBottom *h = (struct LadderBottom *)R_ExternalPtrAddr(e);
+  wickra_ladder_bottom_reset(h);
+  return R_NilValue;
+}
+
+static void laguerre_rsi_fin(SEXP e) {
+  struct LaguerreRsi *h = (struct LaguerreRsi *)R_ExternalPtrAddr(e);
+  if (h) wickra_laguerre_rsi_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_laguerre_rsi_new(SEXP a0) {
+  struct LaguerreRsi *h = wickra_laguerre_rsi_new(Rf_asReal(a0));
+  if (!h) Rf_error("invalid LaguerreRsi parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, laguerre_rsi_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_laguerre_rsi_update(SEXP e, SEXP a0) {
+  struct LaguerreRsi *h = (struct LaguerreRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_laguerre_rsi_update(h, Rf_asReal(a0)));
+}
+SEXP wk_laguerre_rsi_batch(SEXP e, SEXP a0) {
+  struct LaguerreRsi *h = (struct LaguerreRsi *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_laguerre_rsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_laguerre_rsi_reset(SEXP e) {
+  struct LaguerreRsi *h = (struct LaguerreRsi *)R_ExternalPtrAddr(e);
+  wickra_laguerre_rsi_reset(h);
+  return R_NilValue;
+}
+
+static void lead_lag_cross_correlation_fin(SEXP e) {
+  struct LeadLagCrossCorrelation *h = (struct LeadLagCrossCorrelation *)R_ExternalPtrAddr(e);
+  if (h) wickra_lead_lag_cross_correlation_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_lead_lag_cross_correlation_new(SEXP a0, SEXP a1) {
+  struct LeadLagCrossCorrelation *h = wickra_lead_lag_cross_correlation_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid LeadLagCrossCorrelation parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, lead_lag_cross_correlation_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_lead_lag_cross_correlation_update(SEXP e, SEXP a0, SEXP a1) {
+  struct LeadLagCrossCorrelation *h = (struct LeadLagCrossCorrelation *)R_ExternalPtrAddr(e);
+  struct WickraLeadLagCrossCorrelationOutput out;
+  int ok = wickra_lead_lag_cross_correlation_update(h, Rf_asReal(a0), Rf_asReal(a1), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.lag : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.correlation : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("lag"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("correlation"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_lead_lag_cross_correlation_reset(SEXP e) {
+  struct LeadLagCrossCorrelation *h = (struct LeadLagCrossCorrelation *)R_ExternalPtrAddr(e);
+  wickra_lead_lag_cross_correlation_reset(h);
+  return R_NilValue;
+}
+
+static void lin_reg_angle_fin(SEXP e) {
+  struct LinRegAngle *h = (struct LinRegAngle *)R_ExternalPtrAddr(e);
+  if (h) wickra_lin_reg_angle_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_lin_reg_angle_new(SEXP a0) {
+  struct LinRegAngle *h = wickra_lin_reg_angle_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid LinRegAngle parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, lin_reg_angle_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_lin_reg_angle_update(SEXP e, SEXP a0) {
+  struct LinRegAngle *h = (struct LinRegAngle *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_lin_reg_angle_update(h, Rf_asReal(a0)));
+}
+SEXP wk_lin_reg_angle_batch(SEXP e, SEXP a0) {
+  struct LinRegAngle *h = (struct LinRegAngle *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_lin_reg_angle_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_lin_reg_angle_reset(SEXP e) {
+  struct LinRegAngle *h = (struct LinRegAngle *)R_ExternalPtrAddr(e);
+  wickra_lin_reg_angle_reset(h);
+  return R_NilValue;
+}
+
+static void lin_reg_channel_fin(SEXP e) {
+  struct LinRegChannel *h = (struct LinRegChannel *)R_ExternalPtrAddr(e);
+  if (h) wickra_lin_reg_channel_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_lin_reg_channel_new(SEXP a0, SEXP a1) {
+  struct LinRegChannel *h = wickra_lin_reg_channel_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid LinRegChannel parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, lin_reg_channel_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_lin_reg_channel_update(SEXP e, SEXP a0) {
+  struct LinRegChannel *h = (struct LinRegChannel *)R_ExternalPtrAddr(e);
+  struct WickraLinRegChannelOutput out;
+  int ok = wickra_lin_reg_channel_update(h, Rf_asReal(a0), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.upper : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.middle : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.lower : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("lower"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_lin_reg_channel_reset(SEXP e) {
+  struct LinRegChannel *h = (struct LinRegChannel *)R_ExternalPtrAddr(e);
+  wickra_lin_reg_channel_reset(h);
+  return R_NilValue;
+}
+
+static void lin_reg_intercept_fin(SEXP e) {
+  struct LinRegIntercept *h = (struct LinRegIntercept *)R_ExternalPtrAddr(e);
+  if (h) wickra_lin_reg_intercept_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_lin_reg_intercept_new(SEXP a0) {
+  struct LinRegIntercept *h = wickra_lin_reg_intercept_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid LinRegIntercept parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, lin_reg_intercept_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_lin_reg_intercept_update(SEXP e, SEXP a0) {
+  struct LinRegIntercept *h = (struct LinRegIntercept *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_lin_reg_intercept_update(h, Rf_asReal(a0)));
+}
+SEXP wk_lin_reg_intercept_batch(SEXP e, SEXP a0) {
+  struct LinRegIntercept *h = (struct LinRegIntercept *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_lin_reg_intercept_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_lin_reg_intercept_reset(SEXP e) {
+  struct LinRegIntercept *h = (struct LinRegIntercept *)R_ExternalPtrAddr(e);
+  wickra_lin_reg_intercept_reset(h);
+  return R_NilValue;
+}
+
+static void lin_reg_slope_fin(SEXP e) {
+  struct LinRegSlope *h = (struct LinRegSlope *)R_ExternalPtrAddr(e);
+  if (h) wickra_lin_reg_slope_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_lin_reg_slope_new(SEXP a0) {
+  struct LinRegSlope *h = wickra_lin_reg_slope_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid LinRegSlope parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, lin_reg_slope_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_lin_reg_slope_update(SEXP e, SEXP a0) {
+  struct LinRegSlope *h = (struct LinRegSlope *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_lin_reg_slope_update(h, Rf_asReal(a0)));
+}
+SEXP wk_lin_reg_slope_batch(SEXP e, SEXP a0) {
+  struct LinRegSlope *h = (struct LinRegSlope *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_lin_reg_slope_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_lin_reg_slope_reset(SEXP e) {
+  struct LinRegSlope *h = (struct LinRegSlope *)R_ExternalPtrAddr(e);
+  wickra_lin_reg_slope_reset(h);
+  return R_NilValue;
+}
+
+static void linear_regression_fin(SEXP e) {
+  struct LinearRegression *h = (struct LinearRegression *)R_ExternalPtrAddr(e);
+  if (h) wickra_linear_regression_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_linear_regression_new(SEXP a0) {
+  struct LinearRegression *h = wickra_linear_regression_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid LinearRegression parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, linear_regression_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_linear_regression_update(SEXP e, SEXP a0) {
+  struct LinearRegression *h = (struct LinearRegression *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_linear_regression_update(h, Rf_asReal(a0)));
+}
+SEXP wk_linear_regression_batch(SEXP e, SEXP a0) {
+  struct LinearRegression *h = (struct LinearRegression *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_linear_regression_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_linear_regression_reset(SEXP e) {
+  struct LinearRegression *h = (struct LinearRegression *)R_ExternalPtrAddr(e);
+  wickra_linear_regression_reset(h);
+  return R_NilValue;
+}
+
+static void liquidation_features_fin(SEXP e) {
+  struct LiquidationFeatures *h = (struct LiquidationFeatures *)R_ExternalPtrAddr(e);
+  if (h) wickra_liquidation_features_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_liquidation_features_new(void) {
+  struct LiquidationFeatures *h = wickra_liquidation_features_new();
+  if (!h) Rf_error("invalid LiquidationFeatures parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, liquidation_features_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_liquidation_features_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct LiquidationFeatures *h = (struct LiquidationFeatures *)R_ExternalPtrAddr(e);
+  struct WickraLiquidationFeaturesOutput out;
+  int ok = wickra_liquidation_features_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 5));
+  REAL(r)[0] = ok ? (double)out.long_ : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.short_ : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.net : NA_REAL;
+  REAL(r)[3] = ok ? (double)out.total : NA_REAL;
+  REAL(r)[4] = ok ? (double)out.imbalance : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 5));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("long_"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("short_"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("net"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("total"));
+  SET_STRING_ELT(nm, 4, Rf_mkChar("imbalance"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_liquidation_features_reset(SEXP e) {
+  struct LiquidationFeatures *h = (struct LiquidationFeatures *)R_ExternalPtrAddr(e);
+  wickra_liquidation_features_reset(h);
+  return R_NilValue;
+}
+
+static void log_return_fin(SEXP e) {
+  struct LogReturn *h = (struct LogReturn *)R_ExternalPtrAddr(e);
+  if (h) wickra_log_return_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_log_return_new(SEXP a0) {
+  struct LogReturn *h = wickra_log_return_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid LogReturn parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, log_return_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_log_return_update(SEXP e, SEXP a0) {
+  struct LogReturn *h = (struct LogReturn *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_log_return_update(h, Rf_asReal(a0)));
+}
+SEXP wk_log_return_batch(SEXP e, SEXP a0) {
+  struct LogReturn *h = (struct LogReturn *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_log_return_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_log_return_reset(SEXP e) {
+  struct LogReturn *h = (struct LogReturn *)R_ExternalPtrAddr(e);
+  wickra_log_return_reset(h);
+  return R_NilValue;
+}
+
+static void long_legged_doji_fin(SEXP e) {
+  struct LongLeggedDoji *h = (struct LongLeggedDoji *)R_ExternalPtrAddr(e);
+  if (h) wickra_long_legged_doji_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_long_legged_doji_new(void) {
+  struct LongLeggedDoji *h = wickra_long_legged_doji_new();
+  if (!h) Rf_error("invalid LongLeggedDoji parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, long_legged_doji_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_long_legged_doji_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct LongLeggedDoji *h = (struct LongLeggedDoji *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_long_legged_doji_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_long_legged_doji_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct LongLeggedDoji *h = (struct LongLeggedDoji *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_long_legged_doji_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_long_legged_doji_reset(SEXP e) {
+  struct LongLeggedDoji *h = (struct LongLeggedDoji *)R_ExternalPtrAddr(e);
+  wickra_long_legged_doji_reset(h);
+  return R_NilValue;
+}
+
+static void long_line_fin(SEXP e) {
+  struct LongLine *h = (struct LongLine *)R_ExternalPtrAddr(e);
+  if (h) wickra_long_line_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_long_line_new(void) {
+  struct LongLine *h = wickra_long_line_new();
+  if (!h) Rf_error("invalid LongLine parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, long_line_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_long_line_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct LongLine *h = (struct LongLine *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_long_line_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_long_line_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct LongLine *h = (struct LongLine *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_long_line_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_long_line_reset(SEXP e) {
+  struct LongLine *h = (struct LongLine *)R_ExternalPtrAddr(e);
+  wickra_long_line_reset(h);
+  return R_NilValue;
+}
+
+static void long_short_ratio_fin(SEXP e) {
+  struct LongShortRatio *h = (struct LongShortRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_long_short_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_long_short_ratio_new(void) {
+  struct LongShortRatio *h = wickra_long_short_ratio_new();
+  if (!h) Rf_error("invalid LongShortRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, long_short_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_long_short_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct LongShortRatio *h = (struct LongShortRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_long_short_ratio_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_long_short_ratio_reset(SEXP e) {
+  struct LongShortRatio *h = (struct LongShortRatio *)R_ExternalPtrAddr(e);
+  wickra_long_short_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void m2_measure_fin(SEXP e) {
+  struct M2Measure *h = (struct M2Measure *)R_ExternalPtrAddr(e);
+  if (h) wickra_m2_measure_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_m2_measure_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct M2Measure *h = wickra_m2_measure_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2));
+  if (!h) Rf_error("invalid M2Measure parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, m2_measure_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_m2_measure_update(SEXP e, SEXP a0) {
+  struct M2Measure *h = (struct M2Measure *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_m2_measure_update(h, Rf_asReal(a0)));
+}
+SEXP wk_m2_measure_batch(SEXP e, SEXP a0) {
+  struct M2Measure *h = (struct M2Measure *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_m2_measure_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_m2_measure_reset(SEXP e) {
+  struct M2Measure *h = (struct M2Measure *)R_ExternalPtrAddr(e);
+  wickra_m2_measure_reset(h);
+  return R_NilValue;
+}
+
+static void ma_envelope_fin(SEXP e) {
+  struct MaEnvelope *h = (struct MaEnvelope *)R_ExternalPtrAddr(e);
+  if (h) wickra_ma_envelope_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_ma_envelope_new(SEXP a0, SEXP a1) {
+  struct MaEnvelope *h = wickra_ma_envelope_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid MaEnvelope parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, ma_envelope_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_ma_envelope_update(SEXP e, SEXP a0) {
+  struct MaEnvelope *h = (struct MaEnvelope *)R_ExternalPtrAddr(e);
+  struct WickraMaEnvelopeOutput out;
+  int ok = wickra_ma_envelope_update(h, Rf_asReal(a0), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.upper : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.middle : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.lower : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("lower"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_ma_envelope_reset(SEXP e) {
+  struct MaEnvelope *h = (struct MaEnvelope *)R_ExternalPtrAddr(e);
+  wickra_ma_envelope_reset(h);
+  return R_NilValue;
+}
+
+static void macd_ext_fin(SEXP e) {
+  struct MacdExt *h = (struct MacdExt *)R_ExternalPtrAddr(e);
+  if (h) wickra_macd_ext_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_macd_ext_new(SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MacdExt *h = wickra_macd_ext_new((uintptr_t)Rf_asReal(a0), (uint8_t)Rf_asInteger(a1), (uintptr_t)Rf_asReal(a2), (uint8_t)Rf_asInteger(a3), (uintptr_t)Rf_asReal(a4), (uint8_t)Rf_asInteger(a5));
+  if (!h) Rf_error("invalid MacdExt parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, macd_ext_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_macd_ext_update(SEXP e, SEXP a0) {
+  struct MacdExt *h = (struct MacdExt *)R_ExternalPtrAddr(e);
+  struct WickraMacdOutput out;
+  int ok = wickra_macd_ext_update(h, Rf_asReal(a0), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.macd : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.signal : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.histogram : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("macd"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("signal"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("histogram"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_macd_ext_reset(SEXP e) {
+  struct MacdExt *h = (struct MacdExt *)R_ExternalPtrAddr(e);
+  wickra_macd_ext_reset(h);
+  return R_NilValue;
+}
+
+static void macd_fix_fin(SEXP e) {
+  struct MacdFix *h = (struct MacdFix *)R_ExternalPtrAddr(e);
+  if (h) wickra_macd_fix_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_macd_fix_new(SEXP a0) {
+  struct MacdFix *h = wickra_macd_fix_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid MacdFix parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, macd_fix_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_macd_fix_update(SEXP e, SEXP a0) {
+  struct MacdFix *h = (struct MacdFix *)R_ExternalPtrAddr(e);
+  struct WickraMacdOutput out;
+  int ok = wickra_macd_fix_update(h, Rf_asReal(a0), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.macd : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.signal : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.histogram : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("macd"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("signal"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("histogram"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_macd_fix_reset(SEXP e) {
+  struct MacdFix *h = (struct MacdFix *)R_ExternalPtrAddr(e);
+  wickra_macd_fix_reset(h);
+  return R_NilValue;
+}
+
+static void macd_histogram_fin(SEXP e) {
+  struct MacdHistogram *h = (struct MacdHistogram *)R_ExternalPtrAddr(e);
+  if (h) wickra_macd_histogram_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_macd_histogram_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct MacdHistogram *h = wickra_macd_histogram_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2));
+  if (!h) Rf_error("invalid MacdHistogram parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, macd_histogram_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_macd_histogram_update(SEXP e, SEXP a0) {
+  struct MacdHistogram *h = (struct MacdHistogram *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_macd_histogram_update(h, Rf_asReal(a0)));
+}
+SEXP wk_macd_histogram_batch(SEXP e, SEXP a0) {
+  struct MacdHistogram *h = (struct MacdHistogram *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_macd_histogram_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_macd_histogram_reset(SEXP e) {
+  struct MacdHistogram *h = (struct MacdHistogram *)R_ExternalPtrAddr(e);
+  wickra_macd_histogram_reset(h);
+  return R_NilValue;
+}
+
+static void macd_indicator_fin(SEXP e) {
+  struct MacdIndicator *h = (struct MacdIndicator *)R_ExternalPtrAddr(e);
+  if (h) wickra_macd_indicator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_macd_indicator_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct MacdIndicator *h = wickra_macd_indicator_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2));
+  if (!h) Rf_error("invalid MacdIndicator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, macd_indicator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_macd_indicator_update(SEXP e, SEXP a0) {
+  struct MacdIndicator *h = (struct MacdIndicator *)R_ExternalPtrAddr(e);
+  struct WickraMacdOutput out;
+  int ok = wickra_macd_indicator_update(h, Rf_asReal(a0), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.macd : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.signal : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.histogram : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("macd"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("signal"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("histogram"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_macd_indicator_reset(SEXP e) {
+  struct MacdIndicator *h = (struct MacdIndicator *)R_ExternalPtrAddr(e);
+  wickra_macd_indicator_reset(h);
+  return R_NilValue;
+}
+
+static void mama_fin(SEXP e) {
+  struct Mama *h = (struct Mama *)R_ExternalPtrAddr(e);
+  if (h) wickra_mama_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_mama_new(SEXP a0, SEXP a1) {
+  struct Mama *h = wickra_mama_new(Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid Mama parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, mama_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_mama_update(SEXP e, SEXP a0) {
+  struct Mama *h = (struct Mama *)R_ExternalPtrAddr(e);
+  struct WickraMamaOutput out;
+  int ok = wickra_mama_update(h, Rf_asReal(a0), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.mama : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.fama : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("mama"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("fama"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_mama_reset(SEXP e) {
+  struct Mama *h = (struct Mama *)R_ExternalPtrAddr(e);
+  wickra_mama_reset(h);
+  return R_NilValue;
+}
+
+static void market_facilitation_index_fin(SEXP e) {
+  struct MarketFacilitationIndex *h = (struct MarketFacilitationIndex *)R_ExternalPtrAddr(e);
+  if (h) wickra_market_facilitation_index_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_market_facilitation_index_new(void) {
+  struct MarketFacilitationIndex *h = wickra_market_facilitation_index_new();
+  if (!h) Rf_error("invalid MarketFacilitationIndex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, market_facilitation_index_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_market_facilitation_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MarketFacilitationIndex *h = (struct MarketFacilitationIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_market_facilitation_index_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_market_facilitation_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MarketFacilitationIndex *h = (struct MarketFacilitationIndex *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_market_facilitation_index_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_market_facilitation_index_reset(SEXP e) {
+  struct MarketFacilitationIndex *h = (struct MarketFacilitationIndex *)R_ExternalPtrAddr(e);
+  wickra_market_facilitation_index_reset(h);
+  return R_NilValue;
+}
+
+static void martin_ratio_fin(SEXP e) {
+  struct MartinRatio *h = (struct MartinRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_martin_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_martin_ratio_new(SEXP a0) {
+  struct MartinRatio *h = wickra_martin_ratio_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid MartinRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, martin_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_martin_ratio_update(SEXP e, SEXP a0) {
+  struct MartinRatio *h = (struct MartinRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_martin_ratio_update(h, Rf_asReal(a0)));
+}
+SEXP wk_martin_ratio_batch(SEXP e, SEXP a0) {
+  struct MartinRatio *h = (struct MartinRatio *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_martin_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_martin_ratio_reset(SEXP e) {
+  struct MartinRatio *h = (struct MartinRatio *)R_ExternalPtrAddr(e);
+  wickra_martin_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void marubozu_fin(SEXP e) {
+  struct Marubozu *h = (struct Marubozu *)R_ExternalPtrAddr(e);
+  if (h) wickra_marubozu_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_marubozu_new(void) {
+  struct Marubozu *h = wickra_marubozu_new();
+  if (!h) Rf_error("invalid Marubozu parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, marubozu_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_marubozu_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Marubozu *h = (struct Marubozu *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_marubozu_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_marubozu_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Marubozu *h = (struct Marubozu *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_marubozu_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_marubozu_reset(SEXP e) {
+  struct Marubozu *h = (struct Marubozu *)R_ExternalPtrAddr(e);
+  wickra_marubozu_reset(h);
+  return R_NilValue;
+}
+
+static void mass_index_fin(SEXP e) {
+  struct MassIndex *h = (struct MassIndex *)R_ExternalPtrAddr(e);
+  if (h) wickra_mass_index_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_mass_index_new(SEXP a0, SEXP a1) {
+  struct MassIndex *h = wickra_mass_index_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid MassIndex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, mass_index_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_mass_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MassIndex *h = (struct MassIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_mass_index_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_mass_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MassIndex *h = (struct MassIndex *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_mass_index_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_mass_index_reset(SEXP e) {
+  struct MassIndex *h = (struct MassIndex *)R_ExternalPtrAddr(e);
+  wickra_mass_index_reset(h);
+  return R_NilValue;
+}
+
+static void mat_hold_fin(SEXP e) {
+  struct MatHold *h = (struct MatHold *)R_ExternalPtrAddr(e);
+  if (h) wickra_mat_hold_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_mat_hold_new(void) {
+  struct MatHold *h = wickra_mat_hold_new();
+  if (!h) Rf_error("invalid MatHold parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, mat_hold_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_mat_hold_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MatHold *h = (struct MatHold *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_mat_hold_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_mat_hold_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MatHold *h = (struct MatHold *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_mat_hold_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_mat_hold_reset(SEXP e) {
+  struct MatHold *h = (struct MatHold *)R_ExternalPtrAddr(e);
+  wickra_mat_hold_reset(h);
+  return R_NilValue;
+}
+
+static void matching_low_fin(SEXP e) {
+  struct MatchingLow *h = (struct MatchingLow *)R_ExternalPtrAddr(e);
+  if (h) wickra_matching_low_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_matching_low_new(void) {
+  struct MatchingLow *h = wickra_matching_low_new();
+  if (!h) Rf_error("invalid MatchingLow parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, matching_low_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_matching_low_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MatchingLow *h = (struct MatchingLow *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_matching_low_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_matching_low_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MatchingLow *h = (struct MatchingLow *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_matching_low_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_matching_low_reset(SEXP e) {
+  struct MatchingLow *h = (struct MatchingLow *)R_ExternalPtrAddr(e);
+  wickra_matching_low_reset(h);
+  return R_NilValue;
+}
+
+static void max_drawdown_fin(SEXP e) {
+  struct MaxDrawdown *h = (struct MaxDrawdown *)R_ExternalPtrAddr(e);
+  if (h) wickra_max_drawdown_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_max_drawdown_new(SEXP a0) {
+  struct MaxDrawdown *h = wickra_max_drawdown_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid MaxDrawdown parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, max_drawdown_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_max_drawdown_update(SEXP e, SEXP a0) {
+  struct MaxDrawdown *h = (struct MaxDrawdown *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_max_drawdown_update(h, Rf_asReal(a0)));
+}
+SEXP wk_max_drawdown_batch(SEXP e, SEXP a0) {
+  struct MaxDrawdown *h = (struct MaxDrawdown *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_max_drawdown_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_max_drawdown_reset(SEXP e) {
+  struct MaxDrawdown *h = (struct MaxDrawdown *)R_ExternalPtrAddr(e);
+  wickra_max_drawdown_reset(h);
+  return R_NilValue;
+}
+
+static void mc_clellan_oscillator_fin(SEXP e) {
+  struct McClellanOscillator *h = (struct McClellanOscillator *)R_ExternalPtrAddr(e);
+  if (h) wickra_mc_clellan_oscillator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_mc_clellan_oscillator_new(void) {
+  struct McClellanOscillator *h = wickra_mc_clellan_oscillator_new();
+  if (!h) Rf_error("invalid McClellanOscillator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, mc_clellan_oscillator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_mc_clellan_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
+  struct McClellanOscillator *h = (struct McClellanOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_mc_clellan_oscillator_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_mc_clellan_oscillator_reset(SEXP e) {
+  struct McClellanOscillator *h = (struct McClellanOscillator *)R_ExternalPtrAddr(e);
+  wickra_mc_clellan_oscillator_reset(h);
+  return R_NilValue;
+}
+
+static void mc_clellan_summation_index_fin(SEXP e) {
+  struct McClellanSummationIndex *h = (struct McClellanSummationIndex *)R_ExternalPtrAddr(e);
+  if (h) wickra_mc_clellan_summation_index_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_mc_clellan_summation_index_new(void) {
+  struct McClellanSummationIndex *h = wickra_mc_clellan_summation_index_new();
+  if (!h) Rf_error("invalid McClellanSummationIndex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, mc_clellan_summation_index_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_mc_clellan_summation_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
+  struct McClellanSummationIndex *h = (struct McClellanSummationIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_mc_clellan_summation_index_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_mc_clellan_summation_index_reset(SEXP e) {
+  struct McClellanSummationIndex *h = (struct McClellanSummationIndex *)R_ExternalPtrAddr(e);
+  wickra_mc_clellan_summation_index_reset(h);
+  return R_NilValue;
+}
+
+static void mc_ginley_dynamic_fin(SEXP e) {
+  struct McGinleyDynamic *h = (struct McGinleyDynamic *)R_ExternalPtrAddr(e);
+  if (h) wickra_mc_ginley_dynamic_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_mc_ginley_dynamic_new(SEXP a0) {
+  struct McGinleyDynamic *h = wickra_mc_ginley_dynamic_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid McGinleyDynamic parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, mc_ginley_dynamic_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_mc_ginley_dynamic_update(SEXP e, SEXP a0) {
+  struct McGinleyDynamic *h = (struct McGinleyDynamic *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_mc_ginley_dynamic_update(h, Rf_asReal(a0)));
+}
+SEXP wk_mc_ginley_dynamic_batch(SEXP e, SEXP a0) {
+  struct McGinleyDynamic *h = (struct McGinleyDynamic *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_mc_ginley_dynamic_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_mc_ginley_dynamic_reset(SEXP e) {
+  struct McGinleyDynamic *h = (struct McGinleyDynamic *)R_ExternalPtrAddr(e);
+  wickra_mc_ginley_dynamic_reset(h);
+  return R_NilValue;
+}
+
+static void median_absolute_deviation_fin(SEXP e) {
+  struct MedianAbsoluteDeviation *h = (struct MedianAbsoluteDeviation *)R_ExternalPtrAddr(e);
+  if (h) wickra_median_absolute_deviation_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_median_absolute_deviation_new(SEXP a0) {
+  struct MedianAbsoluteDeviation *h = wickra_median_absolute_deviation_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid MedianAbsoluteDeviation parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, median_absolute_deviation_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_median_absolute_deviation_update(SEXP e, SEXP a0) {
+  struct MedianAbsoluteDeviation *h = (struct MedianAbsoluteDeviation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_median_absolute_deviation_update(h, Rf_asReal(a0)));
+}
+SEXP wk_median_absolute_deviation_batch(SEXP e, SEXP a0) {
+  struct MedianAbsoluteDeviation *h = (struct MedianAbsoluteDeviation *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_median_absolute_deviation_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_median_absolute_deviation_reset(SEXP e) {
+  struct MedianAbsoluteDeviation *h = (struct MedianAbsoluteDeviation *)R_ExternalPtrAddr(e);
+  wickra_median_absolute_deviation_reset(h);
+  return R_NilValue;
+}
+
+static void median_channel_fin(SEXP e) {
+  struct MedianChannel *h = (struct MedianChannel *)R_ExternalPtrAddr(e);
+  if (h) wickra_median_channel_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_median_channel_new(SEXP a0, SEXP a1) {
+  struct MedianChannel *h = wickra_median_channel_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid MedianChannel parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, median_channel_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_median_channel_update(SEXP e, SEXP a0) {
+  struct MedianChannel *h = (struct MedianChannel *)R_ExternalPtrAddr(e);
+  struct WickraMedianChannelOutput out;
+  int ok = wickra_median_channel_update(h, Rf_asReal(a0), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.upper : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.middle : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.lower : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("lower"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_median_channel_reset(SEXP e) {
+  struct MedianChannel *h = (struct MedianChannel *)R_ExternalPtrAddr(e);
+  wickra_median_channel_reset(h);
+  return R_NilValue;
+}
+
+static void median_ma_fin(SEXP e) {
+  struct MedianMa *h = (struct MedianMa *)R_ExternalPtrAddr(e);
+  if (h) wickra_median_ma_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_median_ma_new(SEXP a0) {
+  struct MedianMa *h = wickra_median_ma_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid MedianMa parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, median_ma_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_median_ma_update(SEXP e, SEXP a0) {
+  struct MedianMa *h = (struct MedianMa *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_median_ma_update(h, Rf_asReal(a0)));
+}
+SEXP wk_median_ma_batch(SEXP e, SEXP a0) {
+  struct MedianMa *h = (struct MedianMa *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_median_ma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_median_ma_reset(SEXP e) {
+  struct MedianMa *h = (struct MedianMa *)R_ExternalPtrAddr(e);
+  wickra_median_ma_reset(h);
+  return R_NilValue;
+}
+
+static void median_price_fin(SEXP e) {
+  struct MedianPrice *h = (struct MedianPrice *)R_ExternalPtrAddr(e);
+  if (h) wickra_median_price_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_median_price_new(void) {
+  struct MedianPrice *h = wickra_median_price_new();
+  if (!h) Rf_error("invalid MedianPrice parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, median_price_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_median_price_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MedianPrice *h = (struct MedianPrice *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_median_price_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_median_price_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MedianPrice *h = (struct MedianPrice *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_median_price_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_median_price_reset(SEXP e) {
+  struct MedianPrice *h = (struct MedianPrice *)R_ExternalPtrAddr(e);
+  wickra_median_price_reset(h);
+  return R_NilValue;
+}
+
+static void mfi_fin(SEXP e) {
+  struct Mfi *h = (struct Mfi *)R_ExternalPtrAddr(e);
+  if (h) wickra_mfi_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_mfi_new(SEXP a0) {
+  struct Mfi *h = wickra_mfi_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Mfi parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, mfi_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_mfi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Mfi *h = (struct Mfi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_mfi_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_mfi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Mfi *h = (struct Mfi *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_mfi_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_mfi_reset(SEXP e) {
+  struct Mfi *h = (struct Mfi *)R_ExternalPtrAddr(e);
+  wickra_mfi_reset(h);
+  return R_NilValue;
+}
+
+static void microprice_fin(SEXP e) {
+  struct Microprice *h = (struct Microprice *)R_ExternalPtrAddr(e);
+  if (h) wickra_microprice_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_microprice_new(void) {
+  struct Microprice *h = wickra_microprice_new();
+  if (!h) Rf_error("invalid Microprice parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, microprice_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_microprice_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct Microprice *h = (struct Microprice *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_microprice_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
+}
+SEXP wk_microprice_reset(SEXP e) {
+  struct Microprice *h = (struct Microprice *)R_ExternalPtrAddr(e);
+  wickra_microprice_reset(h);
+  return R_NilValue;
+}
+
+static void mid_point_fin(SEXP e) {
+  struct MidPoint *h = (struct MidPoint *)R_ExternalPtrAddr(e);
+  if (h) wickra_mid_point_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_mid_point_new(SEXP a0) {
+  struct MidPoint *h = wickra_mid_point_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid MidPoint parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, mid_point_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_mid_point_update(SEXP e, SEXP a0) {
+  struct MidPoint *h = (struct MidPoint *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_mid_point_update(h, Rf_asReal(a0)));
+}
+SEXP wk_mid_point_batch(SEXP e, SEXP a0) {
+  struct MidPoint *h = (struct MidPoint *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_mid_point_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_mid_point_reset(SEXP e) {
+  struct MidPoint *h = (struct MidPoint *)R_ExternalPtrAddr(e);
+  wickra_mid_point_reset(h);
+  return R_NilValue;
+}
+
+static void mid_price_fin(SEXP e) {
+  struct MidPrice *h = (struct MidPrice *)R_ExternalPtrAddr(e);
+  if (h) wickra_mid_price_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_mid_price_new(SEXP a0) {
+  struct MidPrice *h = wickra_mid_price_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid MidPrice parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, mid_price_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_mid_price_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MidPrice *h = (struct MidPrice *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_mid_price_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_mid_price_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MidPrice *h = (struct MidPrice *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_mid_price_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_mid_price_reset(SEXP e) {
+  struct MidPrice *h = (struct MidPrice *)R_ExternalPtrAddr(e);
+  wickra_mid_price_reset(h);
+  return R_NilValue;
+}
+
+static void minus_di_fin(SEXP e) {
+  struct MinusDi *h = (struct MinusDi *)R_ExternalPtrAddr(e);
+  if (h) wickra_minus_di_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_minus_di_new(SEXP a0) {
+  struct MinusDi *h = wickra_minus_di_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid MinusDi parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, minus_di_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_minus_di_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MinusDi *h = (struct MinusDi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_minus_di_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_minus_di_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MinusDi *h = (struct MinusDi *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_minus_di_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_minus_di_reset(SEXP e) {
+  struct MinusDi *h = (struct MinusDi *)R_ExternalPtrAddr(e);
+  wickra_minus_di_reset(h);
+  return R_NilValue;
+}
+
+static void minus_dm_fin(SEXP e) {
+  struct MinusDm *h = (struct MinusDm *)R_ExternalPtrAddr(e);
+  if (h) wickra_minus_dm_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_minus_dm_new(SEXP a0) {
+  struct MinusDm *h = wickra_minus_dm_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid MinusDm parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, minus_dm_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_minus_dm_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MinusDm *h = (struct MinusDm *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_minus_dm_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_minus_dm_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MinusDm *h = (struct MinusDm *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_minus_dm_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_minus_dm_reset(SEXP e) {
+  struct MinusDm *h = (struct MinusDm *)R_ExternalPtrAddr(e);
+  wickra_minus_dm_reset(h);
+  return R_NilValue;
+}
+
+static void modified_ma_stop_fin(SEXP e) {
+  struct ModifiedMaStop *h = (struct ModifiedMaStop *)R_ExternalPtrAddr(e);
+  if (h) wickra_modified_ma_stop_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_modified_ma_stop_new(SEXP a0) {
+  struct ModifiedMaStop *h = wickra_modified_ma_stop_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid ModifiedMaStop parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, modified_ma_stop_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_modified_ma_stop_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ModifiedMaStop *h = (struct ModifiedMaStop *)R_ExternalPtrAddr(e);
+  struct WickraModifiedMaStopOutput out;
+  int ok = wickra_modified_ma_stop_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.value : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.direction : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("value"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("direction"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_modified_ma_stop_reset(SEXP e) {
+  struct ModifiedMaStop *h = (struct ModifiedMaStop *)R_ExternalPtrAddr(e);
+  wickra_modified_ma_stop_reset(h);
+  return R_NilValue;
+}
+
+static void mom_fin(SEXP e) {
+  struct Mom *h = (struct Mom *)R_ExternalPtrAddr(e);
+  if (h) wickra_mom_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_mom_new(SEXP a0) {
+  struct Mom *h = wickra_mom_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Mom parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, mom_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_mom_update(SEXP e, SEXP a0) {
+  struct Mom *h = (struct Mom *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_mom_update(h, Rf_asReal(a0)));
+}
+SEXP wk_mom_batch(SEXP e, SEXP a0) {
+  struct Mom *h = (struct Mom *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_mom_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_mom_reset(SEXP e) {
+  struct Mom *h = (struct Mom *)R_ExternalPtrAddr(e);
+  wickra_mom_reset(h);
+  return R_NilValue;
+}
+
+static void morning_doji_star_fin(SEXP e) {
+  struct MorningDojiStar *h = (struct MorningDojiStar *)R_ExternalPtrAddr(e);
+  if (h) wickra_morning_doji_star_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_morning_doji_star_new(void) {
+  struct MorningDojiStar *h = wickra_morning_doji_star_new();
+  if (!h) Rf_error("invalid MorningDojiStar parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, morning_doji_star_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_morning_doji_star_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MorningDojiStar *h = (struct MorningDojiStar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_morning_doji_star_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_morning_doji_star_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MorningDojiStar *h = (struct MorningDojiStar *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_morning_doji_star_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_morning_doji_star_reset(SEXP e) {
+  struct MorningDojiStar *h = (struct MorningDojiStar *)R_ExternalPtrAddr(e);
+  wickra_morning_doji_star_reset(h);
+  return R_NilValue;
+}
+
+static void morning_evening_star_fin(SEXP e) {
+  struct MorningEveningStar *h = (struct MorningEveningStar *)R_ExternalPtrAddr(e);
+  if (h) wickra_morning_evening_star_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_morning_evening_star_new(void) {
+  struct MorningEveningStar *h = wickra_morning_evening_star_new();
+  if (!h) Rf_error("invalid MorningEveningStar parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, morning_evening_star_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_morning_evening_star_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MorningEveningStar *h = (struct MorningEveningStar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_morning_evening_star_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_morning_evening_star_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MorningEveningStar *h = (struct MorningEveningStar *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_morning_evening_star_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_morning_evening_star_reset(SEXP e) {
+  struct MorningEveningStar *h = (struct MorningEveningStar *)R_ExternalPtrAddr(e);
+  wickra_morning_evening_star_reset(h);
+  return R_NilValue;
+}
+
+static void murrey_math_lines_fin(SEXP e) {
+  struct MurreyMathLines *h = (struct MurreyMathLines *)R_ExternalPtrAddr(e);
+  if (h) wickra_murrey_math_lines_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_murrey_math_lines_new(SEXP a0) {
+  struct MurreyMathLines *h = wickra_murrey_math_lines_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid MurreyMathLines parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, murrey_math_lines_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_murrey_math_lines_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct MurreyMathLines *h = (struct MurreyMathLines *)R_ExternalPtrAddr(e);
+  struct WickraMurreyMathLinesOutput out;
+  int ok = wickra_murrey_math_lines_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 9));
+  REAL(r)[0] = ok ? (double)out.mm8_8 : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.mm7_8 : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.mm6_8 : NA_REAL;
+  REAL(r)[3] = ok ? (double)out.mm5_8 : NA_REAL;
+  REAL(r)[4] = ok ? (double)out.mm4_8 : NA_REAL;
+  REAL(r)[5] = ok ? (double)out.mm3_8 : NA_REAL;
+  REAL(r)[6] = ok ? (double)out.mm2_8 : NA_REAL;
+  REAL(r)[7] = ok ? (double)out.mm1_8 : NA_REAL;
+  REAL(r)[8] = ok ? (double)out.mm0_8 : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 9));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("mm8_8"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("mm7_8"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("mm6_8"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("mm5_8"));
+  SET_STRING_ELT(nm, 4, Rf_mkChar("mm4_8"));
+  SET_STRING_ELT(nm, 5, Rf_mkChar("mm3_8"));
+  SET_STRING_ELT(nm, 6, Rf_mkChar("mm2_8"));
+  SET_STRING_ELT(nm, 7, Rf_mkChar("mm1_8"));
+  SET_STRING_ELT(nm, 8, Rf_mkChar("mm0_8"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_murrey_math_lines_reset(SEXP e) {
+  struct MurreyMathLines *h = (struct MurreyMathLines *)R_ExternalPtrAddr(e);
+  wickra_murrey_math_lines_reset(h);
+  return R_NilValue;
+}
+
+static void naked_poc_fin(SEXP e) {
+  struct NakedPoc *h = (struct NakedPoc *)R_ExternalPtrAddr(e);
+  if (h) wickra_naked_poc_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_naked_poc_new(SEXP a0, SEXP a1) {
+  struct NakedPoc *h = wickra_naked_poc_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid NakedPoc parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, naked_poc_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_naked_poc_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct NakedPoc *h = (struct NakedPoc *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_naked_poc_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_naked_poc_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct NakedPoc *h = (struct NakedPoc *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_naked_poc_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_naked_poc_reset(SEXP e) {
+  struct NakedPoc *h = (struct NakedPoc *)R_ExternalPtrAddr(e);
+  wickra_naked_poc_reset(h);
+  return R_NilValue;
+}
+
+static void natr_fin(SEXP e) {
+  struct Natr *h = (struct Natr *)R_ExternalPtrAddr(e);
+  if (h) wickra_natr_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_natr_new(SEXP a0) {
+  struct Natr *h = wickra_natr_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Natr parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, natr_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_natr_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Natr *h = (struct Natr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_natr_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_natr_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Natr *h = (struct Natr *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_natr_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_natr_reset(SEXP e) {
+  struct Natr *h = (struct Natr *)R_ExternalPtrAddr(e);
+  wickra_natr_reset(h);
+  return R_NilValue;
+}
+
+static void new_highs_new_lows_fin(SEXP e) {
+  struct NewHighsNewLows *h = (struct NewHighsNewLows *)R_ExternalPtrAddr(e);
+  if (h) wickra_new_highs_new_lows_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_new_highs_new_lows_new(void) {
+  struct NewHighsNewLows *h = wickra_new_highs_new_lows_new();
+  if (!h) Rf_error("invalid NewHighsNewLows parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, new_highs_new_lows_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_new_highs_new_lows_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
+  struct NewHighsNewLows *h = (struct NewHighsNewLows *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_new_highs_new_lows_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_new_highs_new_lows_reset(SEXP e) {
+  struct NewHighsNewLows *h = (struct NewHighsNewLows *)R_ExternalPtrAddr(e);
+  wickra_new_highs_new_lows_reset(h);
+  return R_NilValue;
+}
+
+static void new_price_lines_fin(SEXP e) {
+  struct NewPriceLines *h = (struct NewPriceLines *)R_ExternalPtrAddr(e);
+  if (h) wickra_new_price_lines_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_new_price_lines_new(SEXP a0) {
+  struct NewPriceLines *h = wickra_new_price_lines_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid NewPriceLines parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, new_price_lines_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_new_price_lines_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct NewPriceLines *h = (struct NewPriceLines *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_new_price_lines_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_new_price_lines_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct NewPriceLines *h = (struct NewPriceLines *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_new_price_lines_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_new_price_lines_reset(SEXP e) {
+  struct NewPriceLines *h = (struct NewPriceLines *)R_ExternalPtrAddr(e);
+  wickra_new_price_lines_reset(h);
+  return R_NilValue;
+}
+
+static void nrtr_fin(SEXP e) {
+  struct Nrtr *h = (struct Nrtr *)R_ExternalPtrAddr(e);
+  if (h) wickra_nrtr_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_nrtr_new(SEXP a0) {
+  struct Nrtr *h = wickra_nrtr_new(Rf_asReal(a0));
+  if (!h) Rf_error("invalid Nrtr parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, nrtr_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_nrtr_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Nrtr *h = (struct Nrtr *)R_ExternalPtrAddr(e);
+  struct WickraNrtrOutput out;
+  int ok = wickra_nrtr_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.value : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.direction : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("value"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("direction"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_nrtr_reset(SEXP e) {
+  struct Nrtr *h = (struct Nrtr *)R_ExternalPtrAddr(e);
+  wickra_nrtr_reset(h);
+  return R_NilValue;
+}
+
+static void nvi_fin(SEXP e) {
+  struct Nvi *h = (struct Nvi *)R_ExternalPtrAddr(e);
+  if (h) wickra_nvi_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_nvi_new(void) {
+  struct Nvi *h = wickra_nvi_new();
+  if (!h) Rf_error("invalid Nvi parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, nvi_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_nvi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Nvi *h = (struct Nvi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_nvi_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_nvi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Nvi *h = (struct Nvi *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_nvi_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_nvi_reset(SEXP e) {
+  struct Nvi *h = (struct Nvi *)R_ExternalPtrAddr(e);
+  wickra_nvi_reset(h);
+  return R_NilValue;
+}
+
+static void obv_fin(SEXP e) {
+  struct Obv *h = (struct Obv *)R_ExternalPtrAddr(e);
+  if (h) wickra_obv_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_obv_new(void) {
+  struct Obv *h = wickra_obv_new();
+  if (!h) Rf_error("invalid Obv parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, obv_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_obv_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Obv *h = (struct Obv *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_obv_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_obv_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Obv *h = (struct Obv *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_obv_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_obv_reset(SEXP e) {
+  struct Obv *h = (struct Obv *)R_ExternalPtrAddr(e);
+  wickra_obv_reset(h);
+  return R_NilValue;
+}
+
+static void oi_price_divergence_fin(SEXP e) {
+  struct OIPriceDivergence *h = (struct OIPriceDivergence *)R_ExternalPtrAddr(e);
+  if (h) wickra_oi_price_divergence_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_oi_price_divergence_new(SEXP a0) {
+  struct OIPriceDivergence *h = wickra_oi_price_divergence_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid OIPriceDivergence parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, oi_price_divergence_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_oi_price_divergence_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct OIPriceDivergence *h = (struct OIPriceDivergence *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_oi_price_divergence_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_oi_price_divergence_reset(SEXP e) {
+  struct OIPriceDivergence *h = (struct OIPriceDivergence *)R_ExternalPtrAddr(e);
+  wickra_oi_price_divergence_reset(h);
+  return R_NilValue;
+}
+
+static void oi_to_volume_ratio_fin(SEXP e) {
+  struct OiToVolumeRatio *h = (struct OiToVolumeRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_oi_to_volume_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_oi_to_volume_ratio_new(void) {
+  struct OiToVolumeRatio *h = wickra_oi_to_volume_ratio_new();
+  if (!h) Rf_error("invalid OiToVolumeRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, oi_to_volume_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_oi_to_volume_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct OiToVolumeRatio *h = (struct OiToVolumeRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_oi_to_volume_ratio_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_oi_to_volume_ratio_reset(SEXP e) {
+  struct OiToVolumeRatio *h = (struct OiToVolumeRatio *)R_ExternalPtrAddr(e);
+  wickra_oi_to_volume_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void oi_weighted_fin(SEXP e) {
+  struct OIWeighted *h = (struct OIWeighted *)R_ExternalPtrAddr(e);
+  if (h) wickra_oi_weighted_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_oi_weighted_new(void) {
+  struct OIWeighted *h = wickra_oi_weighted_new();
+  if (!h) Rf_error("invalid OIWeighted parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, oi_weighted_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_oi_weighted_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct OIWeighted *h = (struct OIWeighted *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_oi_weighted_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_oi_weighted_reset(SEXP e) {
+  struct OIWeighted *h = (struct OIWeighted *)R_ExternalPtrAddr(e);
+  wickra_oi_weighted_reset(h);
+  return R_NilValue;
+}
+
+static void omega_ratio_fin(SEXP e) {
+  struct OmegaRatio *h = (struct OmegaRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_omega_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_omega_ratio_new(SEXP a0, SEXP a1) {
+  struct OmegaRatio *h = wickra_omega_ratio_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid OmegaRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, omega_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_omega_ratio_update(SEXP e, SEXP a0) {
+  struct OmegaRatio *h = (struct OmegaRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_omega_ratio_update(h, Rf_asReal(a0)));
+}
+SEXP wk_omega_ratio_batch(SEXP e, SEXP a0) {
+  struct OmegaRatio *h = (struct OmegaRatio *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_omega_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_omega_ratio_reset(SEXP e) {
+  struct OmegaRatio *h = (struct OmegaRatio *)R_ExternalPtrAddr(e);
+  wickra_omega_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void on_neck_fin(SEXP e) {
+  struct OnNeck *h = (struct OnNeck *)R_ExternalPtrAddr(e);
+  if (h) wickra_on_neck_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_on_neck_new(void) {
+  struct OnNeck *h = wickra_on_neck_new();
+  if (!h) Rf_error("invalid OnNeck parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, on_neck_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_on_neck_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct OnNeck *h = (struct OnNeck *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_on_neck_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_on_neck_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct OnNeck *h = (struct OnNeck *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_on_neck_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_on_neck_reset(SEXP e) {
+  struct OnNeck *h = (struct OnNeck *)R_ExternalPtrAddr(e);
+  wickra_on_neck_reset(h);
+  return R_NilValue;
+}
+
+static void open_interest_delta_fin(SEXP e) {
+  struct OpenInterestDelta *h = (struct OpenInterestDelta *)R_ExternalPtrAddr(e);
+  if (h) wickra_open_interest_delta_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_open_interest_delta_new(void) {
+  struct OpenInterestDelta *h = wickra_open_interest_delta_new();
+  if (!h) Rf_error("invalid OpenInterestDelta parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, open_interest_delta_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_open_interest_delta_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct OpenInterestDelta *h = (struct OpenInterestDelta *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_open_interest_delta_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_open_interest_delta_reset(SEXP e) {
+  struct OpenInterestDelta *h = (struct OpenInterestDelta *)R_ExternalPtrAddr(e);
+  wickra_open_interest_delta_reset(h);
+  return R_NilValue;
+}
+
+static void open_interest_momentum_fin(SEXP e) {
+  struct OpenInterestMomentum *h = (struct OpenInterestMomentum *)R_ExternalPtrAddr(e);
+  if (h) wickra_open_interest_momentum_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_open_interest_momentum_new(SEXP a0) {
+  struct OpenInterestMomentum *h = wickra_open_interest_momentum_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid OpenInterestMomentum parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, open_interest_momentum_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_open_interest_momentum_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct OpenInterestMomentum *h = (struct OpenInterestMomentum *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_open_interest_momentum_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_open_interest_momentum_reset(SEXP e) {
+  struct OpenInterestMomentum *h = (struct OpenInterestMomentum *)R_ExternalPtrAddr(e);
+  wickra_open_interest_momentum_reset(h);
+  return R_NilValue;
+}
+
+static void opening_marubozu_fin(SEXP e) {
+  struct OpeningMarubozu *h = (struct OpeningMarubozu *)R_ExternalPtrAddr(e);
+  if (h) wickra_opening_marubozu_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_opening_marubozu_new(void) {
+  struct OpeningMarubozu *h = wickra_opening_marubozu_new();
+  if (!h) Rf_error("invalid OpeningMarubozu parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, opening_marubozu_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_opening_marubozu_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct OpeningMarubozu *h = (struct OpeningMarubozu *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_opening_marubozu_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_opening_marubozu_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct OpeningMarubozu *h = (struct OpeningMarubozu *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_opening_marubozu_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_opening_marubozu_reset(SEXP e) {
+  struct OpeningMarubozu *h = (struct OpeningMarubozu *)R_ExternalPtrAddr(e);
+  wickra_opening_marubozu_reset(h);
+  return R_NilValue;
+}
+
+static void opening_range_fin(SEXP e) {
+  struct OpeningRange *h = (struct OpeningRange *)R_ExternalPtrAddr(e);
+  if (h) wickra_opening_range_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_opening_range_new(SEXP a0) {
+  struct OpeningRange *h = wickra_opening_range_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid OpeningRange parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, opening_range_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_opening_range_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct OpeningRange *h = (struct OpeningRange *)R_ExternalPtrAddr(e);
+  struct WickraOpeningRangeOutput out;
+  int ok = wickra_opening_range_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.high : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.low : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.breakout_distance : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("high"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("low"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("breakout_distance"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_opening_range_reset(SEXP e) {
+  struct OpeningRange *h = (struct OpeningRange *)R_ExternalPtrAddr(e);
+  wickra_opening_range_reset(h);
+  return R_NilValue;
+}
+
+static void order_book_imbalance_full_fin(SEXP e) {
+  struct OrderBookImbalanceFull *h = (struct OrderBookImbalanceFull *)R_ExternalPtrAddr(e);
+  if (h) wickra_order_book_imbalance_full_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_order_book_imbalance_full_new(void) {
+  struct OrderBookImbalanceFull *h = wickra_order_book_imbalance_full_new();
+  if (!h) Rf_error("invalid OrderBookImbalanceFull parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, order_book_imbalance_full_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_order_book_imbalance_full_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct OrderBookImbalanceFull *h = (struct OrderBookImbalanceFull *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_order_book_imbalance_full_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
+}
+SEXP wk_order_book_imbalance_full_reset(SEXP e) {
+  struct OrderBookImbalanceFull *h = (struct OrderBookImbalanceFull *)R_ExternalPtrAddr(e);
+  wickra_order_book_imbalance_full_reset(h);
+  return R_NilValue;
+}
+
+static void order_book_imbalance_top1_fin(SEXP e) {
+  struct OrderBookImbalanceTop1 *h = (struct OrderBookImbalanceTop1 *)R_ExternalPtrAddr(e);
+  if (h) wickra_order_book_imbalance_top1_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_order_book_imbalance_top1_new(void) {
+  struct OrderBookImbalanceTop1 *h = wickra_order_book_imbalance_top1_new();
+  if (!h) Rf_error("invalid OrderBookImbalanceTop1 parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, order_book_imbalance_top1_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_order_book_imbalance_top1_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct OrderBookImbalanceTop1 *h = (struct OrderBookImbalanceTop1 *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_order_book_imbalance_top1_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
+}
+SEXP wk_order_book_imbalance_top1_reset(SEXP e) {
+  struct OrderBookImbalanceTop1 *h = (struct OrderBookImbalanceTop1 *)R_ExternalPtrAddr(e);
+  wickra_order_book_imbalance_top1_reset(h);
+  return R_NilValue;
+}
+
+static void order_book_imbalance_top_n_fin(SEXP e) {
+  struct OrderBookImbalanceTopN *h = (struct OrderBookImbalanceTopN *)R_ExternalPtrAddr(e);
+  if (h) wickra_order_book_imbalance_top_n_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_order_book_imbalance_top_n_new(SEXP a0) {
+  struct OrderBookImbalanceTopN *h = wickra_order_book_imbalance_top_n_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid OrderBookImbalanceTopN parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, order_book_imbalance_top_n_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_order_book_imbalance_top_n_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct OrderBookImbalanceTopN *h = (struct OrderBookImbalanceTopN *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_order_book_imbalance_top_n_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
+}
+SEXP wk_order_book_imbalance_top_n_reset(SEXP e) {
+  struct OrderBookImbalanceTopN *h = (struct OrderBookImbalanceTopN *)R_ExternalPtrAddr(e);
+  wickra_order_book_imbalance_top_n_reset(h);
+  return R_NilValue;
+}
+
+static void order_flow_imbalance_fin(SEXP e) {
+  struct OrderFlowImbalance *h = (struct OrderFlowImbalance *)R_ExternalPtrAddr(e);
+  if (h) wickra_order_flow_imbalance_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_order_flow_imbalance_new(SEXP a0) {
+  struct OrderFlowImbalance *h = wickra_order_flow_imbalance_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid OrderFlowImbalance parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, order_flow_imbalance_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_order_flow_imbalance_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct OrderFlowImbalance *h = (struct OrderFlowImbalance *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_order_flow_imbalance_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
+}
+SEXP wk_order_flow_imbalance_reset(SEXP e) {
+  struct OrderFlowImbalance *h = (struct OrderFlowImbalance *)R_ExternalPtrAddr(e);
+  wickra_order_flow_imbalance_reset(h);
+  return R_NilValue;
+}
+
+static void ou_half_life_fin(SEXP e) {
+  struct OuHalfLife *h = (struct OuHalfLife *)R_ExternalPtrAddr(e);
+  if (h) wickra_ou_half_life_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_ou_half_life_new(SEXP a0) {
+  struct OuHalfLife *h = wickra_ou_half_life_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid OuHalfLife parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, ou_half_life_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_ou_half_life_update(SEXP e, SEXP a0, SEXP a1) {
+  struct OuHalfLife *h = (struct OuHalfLife *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_ou_half_life_update(h, Rf_asReal(a0), Rf_asReal(a1)));
+}
+SEXP wk_ou_half_life_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct OuHalfLife *h = (struct OuHalfLife *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_ou_half_life_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_ou_half_life_reset(SEXP e) {
+  struct OuHalfLife *h = (struct OuHalfLife *)R_ExternalPtrAddr(e);
+  wickra_ou_half_life_reset(h);
+  return R_NilValue;
+}
+
+static void overnight_gap_fin(SEXP e) {
+  struct OvernightGap *h = (struct OvernightGap *)R_ExternalPtrAddr(e);
+  if (h) wickra_overnight_gap_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_overnight_gap_new(SEXP a0) {
+  struct OvernightGap *h = wickra_overnight_gap_new((int32_t)Rf_asInteger(a0));
+  if (!h) Rf_error("invalid OvernightGap parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, overnight_gap_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_overnight_gap_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct OvernightGap *h = (struct OvernightGap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_overnight_gap_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_overnight_gap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct OvernightGap *h = (struct OvernightGap *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_overnight_gap_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_overnight_gap_reset(SEXP e) {
+  struct OvernightGap *h = (struct OvernightGap *)R_ExternalPtrAddr(e);
+  wickra_overnight_gap_reset(h);
+  return R_NilValue;
+}
+
+static void overnight_intraday_return_fin(SEXP e) {
+  struct OvernightIntradayReturn *h = (struct OvernightIntradayReturn *)R_ExternalPtrAddr(e);
+  if (h) wickra_overnight_intraday_return_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_overnight_intraday_return_new(SEXP a0) {
+  struct OvernightIntradayReturn *h = wickra_overnight_intraday_return_new((int32_t)Rf_asInteger(a0));
+  if (!h) Rf_error("invalid OvernightIntradayReturn parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, overnight_intraday_return_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_overnight_intraday_return_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct OvernightIntradayReturn *h = (struct OvernightIntradayReturn *)R_ExternalPtrAddr(e);
+  struct WickraOvernightIntradayReturnOutput out;
+  int ok = wickra_overnight_intraday_return_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.overnight : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.intraday : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("overnight"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("intraday"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_overnight_intraday_return_reset(SEXP e) {
+  struct OvernightIntradayReturn *h = (struct OvernightIntradayReturn *)R_ExternalPtrAddr(e);
+  wickra_overnight_intraday_return_reset(h);
+  return R_NilValue;
+}
+
+static void pain_index_fin(SEXP e) {
+  struct PainIndex *h = (struct PainIndex *)R_ExternalPtrAddr(e);
+  if (h) wickra_pain_index_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_pain_index_new(SEXP a0) {
+  struct PainIndex *h = wickra_pain_index_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid PainIndex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, pain_index_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_pain_index_update(SEXP e, SEXP a0) {
+  struct PainIndex *h = (struct PainIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_pain_index_update(h, Rf_asReal(a0)));
+}
+SEXP wk_pain_index_batch(SEXP e, SEXP a0) {
+  struct PainIndex *h = (struct PainIndex *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_pain_index_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_pain_index_reset(SEXP e) {
+  struct PainIndex *h = (struct PainIndex *)R_ExternalPtrAddr(e);
+  wickra_pain_index_reset(h);
+  return R_NilValue;
+}
+
+static void pair_spread_z_score_fin(SEXP e) {
+  struct PairSpreadZScore *h = (struct PairSpreadZScore *)R_ExternalPtrAddr(e);
+  if (h) wickra_pair_spread_z_score_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_pair_spread_z_score_new(SEXP a0, SEXP a1) {
+  struct PairSpreadZScore *h = wickra_pair_spread_z_score_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid PairSpreadZScore parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, pair_spread_z_score_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_pair_spread_z_score_update(SEXP e, SEXP a0, SEXP a1) {
+  struct PairSpreadZScore *h = (struct PairSpreadZScore *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_pair_spread_z_score_update(h, Rf_asReal(a0), Rf_asReal(a1)));
+}
+SEXP wk_pair_spread_z_score_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct PairSpreadZScore *h = (struct PairSpreadZScore *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_pair_spread_z_score_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_pair_spread_z_score_reset(SEXP e) {
+  struct PairSpreadZScore *h = (struct PairSpreadZScore *)R_ExternalPtrAddr(e);
+  wickra_pair_spread_z_score_reset(h);
+  return R_NilValue;
+}
+
+static void pairwise_beta_fin(SEXP e) {
+  struct PairwiseBeta *h = (struct PairwiseBeta *)R_ExternalPtrAddr(e);
+  if (h) wickra_pairwise_beta_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_pairwise_beta_new(SEXP a0) {
+  struct PairwiseBeta *h = wickra_pairwise_beta_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid PairwiseBeta parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, pairwise_beta_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_pairwise_beta_update(SEXP e, SEXP a0, SEXP a1) {
+  struct PairwiseBeta *h = (struct PairwiseBeta *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_pairwise_beta_update(h, Rf_asReal(a0), Rf_asReal(a1)));
+}
+SEXP wk_pairwise_beta_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct PairwiseBeta *h = (struct PairwiseBeta *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_pairwise_beta_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_pairwise_beta_reset(SEXP e) {
+  struct PairwiseBeta *h = (struct PairwiseBeta *)R_ExternalPtrAddr(e);
+  wickra_pairwise_beta_reset(h);
+  return R_NilValue;
+}
+
+static void parkinson_volatility_fin(SEXP e) {
+  struct ParkinsonVolatility *h = (struct ParkinsonVolatility *)R_ExternalPtrAddr(e);
+  if (h) wickra_parkinson_volatility_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_parkinson_volatility_new(SEXP a0, SEXP a1) {
+  struct ParkinsonVolatility *h = wickra_parkinson_volatility_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid ParkinsonVolatility parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, parkinson_volatility_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_parkinson_volatility_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ParkinsonVolatility *h = (struct ParkinsonVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_parkinson_volatility_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_parkinson_volatility_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ParkinsonVolatility *h = (struct ParkinsonVolatility *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_parkinson_volatility_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_parkinson_volatility_reset(SEXP e) {
+  struct ParkinsonVolatility *h = (struct ParkinsonVolatility *)R_ExternalPtrAddr(e);
+  wickra_parkinson_volatility_reset(h);
+  return R_NilValue;
+}
+
+static void pearson_correlation_fin(SEXP e) {
+  struct PearsonCorrelation *h = (struct PearsonCorrelation *)R_ExternalPtrAddr(e);
+  if (h) wickra_pearson_correlation_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_pearson_correlation_new(SEXP a0) {
+  struct PearsonCorrelation *h = wickra_pearson_correlation_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid PearsonCorrelation parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, pearson_correlation_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_pearson_correlation_update(SEXP e, SEXP a0, SEXP a1) {
+  struct PearsonCorrelation *h = (struct PearsonCorrelation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_pearson_correlation_update(h, Rf_asReal(a0), Rf_asReal(a1)));
+}
+SEXP wk_pearson_correlation_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct PearsonCorrelation *h = (struct PearsonCorrelation *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_pearson_correlation_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_pearson_correlation_reset(SEXP e) {
+  struct PearsonCorrelation *h = (struct PearsonCorrelation *)R_ExternalPtrAddr(e);
+  wickra_pearson_correlation_reset(h);
+  return R_NilValue;
+}
+
+static void percent_above_ma_fin(SEXP e) {
+  struct PercentAboveMa *h = (struct PercentAboveMa *)R_ExternalPtrAddr(e);
+  if (h) wickra_percent_above_ma_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_percent_above_ma_new(void) {
+  struct PercentAboveMa *h = wickra_percent_above_ma_new();
+  if (!h) Rf_error("invalid PercentAboveMa parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, percent_above_ma_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_percent_above_ma_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
+  struct PercentAboveMa *h = (struct PercentAboveMa *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_percent_above_ma_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_percent_above_ma_reset(SEXP e) {
+  struct PercentAboveMa *h = (struct PercentAboveMa *)R_ExternalPtrAddr(e);
+  wickra_percent_above_ma_reset(h);
+  return R_NilValue;
+}
+
+static void percent_b_fin(SEXP e) {
+  struct PercentB *h = (struct PercentB *)R_ExternalPtrAddr(e);
+  if (h) wickra_percent_b_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_percent_b_new(SEXP a0, SEXP a1) {
+  struct PercentB *h = wickra_percent_b_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid PercentB parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, percent_b_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_percent_b_update(SEXP e, SEXP a0) {
+  struct PercentB *h = (struct PercentB *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_percent_b_update(h, Rf_asReal(a0)));
+}
+SEXP wk_percent_b_batch(SEXP e, SEXP a0) {
+  struct PercentB *h = (struct PercentB *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_percent_b_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_percent_b_reset(SEXP e) {
+  struct PercentB *h = (struct PercentB *)R_ExternalPtrAddr(e);
+  wickra_percent_b_reset(h);
+  return R_NilValue;
+}
+
+static void percentage_trailing_stop_fin(SEXP e) {
+  struct PercentageTrailingStop *h = (struct PercentageTrailingStop *)R_ExternalPtrAddr(e);
+  if (h) wickra_percentage_trailing_stop_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_percentage_trailing_stop_new(SEXP a0) {
+  struct PercentageTrailingStop *h = wickra_percentage_trailing_stop_new(Rf_asReal(a0));
+  if (!h) Rf_error("invalid PercentageTrailingStop parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, percentage_trailing_stop_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_percentage_trailing_stop_update(SEXP e, SEXP a0) {
+  struct PercentageTrailingStop *h = (struct PercentageTrailingStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_percentage_trailing_stop_update(h, Rf_asReal(a0)));
+}
+SEXP wk_percentage_trailing_stop_batch(SEXP e, SEXP a0) {
+  struct PercentageTrailingStop *h = (struct PercentageTrailingStop *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_percentage_trailing_stop_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_percentage_trailing_stop_reset(SEXP e) {
+  struct PercentageTrailingStop *h = (struct PercentageTrailingStop *)R_ExternalPtrAddr(e);
+  wickra_percentage_trailing_stop_reset(h);
+  return R_NilValue;
+}
+
+static void perpetual_premium_index_fin(SEXP e) {
+  struct PerpetualPremiumIndex *h = (struct PerpetualPremiumIndex *)R_ExternalPtrAddr(e);
+  if (h) wickra_perpetual_premium_index_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_perpetual_premium_index_new(void) {
+  struct PerpetualPremiumIndex *h = wickra_perpetual_premium_index_new();
+  if (!h) Rf_error("invalid PerpetualPremiumIndex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, perpetual_premium_index_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_perpetual_premium_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct PerpetualPremiumIndex *h = (struct PerpetualPremiumIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_perpetual_premium_index_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_perpetual_premium_index_reset(SEXP e) {
+  struct PerpetualPremiumIndex *h = (struct PerpetualPremiumIndex *)R_ExternalPtrAddr(e);
+  wickra_perpetual_premium_index_reset(h);
+  return R_NilValue;
+}
+
+static void pgo_fin(SEXP e) {
+  struct Pgo *h = (struct Pgo *)R_ExternalPtrAddr(e);
+  if (h) wickra_pgo_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_pgo_new(SEXP a0) {
+  struct Pgo *h = wickra_pgo_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Pgo parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, pgo_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_pgo_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Pgo *h = (struct Pgo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_pgo_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_pgo_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Pgo *h = (struct Pgo *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_pgo_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_pgo_reset(SEXP e) {
+  struct Pgo *h = (struct Pgo *)R_ExternalPtrAddr(e);
+  wickra_pgo_reset(h);
+  return R_NilValue;
+}
+
+static void piercing_dark_cloud_fin(SEXP e) {
+  struct PiercingDarkCloud *h = (struct PiercingDarkCloud *)R_ExternalPtrAddr(e);
+  if (h) wickra_piercing_dark_cloud_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_piercing_dark_cloud_new(void) {
+  struct PiercingDarkCloud *h = wickra_piercing_dark_cloud_new();
+  if (!h) Rf_error("invalid PiercingDarkCloud parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, piercing_dark_cloud_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_piercing_dark_cloud_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct PiercingDarkCloud *h = (struct PiercingDarkCloud *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_piercing_dark_cloud_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_piercing_dark_cloud_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct PiercingDarkCloud *h = (struct PiercingDarkCloud *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_piercing_dark_cloud_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_piercing_dark_cloud_reset(SEXP e) {
+  struct PiercingDarkCloud *h = (struct PiercingDarkCloud *)R_ExternalPtrAddr(e);
+  wickra_piercing_dark_cloud_reset(h);
+  return R_NilValue;
+}
+
+static void pin_fin(SEXP e) {
+  struct Pin *h = (struct Pin *)R_ExternalPtrAddr(e);
+  if (h) wickra_pin_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_pin_new(SEXP a0) {
+  struct Pin *h = wickra_pin_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Pin parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, pin_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_pin_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct Pin *h = (struct Pin *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_pin_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
+}
+SEXP wk_pin_reset(SEXP e) {
+  struct Pin *h = (struct Pin *)R_ExternalPtrAddr(e);
+  wickra_pin_reset(h);
+  return R_NilValue;
+}
+
+static void pivot_reversal_fin(SEXP e) {
+  struct PivotReversal *h = (struct PivotReversal *)R_ExternalPtrAddr(e);
+  if (h) wickra_pivot_reversal_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_pivot_reversal_new(SEXP a0, SEXP a1) {
+  struct PivotReversal *h = wickra_pivot_reversal_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid PivotReversal parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, pivot_reversal_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_pivot_reversal_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct PivotReversal *h = (struct PivotReversal *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_pivot_reversal_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_pivot_reversal_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct PivotReversal *h = (struct PivotReversal *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_pivot_reversal_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_pivot_reversal_reset(SEXP e) {
+  struct PivotReversal *h = (struct PivotReversal *)R_ExternalPtrAddr(e);
+  wickra_pivot_reversal_reset(h);
+  return R_NilValue;
+}
+
+static void plus_di_fin(SEXP e) {
+  struct PlusDi *h = (struct PlusDi *)R_ExternalPtrAddr(e);
+  if (h) wickra_plus_di_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_plus_di_new(SEXP a0) {
+  struct PlusDi *h = wickra_plus_di_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid PlusDi parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, plus_di_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_plus_di_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct PlusDi *h = (struct PlusDi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_plus_di_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_plus_di_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct PlusDi *h = (struct PlusDi *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_plus_di_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_plus_di_reset(SEXP e) {
+  struct PlusDi *h = (struct PlusDi *)R_ExternalPtrAddr(e);
+  wickra_plus_di_reset(h);
+  return R_NilValue;
+}
+
+static void plus_dm_fin(SEXP e) {
+  struct PlusDm *h = (struct PlusDm *)R_ExternalPtrAddr(e);
+  if (h) wickra_plus_dm_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_plus_dm_new(SEXP a0) {
+  struct PlusDm *h = wickra_plus_dm_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid PlusDm parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, plus_dm_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_plus_dm_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct PlusDm *h = (struct PlusDm *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_plus_dm_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_plus_dm_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct PlusDm *h = (struct PlusDm *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_plus_dm_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_plus_dm_reset(SEXP e) {
+  struct PlusDm *h = (struct PlusDm *)R_ExternalPtrAddr(e);
+  wickra_plus_dm_reset(h);
+  return R_NilValue;
+}
+
+static void pmo_fin(SEXP e) {
+  struct Pmo *h = (struct Pmo *)R_ExternalPtrAddr(e);
+  if (h) wickra_pmo_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_pmo_new(SEXP a0, SEXP a1) {
+  struct Pmo *h = wickra_pmo_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid Pmo parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, pmo_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_pmo_update(SEXP e, SEXP a0) {
+  struct Pmo *h = (struct Pmo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_pmo_update(h, Rf_asReal(a0)));
+}
+SEXP wk_pmo_batch(SEXP e, SEXP a0) {
+  struct Pmo *h = (struct Pmo *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_pmo_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_pmo_reset(SEXP e) {
+  struct Pmo *h = (struct Pmo *)R_ExternalPtrAddr(e);
+  wickra_pmo_reset(h);
+  return R_NilValue;
+}
+
+static void point_and_figure_bars_fin(SEXP e) {
+  struct PointAndFigureBars *h = (struct PointAndFigureBars *)R_ExternalPtrAddr(e);
+  if (h) wickra_point_and_figure_bars_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_point_and_figure_bars_new(SEXP a0, SEXP a1) {
+  struct PointAndFigureBars *h = wickra_point_and_figure_bars_new(Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid PointAndFigureBars parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, point_and_figure_bars_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_point_and_figure_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct PointAndFigureBars *h = (struct PointAndFigureBars *)R_ExternalPtrAddr(e);
+  struct WickraPnfColumn buf[64];
+  size_t n = wickra_point_and_figure_bars_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), buf, 64);
+  SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (size_t i = 0; i < n; i++) {
+    REAL(r)[i + n * 0] = (double)buf[i].direction;
+    REAL(r)[i + n * 1] = (double)buf[i].high;
+    REAL(r)[i + n * 2] = (double)buf[i].low;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("direction"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("high"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("low"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(r, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return r;
+}
+SEXP wk_point_and_figure_bars_reset(SEXP e) {
+  struct PointAndFigureBars *h = (struct PointAndFigureBars *)R_ExternalPtrAddr(e);
+  wickra_point_and_figure_bars_reset(h);
+  return R_NilValue;
+}
+
+static void polarized_fractal_efficiency_fin(SEXP e) {
+  struct PolarizedFractalEfficiency *h = (struct PolarizedFractalEfficiency *)R_ExternalPtrAddr(e);
+  if (h) wickra_polarized_fractal_efficiency_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_polarized_fractal_efficiency_new(SEXP a0, SEXP a1) {
+  struct PolarizedFractalEfficiency *h = wickra_polarized_fractal_efficiency_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid PolarizedFractalEfficiency parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, polarized_fractal_efficiency_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_polarized_fractal_efficiency_update(SEXP e, SEXP a0) {
+  struct PolarizedFractalEfficiency *h = (struct PolarizedFractalEfficiency *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_polarized_fractal_efficiency_update(h, Rf_asReal(a0)));
+}
+SEXP wk_polarized_fractal_efficiency_batch(SEXP e, SEXP a0) {
+  struct PolarizedFractalEfficiency *h = (struct PolarizedFractalEfficiency *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_polarized_fractal_efficiency_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_polarized_fractal_efficiency_reset(SEXP e) {
+  struct PolarizedFractalEfficiency *h = (struct PolarizedFractalEfficiency *)R_ExternalPtrAddr(e);
+  wickra_polarized_fractal_efficiency_reset(h);
+  return R_NilValue;
+}
+
+static void ppo_fin(SEXP e) {
+  struct Ppo *h = (struct Ppo *)R_ExternalPtrAddr(e);
+  if (h) wickra_ppo_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_ppo_new(SEXP a0, SEXP a1) {
+  struct Ppo *h = wickra_ppo_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid Ppo parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, ppo_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_ppo_update(SEXP e, SEXP a0) {
+  struct Ppo *h = (struct Ppo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_ppo_update(h, Rf_asReal(a0)));
+}
+SEXP wk_ppo_batch(SEXP e, SEXP a0) {
+  struct Ppo *h = (struct Ppo *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_ppo_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_ppo_reset(SEXP e) {
+  struct Ppo *h = (struct Ppo *)R_ExternalPtrAddr(e);
+  wickra_ppo_reset(h);
+  return R_NilValue;
+}
+
+static void ppo_histogram_fin(SEXP e) {
+  struct PpoHistogram *h = (struct PpoHistogram *)R_ExternalPtrAddr(e);
+  if (h) wickra_ppo_histogram_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_ppo_histogram_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct PpoHistogram *h = wickra_ppo_histogram_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2));
+  if (!h) Rf_error("invalid PpoHistogram parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, ppo_histogram_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_ppo_histogram_update(SEXP e, SEXP a0) {
+  struct PpoHistogram *h = (struct PpoHistogram *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_ppo_histogram_update(h, Rf_asReal(a0)));
+}
+SEXP wk_ppo_histogram_batch(SEXP e, SEXP a0) {
+  struct PpoHistogram *h = (struct PpoHistogram *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_ppo_histogram_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_ppo_histogram_reset(SEXP e) {
+  struct PpoHistogram *h = (struct PpoHistogram *)R_ExternalPtrAddr(e);
+  wickra_ppo_histogram_reset(h);
+  return R_NilValue;
+}
+
+static void profile_shape_fin(SEXP e) {
+  struct ProfileShape *h = (struct ProfileShape *)R_ExternalPtrAddr(e);
+  if (h) wickra_profile_shape_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_profile_shape_new(SEXP a0, SEXP a1) {
+  struct ProfileShape *h = wickra_profile_shape_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid ProfileShape parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, profile_shape_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_profile_shape_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ProfileShape *h = (struct ProfileShape *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_profile_shape_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_profile_shape_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ProfileShape *h = (struct ProfileShape *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_profile_shape_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_profile_shape_reset(SEXP e) {
+  struct ProfileShape *h = (struct ProfileShape *)R_ExternalPtrAddr(e);
+  wickra_profile_shape_reset(h);
+  return R_NilValue;
+}
+
+static void profit_factor_fin(SEXP e) {
+  struct ProfitFactor *h = (struct ProfitFactor *)R_ExternalPtrAddr(e);
+  if (h) wickra_profit_factor_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_profit_factor_new(SEXP a0) {
+  struct ProfitFactor *h = wickra_profit_factor_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid ProfitFactor parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, profit_factor_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_profit_factor_update(SEXP e, SEXP a0) {
+  struct ProfitFactor *h = (struct ProfitFactor *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_profit_factor_update(h, Rf_asReal(a0)));
+}
+SEXP wk_profit_factor_batch(SEXP e, SEXP a0) {
+  struct ProfitFactor *h = (struct ProfitFactor *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_profit_factor_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_profit_factor_reset(SEXP e) {
+  struct ProfitFactor *h = (struct ProfitFactor *)R_ExternalPtrAddr(e);
+  wickra_profit_factor_reset(h);
+  return R_NilValue;
+}
+
+static void projection_bands_fin(SEXP e) {
+  struct ProjectionBands *h = (struct ProjectionBands *)R_ExternalPtrAddr(e);
+  if (h) wickra_projection_bands_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_projection_bands_new(SEXP a0) {
+  struct ProjectionBands *h = wickra_projection_bands_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid ProjectionBands parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, projection_bands_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_projection_bands_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ProjectionBands *h = (struct ProjectionBands *)R_ExternalPtrAddr(e);
+  struct WickraProjectionBandsOutput out;
+  int ok = wickra_projection_bands_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.upper : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.middle : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.lower : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("lower"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_projection_bands_reset(SEXP e) {
+  struct ProjectionBands *h = (struct ProjectionBands *)R_ExternalPtrAddr(e);
+  wickra_projection_bands_reset(h);
+  return R_NilValue;
+}
+
+static void projection_oscillator_fin(SEXP e) {
+  struct ProjectionOscillator *h = (struct ProjectionOscillator *)R_ExternalPtrAddr(e);
+  if (h) wickra_projection_oscillator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_projection_oscillator_new(SEXP a0) {
+  struct ProjectionOscillator *h = wickra_projection_oscillator_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid ProjectionOscillator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, projection_oscillator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_projection_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ProjectionOscillator *h = (struct ProjectionOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_projection_oscillator_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_projection_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ProjectionOscillator *h = (struct ProjectionOscillator *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_projection_oscillator_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_projection_oscillator_reset(SEXP e) {
+  struct ProjectionOscillator *h = (struct ProjectionOscillator *)R_ExternalPtrAddr(e);
+  wickra_projection_oscillator_reset(h);
+  return R_NilValue;
+}
+
+static void psar_fin(SEXP e) {
+  struct Psar *h = (struct Psar *)R_ExternalPtrAddr(e);
+  if (h) wickra_psar_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_psar_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct Psar *h = wickra_psar_new(Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2));
+  if (!h) Rf_error("invalid Psar parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, psar_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_psar_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Psar *h = (struct Psar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_psar_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_psar_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Psar *h = (struct Psar *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_psar_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_psar_reset(SEXP e) {
+  struct Psar *h = (struct Psar *)R_ExternalPtrAddr(e);
+  wickra_psar_reset(h);
+  return R_NilValue;
+}
+
+static void pvi_fin(SEXP e) {
+  struct Pvi *h = (struct Pvi *)R_ExternalPtrAddr(e);
+  if (h) wickra_pvi_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_pvi_new(void) {
+  struct Pvi *h = wickra_pvi_new();
+  if (!h) Rf_error("invalid Pvi parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, pvi_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_pvi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Pvi *h = (struct Pvi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_pvi_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_pvi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Pvi *h = (struct Pvi *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_pvi_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_pvi_reset(SEXP e) {
+  struct Pvi *h = (struct Pvi *)R_ExternalPtrAddr(e);
+  wickra_pvi_reset(h);
+  return R_NilValue;
+}
+
+static void qqe_fin(SEXP e) {
+  struct Qqe *h = (struct Qqe *)R_ExternalPtrAddr(e);
+  if (h) wickra_qqe_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_qqe_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct Qqe *h = wickra_qqe_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), Rf_asReal(a2));
+  if (!h) Rf_error("invalid Qqe parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, qqe_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_qqe_update(SEXP e, SEXP a0) {
+  struct Qqe *h = (struct Qqe *)R_ExternalPtrAddr(e);
+  struct WickraQqeOutput out;
+  int ok = wickra_qqe_update(h, Rf_asReal(a0), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.rsi_ma : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.trailing_line : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("rsi_ma"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("trailing_line"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_qqe_reset(SEXP e) {
+  struct Qqe *h = (struct Qqe *)R_ExternalPtrAddr(e);
+  wickra_qqe_reset(h);
+  return R_NilValue;
+}
+
+static void qstick_fin(SEXP e) {
+  struct Qstick *h = (struct Qstick *)R_ExternalPtrAddr(e);
+  if (h) wickra_qstick_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_qstick_new(SEXP a0) {
+  struct Qstick *h = wickra_qstick_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Qstick parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, qstick_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_qstick_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Qstick *h = (struct Qstick *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_qstick_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_qstick_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Qstick *h = (struct Qstick *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_qstick_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_qstick_reset(SEXP e) {
+  struct Qstick *h = (struct Qstick *)R_ExternalPtrAddr(e);
+  wickra_qstick_reset(h);
+  return R_NilValue;
+}
+
+static void quartile_bands_fin(SEXP e) {
+  struct QuartileBands *h = (struct QuartileBands *)R_ExternalPtrAddr(e);
+  if (h) wickra_quartile_bands_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_quartile_bands_new(SEXP a0) {
+  struct QuartileBands *h = wickra_quartile_bands_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid QuartileBands parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, quartile_bands_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_quartile_bands_update(SEXP e, SEXP a0) {
+  struct QuartileBands *h = (struct QuartileBands *)R_ExternalPtrAddr(e);
+  struct WickraQuartileBandsOutput out;
+  int ok = wickra_quartile_bands_update(h, Rf_asReal(a0), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.upper : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.middle : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.lower : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("lower"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_quartile_bands_reset(SEXP e) {
+  struct QuartileBands *h = (struct QuartileBands *)R_ExternalPtrAddr(e);
+  wickra_quartile_bands_reset(h);
+  return R_NilValue;
+}
+
+static void quoted_spread_fin(SEXP e) {
+  struct QuotedSpread *h = (struct QuotedSpread *)R_ExternalPtrAddr(e);
+  if (h) wickra_quoted_spread_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_quoted_spread_new(void) {
+  struct QuotedSpread *h = wickra_quoted_spread_new();
+  if (!h) Rf_error("invalid QuotedSpread parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, quoted_spread_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_quoted_spread_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct QuotedSpread *h = (struct QuotedSpread *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_quoted_spread_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
+}
+SEXP wk_quoted_spread_reset(SEXP e) {
+  struct QuotedSpread *h = (struct QuotedSpread *)R_ExternalPtrAddr(e);
+  wickra_quoted_spread_reset(h);
+  return R_NilValue;
+}
+
+static void r_squared_fin(SEXP e) {
+  struct RSquared *h = (struct RSquared *)R_ExternalPtrAddr(e);
+  if (h) wickra_r_squared_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_r_squared_new(SEXP a0) {
+  struct RSquared *h = wickra_r_squared_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid RSquared parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, r_squared_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_r_squared_update(SEXP e, SEXP a0) {
+  struct RSquared *h = (struct RSquared *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_r_squared_update(h, Rf_asReal(a0)));
+}
+SEXP wk_r_squared_batch(SEXP e, SEXP a0) {
+  struct RSquared *h = (struct RSquared *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_r_squared_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_r_squared_reset(SEXP e) {
+  struct RSquared *h = (struct RSquared *)R_ExternalPtrAddr(e);
+  wickra_r_squared_reset(h);
+  return R_NilValue;
+}
+
+static void range_bars_fin(SEXP e) {
+  struct RangeBars *h = (struct RangeBars *)R_ExternalPtrAddr(e);
+  if (h) wickra_range_bars_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_range_bars_new(SEXP a0) {
+  struct RangeBars *h = wickra_range_bars_new(Rf_asReal(a0));
+  if (!h) Rf_error("invalid RangeBars parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, range_bars_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_range_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct RangeBars *h = (struct RangeBars *)R_ExternalPtrAddr(e);
+  struct WickraRangeBar buf[64];
+  size_t n = wickra_range_bars_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), buf, 64);
+  SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (size_t i = 0; i < n; i++) {
+    REAL(r)[i + n * 0] = (double)buf[i].open;
+    REAL(r)[i + n * 1] = (double)buf[i].close;
+    REAL(r)[i + n * 2] = (double)buf[i].direction;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("close"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("direction"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(r, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return r;
+}
+SEXP wk_range_bars_reset(SEXP e) {
+  struct RangeBars *h = (struct RangeBars *)R_ExternalPtrAddr(e);
+  wickra_range_bars_reset(h);
+  return R_NilValue;
+}
+
+static void realized_spread_fin(SEXP e) {
+  struct RealizedSpread *h = (struct RealizedSpread *)R_ExternalPtrAddr(e);
+  if (h) wickra_realized_spread_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_realized_spread_new(SEXP a0) {
+  struct RealizedSpread *h = wickra_realized_spread_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid RealizedSpread parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, realized_spread_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_realized_spread_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4) {
+  struct RealizedSpread *h = (struct RealizedSpread *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_realized_spread_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3), Rf_asReal(a4)));
+}
+SEXP wk_realized_spread_reset(SEXP e) {
+  struct RealizedSpread *h = (struct RealizedSpread *)R_ExternalPtrAddr(e);
+  wickra_realized_spread_reset(h);
+  return R_NilValue;
+}
+
+static void realized_volatility_fin(SEXP e) {
+  struct RealizedVolatility *h = (struct RealizedVolatility *)R_ExternalPtrAddr(e);
+  if (h) wickra_realized_volatility_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_realized_volatility_new(SEXP a0) {
+  struct RealizedVolatility *h = wickra_realized_volatility_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid RealizedVolatility parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, realized_volatility_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_realized_volatility_update(SEXP e, SEXP a0) {
+  struct RealizedVolatility *h = (struct RealizedVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_realized_volatility_update(h, Rf_asReal(a0)));
+}
+SEXP wk_realized_volatility_batch(SEXP e, SEXP a0) {
+  struct RealizedVolatility *h = (struct RealizedVolatility *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_realized_volatility_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_realized_volatility_reset(SEXP e) {
+  struct RealizedVolatility *h = (struct RealizedVolatility *)R_ExternalPtrAddr(e);
+  wickra_realized_volatility_reset(h);
+  return R_NilValue;
+}
+
+static void recovery_factor_fin(SEXP e) {
+  struct RecoveryFactor *h = (struct RecoveryFactor *)R_ExternalPtrAddr(e);
+  if (h) wickra_recovery_factor_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_recovery_factor_new(void) {
+  struct RecoveryFactor *h = wickra_recovery_factor_new();
+  if (!h) Rf_error("invalid RecoveryFactor parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, recovery_factor_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_recovery_factor_update(SEXP e, SEXP a0) {
+  struct RecoveryFactor *h = (struct RecoveryFactor *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_recovery_factor_update(h, Rf_asReal(a0)));
+}
+SEXP wk_recovery_factor_batch(SEXP e, SEXP a0) {
+  struct RecoveryFactor *h = (struct RecoveryFactor *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_recovery_factor_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_recovery_factor_reset(SEXP e) {
+  struct RecoveryFactor *h = (struct RecoveryFactor *)R_ExternalPtrAddr(e);
+  wickra_recovery_factor_reset(h);
+  return R_NilValue;
+}
+
+static void rectangle_range_fin(SEXP e) {
+  struct RectangleRange *h = (struct RectangleRange *)R_ExternalPtrAddr(e);
+  if (h) wickra_rectangle_range_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_rectangle_range_new(void) {
+  struct RectangleRange *h = wickra_rectangle_range_new();
+  if (!h) Rf_error("invalid RectangleRange parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, rectangle_range_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_rectangle_range_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct RectangleRange *h = (struct RectangleRange *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_rectangle_range_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_rectangle_range_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct RectangleRange *h = (struct RectangleRange *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_rectangle_range_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_rectangle_range_reset(SEXP e) {
+  struct RectangleRange *h = (struct RectangleRange *)R_ExternalPtrAddr(e);
+  wickra_rectangle_range_reset(h);
+  return R_NilValue;
+}
+
+static void reflex_fin(SEXP e) {
+  struct Reflex *h = (struct Reflex *)R_ExternalPtrAddr(e);
+  if (h) wickra_reflex_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_reflex_new(SEXP a0) {
+  struct Reflex *h = wickra_reflex_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Reflex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, reflex_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_reflex_update(SEXP e, SEXP a0) {
+  struct Reflex *h = (struct Reflex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_reflex_update(h, Rf_asReal(a0)));
+}
+SEXP wk_reflex_batch(SEXP e, SEXP a0) {
+  struct Reflex *h = (struct Reflex *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_reflex_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_reflex_reset(SEXP e) {
+  struct Reflex *h = (struct Reflex *)R_ExternalPtrAddr(e);
+  wickra_reflex_reset(h);
+  return R_NilValue;
+}
+
+static void regime_label_fin(SEXP e) {
+  struct RegimeLabel *h = (struct RegimeLabel *)R_ExternalPtrAddr(e);
+  if (h) wickra_regime_label_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_regime_label_new(SEXP a0, SEXP a1) {
+  struct RegimeLabel *h = wickra_regime_label_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid RegimeLabel parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, regime_label_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_regime_label_update(SEXP e, SEXP a0) {
+  struct RegimeLabel *h = (struct RegimeLabel *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_regime_label_update(h, Rf_asReal(a0)));
+}
+SEXP wk_regime_label_batch(SEXP e, SEXP a0) {
+  struct RegimeLabel *h = (struct RegimeLabel *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_regime_label_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_regime_label_reset(SEXP e) {
+  struct RegimeLabel *h = (struct RegimeLabel *)R_ExternalPtrAddr(e);
+  wickra_regime_label_reset(h);
+  return R_NilValue;
+}
+
+static void relative_strength_ab_fin(SEXP e) {
+  struct RelativeStrengthAB *h = (struct RelativeStrengthAB *)R_ExternalPtrAddr(e);
+  if (h) wickra_relative_strength_ab_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_relative_strength_ab_new(SEXP a0, SEXP a1) {
+  struct RelativeStrengthAB *h = wickra_relative_strength_ab_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid RelativeStrengthAB parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, relative_strength_ab_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_relative_strength_ab_update(SEXP e, SEXP a0, SEXP a1) {
+  struct RelativeStrengthAB *h = (struct RelativeStrengthAB *)R_ExternalPtrAddr(e);
+  struct WickraRelativeStrengthOutput out;
+  int ok = wickra_relative_strength_ab_update(h, Rf_asReal(a0), Rf_asReal(a1), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.ratio : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.ratio_ma : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.ratio_rsi : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("ratio"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("ratio_ma"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("ratio_rsi"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_relative_strength_ab_reset(SEXP e) {
+  struct RelativeStrengthAB *h = (struct RelativeStrengthAB *)R_ExternalPtrAddr(e);
+  wickra_relative_strength_ab_reset(h);
+  return R_NilValue;
+}
+
+static void renko_bars_fin(SEXP e) {
+  struct RenkoBars *h = (struct RenkoBars *)R_ExternalPtrAddr(e);
+  if (h) wickra_renko_bars_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_renko_bars_new(SEXP a0) {
+  struct RenkoBars *h = wickra_renko_bars_new(Rf_asReal(a0));
+  if (!h) Rf_error("invalid RenkoBars parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, renko_bars_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_renko_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct RenkoBars *h = (struct RenkoBars *)R_ExternalPtrAddr(e);
+  struct WickraRenkoBrick buf[64];
+  size_t n = wickra_renko_bars_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), buf, 64);
+  SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (size_t i = 0; i < n; i++) {
+    REAL(r)[i + n * 0] = (double)buf[i].open;
+    REAL(r)[i + n * 1] = (double)buf[i].close;
+    REAL(r)[i + n * 2] = (double)buf[i].direction;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("close"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("direction"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(r, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return r;
+}
+SEXP wk_renko_bars_reset(SEXP e) {
+  struct RenkoBars *h = (struct RenkoBars *)R_ExternalPtrAddr(e);
+  wickra_renko_bars_reset(h);
+  return R_NilValue;
+}
+
+static void renko_trailing_stop_fin(SEXP e) {
+  struct RenkoTrailingStop *h = (struct RenkoTrailingStop *)R_ExternalPtrAddr(e);
+  if (h) wickra_renko_trailing_stop_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_renko_trailing_stop_new(SEXP a0) {
+  struct RenkoTrailingStop *h = wickra_renko_trailing_stop_new(Rf_asReal(a0));
+  if (!h) Rf_error("invalid RenkoTrailingStop parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, renko_trailing_stop_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_renko_trailing_stop_update(SEXP e, SEXP a0) {
+  struct RenkoTrailingStop *h = (struct RenkoTrailingStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_renko_trailing_stop_update(h, Rf_asReal(a0)));
+}
+SEXP wk_renko_trailing_stop_batch(SEXP e, SEXP a0) {
+  struct RenkoTrailingStop *h = (struct RenkoTrailingStop *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_renko_trailing_stop_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_renko_trailing_stop_reset(SEXP e) {
+  struct RenkoTrailingStop *h = (struct RenkoTrailingStop *)R_ExternalPtrAddr(e);
+  wickra_renko_trailing_stop_reset(h);
+  return R_NilValue;
+}
+
+static void rickshaw_man_fin(SEXP e) {
+  struct RickshawMan *h = (struct RickshawMan *)R_ExternalPtrAddr(e);
+  if (h) wickra_rickshaw_man_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_rickshaw_man_new(void) {
+  struct RickshawMan *h = wickra_rickshaw_man_new();
+  if (!h) Rf_error("invalid RickshawMan parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, rickshaw_man_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_rickshaw_man_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct RickshawMan *h = (struct RickshawMan *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_rickshaw_man_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_rickshaw_man_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct RickshawMan *h = (struct RickshawMan *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_rickshaw_man_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_rickshaw_man_reset(SEXP e) {
+  struct RickshawMan *h = (struct RickshawMan *)R_ExternalPtrAddr(e);
+  wickra_rickshaw_man_reset(h);
+  return R_NilValue;
+}
+
+static void rising_three_methods_fin(SEXP e) {
+  struct RisingThreeMethods *h = (struct RisingThreeMethods *)R_ExternalPtrAddr(e);
+  if (h) wickra_rising_three_methods_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_rising_three_methods_new(void) {
+  struct RisingThreeMethods *h = wickra_rising_three_methods_new();
+  if (!h) Rf_error("invalid RisingThreeMethods parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, rising_three_methods_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_rising_three_methods_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct RisingThreeMethods *h = (struct RisingThreeMethods *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_rising_three_methods_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_rising_three_methods_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct RisingThreeMethods *h = (struct RisingThreeMethods *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_rising_three_methods_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_rising_three_methods_reset(SEXP e) {
+  struct RisingThreeMethods *h = (struct RisingThreeMethods *)R_ExternalPtrAddr(e);
+  wickra_rising_three_methods_reset(h);
+  return R_NilValue;
+}
+
+static void rmi_fin(SEXP e) {
+  struct Rmi *h = (struct Rmi *)R_ExternalPtrAddr(e);
+  if (h) wickra_rmi_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_rmi_new(SEXP a0, SEXP a1) {
+  struct Rmi *h = wickra_rmi_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid Rmi parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, rmi_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_rmi_update(SEXP e, SEXP a0) {
+  struct Rmi *h = (struct Rmi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_rmi_update(h, Rf_asReal(a0)));
+}
+SEXP wk_rmi_batch(SEXP e, SEXP a0) {
+  struct Rmi *h = (struct Rmi *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_rmi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_rmi_reset(SEXP e) {
+  struct Rmi *h = (struct Rmi *)R_ExternalPtrAddr(e);
+  wickra_rmi_reset(h);
+  return R_NilValue;
+}
+
+static void roc_fin(SEXP e) {
+  struct Roc *h = (struct Roc *)R_ExternalPtrAddr(e);
+  if (h) wickra_roc_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_roc_new(SEXP a0) {
+  struct Roc *h = wickra_roc_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Roc parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, roc_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_roc_update(SEXP e, SEXP a0) {
+  struct Roc *h = (struct Roc *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_roc_update(h, Rf_asReal(a0)));
+}
+SEXP wk_roc_batch(SEXP e, SEXP a0) {
+  struct Roc *h = (struct Roc *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_roc_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_roc_reset(SEXP e) {
+  struct Roc *h = (struct Roc *)R_ExternalPtrAddr(e);
+  wickra_roc_reset(h);
+  return R_NilValue;
+}
+
+static void rocp_fin(SEXP e) {
+  struct Rocp *h = (struct Rocp *)R_ExternalPtrAddr(e);
+  if (h) wickra_rocp_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_rocp_new(SEXP a0) {
+  struct Rocp *h = wickra_rocp_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Rocp parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, rocp_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_rocp_update(SEXP e, SEXP a0) {
+  struct Rocp *h = (struct Rocp *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_rocp_update(h, Rf_asReal(a0)));
+}
+SEXP wk_rocp_batch(SEXP e, SEXP a0) {
+  struct Rocp *h = (struct Rocp *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_rocp_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_rocp_reset(SEXP e) {
+  struct Rocp *h = (struct Rocp *)R_ExternalPtrAddr(e);
+  wickra_rocp_reset(h);
+  return R_NilValue;
+}
+
+static void rocr_fin(SEXP e) {
+  struct Rocr *h = (struct Rocr *)R_ExternalPtrAddr(e);
+  if (h) wickra_rocr_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_rocr_new(SEXP a0) {
+  struct Rocr *h = wickra_rocr_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Rocr parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, rocr_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_rocr_update(SEXP e, SEXP a0) {
+  struct Rocr *h = (struct Rocr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_rocr_update(h, Rf_asReal(a0)));
+}
+SEXP wk_rocr_batch(SEXP e, SEXP a0) {
+  struct Rocr *h = (struct Rocr *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_rocr_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_rocr_reset(SEXP e) {
+  struct Rocr *h = (struct Rocr *)R_ExternalPtrAddr(e);
+  wickra_rocr_reset(h);
+  return R_NilValue;
+}
+
+static void rocr100_fin(SEXP e) {
+  struct Rocr100 *h = (struct Rocr100 *)R_ExternalPtrAddr(e);
+  if (h) wickra_rocr100_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_rocr100_new(SEXP a0) {
+  struct Rocr100 *h = wickra_rocr100_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Rocr100 parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, rocr100_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_rocr100_update(SEXP e, SEXP a0) {
+  struct Rocr100 *h = (struct Rocr100 *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_rocr100_update(h, Rf_asReal(a0)));
+}
+SEXP wk_rocr100_batch(SEXP e, SEXP a0) {
+  struct Rocr100 *h = (struct Rocr100 *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_rocr100_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_rocr100_reset(SEXP e) {
+  struct Rocr100 *h = (struct Rocr100 *)R_ExternalPtrAddr(e);
+  wickra_rocr100_reset(h);
+  return R_NilValue;
+}
+
+static void rogers_satchell_volatility_fin(SEXP e) {
+  struct RogersSatchellVolatility *h = (struct RogersSatchellVolatility *)R_ExternalPtrAddr(e);
+  if (h) wickra_rogers_satchell_volatility_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_rogers_satchell_volatility_new(SEXP a0, SEXP a1) {
+  struct RogersSatchellVolatility *h = wickra_rogers_satchell_volatility_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid RogersSatchellVolatility parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, rogers_satchell_volatility_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_rogers_satchell_volatility_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct RogersSatchellVolatility *h = (struct RogersSatchellVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_rogers_satchell_volatility_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_rogers_satchell_volatility_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct RogersSatchellVolatility *h = (struct RogersSatchellVolatility *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_rogers_satchell_volatility_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_rogers_satchell_volatility_reset(SEXP e) {
+  struct RogersSatchellVolatility *h = (struct RogersSatchellVolatility *)R_ExternalPtrAddr(e);
+  wickra_rogers_satchell_volatility_reset(h);
+  return R_NilValue;
+}
+
+static void roll_measure_fin(SEXP e) {
+  struct RollMeasure *h = (struct RollMeasure *)R_ExternalPtrAddr(e);
+  if (h) wickra_roll_measure_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_roll_measure_new(SEXP a0) {
+  struct RollMeasure *h = wickra_roll_measure_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid RollMeasure parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, roll_measure_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_roll_measure_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct RollMeasure *h = (struct RollMeasure *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_roll_measure_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
+}
+SEXP wk_roll_measure_reset(SEXP e) {
+  struct RollMeasure *h = (struct RollMeasure *)R_ExternalPtrAddr(e);
+  wickra_roll_measure_reset(h);
+  return R_NilValue;
+}
+
+static void rolling_correlation_fin(SEXP e) {
+  struct RollingCorrelation *h = (struct RollingCorrelation *)R_ExternalPtrAddr(e);
+  if (h) wickra_rolling_correlation_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_rolling_correlation_new(SEXP a0) {
+  struct RollingCorrelation *h = wickra_rolling_correlation_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid RollingCorrelation parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, rolling_correlation_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_rolling_correlation_update(SEXP e, SEXP a0, SEXP a1) {
+  struct RollingCorrelation *h = (struct RollingCorrelation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_rolling_correlation_update(h, Rf_asReal(a0), Rf_asReal(a1)));
+}
+SEXP wk_rolling_correlation_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct RollingCorrelation *h = (struct RollingCorrelation *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_rolling_correlation_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_rolling_correlation_reset(SEXP e) {
+  struct RollingCorrelation *h = (struct RollingCorrelation *)R_ExternalPtrAddr(e);
+  wickra_rolling_correlation_reset(h);
+  return R_NilValue;
+}
+
+static void rolling_covariance_fin(SEXP e) {
+  struct RollingCovariance *h = (struct RollingCovariance *)R_ExternalPtrAddr(e);
+  if (h) wickra_rolling_covariance_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_rolling_covariance_new(SEXP a0) {
+  struct RollingCovariance *h = wickra_rolling_covariance_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid RollingCovariance parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, rolling_covariance_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_rolling_covariance_update(SEXP e, SEXP a0, SEXP a1) {
+  struct RollingCovariance *h = (struct RollingCovariance *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_rolling_covariance_update(h, Rf_asReal(a0), Rf_asReal(a1)));
+}
+SEXP wk_rolling_covariance_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct RollingCovariance *h = (struct RollingCovariance *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_rolling_covariance_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_rolling_covariance_reset(SEXP e) {
+  struct RollingCovariance *h = (struct RollingCovariance *)R_ExternalPtrAddr(e);
+  wickra_rolling_covariance_reset(h);
+  return R_NilValue;
+}
+
+static void rolling_iqr_fin(SEXP e) {
+  struct RollingIqr *h = (struct RollingIqr *)R_ExternalPtrAddr(e);
+  if (h) wickra_rolling_iqr_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_rolling_iqr_new(SEXP a0) {
+  struct RollingIqr *h = wickra_rolling_iqr_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid RollingIqr parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, rolling_iqr_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_rolling_iqr_update(SEXP e, SEXP a0) {
+  struct RollingIqr *h = (struct RollingIqr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_rolling_iqr_update(h, Rf_asReal(a0)));
+}
+SEXP wk_rolling_iqr_batch(SEXP e, SEXP a0) {
+  struct RollingIqr *h = (struct RollingIqr *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_rolling_iqr_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_rolling_iqr_reset(SEXP e) {
+  struct RollingIqr *h = (struct RollingIqr *)R_ExternalPtrAddr(e);
+  wickra_rolling_iqr_reset(h);
+  return R_NilValue;
+}
+
+static void rolling_min_max_scaler_fin(SEXP e) {
+  struct RollingMinMaxScaler *h = (struct RollingMinMaxScaler *)R_ExternalPtrAddr(e);
+  if (h) wickra_rolling_min_max_scaler_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_rolling_min_max_scaler_new(SEXP a0) {
+  struct RollingMinMaxScaler *h = wickra_rolling_min_max_scaler_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid RollingMinMaxScaler parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, rolling_min_max_scaler_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_rolling_min_max_scaler_update(SEXP e, SEXP a0) {
+  struct RollingMinMaxScaler *h = (struct RollingMinMaxScaler *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_rolling_min_max_scaler_update(h, Rf_asReal(a0)));
+}
+SEXP wk_rolling_min_max_scaler_batch(SEXP e, SEXP a0) {
+  struct RollingMinMaxScaler *h = (struct RollingMinMaxScaler *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_rolling_min_max_scaler_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_rolling_min_max_scaler_reset(SEXP e) {
+  struct RollingMinMaxScaler *h = (struct RollingMinMaxScaler *)R_ExternalPtrAddr(e);
+  wickra_rolling_min_max_scaler_reset(h);
+  return R_NilValue;
+}
+
+static void rolling_percentile_rank_fin(SEXP e) {
+  struct RollingPercentileRank *h = (struct RollingPercentileRank *)R_ExternalPtrAddr(e);
+  if (h) wickra_rolling_percentile_rank_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_rolling_percentile_rank_new(SEXP a0) {
+  struct RollingPercentileRank *h = wickra_rolling_percentile_rank_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid RollingPercentileRank parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, rolling_percentile_rank_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_rolling_percentile_rank_update(SEXP e, SEXP a0) {
+  struct RollingPercentileRank *h = (struct RollingPercentileRank *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_rolling_percentile_rank_update(h, Rf_asReal(a0)));
+}
+SEXP wk_rolling_percentile_rank_batch(SEXP e, SEXP a0) {
+  struct RollingPercentileRank *h = (struct RollingPercentileRank *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_rolling_percentile_rank_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_rolling_percentile_rank_reset(SEXP e) {
+  struct RollingPercentileRank *h = (struct RollingPercentileRank *)R_ExternalPtrAddr(e);
+  wickra_rolling_percentile_rank_reset(h);
+  return R_NilValue;
+}
+
+static void rolling_quantile_fin(SEXP e) {
+  struct RollingQuantile *h = (struct RollingQuantile *)R_ExternalPtrAddr(e);
+  if (h) wickra_rolling_quantile_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_rolling_quantile_new(SEXP a0, SEXP a1) {
+  struct RollingQuantile *h = wickra_rolling_quantile_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid RollingQuantile parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, rolling_quantile_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_rolling_quantile_update(SEXP e, SEXP a0) {
+  struct RollingQuantile *h = (struct RollingQuantile *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_rolling_quantile_update(h, Rf_asReal(a0)));
+}
+SEXP wk_rolling_quantile_batch(SEXP e, SEXP a0) {
+  struct RollingQuantile *h = (struct RollingQuantile *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_rolling_quantile_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_rolling_quantile_reset(SEXP e) {
+  struct RollingQuantile *h = (struct RollingQuantile *)R_ExternalPtrAddr(e);
+  wickra_rolling_quantile_reset(h);
+  return R_NilValue;
+}
+
+static void rolling_vwap_fin(SEXP e) {
+  struct RollingVwap *h = (struct RollingVwap *)R_ExternalPtrAddr(e);
+  if (h) wickra_rolling_vwap_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_rolling_vwap_new(SEXP a0) {
+  struct RollingVwap *h = wickra_rolling_vwap_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid RollingVwap parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, rolling_vwap_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_rolling_vwap_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct RollingVwap *h = (struct RollingVwap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_rolling_vwap_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_rolling_vwap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct RollingVwap *h = (struct RollingVwap *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_rolling_vwap_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_rolling_vwap_reset(SEXP e) {
+  struct RollingVwap *h = (struct RollingVwap *)R_ExternalPtrAddr(e);
+  wickra_rolling_vwap_reset(h);
+  return R_NilValue;
+}
+
+static void roofing_filter_fin(SEXP e) {
+  struct RoofingFilter *h = (struct RoofingFilter *)R_ExternalPtrAddr(e);
+  if (h) wickra_roofing_filter_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_roofing_filter_new(SEXP a0, SEXP a1) {
+  struct RoofingFilter *h = wickra_roofing_filter_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid RoofingFilter parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, roofing_filter_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_roofing_filter_update(SEXP e, SEXP a0) {
+  struct RoofingFilter *h = (struct RoofingFilter *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_roofing_filter_update(h, Rf_asReal(a0)));
+}
+SEXP wk_roofing_filter_batch(SEXP e, SEXP a0) {
+  struct RoofingFilter *h = (struct RoofingFilter *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_roofing_filter_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_roofing_filter_reset(SEXP e) {
+  struct RoofingFilter *h = (struct RoofingFilter *)R_ExternalPtrAddr(e);
+  wickra_roofing_filter_reset(h);
+  return R_NilValue;
+}
+
+static void rsi_fin(SEXP e) {
+  struct Rsi *h = (struct Rsi *)R_ExternalPtrAddr(e);
+  if (h) wickra_rsi_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_rsi_new(SEXP a0) {
+  struct Rsi *h = wickra_rsi_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Rsi parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, rsi_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_rsi_update(SEXP e, SEXP a0) {
+  struct Rsi *h = (struct Rsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_rsi_update(h, Rf_asReal(a0)));
+}
+SEXP wk_rsi_batch(SEXP e, SEXP a0) {
+  struct Rsi *h = (struct Rsi *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_rsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_rsi_reset(SEXP e) {
+  struct Rsi *h = (struct Rsi *)R_ExternalPtrAddr(e);
+  wickra_rsi_reset(h);
+  return R_NilValue;
+}
+
+static void rsx_fin(SEXP e) {
+  struct Rsx *h = (struct Rsx *)R_ExternalPtrAddr(e);
+  if (h) wickra_rsx_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_rsx_new(SEXP a0) {
+  struct Rsx *h = wickra_rsx_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Rsx parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, rsx_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_rsx_update(SEXP e, SEXP a0) {
+  struct Rsx *h = (struct Rsx *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_rsx_update(h, Rf_asReal(a0)));
+}
+SEXP wk_rsx_batch(SEXP e, SEXP a0) {
+  struct Rsx *h = (struct Rsx *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_rsx_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_rsx_reset(SEXP e) {
+  struct Rsx *h = (struct Rsx *)R_ExternalPtrAddr(e);
+  wickra_rsx_reset(h);
+  return R_NilValue;
+}
+
+static void run_bars_fin(SEXP e) {
+  struct RunBars *h = (struct RunBars *)R_ExternalPtrAddr(e);
+  if (h) wickra_run_bars_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_run_bars_new(SEXP a0) {
+  struct RunBars *h = wickra_run_bars_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid RunBars parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, run_bars_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_run_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct RunBars *h = (struct RunBars *)R_ExternalPtrAddr(e);
+  struct WickraRunBar buf[64];
+  size_t n = wickra_run_bars_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), buf, 64);
+  SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 6));
+  for (size_t i = 0; i < n; i++) {
+    REAL(r)[i + n * 0] = (double)buf[i].open;
+    REAL(r)[i + n * 1] = (double)buf[i].high;
+    REAL(r)[i + n * 2] = (double)buf[i].low;
+    REAL(r)[i + n * 3] = (double)buf[i].close;
+    REAL(r)[i + n * 4] = (double)buf[i].length;
+    REAL(r)[i + n * 5] = (double)buf[i].direction;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 6));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("high"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("low"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("close"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("length"));
+  SET_STRING_ELT(cn, 5, Rf_mkChar("direction"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(r, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return r;
+}
+SEXP wk_run_bars_reset(SEXP e) {
+  struct RunBars *h = (struct RunBars *)R_ExternalPtrAddr(e);
+  wickra_run_bars_reset(h);
+  return R_NilValue;
+}
+
+static void rvi_fin(SEXP e) {
+  struct Rvi *h = (struct Rvi *)R_ExternalPtrAddr(e);
+  if (h) wickra_rvi_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_rvi_new(SEXP a0) {
+  struct Rvi *h = wickra_rvi_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Rvi parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, rvi_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_rvi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Rvi *h = (struct Rvi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_rvi_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_rvi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Rvi *h = (struct Rvi *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_rvi_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_rvi_reset(SEXP e) {
+  struct Rvi *h = (struct Rvi *)R_ExternalPtrAddr(e);
+  wickra_rvi_reset(h);
+  return R_NilValue;
+}
+
+static void rvi_volatility_fin(SEXP e) {
+  struct RviVolatility *h = (struct RviVolatility *)R_ExternalPtrAddr(e);
+  if (h) wickra_rvi_volatility_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_rvi_volatility_new(SEXP a0) {
+  struct RviVolatility *h = wickra_rvi_volatility_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid RviVolatility parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, rvi_volatility_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_rvi_volatility_update(SEXP e, SEXP a0) {
+  struct RviVolatility *h = (struct RviVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_rvi_volatility_update(h, Rf_asReal(a0)));
+}
+SEXP wk_rvi_volatility_batch(SEXP e, SEXP a0) {
+  struct RviVolatility *h = (struct RviVolatility *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_rvi_volatility_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_rvi_volatility_reset(SEXP e) {
+  struct RviVolatility *h = (struct RviVolatility *)R_ExternalPtrAddr(e);
+  wickra_rvi_volatility_reset(h);
+  return R_NilValue;
+}
+
+static void rwi_fin(SEXP e) {
+  struct Rwi *h = (struct Rwi *)R_ExternalPtrAddr(e);
+  if (h) wickra_rwi_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_rwi_new(SEXP a0) {
+  struct Rwi *h = wickra_rwi_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Rwi parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, rwi_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_rwi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Rwi *h = (struct Rwi *)R_ExternalPtrAddr(e);
+  struct WickraRwiOutput out;
+  int ok = wickra_rwi_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.high : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.low : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("high"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("low"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_rwi_reset(SEXP e) {
+  struct Rwi *h = (struct Rwi *)R_ExternalPtrAddr(e);
+  wickra_rwi_reset(h);
+  return R_NilValue;
+}
+
+static void sample_entropy_fin(SEXP e) {
+  struct SampleEntropy *h = (struct SampleEntropy *)R_ExternalPtrAddr(e);
+  if (h) wickra_sample_entropy_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_sample_entropy_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct SampleEntropy *h = wickra_sample_entropy_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), Rf_asReal(a2));
+  if (!h) Rf_error("invalid SampleEntropy parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, sample_entropy_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_sample_entropy_update(SEXP e, SEXP a0) {
+  struct SampleEntropy *h = (struct SampleEntropy *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_sample_entropy_update(h, Rf_asReal(a0)));
+}
+SEXP wk_sample_entropy_batch(SEXP e, SEXP a0) {
+  struct SampleEntropy *h = (struct SampleEntropy *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_sample_entropy_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_sample_entropy_reset(SEXP e) {
+  struct SampleEntropy *h = (struct SampleEntropy *)R_ExternalPtrAddr(e);
+  wickra_sample_entropy_reset(h);
+  return R_NilValue;
+}
+
+static void sar_ext_fin(SEXP e) {
+  struct SarExt *h = (struct SarExt *)R_ExternalPtrAddr(e);
+  if (h) wickra_sar_ext_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_sar_ext_new(SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7) {
+  struct SarExt *h = wickra_sar_ext_new(Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7));
+  if (!h) Rf_error("invalid SarExt parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, sar_ext_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_sar_ext_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct SarExt *h = (struct SarExt *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_sar_ext_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_sar_ext_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct SarExt *h = (struct SarExt *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_sar_ext_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_sar_ext_reset(SEXP e) {
+  struct SarExt *h = (struct SarExt *)R_ExternalPtrAddr(e);
+  wickra_sar_ext_reset(h);
+  return R_NilValue;
+}
+
+static void seasonal_z_score_fin(SEXP e) {
+  struct SeasonalZScore *h = (struct SeasonalZScore *)R_ExternalPtrAddr(e);
+  if (h) wickra_seasonal_z_score_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_seasonal_z_score_new(SEXP a0) {
+  struct SeasonalZScore *h = wickra_seasonal_z_score_new((int32_t)Rf_asInteger(a0));
+  if (!h) Rf_error("invalid SeasonalZScore parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, seasonal_z_score_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_seasonal_z_score_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct SeasonalZScore *h = (struct SeasonalZScore *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_seasonal_z_score_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_seasonal_z_score_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct SeasonalZScore *h = (struct SeasonalZScore *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_seasonal_z_score_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_seasonal_z_score_reset(SEXP e) {
+  struct SeasonalZScore *h = (struct SeasonalZScore *)R_ExternalPtrAddr(e);
+  wickra_seasonal_z_score_reset(h);
+  return R_NilValue;
+}
+
+static void separating_lines_fin(SEXP e) {
+  struct SeparatingLines *h = (struct SeparatingLines *)R_ExternalPtrAddr(e);
+  if (h) wickra_separating_lines_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_separating_lines_new(void) {
+  struct SeparatingLines *h = wickra_separating_lines_new();
+  if (!h) Rf_error("invalid SeparatingLines parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, separating_lines_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_separating_lines_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct SeparatingLines *h = (struct SeparatingLines *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_separating_lines_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_separating_lines_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct SeparatingLines *h = (struct SeparatingLines *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_separating_lines_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_separating_lines_reset(SEXP e) {
+  struct SeparatingLines *h = (struct SeparatingLines *)R_ExternalPtrAddr(e);
+  wickra_separating_lines_reset(h);
+  return R_NilValue;
+}
+
+static void session_high_low_fin(SEXP e) {
+  struct SessionHighLow *h = (struct SessionHighLow *)R_ExternalPtrAddr(e);
+  if (h) wickra_session_high_low_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_session_high_low_new(SEXP a0) {
+  struct SessionHighLow *h = wickra_session_high_low_new((int32_t)Rf_asInteger(a0));
+  if (!h) Rf_error("invalid SessionHighLow parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, session_high_low_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_session_high_low_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct SessionHighLow *h = (struct SessionHighLow *)R_ExternalPtrAddr(e);
+  struct WickraSessionHighLowOutput out;
+  int ok = wickra_session_high_low_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.high : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.low : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("high"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("low"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_session_high_low_reset(SEXP e) {
+  struct SessionHighLow *h = (struct SessionHighLow *)R_ExternalPtrAddr(e);
+  wickra_session_high_low_reset(h);
+  return R_NilValue;
+}
+
+static void session_range_fin(SEXP e) {
+  struct SessionRange *h = (struct SessionRange *)R_ExternalPtrAddr(e);
+  if (h) wickra_session_range_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_session_range_new(SEXP a0) {
+  struct SessionRange *h = wickra_session_range_new((int32_t)Rf_asInteger(a0));
+  if (!h) Rf_error("invalid SessionRange parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, session_range_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_session_range_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct SessionRange *h = (struct SessionRange *)R_ExternalPtrAddr(e);
+  struct WickraSessionRangeOutput out;
+  int ok = wickra_session_range_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.asia : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.eu : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.us : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("asia"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("eu"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("us"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_session_range_reset(SEXP e) {
+  struct SessionRange *h = (struct SessionRange *)R_ExternalPtrAddr(e);
+  wickra_session_range_reset(h);
+  return R_NilValue;
+}
+
+static void session_vwap_fin(SEXP e) {
+  struct SessionVwap *h = (struct SessionVwap *)R_ExternalPtrAddr(e);
+  if (h) wickra_session_vwap_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_session_vwap_new(SEXP a0) {
+  struct SessionVwap *h = wickra_session_vwap_new((int32_t)Rf_asInteger(a0));
+  if (!h) Rf_error("invalid SessionVwap parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, session_vwap_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_session_vwap_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct SessionVwap *h = (struct SessionVwap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_session_vwap_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_session_vwap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct SessionVwap *h = (struct SessionVwap *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_session_vwap_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_session_vwap_reset(SEXP e) {
+  struct SessionVwap *h = (struct SessionVwap *)R_ExternalPtrAddr(e);
+  wickra_session_vwap_reset(h);
+  return R_NilValue;
+}
+
+static void shannon_entropy_fin(SEXP e) {
+  struct ShannonEntropy *h = (struct ShannonEntropy *)R_ExternalPtrAddr(e);
+  if (h) wickra_shannon_entropy_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_shannon_entropy_new(SEXP a0, SEXP a1) {
+  struct ShannonEntropy *h = wickra_shannon_entropy_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid ShannonEntropy parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, shannon_entropy_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_shannon_entropy_update(SEXP e, SEXP a0) {
+  struct ShannonEntropy *h = (struct ShannonEntropy *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_shannon_entropy_update(h, Rf_asReal(a0)));
+}
+SEXP wk_shannon_entropy_batch(SEXP e, SEXP a0) {
+  struct ShannonEntropy *h = (struct ShannonEntropy *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_shannon_entropy_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_shannon_entropy_reset(SEXP e) {
+  struct ShannonEntropy *h = (struct ShannonEntropy *)R_ExternalPtrAddr(e);
+  wickra_shannon_entropy_reset(h);
+  return R_NilValue;
+}
+
+static void shark_fin(SEXP e) {
+  struct Shark *h = (struct Shark *)R_ExternalPtrAddr(e);
+  if (h) wickra_shark_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_shark_new(void) {
+  struct Shark *h = wickra_shark_new();
+  if (!h) Rf_error("invalid Shark parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, shark_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_shark_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Shark *h = (struct Shark *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_shark_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_shark_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Shark *h = (struct Shark *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_shark_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_shark_reset(SEXP e) {
+  struct Shark *h = (struct Shark *)R_ExternalPtrAddr(e);
+  wickra_shark_reset(h);
+  return R_NilValue;
+}
+
+static void sharpe_ratio_fin(SEXP e) {
+  struct SharpeRatio *h = (struct SharpeRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_sharpe_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_sharpe_ratio_new(SEXP a0, SEXP a1) {
+  struct SharpeRatio *h = wickra_sharpe_ratio_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid SharpeRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, sharpe_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_sharpe_ratio_update(SEXP e, SEXP a0) {
+  struct SharpeRatio *h = (struct SharpeRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_sharpe_ratio_update(h, Rf_asReal(a0)));
+}
+SEXP wk_sharpe_ratio_batch(SEXP e, SEXP a0) {
+  struct SharpeRatio *h = (struct SharpeRatio *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_sharpe_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_sharpe_ratio_reset(SEXP e) {
+  struct SharpeRatio *h = (struct SharpeRatio *)R_ExternalPtrAddr(e);
+  wickra_sharpe_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void shooting_star_fin(SEXP e) {
+  struct ShootingStar *h = (struct ShootingStar *)R_ExternalPtrAddr(e);
+  if (h) wickra_shooting_star_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_shooting_star_new(void) {
+  struct ShootingStar *h = wickra_shooting_star_new();
+  if (!h) Rf_error("invalid ShootingStar parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, shooting_star_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_shooting_star_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ShootingStar *h = (struct ShootingStar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_shooting_star_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_shooting_star_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ShootingStar *h = (struct ShootingStar *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_shooting_star_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_shooting_star_reset(SEXP e) {
+  struct ShootingStar *h = (struct ShootingStar *)R_ExternalPtrAddr(e);
+  wickra_shooting_star_reset(h);
+  return R_NilValue;
+}
+
+static void short_line_fin(SEXP e) {
+  struct ShortLine *h = (struct ShortLine *)R_ExternalPtrAddr(e);
+  if (h) wickra_short_line_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_short_line_new(void) {
+  struct ShortLine *h = wickra_short_line_new();
+  if (!h) Rf_error("invalid ShortLine parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, short_line_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_short_line_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ShortLine *h = (struct ShortLine *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_short_line_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_short_line_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ShortLine *h = (struct ShortLine *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_short_line_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_short_line_reset(SEXP e) {
+  struct ShortLine *h = (struct ShortLine *)R_ExternalPtrAddr(e);
+  wickra_short_line_reset(h);
+  return R_NilValue;
+}
+
+static void signed_volume_fin(SEXP e) {
+  struct SignedVolume *h = (struct SignedVolume *)R_ExternalPtrAddr(e);
+  if (h) wickra_signed_volume_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_signed_volume_new(void) {
+  struct SignedVolume *h = wickra_signed_volume_new();
+  if (!h) Rf_error("invalid SignedVolume parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, signed_volume_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_signed_volume_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct SignedVolume *h = (struct SignedVolume *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_signed_volume_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
+}
+SEXP wk_signed_volume_reset(SEXP e) {
+  struct SignedVolume *h = (struct SignedVolume *)R_ExternalPtrAddr(e);
+  wickra_signed_volume_reset(h);
+  return R_NilValue;
+}
+
+static void sine_wave_fin(SEXP e) {
+  struct SineWave *h = (struct SineWave *)R_ExternalPtrAddr(e);
+  if (h) wickra_sine_wave_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_sine_wave_new(void) {
+  struct SineWave *h = wickra_sine_wave_new();
+  if (!h) Rf_error("invalid SineWave parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, sine_wave_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_sine_wave_update(SEXP e, SEXP a0) {
+  struct SineWave *h = (struct SineWave *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_sine_wave_update(h, Rf_asReal(a0)));
+}
+SEXP wk_sine_wave_batch(SEXP e, SEXP a0) {
+  struct SineWave *h = (struct SineWave *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_sine_wave_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_sine_wave_reset(SEXP e) {
+  struct SineWave *h = (struct SineWave *)R_ExternalPtrAddr(e);
+  wickra_sine_wave_reset(h);
+  return R_NilValue;
+}
+
+static void sine_weighted_ma_fin(SEXP e) {
+  struct SineWeightedMa *h = (struct SineWeightedMa *)R_ExternalPtrAddr(e);
+  if (h) wickra_sine_weighted_ma_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_sine_weighted_ma_new(SEXP a0) {
+  struct SineWeightedMa *h = wickra_sine_weighted_ma_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid SineWeightedMa parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, sine_weighted_ma_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_sine_weighted_ma_update(SEXP e, SEXP a0) {
+  struct SineWeightedMa *h = (struct SineWeightedMa *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_sine_weighted_ma_update(h, Rf_asReal(a0)));
+}
+SEXP wk_sine_weighted_ma_batch(SEXP e, SEXP a0) {
+  struct SineWeightedMa *h = (struct SineWeightedMa *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_sine_weighted_ma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_sine_weighted_ma_reset(SEXP e) {
+  struct SineWeightedMa *h = (struct SineWeightedMa *)R_ExternalPtrAddr(e);
+  wickra_sine_weighted_ma_reset(h);
+  return R_NilValue;
+}
+
+static void single_prints_fin(SEXP e) {
+  struct SinglePrints *h = (struct SinglePrints *)R_ExternalPtrAddr(e);
+  if (h) wickra_single_prints_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_single_prints_new(SEXP a0, SEXP a1) {
+  struct SinglePrints *h = wickra_single_prints_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid SinglePrints parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, single_prints_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_single_prints_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct SinglePrints *h = (struct SinglePrints *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_single_prints_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_single_prints_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct SinglePrints *h = (struct SinglePrints *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_single_prints_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_single_prints_reset(SEXP e) {
+  struct SinglePrints *h = (struct SinglePrints *)R_ExternalPtrAddr(e);
+  wickra_single_prints_reset(h);
+  return R_NilValue;
+}
+
+static void skewness_fin(SEXP e) {
+  struct Skewness *h = (struct Skewness *)R_ExternalPtrAddr(e);
+  if (h) wickra_skewness_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_skewness_new(SEXP a0) {
+  struct Skewness *h = wickra_skewness_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Skewness parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, skewness_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_skewness_update(SEXP e, SEXP a0) {
+  struct Skewness *h = (struct Skewness *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_skewness_update(h, Rf_asReal(a0)));
+}
+SEXP wk_skewness_batch(SEXP e, SEXP a0) {
+  struct Skewness *h = (struct Skewness *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_skewness_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_skewness_reset(SEXP e) {
+  struct Skewness *h = (struct Skewness *)R_ExternalPtrAddr(e);
+  wickra_skewness_reset(h);
+  return R_NilValue;
+}
+
+static void sma_fin(SEXP e) {
+  struct Sma *h = (struct Sma *)R_ExternalPtrAddr(e);
+  if (h) wickra_sma_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_sma_new(SEXP a0) {
+  struct Sma *h = wickra_sma_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Sma parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, sma_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_sma_update(SEXP e, SEXP a0) {
+  struct Sma *h = (struct Sma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_sma_update(h, Rf_asReal(a0)));
+}
+SEXP wk_sma_batch(SEXP e, SEXP a0) {
+  struct Sma *h = (struct Sma *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_sma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_sma_reset(SEXP e) {
+  struct Sma *h = (struct Sma *)R_ExternalPtrAddr(e);
+  wickra_sma_reset(h);
+  return R_NilValue;
+}
+
+static void smi_fin(SEXP e) {
+  struct Smi *h = (struct Smi *)R_ExternalPtrAddr(e);
+  if (h) wickra_smi_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_smi_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct Smi *h = wickra_smi_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2));
+  if (!h) Rf_error("invalid Smi parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, smi_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_smi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Smi *h = (struct Smi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_smi_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_smi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Smi *h = (struct Smi *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_smi_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_smi_reset(SEXP e) {
+  struct Smi *h = (struct Smi *)R_ExternalPtrAddr(e);
+  wickra_smi_reset(h);
+  return R_NilValue;
+}
+
+static void smma_fin(SEXP e) {
+  struct Smma *h = (struct Smma *)R_ExternalPtrAddr(e);
+  if (h) wickra_smma_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_smma_new(SEXP a0) {
+  struct Smma *h = wickra_smma_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Smma parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, smma_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_smma_update(SEXP e, SEXP a0) {
+  struct Smma *h = (struct Smma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_smma_update(h, Rf_asReal(a0)));
+}
+SEXP wk_smma_batch(SEXP e, SEXP a0) {
+  struct Smma *h = (struct Smma *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_smma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_smma_reset(SEXP e) {
+  struct Smma *h = (struct Smma *)R_ExternalPtrAddr(e);
+  wickra_smma_reset(h);
+  return R_NilValue;
+}
+
+static void smoothed_heikin_ashi_fin(SEXP e) {
+  struct SmoothedHeikinAshi *h = (struct SmoothedHeikinAshi *)R_ExternalPtrAddr(e);
+  if (h) wickra_smoothed_heikin_ashi_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_smoothed_heikin_ashi_new(SEXP a0) {
+  struct SmoothedHeikinAshi *h = wickra_smoothed_heikin_ashi_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid SmoothedHeikinAshi parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, smoothed_heikin_ashi_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_smoothed_heikin_ashi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct SmoothedHeikinAshi *h = (struct SmoothedHeikinAshi *)R_ExternalPtrAddr(e);
+  struct WickraSmoothedHeikinAshiOutput out;
+  int ok = wickra_smoothed_heikin_ashi_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 4));
+  REAL(r)[0] = ok ? (double)out.open : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.high : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.low : NA_REAL;
+  REAL(r)[3] = ok ? (double)out.close : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 4));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("high"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("low"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("close"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_smoothed_heikin_ashi_reset(SEXP e) {
+  struct SmoothedHeikinAshi *h = (struct SmoothedHeikinAshi *)R_ExternalPtrAddr(e);
+  wickra_smoothed_heikin_ashi_reset(h);
+  return R_NilValue;
+}
+
+static void sortino_ratio_fin(SEXP e) {
+  struct SortinoRatio *h = (struct SortinoRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_sortino_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_sortino_ratio_new(SEXP a0, SEXP a1) {
+  struct SortinoRatio *h = wickra_sortino_ratio_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid SortinoRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, sortino_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_sortino_ratio_update(SEXP e, SEXP a0) {
+  struct SortinoRatio *h = (struct SortinoRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_sortino_ratio_update(h, Rf_asReal(a0)));
+}
+SEXP wk_sortino_ratio_batch(SEXP e, SEXP a0) {
+  struct SortinoRatio *h = (struct SortinoRatio *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_sortino_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_sortino_ratio_reset(SEXP e) {
+  struct SortinoRatio *h = (struct SortinoRatio *)R_ExternalPtrAddr(e);
+  wickra_sortino_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void spearman_correlation_fin(SEXP e) {
+  struct SpearmanCorrelation *h = (struct SpearmanCorrelation *)R_ExternalPtrAddr(e);
+  if (h) wickra_spearman_correlation_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_spearman_correlation_new(SEXP a0) {
+  struct SpearmanCorrelation *h = wickra_spearman_correlation_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid SpearmanCorrelation parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, spearman_correlation_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_spearman_correlation_update(SEXP e, SEXP a0, SEXP a1) {
+  struct SpearmanCorrelation *h = (struct SpearmanCorrelation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_spearman_correlation_update(h, Rf_asReal(a0), Rf_asReal(a1)));
+}
+SEXP wk_spearman_correlation_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct SpearmanCorrelation *h = (struct SpearmanCorrelation *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_spearman_correlation_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_spearman_correlation_reset(SEXP e) {
+  struct SpearmanCorrelation *h = (struct SpearmanCorrelation *)R_ExternalPtrAddr(e);
+  wickra_spearman_correlation_reset(h);
+  return R_NilValue;
+}
+
+static void spinning_top_fin(SEXP e) {
+  struct SpinningTop *h = (struct SpinningTop *)R_ExternalPtrAddr(e);
+  if (h) wickra_spinning_top_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_spinning_top_new(void) {
+  struct SpinningTop *h = wickra_spinning_top_new();
+  if (!h) Rf_error("invalid SpinningTop parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, spinning_top_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_spinning_top_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct SpinningTop *h = (struct SpinningTop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_spinning_top_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_spinning_top_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct SpinningTop *h = (struct SpinningTop *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_spinning_top_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_spinning_top_reset(SEXP e) {
+  struct SpinningTop *h = (struct SpinningTop *)R_ExternalPtrAddr(e);
+  wickra_spinning_top_reset(h);
+  return R_NilValue;
+}
+
+static void spread_ar1_coefficient_fin(SEXP e) {
+  struct SpreadAr1Coefficient *h = (struct SpreadAr1Coefficient *)R_ExternalPtrAddr(e);
+  if (h) wickra_spread_ar1_coefficient_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_spread_ar1_coefficient_new(SEXP a0) {
+  struct SpreadAr1Coefficient *h = wickra_spread_ar1_coefficient_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid SpreadAr1Coefficient parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, spread_ar1_coefficient_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_spread_ar1_coefficient_update(SEXP e, SEXP a0, SEXP a1) {
+  struct SpreadAr1Coefficient *h = (struct SpreadAr1Coefficient *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_spread_ar1_coefficient_update(h, Rf_asReal(a0), Rf_asReal(a1)));
+}
+SEXP wk_spread_ar1_coefficient_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct SpreadAr1Coefficient *h = (struct SpreadAr1Coefficient *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_spread_ar1_coefficient_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_spread_ar1_coefficient_reset(SEXP e) {
+  struct SpreadAr1Coefficient *h = (struct SpreadAr1Coefficient *)R_ExternalPtrAddr(e);
+  wickra_spread_ar1_coefficient_reset(h);
+  return R_NilValue;
+}
+
+static void spread_bollinger_bands_fin(SEXP e) {
+  struct SpreadBollingerBands *h = (struct SpreadBollingerBands *)R_ExternalPtrAddr(e);
+  if (h) wickra_spread_bollinger_bands_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_spread_bollinger_bands_new(SEXP a0, SEXP a1) {
+  struct SpreadBollingerBands *h = wickra_spread_bollinger_bands_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid SpreadBollingerBands parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, spread_bollinger_bands_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_spread_bollinger_bands_update(SEXP e, SEXP a0, SEXP a1) {
+  struct SpreadBollingerBands *h = (struct SpreadBollingerBands *)R_ExternalPtrAddr(e);
+  struct WickraSpreadBollingerBandsOutput out;
+  int ok = wickra_spread_bollinger_bands_update(h, Rf_asReal(a0), Rf_asReal(a1), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 4));
+  REAL(r)[0] = ok ? (double)out.middle : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.upper : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.lower : NA_REAL;
+  REAL(r)[3] = ok ? (double)out.percent_b : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 4));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("middle"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("upper"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("lower"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("percent_b"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_spread_bollinger_bands_reset(SEXP e) {
+  struct SpreadBollingerBands *h = (struct SpreadBollingerBands *)R_ExternalPtrAddr(e);
+  wickra_spread_bollinger_bands_reset(h);
+  return R_NilValue;
+}
+
+static void spread_hurst_fin(SEXP e) {
+  struct SpreadHurst *h = (struct SpreadHurst *)R_ExternalPtrAddr(e);
+  if (h) wickra_spread_hurst_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_spread_hurst_new(SEXP a0) {
+  struct SpreadHurst *h = wickra_spread_hurst_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid SpreadHurst parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, spread_hurst_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_spread_hurst_update(SEXP e, SEXP a0, SEXP a1) {
+  struct SpreadHurst *h = (struct SpreadHurst *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_spread_hurst_update(h, Rf_asReal(a0), Rf_asReal(a1)));
+}
+SEXP wk_spread_hurst_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct SpreadHurst *h = (struct SpreadHurst *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_spread_hurst_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_spread_hurst_reset(SEXP e) {
+  struct SpreadHurst *h = (struct SpreadHurst *)R_ExternalPtrAddr(e);
+  wickra_spread_hurst_reset(h);
+  return R_NilValue;
+}
+
+static void stalled_pattern_fin(SEXP e) {
+  struct StalledPattern *h = (struct StalledPattern *)R_ExternalPtrAddr(e);
+  if (h) wickra_stalled_pattern_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_stalled_pattern_new(void) {
+  struct StalledPattern *h = wickra_stalled_pattern_new();
+  if (!h) Rf_error("invalid StalledPattern parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, stalled_pattern_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_stalled_pattern_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct StalledPattern *h = (struct StalledPattern *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_stalled_pattern_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_stalled_pattern_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct StalledPattern *h = (struct StalledPattern *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_stalled_pattern_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_stalled_pattern_reset(SEXP e) {
+  struct StalledPattern *h = (struct StalledPattern *)R_ExternalPtrAddr(e);
+  wickra_stalled_pattern_reset(h);
+  return R_NilValue;
+}
+
+static void standard_error_fin(SEXP e) {
+  struct StandardError *h = (struct StandardError *)R_ExternalPtrAddr(e);
+  if (h) wickra_standard_error_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_standard_error_new(SEXP a0) {
+  struct StandardError *h = wickra_standard_error_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid StandardError parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, standard_error_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_standard_error_update(SEXP e, SEXP a0) {
+  struct StandardError *h = (struct StandardError *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_standard_error_update(h, Rf_asReal(a0)));
+}
+SEXP wk_standard_error_batch(SEXP e, SEXP a0) {
+  struct StandardError *h = (struct StandardError *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_standard_error_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_standard_error_reset(SEXP e) {
+  struct StandardError *h = (struct StandardError *)R_ExternalPtrAddr(e);
+  wickra_standard_error_reset(h);
+  return R_NilValue;
+}
+
+static void standard_error_bands_fin(SEXP e) {
+  struct StandardErrorBands *h = (struct StandardErrorBands *)R_ExternalPtrAddr(e);
+  if (h) wickra_standard_error_bands_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_standard_error_bands_new(SEXP a0, SEXP a1) {
+  struct StandardErrorBands *h = wickra_standard_error_bands_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid StandardErrorBands parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, standard_error_bands_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_standard_error_bands_update(SEXP e, SEXP a0) {
+  struct StandardErrorBands *h = (struct StandardErrorBands *)R_ExternalPtrAddr(e);
+  struct WickraStandardErrorBandsOutput out;
+  int ok = wickra_standard_error_bands_update(h, Rf_asReal(a0), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.upper : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.middle : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.lower : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("lower"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_standard_error_bands_reset(SEXP e) {
+  struct StandardErrorBands *h = (struct StandardErrorBands *)R_ExternalPtrAddr(e);
+  wickra_standard_error_bands_reset(h);
+  return R_NilValue;
+}
+
+static void starc_bands_fin(SEXP e) {
+  struct StarcBands *h = (struct StarcBands *)R_ExternalPtrAddr(e);
+  if (h) wickra_starc_bands_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_starc_bands_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct StarcBands *h = wickra_starc_bands_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), Rf_asReal(a2));
+  if (!h) Rf_error("invalid StarcBands parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, starc_bands_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_starc_bands_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct StarcBands *h = (struct StarcBands *)R_ExternalPtrAddr(e);
+  struct WickraStarcBandsOutput out;
+  int ok = wickra_starc_bands_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.upper : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.middle : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.lower : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("lower"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_starc_bands_reset(SEXP e) {
+  struct StarcBands *h = (struct StarcBands *)R_ExternalPtrAddr(e);
+  wickra_starc_bands_reset(h);
+  return R_NilValue;
+}
+
+static void stc_fin(SEXP e) {
+  struct Stc *h = (struct Stc *)R_ExternalPtrAddr(e);
+  if (h) wickra_stc_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_stc_new(SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct Stc *h = wickra_stc_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2), Rf_asReal(a3));
+  if (!h) Rf_error("invalid Stc parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, stc_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_stc_update(SEXP e, SEXP a0) {
+  struct Stc *h = (struct Stc *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_stc_update(h, Rf_asReal(a0)));
+}
+SEXP wk_stc_batch(SEXP e, SEXP a0) {
+  struct Stc *h = (struct Stc *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_stc_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_stc_reset(SEXP e) {
+  struct Stc *h = (struct Stc *)R_ExternalPtrAddr(e);
+  wickra_stc_reset(h);
+  return R_NilValue;
+}
+
+static void std_dev_fin(SEXP e) {
+  struct StdDev *h = (struct StdDev *)R_ExternalPtrAddr(e);
+  if (h) wickra_std_dev_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_std_dev_new(SEXP a0) {
+  struct StdDev *h = wickra_std_dev_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid StdDev parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, std_dev_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_std_dev_update(SEXP e, SEXP a0) {
+  struct StdDev *h = (struct StdDev *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_std_dev_update(h, Rf_asReal(a0)));
+}
+SEXP wk_std_dev_batch(SEXP e, SEXP a0) {
+  struct StdDev *h = (struct StdDev *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_std_dev_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_std_dev_reset(SEXP e) {
+  struct StdDev *h = (struct StdDev *)R_ExternalPtrAddr(e);
+  wickra_std_dev_reset(h);
+  return R_NilValue;
+}
+
+static void step_trailing_stop_fin(SEXP e) {
+  struct StepTrailingStop *h = (struct StepTrailingStop *)R_ExternalPtrAddr(e);
+  if (h) wickra_step_trailing_stop_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_step_trailing_stop_new(SEXP a0) {
+  struct StepTrailingStop *h = wickra_step_trailing_stop_new(Rf_asReal(a0));
+  if (!h) Rf_error("invalid StepTrailingStop parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, step_trailing_stop_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_step_trailing_stop_update(SEXP e, SEXP a0) {
+  struct StepTrailingStop *h = (struct StepTrailingStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_step_trailing_stop_update(h, Rf_asReal(a0)));
+}
+SEXP wk_step_trailing_stop_batch(SEXP e, SEXP a0) {
+  struct StepTrailingStop *h = (struct StepTrailingStop *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_step_trailing_stop_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_step_trailing_stop_reset(SEXP e) {
+  struct StepTrailingStop *h = (struct StepTrailingStop *)R_ExternalPtrAddr(e);
+  wickra_step_trailing_stop_reset(h);
+  return R_NilValue;
+}
+
+static void sterling_ratio_fin(SEXP e) {
+  struct SterlingRatio *h = (struct SterlingRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_sterling_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_sterling_ratio_new(SEXP a0) {
+  struct SterlingRatio *h = wickra_sterling_ratio_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid SterlingRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, sterling_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_sterling_ratio_update(SEXP e, SEXP a0) {
+  struct SterlingRatio *h = (struct SterlingRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_sterling_ratio_update(h, Rf_asReal(a0)));
+}
+SEXP wk_sterling_ratio_batch(SEXP e, SEXP a0) {
+  struct SterlingRatio *h = (struct SterlingRatio *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_sterling_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_sterling_ratio_reset(SEXP e) {
+  struct SterlingRatio *h = (struct SterlingRatio *)R_ExternalPtrAddr(e);
+  wickra_sterling_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void stick_sandwich_fin(SEXP e) {
+  struct StickSandwich *h = (struct StickSandwich *)R_ExternalPtrAddr(e);
+  if (h) wickra_stick_sandwich_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_stick_sandwich_new(void) {
+  struct StickSandwich *h = wickra_stick_sandwich_new();
+  if (!h) Rf_error("invalid StickSandwich parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, stick_sandwich_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_stick_sandwich_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct StickSandwich *h = (struct StickSandwich *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_stick_sandwich_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_stick_sandwich_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct StickSandwich *h = (struct StickSandwich *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_stick_sandwich_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_stick_sandwich_reset(SEXP e) {
+  struct StickSandwich *h = (struct StickSandwich *)R_ExternalPtrAddr(e);
+  wickra_stick_sandwich_reset(h);
+  return R_NilValue;
+}
+
+static void stoch_rsi_fin(SEXP e) {
+  struct StochRsi *h = (struct StochRsi *)R_ExternalPtrAddr(e);
+  if (h) wickra_stoch_rsi_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_stoch_rsi_new(SEXP a0, SEXP a1) {
+  struct StochRsi *h = wickra_stoch_rsi_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid StochRsi parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, stoch_rsi_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_stoch_rsi_update(SEXP e, SEXP a0) {
+  struct StochRsi *h = (struct StochRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_stoch_rsi_update(h, Rf_asReal(a0)));
+}
+SEXP wk_stoch_rsi_batch(SEXP e, SEXP a0) {
+  struct StochRsi *h = (struct StochRsi *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_stoch_rsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_stoch_rsi_reset(SEXP e) {
+  struct StochRsi *h = (struct StochRsi *)R_ExternalPtrAddr(e);
+  wickra_stoch_rsi_reset(h);
+  return R_NilValue;
+}
+
+static void stochastic_fin(SEXP e) {
+  struct Stochastic *h = (struct Stochastic *)R_ExternalPtrAddr(e);
+  if (h) wickra_stochastic_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_stochastic_new(SEXP a0, SEXP a1) {
+  struct Stochastic *h = wickra_stochastic_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid Stochastic parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, stochastic_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_stochastic_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Stochastic *h = (struct Stochastic *)R_ExternalPtrAddr(e);
+  struct WickraStochasticOutput out;
+  int ok = wickra_stochastic_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.k : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.d : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("k"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("d"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_stochastic_reset(SEXP e) {
+  struct Stochastic *h = (struct Stochastic *)R_ExternalPtrAddr(e);
+  wickra_stochastic_reset(h);
+  return R_NilValue;
+}
+
+static void stochastic_cci_fin(SEXP e) {
+  struct StochasticCci *h = (struct StochasticCci *)R_ExternalPtrAddr(e);
+  if (h) wickra_stochastic_cci_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_stochastic_cci_new(SEXP a0) {
+  struct StochasticCci *h = wickra_stochastic_cci_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid StochasticCci parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, stochastic_cci_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_stochastic_cci_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct StochasticCci *h = (struct StochasticCci *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_stochastic_cci_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_stochastic_cci_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct StochasticCci *h = (struct StochasticCci *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_stochastic_cci_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_stochastic_cci_reset(SEXP e) {
+  struct StochasticCci *h = (struct StochasticCci *)R_ExternalPtrAddr(e);
+  wickra_stochastic_cci_reset(h);
+  return R_NilValue;
+}
+
+static void super_smoother_fin(SEXP e) {
+  struct SuperSmoother *h = (struct SuperSmoother *)R_ExternalPtrAddr(e);
+  if (h) wickra_super_smoother_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_super_smoother_new(SEXP a0) {
+  struct SuperSmoother *h = wickra_super_smoother_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid SuperSmoother parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, super_smoother_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_super_smoother_update(SEXP e, SEXP a0) {
+  struct SuperSmoother *h = (struct SuperSmoother *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_super_smoother_update(h, Rf_asReal(a0)));
+}
+SEXP wk_super_smoother_batch(SEXP e, SEXP a0) {
+  struct SuperSmoother *h = (struct SuperSmoother *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_super_smoother_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_super_smoother_reset(SEXP e) {
+  struct SuperSmoother *h = (struct SuperSmoother *)R_ExternalPtrAddr(e);
+  wickra_super_smoother_reset(h);
+  return R_NilValue;
+}
+
+static void super_trend_fin(SEXP e) {
+  struct SuperTrend *h = (struct SuperTrend *)R_ExternalPtrAddr(e);
+  if (h) wickra_super_trend_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_super_trend_new(SEXP a0, SEXP a1) {
+  struct SuperTrend *h = wickra_super_trend_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid SuperTrend parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, super_trend_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_super_trend_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct SuperTrend *h = (struct SuperTrend *)R_ExternalPtrAddr(e);
+  struct WickraSuperTrendOutput out;
+  int ok = wickra_super_trend_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.value : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.direction : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("value"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("direction"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_super_trend_reset(SEXP e) {
+  struct SuperTrend *h = (struct SuperTrend *)R_ExternalPtrAddr(e);
+  wickra_super_trend_reset(h);
+  return R_NilValue;
+}
+
+static void t3_fin(SEXP e) {
+  struct T3 *h = (struct T3 *)R_ExternalPtrAddr(e);
+  if (h) wickra_t3_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_t3_new(SEXP a0, SEXP a1) {
+  struct T3 *h = wickra_t3_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid T3 parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, t3_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_t3_update(SEXP e, SEXP a0) {
+  struct T3 *h = (struct T3 *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_t3_update(h, Rf_asReal(a0)));
+}
+SEXP wk_t3_batch(SEXP e, SEXP a0) {
+  struct T3 *h = (struct T3 *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_t3_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_t3_reset(SEXP e) {
+  struct T3 *h = (struct T3 *)R_ExternalPtrAddr(e);
+  wickra_t3_reset(h);
+  return R_NilValue;
+}
+
+static void tail_ratio_fin(SEXP e) {
+  struct TailRatio *h = (struct TailRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_tail_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_tail_ratio_new(SEXP a0) {
+  struct TailRatio *h = wickra_tail_ratio_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid TailRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, tail_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_tail_ratio_update(SEXP e, SEXP a0) {
+  struct TailRatio *h = (struct TailRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_tail_ratio_update(h, Rf_asReal(a0)));
+}
+SEXP wk_tail_ratio_batch(SEXP e, SEXP a0) {
+  struct TailRatio *h = (struct TailRatio *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_tail_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_tail_ratio_reset(SEXP e) {
+  struct TailRatio *h = (struct TailRatio *)R_ExternalPtrAddr(e);
+  wickra_tail_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void taker_buy_sell_ratio_fin(SEXP e) {
+  struct TakerBuySellRatio *h = (struct TakerBuySellRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_taker_buy_sell_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_taker_buy_sell_ratio_new(void) {
+  struct TakerBuySellRatio *h = wickra_taker_buy_sell_ratio_new();
+  if (!h) Rf_error("invalid TakerBuySellRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, taker_buy_sell_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_taker_buy_sell_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct TakerBuySellRatio *h = (struct TakerBuySellRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_taker_buy_sell_ratio_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_taker_buy_sell_ratio_reset(SEXP e) {
+  struct TakerBuySellRatio *h = (struct TakerBuySellRatio *)R_ExternalPtrAddr(e);
+  wickra_taker_buy_sell_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void takuri_fin(SEXP e) {
+  struct Takuri *h = (struct Takuri *)R_ExternalPtrAddr(e);
+  if (h) wickra_takuri_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_takuri_new(void) {
+  struct Takuri *h = wickra_takuri_new();
+  if (!h) Rf_error("invalid Takuri parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, takuri_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_takuri_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Takuri *h = (struct Takuri *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_takuri_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_takuri_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Takuri *h = (struct Takuri *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_takuri_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_takuri_reset(SEXP e) {
+  struct Takuri *h = (struct Takuri *)R_ExternalPtrAddr(e);
+  wickra_takuri_reset(h);
+  return R_NilValue;
+}
+
+static void tasuki_gap_fin(SEXP e) {
+  struct TasukiGap *h = (struct TasukiGap *)R_ExternalPtrAddr(e);
+  if (h) wickra_tasuki_gap_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_tasuki_gap_new(void) {
+  struct TasukiGap *h = wickra_tasuki_gap_new();
+  if (!h) Rf_error("invalid TasukiGap parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, tasuki_gap_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_tasuki_gap_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TasukiGap *h = (struct TasukiGap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_tasuki_gap_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_tasuki_gap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TasukiGap *h = (struct TasukiGap *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_tasuki_gap_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_tasuki_gap_reset(SEXP e) {
+  struct TasukiGap *h = (struct TasukiGap *)R_ExternalPtrAddr(e);
+  wickra_tasuki_gap_reset(h);
+  return R_NilValue;
+}
+
+static void td_camouflage_fin(SEXP e) {
+  struct TdCamouflage *h = (struct TdCamouflage *)R_ExternalPtrAddr(e);
+  if (h) wickra_td_camouflage_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_td_camouflage_new(void) {
+  struct TdCamouflage *h = wickra_td_camouflage_new();
+  if (!h) Rf_error("invalid TdCamouflage parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, td_camouflage_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_td_camouflage_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdCamouflage *h = (struct TdCamouflage *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_td_camouflage_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_td_camouflage_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdCamouflage *h = (struct TdCamouflage *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_td_camouflage_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_td_camouflage_reset(SEXP e) {
+  struct TdCamouflage *h = (struct TdCamouflage *)R_ExternalPtrAddr(e);
+  wickra_td_camouflage_reset(h);
+  return R_NilValue;
+}
+
+static void td_clop_fin(SEXP e) {
+  struct TdClop *h = (struct TdClop *)R_ExternalPtrAddr(e);
+  if (h) wickra_td_clop_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_td_clop_new(void) {
+  struct TdClop *h = wickra_td_clop_new();
+  if (!h) Rf_error("invalid TdClop parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, td_clop_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_td_clop_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdClop *h = (struct TdClop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_td_clop_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_td_clop_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdClop *h = (struct TdClop *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_td_clop_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_td_clop_reset(SEXP e) {
+  struct TdClop *h = (struct TdClop *)R_ExternalPtrAddr(e);
+  wickra_td_clop_reset(h);
+  return R_NilValue;
+}
+
+static void td_clopwin_fin(SEXP e) {
+  struct TdClopwin *h = (struct TdClopwin *)R_ExternalPtrAddr(e);
+  if (h) wickra_td_clopwin_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_td_clopwin_new(void) {
+  struct TdClopwin *h = wickra_td_clopwin_new();
+  if (!h) Rf_error("invalid TdClopwin parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, td_clopwin_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_td_clopwin_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdClopwin *h = (struct TdClopwin *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_td_clopwin_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_td_clopwin_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdClopwin *h = (struct TdClopwin *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_td_clopwin_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_td_clopwin_reset(SEXP e) {
+  struct TdClopwin *h = (struct TdClopwin *)R_ExternalPtrAddr(e);
+  wickra_td_clopwin_reset(h);
+  return R_NilValue;
+}
+
+static void td_combo_fin(SEXP e) {
+  struct TdCombo *h = (struct TdCombo *)R_ExternalPtrAddr(e);
+  if (h) wickra_td_combo_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_td_combo_new(SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct TdCombo *h = wickra_td_combo_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2), (uintptr_t)Rf_asReal(a3));
+  if (!h) Rf_error("invalid TdCombo parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, td_combo_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_td_combo_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdCombo *h = (struct TdCombo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_td_combo_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_td_combo_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdCombo *h = (struct TdCombo *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_td_combo_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_td_combo_reset(SEXP e) {
+  struct TdCombo *h = (struct TdCombo *)R_ExternalPtrAddr(e);
+  wickra_td_combo_reset(h);
+  return R_NilValue;
+}
+
+static void td_countdown_fin(SEXP e) {
+  struct TdCountdown *h = (struct TdCountdown *)R_ExternalPtrAddr(e);
+  if (h) wickra_td_countdown_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_td_countdown_new(SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct TdCountdown *h = wickra_td_countdown_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2), (uintptr_t)Rf_asReal(a3));
+  if (!h) Rf_error("invalid TdCountdown parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, td_countdown_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_td_countdown_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdCountdown *h = (struct TdCountdown *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_td_countdown_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_td_countdown_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdCountdown *h = (struct TdCountdown *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_td_countdown_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_td_countdown_reset(SEXP e) {
+  struct TdCountdown *h = (struct TdCountdown *)R_ExternalPtrAddr(e);
+  wickra_td_countdown_reset(h);
+  return R_NilValue;
+}
+
+static void td_d_wave_fin(SEXP e) {
+  struct TdDWave *h = (struct TdDWave *)R_ExternalPtrAddr(e);
+  if (h) wickra_td_d_wave_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_td_d_wave_new(SEXP a0) {
+  struct TdDWave *h = wickra_td_d_wave_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid TdDWave parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, td_d_wave_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_td_d_wave_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdDWave *h = (struct TdDWave *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_td_d_wave_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_td_d_wave_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdDWave *h = (struct TdDWave *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_td_d_wave_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_td_d_wave_reset(SEXP e) {
+  struct TdDWave *h = (struct TdDWave *)R_ExternalPtrAddr(e);
+  wickra_td_d_wave_reset(h);
+  return R_NilValue;
+}
+
+static void td_de_marker_fin(SEXP e) {
+  struct TdDeMarker *h = (struct TdDeMarker *)R_ExternalPtrAddr(e);
+  if (h) wickra_td_de_marker_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_td_de_marker_new(SEXP a0) {
+  struct TdDeMarker *h = wickra_td_de_marker_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid TdDeMarker parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, td_de_marker_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_td_de_marker_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdDeMarker *h = (struct TdDeMarker *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_td_de_marker_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_td_de_marker_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdDeMarker *h = (struct TdDeMarker *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_td_de_marker_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_td_de_marker_reset(SEXP e) {
+  struct TdDeMarker *h = (struct TdDeMarker *)R_ExternalPtrAddr(e);
+  wickra_td_de_marker_reset(h);
+  return R_NilValue;
+}
+
+static void td_differential_fin(SEXP e) {
+  struct TdDifferential *h = (struct TdDifferential *)R_ExternalPtrAddr(e);
+  if (h) wickra_td_differential_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_td_differential_new(void) {
+  struct TdDifferential *h = wickra_td_differential_new();
+  if (!h) Rf_error("invalid TdDifferential parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, td_differential_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_td_differential_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdDifferential *h = (struct TdDifferential *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_td_differential_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_td_differential_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdDifferential *h = (struct TdDifferential *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_td_differential_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_td_differential_reset(SEXP e) {
+  struct TdDifferential *h = (struct TdDifferential *)R_ExternalPtrAddr(e);
+  wickra_td_differential_reset(h);
+  return R_NilValue;
+}
+
+static void td_lines_fin(SEXP e) {
+  struct TdLines *h = (struct TdLines *)R_ExternalPtrAddr(e);
+  if (h) wickra_td_lines_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_td_lines_new(SEXP a0, SEXP a1) {
+  struct TdLines *h = wickra_td_lines_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid TdLines parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, td_lines_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_td_lines_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdLines *h = (struct TdLines *)R_ExternalPtrAddr(e);
+  struct WickraTdLinesOutput out;
+  int ok = wickra_td_lines_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.resistance : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.support : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("resistance"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("support"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_td_lines_reset(SEXP e) {
+  struct TdLines *h = (struct TdLines *)R_ExternalPtrAddr(e);
+  wickra_td_lines_reset(h);
+  return R_NilValue;
+}
+
+static void td_moving_average_fin(SEXP e) {
+  struct TdMovingAverage *h = (struct TdMovingAverage *)R_ExternalPtrAddr(e);
+  if (h) wickra_td_moving_average_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_td_moving_average_new(SEXP a0, SEXP a1) {
+  struct TdMovingAverage *h = wickra_td_moving_average_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid TdMovingAverage parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, td_moving_average_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_td_moving_average_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdMovingAverage *h = (struct TdMovingAverage *)R_ExternalPtrAddr(e);
+  struct WickraTdMovingAverageOutput out;
+  int ok = wickra_td_moving_average_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.st1 : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.st2 : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("st1"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("st2"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_td_moving_average_reset(SEXP e) {
+  struct TdMovingAverage *h = (struct TdMovingAverage *)R_ExternalPtrAddr(e);
+  wickra_td_moving_average_reset(h);
+  return R_NilValue;
+}
+
+static void td_open_fin(SEXP e) {
+  struct TdOpen *h = (struct TdOpen *)R_ExternalPtrAddr(e);
+  if (h) wickra_td_open_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_td_open_new(void) {
+  struct TdOpen *h = wickra_td_open_new();
+  if (!h) Rf_error("invalid TdOpen parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, td_open_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_td_open_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdOpen *h = (struct TdOpen *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_td_open_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_td_open_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdOpen *h = (struct TdOpen *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_td_open_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_td_open_reset(SEXP e) {
+  struct TdOpen *h = (struct TdOpen *)R_ExternalPtrAddr(e);
+  wickra_td_open_reset(h);
+  return R_NilValue;
+}
+
+static void td_pressure_fin(SEXP e) {
+  struct TdPressure *h = (struct TdPressure *)R_ExternalPtrAddr(e);
+  if (h) wickra_td_pressure_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_td_pressure_new(SEXP a0) {
+  struct TdPressure *h = wickra_td_pressure_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid TdPressure parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, td_pressure_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_td_pressure_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdPressure *h = (struct TdPressure *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_td_pressure_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_td_pressure_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdPressure *h = (struct TdPressure *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_td_pressure_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_td_pressure_reset(SEXP e) {
+  struct TdPressure *h = (struct TdPressure *)R_ExternalPtrAddr(e);
+  wickra_td_pressure_reset(h);
+  return R_NilValue;
+}
+
+static void td_propulsion_fin(SEXP e) {
+  struct TdPropulsion *h = (struct TdPropulsion *)R_ExternalPtrAddr(e);
+  if (h) wickra_td_propulsion_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_td_propulsion_new(void) {
+  struct TdPropulsion *h = wickra_td_propulsion_new();
+  if (!h) Rf_error("invalid TdPropulsion parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, td_propulsion_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_td_propulsion_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdPropulsion *h = (struct TdPropulsion *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_td_propulsion_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_td_propulsion_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdPropulsion *h = (struct TdPropulsion *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_td_propulsion_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_td_propulsion_reset(SEXP e) {
+  struct TdPropulsion *h = (struct TdPropulsion *)R_ExternalPtrAddr(e);
+  wickra_td_propulsion_reset(h);
+  return R_NilValue;
+}
+
+static void td_range_projection_fin(SEXP e) {
+  struct TdRangeProjection *h = (struct TdRangeProjection *)R_ExternalPtrAddr(e);
+  if (h) wickra_td_range_projection_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_td_range_projection_new(void) {
+  struct TdRangeProjection *h = wickra_td_range_projection_new();
+  if (!h) Rf_error("invalid TdRangeProjection parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, td_range_projection_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_td_range_projection_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdRangeProjection *h = (struct TdRangeProjection *)R_ExternalPtrAddr(e);
+  struct WickraTdRangeProjectionOutput out;
+  int ok = wickra_td_range_projection_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.high : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.low : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("high"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("low"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_td_range_projection_reset(SEXP e) {
+  struct TdRangeProjection *h = (struct TdRangeProjection *)R_ExternalPtrAddr(e);
+  wickra_td_range_projection_reset(h);
+  return R_NilValue;
+}
+
+static void td_rei_fin(SEXP e) {
+  struct TdRei *h = (struct TdRei *)R_ExternalPtrAddr(e);
+  if (h) wickra_td_rei_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_td_rei_new(SEXP a0) {
+  struct TdRei *h = wickra_td_rei_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid TdRei parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, td_rei_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_td_rei_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdRei *h = (struct TdRei *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_td_rei_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_td_rei_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdRei *h = (struct TdRei *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_td_rei_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_td_rei_reset(SEXP e) {
+  struct TdRei *h = (struct TdRei *)R_ExternalPtrAddr(e);
+  wickra_td_rei_reset(h);
+  return R_NilValue;
+}
+
+static void td_risk_level_fin(SEXP e) {
+  struct TdRiskLevel *h = (struct TdRiskLevel *)R_ExternalPtrAddr(e);
+  if (h) wickra_td_risk_level_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_td_risk_level_new(SEXP a0, SEXP a1) {
+  struct TdRiskLevel *h = wickra_td_risk_level_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid TdRiskLevel parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, td_risk_level_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_td_risk_level_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdRiskLevel *h = (struct TdRiskLevel *)R_ExternalPtrAddr(e);
+  struct WickraTdRiskLevelOutput out;
+  int ok = wickra_td_risk_level_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.buy_risk : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.sell_risk : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("buy_risk"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("sell_risk"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_td_risk_level_reset(SEXP e) {
+  struct TdRiskLevel *h = (struct TdRiskLevel *)R_ExternalPtrAddr(e);
+  wickra_td_risk_level_reset(h);
+  return R_NilValue;
+}
+
+static void td_sequential_fin(SEXP e) {
+  struct TdSequential *h = (struct TdSequential *)R_ExternalPtrAddr(e);
+  if (h) wickra_td_sequential_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_td_sequential_new(SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct TdSequential *h = wickra_td_sequential_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2), (uintptr_t)Rf_asReal(a3));
+  if (!h) Rf_error("invalid TdSequential parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, td_sequential_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_td_sequential_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdSequential *h = (struct TdSequential *)R_ExternalPtrAddr(e);
+  struct WickraTdSequentialOutput out;
+  int ok = wickra_td_sequential_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.setup : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.countdown : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.direction : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("setup"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("countdown"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("direction"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_td_sequential_reset(SEXP e) {
+  struct TdSequential *h = (struct TdSequential *)R_ExternalPtrAddr(e);
+  wickra_td_sequential_reset(h);
+  return R_NilValue;
+}
+
+static void td_setup_fin(SEXP e) {
+  struct TdSetup *h = (struct TdSetup *)R_ExternalPtrAddr(e);
+  if (h) wickra_td_setup_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_td_setup_new(SEXP a0, SEXP a1) {
+  struct TdSetup *h = wickra_td_setup_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid TdSetup parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, td_setup_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_td_setup_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdSetup *h = (struct TdSetup *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_td_setup_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_td_setup_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdSetup *h = (struct TdSetup *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_td_setup_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_td_setup_reset(SEXP e) {
+  struct TdSetup *h = (struct TdSetup *)R_ExternalPtrAddr(e);
+  wickra_td_setup_reset(h);
+  return R_NilValue;
+}
+
+static void td_trap_fin(SEXP e) {
+  struct TdTrap *h = (struct TdTrap *)R_ExternalPtrAddr(e);
+  if (h) wickra_td_trap_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_td_trap_new(void) {
+  struct TdTrap *h = wickra_td_trap_new();
+  if (!h) Rf_error("invalid TdTrap parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, td_trap_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_td_trap_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdTrap *h = (struct TdTrap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_td_trap_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_td_trap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TdTrap *h = (struct TdTrap *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_td_trap_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_td_trap_reset(SEXP e) {
+  struct TdTrap *h = (struct TdTrap *)R_ExternalPtrAddr(e);
+  wickra_td_trap_reset(h);
+  return R_NilValue;
+}
+
+static void tema_fin(SEXP e) {
+  struct Tema *h = (struct Tema *)R_ExternalPtrAddr(e);
+  if (h) wickra_tema_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_tema_new(SEXP a0) {
+  struct Tema *h = wickra_tema_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Tema parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, tema_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_tema_update(SEXP e, SEXP a0) {
+  struct Tema *h = (struct Tema *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_tema_update(h, Rf_asReal(a0)));
+}
+SEXP wk_tema_batch(SEXP e, SEXP a0) {
+  struct Tema *h = (struct Tema *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_tema_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_tema_reset(SEXP e) {
+  struct Tema *h = (struct Tema *)R_ExternalPtrAddr(e);
+  wickra_tema_reset(h);
+  return R_NilValue;
+}
+
+static void term_structure_basis_fin(SEXP e) {
+  struct TermStructureBasis *h = (struct TermStructureBasis *)R_ExternalPtrAddr(e);
+  if (h) wickra_term_structure_basis_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_term_structure_basis_new(void) {
+  struct TermStructureBasis *h = wickra_term_structure_basis_new();
+  if (!h) Rf_error("invalid TermStructureBasis parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, term_structure_basis_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_term_structure_basis_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
+  struct TermStructureBasis *h = (struct TermStructureBasis *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_term_structure_basis_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_term_structure_basis_reset(SEXP e) {
+  struct TermStructureBasis *h = (struct TermStructureBasis *)R_ExternalPtrAddr(e);
+  wickra_term_structure_basis_reset(h);
+  return R_NilValue;
+}
+
+static void three_drives_fin(SEXP e) {
+  struct ThreeDrives *h = (struct ThreeDrives *)R_ExternalPtrAddr(e);
+  if (h) wickra_three_drives_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_three_drives_new(void) {
+  struct ThreeDrives *h = wickra_three_drives_new();
+  if (!h) Rf_error("invalid ThreeDrives parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, three_drives_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_three_drives_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ThreeDrives *h = (struct ThreeDrives *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_three_drives_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_three_drives_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ThreeDrives *h = (struct ThreeDrives *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_three_drives_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_three_drives_reset(SEXP e) {
+  struct ThreeDrives *h = (struct ThreeDrives *)R_ExternalPtrAddr(e);
+  wickra_three_drives_reset(h);
+  return R_NilValue;
+}
+
+static void three_inside_fin(SEXP e) {
+  struct ThreeInside *h = (struct ThreeInside *)R_ExternalPtrAddr(e);
+  if (h) wickra_three_inside_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_three_inside_new(void) {
+  struct ThreeInside *h = wickra_three_inside_new();
+  if (!h) Rf_error("invalid ThreeInside parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, three_inside_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_three_inside_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ThreeInside *h = (struct ThreeInside *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_three_inside_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_three_inside_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ThreeInside *h = (struct ThreeInside *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_three_inside_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_three_inside_reset(SEXP e) {
+  struct ThreeInside *h = (struct ThreeInside *)R_ExternalPtrAddr(e);
+  wickra_three_inside_reset(h);
+  return R_NilValue;
+}
+
+static void three_line_break_fin(SEXP e) {
+  struct ThreeLineBreak *h = (struct ThreeLineBreak *)R_ExternalPtrAddr(e);
+  if (h) wickra_three_line_break_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_three_line_break_new(SEXP a0) {
+  struct ThreeLineBreak *h = wickra_three_line_break_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid ThreeLineBreak parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, three_line_break_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_three_line_break_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ThreeLineBreak *h = (struct ThreeLineBreak *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_three_line_break_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_three_line_break_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ThreeLineBreak *h = (struct ThreeLineBreak *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_three_line_break_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_three_line_break_reset(SEXP e) {
+  struct ThreeLineBreak *h = (struct ThreeLineBreak *)R_ExternalPtrAddr(e);
+  wickra_three_line_break_reset(h);
+  return R_NilValue;
+}
+
+static void three_line_break_bars_fin(SEXP e) {
+  struct ThreeLineBreakBars *h = (struct ThreeLineBreakBars *)R_ExternalPtrAddr(e);
+  if (h) wickra_three_line_break_bars_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_three_line_break_bars_new(SEXP a0) {
+  struct ThreeLineBreakBars *h = wickra_three_line_break_bars_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid ThreeLineBreakBars parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, three_line_break_bars_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_three_line_break_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ThreeLineBreakBars *h = (struct ThreeLineBreakBars *)R_ExternalPtrAddr(e);
+  struct WickraLineBreakBar buf[64];
+  size_t n = wickra_three_line_break_bars_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), buf, 64);
+  SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 3));
+  for (size_t i = 0; i < n; i++) {
+    REAL(r)[i + n * 0] = (double)buf[i].open;
+    REAL(r)[i + n * 1] = (double)buf[i].close;
+    REAL(r)[i + n * 2] = (double)buf[i].direction;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("close"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("direction"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(r, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return r;
+}
+SEXP wk_three_line_break_bars_reset(SEXP e) {
+  struct ThreeLineBreakBars *h = (struct ThreeLineBreakBars *)R_ExternalPtrAddr(e);
+  wickra_three_line_break_bars_reset(h);
+  return R_NilValue;
+}
+
+static void three_line_strike_fin(SEXP e) {
+  struct ThreeLineStrike *h = (struct ThreeLineStrike *)R_ExternalPtrAddr(e);
+  if (h) wickra_three_line_strike_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_three_line_strike_new(void) {
+  struct ThreeLineStrike *h = wickra_three_line_strike_new();
+  if (!h) Rf_error("invalid ThreeLineStrike parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, three_line_strike_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_three_line_strike_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ThreeLineStrike *h = (struct ThreeLineStrike *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_three_line_strike_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_three_line_strike_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ThreeLineStrike *h = (struct ThreeLineStrike *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_three_line_strike_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_three_line_strike_reset(SEXP e) {
+  struct ThreeLineStrike *h = (struct ThreeLineStrike *)R_ExternalPtrAddr(e);
+  wickra_three_line_strike_reset(h);
+  return R_NilValue;
+}
+
+static void three_outside_fin(SEXP e) {
+  struct ThreeOutside *h = (struct ThreeOutside *)R_ExternalPtrAddr(e);
+  if (h) wickra_three_outside_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_three_outside_new(void) {
+  struct ThreeOutside *h = wickra_three_outside_new();
+  if (!h) Rf_error("invalid ThreeOutside parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, three_outside_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_three_outside_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ThreeOutside *h = (struct ThreeOutside *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_three_outside_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_three_outside_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ThreeOutside *h = (struct ThreeOutside *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_three_outside_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_three_outside_reset(SEXP e) {
+  struct ThreeOutside *h = (struct ThreeOutside *)R_ExternalPtrAddr(e);
+  wickra_three_outside_reset(h);
+  return R_NilValue;
+}
+
+static void three_soldiers_or_crows_fin(SEXP e) {
+  struct ThreeSoldiersOrCrows *h = (struct ThreeSoldiersOrCrows *)R_ExternalPtrAddr(e);
+  if (h) wickra_three_soldiers_or_crows_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_three_soldiers_or_crows_new(void) {
+  struct ThreeSoldiersOrCrows *h = wickra_three_soldiers_or_crows_new();
+  if (!h) Rf_error("invalid ThreeSoldiersOrCrows parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, three_soldiers_or_crows_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_three_soldiers_or_crows_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ThreeSoldiersOrCrows *h = (struct ThreeSoldiersOrCrows *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_three_soldiers_or_crows_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_three_soldiers_or_crows_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ThreeSoldiersOrCrows *h = (struct ThreeSoldiersOrCrows *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_three_soldiers_or_crows_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_three_soldiers_or_crows_reset(SEXP e) {
+  struct ThreeSoldiersOrCrows *h = (struct ThreeSoldiersOrCrows *)R_ExternalPtrAddr(e);
+  wickra_three_soldiers_or_crows_reset(h);
+  return R_NilValue;
+}
+
+static void three_stars_in_south_fin(SEXP e) {
+  struct ThreeStarsInSouth *h = (struct ThreeStarsInSouth *)R_ExternalPtrAddr(e);
+  if (h) wickra_three_stars_in_south_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_three_stars_in_south_new(void) {
+  struct ThreeStarsInSouth *h = wickra_three_stars_in_south_new();
+  if (!h) Rf_error("invalid ThreeStarsInSouth parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, three_stars_in_south_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_three_stars_in_south_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ThreeStarsInSouth *h = (struct ThreeStarsInSouth *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_three_stars_in_south_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_three_stars_in_south_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ThreeStarsInSouth *h = (struct ThreeStarsInSouth *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_three_stars_in_south_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_three_stars_in_south_reset(SEXP e) {
+  struct ThreeStarsInSouth *h = (struct ThreeStarsInSouth *)R_ExternalPtrAddr(e);
+  wickra_three_stars_in_south_reset(h);
+  return R_NilValue;
+}
+
+static void thrusting_fin(SEXP e) {
+  struct Thrusting *h = (struct Thrusting *)R_ExternalPtrAddr(e);
+  if (h) wickra_thrusting_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_thrusting_new(void) {
+  struct Thrusting *h = wickra_thrusting_new();
+  if (!h) Rf_error("invalid Thrusting parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, thrusting_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_thrusting_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Thrusting *h = (struct Thrusting *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_thrusting_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_thrusting_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Thrusting *h = (struct Thrusting *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_thrusting_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_thrusting_reset(SEXP e) {
+  struct Thrusting *h = (struct Thrusting *)R_ExternalPtrAddr(e);
+  wickra_thrusting_reset(h);
+  return R_NilValue;
+}
+
+static void tick_bars_fin(SEXP e) {
+  struct TickBars *h = (struct TickBars *)R_ExternalPtrAddr(e);
+  if (h) wickra_tick_bars_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_tick_bars_new(SEXP a0) {
+  struct TickBars *h = wickra_tick_bars_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid TickBars parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, tick_bars_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_tick_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TickBars *h = (struct TickBars *)R_ExternalPtrAddr(e);
+  struct WickraTickBar buf[64];
+  size_t n = wickra_tick_bars_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), buf, 64);
+  SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 5));
+  for (size_t i = 0; i < n; i++) {
+    REAL(r)[i + n * 0] = (double)buf[i].open;
+    REAL(r)[i + n * 1] = (double)buf[i].high;
+    REAL(r)[i + n * 2] = (double)buf[i].low;
+    REAL(r)[i + n * 3] = (double)buf[i].close;
+    REAL(r)[i + n * 4] = (double)buf[i].volume;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 5));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("high"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("low"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("close"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("volume"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(r, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return r;
+}
+SEXP wk_tick_bars_reset(SEXP e) {
+  struct TickBars *h = (struct TickBars *)R_ExternalPtrAddr(e);
+  wickra_tick_bars_reset(h);
+  return R_NilValue;
+}
+
+static void tick_index_fin(SEXP e) {
+  struct TickIndex *h = (struct TickIndex *)R_ExternalPtrAddr(e);
+  if (h) wickra_tick_index_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_tick_index_new(void) {
+  struct TickIndex *h = wickra_tick_index_new();
+  if (!h) Rf_error("invalid TickIndex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, tick_index_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_tick_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
+  struct TickIndex *h = (struct TickIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_tick_index_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_tick_index_reset(SEXP e) {
+  struct TickIndex *h = (struct TickIndex *)R_ExternalPtrAddr(e);
+  wickra_tick_index_reset(h);
+  return R_NilValue;
+}
+
+static void tii_fin(SEXP e) {
+  struct Tii *h = (struct Tii *)R_ExternalPtrAddr(e);
+  if (h) wickra_tii_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_tii_new(SEXP a0, SEXP a1) {
+  struct Tii *h = wickra_tii_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid Tii parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, tii_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_tii_update(SEXP e, SEXP a0) {
+  struct Tii *h = (struct Tii *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_tii_update(h, Rf_asReal(a0)));
+}
+SEXP wk_tii_batch(SEXP e, SEXP a0) {
+  struct Tii *h = (struct Tii *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_tii_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_tii_reset(SEXP e) {
+  struct Tii *h = (struct Tii *)R_ExternalPtrAddr(e);
+  wickra_tii_reset(h);
+  return R_NilValue;
+}
+
+static void time_based_stop_fin(SEXP e) {
+  struct TimeBasedStop *h = (struct TimeBasedStop *)R_ExternalPtrAddr(e);
+  if (h) wickra_time_based_stop_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_time_based_stop_new(SEXP a0) {
+  struct TimeBasedStop *h = wickra_time_based_stop_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid TimeBasedStop parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, time_based_stop_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_time_based_stop_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TimeBasedStop *h = (struct TimeBasedStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_time_based_stop_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_time_based_stop_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TimeBasedStop *h = (struct TimeBasedStop *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_time_based_stop_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_time_based_stop_reset(SEXP e) {
+  struct TimeBasedStop *h = (struct TimeBasedStop *)R_ExternalPtrAddr(e);
+  wickra_time_based_stop_reset(h);
+  return R_NilValue;
+}
+
+static void time_of_day_return_profile_fin(SEXP e) {
+  struct TimeOfDayReturnProfile *h = (struct TimeOfDayReturnProfile *)R_ExternalPtrAddr(e);
+  if (h) wickra_time_of_day_return_profile_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_time_of_day_return_profile_new(SEXP a0, SEXP a1) {
+  struct TimeOfDayReturnProfile *h = wickra_time_of_day_return_profile_new((uintptr_t)Rf_asReal(a0), (int32_t)Rf_asInteger(a1));
+  if (!h) Rf_error("invalid TimeOfDayReturnProfile parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, time_of_day_return_profile_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_time_of_day_return_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP capn) {
+  struct TimeOfDayReturnProfile *h = (struct TimeOfDayReturnProfile *)R_ExternalPtrAddr(e);
+  int cap = Rf_asInteger(capn);
+  SEXP values = PROTECT(Rf_allocVector(REALSXP, cap));
+  R_xlen_t n = wickra_time_of_day_return_profile_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), REAL(values), (uintptr_t)cap);
+  if (n < 0) { UNPROTECT(1); return R_NilValue; }
+  SEXP vv = PROTECT(Rf_allocVector(REALSXP, n));
+  for (R_xlen_t i = 0; i < n; i++) REAL(vv)[i] = REAL(values)[i];
+  UNPROTECT(2);
+  return vv;
+}
+SEXP wk_time_of_day_return_profile_reset(SEXP e) {
+  struct TimeOfDayReturnProfile *h = (struct TimeOfDayReturnProfile *)R_ExternalPtrAddr(e);
+  wickra_time_of_day_return_profile_reset(h);
+  return R_NilValue;
+}
+
+static void tower_top_bottom_fin(SEXP e) {
+  struct TowerTopBottom *h = (struct TowerTopBottom *)R_ExternalPtrAddr(e);
+  if (h) wickra_tower_top_bottom_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_tower_top_bottom_new(void) {
+  struct TowerTopBottom *h = wickra_tower_top_bottom_new();
+  if (!h) Rf_error("invalid TowerTopBottom parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, tower_top_bottom_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_tower_top_bottom_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TowerTopBottom *h = (struct TowerTopBottom *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_tower_top_bottom_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_tower_top_bottom_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TowerTopBottom *h = (struct TowerTopBottom *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_tower_top_bottom_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_tower_top_bottom_reset(SEXP e) {
+  struct TowerTopBottom *h = (struct TowerTopBottom *)R_ExternalPtrAddr(e);
+  wickra_tower_top_bottom_reset(h);
+  return R_NilValue;
+}
+
+static void tpo_profile_fin(SEXP e) {
+  struct TpoProfile *h = (struct TpoProfile *)R_ExternalPtrAddr(e);
+  if (h) wickra_tpo_profile_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_tpo_profile_new(SEXP a0, SEXP a1) {
+  struct TpoProfile *h = wickra_tpo_profile_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid TpoProfile parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, tpo_profile_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_tpo_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP capn) {
+  struct TpoProfile *h = (struct TpoProfile *)R_ExternalPtrAddr(e);
+  int cap = Rf_asInteger(capn);
+  SEXP values = PROTECT(Rf_allocVector(REALSXP, cap));
+  struct WickraTpoProfileOutputScalars sc;
+  R_xlen_t n = wickra_tpo_profile_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &sc, REAL(values), (uintptr_t)cap);
+  if (n < 0) { UNPROTECT(1); return R_NilValue; }
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, 3));
+  SEXP onm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_VECTOR_ELT(out, 0, Rf_ScalarReal((double)sc.price_low));
+  SET_STRING_ELT(onm, 0, Rf_mkChar("price_low"));
+  SET_VECTOR_ELT(out, 1, Rf_ScalarReal((double)sc.price_high));
+  SET_STRING_ELT(onm, 1, Rf_mkChar("price_high"));
+  SEXP vv = PROTECT(Rf_allocVector(REALSXP, n));
+  for (R_xlen_t i = 0; i < n; i++) REAL(vv)[i] = REAL(values)[i];
+  SET_VECTOR_ELT(out, 2, vv);
+  SET_STRING_ELT(onm, 2, Rf_mkChar("values"));
+  Rf_setAttrib(out, R_NamesSymbol, onm);
+  UNPROTECT(4);
+  return out;
+}
+SEXP wk_tpo_profile_reset(SEXP e) {
+  struct TpoProfile *h = (struct TpoProfile *)R_ExternalPtrAddr(e);
+  wickra_tpo_profile_reset(h);
+  return R_NilValue;
+}
+
+static void trade_imbalance_fin(SEXP e) {
+  struct TradeImbalance *h = (struct TradeImbalance *)R_ExternalPtrAddr(e);
+  if (h) wickra_trade_imbalance_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_trade_imbalance_new(SEXP a0) {
+  struct TradeImbalance *h = wickra_trade_imbalance_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid TradeImbalance parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, trade_imbalance_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_trade_imbalance_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct TradeImbalance *h = (struct TradeImbalance *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_trade_imbalance_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
+}
+SEXP wk_trade_imbalance_reset(SEXP e) {
+  struct TradeImbalance *h = (struct TradeImbalance *)R_ExternalPtrAddr(e);
+  wickra_trade_imbalance_reset(h);
+  return R_NilValue;
+}
+
+static void trade_sign_autocorrelation_fin(SEXP e) {
+  struct TradeSignAutocorrelation *h = (struct TradeSignAutocorrelation *)R_ExternalPtrAddr(e);
+  if (h) wickra_trade_sign_autocorrelation_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_trade_sign_autocorrelation_new(SEXP a0) {
+  struct TradeSignAutocorrelation *h = wickra_trade_sign_autocorrelation_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid TradeSignAutocorrelation parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, trade_sign_autocorrelation_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_trade_sign_autocorrelation_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct TradeSignAutocorrelation *h = (struct TradeSignAutocorrelation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_trade_sign_autocorrelation_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
+}
+SEXP wk_trade_sign_autocorrelation_reset(SEXP e) {
+  struct TradeSignAutocorrelation *h = (struct TradeSignAutocorrelation *)R_ExternalPtrAddr(e);
+  wickra_trade_sign_autocorrelation_reset(h);
+  return R_NilValue;
+}
+
+static void trade_volume_index_fin(SEXP e) {
+  struct TradeVolumeIndex *h = (struct TradeVolumeIndex *)R_ExternalPtrAddr(e);
+  if (h) wickra_trade_volume_index_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_trade_volume_index_new(SEXP a0) {
+  struct TradeVolumeIndex *h = wickra_trade_volume_index_new(Rf_asReal(a0));
+  if (!h) Rf_error("invalid TradeVolumeIndex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, trade_volume_index_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_trade_volume_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TradeVolumeIndex *h = (struct TradeVolumeIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_trade_volume_index_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_trade_volume_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TradeVolumeIndex *h = (struct TradeVolumeIndex *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_trade_volume_index_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_trade_volume_index_reset(SEXP e) {
+  struct TradeVolumeIndex *h = (struct TradeVolumeIndex *)R_ExternalPtrAddr(e);
+  wickra_trade_volume_index_reset(h);
+  return R_NilValue;
+}
+
+static void trend_label_fin(SEXP e) {
+  struct TrendLabel *h = (struct TrendLabel *)R_ExternalPtrAddr(e);
+  if (h) wickra_trend_label_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_trend_label_new(SEXP a0) {
+  struct TrendLabel *h = wickra_trend_label_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid TrendLabel parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, trend_label_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_trend_label_update(SEXP e, SEXP a0) {
+  struct TrendLabel *h = (struct TrendLabel *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_trend_label_update(h, Rf_asReal(a0)));
+}
+SEXP wk_trend_label_batch(SEXP e, SEXP a0) {
+  struct TrendLabel *h = (struct TrendLabel *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_trend_label_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_trend_label_reset(SEXP e) {
+  struct TrendLabel *h = (struct TrendLabel *)R_ExternalPtrAddr(e);
+  wickra_trend_label_reset(h);
+  return R_NilValue;
+}
+
+static void trend_strength_index_fin(SEXP e) {
+  struct TrendStrengthIndex *h = (struct TrendStrengthIndex *)R_ExternalPtrAddr(e);
+  if (h) wickra_trend_strength_index_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_trend_strength_index_new(SEXP a0) {
+  struct TrendStrengthIndex *h = wickra_trend_strength_index_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid TrendStrengthIndex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, trend_strength_index_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_trend_strength_index_update(SEXP e, SEXP a0) {
+  struct TrendStrengthIndex *h = (struct TrendStrengthIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_trend_strength_index_update(h, Rf_asReal(a0)));
+}
+SEXP wk_trend_strength_index_batch(SEXP e, SEXP a0) {
+  struct TrendStrengthIndex *h = (struct TrendStrengthIndex *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_trend_strength_index_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_trend_strength_index_reset(SEXP e) {
+  struct TrendStrengthIndex *h = (struct TrendStrengthIndex *)R_ExternalPtrAddr(e);
+  wickra_trend_strength_index_reset(h);
+  return R_NilValue;
+}
+
+static void trendflex_fin(SEXP e) {
+  struct Trendflex *h = (struct Trendflex *)R_ExternalPtrAddr(e);
+  if (h) wickra_trendflex_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_trendflex_new(SEXP a0) {
+  struct Trendflex *h = wickra_trendflex_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Trendflex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, trendflex_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_trendflex_update(SEXP e, SEXP a0) {
+  struct Trendflex *h = (struct Trendflex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_trendflex_update(h, Rf_asReal(a0)));
+}
+SEXP wk_trendflex_batch(SEXP e, SEXP a0) {
+  struct Trendflex *h = (struct Trendflex *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_trendflex_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_trendflex_reset(SEXP e) {
+  struct Trendflex *h = (struct Trendflex *)R_ExternalPtrAddr(e);
+  wickra_trendflex_reset(h);
+  return R_NilValue;
+}
+
+static void treynor_ratio_fin(SEXP e) {
+  struct TreynorRatio *h = (struct TreynorRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_treynor_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_treynor_ratio_new(SEXP a0, SEXP a1) {
+  struct TreynorRatio *h = wickra_treynor_ratio_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid TreynorRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, treynor_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_treynor_ratio_update(SEXP e, SEXP a0, SEXP a1) {
+  struct TreynorRatio *h = (struct TreynorRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_treynor_ratio_update(h, Rf_asReal(a0), Rf_asReal(a1)));
+}
+SEXP wk_treynor_ratio_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct TreynorRatio *h = (struct TreynorRatio *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_treynor_ratio_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_treynor_ratio_reset(SEXP e) {
+  struct TreynorRatio *h = (struct TreynorRatio *)R_ExternalPtrAddr(e);
+  wickra_treynor_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void triangle_fin(SEXP e) {
+  struct Triangle *h = (struct Triangle *)R_ExternalPtrAddr(e);
+  if (h) wickra_triangle_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_triangle_new(void) {
+  struct Triangle *h = wickra_triangle_new();
+  if (!h) Rf_error("invalid Triangle parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, triangle_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_triangle_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Triangle *h = (struct Triangle *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_triangle_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_triangle_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Triangle *h = (struct Triangle *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_triangle_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_triangle_reset(SEXP e) {
+  struct Triangle *h = (struct Triangle *)R_ExternalPtrAddr(e);
+  wickra_triangle_reset(h);
+  return R_NilValue;
+}
+
+static void trima_fin(SEXP e) {
+  struct Trima *h = (struct Trima *)R_ExternalPtrAddr(e);
+  if (h) wickra_trima_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_trima_new(SEXP a0) {
+  struct Trima *h = wickra_trima_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Trima parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, trima_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_trima_update(SEXP e, SEXP a0) {
+  struct Trima *h = (struct Trima *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_trima_update(h, Rf_asReal(a0)));
+}
+SEXP wk_trima_batch(SEXP e, SEXP a0) {
+  struct Trima *h = (struct Trima *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_trima_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_trima_reset(SEXP e) {
+  struct Trima *h = (struct Trima *)R_ExternalPtrAddr(e);
+  wickra_trima_reset(h);
+  return R_NilValue;
+}
+
+static void trin_fin(SEXP e) {
+  struct Trin *h = (struct Trin *)R_ExternalPtrAddr(e);
+  if (h) wickra_trin_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_trin_new(void) {
+  struct Trin *h = wickra_trin_new();
+  if (!h) Rf_error("invalid Trin parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, trin_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_trin_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
+  struct Trin *h = (struct Trin *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_trin_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_trin_reset(SEXP e) {
+  struct Trin *h = (struct Trin *)R_ExternalPtrAddr(e);
+  wickra_trin_reset(h);
+  return R_NilValue;
+}
+
+static void triple_top_bottom_fin(SEXP e) {
+  struct TripleTopBottom *h = (struct TripleTopBottom *)R_ExternalPtrAddr(e);
+  if (h) wickra_triple_top_bottom_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_triple_top_bottom_new(void) {
+  struct TripleTopBottom *h = wickra_triple_top_bottom_new();
+  if (!h) Rf_error("invalid TripleTopBottom parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, triple_top_bottom_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_triple_top_bottom_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TripleTopBottom *h = (struct TripleTopBottom *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_triple_top_bottom_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_triple_top_bottom_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TripleTopBottom *h = (struct TripleTopBottom *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_triple_top_bottom_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_triple_top_bottom_reset(SEXP e) {
+  struct TripleTopBottom *h = (struct TripleTopBottom *)R_ExternalPtrAddr(e);
+  wickra_triple_top_bottom_reset(h);
+  return R_NilValue;
+}
+
+static void tristar_fin(SEXP e) {
+  struct Tristar *h = (struct Tristar *)R_ExternalPtrAddr(e);
+  if (h) wickra_tristar_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_tristar_new(void) {
+  struct Tristar *h = wickra_tristar_new();
+  if (!h) Rf_error("invalid Tristar parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, tristar_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_tristar_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Tristar *h = (struct Tristar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_tristar_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_tristar_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Tristar *h = (struct Tristar *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_tristar_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_tristar_reset(SEXP e) {
+  struct Tristar *h = (struct Tristar *)R_ExternalPtrAddr(e);
+  wickra_tristar_reset(h);
+  return R_NilValue;
+}
+
+static void trix_fin(SEXP e) {
+  struct Trix *h = (struct Trix *)R_ExternalPtrAddr(e);
+  if (h) wickra_trix_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_trix_new(SEXP a0) {
+  struct Trix *h = wickra_trix_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Trix parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, trix_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_trix_update(SEXP e, SEXP a0) {
+  struct Trix *h = (struct Trix *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_trix_update(h, Rf_asReal(a0)));
+}
+SEXP wk_trix_batch(SEXP e, SEXP a0) {
+  struct Trix *h = (struct Trix *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_trix_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_trix_reset(SEXP e) {
+  struct Trix *h = (struct Trix *)R_ExternalPtrAddr(e);
+  wickra_trix_reset(h);
+  return R_NilValue;
+}
+
+static void true_range_fin(SEXP e) {
+  struct TrueRange *h = (struct TrueRange *)R_ExternalPtrAddr(e);
+  if (h) wickra_true_range_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_true_range_new(void) {
+  struct TrueRange *h = wickra_true_range_new();
+  if (!h) Rf_error("invalid TrueRange parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, true_range_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_true_range_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TrueRange *h = (struct TrueRange *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_true_range_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_true_range_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TrueRange *h = (struct TrueRange *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_true_range_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_true_range_reset(SEXP e) {
+  struct TrueRange *h = (struct TrueRange *)R_ExternalPtrAddr(e);
+  wickra_true_range_reset(h);
+  return R_NilValue;
+}
+
+static void tsf_fin(SEXP e) {
+  struct Tsf *h = (struct Tsf *)R_ExternalPtrAddr(e);
+  if (h) wickra_tsf_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_tsf_new(SEXP a0) {
+  struct Tsf *h = wickra_tsf_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Tsf parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, tsf_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_tsf_update(SEXP e, SEXP a0) {
+  struct Tsf *h = (struct Tsf *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_tsf_update(h, Rf_asReal(a0)));
+}
+SEXP wk_tsf_batch(SEXP e, SEXP a0) {
+  struct Tsf *h = (struct Tsf *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_tsf_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_tsf_reset(SEXP e) {
+  struct Tsf *h = (struct Tsf *)R_ExternalPtrAddr(e);
+  wickra_tsf_reset(h);
+  return R_NilValue;
+}
+
+static void tsf_oscillator_fin(SEXP e) {
+  struct TsfOscillator *h = (struct TsfOscillator *)R_ExternalPtrAddr(e);
+  if (h) wickra_tsf_oscillator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_tsf_oscillator_new(SEXP a0) {
+  struct TsfOscillator *h = wickra_tsf_oscillator_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid TsfOscillator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, tsf_oscillator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_tsf_oscillator_update(SEXP e, SEXP a0) {
+  struct TsfOscillator *h = (struct TsfOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_tsf_oscillator_update(h, Rf_asReal(a0)));
+}
+SEXP wk_tsf_oscillator_batch(SEXP e, SEXP a0) {
+  struct TsfOscillator *h = (struct TsfOscillator *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_tsf_oscillator_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_tsf_oscillator_reset(SEXP e) {
+  struct TsfOscillator *h = (struct TsfOscillator *)R_ExternalPtrAddr(e);
+  wickra_tsf_oscillator_reset(h);
+  return R_NilValue;
+}
+
+static void tsi_fin(SEXP e) {
+  struct Tsi *h = (struct Tsi *)R_ExternalPtrAddr(e);
+  if (h) wickra_tsi_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_tsi_new(SEXP a0, SEXP a1) {
+  struct Tsi *h = wickra_tsi_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid Tsi parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, tsi_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_tsi_update(SEXP e, SEXP a0) {
+  struct Tsi *h = (struct Tsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_tsi_update(h, Rf_asReal(a0)));
+}
+SEXP wk_tsi_batch(SEXP e, SEXP a0) {
+  struct Tsi *h = (struct Tsi *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_tsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_tsi_reset(SEXP e) {
+  struct Tsi *h = (struct Tsi *)R_ExternalPtrAddr(e);
+  wickra_tsi_reset(h);
+  return R_NilValue;
+}
+
+static void tsv_fin(SEXP e) {
+  struct Tsv *h = (struct Tsv *)R_ExternalPtrAddr(e);
+  if (h) wickra_tsv_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_tsv_new(SEXP a0) {
+  struct Tsv *h = wickra_tsv_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Tsv parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, tsv_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_tsv_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Tsv *h = (struct Tsv *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_tsv_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_tsv_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Tsv *h = (struct Tsv *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_tsv_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_tsv_reset(SEXP e) {
+  struct Tsv *h = (struct Tsv *)R_ExternalPtrAddr(e);
+  wickra_tsv_reset(h);
+  return R_NilValue;
+}
+
+static void ttm_squeeze_fin(SEXP e) {
+  struct TtmSqueeze *h = (struct TtmSqueeze *)R_ExternalPtrAddr(e);
+  if (h) wickra_ttm_squeeze_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_ttm_squeeze_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct TtmSqueeze *h = wickra_ttm_squeeze_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2));
+  if (!h) Rf_error("invalid TtmSqueeze parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, ttm_squeeze_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_ttm_squeeze_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TtmSqueeze *h = (struct TtmSqueeze *)R_ExternalPtrAddr(e);
+  struct WickraTtmSqueezeOutput out;
+  int ok = wickra_ttm_squeeze_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.squeeze : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.momentum : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("squeeze"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("momentum"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_ttm_squeeze_reset(SEXP e) {
+  struct TtmSqueeze *h = (struct TtmSqueeze *)R_ExternalPtrAddr(e);
+  wickra_ttm_squeeze_reset(h);
+  return R_NilValue;
+}
+
+static void ttm_trend_fin(SEXP e) {
+  struct TtmTrend *h = (struct TtmTrend *)R_ExternalPtrAddr(e);
+  if (h) wickra_ttm_trend_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_ttm_trend_new(SEXP a0) {
+  struct TtmTrend *h = wickra_ttm_trend_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid TtmTrend parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, ttm_trend_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_ttm_trend_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TtmTrend *h = (struct TtmTrend *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_ttm_trend_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_ttm_trend_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TtmTrend *h = (struct TtmTrend *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_ttm_trend_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_ttm_trend_reset(SEXP e) {
+  struct TtmTrend *h = (struct TtmTrend *)R_ExternalPtrAddr(e);
+  wickra_ttm_trend_reset(h);
+  return R_NilValue;
+}
+
+static void turn_of_month_fin(SEXP e) {
+  struct TurnOfMonth *h = (struct TurnOfMonth *)R_ExternalPtrAddr(e);
+  if (h) wickra_turn_of_month_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_turn_of_month_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct TurnOfMonth *h = wickra_turn_of_month_new((uint32_t)Rf_asInteger(a0), (uint32_t)Rf_asInteger(a1), (int32_t)Rf_asInteger(a2));
+  if (!h) Rf_error("invalid TurnOfMonth parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, turn_of_month_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_turn_of_month_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TurnOfMonth *h = (struct TurnOfMonth *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_turn_of_month_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_turn_of_month_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TurnOfMonth *h = (struct TurnOfMonth *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_turn_of_month_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_turn_of_month_reset(SEXP e) {
+  struct TurnOfMonth *h = (struct TurnOfMonth *)R_ExternalPtrAddr(e);
+  wickra_turn_of_month_reset(h);
+  return R_NilValue;
+}
+
+static void tweezer_fin(SEXP e) {
+  struct Tweezer *h = (struct Tweezer *)R_ExternalPtrAddr(e);
+  if (h) wickra_tweezer_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_tweezer_new(void) {
+  struct Tweezer *h = wickra_tweezer_new();
+  if (!h) Rf_error("invalid Tweezer parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, tweezer_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_tweezer_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Tweezer *h = (struct Tweezer *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_tweezer_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_tweezer_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Tweezer *h = (struct Tweezer *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_tweezer_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_tweezer_reset(SEXP e) {
+  struct Tweezer *h = (struct Tweezer *)R_ExternalPtrAddr(e);
+  wickra_tweezer_reset(h);
+  return R_NilValue;
+}
+
+static void twiggs_money_flow_fin(SEXP e) {
+  struct TwiggsMoneyFlow *h = (struct TwiggsMoneyFlow *)R_ExternalPtrAddr(e);
+  if (h) wickra_twiggs_money_flow_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_twiggs_money_flow_new(SEXP a0) {
+  struct TwiggsMoneyFlow *h = wickra_twiggs_money_flow_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid TwiggsMoneyFlow parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, twiggs_money_flow_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_twiggs_money_flow_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TwiggsMoneyFlow *h = (struct TwiggsMoneyFlow *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_twiggs_money_flow_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_twiggs_money_flow_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TwiggsMoneyFlow *h = (struct TwiggsMoneyFlow *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_twiggs_money_flow_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_twiggs_money_flow_reset(SEXP e) {
+  struct TwiggsMoneyFlow *h = (struct TwiggsMoneyFlow *)R_ExternalPtrAddr(e);
+  wickra_twiggs_money_flow_reset(h);
+  return R_NilValue;
+}
+
+static void two_crows_fin(SEXP e) {
+  struct TwoCrows *h = (struct TwoCrows *)R_ExternalPtrAddr(e);
+  if (h) wickra_two_crows_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_two_crows_new(void) {
+  struct TwoCrows *h = wickra_two_crows_new();
+  if (!h) Rf_error("invalid TwoCrows parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, two_crows_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_two_crows_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TwoCrows *h = (struct TwoCrows *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_two_crows_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_two_crows_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TwoCrows *h = (struct TwoCrows *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_two_crows_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_two_crows_reset(SEXP e) {
+  struct TwoCrows *h = (struct TwoCrows *)R_ExternalPtrAddr(e);
+  wickra_two_crows_reset(h);
+  return R_NilValue;
+}
+
+static void typical_price_fin(SEXP e) {
+  struct TypicalPrice *h = (struct TypicalPrice *)R_ExternalPtrAddr(e);
+  if (h) wickra_typical_price_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_typical_price_new(void) {
+  struct TypicalPrice *h = wickra_typical_price_new();
+  if (!h) Rf_error("invalid TypicalPrice parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, typical_price_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_typical_price_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TypicalPrice *h = (struct TypicalPrice *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_typical_price_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_typical_price_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct TypicalPrice *h = (struct TypicalPrice *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_typical_price_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_typical_price_reset(SEXP e) {
+  struct TypicalPrice *h = (struct TypicalPrice *)R_ExternalPtrAddr(e);
+  wickra_typical_price_reset(h);
+  return R_NilValue;
+}
+
+static void ulcer_index_fin(SEXP e) {
+  struct UlcerIndex *h = (struct UlcerIndex *)R_ExternalPtrAddr(e);
+  if (h) wickra_ulcer_index_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_ulcer_index_new(SEXP a0) {
+  struct UlcerIndex *h = wickra_ulcer_index_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid UlcerIndex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, ulcer_index_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_ulcer_index_update(SEXP e, SEXP a0) {
+  struct UlcerIndex *h = (struct UlcerIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_ulcer_index_update(h, Rf_asReal(a0)));
+}
+SEXP wk_ulcer_index_batch(SEXP e, SEXP a0) {
+  struct UlcerIndex *h = (struct UlcerIndex *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_ulcer_index_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_ulcer_index_reset(SEXP e) {
+  struct UlcerIndex *h = (struct UlcerIndex *)R_ExternalPtrAddr(e);
+  wickra_ulcer_index_reset(h);
+  return R_NilValue;
+}
+
+static void ultimate_oscillator_fin(SEXP e) {
+  struct UltimateOscillator *h = (struct UltimateOscillator *)R_ExternalPtrAddr(e);
+  if (h) wickra_ultimate_oscillator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_ultimate_oscillator_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct UltimateOscillator *h = wickra_ultimate_oscillator_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2));
+  if (!h) Rf_error("invalid UltimateOscillator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, ultimate_oscillator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_ultimate_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct UltimateOscillator *h = (struct UltimateOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_ultimate_oscillator_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_ultimate_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct UltimateOscillator *h = (struct UltimateOscillator *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_ultimate_oscillator_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_ultimate_oscillator_reset(SEXP e) {
+  struct UltimateOscillator *h = (struct UltimateOscillator *)R_ExternalPtrAddr(e);
+  wickra_ultimate_oscillator_reset(h);
+  return R_NilValue;
+}
+
+static void unique_three_river_fin(SEXP e) {
+  struct UniqueThreeRiver *h = (struct UniqueThreeRiver *)R_ExternalPtrAddr(e);
+  if (h) wickra_unique_three_river_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_unique_three_river_new(void) {
+  struct UniqueThreeRiver *h = wickra_unique_three_river_new();
+  if (!h) Rf_error("invalid UniqueThreeRiver parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, unique_three_river_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_unique_three_river_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct UniqueThreeRiver *h = (struct UniqueThreeRiver *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_unique_three_river_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_unique_three_river_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct UniqueThreeRiver *h = (struct UniqueThreeRiver *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_unique_three_river_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_unique_three_river_reset(SEXP e) {
+  struct UniqueThreeRiver *h = (struct UniqueThreeRiver *)R_ExternalPtrAddr(e);
+  wickra_unique_three_river_reset(h);
+  return R_NilValue;
+}
+
+static void universal_oscillator_fin(SEXP e) {
+  struct UniversalOscillator *h = (struct UniversalOscillator *)R_ExternalPtrAddr(e);
+  if (h) wickra_universal_oscillator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_universal_oscillator_new(SEXP a0) {
+  struct UniversalOscillator *h = wickra_universal_oscillator_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid UniversalOscillator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, universal_oscillator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_universal_oscillator_update(SEXP e, SEXP a0) {
+  struct UniversalOscillator *h = (struct UniversalOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_universal_oscillator_update(h, Rf_asReal(a0)));
+}
+SEXP wk_universal_oscillator_batch(SEXP e, SEXP a0) {
+  struct UniversalOscillator *h = (struct UniversalOscillator *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_universal_oscillator_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_universal_oscillator_reset(SEXP e) {
+  struct UniversalOscillator *h = (struct UniversalOscillator *)R_ExternalPtrAddr(e);
+  wickra_universal_oscillator_reset(h);
+  return R_NilValue;
+}
+
+static void up_down_volume_ratio_fin(SEXP e) {
+  struct UpDownVolumeRatio *h = (struct UpDownVolumeRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_up_down_volume_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_up_down_volume_ratio_new(void) {
+  struct UpDownVolumeRatio *h = wickra_up_down_volume_ratio_new();
+  if (!h) Rf_error("invalid UpDownVolumeRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, up_down_volume_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_up_down_volume_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
+  struct UpDownVolumeRatio *h = (struct UpDownVolumeRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_up_down_volume_ratio_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_up_down_volume_ratio_reset(SEXP e) {
+  struct UpDownVolumeRatio *h = (struct UpDownVolumeRatio *)R_ExternalPtrAddr(e);
+  wickra_up_down_volume_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void upside_gap_three_methods_fin(SEXP e) {
+  struct UpsideGapThreeMethods *h = (struct UpsideGapThreeMethods *)R_ExternalPtrAddr(e);
+  if (h) wickra_upside_gap_three_methods_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_upside_gap_three_methods_new(void) {
+  struct UpsideGapThreeMethods *h = wickra_upside_gap_three_methods_new();
+  if (!h) Rf_error("invalid UpsideGapThreeMethods parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, upside_gap_three_methods_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_upside_gap_three_methods_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct UpsideGapThreeMethods *h = (struct UpsideGapThreeMethods *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_upside_gap_three_methods_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_upside_gap_three_methods_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct UpsideGapThreeMethods *h = (struct UpsideGapThreeMethods *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_upside_gap_three_methods_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_upside_gap_three_methods_reset(SEXP e) {
+  struct UpsideGapThreeMethods *h = (struct UpsideGapThreeMethods *)R_ExternalPtrAddr(e);
+  wickra_upside_gap_three_methods_reset(h);
+  return R_NilValue;
+}
+
+static void upside_gap_two_crows_fin(SEXP e) {
+  struct UpsideGapTwoCrows *h = (struct UpsideGapTwoCrows *)R_ExternalPtrAddr(e);
+  if (h) wickra_upside_gap_two_crows_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_upside_gap_two_crows_new(void) {
+  struct UpsideGapTwoCrows *h = wickra_upside_gap_two_crows_new();
+  if (!h) Rf_error("invalid UpsideGapTwoCrows parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, upside_gap_two_crows_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_upside_gap_two_crows_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct UpsideGapTwoCrows *h = (struct UpsideGapTwoCrows *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_upside_gap_two_crows_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_upside_gap_two_crows_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct UpsideGapTwoCrows *h = (struct UpsideGapTwoCrows *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_upside_gap_two_crows_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_upside_gap_two_crows_reset(SEXP e) {
+  struct UpsideGapTwoCrows *h = (struct UpsideGapTwoCrows *)R_ExternalPtrAddr(e);
+  wickra_upside_gap_two_crows_reset(h);
+  return R_NilValue;
+}
+
+static void upside_potential_ratio_fin(SEXP e) {
+  struct UpsidePotentialRatio *h = (struct UpsidePotentialRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_upside_potential_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_upside_potential_ratio_new(SEXP a0, SEXP a1) {
+  struct UpsidePotentialRatio *h = wickra_upside_potential_ratio_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid UpsidePotentialRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, upside_potential_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_upside_potential_ratio_update(SEXP e, SEXP a0) {
+  struct UpsidePotentialRatio *h = (struct UpsidePotentialRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_upside_potential_ratio_update(h, Rf_asReal(a0)));
+}
+SEXP wk_upside_potential_ratio_batch(SEXP e, SEXP a0) {
+  struct UpsidePotentialRatio *h = (struct UpsidePotentialRatio *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_upside_potential_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_upside_potential_ratio_reset(SEXP e) {
+  struct UpsidePotentialRatio *h = (struct UpsidePotentialRatio *)R_ExternalPtrAddr(e);
+  wickra_upside_potential_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void value_area_fin(SEXP e) {
+  struct ValueArea *h = (struct ValueArea *)R_ExternalPtrAddr(e);
+  if (h) wickra_value_area_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_value_area_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct ValueArea *h = wickra_value_area_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), Rf_asReal(a2));
+  if (!h) Rf_error("invalid ValueArea parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, value_area_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_value_area_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ValueArea *h = (struct ValueArea *)R_ExternalPtrAddr(e);
+  struct WickraValueAreaOutput out;
+  int ok = wickra_value_area_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.poc : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.vah : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.val : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("poc"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("vah"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("val"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_value_area_reset(SEXP e) {
+  struct ValueArea *h = (struct ValueArea *)R_ExternalPtrAddr(e);
+  wickra_value_area_reset(h);
+  return R_NilValue;
+}
+
+static void value_at_risk_fin(SEXP e) {
+  struct ValueAtRisk *h = (struct ValueAtRisk *)R_ExternalPtrAddr(e);
+  if (h) wickra_value_at_risk_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_value_at_risk_new(SEXP a0, SEXP a1) {
+  struct ValueAtRisk *h = wickra_value_at_risk_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid ValueAtRisk parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, value_at_risk_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_value_at_risk_update(SEXP e, SEXP a0) {
+  struct ValueAtRisk *h = (struct ValueAtRisk *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_value_at_risk_update(h, Rf_asReal(a0)));
+}
+SEXP wk_value_at_risk_batch(SEXP e, SEXP a0) {
+  struct ValueAtRisk *h = (struct ValueAtRisk *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_value_at_risk_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_value_at_risk_reset(SEXP e) {
+  struct ValueAtRisk *h = (struct ValueAtRisk *)R_ExternalPtrAddr(e);
+  wickra_value_at_risk_reset(h);
+  return R_NilValue;
+}
+
+static void variance_fin(SEXP e) {
+  struct Variance *h = (struct Variance *)R_ExternalPtrAddr(e);
+  if (h) wickra_variance_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_variance_new(SEXP a0) {
+  struct Variance *h = wickra_variance_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Variance parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, variance_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_variance_update(SEXP e, SEXP a0) {
+  struct Variance *h = (struct Variance *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_variance_update(h, Rf_asReal(a0)));
+}
+SEXP wk_variance_batch(SEXP e, SEXP a0) {
+  struct Variance *h = (struct Variance *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_variance_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_variance_reset(SEXP e) {
+  struct Variance *h = (struct Variance *)R_ExternalPtrAddr(e);
+  wickra_variance_reset(h);
+  return R_NilValue;
+}
+
+static void variance_ratio_fin(SEXP e) {
+  struct VarianceRatio *h = (struct VarianceRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_variance_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_variance_ratio_new(SEXP a0, SEXP a1) {
+  struct VarianceRatio *h = wickra_variance_ratio_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid VarianceRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, variance_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_variance_ratio_update(SEXP e, SEXP a0, SEXP a1) {
+  struct VarianceRatio *h = (struct VarianceRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_variance_ratio_update(h, Rf_asReal(a0), Rf_asReal(a1)));
+}
+SEXP wk_variance_ratio_batch(SEXP e, SEXP a0, SEXP a1) {
+  struct VarianceRatio *h = (struct VarianceRatio *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_variance_ratio_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_variance_ratio_reset(SEXP e) {
+  struct VarianceRatio *h = (struct VarianceRatio *)R_ExternalPtrAddr(e);
+  wickra_variance_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void vertical_horizontal_filter_fin(SEXP e) {
+  struct VerticalHorizontalFilter *h = (struct VerticalHorizontalFilter *)R_ExternalPtrAddr(e);
+  if (h) wickra_vertical_horizontal_filter_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_vertical_horizontal_filter_new(SEXP a0) {
+  struct VerticalHorizontalFilter *h = wickra_vertical_horizontal_filter_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid VerticalHorizontalFilter parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, vertical_horizontal_filter_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_vertical_horizontal_filter_update(SEXP e, SEXP a0) {
+  struct VerticalHorizontalFilter *h = (struct VerticalHorizontalFilter *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_vertical_horizontal_filter_update(h, Rf_asReal(a0)));
+}
+SEXP wk_vertical_horizontal_filter_batch(SEXP e, SEXP a0) {
+  struct VerticalHorizontalFilter *h = (struct VerticalHorizontalFilter *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_vertical_horizontal_filter_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_vertical_horizontal_filter_reset(SEXP e) {
+  struct VerticalHorizontalFilter *h = (struct VerticalHorizontalFilter *)R_ExternalPtrAddr(e);
+  wickra_vertical_horizontal_filter_reset(h);
+  return R_NilValue;
+}
+
+static void vidya_fin(SEXP e) {
+  struct Vidya *h = (struct Vidya *)R_ExternalPtrAddr(e);
+  if (h) wickra_vidya_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_vidya_new(SEXP a0, SEXP a1) {
+  struct Vidya *h = wickra_vidya_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid Vidya parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, vidya_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_vidya_update(SEXP e, SEXP a0) {
+  struct Vidya *h = (struct Vidya *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_vidya_update(h, Rf_asReal(a0)));
+}
+SEXP wk_vidya_batch(SEXP e, SEXP a0) {
+  struct Vidya *h = (struct Vidya *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_vidya_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_vidya_reset(SEXP e) {
+  struct Vidya *h = (struct Vidya *)R_ExternalPtrAddr(e);
+  wickra_vidya_reset(h);
+  return R_NilValue;
+}
+
+static void volatility_cone_fin(SEXP e) {
+  struct VolatilityCone *h = (struct VolatilityCone *)R_ExternalPtrAddr(e);
+  if (h) wickra_volatility_cone_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_volatility_cone_new(SEXP a0, SEXP a1) {
+  struct VolatilityCone *h = wickra_volatility_cone_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid VolatilityCone parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, volatility_cone_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_volatility_cone_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VolatilityCone *h = (struct VolatilityCone *)R_ExternalPtrAddr(e);
+  struct WickraVolatilityConeOutput out;
+  int ok = wickra_volatility_cone_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 5));
+  REAL(r)[0] = ok ? (double)out.current : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.min : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.median : NA_REAL;
+  REAL(r)[3] = ok ? (double)out.max : NA_REAL;
+  REAL(r)[4] = ok ? (double)out.percentile : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 5));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("current"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("min"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("median"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("max"));
+  SET_STRING_ELT(nm, 4, Rf_mkChar("percentile"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_volatility_cone_reset(SEXP e) {
+  struct VolatilityCone *h = (struct VolatilityCone *)R_ExternalPtrAddr(e);
+  wickra_volatility_cone_reset(h);
+  return R_NilValue;
+}
+
+static void volatility_of_volatility_fin(SEXP e) {
+  struct VolatilityOfVolatility *h = (struct VolatilityOfVolatility *)R_ExternalPtrAddr(e);
+  if (h) wickra_volatility_of_volatility_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_volatility_of_volatility_new(SEXP a0, SEXP a1) {
+  struct VolatilityOfVolatility *h = wickra_volatility_of_volatility_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid VolatilityOfVolatility parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, volatility_of_volatility_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_volatility_of_volatility_update(SEXP e, SEXP a0) {
+  struct VolatilityOfVolatility *h = (struct VolatilityOfVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_volatility_of_volatility_update(h, Rf_asReal(a0)));
+}
+SEXP wk_volatility_of_volatility_batch(SEXP e, SEXP a0) {
+  struct VolatilityOfVolatility *h = (struct VolatilityOfVolatility *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_volatility_of_volatility_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_volatility_of_volatility_reset(SEXP e) {
+  struct VolatilityOfVolatility *h = (struct VolatilityOfVolatility *)R_ExternalPtrAddr(e);
+  wickra_volatility_of_volatility_reset(h);
+  return R_NilValue;
+}
+
+static void volatility_ratio_fin(SEXP e) {
+  struct VolatilityRatio *h = (struct VolatilityRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_volatility_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_volatility_ratio_new(SEXP a0) {
+  struct VolatilityRatio *h = wickra_volatility_ratio_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid VolatilityRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, volatility_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_volatility_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VolatilityRatio *h = (struct VolatilityRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_volatility_ratio_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_volatility_ratio_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VolatilityRatio *h = (struct VolatilityRatio *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_volatility_ratio_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_volatility_ratio_reset(SEXP e) {
+  struct VolatilityRatio *h = (struct VolatilityRatio *)R_ExternalPtrAddr(e);
+  wickra_volatility_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void volty_stop_fin(SEXP e) {
+  struct VoltyStop *h = (struct VoltyStop *)R_ExternalPtrAddr(e);
+  if (h) wickra_volty_stop_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_volty_stop_new(SEXP a0, SEXP a1) {
+  struct VoltyStop *h = wickra_volty_stop_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid VoltyStop parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, volty_stop_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_volty_stop_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VoltyStop *h = (struct VoltyStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_volty_stop_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_volty_stop_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VoltyStop *h = (struct VoltyStop *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_volty_stop_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_volty_stop_reset(SEXP e) {
+  struct VoltyStop *h = (struct VoltyStop *)R_ExternalPtrAddr(e);
+  wickra_volty_stop_reset(h);
+  return R_NilValue;
+}
+
+static void volume_bars_fin(SEXP e) {
+  struct VolumeBars *h = (struct VolumeBars *)R_ExternalPtrAddr(e);
+  if (h) wickra_volume_bars_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_volume_bars_new(SEXP a0) {
+  struct VolumeBars *h = wickra_volume_bars_new(Rf_asReal(a0));
+  if (!h) Rf_error("invalid VolumeBars parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, volume_bars_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_volume_bars_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VolumeBars *h = (struct VolumeBars *)R_ExternalPtrAddr(e);
+  struct WickraVolumeBar buf[64];
+  size_t n = wickra_volume_bars_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), buf, 64);
+  SEXP r = PROTECT(Rf_allocMatrix(REALSXP, (int)n, 5));
+  for (size_t i = 0; i < n; i++) {
+    REAL(r)[i + n * 0] = (double)buf[i].open;
+    REAL(r)[i + n * 1] = (double)buf[i].high;
+    REAL(r)[i + n * 2] = (double)buf[i].low;
+    REAL(r)[i + n * 3] = (double)buf[i].close;
+    REAL(r)[i + n * 4] = (double)buf[i].volume;
+  }
+  SEXP cn = PROTECT(Rf_allocVector(STRSXP, 5));
+  SET_STRING_ELT(cn, 0, Rf_mkChar("open"));
+  SET_STRING_ELT(cn, 1, Rf_mkChar("high"));
+  SET_STRING_ELT(cn, 2, Rf_mkChar("low"));
+  SET_STRING_ELT(cn, 3, Rf_mkChar("close"));
+  SET_STRING_ELT(cn, 4, Rf_mkChar("volume"));
+  SEXP dn = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(dn, 1, cn);
+  Rf_setAttrib(r, R_DimNamesSymbol, dn);
+  UNPROTECT(3);
+  return r;
+}
+SEXP wk_volume_bars_reset(SEXP e) {
+  struct VolumeBars *h = (struct VolumeBars *)R_ExternalPtrAddr(e);
+  wickra_volume_bars_reset(h);
+  return R_NilValue;
+}
+
+static void volume_by_time_profile_fin(SEXP e) {
+  struct VolumeByTimeProfile *h = (struct VolumeByTimeProfile *)R_ExternalPtrAddr(e);
+  if (h) wickra_volume_by_time_profile_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_volume_by_time_profile_new(SEXP a0, SEXP a1) {
+  struct VolumeByTimeProfile *h = wickra_volume_by_time_profile_new((uintptr_t)Rf_asReal(a0), (int32_t)Rf_asInteger(a1));
+  if (!h) Rf_error("invalid VolumeByTimeProfile parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, volume_by_time_profile_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_volume_by_time_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP capn) {
+  struct VolumeByTimeProfile *h = (struct VolumeByTimeProfile *)R_ExternalPtrAddr(e);
+  int cap = Rf_asInteger(capn);
+  SEXP values = PROTECT(Rf_allocVector(REALSXP, cap));
+  R_xlen_t n = wickra_volume_by_time_profile_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), REAL(values), (uintptr_t)cap);
+  if (n < 0) { UNPROTECT(1); return R_NilValue; }
+  SEXP vv = PROTECT(Rf_allocVector(REALSXP, n));
+  for (R_xlen_t i = 0; i < n; i++) REAL(vv)[i] = REAL(values)[i];
+  UNPROTECT(2);
+  return vv;
+}
+SEXP wk_volume_by_time_profile_reset(SEXP e) {
+  struct VolumeByTimeProfile *h = (struct VolumeByTimeProfile *)R_ExternalPtrAddr(e);
+  wickra_volume_by_time_profile_reset(h);
+  return R_NilValue;
+}
+
+static void volume_oscillator_fin(SEXP e) {
+  struct VolumeOscillator *h = (struct VolumeOscillator *)R_ExternalPtrAddr(e);
+  if (h) wickra_volume_oscillator_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_volume_oscillator_new(SEXP a0, SEXP a1) {
+  struct VolumeOscillator *h = wickra_volume_oscillator_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid VolumeOscillator parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, volume_oscillator_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_volume_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VolumeOscillator *h = (struct VolumeOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_volume_oscillator_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_volume_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VolumeOscillator *h = (struct VolumeOscillator *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_volume_oscillator_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_volume_oscillator_reset(SEXP e) {
+  struct VolumeOscillator *h = (struct VolumeOscillator *)R_ExternalPtrAddr(e);
+  wickra_volume_oscillator_reset(h);
+  return R_NilValue;
+}
+
+static void volume_price_trend_fin(SEXP e) {
+  struct VolumePriceTrend *h = (struct VolumePriceTrend *)R_ExternalPtrAddr(e);
+  if (h) wickra_volume_price_trend_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_volume_price_trend_new(void) {
+  struct VolumePriceTrend *h = wickra_volume_price_trend_new();
+  if (!h) Rf_error("invalid VolumePriceTrend parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, volume_price_trend_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_volume_price_trend_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VolumePriceTrend *h = (struct VolumePriceTrend *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_volume_price_trend_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_volume_price_trend_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VolumePriceTrend *h = (struct VolumePriceTrend *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_volume_price_trend_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_volume_price_trend_reset(SEXP e) {
+  struct VolumePriceTrend *h = (struct VolumePriceTrend *)R_ExternalPtrAddr(e);
+  wickra_volume_price_trend_reset(h);
+  return R_NilValue;
+}
+
+static void volume_profile_fin(SEXP e) {
+  struct VolumeProfile *h = (struct VolumeProfile *)R_ExternalPtrAddr(e);
+  if (h) wickra_volume_profile_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_volume_profile_new(SEXP a0, SEXP a1) {
+  struct VolumeProfile *h = wickra_volume_profile_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid VolumeProfile parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, volume_profile_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_volume_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP capn) {
+  struct VolumeProfile *h = (struct VolumeProfile *)R_ExternalPtrAddr(e);
+  int cap = Rf_asInteger(capn);
+  SEXP values = PROTECT(Rf_allocVector(REALSXP, cap));
+  struct WickraVolumeProfileOutputScalars sc;
+  R_xlen_t n = wickra_volume_profile_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &sc, REAL(values), (uintptr_t)cap);
+  if (n < 0) { UNPROTECT(1); return R_NilValue; }
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, 3));
+  SEXP onm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_VECTOR_ELT(out, 0, Rf_ScalarReal((double)sc.price_low));
+  SET_STRING_ELT(onm, 0, Rf_mkChar("price_low"));
+  SET_VECTOR_ELT(out, 1, Rf_ScalarReal((double)sc.price_high));
+  SET_STRING_ELT(onm, 1, Rf_mkChar("price_high"));
+  SEXP vv = PROTECT(Rf_allocVector(REALSXP, n));
+  for (R_xlen_t i = 0; i < n; i++) REAL(vv)[i] = REAL(values)[i];
+  SET_VECTOR_ELT(out, 2, vv);
+  SET_STRING_ELT(onm, 2, Rf_mkChar("values"));
+  Rf_setAttrib(out, R_NamesSymbol, onm);
+  UNPROTECT(4);
+  return out;
+}
+SEXP wk_volume_profile_reset(SEXP e) {
+  struct VolumeProfile *h = (struct VolumeProfile *)R_ExternalPtrAddr(e);
+  wickra_volume_profile_reset(h);
+  return R_NilValue;
+}
+
+static void volume_rsi_fin(SEXP e) {
+  struct VolumeRsi *h = (struct VolumeRsi *)R_ExternalPtrAddr(e);
+  if (h) wickra_volume_rsi_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_volume_rsi_new(SEXP a0) {
+  struct VolumeRsi *h = wickra_volume_rsi_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid VolumeRsi parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, volume_rsi_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_volume_rsi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VolumeRsi *h = (struct VolumeRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_volume_rsi_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_volume_rsi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VolumeRsi *h = (struct VolumeRsi *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_volume_rsi_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_volume_rsi_reset(SEXP e) {
+  struct VolumeRsi *h = (struct VolumeRsi *)R_ExternalPtrAddr(e);
+  wickra_volume_rsi_reset(h);
+  return R_NilValue;
+}
+
+static void volume_weighted_macd_fin(SEXP e) {
+  struct VolumeWeightedMacd *h = (struct VolumeWeightedMacd *)R_ExternalPtrAddr(e);
+  if (h) wickra_volume_weighted_macd_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_volume_weighted_macd_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct VolumeWeightedMacd *h = wickra_volume_weighted_macd_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2));
+  if (!h) Rf_error("invalid VolumeWeightedMacd parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, volume_weighted_macd_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_volume_weighted_macd_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VolumeWeightedMacd *h = (struct VolumeWeightedMacd *)R_ExternalPtrAddr(e);
+  struct WickraVolumeWeightedMacdOutput out;
+  int ok = wickra_volume_weighted_macd_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.macd : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.signal : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.histogram : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("macd"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("signal"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("histogram"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_volume_weighted_macd_reset(SEXP e) {
+  struct VolumeWeightedMacd *h = (struct VolumeWeightedMacd *)R_ExternalPtrAddr(e);
+  wickra_volume_weighted_macd_reset(h);
+  return R_NilValue;
+}
+
+static void volume_weighted_sr_fin(SEXP e) {
+  struct VolumeWeightedSr *h = (struct VolumeWeightedSr *)R_ExternalPtrAddr(e);
+  if (h) wickra_volume_weighted_sr_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_volume_weighted_sr_new(SEXP a0) {
+  struct VolumeWeightedSr *h = wickra_volume_weighted_sr_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid VolumeWeightedSr parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, volume_weighted_sr_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_volume_weighted_sr_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VolumeWeightedSr *h = (struct VolumeWeightedSr *)R_ExternalPtrAddr(e);
+  struct WickraVolumeWeightedSrOutput out;
+  int ok = wickra_volume_weighted_sr_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.support : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.resistance : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("support"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("resistance"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_volume_weighted_sr_reset(SEXP e) {
+  struct VolumeWeightedSr *h = (struct VolumeWeightedSr *)R_ExternalPtrAddr(e);
+  wickra_volume_weighted_sr_reset(h);
+  return R_NilValue;
+}
+
+static void vortex_fin(SEXP e) {
+  struct Vortex *h = (struct Vortex *)R_ExternalPtrAddr(e);
+  if (h) wickra_vortex_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_vortex_new(SEXP a0) {
+  struct Vortex *h = wickra_vortex_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Vortex parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, vortex_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_vortex_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Vortex *h = (struct Vortex *)R_ExternalPtrAddr(e);
+  struct WickraVortexOutput out;
+  int ok = wickra_vortex_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.plus : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.minus : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("plus"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("minus"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_vortex_reset(SEXP e) {
+  struct Vortex *h = (struct Vortex *)R_ExternalPtrAddr(e);
+  wickra_vortex_reset(h);
+  return R_NilValue;
+}
+
+static void vpin_fin(SEXP e) {
+  struct Vpin *h = (struct Vpin *)R_ExternalPtrAddr(e);
+  if (h) wickra_vpin_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_vpin_new(SEXP a0, SEXP a1) {
+  struct Vpin *h = wickra_vpin_new(Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid Vpin parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, vpin_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_vpin_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
+  struct Vpin *h = (struct Vpin *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_vpin_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
+}
+SEXP wk_vpin_reset(SEXP e) {
+  struct Vpin *h = (struct Vpin *)R_ExternalPtrAddr(e);
+  wickra_vpin_reset(h);
+  return R_NilValue;
+}
+
+static void vwap_fin(SEXP e) {
+  struct Vwap *h = (struct Vwap *)R_ExternalPtrAddr(e);
+  if (h) wickra_vwap_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_vwap_new(void) {
+  struct Vwap *h = wickra_vwap_new();
+  if (!h) Rf_error("invalid Vwap parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, vwap_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_vwap_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Vwap *h = (struct Vwap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_vwap_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_vwap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Vwap *h = (struct Vwap *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_vwap_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_vwap_reset(SEXP e) {
+  struct Vwap *h = (struct Vwap *)R_ExternalPtrAddr(e);
+  wickra_vwap_reset(h);
+  return R_NilValue;
+}
+
+static void vwap_std_dev_bands_fin(SEXP e) {
+  struct VwapStdDevBands *h = (struct VwapStdDevBands *)R_ExternalPtrAddr(e);
+  if (h) wickra_vwap_std_dev_bands_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_vwap_std_dev_bands_new(SEXP a0) {
+  struct VwapStdDevBands *h = wickra_vwap_std_dev_bands_new(Rf_asReal(a0));
+  if (!h) Rf_error("invalid VwapStdDevBands parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, vwap_std_dev_bands_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_vwap_std_dev_bands_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct VwapStdDevBands *h = (struct VwapStdDevBands *)R_ExternalPtrAddr(e);
+  struct WickraVwapStdDevBandsOutput out;
+  int ok = wickra_vwap_std_dev_bands_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 4));
+  REAL(r)[0] = ok ? (double)out.upper : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.middle : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.lower : NA_REAL;
+  REAL(r)[3] = ok ? (double)out.stddev : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 4));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("upper"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("middle"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("lower"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("stddev"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_vwap_std_dev_bands_reset(SEXP e) {
+  struct VwapStdDevBands *h = (struct VwapStdDevBands *)R_ExternalPtrAddr(e);
+  wickra_vwap_std_dev_bands_reset(h);
+  return R_NilValue;
+}
+
+static void vwma_fin(SEXP e) {
+  struct Vwma *h = (struct Vwma *)R_ExternalPtrAddr(e);
+  if (h) wickra_vwma_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_vwma_new(SEXP a0) {
+  struct Vwma *h = wickra_vwma_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Vwma parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, vwma_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_vwma_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Vwma *h = (struct Vwma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_vwma_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_vwma_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Vwma *h = (struct Vwma *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_vwma_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_vwma_reset(SEXP e) {
+  struct Vwma *h = (struct Vwma *)R_ExternalPtrAddr(e);
+  wickra_vwma_reset(h);
+  return R_NilValue;
+}
+
+static void vzo_fin(SEXP e) {
+  struct Vzo *h = (struct Vzo *)R_ExternalPtrAddr(e);
+  if (h) wickra_vzo_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_vzo_new(SEXP a0) {
+  struct Vzo *h = wickra_vzo_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Vzo parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, vzo_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_vzo_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Vzo *h = (struct Vzo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_vzo_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_vzo_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Vzo *h = (struct Vzo *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_vzo_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_vzo_reset(SEXP e) {
+  struct Vzo *h = (struct Vzo *)R_ExternalPtrAddr(e);
+  wickra_vzo_reset(h);
+  return R_NilValue;
+}
+
+static void wad_fin(SEXP e) {
+  struct Wad *h = (struct Wad *)R_ExternalPtrAddr(e);
+  if (h) wickra_wad_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_wad_new(void) {
+  struct Wad *h = wickra_wad_new();
+  if (!h) Rf_error("invalid Wad parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, wad_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_wad_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Wad *h = (struct Wad *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_wad_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_wad_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Wad *h = (struct Wad *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_wad_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_wad_reset(SEXP e) {
+  struct Wad *h = (struct Wad *)R_ExternalPtrAddr(e);
+  wickra_wad_reset(h);
+  return R_NilValue;
+}
+
+static void wave_pm_fin(SEXP e) {
+  struct WavePm *h = (struct WavePm *)R_ExternalPtrAddr(e);
+  if (h) wickra_wave_pm_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_wave_pm_new(SEXP a0, SEXP a1) {
+  struct WavePm *h = wickra_wave_pm_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid WavePm parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, wave_pm_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_wave_pm_update(SEXP e, SEXP a0) {
+  struct WavePm *h = (struct WavePm *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_wave_pm_update(h, Rf_asReal(a0)));
+}
+SEXP wk_wave_pm_batch(SEXP e, SEXP a0) {
+  struct WavePm *h = (struct WavePm *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_wave_pm_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_wave_pm_reset(SEXP e) {
+  struct WavePm *h = (struct WavePm *)R_ExternalPtrAddr(e);
+  wickra_wave_pm_reset(h);
+  return R_NilValue;
+}
+
+static void wave_trend_fin(SEXP e) {
+  struct WaveTrend *h = (struct WaveTrend *)R_ExternalPtrAddr(e);
+  if (h) wickra_wave_trend_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_wave_trend_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct WaveTrend *h = wickra_wave_trend_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2));
+  if (!h) Rf_error("invalid WaveTrend parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, wave_trend_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_wave_trend_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct WaveTrend *h = (struct WaveTrend *)R_ExternalPtrAddr(e);
+  struct WickraWaveTrendOutput out;
+  int ok = wickra_wave_trend_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.wt1 : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.wt2 : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("wt1"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("wt2"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_wave_trend_reset(SEXP e) {
+  struct WaveTrend *h = (struct WaveTrend *)R_ExternalPtrAddr(e);
+  wickra_wave_trend_reset(h);
+  return R_NilValue;
+}
+
+static void wedge_fin(SEXP e) {
+  struct Wedge *h = (struct Wedge *)R_ExternalPtrAddr(e);
+  if (h) wickra_wedge_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_wedge_new(void) {
+  struct Wedge *h = wickra_wedge_new();
+  if (!h) Rf_error("invalid Wedge parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, wedge_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_wedge_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Wedge *h = (struct Wedge *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_wedge_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_wedge_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct Wedge *h = (struct Wedge *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_wedge_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_wedge_reset(SEXP e) {
+  struct Wedge *h = (struct Wedge *)R_ExternalPtrAddr(e);
+  wickra_wedge_reset(h);
+  return R_NilValue;
+}
+
+static void weighted_close_fin(SEXP e) {
+  struct WeightedClose *h = (struct WeightedClose *)R_ExternalPtrAddr(e);
+  if (h) wickra_weighted_close_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_weighted_close_new(void) {
+  struct WeightedClose *h = wickra_weighted_close_new();
+  if (!h) Rf_error("invalid WeightedClose parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, weighted_close_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_weighted_close_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct WeightedClose *h = (struct WeightedClose *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_weighted_close_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_weighted_close_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct WeightedClose *h = (struct WeightedClose *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_weighted_close_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_weighted_close_reset(SEXP e) {
+  struct WeightedClose *h = (struct WeightedClose *)R_ExternalPtrAddr(e);
+  wickra_weighted_close_reset(h);
+  return R_NilValue;
+}
+
+static void wick_ratio_fin(SEXP e) {
+  struct WickRatio *h = (struct WickRatio *)R_ExternalPtrAddr(e);
+  if (h) wickra_wick_ratio_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_wick_ratio_new(void) {
+  struct WickRatio *h = wickra_wick_ratio_new();
+  if (!h) Rf_error("invalid WickRatio parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, wick_ratio_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_wick_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct WickRatio *h = (struct WickRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_wick_ratio_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_wick_ratio_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct WickRatio *h = (struct WickRatio *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_wick_ratio_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_wick_ratio_reset(SEXP e) {
+  struct WickRatio *h = (struct WickRatio *)R_ExternalPtrAddr(e);
+  wickra_wick_ratio_reset(h);
+  return R_NilValue;
+}
+
+static void williams_fractals_fin(SEXP e) {
+  struct WilliamsFractals *h = (struct WilliamsFractals *)R_ExternalPtrAddr(e);
+  if (h) wickra_williams_fractals_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_williams_fractals_new(void) {
+  struct WilliamsFractals *h = wickra_williams_fractals_new();
+  if (!h) Rf_error("invalid WilliamsFractals parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, williams_fractals_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_williams_fractals_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct WilliamsFractals *h = (struct WilliamsFractals *)R_ExternalPtrAddr(e);
+  struct WickraWilliamsFractalsOutput out;
+  int ok = wickra_williams_fractals_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.up : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.down : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("up"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("down"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_williams_fractals_reset(SEXP e) {
+  struct WilliamsFractals *h = (struct WilliamsFractals *)R_ExternalPtrAddr(e);
+  wickra_williams_fractals_reset(h);
+  return R_NilValue;
+}
+
+static void williams_r_fin(SEXP e) {
+  struct WilliamsR *h = (struct WilliamsR *)R_ExternalPtrAddr(e);
+  if (h) wickra_williams_r_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_williams_r_new(SEXP a0) {
+  struct WilliamsR *h = wickra_williams_r_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid WilliamsR parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, williams_r_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_williams_r_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct WilliamsR *h = (struct WilliamsR *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_williams_r_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_williams_r_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct WilliamsR *h = (struct WilliamsR *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_williams_r_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_williams_r_reset(SEXP e) {
+  struct WilliamsR *h = (struct WilliamsR *)R_ExternalPtrAddr(e);
+  wickra_williams_r_reset(h);
+  return R_NilValue;
+}
+
+static void win_rate_fin(SEXP e) {
+  struct WinRate *h = (struct WinRate *)R_ExternalPtrAddr(e);
+  if (h) wickra_win_rate_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_win_rate_new(SEXP a0) {
+  struct WinRate *h = wickra_win_rate_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid WinRate parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, win_rate_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_win_rate_update(SEXP e, SEXP a0) {
+  struct WinRate *h = (struct WinRate *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_win_rate_update(h, Rf_asReal(a0)));
+}
+SEXP wk_win_rate_batch(SEXP e, SEXP a0) {
+  struct WinRate *h = (struct WinRate *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_win_rate_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_win_rate_reset(SEXP e) {
+  struct WinRate *h = (struct WinRate *)R_ExternalPtrAddr(e);
+  wickra_win_rate_reset(h);
+  return R_NilValue;
+}
+
+static void wma_fin(SEXP e) {
+  struct Wma *h = (struct Wma *)R_ExternalPtrAddr(e);
+  if (h) wickra_wma_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_wma_new(SEXP a0) {
+  struct Wma *h = wickra_wma_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Wma parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, wma_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_wma_update(SEXP e, SEXP a0) {
+  struct Wma *h = (struct Wma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_wma_update(h, Rf_asReal(a0)));
+}
+SEXP wk_wma_batch(SEXP e, SEXP a0) {
+  struct Wma *h = (struct Wma *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_wma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_wma_reset(SEXP e) {
+  struct Wma *h = (struct Wma *)R_ExternalPtrAddr(e);
+  wickra_wma_reset(h);
+  return R_NilValue;
+}
+
+static void woodie_pivots_fin(SEXP e) {
+  struct WoodiePivots *h = (struct WoodiePivots *)R_ExternalPtrAddr(e);
+  if (h) wickra_woodie_pivots_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_woodie_pivots_new(void) {
+  struct WoodiePivots *h = wickra_woodie_pivots_new();
+  if (!h) Rf_error("invalid WoodiePivots parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, woodie_pivots_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_woodie_pivots_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct WoodiePivots *h = (struct WoodiePivots *)R_ExternalPtrAddr(e);
+  struct WickraWoodiePivotsOutput out;
+  int ok = wickra_woodie_pivots_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 5));
+  REAL(r)[0] = ok ? (double)out.pp : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.r1 : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.r2 : NA_REAL;
+  REAL(r)[3] = ok ? (double)out.s1 : NA_REAL;
+  REAL(r)[4] = ok ? (double)out.s2 : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 5));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("pp"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("r1"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("r2"));
+  SET_STRING_ELT(nm, 3, Rf_mkChar("s1"));
+  SET_STRING_ELT(nm, 4, Rf_mkChar("s2"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_woodie_pivots_reset(SEXP e) {
+  struct WoodiePivots *h = (struct WoodiePivots *)R_ExternalPtrAddr(e);
+  wickra_woodie_pivots_reset(h);
+  return R_NilValue;
+}
+
+static void yang_zhang_volatility_fin(SEXP e) {
+  struct YangZhangVolatility *h = (struct YangZhangVolatility *)R_ExternalPtrAddr(e);
+  if (h) wickra_yang_zhang_volatility_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_yang_zhang_volatility_new(SEXP a0, SEXP a1) {
+  struct YangZhangVolatility *h = wickra_yang_zhang_volatility_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1));
+  if (!h) Rf_error("invalid YangZhangVolatility parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, yang_zhang_volatility_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_yang_zhang_volatility_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct YangZhangVolatility *h = (struct YangZhangVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_yang_zhang_volatility_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_yang_zhang_volatility_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct YangZhangVolatility *h = (struct YangZhangVolatility *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_yang_zhang_volatility_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_yang_zhang_volatility_reset(SEXP e) {
+  struct YangZhangVolatility *h = (struct YangZhangVolatility *)R_ExternalPtrAddr(e);
+  wickra_yang_zhang_volatility_reset(h);
+  return R_NilValue;
+}
+
+static void yoyo_exit_fin(SEXP e) {
+  struct YoyoExit *h = (struct YoyoExit *)R_ExternalPtrAddr(e);
+  if (h) wickra_yoyo_exit_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_yoyo_exit_new(SEXP a0, SEXP a1) {
+  struct YoyoExit *h = wickra_yoyo_exit_new((uintptr_t)Rf_asReal(a0), Rf_asReal(a1));
+  if (!h) Rf_error("invalid YoyoExit parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, yoyo_exit_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_yoyo_exit_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct YoyoExit *h = (struct YoyoExit *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_yoyo_exit_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5)));
+}
+SEXP wk_yoyo_exit_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct YoyoExit *h = (struct YoyoExit *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  int64_t *b5 = (int64_t *)R_alloc(n, sizeof(int64_t));
+  for (R_xlen_t k = 0; k < n; k++) b5[k] = (int64_t)REAL(a5)[k];
+  wickra_yoyo_exit_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_yoyo_exit_reset(SEXP e) {
+  struct YoyoExit *h = (struct YoyoExit *)R_ExternalPtrAddr(e);
+  wickra_yoyo_exit_reset(h);
+  return R_NilValue;
+}
+
+static void z_score_fin(SEXP e) {
+  struct ZScore *h = (struct ZScore *)R_ExternalPtrAddr(e);
+  if (h) wickra_z_score_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_z_score_new(SEXP a0) {
+  struct ZScore *h = wickra_z_score_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid ZScore parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, z_score_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_z_score_update(SEXP e, SEXP a0) {
+  struct ZScore *h = (struct ZScore *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_z_score_update(h, Rf_asReal(a0)));
+}
+SEXP wk_z_score_batch(SEXP e, SEXP a0) {
+  struct ZScore *h = (struct ZScore *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_z_score_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_z_score_reset(SEXP e) {
+  struct ZScore *h = (struct ZScore *)R_ExternalPtrAddr(e);
+  wickra_z_score_reset(h);
+  return R_NilValue;
+}
+
+static void zero_lag_macd_fin(SEXP e) {
+  struct ZeroLagMacd *h = (struct ZeroLagMacd *)R_ExternalPtrAddr(e);
+  if (h) wickra_zero_lag_macd_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_zero_lag_macd_new(SEXP a0, SEXP a1, SEXP a2) {
+  struct ZeroLagMacd *h = wickra_zero_lag_macd_new((uintptr_t)Rf_asReal(a0), (uintptr_t)Rf_asReal(a1), (uintptr_t)Rf_asReal(a2));
+  if (!h) Rf_error("invalid ZeroLagMacd parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, zero_lag_macd_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_zero_lag_macd_update(SEXP e, SEXP a0) {
+  struct ZeroLagMacd *h = (struct ZeroLagMacd *)R_ExternalPtrAddr(e);
+  struct WickraZeroLagMacdOutput out;
+  int ok = wickra_zero_lag_macd_update(h, Rf_asReal(a0), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 3));
+  REAL(r)[0] = ok ? (double)out.macd : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.signal : NA_REAL;
+  REAL(r)[2] = ok ? (double)out.histogram : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 3));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("macd"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("signal"));
+  SET_STRING_ELT(nm, 2, Rf_mkChar("histogram"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_zero_lag_macd_reset(SEXP e) {
+  struct ZeroLagMacd *h = (struct ZeroLagMacd *)R_ExternalPtrAddr(e);
+  wickra_zero_lag_macd_reset(h);
+  return R_NilValue;
+}
+
+static void zig_zag_fin(SEXP e) {
+  struct ZigZag *h = (struct ZigZag *)R_ExternalPtrAddr(e);
+  if (h) wickra_zig_zag_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_zig_zag_new(SEXP a0) {
+  struct ZigZag *h = wickra_zig_zag_new(Rf_asReal(a0));
+  if (!h) Rf_error("invalid ZigZag parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, zig_zag_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_zig_zag_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
+  struct ZigZag *h = (struct ZigZag *)R_ExternalPtrAddr(e);
+  struct WickraZigZagOutput out;
+  int ok = wickra_zig_zag_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), (int64_t)Rf_asReal(a5), &out);
+  SEXP r = PROTECT(Rf_allocVector(REALSXP, 2));
+  REAL(r)[0] = ok ? (double)out.swing : NA_REAL;
+  REAL(r)[1] = ok ? (double)out.direction : NA_REAL;
+  SEXP nm = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(nm, 0, Rf_mkChar("swing"));
+  SET_STRING_ELT(nm, 1, Rf_mkChar("direction"));
+  Rf_setAttrib(r, R_NamesSymbol, nm);
+  UNPROTECT(2);
+  return r;
+}
+SEXP wk_zig_zag_reset(SEXP e) {
+  struct ZigZag *h = (struct ZigZag *)R_ExternalPtrAddr(e);
+  wickra_zig_zag_reset(h);
+  return R_NilValue;
+}
+
+static void zlema_fin(SEXP e) {
+  struct Zlema *h = (struct Zlema *)R_ExternalPtrAddr(e);
+  if (h) wickra_zlema_free(h);
+  R_ClearExternalPtr(e);
+}
+SEXP wk_zlema_new(SEXP a0) {
+  struct Zlema *h = wickra_zlema_new((uintptr_t)Rf_asReal(a0));
+  if (!h) Rf_error("invalid Zlema parameters");
+  SEXP e = PROTECT(R_MakeExternalPtr(h, R_NilValue, R_NilValue));
+  R_RegisterCFinalizerEx(e, zlema_fin, TRUE);
+  UNPROTECT(1);
+  return e;
+}
+SEXP wk_zlema_update(SEXP e, SEXP a0) {
+  struct Zlema *h = (struct Zlema *)R_ExternalPtrAddr(e);
+  return Rf_ScalarReal(wickra_zlema_update(h, Rf_asReal(a0)));
+}
+SEXP wk_zlema_batch(SEXP e, SEXP a0) {
+  struct Zlema *h = (struct Zlema *)R_ExternalPtrAddr(e);
+  R_xlen_t n = Rf_xlength(a0);
+  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
+  wickra_zlema_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
+  UNPROTECT(1);
+  return out;
+}
+SEXP wk_zlema_reset(SEXP e) {
+  struct Zlema *h = (struct Zlema *)R_ExternalPtrAddr(e);
+  wickra_zlema_reset(h);
+  return R_NilValue;
+}
+
+static const R_CallMethodDef CallEntries[] = {
+  {"wk_abandoned_baby_new", (DL_FUNC)&wk_abandoned_baby_new, 0},
+  {"wk_abandoned_baby_update", (DL_FUNC)&wk_abandoned_baby_update, 7},
+  {"wk_abandoned_baby_batch", (DL_FUNC)&wk_abandoned_baby_batch, 7},
+  {"wk_abandoned_baby_reset", (DL_FUNC)&wk_abandoned_baby_reset, 1},
+  {"wk_abcd_new", (DL_FUNC)&wk_abcd_new, 0},
+  {"wk_abcd_update", (DL_FUNC)&wk_abcd_update, 7},
+  {"wk_abcd_batch", (DL_FUNC)&wk_abcd_batch, 7},
+  {"wk_abcd_reset", (DL_FUNC)&wk_abcd_reset, 1},
+  {"wk_absolute_breadth_index_new", (DL_FUNC)&wk_absolute_breadth_index_new, 0},
+  {"wk_absolute_breadth_index_update", (DL_FUNC)&wk_absolute_breadth_index_update, 8},
+  {"wk_absolute_breadth_index_reset", (DL_FUNC)&wk_absolute_breadth_index_reset, 1},
+  {"wk_acceleration_bands_new", (DL_FUNC)&wk_acceleration_bands_new, 2},
+  {"wk_acceleration_bands_update", (DL_FUNC)&wk_acceleration_bands_update, 7},
+  {"wk_acceleration_bands_reset", (DL_FUNC)&wk_acceleration_bands_reset, 1},
+  {"wk_accelerator_oscillator_new", (DL_FUNC)&wk_accelerator_oscillator_new, 3},
+  {"wk_accelerator_oscillator_update", (DL_FUNC)&wk_accelerator_oscillator_update, 7},
+  {"wk_accelerator_oscillator_batch", (DL_FUNC)&wk_accelerator_oscillator_batch, 7},
+  {"wk_accelerator_oscillator_reset", (DL_FUNC)&wk_accelerator_oscillator_reset, 1},
+  {"wk_ad_oscillator_new", (DL_FUNC)&wk_ad_oscillator_new, 0},
+  {"wk_ad_oscillator_update", (DL_FUNC)&wk_ad_oscillator_update, 7},
+  {"wk_ad_oscillator_batch", (DL_FUNC)&wk_ad_oscillator_batch, 7},
+  {"wk_ad_oscillator_reset", (DL_FUNC)&wk_ad_oscillator_reset, 1},
+  {"wk_ad_volume_line_new", (DL_FUNC)&wk_ad_volume_line_new, 0},
+  {"wk_ad_volume_line_update", (DL_FUNC)&wk_ad_volume_line_update, 8},
+  {"wk_ad_volume_line_reset", (DL_FUNC)&wk_ad_volume_line_reset, 1},
+  {"wk_adaptive_cci_new", (DL_FUNC)&wk_adaptive_cci_new, 1},
+  {"wk_adaptive_cci_update", (DL_FUNC)&wk_adaptive_cci_update, 7},
+  {"wk_adaptive_cci_batch", (DL_FUNC)&wk_adaptive_cci_batch, 7},
+  {"wk_adaptive_cci_reset", (DL_FUNC)&wk_adaptive_cci_reset, 1},
+  {"wk_adaptive_cycle_new", (DL_FUNC)&wk_adaptive_cycle_new, 0},
+  {"wk_adaptive_cycle_update", (DL_FUNC)&wk_adaptive_cycle_update, 2},
+  {"wk_adaptive_cycle_batch", (DL_FUNC)&wk_adaptive_cycle_batch, 2},
+  {"wk_adaptive_cycle_reset", (DL_FUNC)&wk_adaptive_cycle_reset, 1},
+  {"wk_adaptive_laguerre_filter_new", (DL_FUNC)&wk_adaptive_laguerre_filter_new, 1},
+  {"wk_adaptive_laguerre_filter_update", (DL_FUNC)&wk_adaptive_laguerre_filter_update, 2},
+  {"wk_adaptive_laguerre_filter_batch", (DL_FUNC)&wk_adaptive_laguerre_filter_batch, 2},
+  {"wk_adaptive_laguerre_filter_reset", (DL_FUNC)&wk_adaptive_laguerre_filter_reset, 1},
+  {"wk_adaptive_rsi_new", (DL_FUNC)&wk_adaptive_rsi_new, 1},
+  {"wk_adaptive_rsi_update", (DL_FUNC)&wk_adaptive_rsi_update, 2},
+  {"wk_adaptive_rsi_batch", (DL_FUNC)&wk_adaptive_rsi_batch, 2},
+  {"wk_adaptive_rsi_reset", (DL_FUNC)&wk_adaptive_rsi_reset, 1},
+  {"wk_adl_new", (DL_FUNC)&wk_adl_new, 0},
+  {"wk_adl_update", (DL_FUNC)&wk_adl_update, 7},
+  {"wk_adl_batch", (DL_FUNC)&wk_adl_batch, 7},
+  {"wk_adl_reset", (DL_FUNC)&wk_adl_reset, 1},
+  {"wk_advance_block_new", (DL_FUNC)&wk_advance_block_new, 0},
+  {"wk_advance_block_update", (DL_FUNC)&wk_advance_block_update, 7},
+  {"wk_advance_block_batch", (DL_FUNC)&wk_advance_block_batch, 7},
+  {"wk_advance_block_reset", (DL_FUNC)&wk_advance_block_reset, 1},
+  {"wk_advance_decline_new", (DL_FUNC)&wk_advance_decline_new, 0},
+  {"wk_advance_decline_update", (DL_FUNC)&wk_advance_decline_update, 8},
+  {"wk_advance_decline_reset", (DL_FUNC)&wk_advance_decline_reset, 1},
+  {"wk_advance_decline_ratio_new", (DL_FUNC)&wk_advance_decline_ratio_new, 0},
+  {"wk_advance_decline_ratio_update", (DL_FUNC)&wk_advance_decline_ratio_update, 8},
+  {"wk_advance_decline_ratio_reset", (DL_FUNC)&wk_advance_decline_ratio_reset, 1},
+  {"wk_adx_new", (DL_FUNC)&wk_adx_new, 1},
+  {"wk_adx_update", (DL_FUNC)&wk_adx_update, 7},
+  {"wk_adx_reset", (DL_FUNC)&wk_adx_reset, 1},
+  {"wk_adxr_new", (DL_FUNC)&wk_adxr_new, 1},
+  {"wk_adxr_update", (DL_FUNC)&wk_adxr_update, 7},
+  {"wk_adxr_batch", (DL_FUNC)&wk_adxr_batch, 7},
+  {"wk_adxr_reset", (DL_FUNC)&wk_adxr_reset, 1},
+  {"wk_alligator_new", (DL_FUNC)&wk_alligator_new, 3},
+  {"wk_alligator_update", (DL_FUNC)&wk_alligator_update, 7},
+  {"wk_alligator_reset", (DL_FUNC)&wk_alligator_reset, 1},
+  {"wk_alma_new", (DL_FUNC)&wk_alma_new, 3},
+  {"wk_alma_update", (DL_FUNC)&wk_alma_update, 2},
+  {"wk_alma_batch", (DL_FUNC)&wk_alma_batch, 2},
+  {"wk_alma_reset", (DL_FUNC)&wk_alma_reset, 1},
+  {"wk_alpha_new", (DL_FUNC)&wk_alpha_new, 2},
+  {"wk_alpha_update", (DL_FUNC)&wk_alpha_update, 3},
+  {"wk_alpha_batch", (DL_FUNC)&wk_alpha_batch, 3},
+  {"wk_alpha_reset", (DL_FUNC)&wk_alpha_reset, 1},
+  {"wk_amihud_illiquidity_new", (DL_FUNC)&wk_amihud_illiquidity_new, 1},
+  {"wk_amihud_illiquidity_update", (DL_FUNC)&wk_amihud_illiquidity_update, 5},
+  {"wk_amihud_illiquidity_reset", (DL_FUNC)&wk_amihud_illiquidity_reset, 1},
+  {"wk_anchored_rsi_new", (DL_FUNC)&wk_anchored_rsi_new, 0},
+  {"wk_anchored_rsi_update", (DL_FUNC)&wk_anchored_rsi_update, 2},
+  {"wk_anchored_rsi_batch", (DL_FUNC)&wk_anchored_rsi_batch, 2},
+  {"wk_anchored_rsi_reset", (DL_FUNC)&wk_anchored_rsi_reset, 1},
+  {"wk_anchored_vwap_new", (DL_FUNC)&wk_anchored_vwap_new, 0},
+  {"wk_anchored_vwap_update", (DL_FUNC)&wk_anchored_vwap_update, 7},
+  {"wk_anchored_vwap_batch", (DL_FUNC)&wk_anchored_vwap_batch, 7},
+  {"wk_anchored_vwap_reset", (DL_FUNC)&wk_anchored_vwap_reset, 1},
+  {"wk_andrews_pitchfork_new", (DL_FUNC)&wk_andrews_pitchfork_new, 1},
+  {"wk_andrews_pitchfork_update", (DL_FUNC)&wk_andrews_pitchfork_update, 7},
+  {"wk_andrews_pitchfork_reset", (DL_FUNC)&wk_andrews_pitchfork_reset, 1},
+  {"wk_apo_new", (DL_FUNC)&wk_apo_new, 2},
+  {"wk_apo_update", (DL_FUNC)&wk_apo_update, 2},
+  {"wk_apo_batch", (DL_FUNC)&wk_apo_batch, 2},
+  {"wk_apo_reset", (DL_FUNC)&wk_apo_reset, 1},
+  {"wk_aroon_new", (DL_FUNC)&wk_aroon_new, 1},
+  {"wk_aroon_update", (DL_FUNC)&wk_aroon_update, 7},
+  {"wk_aroon_reset", (DL_FUNC)&wk_aroon_reset, 1},
+  {"wk_aroon_oscillator_new", (DL_FUNC)&wk_aroon_oscillator_new, 1},
+  {"wk_aroon_oscillator_update", (DL_FUNC)&wk_aroon_oscillator_update, 7},
+  {"wk_aroon_oscillator_batch", (DL_FUNC)&wk_aroon_oscillator_batch, 7},
+  {"wk_aroon_oscillator_reset", (DL_FUNC)&wk_aroon_oscillator_reset, 1},
+  {"wk_atr_new", (DL_FUNC)&wk_atr_new, 1},
+  {"wk_atr_update", (DL_FUNC)&wk_atr_update, 7},
+  {"wk_atr_batch", (DL_FUNC)&wk_atr_batch, 7},
+  {"wk_atr_reset", (DL_FUNC)&wk_atr_reset, 1},
+  {"wk_atr_bands_new", (DL_FUNC)&wk_atr_bands_new, 2},
+  {"wk_atr_bands_update", (DL_FUNC)&wk_atr_bands_update, 7},
+  {"wk_atr_bands_reset", (DL_FUNC)&wk_atr_bands_reset, 1},
+  {"wk_atr_ratchet_new", (DL_FUNC)&wk_atr_ratchet_new, 3},
+  {"wk_atr_ratchet_update", (DL_FUNC)&wk_atr_ratchet_update, 7},
+  {"wk_atr_ratchet_reset", (DL_FUNC)&wk_atr_ratchet_reset, 1},
+  {"wk_atr_trailing_stop_new", (DL_FUNC)&wk_atr_trailing_stop_new, 2},
+  {"wk_atr_trailing_stop_update", (DL_FUNC)&wk_atr_trailing_stop_update, 7},
+  {"wk_atr_trailing_stop_batch", (DL_FUNC)&wk_atr_trailing_stop_batch, 7},
+  {"wk_atr_trailing_stop_reset", (DL_FUNC)&wk_atr_trailing_stop_reset, 1},
+  {"wk_auto_fib_new", (DL_FUNC)&wk_auto_fib_new, 0},
+  {"wk_auto_fib_update", (DL_FUNC)&wk_auto_fib_update, 7},
+  {"wk_auto_fib_reset", (DL_FUNC)&wk_auto_fib_reset, 1},
+  {"wk_autocorrelation_new", (DL_FUNC)&wk_autocorrelation_new, 2},
+  {"wk_autocorrelation_update", (DL_FUNC)&wk_autocorrelation_update, 2},
+  {"wk_autocorrelation_batch", (DL_FUNC)&wk_autocorrelation_batch, 2},
+  {"wk_autocorrelation_reset", (DL_FUNC)&wk_autocorrelation_reset, 1},
+  {"wk_autocorrelation_periodogram_new", (DL_FUNC)&wk_autocorrelation_periodogram_new, 2},
+  {"wk_autocorrelation_periodogram_update", (DL_FUNC)&wk_autocorrelation_periodogram_update, 2},
+  {"wk_autocorrelation_periodogram_batch", (DL_FUNC)&wk_autocorrelation_periodogram_batch, 2},
+  {"wk_autocorrelation_periodogram_reset", (DL_FUNC)&wk_autocorrelation_periodogram_reset, 1},
+  {"wk_average_daily_range_new", (DL_FUNC)&wk_average_daily_range_new, 2},
+  {"wk_average_daily_range_update", (DL_FUNC)&wk_average_daily_range_update, 7},
+  {"wk_average_daily_range_batch", (DL_FUNC)&wk_average_daily_range_batch, 7},
+  {"wk_average_daily_range_reset", (DL_FUNC)&wk_average_daily_range_reset, 1},
+  {"wk_average_drawdown_new", (DL_FUNC)&wk_average_drawdown_new, 1},
+  {"wk_average_drawdown_update", (DL_FUNC)&wk_average_drawdown_update, 2},
+  {"wk_average_drawdown_batch", (DL_FUNC)&wk_average_drawdown_batch, 2},
+  {"wk_average_drawdown_reset", (DL_FUNC)&wk_average_drawdown_reset, 1},
+  {"wk_avg_price_new", (DL_FUNC)&wk_avg_price_new, 0},
+  {"wk_avg_price_update", (DL_FUNC)&wk_avg_price_update, 7},
+  {"wk_avg_price_batch", (DL_FUNC)&wk_avg_price_batch, 7},
+  {"wk_avg_price_reset", (DL_FUNC)&wk_avg_price_reset, 1},
+  {"wk_awesome_oscillator_new", (DL_FUNC)&wk_awesome_oscillator_new, 2},
+  {"wk_awesome_oscillator_update", (DL_FUNC)&wk_awesome_oscillator_update, 7},
+  {"wk_awesome_oscillator_batch", (DL_FUNC)&wk_awesome_oscillator_batch, 7},
+  {"wk_awesome_oscillator_reset", (DL_FUNC)&wk_awesome_oscillator_reset, 1},
+  {"wk_awesome_oscillator_histogram_new", (DL_FUNC)&wk_awesome_oscillator_histogram_new, 3},
+  {"wk_awesome_oscillator_histogram_update", (DL_FUNC)&wk_awesome_oscillator_histogram_update, 7},
+  {"wk_awesome_oscillator_histogram_batch", (DL_FUNC)&wk_awesome_oscillator_histogram_batch, 7},
+  {"wk_awesome_oscillator_histogram_reset", (DL_FUNC)&wk_awesome_oscillator_histogram_reset, 1},
+  {"wk_balance_of_power_new", (DL_FUNC)&wk_balance_of_power_new, 0},
+  {"wk_balance_of_power_update", (DL_FUNC)&wk_balance_of_power_update, 7},
+  {"wk_balance_of_power_batch", (DL_FUNC)&wk_balance_of_power_batch, 7},
+  {"wk_balance_of_power_reset", (DL_FUNC)&wk_balance_of_power_reset, 1},
+  {"wk_bandpass_filter_new", (DL_FUNC)&wk_bandpass_filter_new, 2},
+  {"wk_bandpass_filter_update", (DL_FUNC)&wk_bandpass_filter_update, 2},
+  {"wk_bandpass_filter_batch", (DL_FUNC)&wk_bandpass_filter_batch, 2},
+  {"wk_bandpass_filter_reset", (DL_FUNC)&wk_bandpass_filter_reset, 1},
+  {"wk_bat_new", (DL_FUNC)&wk_bat_new, 0},
+  {"wk_bat_update", (DL_FUNC)&wk_bat_update, 7},
+  {"wk_bat_batch", (DL_FUNC)&wk_bat_batch, 7},
+  {"wk_bat_reset", (DL_FUNC)&wk_bat_reset, 1},
+  {"wk_belt_hold_new", (DL_FUNC)&wk_belt_hold_new, 0},
+  {"wk_belt_hold_update", (DL_FUNC)&wk_belt_hold_update, 7},
+  {"wk_belt_hold_batch", (DL_FUNC)&wk_belt_hold_batch, 7},
+  {"wk_belt_hold_reset", (DL_FUNC)&wk_belt_hold_reset, 1},
+  {"wk_beta_new", (DL_FUNC)&wk_beta_new, 1},
+  {"wk_beta_update", (DL_FUNC)&wk_beta_update, 3},
+  {"wk_beta_batch", (DL_FUNC)&wk_beta_batch, 3},
+  {"wk_beta_reset", (DL_FUNC)&wk_beta_reset, 1},
+  {"wk_beta_neutral_spread_new", (DL_FUNC)&wk_beta_neutral_spread_new, 1},
+  {"wk_beta_neutral_spread_update", (DL_FUNC)&wk_beta_neutral_spread_update, 3},
+  {"wk_beta_neutral_spread_batch", (DL_FUNC)&wk_beta_neutral_spread_batch, 3},
+  {"wk_beta_neutral_spread_reset", (DL_FUNC)&wk_beta_neutral_spread_reset, 1},
+  {"wk_better_volume_new", (DL_FUNC)&wk_better_volume_new, 1},
+  {"wk_better_volume_update", (DL_FUNC)&wk_better_volume_update, 7},
+  {"wk_better_volume_batch", (DL_FUNC)&wk_better_volume_batch, 7},
+  {"wk_better_volume_reset", (DL_FUNC)&wk_better_volume_reset, 1},
+  {"wk_bipower_variation_new", (DL_FUNC)&wk_bipower_variation_new, 1},
+  {"wk_bipower_variation_update", (DL_FUNC)&wk_bipower_variation_update, 2},
+  {"wk_bipower_variation_batch", (DL_FUNC)&wk_bipower_variation_batch, 2},
+  {"wk_bipower_variation_reset", (DL_FUNC)&wk_bipower_variation_reset, 1},
+  {"wk_body_size_pct_new", (DL_FUNC)&wk_body_size_pct_new, 0},
+  {"wk_body_size_pct_update", (DL_FUNC)&wk_body_size_pct_update, 7},
+  {"wk_body_size_pct_batch", (DL_FUNC)&wk_body_size_pct_batch, 7},
+  {"wk_body_size_pct_reset", (DL_FUNC)&wk_body_size_pct_reset, 1},
+  {"wk_bollinger_bands_new", (DL_FUNC)&wk_bollinger_bands_new, 2},
+  {"wk_bollinger_bands_update", (DL_FUNC)&wk_bollinger_bands_update, 2},
+  {"wk_bollinger_bands_reset", (DL_FUNC)&wk_bollinger_bands_reset, 1},
+  {"wk_bollinger_bandwidth_new", (DL_FUNC)&wk_bollinger_bandwidth_new, 2},
+  {"wk_bollinger_bandwidth_update", (DL_FUNC)&wk_bollinger_bandwidth_update, 2},
+  {"wk_bollinger_bandwidth_batch", (DL_FUNC)&wk_bollinger_bandwidth_batch, 2},
+  {"wk_bollinger_bandwidth_reset", (DL_FUNC)&wk_bollinger_bandwidth_reset, 1},
+  {"wk_bomar_bands_new", (DL_FUNC)&wk_bomar_bands_new, 2},
+  {"wk_bomar_bands_update", (DL_FUNC)&wk_bomar_bands_update, 2},
+  {"wk_bomar_bands_reset", (DL_FUNC)&wk_bomar_bands_reset, 1},
+  {"wk_breadth_thrust_new", (DL_FUNC)&wk_breadth_thrust_new, 1},
+  {"wk_breadth_thrust_update", (DL_FUNC)&wk_breadth_thrust_update, 8},
+  {"wk_breadth_thrust_reset", (DL_FUNC)&wk_breadth_thrust_reset, 1},
+  {"wk_breakaway_new", (DL_FUNC)&wk_breakaway_new, 0},
+  {"wk_breakaway_update", (DL_FUNC)&wk_breakaway_update, 7},
+  {"wk_breakaway_batch", (DL_FUNC)&wk_breakaway_batch, 7},
+  {"wk_breakaway_reset", (DL_FUNC)&wk_breakaway_reset, 1},
+  {"wk_bullish_percent_index_new", (DL_FUNC)&wk_bullish_percent_index_new, 0},
+  {"wk_bullish_percent_index_update", (DL_FUNC)&wk_bullish_percent_index_update, 8},
+  {"wk_bullish_percent_index_reset", (DL_FUNC)&wk_bullish_percent_index_reset, 1},
+  {"wk_burke_ratio_new", (DL_FUNC)&wk_burke_ratio_new, 1},
+  {"wk_burke_ratio_update", (DL_FUNC)&wk_burke_ratio_update, 2},
+  {"wk_burke_ratio_batch", (DL_FUNC)&wk_burke_ratio_batch, 2},
+  {"wk_burke_ratio_reset", (DL_FUNC)&wk_burke_ratio_reset, 1},
+  {"wk_butterfly_new", (DL_FUNC)&wk_butterfly_new, 0},
+  {"wk_butterfly_update", (DL_FUNC)&wk_butterfly_update, 7},
+  {"wk_butterfly_batch", (DL_FUNC)&wk_butterfly_batch, 7},
+  {"wk_butterfly_reset", (DL_FUNC)&wk_butterfly_reset, 1},
+  {"wk_calendar_spread_new", (DL_FUNC)&wk_calendar_spread_new, 0},
+  {"wk_calendar_spread_update", (DL_FUNC)&wk_calendar_spread_update, 13},
+  {"wk_calendar_spread_reset", (DL_FUNC)&wk_calendar_spread_reset, 1},
+  {"wk_calmar_ratio_new", (DL_FUNC)&wk_calmar_ratio_new, 1},
+  {"wk_calmar_ratio_update", (DL_FUNC)&wk_calmar_ratio_update, 2},
+  {"wk_calmar_ratio_batch", (DL_FUNC)&wk_calmar_ratio_batch, 2},
+  {"wk_calmar_ratio_reset", (DL_FUNC)&wk_calmar_ratio_reset, 1},
+  {"wk_camarilla_new", (DL_FUNC)&wk_camarilla_new, 0},
+  {"wk_camarilla_update", (DL_FUNC)&wk_camarilla_update, 7},
+  {"wk_camarilla_reset", (DL_FUNC)&wk_camarilla_reset, 1},
+  {"wk_candle_volume_new", (DL_FUNC)&wk_candle_volume_new, 1},
+  {"wk_candle_volume_update", (DL_FUNC)&wk_candle_volume_update, 7},
+  {"wk_candle_volume_reset", (DL_FUNC)&wk_candle_volume_reset, 1},
+  {"wk_cci_new", (DL_FUNC)&wk_cci_new, 1},
+  {"wk_cci_update", (DL_FUNC)&wk_cci_update, 7},
+  {"wk_cci_batch", (DL_FUNC)&wk_cci_batch, 7},
+  {"wk_cci_reset", (DL_FUNC)&wk_cci_reset, 1},
+  {"wk_center_of_gravity_new", (DL_FUNC)&wk_center_of_gravity_new, 1},
+  {"wk_center_of_gravity_update", (DL_FUNC)&wk_center_of_gravity_update, 2},
+  {"wk_center_of_gravity_batch", (DL_FUNC)&wk_center_of_gravity_batch, 2},
+  {"wk_center_of_gravity_reset", (DL_FUNC)&wk_center_of_gravity_reset, 1},
+  {"wk_central_pivot_range_new", (DL_FUNC)&wk_central_pivot_range_new, 0},
+  {"wk_central_pivot_range_update", (DL_FUNC)&wk_central_pivot_range_update, 7},
+  {"wk_central_pivot_range_reset", (DL_FUNC)&wk_central_pivot_range_reset, 1},
+  {"wk_cfo_new", (DL_FUNC)&wk_cfo_new, 1},
+  {"wk_cfo_update", (DL_FUNC)&wk_cfo_update, 2},
+  {"wk_cfo_batch", (DL_FUNC)&wk_cfo_batch, 2},
+  {"wk_cfo_reset", (DL_FUNC)&wk_cfo_reset, 1},
+  {"wk_chaikin_money_flow_new", (DL_FUNC)&wk_chaikin_money_flow_new, 1},
+  {"wk_chaikin_money_flow_update", (DL_FUNC)&wk_chaikin_money_flow_update, 7},
+  {"wk_chaikin_money_flow_batch", (DL_FUNC)&wk_chaikin_money_flow_batch, 7},
+  {"wk_chaikin_money_flow_reset", (DL_FUNC)&wk_chaikin_money_flow_reset, 1},
+  {"wk_chaikin_oscillator_new", (DL_FUNC)&wk_chaikin_oscillator_new, 2},
+  {"wk_chaikin_oscillator_update", (DL_FUNC)&wk_chaikin_oscillator_update, 7},
+  {"wk_chaikin_oscillator_batch", (DL_FUNC)&wk_chaikin_oscillator_batch, 7},
+  {"wk_chaikin_oscillator_reset", (DL_FUNC)&wk_chaikin_oscillator_reset, 1},
+  {"wk_chaikin_volatility_new", (DL_FUNC)&wk_chaikin_volatility_new, 2},
+  {"wk_chaikin_volatility_update", (DL_FUNC)&wk_chaikin_volatility_update, 7},
+  {"wk_chaikin_volatility_batch", (DL_FUNC)&wk_chaikin_volatility_batch, 7},
+  {"wk_chaikin_volatility_reset", (DL_FUNC)&wk_chaikin_volatility_reset, 1},
+  {"wk_chande_kroll_stop_new", (DL_FUNC)&wk_chande_kroll_stop_new, 3},
+  {"wk_chande_kroll_stop_update", (DL_FUNC)&wk_chande_kroll_stop_update, 7},
+  {"wk_chande_kroll_stop_reset", (DL_FUNC)&wk_chande_kroll_stop_reset, 1},
+  {"wk_chandelier_exit_new", (DL_FUNC)&wk_chandelier_exit_new, 2},
+  {"wk_chandelier_exit_update", (DL_FUNC)&wk_chandelier_exit_update, 7},
+  {"wk_chandelier_exit_reset", (DL_FUNC)&wk_chandelier_exit_reset, 1},
+  {"wk_choppiness_index_new", (DL_FUNC)&wk_choppiness_index_new, 1},
+  {"wk_choppiness_index_update", (DL_FUNC)&wk_choppiness_index_update, 7},
+  {"wk_choppiness_index_batch", (DL_FUNC)&wk_choppiness_index_batch, 7},
+  {"wk_choppiness_index_reset", (DL_FUNC)&wk_choppiness_index_reset, 1},
+  {"wk_classic_pivots_new", (DL_FUNC)&wk_classic_pivots_new, 0},
+  {"wk_classic_pivots_update", (DL_FUNC)&wk_classic_pivots_update, 7},
+  {"wk_classic_pivots_reset", (DL_FUNC)&wk_classic_pivots_reset, 1},
+  {"wk_close_vs_open_new", (DL_FUNC)&wk_close_vs_open_new, 0},
+  {"wk_close_vs_open_update", (DL_FUNC)&wk_close_vs_open_update, 7},
+  {"wk_close_vs_open_batch", (DL_FUNC)&wk_close_vs_open_batch, 7},
+  {"wk_close_vs_open_reset", (DL_FUNC)&wk_close_vs_open_reset, 1},
+  {"wk_closing_marubozu_new", (DL_FUNC)&wk_closing_marubozu_new, 0},
+  {"wk_closing_marubozu_update", (DL_FUNC)&wk_closing_marubozu_update, 7},
+  {"wk_closing_marubozu_batch", (DL_FUNC)&wk_closing_marubozu_batch, 7},
+  {"wk_closing_marubozu_reset", (DL_FUNC)&wk_closing_marubozu_reset, 1},
+  {"wk_cmo_new", (DL_FUNC)&wk_cmo_new, 1},
+  {"wk_cmo_update", (DL_FUNC)&wk_cmo_update, 2},
+  {"wk_cmo_batch", (DL_FUNC)&wk_cmo_batch, 2},
+  {"wk_cmo_reset", (DL_FUNC)&wk_cmo_reset, 1},
+  {"wk_coefficient_of_variation_new", (DL_FUNC)&wk_coefficient_of_variation_new, 1},
+  {"wk_coefficient_of_variation_update", (DL_FUNC)&wk_coefficient_of_variation_update, 2},
+  {"wk_coefficient_of_variation_batch", (DL_FUNC)&wk_coefficient_of_variation_batch, 2},
+  {"wk_coefficient_of_variation_reset", (DL_FUNC)&wk_coefficient_of_variation_reset, 1},
+  {"wk_cointegration_new", (DL_FUNC)&wk_cointegration_new, 2},
+  {"wk_cointegration_update", (DL_FUNC)&wk_cointegration_update, 3},
+  {"wk_cointegration_reset", (DL_FUNC)&wk_cointegration_reset, 1},
+  {"wk_common_sense_ratio_new", (DL_FUNC)&wk_common_sense_ratio_new, 1},
+  {"wk_common_sense_ratio_update", (DL_FUNC)&wk_common_sense_ratio_update, 2},
+  {"wk_common_sense_ratio_batch", (DL_FUNC)&wk_common_sense_ratio_batch, 2},
+  {"wk_common_sense_ratio_reset", (DL_FUNC)&wk_common_sense_ratio_reset, 1},
+  {"wk_composite_profile_new", (DL_FUNC)&wk_composite_profile_new, 3},
+  {"wk_composite_profile_update", (DL_FUNC)&wk_composite_profile_update, 7},
+  {"wk_composite_profile_reset", (DL_FUNC)&wk_composite_profile_reset, 1},
+  {"wk_concealing_baby_swallow_new", (DL_FUNC)&wk_concealing_baby_swallow_new, 0},
+  {"wk_concealing_baby_swallow_update", (DL_FUNC)&wk_concealing_baby_swallow_update, 7},
+  {"wk_concealing_baby_swallow_batch", (DL_FUNC)&wk_concealing_baby_swallow_batch, 7},
+  {"wk_concealing_baby_swallow_reset", (DL_FUNC)&wk_concealing_baby_swallow_reset, 1},
+  {"wk_conditional_value_at_risk_new", (DL_FUNC)&wk_conditional_value_at_risk_new, 2},
+  {"wk_conditional_value_at_risk_update", (DL_FUNC)&wk_conditional_value_at_risk_update, 2},
+  {"wk_conditional_value_at_risk_batch", (DL_FUNC)&wk_conditional_value_at_risk_batch, 2},
+  {"wk_conditional_value_at_risk_reset", (DL_FUNC)&wk_conditional_value_at_risk_reset, 1},
+  {"wk_connors_rsi_new", (DL_FUNC)&wk_connors_rsi_new, 3},
+  {"wk_connors_rsi_update", (DL_FUNC)&wk_connors_rsi_update, 2},
+  {"wk_connors_rsi_batch", (DL_FUNC)&wk_connors_rsi_batch, 2},
+  {"wk_connors_rsi_reset", (DL_FUNC)&wk_connors_rsi_reset, 1},
+  {"wk_coppock_new", (DL_FUNC)&wk_coppock_new, 3},
+  {"wk_coppock_update", (DL_FUNC)&wk_coppock_update, 2},
+  {"wk_coppock_batch", (DL_FUNC)&wk_coppock_batch, 2},
+  {"wk_coppock_reset", (DL_FUNC)&wk_coppock_reset, 1},
+  {"wk_correlation_trend_indicator_new", (DL_FUNC)&wk_correlation_trend_indicator_new, 1},
+  {"wk_correlation_trend_indicator_update", (DL_FUNC)&wk_correlation_trend_indicator_update, 2},
+  {"wk_correlation_trend_indicator_batch", (DL_FUNC)&wk_correlation_trend_indicator_batch, 2},
+  {"wk_correlation_trend_indicator_reset", (DL_FUNC)&wk_correlation_trend_indicator_reset, 1},
+  {"wk_counterattack_new", (DL_FUNC)&wk_counterattack_new, 0},
+  {"wk_counterattack_update", (DL_FUNC)&wk_counterattack_update, 7},
+  {"wk_counterattack_batch", (DL_FUNC)&wk_counterattack_batch, 7},
+  {"wk_counterattack_reset", (DL_FUNC)&wk_counterattack_reset, 1},
+  {"wk_crab_new", (DL_FUNC)&wk_crab_new, 0},
+  {"wk_crab_update", (DL_FUNC)&wk_crab_update, 7},
+  {"wk_crab_batch", (DL_FUNC)&wk_crab_batch, 7},
+  {"wk_crab_reset", (DL_FUNC)&wk_crab_reset, 1},
+  {"wk_cumulative_volume_delta_new", (DL_FUNC)&wk_cumulative_volume_delta_new, 0},
+  {"wk_cumulative_volume_delta_update", (DL_FUNC)&wk_cumulative_volume_delta_update, 5},
+  {"wk_cumulative_volume_delta_reset", (DL_FUNC)&wk_cumulative_volume_delta_reset, 1},
+  {"wk_cumulative_volume_index_new", (DL_FUNC)&wk_cumulative_volume_index_new, 0},
+  {"wk_cumulative_volume_index_update", (DL_FUNC)&wk_cumulative_volume_index_update, 8},
+  {"wk_cumulative_volume_index_reset", (DL_FUNC)&wk_cumulative_volume_index_reset, 1},
+  {"wk_cup_and_handle_new", (DL_FUNC)&wk_cup_and_handle_new, 0},
+  {"wk_cup_and_handle_update", (DL_FUNC)&wk_cup_and_handle_update, 7},
+  {"wk_cup_and_handle_batch", (DL_FUNC)&wk_cup_and_handle_batch, 7},
+  {"wk_cup_and_handle_reset", (DL_FUNC)&wk_cup_and_handle_reset, 1},
+  {"wk_cybernetic_cycle_new", (DL_FUNC)&wk_cybernetic_cycle_new, 1},
+  {"wk_cybernetic_cycle_update", (DL_FUNC)&wk_cybernetic_cycle_update, 2},
+  {"wk_cybernetic_cycle_batch", (DL_FUNC)&wk_cybernetic_cycle_batch, 2},
+  {"wk_cybernetic_cycle_reset", (DL_FUNC)&wk_cybernetic_cycle_reset, 1},
+  {"wk_cypher_new", (DL_FUNC)&wk_cypher_new, 0},
+  {"wk_cypher_update", (DL_FUNC)&wk_cypher_update, 7},
+  {"wk_cypher_batch", (DL_FUNC)&wk_cypher_batch, 7},
+  {"wk_cypher_reset", (DL_FUNC)&wk_cypher_reset, 1},
+  {"wk_day_of_week_profile_new", (DL_FUNC)&wk_day_of_week_profile_new, 1},
+  {"wk_day_of_week_profile_update", (DL_FUNC)&wk_day_of_week_profile_update, 8},
+  {"wk_day_of_week_profile_reset", (DL_FUNC)&wk_day_of_week_profile_reset, 1},
+  {"wk_decycler_new", (DL_FUNC)&wk_decycler_new, 1},
+  {"wk_decycler_update", (DL_FUNC)&wk_decycler_update, 2},
+  {"wk_decycler_batch", (DL_FUNC)&wk_decycler_batch, 2},
+  {"wk_decycler_reset", (DL_FUNC)&wk_decycler_reset, 1},
+  {"wk_decycler_oscillator_new", (DL_FUNC)&wk_decycler_oscillator_new, 2},
+  {"wk_decycler_oscillator_update", (DL_FUNC)&wk_decycler_oscillator_update, 2},
+  {"wk_decycler_oscillator_batch", (DL_FUNC)&wk_decycler_oscillator_batch, 2},
+  {"wk_decycler_oscillator_reset", (DL_FUNC)&wk_decycler_oscillator_reset, 1},
+  {"wk_dema_new", (DL_FUNC)&wk_dema_new, 1},
+  {"wk_dema_update", (DL_FUNC)&wk_dema_update, 2},
+  {"wk_dema_batch", (DL_FUNC)&wk_dema_batch, 2},
+  {"wk_dema_reset", (DL_FUNC)&wk_dema_reset, 1},
+  {"wk_demand_index_new", (DL_FUNC)&wk_demand_index_new, 1},
+  {"wk_demand_index_update", (DL_FUNC)&wk_demand_index_update, 7},
+  {"wk_demand_index_batch", (DL_FUNC)&wk_demand_index_batch, 7},
+  {"wk_demand_index_reset", (DL_FUNC)&wk_demand_index_reset, 1},
+  {"wk_demark_pivots_new", (DL_FUNC)&wk_demark_pivots_new, 0},
+  {"wk_demark_pivots_update", (DL_FUNC)&wk_demark_pivots_update, 7},
+  {"wk_demark_pivots_reset", (DL_FUNC)&wk_demark_pivots_reset, 1},
+  {"wk_depth_slope_new", (DL_FUNC)&wk_depth_slope_new, 0},
+  {"wk_depth_slope_update", (DL_FUNC)&wk_depth_slope_update, 5},
+  {"wk_depth_slope_reset", (DL_FUNC)&wk_depth_slope_reset, 1},
+  {"wk_derivative_oscillator_new", (DL_FUNC)&wk_derivative_oscillator_new, 4},
+  {"wk_derivative_oscillator_update", (DL_FUNC)&wk_derivative_oscillator_update, 2},
+  {"wk_derivative_oscillator_batch", (DL_FUNC)&wk_derivative_oscillator_batch, 2},
+  {"wk_derivative_oscillator_reset", (DL_FUNC)&wk_derivative_oscillator_reset, 1},
+  {"wk_detrended_std_dev_new", (DL_FUNC)&wk_detrended_std_dev_new, 1},
+  {"wk_detrended_std_dev_update", (DL_FUNC)&wk_detrended_std_dev_update, 2},
+  {"wk_detrended_std_dev_batch", (DL_FUNC)&wk_detrended_std_dev_batch, 2},
+  {"wk_detrended_std_dev_reset", (DL_FUNC)&wk_detrended_std_dev_reset, 1},
+  {"wk_disparity_index_new", (DL_FUNC)&wk_disparity_index_new, 1},
+  {"wk_disparity_index_update", (DL_FUNC)&wk_disparity_index_update, 2},
+  {"wk_disparity_index_batch", (DL_FUNC)&wk_disparity_index_batch, 2},
+  {"wk_disparity_index_reset", (DL_FUNC)&wk_disparity_index_reset, 1},
+  {"wk_distance_ssd_new", (DL_FUNC)&wk_distance_ssd_new, 1},
+  {"wk_distance_ssd_update", (DL_FUNC)&wk_distance_ssd_update, 3},
+  {"wk_distance_ssd_batch", (DL_FUNC)&wk_distance_ssd_batch, 3},
+  {"wk_distance_ssd_reset", (DL_FUNC)&wk_distance_ssd_reset, 1},
+  {"wk_doji_new", (DL_FUNC)&wk_doji_new, 0},
+  {"wk_doji_update", (DL_FUNC)&wk_doji_update, 7},
+  {"wk_doji_batch", (DL_FUNC)&wk_doji_batch, 7},
+  {"wk_doji_reset", (DL_FUNC)&wk_doji_reset, 1},
+  {"wk_doji_star_new", (DL_FUNC)&wk_doji_star_new, 0},
+  {"wk_doji_star_update", (DL_FUNC)&wk_doji_star_update, 7},
+  {"wk_doji_star_batch", (DL_FUNC)&wk_doji_star_batch, 7},
+  {"wk_doji_star_reset", (DL_FUNC)&wk_doji_star_reset, 1},
+  {"wk_dollar_bars_new", (DL_FUNC)&wk_dollar_bars_new, 1},
+  {"wk_dollar_bars_update", (DL_FUNC)&wk_dollar_bars_update, 7},
+  {"wk_dollar_bars_reset", (DL_FUNC)&wk_dollar_bars_reset, 1},
+  {"wk_donchian_new", (DL_FUNC)&wk_donchian_new, 1},
+  {"wk_donchian_update", (DL_FUNC)&wk_donchian_update, 7},
+  {"wk_donchian_reset", (DL_FUNC)&wk_donchian_reset, 1},
+  {"wk_donchian_stop_new", (DL_FUNC)&wk_donchian_stop_new, 1},
+  {"wk_donchian_stop_update", (DL_FUNC)&wk_donchian_stop_update, 7},
+  {"wk_donchian_stop_reset", (DL_FUNC)&wk_donchian_stop_reset, 1},
+  {"wk_double_bollinger_new", (DL_FUNC)&wk_double_bollinger_new, 3},
+  {"wk_double_bollinger_update", (DL_FUNC)&wk_double_bollinger_update, 2},
+  {"wk_double_bollinger_reset", (DL_FUNC)&wk_double_bollinger_reset, 1},
+  {"wk_double_top_bottom_new", (DL_FUNC)&wk_double_top_bottom_new, 0},
+  {"wk_double_top_bottom_update", (DL_FUNC)&wk_double_top_bottom_update, 7},
+  {"wk_double_top_bottom_batch", (DL_FUNC)&wk_double_top_bottom_batch, 7},
+  {"wk_double_top_bottom_reset", (DL_FUNC)&wk_double_top_bottom_reset, 1},
+  {"wk_downside_gap_three_methods_new", (DL_FUNC)&wk_downside_gap_three_methods_new, 0},
+  {"wk_downside_gap_three_methods_update", (DL_FUNC)&wk_downside_gap_three_methods_update, 7},
+  {"wk_downside_gap_three_methods_batch", (DL_FUNC)&wk_downside_gap_three_methods_batch, 7},
+  {"wk_downside_gap_three_methods_reset", (DL_FUNC)&wk_downside_gap_three_methods_reset, 1},
+  {"wk_dpo_new", (DL_FUNC)&wk_dpo_new, 1},
+  {"wk_dpo_update", (DL_FUNC)&wk_dpo_update, 2},
+  {"wk_dpo_batch", (DL_FUNC)&wk_dpo_batch, 2},
+  {"wk_dpo_reset", (DL_FUNC)&wk_dpo_reset, 1},
+  {"wk_dragonfly_doji_new", (DL_FUNC)&wk_dragonfly_doji_new, 0},
+  {"wk_dragonfly_doji_update", (DL_FUNC)&wk_dragonfly_doji_update, 7},
+  {"wk_dragonfly_doji_batch", (DL_FUNC)&wk_dragonfly_doji_batch, 7},
+  {"wk_dragonfly_doji_reset", (DL_FUNC)&wk_dragonfly_doji_reset, 1},
+  {"wk_drawdown_duration_new", (DL_FUNC)&wk_drawdown_duration_new, 0},
+  {"wk_drawdown_duration_update", (DL_FUNC)&wk_drawdown_duration_update, 2},
+  {"wk_drawdown_duration_batch", (DL_FUNC)&wk_drawdown_duration_batch, 2},
+  {"wk_drawdown_duration_reset", (DL_FUNC)&wk_drawdown_duration_reset, 1},
+  {"wk_dumpling_top_new", (DL_FUNC)&wk_dumpling_top_new, 1},
+  {"wk_dumpling_top_update", (DL_FUNC)&wk_dumpling_top_update, 7},
+  {"wk_dumpling_top_batch", (DL_FUNC)&wk_dumpling_top_batch, 7},
+  {"wk_dumpling_top_reset", (DL_FUNC)&wk_dumpling_top_reset, 1},
+  {"wk_dx_new", (DL_FUNC)&wk_dx_new, 1},
+  {"wk_dx_update", (DL_FUNC)&wk_dx_update, 7},
+  {"wk_dx_batch", (DL_FUNC)&wk_dx_batch, 7},
+  {"wk_dx_reset", (DL_FUNC)&wk_dx_reset, 1},
+  {"wk_dynamic_momentum_index_new", (DL_FUNC)&wk_dynamic_momentum_index_new, 1},
+  {"wk_dynamic_momentum_index_update", (DL_FUNC)&wk_dynamic_momentum_index_update, 2},
+  {"wk_dynamic_momentum_index_batch", (DL_FUNC)&wk_dynamic_momentum_index_batch, 2},
+  {"wk_dynamic_momentum_index_reset", (DL_FUNC)&wk_dynamic_momentum_index_reset, 1},
+  {"wk_ease_of_movement_new", (DL_FUNC)&wk_ease_of_movement_new, 1},
+  {"wk_ease_of_movement_update", (DL_FUNC)&wk_ease_of_movement_update, 7},
+  {"wk_ease_of_movement_batch", (DL_FUNC)&wk_ease_of_movement_batch, 7},
+  {"wk_ease_of_movement_reset", (DL_FUNC)&wk_ease_of_movement_reset, 1},
+  {"wk_effective_spread_new", (DL_FUNC)&wk_effective_spread_new, 0},
+  {"wk_effective_spread_update", (DL_FUNC)&wk_effective_spread_update, 6},
+  {"wk_effective_spread_reset", (DL_FUNC)&wk_effective_spread_reset, 1},
+  {"wk_ehlers_stochastic_new", (DL_FUNC)&wk_ehlers_stochastic_new, 1},
+  {"wk_ehlers_stochastic_update", (DL_FUNC)&wk_ehlers_stochastic_update, 2},
+  {"wk_ehlers_stochastic_batch", (DL_FUNC)&wk_ehlers_stochastic_batch, 2},
+  {"wk_ehlers_stochastic_reset", (DL_FUNC)&wk_ehlers_stochastic_reset, 1},
+  {"wk_ehma_new", (DL_FUNC)&wk_ehma_new, 1},
+  {"wk_ehma_update", (DL_FUNC)&wk_ehma_update, 2},
+  {"wk_ehma_batch", (DL_FUNC)&wk_ehma_batch, 2},
+  {"wk_ehma_reset", (DL_FUNC)&wk_ehma_reset, 1},
+  {"wk_elder_impulse_new", (DL_FUNC)&wk_elder_impulse_new, 4},
+  {"wk_elder_impulse_update", (DL_FUNC)&wk_elder_impulse_update, 2},
+  {"wk_elder_impulse_batch", (DL_FUNC)&wk_elder_impulse_batch, 2},
+  {"wk_elder_impulse_reset", (DL_FUNC)&wk_elder_impulse_reset, 1},
+  {"wk_elder_ray_new", (DL_FUNC)&wk_elder_ray_new, 1},
+  {"wk_elder_ray_update", (DL_FUNC)&wk_elder_ray_update, 7},
+  {"wk_elder_ray_reset", (DL_FUNC)&wk_elder_ray_reset, 1},
+  {"wk_elder_safe_zone_new", (DL_FUNC)&wk_elder_safe_zone_new, 2},
+  {"wk_elder_safe_zone_update", (DL_FUNC)&wk_elder_safe_zone_update, 7},
+  {"wk_elder_safe_zone_reset", (DL_FUNC)&wk_elder_safe_zone_reset, 1},
+  {"wk_ema_new", (DL_FUNC)&wk_ema_new, 1},
+  {"wk_ema_update", (DL_FUNC)&wk_ema_update, 2},
+  {"wk_ema_batch", (DL_FUNC)&wk_ema_batch, 2},
+  {"wk_ema_reset", (DL_FUNC)&wk_ema_reset, 1},
+  {"wk_empirical_mode_decomposition_new", (DL_FUNC)&wk_empirical_mode_decomposition_new, 2},
+  {"wk_empirical_mode_decomposition_update", (DL_FUNC)&wk_empirical_mode_decomposition_update, 2},
+  {"wk_empirical_mode_decomposition_batch", (DL_FUNC)&wk_empirical_mode_decomposition_batch, 2},
+  {"wk_empirical_mode_decomposition_reset", (DL_FUNC)&wk_empirical_mode_decomposition_reset, 1},
+  {"wk_engulfing_new", (DL_FUNC)&wk_engulfing_new, 0},
+  {"wk_engulfing_update", (DL_FUNC)&wk_engulfing_update, 7},
+  {"wk_engulfing_batch", (DL_FUNC)&wk_engulfing_batch, 7},
+  {"wk_engulfing_reset", (DL_FUNC)&wk_engulfing_reset, 1},
+  {"wk_equivolume_new", (DL_FUNC)&wk_equivolume_new, 1},
+  {"wk_equivolume_update", (DL_FUNC)&wk_equivolume_update, 7},
+  {"wk_equivolume_reset", (DL_FUNC)&wk_equivolume_reset, 1},
+  {"wk_estimated_leverage_ratio_new", (DL_FUNC)&wk_estimated_leverage_ratio_new, 0},
+  {"wk_estimated_leverage_ratio_update", (DL_FUNC)&wk_estimated_leverage_ratio_update, 13},
+  {"wk_estimated_leverage_ratio_reset", (DL_FUNC)&wk_estimated_leverage_ratio_reset, 1},
+  {"wk_even_better_sinewave_new", (DL_FUNC)&wk_even_better_sinewave_new, 2},
+  {"wk_even_better_sinewave_update", (DL_FUNC)&wk_even_better_sinewave_update, 2},
+  {"wk_even_better_sinewave_batch", (DL_FUNC)&wk_even_better_sinewave_batch, 2},
+  {"wk_even_better_sinewave_reset", (DL_FUNC)&wk_even_better_sinewave_reset, 1},
+  {"wk_evening_doji_star_new", (DL_FUNC)&wk_evening_doji_star_new, 0},
+  {"wk_evening_doji_star_update", (DL_FUNC)&wk_evening_doji_star_update, 7},
+  {"wk_evening_doji_star_batch", (DL_FUNC)&wk_evening_doji_star_batch, 7},
+  {"wk_evening_doji_star_reset", (DL_FUNC)&wk_evening_doji_star_reset, 1},
+  {"wk_evwma_new", (DL_FUNC)&wk_evwma_new, 1},
+  {"wk_evwma_update", (DL_FUNC)&wk_evwma_update, 7},
+  {"wk_evwma_batch", (DL_FUNC)&wk_evwma_batch, 7},
+  {"wk_evwma_reset", (DL_FUNC)&wk_evwma_reset, 1},
+  {"wk_ewma_volatility_new", (DL_FUNC)&wk_ewma_volatility_new, 1},
+  {"wk_ewma_volatility_update", (DL_FUNC)&wk_ewma_volatility_update, 2},
+  {"wk_ewma_volatility_batch", (DL_FUNC)&wk_ewma_volatility_batch, 2},
+  {"wk_ewma_volatility_reset", (DL_FUNC)&wk_ewma_volatility_reset, 1},
+  {"wk_expectancy_new", (DL_FUNC)&wk_expectancy_new, 1},
+  {"wk_expectancy_update", (DL_FUNC)&wk_expectancy_update, 2},
+  {"wk_expectancy_batch", (DL_FUNC)&wk_expectancy_batch, 2},
+  {"wk_expectancy_reset", (DL_FUNC)&wk_expectancy_reset, 1},
+  {"wk_falling_three_methods_new", (DL_FUNC)&wk_falling_three_methods_new, 0},
+  {"wk_falling_three_methods_update", (DL_FUNC)&wk_falling_three_methods_update, 7},
+  {"wk_falling_three_methods_batch", (DL_FUNC)&wk_falling_three_methods_batch, 7},
+  {"wk_falling_three_methods_reset", (DL_FUNC)&wk_falling_three_methods_reset, 1},
+  {"wk_fama_new", (DL_FUNC)&wk_fama_new, 2},
+  {"wk_fama_update", (DL_FUNC)&wk_fama_update, 2},
+  {"wk_fama_batch", (DL_FUNC)&wk_fama_batch, 2},
+  {"wk_fama_reset", (DL_FUNC)&wk_fama_reset, 1},
+  {"wk_fib_arcs_new", (DL_FUNC)&wk_fib_arcs_new, 0},
+  {"wk_fib_arcs_update", (DL_FUNC)&wk_fib_arcs_update, 7},
+  {"wk_fib_arcs_reset", (DL_FUNC)&wk_fib_arcs_reset, 1},
+  {"wk_fib_channel_new", (DL_FUNC)&wk_fib_channel_new, 0},
+  {"wk_fib_channel_update", (DL_FUNC)&wk_fib_channel_update, 7},
+  {"wk_fib_channel_reset", (DL_FUNC)&wk_fib_channel_reset, 1},
+  {"wk_fib_confluence_new", (DL_FUNC)&wk_fib_confluence_new, 0},
+  {"wk_fib_confluence_update", (DL_FUNC)&wk_fib_confluence_update, 7},
+  {"wk_fib_confluence_reset", (DL_FUNC)&wk_fib_confluence_reset, 1},
+  {"wk_fib_extension_new", (DL_FUNC)&wk_fib_extension_new, 0},
+  {"wk_fib_extension_update", (DL_FUNC)&wk_fib_extension_update, 7},
+  {"wk_fib_extension_reset", (DL_FUNC)&wk_fib_extension_reset, 1},
+  {"wk_fib_fan_new", (DL_FUNC)&wk_fib_fan_new, 0},
+  {"wk_fib_fan_update", (DL_FUNC)&wk_fib_fan_update, 7},
+  {"wk_fib_fan_reset", (DL_FUNC)&wk_fib_fan_reset, 1},
+  {"wk_fib_projection_new", (DL_FUNC)&wk_fib_projection_new, 0},
+  {"wk_fib_projection_update", (DL_FUNC)&wk_fib_projection_update, 7},
+  {"wk_fib_projection_reset", (DL_FUNC)&wk_fib_projection_reset, 1},
+  {"wk_fib_retracement_new", (DL_FUNC)&wk_fib_retracement_new, 0},
+  {"wk_fib_retracement_update", (DL_FUNC)&wk_fib_retracement_update, 7},
+  {"wk_fib_retracement_reset", (DL_FUNC)&wk_fib_retracement_reset, 1},
+  {"wk_fib_time_zones_new", (DL_FUNC)&wk_fib_time_zones_new, 0},
+  {"wk_fib_time_zones_update", (DL_FUNC)&wk_fib_time_zones_update, 7},
+  {"wk_fib_time_zones_reset", (DL_FUNC)&wk_fib_time_zones_reset, 1},
+  {"wk_fibonacci_pivots_new", (DL_FUNC)&wk_fibonacci_pivots_new, 0},
+  {"wk_fibonacci_pivots_update", (DL_FUNC)&wk_fibonacci_pivots_update, 7},
+  {"wk_fibonacci_pivots_reset", (DL_FUNC)&wk_fibonacci_pivots_reset, 1},
+  {"wk_fisher_rsi_new", (DL_FUNC)&wk_fisher_rsi_new, 1},
+  {"wk_fisher_rsi_update", (DL_FUNC)&wk_fisher_rsi_update, 2},
+  {"wk_fisher_rsi_batch", (DL_FUNC)&wk_fisher_rsi_batch, 2},
+  {"wk_fisher_rsi_reset", (DL_FUNC)&wk_fisher_rsi_reset, 1},
+  {"wk_fisher_transform_new", (DL_FUNC)&wk_fisher_transform_new, 1},
+  {"wk_fisher_transform_update", (DL_FUNC)&wk_fisher_transform_update, 2},
+  {"wk_fisher_transform_batch", (DL_FUNC)&wk_fisher_transform_batch, 2},
+  {"wk_fisher_transform_reset", (DL_FUNC)&wk_fisher_transform_reset, 1},
+  {"wk_flag_pennant_new", (DL_FUNC)&wk_flag_pennant_new, 0},
+  {"wk_flag_pennant_update", (DL_FUNC)&wk_flag_pennant_update, 7},
+  {"wk_flag_pennant_batch", (DL_FUNC)&wk_flag_pennant_batch, 7},
+  {"wk_flag_pennant_reset", (DL_FUNC)&wk_flag_pennant_reset, 1},
+  {"wk_footprint_new", (DL_FUNC)&wk_footprint_new, 1},
+  {"wk_footprint_update", (DL_FUNC)&wk_footprint_update, 5},
+  {"wk_footprint_reset", (DL_FUNC)&wk_footprint_reset, 1},
+  {"wk_force_index_new", (DL_FUNC)&wk_force_index_new, 1},
+  {"wk_force_index_update", (DL_FUNC)&wk_force_index_update, 7},
+  {"wk_force_index_batch", (DL_FUNC)&wk_force_index_batch, 7},
+  {"wk_force_index_reset", (DL_FUNC)&wk_force_index_reset, 1},
+  {"wk_fractal_chaos_bands_new", (DL_FUNC)&wk_fractal_chaos_bands_new, 1},
+  {"wk_fractal_chaos_bands_update", (DL_FUNC)&wk_fractal_chaos_bands_update, 7},
+  {"wk_fractal_chaos_bands_reset", (DL_FUNC)&wk_fractal_chaos_bands_reset, 1},
+  {"wk_frama_new", (DL_FUNC)&wk_frama_new, 1},
+  {"wk_frama_update", (DL_FUNC)&wk_frama_update, 2},
+  {"wk_frama_batch", (DL_FUNC)&wk_frama_batch, 2},
+  {"wk_frama_reset", (DL_FUNC)&wk_frama_reset, 1},
+  {"wk_fry_pan_bottom_new", (DL_FUNC)&wk_fry_pan_bottom_new, 1},
+  {"wk_fry_pan_bottom_update", (DL_FUNC)&wk_fry_pan_bottom_update, 7},
+  {"wk_fry_pan_bottom_batch", (DL_FUNC)&wk_fry_pan_bottom_batch, 7},
+  {"wk_fry_pan_bottom_reset", (DL_FUNC)&wk_fry_pan_bottom_reset, 1},
+  {"wk_funding_basis_new", (DL_FUNC)&wk_funding_basis_new, 0},
+  {"wk_funding_basis_update", (DL_FUNC)&wk_funding_basis_update, 13},
+  {"wk_funding_basis_reset", (DL_FUNC)&wk_funding_basis_reset, 1},
+  {"wk_funding_implied_apr_new", (DL_FUNC)&wk_funding_implied_apr_new, 1},
+  {"wk_funding_implied_apr_update", (DL_FUNC)&wk_funding_implied_apr_update, 13},
+  {"wk_funding_implied_apr_reset", (DL_FUNC)&wk_funding_implied_apr_reset, 1},
+  {"wk_funding_rate_new", (DL_FUNC)&wk_funding_rate_new, 0},
+  {"wk_funding_rate_update", (DL_FUNC)&wk_funding_rate_update, 13},
+  {"wk_funding_rate_reset", (DL_FUNC)&wk_funding_rate_reset, 1},
+  {"wk_funding_rate_mean_new", (DL_FUNC)&wk_funding_rate_mean_new, 1},
+  {"wk_funding_rate_mean_update", (DL_FUNC)&wk_funding_rate_mean_update, 13},
+  {"wk_funding_rate_mean_reset", (DL_FUNC)&wk_funding_rate_mean_reset, 1},
+  {"wk_funding_rate_z_score_new", (DL_FUNC)&wk_funding_rate_z_score_new, 1},
+  {"wk_funding_rate_z_score_update", (DL_FUNC)&wk_funding_rate_z_score_update, 13},
+  {"wk_funding_rate_z_score_reset", (DL_FUNC)&wk_funding_rate_z_score_reset, 1},
+  {"wk_gain_loss_ratio_new", (DL_FUNC)&wk_gain_loss_ratio_new, 1},
+  {"wk_gain_loss_ratio_update", (DL_FUNC)&wk_gain_loss_ratio_update, 2},
+  {"wk_gain_loss_ratio_batch", (DL_FUNC)&wk_gain_loss_ratio_batch, 2},
+  {"wk_gain_loss_ratio_reset", (DL_FUNC)&wk_gain_loss_ratio_reset, 1},
+  {"wk_gain_to_pain_ratio_new", (DL_FUNC)&wk_gain_to_pain_ratio_new, 1},
+  {"wk_gain_to_pain_ratio_update", (DL_FUNC)&wk_gain_to_pain_ratio_update, 2},
+  {"wk_gain_to_pain_ratio_batch", (DL_FUNC)&wk_gain_to_pain_ratio_batch, 2},
+  {"wk_gain_to_pain_ratio_reset", (DL_FUNC)&wk_gain_to_pain_ratio_reset, 1},
+  {"wk_gap_side_by_side_white_new", (DL_FUNC)&wk_gap_side_by_side_white_new, 0},
+  {"wk_gap_side_by_side_white_update", (DL_FUNC)&wk_gap_side_by_side_white_update, 7},
+  {"wk_gap_side_by_side_white_batch", (DL_FUNC)&wk_gap_side_by_side_white_batch, 7},
+  {"wk_gap_side_by_side_white_reset", (DL_FUNC)&wk_gap_side_by_side_white_reset, 1},
+  {"wk_garch11_new", (DL_FUNC)&wk_garch11_new, 3},
+  {"wk_garch11_update", (DL_FUNC)&wk_garch11_update, 2},
+  {"wk_garch11_batch", (DL_FUNC)&wk_garch11_batch, 2},
+  {"wk_garch11_reset", (DL_FUNC)&wk_garch11_reset, 1},
+  {"wk_garman_klass_volatility_new", (DL_FUNC)&wk_garman_klass_volatility_new, 2},
+  {"wk_garman_klass_volatility_update", (DL_FUNC)&wk_garman_klass_volatility_update, 7},
+  {"wk_garman_klass_volatility_batch", (DL_FUNC)&wk_garman_klass_volatility_batch, 7},
+  {"wk_garman_klass_volatility_reset", (DL_FUNC)&wk_garman_klass_volatility_reset, 1},
+  {"wk_gartley_new", (DL_FUNC)&wk_gartley_new, 0},
+  {"wk_gartley_update", (DL_FUNC)&wk_gartley_update, 7},
+  {"wk_gartley_batch", (DL_FUNC)&wk_gartley_batch, 7},
+  {"wk_gartley_reset", (DL_FUNC)&wk_gartley_reset, 1},
+  {"wk_gator_oscillator_new", (DL_FUNC)&wk_gator_oscillator_new, 3},
+  {"wk_gator_oscillator_update", (DL_FUNC)&wk_gator_oscillator_update, 7},
+  {"wk_gator_oscillator_reset", (DL_FUNC)&wk_gator_oscillator_reset, 1},
+  {"wk_generalized_dema_new", (DL_FUNC)&wk_generalized_dema_new, 2},
+  {"wk_generalized_dema_update", (DL_FUNC)&wk_generalized_dema_update, 2},
+  {"wk_generalized_dema_batch", (DL_FUNC)&wk_generalized_dema_batch, 2},
+  {"wk_generalized_dema_reset", (DL_FUNC)&wk_generalized_dema_reset, 1},
+  {"wk_geometric_ma_new", (DL_FUNC)&wk_geometric_ma_new, 1},
+  {"wk_geometric_ma_update", (DL_FUNC)&wk_geometric_ma_update, 2},
+  {"wk_geometric_ma_batch", (DL_FUNC)&wk_geometric_ma_batch, 2},
+  {"wk_geometric_ma_reset", (DL_FUNC)&wk_geometric_ma_reset, 1},
+  {"wk_golden_pocket_new", (DL_FUNC)&wk_golden_pocket_new, 0},
+  {"wk_golden_pocket_update", (DL_FUNC)&wk_golden_pocket_update, 7},
+  {"wk_golden_pocket_reset", (DL_FUNC)&wk_golden_pocket_reset, 1},
+  {"wk_granger_causality_new", (DL_FUNC)&wk_granger_causality_new, 2},
+  {"wk_granger_causality_update", (DL_FUNC)&wk_granger_causality_update, 3},
+  {"wk_granger_causality_batch", (DL_FUNC)&wk_granger_causality_batch, 3},
+  {"wk_granger_causality_reset", (DL_FUNC)&wk_granger_causality_reset, 1},
+  {"wk_gravestone_doji_new", (DL_FUNC)&wk_gravestone_doji_new, 0},
+  {"wk_gravestone_doji_update", (DL_FUNC)&wk_gravestone_doji_update, 7},
+  {"wk_gravestone_doji_batch", (DL_FUNC)&wk_gravestone_doji_batch, 7},
+  {"wk_gravestone_doji_reset", (DL_FUNC)&wk_gravestone_doji_reset, 1},
+  {"wk_hammer_new", (DL_FUNC)&wk_hammer_new, 0},
+  {"wk_hammer_update", (DL_FUNC)&wk_hammer_update, 7},
+  {"wk_hammer_batch", (DL_FUNC)&wk_hammer_batch, 7},
+  {"wk_hammer_reset", (DL_FUNC)&wk_hammer_reset, 1},
+  {"wk_hanging_man_new", (DL_FUNC)&wk_hanging_man_new, 0},
+  {"wk_hanging_man_update", (DL_FUNC)&wk_hanging_man_update, 7},
+  {"wk_hanging_man_batch", (DL_FUNC)&wk_hanging_man_batch, 7},
+  {"wk_hanging_man_reset", (DL_FUNC)&wk_hanging_man_reset, 1},
+  {"wk_harami_new", (DL_FUNC)&wk_harami_new, 0},
+  {"wk_harami_update", (DL_FUNC)&wk_harami_update, 7},
+  {"wk_harami_batch", (DL_FUNC)&wk_harami_batch, 7},
+  {"wk_harami_reset", (DL_FUNC)&wk_harami_reset, 1},
+  {"wk_harami_cross_new", (DL_FUNC)&wk_harami_cross_new, 0},
+  {"wk_harami_cross_update", (DL_FUNC)&wk_harami_cross_update, 7},
+  {"wk_harami_cross_batch", (DL_FUNC)&wk_harami_cross_batch, 7},
+  {"wk_harami_cross_reset", (DL_FUNC)&wk_harami_cross_reset, 1},
+  {"wk_hasbrouck_information_share_new", (DL_FUNC)&wk_hasbrouck_information_share_new, 1},
+  {"wk_hasbrouck_information_share_update", (DL_FUNC)&wk_hasbrouck_information_share_update, 3},
+  {"wk_hasbrouck_information_share_batch", (DL_FUNC)&wk_hasbrouck_information_share_batch, 3},
+  {"wk_hasbrouck_information_share_reset", (DL_FUNC)&wk_hasbrouck_information_share_reset, 1},
+  {"wk_head_and_shoulders_new", (DL_FUNC)&wk_head_and_shoulders_new, 0},
+  {"wk_head_and_shoulders_update", (DL_FUNC)&wk_head_and_shoulders_update, 7},
+  {"wk_head_and_shoulders_batch", (DL_FUNC)&wk_head_and_shoulders_batch, 7},
+  {"wk_head_and_shoulders_reset", (DL_FUNC)&wk_head_and_shoulders_reset, 1},
+  {"wk_heikin_ashi_new", (DL_FUNC)&wk_heikin_ashi_new, 0},
+  {"wk_heikin_ashi_update", (DL_FUNC)&wk_heikin_ashi_update, 7},
+  {"wk_heikin_ashi_reset", (DL_FUNC)&wk_heikin_ashi_reset, 1},
+  {"wk_heikin_ashi_oscillator_new", (DL_FUNC)&wk_heikin_ashi_oscillator_new, 1},
+  {"wk_heikin_ashi_oscillator_update", (DL_FUNC)&wk_heikin_ashi_oscillator_update, 7},
+  {"wk_heikin_ashi_oscillator_batch", (DL_FUNC)&wk_heikin_ashi_oscillator_batch, 7},
+  {"wk_heikin_ashi_oscillator_reset", (DL_FUNC)&wk_heikin_ashi_oscillator_reset, 1},
+  {"wk_hi_lo_activator_new", (DL_FUNC)&wk_hi_lo_activator_new, 1},
+  {"wk_hi_lo_activator_update", (DL_FUNC)&wk_hi_lo_activator_update, 7},
+  {"wk_hi_lo_activator_batch", (DL_FUNC)&wk_hi_lo_activator_batch, 7},
+  {"wk_hi_lo_activator_reset", (DL_FUNC)&wk_hi_lo_activator_reset, 1},
+  {"wk_high_low_index_new", (DL_FUNC)&wk_high_low_index_new, 1},
+  {"wk_high_low_index_update", (DL_FUNC)&wk_high_low_index_update, 8},
+  {"wk_high_low_index_reset", (DL_FUNC)&wk_high_low_index_reset, 1},
+  {"wk_high_low_range_new", (DL_FUNC)&wk_high_low_range_new, 0},
+  {"wk_high_low_range_update", (DL_FUNC)&wk_high_low_range_update, 7},
+  {"wk_high_low_range_batch", (DL_FUNC)&wk_high_low_range_batch, 7},
+  {"wk_high_low_range_reset", (DL_FUNC)&wk_high_low_range_reset, 1},
+  {"wk_high_low_volume_nodes_new", (DL_FUNC)&wk_high_low_volume_nodes_new, 2},
+  {"wk_high_low_volume_nodes_update", (DL_FUNC)&wk_high_low_volume_nodes_update, 7},
+  {"wk_high_low_volume_nodes_reset", (DL_FUNC)&wk_high_low_volume_nodes_reset, 1},
+  {"wk_high_wave_new", (DL_FUNC)&wk_high_wave_new, 0},
+  {"wk_high_wave_update", (DL_FUNC)&wk_high_wave_update, 7},
+  {"wk_high_wave_batch", (DL_FUNC)&wk_high_wave_batch, 7},
+  {"wk_high_wave_reset", (DL_FUNC)&wk_high_wave_reset, 1},
+  {"wk_highpass_filter_new", (DL_FUNC)&wk_highpass_filter_new, 1},
+  {"wk_highpass_filter_update", (DL_FUNC)&wk_highpass_filter_update, 2},
+  {"wk_highpass_filter_batch", (DL_FUNC)&wk_highpass_filter_batch, 2},
+  {"wk_highpass_filter_reset", (DL_FUNC)&wk_highpass_filter_reset, 1},
+  {"wk_hikkake_new", (DL_FUNC)&wk_hikkake_new, 0},
+  {"wk_hikkake_update", (DL_FUNC)&wk_hikkake_update, 7},
+  {"wk_hikkake_batch", (DL_FUNC)&wk_hikkake_batch, 7},
+  {"wk_hikkake_reset", (DL_FUNC)&wk_hikkake_reset, 1},
+  {"wk_hikkake_modified_new", (DL_FUNC)&wk_hikkake_modified_new, 0},
+  {"wk_hikkake_modified_update", (DL_FUNC)&wk_hikkake_modified_update, 7},
+  {"wk_hikkake_modified_batch", (DL_FUNC)&wk_hikkake_modified_batch, 7},
+  {"wk_hikkake_modified_reset", (DL_FUNC)&wk_hikkake_modified_reset, 1},
+  {"wk_hilbert_dominant_cycle_new", (DL_FUNC)&wk_hilbert_dominant_cycle_new, 0},
+  {"wk_hilbert_dominant_cycle_update", (DL_FUNC)&wk_hilbert_dominant_cycle_update, 2},
+  {"wk_hilbert_dominant_cycle_batch", (DL_FUNC)&wk_hilbert_dominant_cycle_batch, 2},
+  {"wk_hilbert_dominant_cycle_reset", (DL_FUNC)&wk_hilbert_dominant_cycle_reset, 1},
+  {"wk_historical_volatility_new", (DL_FUNC)&wk_historical_volatility_new, 2},
+  {"wk_historical_volatility_update", (DL_FUNC)&wk_historical_volatility_update, 2},
+  {"wk_historical_volatility_batch", (DL_FUNC)&wk_historical_volatility_batch, 2},
+  {"wk_historical_volatility_reset", (DL_FUNC)&wk_historical_volatility_reset, 1},
+  {"wk_hma_new", (DL_FUNC)&wk_hma_new, 1},
+  {"wk_hma_update", (DL_FUNC)&wk_hma_update, 2},
+  {"wk_hma_batch", (DL_FUNC)&wk_hma_batch, 2},
+  {"wk_hma_reset", (DL_FUNC)&wk_hma_reset, 1},
+  {"wk_holt_winters_new", (DL_FUNC)&wk_holt_winters_new, 2},
+  {"wk_holt_winters_update", (DL_FUNC)&wk_holt_winters_update, 2},
+  {"wk_holt_winters_batch", (DL_FUNC)&wk_holt_winters_batch, 2},
+  {"wk_holt_winters_reset", (DL_FUNC)&wk_holt_winters_reset, 1},
+  {"wk_homing_pigeon_new", (DL_FUNC)&wk_homing_pigeon_new, 0},
+  {"wk_homing_pigeon_update", (DL_FUNC)&wk_homing_pigeon_update, 7},
+  {"wk_homing_pigeon_batch", (DL_FUNC)&wk_homing_pigeon_batch, 7},
+  {"wk_homing_pigeon_reset", (DL_FUNC)&wk_homing_pigeon_reset, 1},
+  {"wk_ht_dc_phase_new", (DL_FUNC)&wk_ht_dc_phase_new, 0},
+  {"wk_ht_dc_phase_update", (DL_FUNC)&wk_ht_dc_phase_update, 2},
+  {"wk_ht_dc_phase_batch", (DL_FUNC)&wk_ht_dc_phase_batch, 2},
+  {"wk_ht_dc_phase_reset", (DL_FUNC)&wk_ht_dc_phase_reset, 1},
+  {"wk_ht_phasor_new", (DL_FUNC)&wk_ht_phasor_new, 0},
+  {"wk_ht_phasor_update", (DL_FUNC)&wk_ht_phasor_update, 2},
+  {"wk_ht_phasor_reset", (DL_FUNC)&wk_ht_phasor_reset, 1},
+  {"wk_ht_trend_mode_new", (DL_FUNC)&wk_ht_trend_mode_new, 0},
+  {"wk_ht_trend_mode_update", (DL_FUNC)&wk_ht_trend_mode_update, 2},
+  {"wk_ht_trend_mode_batch", (DL_FUNC)&wk_ht_trend_mode_batch, 2},
+  {"wk_ht_trend_mode_reset", (DL_FUNC)&wk_ht_trend_mode_reset, 1},
+  {"wk_hurst_channel_new", (DL_FUNC)&wk_hurst_channel_new, 2},
+  {"wk_hurst_channel_update", (DL_FUNC)&wk_hurst_channel_update, 7},
+  {"wk_hurst_channel_reset", (DL_FUNC)&wk_hurst_channel_reset, 1},
+  {"wk_hurst_exponent_new", (DL_FUNC)&wk_hurst_exponent_new, 2},
+  {"wk_hurst_exponent_update", (DL_FUNC)&wk_hurst_exponent_update, 2},
+  {"wk_hurst_exponent_batch", (DL_FUNC)&wk_hurst_exponent_batch, 2},
+  {"wk_hurst_exponent_reset", (DL_FUNC)&wk_hurst_exponent_reset, 1},
+  {"wk_ichimoku_new", (DL_FUNC)&wk_ichimoku_new, 4},
+  {"wk_ichimoku_update", (DL_FUNC)&wk_ichimoku_update, 7},
+  {"wk_ichimoku_reset", (DL_FUNC)&wk_ichimoku_reset, 1},
+  {"wk_identical_three_crows_new", (DL_FUNC)&wk_identical_three_crows_new, 0},
+  {"wk_identical_three_crows_update", (DL_FUNC)&wk_identical_three_crows_update, 7},
+  {"wk_identical_three_crows_batch", (DL_FUNC)&wk_identical_three_crows_batch, 7},
+  {"wk_identical_three_crows_reset", (DL_FUNC)&wk_identical_three_crows_reset, 1},
+  {"wk_imbalance_bars_new", (DL_FUNC)&wk_imbalance_bars_new, 1},
+  {"wk_imbalance_bars_update", (DL_FUNC)&wk_imbalance_bars_update, 7},
+  {"wk_imbalance_bars_reset", (DL_FUNC)&wk_imbalance_bars_reset, 1},
+  {"wk_in_neck_new", (DL_FUNC)&wk_in_neck_new, 0},
+  {"wk_in_neck_update", (DL_FUNC)&wk_in_neck_update, 7},
+  {"wk_in_neck_batch", (DL_FUNC)&wk_in_neck_batch, 7},
+  {"wk_in_neck_reset", (DL_FUNC)&wk_in_neck_reset, 1},
+  {"wk_inertia_new", (DL_FUNC)&wk_inertia_new, 2},
+  {"wk_inertia_update", (DL_FUNC)&wk_inertia_update, 7},
+  {"wk_inertia_batch", (DL_FUNC)&wk_inertia_batch, 7},
+  {"wk_inertia_reset", (DL_FUNC)&wk_inertia_reset, 1},
+  {"wk_information_ratio_new", (DL_FUNC)&wk_information_ratio_new, 1},
+  {"wk_information_ratio_update", (DL_FUNC)&wk_information_ratio_update, 3},
+  {"wk_information_ratio_batch", (DL_FUNC)&wk_information_ratio_batch, 3},
+  {"wk_information_ratio_reset", (DL_FUNC)&wk_information_ratio_reset, 1},
+  {"wk_initial_balance_new", (DL_FUNC)&wk_initial_balance_new, 1},
+  {"wk_initial_balance_update", (DL_FUNC)&wk_initial_balance_update, 7},
+  {"wk_initial_balance_reset", (DL_FUNC)&wk_initial_balance_reset, 1},
+  {"wk_instantaneous_trendline_new", (DL_FUNC)&wk_instantaneous_trendline_new, 1},
+  {"wk_instantaneous_trendline_update", (DL_FUNC)&wk_instantaneous_trendline_update, 2},
+  {"wk_instantaneous_trendline_batch", (DL_FUNC)&wk_instantaneous_trendline_batch, 2},
+  {"wk_instantaneous_trendline_reset", (DL_FUNC)&wk_instantaneous_trendline_reset, 1},
+  {"wk_intraday_intensity_new", (DL_FUNC)&wk_intraday_intensity_new, 0},
+  {"wk_intraday_intensity_update", (DL_FUNC)&wk_intraday_intensity_update, 7},
+  {"wk_intraday_intensity_batch", (DL_FUNC)&wk_intraday_intensity_batch, 7},
+  {"wk_intraday_intensity_reset", (DL_FUNC)&wk_intraday_intensity_reset, 1},
+  {"wk_intraday_momentum_index_new", (DL_FUNC)&wk_intraday_momentum_index_new, 1},
+  {"wk_intraday_momentum_index_update", (DL_FUNC)&wk_intraday_momentum_index_update, 7},
+  {"wk_intraday_momentum_index_batch", (DL_FUNC)&wk_intraday_momentum_index_batch, 7},
+  {"wk_intraday_momentum_index_reset", (DL_FUNC)&wk_intraday_momentum_index_reset, 1},
+  {"wk_intraday_volatility_profile_new", (DL_FUNC)&wk_intraday_volatility_profile_new, 2},
+  {"wk_intraday_volatility_profile_update", (DL_FUNC)&wk_intraday_volatility_profile_update, 8},
+  {"wk_intraday_volatility_profile_reset", (DL_FUNC)&wk_intraday_volatility_profile_reset, 1},
+  {"wk_inverse_fisher_transform_new", (DL_FUNC)&wk_inverse_fisher_transform_new, 1},
+  {"wk_inverse_fisher_transform_update", (DL_FUNC)&wk_inverse_fisher_transform_update, 2},
+  {"wk_inverse_fisher_transform_batch", (DL_FUNC)&wk_inverse_fisher_transform_batch, 2},
+  {"wk_inverse_fisher_transform_reset", (DL_FUNC)&wk_inverse_fisher_transform_reset, 1},
+  {"wk_inverted_hammer_new", (DL_FUNC)&wk_inverted_hammer_new, 0},
+  {"wk_inverted_hammer_update", (DL_FUNC)&wk_inverted_hammer_update, 7},
+  {"wk_inverted_hammer_batch", (DL_FUNC)&wk_inverted_hammer_batch, 7},
+  {"wk_inverted_hammer_reset", (DL_FUNC)&wk_inverted_hammer_reset, 1},
+  {"wk_jarque_bera_new", (DL_FUNC)&wk_jarque_bera_new, 1},
+  {"wk_jarque_bera_update", (DL_FUNC)&wk_jarque_bera_update, 2},
+  {"wk_jarque_bera_batch", (DL_FUNC)&wk_jarque_bera_batch, 2},
+  {"wk_jarque_bera_reset", (DL_FUNC)&wk_jarque_bera_reset, 1},
+  {"wk_jma_new", (DL_FUNC)&wk_jma_new, 3},
+  {"wk_jma_update", (DL_FUNC)&wk_jma_update, 2},
+  {"wk_jma_batch", (DL_FUNC)&wk_jma_batch, 2},
+  {"wk_jma_reset", (DL_FUNC)&wk_jma_reset, 1},
+  {"wk_jump_indicator_new", (DL_FUNC)&wk_jump_indicator_new, 2},
+  {"wk_jump_indicator_update", (DL_FUNC)&wk_jump_indicator_update, 2},
+  {"wk_jump_indicator_batch", (DL_FUNC)&wk_jump_indicator_batch, 2},
+  {"wk_jump_indicator_reset", (DL_FUNC)&wk_jump_indicator_reset, 1},
+  {"wk_k_ratio_new", (DL_FUNC)&wk_k_ratio_new, 1},
+  {"wk_k_ratio_update", (DL_FUNC)&wk_k_ratio_update, 2},
+  {"wk_k_ratio_batch", (DL_FUNC)&wk_k_ratio_batch, 2},
+  {"wk_k_ratio_reset", (DL_FUNC)&wk_k_ratio_reset, 1},
+  {"wk_kagi_bars_new", (DL_FUNC)&wk_kagi_bars_new, 1},
+  {"wk_kagi_bars_update", (DL_FUNC)&wk_kagi_bars_update, 7},
+  {"wk_kagi_bars_reset", (DL_FUNC)&wk_kagi_bars_reset, 1},
+  {"wk_kalman_hedge_ratio_new", (DL_FUNC)&wk_kalman_hedge_ratio_new, 2},
+  {"wk_kalman_hedge_ratio_update", (DL_FUNC)&wk_kalman_hedge_ratio_update, 3},
+  {"wk_kalman_hedge_ratio_reset", (DL_FUNC)&wk_kalman_hedge_ratio_reset, 1},
+  {"wk_kama_new", (DL_FUNC)&wk_kama_new, 3},
+  {"wk_kama_update", (DL_FUNC)&wk_kama_update, 2},
+  {"wk_kama_batch", (DL_FUNC)&wk_kama_batch, 2},
+  {"wk_kama_reset", (DL_FUNC)&wk_kama_reset, 1},
+  {"wk_kase_dev_stop_new", (DL_FUNC)&wk_kase_dev_stop_new, 2},
+  {"wk_kase_dev_stop_update", (DL_FUNC)&wk_kase_dev_stop_update, 7},
+  {"wk_kase_dev_stop_reset", (DL_FUNC)&wk_kase_dev_stop_reset, 1},
+  {"wk_kase_permission_stochastic_new", (DL_FUNC)&wk_kase_permission_stochastic_new, 2},
+  {"wk_kase_permission_stochastic_update", (DL_FUNC)&wk_kase_permission_stochastic_update, 7},
+  {"wk_kase_permission_stochastic_reset", (DL_FUNC)&wk_kase_permission_stochastic_reset, 1},
+  {"wk_kelly_criterion_new", (DL_FUNC)&wk_kelly_criterion_new, 1},
+  {"wk_kelly_criterion_update", (DL_FUNC)&wk_kelly_criterion_update, 2},
+  {"wk_kelly_criterion_batch", (DL_FUNC)&wk_kelly_criterion_batch, 2},
+  {"wk_kelly_criterion_reset", (DL_FUNC)&wk_kelly_criterion_reset, 1},
+  {"wk_keltner_new", (DL_FUNC)&wk_keltner_new, 3},
+  {"wk_keltner_update", (DL_FUNC)&wk_keltner_update, 7},
+  {"wk_keltner_reset", (DL_FUNC)&wk_keltner_reset, 1},
+  {"wk_kendall_tau_new", (DL_FUNC)&wk_kendall_tau_new, 1},
+  {"wk_kendall_tau_update", (DL_FUNC)&wk_kendall_tau_update, 3},
+  {"wk_kendall_tau_batch", (DL_FUNC)&wk_kendall_tau_batch, 3},
+  {"wk_kendall_tau_reset", (DL_FUNC)&wk_kendall_tau_reset, 1},
+  {"wk_kicking_new", (DL_FUNC)&wk_kicking_new, 0},
+  {"wk_kicking_update", (DL_FUNC)&wk_kicking_update, 7},
+  {"wk_kicking_batch", (DL_FUNC)&wk_kicking_batch, 7},
+  {"wk_kicking_reset", (DL_FUNC)&wk_kicking_reset, 1},
+  {"wk_kicking_by_length_new", (DL_FUNC)&wk_kicking_by_length_new, 0},
+  {"wk_kicking_by_length_update", (DL_FUNC)&wk_kicking_by_length_update, 7},
+  {"wk_kicking_by_length_batch", (DL_FUNC)&wk_kicking_by_length_batch, 7},
+  {"wk_kicking_by_length_reset", (DL_FUNC)&wk_kicking_by_length_reset, 1},
+  {"wk_kst_new", (DL_FUNC)&wk_kst_new, 9},
+  {"wk_kst_update", (DL_FUNC)&wk_kst_update, 2},
+  {"wk_kst_reset", (DL_FUNC)&wk_kst_reset, 1},
+  {"wk_kurtosis_new", (DL_FUNC)&wk_kurtosis_new, 1},
+  {"wk_kurtosis_update", (DL_FUNC)&wk_kurtosis_update, 2},
+  {"wk_kurtosis_batch", (DL_FUNC)&wk_kurtosis_batch, 2},
+  {"wk_kurtosis_reset", (DL_FUNC)&wk_kurtosis_reset, 1},
+  {"wk_kvo_new", (DL_FUNC)&wk_kvo_new, 2},
+  {"wk_kvo_update", (DL_FUNC)&wk_kvo_update, 7},
+  {"wk_kvo_batch", (DL_FUNC)&wk_kvo_batch, 7},
+  {"wk_kvo_reset", (DL_FUNC)&wk_kvo_reset, 1},
+  {"wk_kyles_lambda_new", (DL_FUNC)&wk_kyles_lambda_new, 1},
+  {"wk_kyles_lambda_update", (DL_FUNC)&wk_kyles_lambda_update, 6},
+  {"wk_kyles_lambda_reset", (DL_FUNC)&wk_kyles_lambda_reset, 1},
+  {"wk_ladder_bottom_new", (DL_FUNC)&wk_ladder_bottom_new, 0},
+  {"wk_ladder_bottom_update", (DL_FUNC)&wk_ladder_bottom_update, 7},
+  {"wk_ladder_bottom_batch", (DL_FUNC)&wk_ladder_bottom_batch, 7},
+  {"wk_ladder_bottom_reset", (DL_FUNC)&wk_ladder_bottom_reset, 1},
+  {"wk_laguerre_rsi_new", (DL_FUNC)&wk_laguerre_rsi_new, 1},
+  {"wk_laguerre_rsi_update", (DL_FUNC)&wk_laguerre_rsi_update, 2},
+  {"wk_laguerre_rsi_batch", (DL_FUNC)&wk_laguerre_rsi_batch, 2},
+  {"wk_laguerre_rsi_reset", (DL_FUNC)&wk_laguerre_rsi_reset, 1},
+  {"wk_lead_lag_cross_correlation_new", (DL_FUNC)&wk_lead_lag_cross_correlation_new, 2},
+  {"wk_lead_lag_cross_correlation_update", (DL_FUNC)&wk_lead_lag_cross_correlation_update, 3},
+  {"wk_lead_lag_cross_correlation_reset", (DL_FUNC)&wk_lead_lag_cross_correlation_reset, 1},
+  {"wk_lin_reg_angle_new", (DL_FUNC)&wk_lin_reg_angle_new, 1},
+  {"wk_lin_reg_angle_update", (DL_FUNC)&wk_lin_reg_angle_update, 2},
+  {"wk_lin_reg_angle_batch", (DL_FUNC)&wk_lin_reg_angle_batch, 2},
+  {"wk_lin_reg_angle_reset", (DL_FUNC)&wk_lin_reg_angle_reset, 1},
+  {"wk_lin_reg_channel_new", (DL_FUNC)&wk_lin_reg_channel_new, 2},
+  {"wk_lin_reg_channel_update", (DL_FUNC)&wk_lin_reg_channel_update, 2},
+  {"wk_lin_reg_channel_reset", (DL_FUNC)&wk_lin_reg_channel_reset, 1},
+  {"wk_lin_reg_intercept_new", (DL_FUNC)&wk_lin_reg_intercept_new, 1},
+  {"wk_lin_reg_intercept_update", (DL_FUNC)&wk_lin_reg_intercept_update, 2},
+  {"wk_lin_reg_intercept_batch", (DL_FUNC)&wk_lin_reg_intercept_batch, 2},
+  {"wk_lin_reg_intercept_reset", (DL_FUNC)&wk_lin_reg_intercept_reset, 1},
+  {"wk_lin_reg_slope_new", (DL_FUNC)&wk_lin_reg_slope_new, 1},
+  {"wk_lin_reg_slope_update", (DL_FUNC)&wk_lin_reg_slope_update, 2},
+  {"wk_lin_reg_slope_batch", (DL_FUNC)&wk_lin_reg_slope_batch, 2},
+  {"wk_lin_reg_slope_reset", (DL_FUNC)&wk_lin_reg_slope_reset, 1},
+  {"wk_linear_regression_new", (DL_FUNC)&wk_linear_regression_new, 1},
+  {"wk_linear_regression_update", (DL_FUNC)&wk_linear_regression_update, 2},
+  {"wk_linear_regression_batch", (DL_FUNC)&wk_linear_regression_batch, 2},
+  {"wk_linear_regression_reset", (DL_FUNC)&wk_linear_regression_reset, 1},
+  {"wk_liquidation_features_new", (DL_FUNC)&wk_liquidation_features_new, 0},
+  {"wk_liquidation_features_update", (DL_FUNC)&wk_liquidation_features_update, 13},
+  {"wk_liquidation_features_reset", (DL_FUNC)&wk_liquidation_features_reset, 1},
+  {"wk_log_return_new", (DL_FUNC)&wk_log_return_new, 1},
+  {"wk_log_return_update", (DL_FUNC)&wk_log_return_update, 2},
+  {"wk_log_return_batch", (DL_FUNC)&wk_log_return_batch, 2},
+  {"wk_log_return_reset", (DL_FUNC)&wk_log_return_reset, 1},
+  {"wk_long_legged_doji_new", (DL_FUNC)&wk_long_legged_doji_new, 0},
+  {"wk_long_legged_doji_update", (DL_FUNC)&wk_long_legged_doji_update, 7},
+  {"wk_long_legged_doji_batch", (DL_FUNC)&wk_long_legged_doji_batch, 7},
+  {"wk_long_legged_doji_reset", (DL_FUNC)&wk_long_legged_doji_reset, 1},
+  {"wk_long_line_new", (DL_FUNC)&wk_long_line_new, 0},
+  {"wk_long_line_update", (DL_FUNC)&wk_long_line_update, 7},
+  {"wk_long_line_batch", (DL_FUNC)&wk_long_line_batch, 7},
+  {"wk_long_line_reset", (DL_FUNC)&wk_long_line_reset, 1},
+  {"wk_long_short_ratio_new", (DL_FUNC)&wk_long_short_ratio_new, 0},
+  {"wk_long_short_ratio_update", (DL_FUNC)&wk_long_short_ratio_update, 13},
+  {"wk_long_short_ratio_reset", (DL_FUNC)&wk_long_short_ratio_reset, 1},
+  {"wk_m2_measure_new", (DL_FUNC)&wk_m2_measure_new, 3},
+  {"wk_m2_measure_update", (DL_FUNC)&wk_m2_measure_update, 2},
+  {"wk_m2_measure_batch", (DL_FUNC)&wk_m2_measure_batch, 2},
+  {"wk_m2_measure_reset", (DL_FUNC)&wk_m2_measure_reset, 1},
+  {"wk_ma_envelope_new", (DL_FUNC)&wk_ma_envelope_new, 2},
+  {"wk_ma_envelope_update", (DL_FUNC)&wk_ma_envelope_update, 2},
+  {"wk_ma_envelope_reset", (DL_FUNC)&wk_ma_envelope_reset, 1},
+  {"wk_macd_ext_new", (DL_FUNC)&wk_macd_ext_new, 6},
+  {"wk_macd_ext_update", (DL_FUNC)&wk_macd_ext_update, 2},
+  {"wk_macd_ext_reset", (DL_FUNC)&wk_macd_ext_reset, 1},
+  {"wk_macd_fix_new", (DL_FUNC)&wk_macd_fix_new, 1},
+  {"wk_macd_fix_update", (DL_FUNC)&wk_macd_fix_update, 2},
+  {"wk_macd_fix_reset", (DL_FUNC)&wk_macd_fix_reset, 1},
+  {"wk_macd_histogram_new", (DL_FUNC)&wk_macd_histogram_new, 3},
+  {"wk_macd_histogram_update", (DL_FUNC)&wk_macd_histogram_update, 2},
+  {"wk_macd_histogram_batch", (DL_FUNC)&wk_macd_histogram_batch, 2},
+  {"wk_macd_histogram_reset", (DL_FUNC)&wk_macd_histogram_reset, 1},
+  {"wk_macd_indicator_new", (DL_FUNC)&wk_macd_indicator_new, 3},
+  {"wk_macd_indicator_update", (DL_FUNC)&wk_macd_indicator_update, 2},
+  {"wk_macd_indicator_reset", (DL_FUNC)&wk_macd_indicator_reset, 1},
+  {"wk_mama_new", (DL_FUNC)&wk_mama_new, 2},
+  {"wk_mama_update", (DL_FUNC)&wk_mama_update, 2},
+  {"wk_mama_reset", (DL_FUNC)&wk_mama_reset, 1},
+  {"wk_market_facilitation_index_new", (DL_FUNC)&wk_market_facilitation_index_new, 0},
+  {"wk_market_facilitation_index_update", (DL_FUNC)&wk_market_facilitation_index_update, 7},
+  {"wk_market_facilitation_index_batch", (DL_FUNC)&wk_market_facilitation_index_batch, 7},
+  {"wk_market_facilitation_index_reset", (DL_FUNC)&wk_market_facilitation_index_reset, 1},
+  {"wk_martin_ratio_new", (DL_FUNC)&wk_martin_ratio_new, 1},
+  {"wk_martin_ratio_update", (DL_FUNC)&wk_martin_ratio_update, 2},
+  {"wk_martin_ratio_batch", (DL_FUNC)&wk_martin_ratio_batch, 2},
+  {"wk_martin_ratio_reset", (DL_FUNC)&wk_martin_ratio_reset, 1},
+  {"wk_marubozu_new", (DL_FUNC)&wk_marubozu_new, 0},
+  {"wk_marubozu_update", (DL_FUNC)&wk_marubozu_update, 7},
+  {"wk_marubozu_batch", (DL_FUNC)&wk_marubozu_batch, 7},
+  {"wk_marubozu_reset", (DL_FUNC)&wk_marubozu_reset, 1},
+  {"wk_mass_index_new", (DL_FUNC)&wk_mass_index_new, 2},
+  {"wk_mass_index_update", (DL_FUNC)&wk_mass_index_update, 7},
+  {"wk_mass_index_batch", (DL_FUNC)&wk_mass_index_batch, 7},
+  {"wk_mass_index_reset", (DL_FUNC)&wk_mass_index_reset, 1},
+  {"wk_mat_hold_new", (DL_FUNC)&wk_mat_hold_new, 0},
+  {"wk_mat_hold_update", (DL_FUNC)&wk_mat_hold_update, 7},
+  {"wk_mat_hold_batch", (DL_FUNC)&wk_mat_hold_batch, 7},
+  {"wk_mat_hold_reset", (DL_FUNC)&wk_mat_hold_reset, 1},
+  {"wk_matching_low_new", (DL_FUNC)&wk_matching_low_new, 0},
+  {"wk_matching_low_update", (DL_FUNC)&wk_matching_low_update, 7},
+  {"wk_matching_low_batch", (DL_FUNC)&wk_matching_low_batch, 7},
+  {"wk_matching_low_reset", (DL_FUNC)&wk_matching_low_reset, 1},
+  {"wk_max_drawdown_new", (DL_FUNC)&wk_max_drawdown_new, 1},
+  {"wk_max_drawdown_update", (DL_FUNC)&wk_max_drawdown_update, 2},
+  {"wk_max_drawdown_batch", (DL_FUNC)&wk_max_drawdown_batch, 2},
+  {"wk_max_drawdown_reset", (DL_FUNC)&wk_max_drawdown_reset, 1},
+  {"wk_mc_clellan_oscillator_new", (DL_FUNC)&wk_mc_clellan_oscillator_new, 0},
+  {"wk_mc_clellan_oscillator_update", (DL_FUNC)&wk_mc_clellan_oscillator_update, 8},
+  {"wk_mc_clellan_oscillator_reset", (DL_FUNC)&wk_mc_clellan_oscillator_reset, 1},
+  {"wk_mc_clellan_summation_index_new", (DL_FUNC)&wk_mc_clellan_summation_index_new, 0},
+  {"wk_mc_clellan_summation_index_update", (DL_FUNC)&wk_mc_clellan_summation_index_update, 8},
+  {"wk_mc_clellan_summation_index_reset", (DL_FUNC)&wk_mc_clellan_summation_index_reset, 1},
+  {"wk_mc_ginley_dynamic_new", (DL_FUNC)&wk_mc_ginley_dynamic_new, 1},
+  {"wk_mc_ginley_dynamic_update", (DL_FUNC)&wk_mc_ginley_dynamic_update, 2},
+  {"wk_mc_ginley_dynamic_batch", (DL_FUNC)&wk_mc_ginley_dynamic_batch, 2},
+  {"wk_mc_ginley_dynamic_reset", (DL_FUNC)&wk_mc_ginley_dynamic_reset, 1},
+  {"wk_median_absolute_deviation_new", (DL_FUNC)&wk_median_absolute_deviation_new, 1},
+  {"wk_median_absolute_deviation_update", (DL_FUNC)&wk_median_absolute_deviation_update, 2},
+  {"wk_median_absolute_deviation_batch", (DL_FUNC)&wk_median_absolute_deviation_batch, 2},
+  {"wk_median_absolute_deviation_reset", (DL_FUNC)&wk_median_absolute_deviation_reset, 1},
+  {"wk_median_channel_new", (DL_FUNC)&wk_median_channel_new, 2},
+  {"wk_median_channel_update", (DL_FUNC)&wk_median_channel_update, 2},
+  {"wk_median_channel_reset", (DL_FUNC)&wk_median_channel_reset, 1},
+  {"wk_median_ma_new", (DL_FUNC)&wk_median_ma_new, 1},
+  {"wk_median_ma_update", (DL_FUNC)&wk_median_ma_update, 2},
+  {"wk_median_ma_batch", (DL_FUNC)&wk_median_ma_batch, 2},
+  {"wk_median_ma_reset", (DL_FUNC)&wk_median_ma_reset, 1},
+  {"wk_median_price_new", (DL_FUNC)&wk_median_price_new, 0},
+  {"wk_median_price_update", (DL_FUNC)&wk_median_price_update, 7},
+  {"wk_median_price_batch", (DL_FUNC)&wk_median_price_batch, 7},
+  {"wk_median_price_reset", (DL_FUNC)&wk_median_price_reset, 1},
+  {"wk_mfi_new", (DL_FUNC)&wk_mfi_new, 1},
+  {"wk_mfi_update", (DL_FUNC)&wk_mfi_update, 7},
+  {"wk_mfi_batch", (DL_FUNC)&wk_mfi_batch, 7},
+  {"wk_mfi_reset", (DL_FUNC)&wk_mfi_reset, 1},
+  {"wk_microprice_new", (DL_FUNC)&wk_microprice_new, 0},
+  {"wk_microprice_update", (DL_FUNC)&wk_microprice_update, 5},
+  {"wk_microprice_reset", (DL_FUNC)&wk_microprice_reset, 1},
+  {"wk_mid_point_new", (DL_FUNC)&wk_mid_point_new, 1},
+  {"wk_mid_point_update", (DL_FUNC)&wk_mid_point_update, 2},
+  {"wk_mid_point_batch", (DL_FUNC)&wk_mid_point_batch, 2},
+  {"wk_mid_point_reset", (DL_FUNC)&wk_mid_point_reset, 1},
+  {"wk_mid_price_new", (DL_FUNC)&wk_mid_price_new, 1},
+  {"wk_mid_price_update", (DL_FUNC)&wk_mid_price_update, 7},
+  {"wk_mid_price_batch", (DL_FUNC)&wk_mid_price_batch, 7},
+  {"wk_mid_price_reset", (DL_FUNC)&wk_mid_price_reset, 1},
+  {"wk_minus_di_new", (DL_FUNC)&wk_minus_di_new, 1},
+  {"wk_minus_di_update", (DL_FUNC)&wk_minus_di_update, 7},
+  {"wk_minus_di_batch", (DL_FUNC)&wk_minus_di_batch, 7},
+  {"wk_minus_di_reset", (DL_FUNC)&wk_minus_di_reset, 1},
+  {"wk_minus_dm_new", (DL_FUNC)&wk_minus_dm_new, 1},
+  {"wk_minus_dm_update", (DL_FUNC)&wk_minus_dm_update, 7},
+  {"wk_minus_dm_batch", (DL_FUNC)&wk_minus_dm_batch, 7},
+  {"wk_minus_dm_reset", (DL_FUNC)&wk_minus_dm_reset, 1},
+  {"wk_modified_ma_stop_new", (DL_FUNC)&wk_modified_ma_stop_new, 1},
+  {"wk_modified_ma_stop_update", (DL_FUNC)&wk_modified_ma_stop_update, 7},
+  {"wk_modified_ma_stop_reset", (DL_FUNC)&wk_modified_ma_stop_reset, 1},
+  {"wk_mom_new", (DL_FUNC)&wk_mom_new, 1},
+  {"wk_mom_update", (DL_FUNC)&wk_mom_update, 2},
+  {"wk_mom_batch", (DL_FUNC)&wk_mom_batch, 2},
+  {"wk_mom_reset", (DL_FUNC)&wk_mom_reset, 1},
+  {"wk_morning_doji_star_new", (DL_FUNC)&wk_morning_doji_star_new, 0},
+  {"wk_morning_doji_star_update", (DL_FUNC)&wk_morning_doji_star_update, 7},
+  {"wk_morning_doji_star_batch", (DL_FUNC)&wk_morning_doji_star_batch, 7},
+  {"wk_morning_doji_star_reset", (DL_FUNC)&wk_morning_doji_star_reset, 1},
+  {"wk_morning_evening_star_new", (DL_FUNC)&wk_morning_evening_star_new, 0},
+  {"wk_morning_evening_star_update", (DL_FUNC)&wk_morning_evening_star_update, 7},
+  {"wk_morning_evening_star_batch", (DL_FUNC)&wk_morning_evening_star_batch, 7},
+  {"wk_morning_evening_star_reset", (DL_FUNC)&wk_morning_evening_star_reset, 1},
+  {"wk_murrey_math_lines_new", (DL_FUNC)&wk_murrey_math_lines_new, 1},
+  {"wk_murrey_math_lines_update", (DL_FUNC)&wk_murrey_math_lines_update, 7},
+  {"wk_murrey_math_lines_reset", (DL_FUNC)&wk_murrey_math_lines_reset, 1},
+  {"wk_naked_poc_new", (DL_FUNC)&wk_naked_poc_new, 2},
+  {"wk_naked_poc_update", (DL_FUNC)&wk_naked_poc_update, 7},
+  {"wk_naked_poc_batch", (DL_FUNC)&wk_naked_poc_batch, 7},
+  {"wk_naked_poc_reset", (DL_FUNC)&wk_naked_poc_reset, 1},
+  {"wk_natr_new", (DL_FUNC)&wk_natr_new, 1},
+  {"wk_natr_update", (DL_FUNC)&wk_natr_update, 7},
+  {"wk_natr_batch", (DL_FUNC)&wk_natr_batch, 7},
+  {"wk_natr_reset", (DL_FUNC)&wk_natr_reset, 1},
+  {"wk_new_highs_new_lows_new", (DL_FUNC)&wk_new_highs_new_lows_new, 0},
+  {"wk_new_highs_new_lows_update", (DL_FUNC)&wk_new_highs_new_lows_update, 8},
+  {"wk_new_highs_new_lows_reset", (DL_FUNC)&wk_new_highs_new_lows_reset, 1},
+  {"wk_new_price_lines_new", (DL_FUNC)&wk_new_price_lines_new, 1},
+  {"wk_new_price_lines_update", (DL_FUNC)&wk_new_price_lines_update, 7},
+  {"wk_new_price_lines_batch", (DL_FUNC)&wk_new_price_lines_batch, 7},
+  {"wk_new_price_lines_reset", (DL_FUNC)&wk_new_price_lines_reset, 1},
+  {"wk_nrtr_new", (DL_FUNC)&wk_nrtr_new, 1},
+  {"wk_nrtr_update", (DL_FUNC)&wk_nrtr_update, 7},
+  {"wk_nrtr_reset", (DL_FUNC)&wk_nrtr_reset, 1},
+  {"wk_nvi_new", (DL_FUNC)&wk_nvi_new, 0},
+  {"wk_nvi_update", (DL_FUNC)&wk_nvi_update, 7},
+  {"wk_nvi_batch", (DL_FUNC)&wk_nvi_batch, 7},
+  {"wk_nvi_reset", (DL_FUNC)&wk_nvi_reset, 1},
+  {"wk_obv_new", (DL_FUNC)&wk_obv_new, 0},
+  {"wk_obv_update", (DL_FUNC)&wk_obv_update, 7},
+  {"wk_obv_batch", (DL_FUNC)&wk_obv_batch, 7},
+  {"wk_obv_reset", (DL_FUNC)&wk_obv_reset, 1},
+  {"wk_oi_price_divergence_new", (DL_FUNC)&wk_oi_price_divergence_new, 1},
+  {"wk_oi_price_divergence_update", (DL_FUNC)&wk_oi_price_divergence_update, 13},
+  {"wk_oi_price_divergence_reset", (DL_FUNC)&wk_oi_price_divergence_reset, 1},
+  {"wk_oi_to_volume_ratio_new", (DL_FUNC)&wk_oi_to_volume_ratio_new, 0},
+  {"wk_oi_to_volume_ratio_update", (DL_FUNC)&wk_oi_to_volume_ratio_update, 13},
+  {"wk_oi_to_volume_ratio_reset", (DL_FUNC)&wk_oi_to_volume_ratio_reset, 1},
+  {"wk_oi_weighted_new", (DL_FUNC)&wk_oi_weighted_new, 0},
+  {"wk_oi_weighted_update", (DL_FUNC)&wk_oi_weighted_update, 13},
+  {"wk_oi_weighted_reset", (DL_FUNC)&wk_oi_weighted_reset, 1},
+  {"wk_omega_ratio_new", (DL_FUNC)&wk_omega_ratio_new, 2},
+  {"wk_omega_ratio_update", (DL_FUNC)&wk_omega_ratio_update, 2},
+  {"wk_omega_ratio_batch", (DL_FUNC)&wk_omega_ratio_batch, 2},
+  {"wk_omega_ratio_reset", (DL_FUNC)&wk_omega_ratio_reset, 1},
+  {"wk_on_neck_new", (DL_FUNC)&wk_on_neck_new, 0},
+  {"wk_on_neck_update", (DL_FUNC)&wk_on_neck_update, 7},
+  {"wk_on_neck_batch", (DL_FUNC)&wk_on_neck_batch, 7},
+  {"wk_on_neck_reset", (DL_FUNC)&wk_on_neck_reset, 1},
+  {"wk_open_interest_delta_new", (DL_FUNC)&wk_open_interest_delta_new, 0},
+  {"wk_open_interest_delta_update", (DL_FUNC)&wk_open_interest_delta_update, 13},
+  {"wk_open_interest_delta_reset", (DL_FUNC)&wk_open_interest_delta_reset, 1},
+  {"wk_open_interest_momentum_new", (DL_FUNC)&wk_open_interest_momentum_new, 1},
+  {"wk_open_interest_momentum_update", (DL_FUNC)&wk_open_interest_momentum_update, 13},
+  {"wk_open_interest_momentum_reset", (DL_FUNC)&wk_open_interest_momentum_reset, 1},
+  {"wk_opening_marubozu_new", (DL_FUNC)&wk_opening_marubozu_new, 0},
+  {"wk_opening_marubozu_update", (DL_FUNC)&wk_opening_marubozu_update, 7},
+  {"wk_opening_marubozu_batch", (DL_FUNC)&wk_opening_marubozu_batch, 7},
+  {"wk_opening_marubozu_reset", (DL_FUNC)&wk_opening_marubozu_reset, 1},
+  {"wk_opening_range_new", (DL_FUNC)&wk_opening_range_new, 1},
+  {"wk_opening_range_update", (DL_FUNC)&wk_opening_range_update, 7},
+  {"wk_opening_range_reset", (DL_FUNC)&wk_opening_range_reset, 1},
+  {"wk_order_book_imbalance_full_new", (DL_FUNC)&wk_order_book_imbalance_full_new, 0},
+  {"wk_order_book_imbalance_full_update", (DL_FUNC)&wk_order_book_imbalance_full_update, 5},
+  {"wk_order_book_imbalance_full_reset", (DL_FUNC)&wk_order_book_imbalance_full_reset, 1},
+  {"wk_order_book_imbalance_top1_new", (DL_FUNC)&wk_order_book_imbalance_top1_new, 0},
+  {"wk_order_book_imbalance_top1_update", (DL_FUNC)&wk_order_book_imbalance_top1_update, 5},
+  {"wk_order_book_imbalance_top1_reset", (DL_FUNC)&wk_order_book_imbalance_top1_reset, 1},
+  {"wk_order_book_imbalance_top_n_new", (DL_FUNC)&wk_order_book_imbalance_top_n_new, 1},
+  {"wk_order_book_imbalance_top_n_update", (DL_FUNC)&wk_order_book_imbalance_top_n_update, 5},
+  {"wk_order_book_imbalance_top_n_reset", (DL_FUNC)&wk_order_book_imbalance_top_n_reset, 1},
+  {"wk_order_flow_imbalance_new", (DL_FUNC)&wk_order_flow_imbalance_new, 1},
+  {"wk_order_flow_imbalance_update", (DL_FUNC)&wk_order_flow_imbalance_update, 5},
+  {"wk_order_flow_imbalance_reset", (DL_FUNC)&wk_order_flow_imbalance_reset, 1},
+  {"wk_ou_half_life_new", (DL_FUNC)&wk_ou_half_life_new, 1},
+  {"wk_ou_half_life_update", (DL_FUNC)&wk_ou_half_life_update, 3},
+  {"wk_ou_half_life_batch", (DL_FUNC)&wk_ou_half_life_batch, 3},
+  {"wk_ou_half_life_reset", (DL_FUNC)&wk_ou_half_life_reset, 1},
+  {"wk_overnight_gap_new", (DL_FUNC)&wk_overnight_gap_new, 1},
+  {"wk_overnight_gap_update", (DL_FUNC)&wk_overnight_gap_update, 7},
+  {"wk_overnight_gap_batch", (DL_FUNC)&wk_overnight_gap_batch, 7},
+  {"wk_overnight_gap_reset", (DL_FUNC)&wk_overnight_gap_reset, 1},
+  {"wk_overnight_intraday_return_new", (DL_FUNC)&wk_overnight_intraday_return_new, 1},
+  {"wk_overnight_intraday_return_update", (DL_FUNC)&wk_overnight_intraday_return_update, 7},
+  {"wk_overnight_intraday_return_reset", (DL_FUNC)&wk_overnight_intraday_return_reset, 1},
+  {"wk_pain_index_new", (DL_FUNC)&wk_pain_index_new, 1},
+  {"wk_pain_index_update", (DL_FUNC)&wk_pain_index_update, 2},
+  {"wk_pain_index_batch", (DL_FUNC)&wk_pain_index_batch, 2},
+  {"wk_pain_index_reset", (DL_FUNC)&wk_pain_index_reset, 1},
+  {"wk_pair_spread_z_score_new", (DL_FUNC)&wk_pair_spread_z_score_new, 2},
+  {"wk_pair_spread_z_score_update", (DL_FUNC)&wk_pair_spread_z_score_update, 3},
+  {"wk_pair_spread_z_score_batch", (DL_FUNC)&wk_pair_spread_z_score_batch, 3},
+  {"wk_pair_spread_z_score_reset", (DL_FUNC)&wk_pair_spread_z_score_reset, 1},
+  {"wk_pairwise_beta_new", (DL_FUNC)&wk_pairwise_beta_new, 1},
+  {"wk_pairwise_beta_update", (DL_FUNC)&wk_pairwise_beta_update, 3},
+  {"wk_pairwise_beta_batch", (DL_FUNC)&wk_pairwise_beta_batch, 3},
+  {"wk_pairwise_beta_reset", (DL_FUNC)&wk_pairwise_beta_reset, 1},
+  {"wk_parkinson_volatility_new", (DL_FUNC)&wk_parkinson_volatility_new, 2},
+  {"wk_parkinson_volatility_update", (DL_FUNC)&wk_parkinson_volatility_update, 7},
+  {"wk_parkinson_volatility_batch", (DL_FUNC)&wk_parkinson_volatility_batch, 7},
+  {"wk_parkinson_volatility_reset", (DL_FUNC)&wk_parkinson_volatility_reset, 1},
+  {"wk_pearson_correlation_new", (DL_FUNC)&wk_pearson_correlation_new, 1},
+  {"wk_pearson_correlation_update", (DL_FUNC)&wk_pearson_correlation_update, 3},
+  {"wk_pearson_correlation_batch", (DL_FUNC)&wk_pearson_correlation_batch, 3},
+  {"wk_pearson_correlation_reset", (DL_FUNC)&wk_pearson_correlation_reset, 1},
+  {"wk_percent_above_ma_new", (DL_FUNC)&wk_percent_above_ma_new, 0},
+  {"wk_percent_above_ma_update", (DL_FUNC)&wk_percent_above_ma_update, 8},
+  {"wk_percent_above_ma_reset", (DL_FUNC)&wk_percent_above_ma_reset, 1},
+  {"wk_percent_b_new", (DL_FUNC)&wk_percent_b_new, 2},
+  {"wk_percent_b_update", (DL_FUNC)&wk_percent_b_update, 2},
+  {"wk_percent_b_batch", (DL_FUNC)&wk_percent_b_batch, 2},
+  {"wk_percent_b_reset", (DL_FUNC)&wk_percent_b_reset, 1},
+  {"wk_percentage_trailing_stop_new", (DL_FUNC)&wk_percentage_trailing_stop_new, 1},
+  {"wk_percentage_trailing_stop_update", (DL_FUNC)&wk_percentage_trailing_stop_update, 2},
+  {"wk_percentage_trailing_stop_batch", (DL_FUNC)&wk_percentage_trailing_stop_batch, 2},
+  {"wk_percentage_trailing_stop_reset", (DL_FUNC)&wk_percentage_trailing_stop_reset, 1},
+  {"wk_perpetual_premium_index_new", (DL_FUNC)&wk_perpetual_premium_index_new, 0},
+  {"wk_perpetual_premium_index_update", (DL_FUNC)&wk_perpetual_premium_index_update, 13},
+  {"wk_perpetual_premium_index_reset", (DL_FUNC)&wk_perpetual_premium_index_reset, 1},
+  {"wk_pgo_new", (DL_FUNC)&wk_pgo_new, 1},
+  {"wk_pgo_update", (DL_FUNC)&wk_pgo_update, 7},
+  {"wk_pgo_batch", (DL_FUNC)&wk_pgo_batch, 7},
+  {"wk_pgo_reset", (DL_FUNC)&wk_pgo_reset, 1},
+  {"wk_piercing_dark_cloud_new", (DL_FUNC)&wk_piercing_dark_cloud_new, 0},
+  {"wk_piercing_dark_cloud_update", (DL_FUNC)&wk_piercing_dark_cloud_update, 7},
+  {"wk_piercing_dark_cloud_batch", (DL_FUNC)&wk_piercing_dark_cloud_batch, 7},
+  {"wk_piercing_dark_cloud_reset", (DL_FUNC)&wk_piercing_dark_cloud_reset, 1},
+  {"wk_pin_new", (DL_FUNC)&wk_pin_new, 1},
+  {"wk_pin_update", (DL_FUNC)&wk_pin_update, 5},
+  {"wk_pin_reset", (DL_FUNC)&wk_pin_reset, 1},
+  {"wk_pivot_reversal_new", (DL_FUNC)&wk_pivot_reversal_new, 2},
+  {"wk_pivot_reversal_update", (DL_FUNC)&wk_pivot_reversal_update, 7},
+  {"wk_pivot_reversal_batch", (DL_FUNC)&wk_pivot_reversal_batch, 7},
+  {"wk_pivot_reversal_reset", (DL_FUNC)&wk_pivot_reversal_reset, 1},
+  {"wk_plus_di_new", (DL_FUNC)&wk_plus_di_new, 1},
+  {"wk_plus_di_update", (DL_FUNC)&wk_plus_di_update, 7},
+  {"wk_plus_di_batch", (DL_FUNC)&wk_plus_di_batch, 7},
+  {"wk_plus_di_reset", (DL_FUNC)&wk_plus_di_reset, 1},
+  {"wk_plus_dm_new", (DL_FUNC)&wk_plus_dm_new, 1},
+  {"wk_plus_dm_update", (DL_FUNC)&wk_plus_dm_update, 7},
+  {"wk_plus_dm_batch", (DL_FUNC)&wk_plus_dm_batch, 7},
+  {"wk_plus_dm_reset", (DL_FUNC)&wk_plus_dm_reset, 1},
+  {"wk_pmo_new", (DL_FUNC)&wk_pmo_new, 2},
+  {"wk_pmo_update", (DL_FUNC)&wk_pmo_update, 2},
+  {"wk_pmo_batch", (DL_FUNC)&wk_pmo_batch, 2},
+  {"wk_pmo_reset", (DL_FUNC)&wk_pmo_reset, 1},
+  {"wk_point_and_figure_bars_new", (DL_FUNC)&wk_point_and_figure_bars_new, 2},
+  {"wk_point_and_figure_bars_update", (DL_FUNC)&wk_point_and_figure_bars_update, 7},
+  {"wk_point_and_figure_bars_reset", (DL_FUNC)&wk_point_and_figure_bars_reset, 1},
+  {"wk_polarized_fractal_efficiency_new", (DL_FUNC)&wk_polarized_fractal_efficiency_new, 2},
+  {"wk_polarized_fractal_efficiency_update", (DL_FUNC)&wk_polarized_fractal_efficiency_update, 2},
+  {"wk_polarized_fractal_efficiency_batch", (DL_FUNC)&wk_polarized_fractal_efficiency_batch, 2},
+  {"wk_polarized_fractal_efficiency_reset", (DL_FUNC)&wk_polarized_fractal_efficiency_reset, 1},
+  {"wk_ppo_new", (DL_FUNC)&wk_ppo_new, 2},
+  {"wk_ppo_update", (DL_FUNC)&wk_ppo_update, 2},
+  {"wk_ppo_batch", (DL_FUNC)&wk_ppo_batch, 2},
+  {"wk_ppo_reset", (DL_FUNC)&wk_ppo_reset, 1},
+  {"wk_ppo_histogram_new", (DL_FUNC)&wk_ppo_histogram_new, 3},
+  {"wk_ppo_histogram_update", (DL_FUNC)&wk_ppo_histogram_update, 2},
+  {"wk_ppo_histogram_batch", (DL_FUNC)&wk_ppo_histogram_batch, 2},
+  {"wk_ppo_histogram_reset", (DL_FUNC)&wk_ppo_histogram_reset, 1},
+  {"wk_profile_shape_new", (DL_FUNC)&wk_profile_shape_new, 2},
+  {"wk_profile_shape_update", (DL_FUNC)&wk_profile_shape_update, 7},
+  {"wk_profile_shape_batch", (DL_FUNC)&wk_profile_shape_batch, 7},
+  {"wk_profile_shape_reset", (DL_FUNC)&wk_profile_shape_reset, 1},
+  {"wk_profit_factor_new", (DL_FUNC)&wk_profit_factor_new, 1},
+  {"wk_profit_factor_update", (DL_FUNC)&wk_profit_factor_update, 2},
+  {"wk_profit_factor_batch", (DL_FUNC)&wk_profit_factor_batch, 2},
+  {"wk_profit_factor_reset", (DL_FUNC)&wk_profit_factor_reset, 1},
+  {"wk_projection_bands_new", (DL_FUNC)&wk_projection_bands_new, 1},
+  {"wk_projection_bands_update", (DL_FUNC)&wk_projection_bands_update, 7},
+  {"wk_projection_bands_reset", (DL_FUNC)&wk_projection_bands_reset, 1},
+  {"wk_projection_oscillator_new", (DL_FUNC)&wk_projection_oscillator_new, 1},
+  {"wk_projection_oscillator_update", (DL_FUNC)&wk_projection_oscillator_update, 7},
+  {"wk_projection_oscillator_batch", (DL_FUNC)&wk_projection_oscillator_batch, 7},
+  {"wk_projection_oscillator_reset", (DL_FUNC)&wk_projection_oscillator_reset, 1},
+  {"wk_psar_new", (DL_FUNC)&wk_psar_new, 3},
+  {"wk_psar_update", (DL_FUNC)&wk_psar_update, 7},
+  {"wk_psar_batch", (DL_FUNC)&wk_psar_batch, 7},
+  {"wk_psar_reset", (DL_FUNC)&wk_psar_reset, 1},
+  {"wk_pvi_new", (DL_FUNC)&wk_pvi_new, 0},
+  {"wk_pvi_update", (DL_FUNC)&wk_pvi_update, 7},
+  {"wk_pvi_batch", (DL_FUNC)&wk_pvi_batch, 7},
+  {"wk_pvi_reset", (DL_FUNC)&wk_pvi_reset, 1},
+  {"wk_qqe_new", (DL_FUNC)&wk_qqe_new, 3},
+  {"wk_qqe_update", (DL_FUNC)&wk_qqe_update, 2},
+  {"wk_qqe_reset", (DL_FUNC)&wk_qqe_reset, 1},
+  {"wk_qstick_new", (DL_FUNC)&wk_qstick_new, 1},
+  {"wk_qstick_update", (DL_FUNC)&wk_qstick_update, 7},
+  {"wk_qstick_batch", (DL_FUNC)&wk_qstick_batch, 7},
+  {"wk_qstick_reset", (DL_FUNC)&wk_qstick_reset, 1},
+  {"wk_quartile_bands_new", (DL_FUNC)&wk_quartile_bands_new, 1},
+  {"wk_quartile_bands_update", (DL_FUNC)&wk_quartile_bands_update, 2},
+  {"wk_quartile_bands_reset", (DL_FUNC)&wk_quartile_bands_reset, 1},
+  {"wk_quoted_spread_new", (DL_FUNC)&wk_quoted_spread_new, 0},
+  {"wk_quoted_spread_update", (DL_FUNC)&wk_quoted_spread_update, 5},
+  {"wk_quoted_spread_reset", (DL_FUNC)&wk_quoted_spread_reset, 1},
+  {"wk_r_squared_new", (DL_FUNC)&wk_r_squared_new, 1},
+  {"wk_r_squared_update", (DL_FUNC)&wk_r_squared_update, 2},
+  {"wk_r_squared_batch", (DL_FUNC)&wk_r_squared_batch, 2},
+  {"wk_r_squared_reset", (DL_FUNC)&wk_r_squared_reset, 1},
+  {"wk_range_bars_new", (DL_FUNC)&wk_range_bars_new, 1},
+  {"wk_range_bars_update", (DL_FUNC)&wk_range_bars_update, 7},
+  {"wk_range_bars_reset", (DL_FUNC)&wk_range_bars_reset, 1},
+  {"wk_realized_spread_new", (DL_FUNC)&wk_realized_spread_new, 1},
+  {"wk_realized_spread_update", (DL_FUNC)&wk_realized_spread_update, 6},
+  {"wk_realized_spread_reset", (DL_FUNC)&wk_realized_spread_reset, 1},
+  {"wk_realized_volatility_new", (DL_FUNC)&wk_realized_volatility_new, 1},
+  {"wk_realized_volatility_update", (DL_FUNC)&wk_realized_volatility_update, 2},
+  {"wk_realized_volatility_batch", (DL_FUNC)&wk_realized_volatility_batch, 2},
+  {"wk_realized_volatility_reset", (DL_FUNC)&wk_realized_volatility_reset, 1},
+  {"wk_recovery_factor_new", (DL_FUNC)&wk_recovery_factor_new, 0},
+  {"wk_recovery_factor_update", (DL_FUNC)&wk_recovery_factor_update, 2},
+  {"wk_recovery_factor_batch", (DL_FUNC)&wk_recovery_factor_batch, 2},
+  {"wk_recovery_factor_reset", (DL_FUNC)&wk_recovery_factor_reset, 1},
+  {"wk_rectangle_range_new", (DL_FUNC)&wk_rectangle_range_new, 0},
+  {"wk_rectangle_range_update", (DL_FUNC)&wk_rectangle_range_update, 7},
+  {"wk_rectangle_range_batch", (DL_FUNC)&wk_rectangle_range_batch, 7},
+  {"wk_rectangle_range_reset", (DL_FUNC)&wk_rectangle_range_reset, 1},
+  {"wk_reflex_new", (DL_FUNC)&wk_reflex_new, 1},
+  {"wk_reflex_update", (DL_FUNC)&wk_reflex_update, 2},
+  {"wk_reflex_batch", (DL_FUNC)&wk_reflex_batch, 2},
+  {"wk_reflex_reset", (DL_FUNC)&wk_reflex_reset, 1},
+  {"wk_regime_label_new", (DL_FUNC)&wk_regime_label_new, 2},
+  {"wk_regime_label_update", (DL_FUNC)&wk_regime_label_update, 2},
+  {"wk_regime_label_batch", (DL_FUNC)&wk_regime_label_batch, 2},
+  {"wk_regime_label_reset", (DL_FUNC)&wk_regime_label_reset, 1},
+  {"wk_relative_strength_ab_new", (DL_FUNC)&wk_relative_strength_ab_new, 2},
+  {"wk_relative_strength_ab_update", (DL_FUNC)&wk_relative_strength_ab_update, 3},
+  {"wk_relative_strength_ab_reset", (DL_FUNC)&wk_relative_strength_ab_reset, 1},
+  {"wk_renko_bars_new", (DL_FUNC)&wk_renko_bars_new, 1},
+  {"wk_renko_bars_update", (DL_FUNC)&wk_renko_bars_update, 7},
+  {"wk_renko_bars_reset", (DL_FUNC)&wk_renko_bars_reset, 1},
+  {"wk_renko_trailing_stop_new", (DL_FUNC)&wk_renko_trailing_stop_new, 1},
+  {"wk_renko_trailing_stop_update", (DL_FUNC)&wk_renko_trailing_stop_update, 2},
+  {"wk_renko_trailing_stop_batch", (DL_FUNC)&wk_renko_trailing_stop_batch, 2},
+  {"wk_renko_trailing_stop_reset", (DL_FUNC)&wk_renko_trailing_stop_reset, 1},
+  {"wk_rickshaw_man_new", (DL_FUNC)&wk_rickshaw_man_new, 0},
+  {"wk_rickshaw_man_update", (DL_FUNC)&wk_rickshaw_man_update, 7},
+  {"wk_rickshaw_man_batch", (DL_FUNC)&wk_rickshaw_man_batch, 7},
+  {"wk_rickshaw_man_reset", (DL_FUNC)&wk_rickshaw_man_reset, 1},
+  {"wk_rising_three_methods_new", (DL_FUNC)&wk_rising_three_methods_new, 0},
+  {"wk_rising_three_methods_update", (DL_FUNC)&wk_rising_three_methods_update, 7},
+  {"wk_rising_three_methods_batch", (DL_FUNC)&wk_rising_three_methods_batch, 7},
+  {"wk_rising_three_methods_reset", (DL_FUNC)&wk_rising_three_methods_reset, 1},
+  {"wk_rmi_new", (DL_FUNC)&wk_rmi_new, 2},
+  {"wk_rmi_update", (DL_FUNC)&wk_rmi_update, 2},
+  {"wk_rmi_batch", (DL_FUNC)&wk_rmi_batch, 2},
+  {"wk_rmi_reset", (DL_FUNC)&wk_rmi_reset, 1},
+  {"wk_roc_new", (DL_FUNC)&wk_roc_new, 1},
+  {"wk_roc_update", (DL_FUNC)&wk_roc_update, 2},
+  {"wk_roc_batch", (DL_FUNC)&wk_roc_batch, 2},
+  {"wk_roc_reset", (DL_FUNC)&wk_roc_reset, 1},
+  {"wk_rocp_new", (DL_FUNC)&wk_rocp_new, 1},
+  {"wk_rocp_update", (DL_FUNC)&wk_rocp_update, 2},
+  {"wk_rocp_batch", (DL_FUNC)&wk_rocp_batch, 2},
+  {"wk_rocp_reset", (DL_FUNC)&wk_rocp_reset, 1},
+  {"wk_rocr_new", (DL_FUNC)&wk_rocr_new, 1},
+  {"wk_rocr_update", (DL_FUNC)&wk_rocr_update, 2},
+  {"wk_rocr_batch", (DL_FUNC)&wk_rocr_batch, 2},
+  {"wk_rocr_reset", (DL_FUNC)&wk_rocr_reset, 1},
+  {"wk_rocr100_new", (DL_FUNC)&wk_rocr100_new, 1},
+  {"wk_rocr100_update", (DL_FUNC)&wk_rocr100_update, 2},
+  {"wk_rocr100_batch", (DL_FUNC)&wk_rocr100_batch, 2},
+  {"wk_rocr100_reset", (DL_FUNC)&wk_rocr100_reset, 1},
+  {"wk_rogers_satchell_volatility_new", (DL_FUNC)&wk_rogers_satchell_volatility_new, 2},
+  {"wk_rogers_satchell_volatility_update", (DL_FUNC)&wk_rogers_satchell_volatility_update, 7},
+  {"wk_rogers_satchell_volatility_batch", (DL_FUNC)&wk_rogers_satchell_volatility_batch, 7},
+  {"wk_rogers_satchell_volatility_reset", (DL_FUNC)&wk_rogers_satchell_volatility_reset, 1},
+  {"wk_roll_measure_new", (DL_FUNC)&wk_roll_measure_new, 1},
+  {"wk_roll_measure_update", (DL_FUNC)&wk_roll_measure_update, 5},
+  {"wk_roll_measure_reset", (DL_FUNC)&wk_roll_measure_reset, 1},
+  {"wk_rolling_correlation_new", (DL_FUNC)&wk_rolling_correlation_new, 1},
+  {"wk_rolling_correlation_update", (DL_FUNC)&wk_rolling_correlation_update, 3},
+  {"wk_rolling_correlation_batch", (DL_FUNC)&wk_rolling_correlation_batch, 3},
+  {"wk_rolling_correlation_reset", (DL_FUNC)&wk_rolling_correlation_reset, 1},
+  {"wk_rolling_covariance_new", (DL_FUNC)&wk_rolling_covariance_new, 1},
+  {"wk_rolling_covariance_update", (DL_FUNC)&wk_rolling_covariance_update, 3},
+  {"wk_rolling_covariance_batch", (DL_FUNC)&wk_rolling_covariance_batch, 3},
+  {"wk_rolling_covariance_reset", (DL_FUNC)&wk_rolling_covariance_reset, 1},
+  {"wk_rolling_iqr_new", (DL_FUNC)&wk_rolling_iqr_new, 1},
+  {"wk_rolling_iqr_update", (DL_FUNC)&wk_rolling_iqr_update, 2},
+  {"wk_rolling_iqr_batch", (DL_FUNC)&wk_rolling_iqr_batch, 2},
+  {"wk_rolling_iqr_reset", (DL_FUNC)&wk_rolling_iqr_reset, 1},
+  {"wk_rolling_min_max_scaler_new", (DL_FUNC)&wk_rolling_min_max_scaler_new, 1},
+  {"wk_rolling_min_max_scaler_update", (DL_FUNC)&wk_rolling_min_max_scaler_update, 2},
+  {"wk_rolling_min_max_scaler_batch", (DL_FUNC)&wk_rolling_min_max_scaler_batch, 2},
+  {"wk_rolling_min_max_scaler_reset", (DL_FUNC)&wk_rolling_min_max_scaler_reset, 1},
+  {"wk_rolling_percentile_rank_new", (DL_FUNC)&wk_rolling_percentile_rank_new, 1},
+  {"wk_rolling_percentile_rank_update", (DL_FUNC)&wk_rolling_percentile_rank_update, 2},
+  {"wk_rolling_percentile_rank_batch", (DL_FUNC)&wk_rolling_percentile_rank_batch, 2},
+  {"wk_rolling_percentile_rank_reset", (DL_FUNC)&wk_rolling_percentile_rank_reset, 1},
+  {"wk_rolling_quantile_new", (DL_FUNC)&wk_rolling_quantile_new, 2},
+  {"wk_rolling_quantile_update", (DL_FUNC)&wk_rolling_quantile_update, 2},
+  {"wk_rolling_quantile_batch", (DL_FUNC)&wk_rolling_quantile_batch, 2},
+  {"wk_rolling_quantile_reset", (DL_FUNC)&wk_rolling_quantile_reset, 1},
+  {"wk_rolling_vwap_new", (DL_FUNC)&wk_rolling_vwap_new, 1},
+  {"wk_rolling_vwap_update", (DL_FUNC)&wk_rolling_vwap_update, 7},
+  {"wk_rolling_vwap_batch", (DL_FUNC)&wk_rolling_vwap_batch, 7},
+  {"wk_rolling_vwap_reset", (DL_FUNC)&wk_rolling_vwap_reset, 1},
+  {"wk_roofing_filter_new", (DL_FUNC)&wk_roofing_filter_new, 2},
+  {"wk_roofing_filter_update", (DL_FUNC)&wk_roofing_filter_update, 2},
+  {"wk_roofing_filter_batch", (DL_FUNC)&wk_roofing_filter_batch, 2},
+  {"wk_roofing_filter_reset", (DL_FUNC)&wk_roofing_filter_reset, 1},
+  {"wk_rsi_new", (DL_FUNC)&wk_rsi_new, 1},
+  {"wk_rsi_update", (DL_FUNC)&wk_rsi_update, 2},
+  {"wk_rsi_batch", (DL_FUNC)&wk_rsi_batch, 2},
+  {"wk_rsi_reset", (DL_FUNC)&wk_rsi_reset, 1},
+  {"wk_rsx_new", (DL_FUNC)&wk_rsx_new, 1},
+  {"wk_rsx_update", (DL_FUNC)&wk_rsx_update, 2},
+  {"wk_rsx_batch", (DL_FUNC)&wk_rsx_batch, 2},
+  {"wk_rsx_reset", (DL_FUNC)&wk_rsx_reset, 1},
+  {"wk_run_bars_new", (DL_FUNC)&wk_run_bars_new, 1},
+  {"wk_run_bars_update", (DL_FUNC)&wk_run_bars_update, 7},
+  {"wk_run_bars_reset", (DL_FUNC)&wk_run_bars_reset, 1},
+  {"wk_rvi_new", (DL_FUNC)&wk_rvi_new, 1},
+  {"wk_rvi_update", (DL_FUNC)&wk_rvi_update, 7},
+  {"wk_rvi_batch", (DL_FUNC)&wk_rvi_batch, 7},
+  {"wk_rvi_reset", (DL_FUNC)&wk_rvi_reset, 1},
+  {"wk_rvi_volatility_new", (DL_FUNC)&wk_rvi_volatility_new, 1},
+  {"wk_rvi_volatility_update", (DL_FUNC)&wk_rvi_volatility_update, 2},
+  {"wk_rvi_volatility_batch", (DL_FUNC)&wk_rvi_volatility_batch, 2},
+  {"wk_rvi_volatility_reset", (DL_FUNC)&wk_rvi_volatility_reset, 1},
+  {"wk_rwi_new", (DL_FUNC)&wk_rwi_new, 1},
+  {"wk_rwi_update", (DL_FUNC)&wk_rwi_update, 7},
+  {"wk_rwi_reset", (DL_FUNC)&wk_rwi_reset, 1},
+  {"wk_sample_entropy_new", (DL_FUNC)&wk_sample_entropy_new, 3},
+  {"wk_sample_entropy_update", (DL_FUNC)&wk_sample_entropy_update, 2},
+  {"wk_sample_entropy_batch", (DL_FUNC)&wk_sample_entropy_batch, 2},
+  {"wk_sample_entropy_reset", (DL_FUNC)&wk_sample_entropy_reset, 1},
+  {"wk_sar_ext_new", (DL_FUNC)&wk_sar_ext_new, 8},
+  {"wk_sar_ext_update", (DL_FUNC)&wk_sar_ext_update, 7},
+  {"wk_sar_ext_batch", (DL_FUNC)&wk_sar_ext_batch, 7},
+  {"wk_sar_ext_reset", (DL_FUNC)&wk_sar_ext_reset, 1},
+  {"wk_seasonal_z_score_new", (DL_FUNC)&wk_seasonal_z_score_new, 1},
+  {"wk_seasonal_z_score_update", (DL_FUNC)&wk_seasonal_z_score_update, 7},
+  {"wk_seasonal_z_score_batch", (DL_FUNC)&wk_seasonal_z_score_batch, 7},
+  {"wk_seasonal_z_score_reset", (DL_FUNC)&wk_seasonal_z_score_reset, 1},
+  {"wk_separating_lines_new", (DL_FUNC)&wk_separating_lines_new, 0},
+  {"wk_separating_lines_update", (DL_FUNC)&wk_separating_lines_update, 7},
+  {"wk_separating_lines_batch", (DL_FUNC)&wk_separating_lines_batch, 7},
+  {"wk_separating_lines_reset", (DL_FUNC)&wk_separating_lines_reset, 1},
+  {"wk_session_high_low_new", (DL_FUNC)&wk_session_high_low_new, 1},
+  {"wk_session_high_low_update", (DL_FUNC)&wk_session_high_low_update, 7},
+  {"wk_session_high_low_reset", (DL_FUNC)&wk_session_high_low_reset, 1},
+  {"wk_session_range_new", (DL_FUNC)&wk_session_range_new, 1},
+  {"wk_session_range_update", (DL_FUNC)&wk_session_range_update, 7},
+  {"wk_session_range_reset", (DL_FUNC)&wk_session_range_reset, 1},
+  {"wk_session_vwap_new", (DL_FUNC)&wk_session_vwap_new, 1},
+  {"wk_session_vwap_update", (DL_FUNC)&wk_session_vwap_update, 7},
+  {"wk_session_vwap_batch", (DL_FUNC)&wk_session_vwap_batch, 7},
+  {"wk_session_vwap_reset", (DL_FUNC)&wk_session_vwap_reset, 1},
+  {"wk_shannon_entropy_new", (DL_FUNC)&wk_shannon_entropy_new, 2},
+  {"wk_shannon_entropy_update", (DL_FUNC)&wk_shannon_entropy_update, 2},
+  {"wk_shannon_entropy_batch", (DL_FUNC)&wk_shannon_entropy_batch, 2},
+  {"wk_shannon_entropy_reset", (DL_FUNC)&wk_shannon_entropy_reset, 1},
+  {"wk_shark_new", (DL_FUNC)&wk_shark_new, 0},
+  {"wk_shark_update", (DL_FUNC)&wk_shark_update, 7},
+  {"wk_shark_batch", (DL_FUNC)&wk_shark_batch, 7},
+  {"wk_shark_reset", (DL_FUNC)&wk_shark_reset, 1},
+  {"wk_sharpe_ratio_new", (DL_FUNC)&wk_sharpe_ratio_new, 2},
+  {"wk_sharpe_ratio_update", (DL_FUNC)&wk_sharpe_ratio_update, 2},
+  {"wk_sharpe_ratio_batch", (DL_FUNC)&wk_sharpe_ratio_batch, 2},
+  {"wk_sharpe_ratio_reset", (DL_FUNC)&wk_sharpe_ratio_reset, 1},
+  {"wk_shooting_star_new", (DL_FUNC)&wk_shooting_star_new, 0},
+  {"wk_shooting_star_update", (DL_FUNC)&wk_shooting_star_update, 7},
+  {"wk_shooting_star_batch", (DL_FUNC)&wk_shooting_star_batch, 7},
+  {"wk_shooting_star_reset", (DL_FUNC)&wk_shooting_star_reset, 1},
+  {"wk_short_line_new", (DL_FUNC)&wk_short_line_new, 0},
+  {"wk_short_line_update", (DL_FUNC)&wk_short_line_update, 7},
+  {"wk_short_line_batch", (DL_FUNC)&wk_short_line_batch, 7},
+  {"wk_short_line_reset", (DL_FUNC)&wk_short_line_reset, 1},
+  {"wk_signed_volume_new", (DL_FUNC)&wk_signed_volume_new, 0},
+  {"wk_signed_volume_update", (DL_FUNC)&wk_signed_volume_update, 5},
+  {"wk_signed_volume_reset", (DL_FUNC)&wk_signed_volume_reset, 1},
+  {"wk_sine_wave_new", (DL_FUNC)&wk_sine_wave_new, 0},
+  {"wk_sine_wave_update", (DL_FUNC)&wk_sine_wave_update, 2},
+  {"wk_sine_wave_batch", (DL_FUNC)&wk_sine_wave_batch, 2},
+  {"wk_sine_wave_reset", (DL_FUNC)&wk_sine_wave_reset, 1},
+  {"wk_sine_weighted_ma_new", (DL_FUNC)&wk_sine_weighted_ma_new, 1},
+  {"wk_sine_weighted_ma_update", (DL_FUNC)&wk_sine_weighted_ma_update, 2},
+  {"wk_sine_weighted_ma_batch", (DL_FUNC)&wk_sine_weighted_ma_batch, 2},
+  {"wk_sine_weighted_ma_reset", (DL_FUNC)&wk_sine_weighted_ma_reset, 1},
+  {"wk_single_prints_new", (DL_FUNC)&wk_single_prints_new, 2},
+  {"wk_single_prints_update", (DL_FUNC)&wk_single_prints_update, 7},
+  {"wk_single_prints_batch", (DL_FUNC)&wk_single_prints_batch, 7},
+  {"wk_single_prints_reset", (DL_FUNC)&wk_single_prints_reset, 1},
+  {"wk_skewness_new", (DL_FUNC)&wk_skewness_new, 1},
+  {"wk_skewness_update", (DL_FUNC)&wk_skewness_update, 2},
+  {"wk_skewness_batch", (DL_FUNC)&wk_skewness_batch, 2},
+  {"wk_skewness_reset", (DL_FUNC)&wk_skewness_reset, 1},
+  {"wk_sma_new", (DL_FUNC)&wk_sma_new, 1},
+  {"wk_sma_update", (DL_FUNC)&wk_sma_update, 2},
+  {"wk_sma_batch", (DL_FUNC)&wk_sma_batch, 2},
+  {"wk_sma_reset", (DL_FUNC)&wk_sma_reset, 1},
+  {"wk_smi_new", (DL_FUNC)&wk_smi_new, 3},
+  {"wk_smi_update", (DL_FUNC)&wk_smi_update, 7},
+  {"wk_smi_batch", (DL_FUNC)&wk_smi_batch, 7},
+  {"wk_smi_reset", (DL_FUNC)&wk_smi_reset, 1},
+  {"wk_smma_new", (DL_FUNC)&wk_smma_new, 1},
+  {"wk_smma_update", (DL_FUNC)&wk_smma_update, 2},
+  {"wk_smma_batch", (DL_FUNC)&wk_smma_batch, 2},
+  {"wk_smma_reset", (DL_FUNC)&wk_smma_reset, 1},
+  {"wk_smoothed_heikin_ashi_new", (DL_FUNC)&wk_smoothed_heikin_ashi_new, 1},
+  {"wk_smoothed_heikin_ashi_update", (DL_FUNC)&wk_smoothed_heikin_ashi_update, 7},
+  {"wk_smoothed_heikin_ashi_reset", (DL_FUNC)&wk_smoothed_heikin_ashi_reset, 1},
+  {"wk_sortino_ratio_new", (DL_FUNC)&wk_sortino_ratio_new, 2},
+  {"wk_sortino_ratio_update", (DL_FUNC)&wk_sortino_ratio_update, 2},
+  {"wk_sortino_ratio_batch", (DL_FUNC)&wk_sortino_ratio_batch, 2},
+  {"wk_sortino_ratio_reset", (DL_FUNC)&wk_sortino_ratio_reset, 1},
+  {"wk_spearman_correlation_new", (DL_FUNC)&wk_spearman_correlation_new, 1},
+  {"wk_spearman_correlation_update", (DL_FUNC)&wk_spearman_correlation_update, 3},
+  {"wk_spearman_correlation_batch", (DL_FUNC)&wk_spearman_correlation_batch, 3},
+  {"wk_spearman_correlation_reset", (DL_FUNC)&wk_spearman_correlation_reset, 1},
+  {"wk_spinning_top_new", (DL_FUNC)&wk_spinning_top_new, 0},
+  {"wk_spinning_top_update", (DL_FUNC)&wk_spinning_top_update, 7},
+  {"wk_spinning_top_batch", (DL_FUNC)&wk_spinning_top_batch, 7},
+  {"wk_spinning_top_reset", (DL_FUNC)&wk_spinning_top_reset, 1},
+  {"wk_spread_ar1_coefficient_new", (DL_FUNC)&wk_spread_ar1_coefficient_new, 1},
+  {"wk_spread_ar1_coefficient_update", (DL_FUNC)&wk_spread_ar1_coefficient_update, 3},
+  {"wk_spread_ar1_coefficient_batch", (DL_FUNC)&wk_spread_ar1_coefficient_batch, 3},
+  {"wk_spread_ar1_coefficient_reset", (DL_FUNC)&wk_spread_ar1_coefficient_reset, 1},
+  {"wk_spread_bollinger_bands_new", (DL_FUNC)&wk_spread_bollinger_bands_new, 2},
+  {"wk_spread_bollinger_bands_update", (DL_FUNC)&wk_spread_bollinger_bands_update, 3},
+  {"wk_spread_bollinger_bands_reset", (DL_FUNC)&wk_spread_bollinger_bands_reset, 1},
+  {"wk_spread_hurst_new", (DL_FUNC)&wk_spread_hurst_new, 1},
+  {"wk_spread_hurst_update", (DL_FUNC)&wk_spread_hurst_update, 3},
+  {"wk_spread_hurst_batch", (DL_FUNC)&wk_spread_hurst_batch, 3},
+  {"wk_spread_hurst_reset", (DL_FUNC)&wk_spread_hurst_reset, 1},
+  {"wk_stalled_pattern_new", (DL_FUNC)&wk_stalled_pattern_new, 0},
+  {"wk_stalled_pattern_update", (DL_FUNC)&wk_stalled_pattern_update, 7},
+  {"wk_stalled_pattern_batch", (DL_FUNC)&wk_stalled_pattern_batch, 7},
+  {"wk_stalled_pattern_reset", (DL_FUNC)&wk_stalled_pattern_reset, 1},
+  {"wk_standard_error_new", (DL_FUNC)&wk_standard_error_new, 1},
+  {"wk_standard_error_update", (DL_FUNC)&wk_standard_error_update, 2},
+  {"wk_standard_error_batch", (DL_FUNC)&wk_standard_error_batch, 2},
+  {"wk_standard_error_reset", (DL_FUNC)&wk_standard_error_reset, 1},
+  {"wk_standard_error_bands_new", (DL_FUNC)&wk_standard_error_bands_new, 2},
+  {"wk_standard_error_bands_update", (DL_FUNC)&wk_standard_error_bands_update, 2},
+  {"wk_standard_error_bands_reset", (DL_FUNC)&wk_standard_error_bands_reset, 1},
+  {"wk_starc_bands_new", (DL_FUNC)&wk_starc_bands_new, 3},
+  {"wk_starc_bands_update", (DL_FUNC)&wk_starc_bands_update, 7},
+  {"wk_starc_bands_reset", (DL_FUNC)&wk_starc_bands_reset, 1},
+  {"wk_stc_new", (DL_FUNC)&wk_stc_new, 4},
+  {"wk_stc_update", (DL_FUNC)&wk_stc_update, 2},
+  {"wk_stc_batch", (DL_FUNC)&wk_stc_batch, 2},
+  {"wk_stc_reset", (DL_FUNC)&wk_stc_reset, 1},
+  {"wk_std_dev_new", (DL_FUNC)&wk_std_dev_new, 1},
+  {"wk_std_dev_update", (DL_FUNC)&wk_std_dev_update, 2},
+  {"wk_std_dev_batch", (DL_FUNC)&wk_std_dev_batch, 2},
+  {"wk_std_dev_reset", (DL_FUNC)&wk_std_dev_reset, 1},
+  {"wk_step_trailing_stop_new", (DL_FUNC)&wk_step_trailing_stop_new, 1},
+  {"wk_step_trailing_stop_update", (DL_FUNC)&wk_step_trailing_stop_update, 2},
+  {"wk_step_trailing_stop_batch", (DL_FUNC)&wk_step_trailing_stop_batch, 2},
+  {"wk_step_trailing_stop_reset", (DL_FUNC)&wk_step_trailing_stop_reset, 1},
+  {"wk_sterling_ratio_new", (DL_FUNC)&wk_sterling_ratio_new, 1},
+  {"wk_sterling_ratio_update", (DL_FUNC)&wk_sterling_ratio_update, 2},
+  {"wk_sterling_ratio_batch", (DL_FUNC)&wk_sterling_ratio_batch, 2},
+  {"wk_sterling_ratio_reset", (DL_FUNC)&wk_sterling_ratio_reset, 1},
+  {"wk_stick_sandwich_new", (DL_FUNC)&wk_stick_sandwich_new, 0},
+  {"wk_stick_sandwich_update", (DL_FUNC)&wk_stick_sandwich_update, 7},
+  {"wk_stick_sandwich_batch", (DL_FUNC)&wk_stick_sandwich_batch, 7},
+  {"wk_stick_sandwich_reset", (DL_FUNC)&wk_stick_sandwich_reset, 1},
+  {"wk_stoch_rsi_new", (DL_FUNC)&wk_stoch_rsi_new, 2},
+  {"wk_stoch_rsi_update", (DL_FUNC)&wk_stoch_rsi_update, 2},
+  {"wk_stoch_rsi_batch", (DL_FUNC)&wk_stoch_rsi_batch, 2},
+  {"wk_stoch_rsi_reset", (DL_FUNC)&wk_stoch_rsi_reset, 1},
+  {"wk_stochastic_new", (DL_FUNC)&wk_stochastic_new, 2},
+  {"wk_stochastic_update", (DL_FUNC)&wk_stochastic_update, 7},
+  {"wk_stochastic_reset", (DL_FUNC)&wk_stochastic_reset, 1},
+  {"wk_stochastic_cci_new", (DL_FUNC)&wk_stochastic_cci_new, 1},
+  {"wk_stochastic_cci_update", (DL_FUNC)&wk_stochastic_cci_update, 7},
+  {"wk_stochastic_cci_batch", (DL_FUNC)&wk_stochastic_cci_batch, 7},
+  {"wk_stochastic_cci_reset", (DL_FUNC)&wk_stochastic_cci_reset, 1},
+  {"wk_super_smoother_new", (DL_FUNC)&wk_super_smoother_new, 1},
+  {"wk_super_smoother_update", (DL_FUNC)&wk_super_smoother_update, 2},
+  {"wk_super_smoother_batch", (DL_FUNC)&wk_super_smoother_batch, 2},
+  {"wk_super_smoother_reset", (DL_FUNC)&wk_super_smoother_reset, 1},
+  {"wk_super_trend_new", (DL_FUNC)&wk_super_trend_new, 2},
+  {"wk_super_trend_update", (DL_FUNC)&wk_super_trend_update, 7},
+  {"wk_super_trend_reset", (DL_FUNC)&wk_super_trend_reset, 1},
+  {"wk_t3_new", (DL_FUNC)&wk_t3_new, 2},
+  {"wk_t3_update", (DL_FUNC)&wk_t3_update, 2},
+  {"wk_t3_batch", (DL_FUNC)&wk_t3_batch, 2},
+  {"wk_t3_reset", (DL_FUNC)&wk_t3_reset, 1},
+  {"wk_tail_ratio_new", (DL_FUNC)&wk_tail_ratio_new, 1},
+  {"wk_tail_ratio_update", (DL_FUNC)&wk_tail_ratio_update, 2},
+  {"wk_tail_ratio_batch", (DL_FUNC)&wk_tail_ratio_batch, 2},
+  {"wk_tail_ratio_reset", (DL_FUNC)&wk_tail_ratio_reset, 1},
+  {"wk_taker_buy_sell_ratio_new", (DL_FUNC)&wk_taker_buy_sell_ratio_new, 0},
+  {"wk_taker_buy_sell_ratio_update", (DL_FUNC)&wk_taker_buy_sell_ratio_update, 13},
+  {"wk_taker_buy_sell_ratio_reset", (DL_FUNC)&wk_taker_buy_sell_ratio_reset, 1},
+  {"wk_takuri_new", (DL_FUNC)&wk_takuri_new, 0},
+  {"wk_takuri_update", (DL_FUNC)&wk_takuri_update, 7},
+  {"wk_takuri_batch", (DL_FUNC)&wk_takuri_batch, 7},
+  {"wk_takuri_reset", (DL_FUNC)&wk_takuri_reset, 1},
+  {"wk_tasuki_gap_new", (DL_FUNC)&wk_tasuki_gap_new, 0},
+  {"wk_tasuki_gap_update", (DL_FUNC)&wk_tasuki_gap_update, 7},
+  {"wk_tasuki_gap_batch", (DL_FUNC)&wk_tasuki_gap_batch, 7},
+  {"wk_tasuki_gap_reset", (DL_FUNC)&wk_tasuki_gap_reset, 1},
+  {"wk_td_camouflage_new", (DL_FUNC)&wk_td_camouflage_new, 0},
+  {"wk_td_camouflage_update", (DL_FUNC)&wk_td_camouflage_update, 7},
+  {"wk_td_camouflage_batch", (DL_FUNC)&wk_td_camouflage_batch, 7},
+  {"wk_td_camouflage_reset", (DL_FUNC)&wk_td_camouflage_reset, 1},
+  {"wk_td_clop_new", (DL_FUNC)&wk_td_clop_new, 0},
+  {"wk_td_clop_update", (DL_FUNC)&wk_td_clop_update, 7},
+  {"wk_td_clop_batch", (DL_FUNC)&wk_td_clop_batch, 7},
+  {"wk_td_clop_reset", (DL_FUNC)&wk_td_clop_reset, 1},
+  {"wk_td_clopwin_new", (DL_FUNC)&wk_td_clopwin_new, 0},
+  {"wk_td_clopwin_update", (DL_FUNC)&wk_td_clopwin_update, 7},
+  {"wk_td_clopwin_batch", (DL_FUNC)&wk_td_clopwin_batch, 7},
+  {"wk_td_clopwin_reset", (DL_FUNC)&wk_td_clopwin_reset, 1},
+  {"wk_td_combo_new", (DL_FUNC)&wk_td_combo_new, 4},
+  {"wk_td_combo_update", (DL_FUNC)&wk_td_combo_update, 7},
+  {"wk_td_combo_batch", (DL_FUNC)&wk_td_combo_batch, 7},
+  {"wk_td_combo_reset", (DL_FUNC)&wk_td_combo_reset, 1},
+  {"wk_td_countdown_new", (DL_FUNC)&wk_td_countdown_new, 4},
+  {"wk_td_countdown_update", (DL_FUNC)&wk_td_countdown_update, 7},
+  {"wk_td_countdown_batch", (DL_FUNC)&wk_td_countdown_batch, 7},
+  {"wk_td_countdown_reset", (DL_FUNC)&wk_td_countdown_reset, 1},
+  {"wk_td_d_wave_new", (DL_FUNC)&wk_td_d_wave_new, 1},
+  {"wk_td_d_wave_update", (DL_FUNC)&wk_td_d_wave_update, 7},
+  {"wk_td_d_wave_batch", (DL_FUNC)&wk_td_d_wave_batch, 7},
+  {"wk_td_d_wave_reset", (DL_FUNC)&wk_td_d_wave_reset, 1},
+  {"wk_td_de_marker_new", (DL_FUNC)&wk_td_de_marker_new, 1},
+  {"wk_td_de_marker_update", (DL_FUNC)&wk_td_de_marker_update, 7},
+  {"wk_td_de_marker_batch", (DL_FUNC)&wk_td_de_marker_batch, 7},
+  {"wk_td_de_marker_reset", (DL_FUNC)&wk_td_de_marker_reset, 1},
+  {"wk_td_differential_new", (DL_FUNC)&wk_td_differential_new, 0},
+  {"wk_td_differential_update", (DL_FUNC)&wk_td_differential_update, 7},
+  {"wk_td_differential_batch", (DL_FUNC)&wk_td_differential_batch, 7},
+  {"wk_td_differential_reset", (DL_FUNC)&wk_td_differential_reset, 1},
+  {"wk_td_lines_new", (DL_FUNC)&wk_td_lines_new, 2},
+  {"wk_td_lines_update", (DL_FUNC)&wk_td_lines_update, 7},
+  {"wk_td_lines_reset", (DL_FUNC)&wk_td_lines_reset, 1},
+  {"wk_td_moving_average_new", (DL_FUNC)&wk_td_moving_average_new, 2},
+  {"wk_td_moving_average_update", (DL_FUNC)&wk_td_moving_average_update, 7},
+  {"wk_td_moving_average_reset", (DL_FUNC)&wk_td_moving_average_reset, 1},
+  {"wk_td_open_new", (DL_FUNC)&wk_td_open_new, 0},
+  {"wk_td_open_update", (DL_FUNC)&wk_td_open_update, 7},
+  {"wk_td_open_batch", (DL_FUNC)&wk_td_open_batch, 7},
+  {"wk_td_open_reset", (DL_FUNC)&wk_td_open_reset, 1},
+  {"wk_td_pressure_new", (DL_FUNC)&wk_td_pressure_new, 1},
+  {"wk_td_pressure_update", (DL_FUNC)&wk_td_pressure_update, 7},
+  {"wk_td_pressure_batch", (DL_FUNC)&wk_td_pressure_batch, 7},
+  {"wk_td_pressure_reset", (DL_FUNC)&wk_td_pressure_reset, 1},
+  {"wk_td_propulsion_new", (DL_FUNC)&wk_td_propulsion_new, 0},
+  {"wk_td_propulsion_update", (DL_FUNC)&wk_td_propulsion_update, 7},
+  {"wk_td_propulsion_batch", (DL_FUNC)&wk_td_propulsion_batch, 7},
+  {"wk_td_propulsion_reset", (DL_FUNC)&wk_td_propulsion_reset, 1},
+  {"wk_td_range_projection_new", (DL_FUNC)&wk_td_range_projection_new, 0},
+  {"wk_td_range_projection_update", (DL_FUNC)&wk_td_range_projection_update, 7},
+  {"wk_td_range_projection_reset", (DL_FUNC)&wk_td_range_projection_reset, 1},
+  {"wk_td_rei_new", (DL_FUNC)&wk_td_rei_new, 1},
+  {"wk_td_rei_update", (DL_FUNC)&wk_td_rei_update, 7},
+  {"wk_td_rei_batch", (DL_FUNC)&wk_td_rei_batch, 7},
+  {"wk_td_rei_reset", (DL_FUNC)&wk_td_rei_reset, 1},
+  {"wk_td_risk_level_new", (DL_FUNC)&wk_td_risk_level_new, 2},
+  {"wk_td_risk_level_update", (DL_FUNC)&wk_td_risk_level_update, 7},
+  {"wk_td_risk_level_reset", (DL_FUNC)&wk_td_risk_level_reset, 1},
+  {"wk_td_sequential_new", (DL_FUNC)&wk_td_sequential_new, 4},
+  {"wk_td_sequential_update", (DL_FUNC)&wk_td_sequential_update, 7},
+  {"wk_td_sequential_reset", (DL_FUNC)&wk_td_sequential_reset, 1},
+  {"wk_td_setup_new", (DL_FUNC)&wk_td_setup_new, 2},
+  {"wk_td_setup_update", (DL_FUNC)&wk_td_setup_update, 7},
+  {"wk_td_setup_batch", (DL_FUNC)&wk_td_setup_batch, 7},
+  {"wk_td_setup_reset", (DL_FUNC)&wk_td_setup_reset, 1},
+  {"wk_td_trap_new", (DL_FUNC)&wk_td_trap_new, 0},
+  {"wk_td_trap_update", (DL_FUNC)&wk_td_trap_update, 7},
+  {"wk_td_trap_batch", (DL_FUNC)&wk_td_trap_batch, 7},
+  {"wk_td_trap_reset", (DL_FUNC)&wk_td_trap_reset, 1},
+  {"wk_tema_new", (DL_FUNC)&wk_tema_new, 1},
+  {"wk_tema_update", (DL_FUNC)&wk_tema_update, 2},
+  {"wk_tema_batch", (DL_FUNC)&wk_tema_batch, 2},
+  {"wk_tema_reset", (DL_FUNC)&wk_tema_reset, 1},
+  {"wk_term_structure_basis_new", (DL_FUNC)&wk_term_structure_basis_new, 0},
+  {"wk_term_structure_basis_update", (DL_FUNC)&wk_term_structure_basis_update, 13},
+  {"wk_term_structure_basis_reset", (DL_FUNC)&wk_term_structure_basis_reset, 1},
+  {"wk_three_drives_new", (DL_FUNC)&wk_three_drives_new, 0},
+  {"wk_three_drives_update", (DL_FUNC)&wk_three_drives_update, 7},
+  {"wk_three_drives_batch", (DL_FUNC)&wk_three_drives_batch, 7},
+  {"wk_three_drives_reset", (DL_FUNC)&wk_three_drives_reset, 1},
+  {"wk_three_inside_new", (DL_FUNC)&wk_three_inside_new, 0},
+  {"wk_three_inside_update", (DL_FUNC)&wk_three_inside_update, 7},
+  {"wk_three_inside_batch", (DL_FUNC)&wk_three_inside_batch, 7},
+  {"wk_three_inside_reset", (DL_FUNC)&wk_three_inside_reset, 1},
+  {"wk_three_line_break_new", (DL_FUNC)&wk_three_line_break_new, 1},
+  {"wk_three_line_break_update", (DL_FUNC)&wk_three_line_break_update, 7},
+  {"wk_three_line_break_batch", (DL_FUNC)&wk_three_line_break_batch, 7},
+  {"wk_three_line_break_reset", (DL_FUNC)&wk_three_line_break_reset, 1},
+  {"wk_three_line_break_bars_new", (DL_FUNC)&wk_three_line_break_bars_new, 1},
+  {"wk_three_line_break_bars_update", (DL_FUNC)&wk_three_line_break_bars_update, 7},
+  {"wk_three_line_break_bars_reset", (DL_FUNC)&wk_three_line_break_bars_reset, 1},
+  {"wk_three_line_strike_new", (DL_FUNC)&wk_three_line_strike_new, 0},
+  {"wk_three_line_strike_update", (DL_FUNC)&wk_three_line_strike_update, 7},
+  {"wk_three_line_strike_batch", (DL_FUNC)&wk_three_line_strike_batch, 7},
+  {"wk_three_line_strike_reset", (DL_FUNC)&wk_three_line_strike_reset, 1},
+  {"wk_three_outside_new", (DL_FUNC)&wk_three_outside_new, 0},
+  {"wk_three_outside_update", (DL_FUNC)&wk_three_outside_update, 7},
+  {"wk_three_outside_batch", (DL_FUNC)&wk_three_outside_batch, 7},
+  {"wk_three_outside_reset", (DL_FUNC)&wk_three_outside_reset, 1},
+  {"wk_three_soldiers_or_crows_new", (DL_FUNC)&wk_three_soldiers_or_crows_new, 0},
+  {"wk_three_soldiers_or_crows_update", (DL_FUNC)&wk_three_soldiers_or_crows_update, 7},
+  {"wk_three_soldiers_or_crows_batch", (DL_FUNC)&wk_three_soldiers_or_crows_batch, 7},
+  {"wk_three_soldiers_or_crows_reset", (DL_FUNC)&wk_three_soldiers_or_crows_reset, 1},
+  {"wk_three_stars_in_south_new", (DL_FUNC)&wk_three_stars_in_south_new, 0},
+  {"wk_three_stars_in_south_update", (DL_FUNC)&wk_three_stars_in_south_update, 7},
+  {"wk_three_stars_in_south_batch", (DL_FUNC)&wk_three_stars_in_south_batch, 7},
+  {"wk_three_stars_in_south_reset", (DL_FUNC)&wk_three_stars_in_south_reset, 1},
+  {"wk_thrusting_new", (DL_FUNC)&wk_thrusting_new, 0},
+  {"wk_thrusting_update", (DL_FUNC)&wk_thrusting_update, 7},
+  {"wk_thrusting_batch", (DL_FUNC)&wk_thrusting_batch, 7},
+  {"wk_thrusting_reset", (DL_FUNC)&wk_thrusting_reset, 1},
+  {"wk_tick_bars_new", (DL_FUNC)&wk_tick_bars_new, 1},
+  {"wk_tick_bars_update", (DL_FUNC)&wk_tick_bars_update, 7},
+  {"wk_tick_bars_reset", (DL_FUNC)&wk_tick_bars_reset, 1},
+  {"wk_tick_index_new", (DL_FUNC)&wk_tick_index_new, 0},
+  {"wk_tick_index_update", (DL_FUNC)&wk_tick_index_update, 8},
+  {"wk_tick_index_reset", (DL_FUNC)&wk_tick_index_reset, 1},
+  {"wk_tii_new", (DL_FUNC)&wk_tii_new, 2},
+  {"wk_tii_update", (DL_FUNC)&wk_tii_update, 2},
+  {"wk_tii_batch", (DL_FUNC)&wk_tii_batch, 2},
+  {"wk_tii_reset", (DL_FUNC)&wk_tii_reset, 1},
+  {"wk_time_based_stop_new", (DL_FUNC)&wk_time_based_stop_new, 1},
+  {"wk_time_based_stop_update", (DL_FUNC)&wk_time_based_stop_update, 7},
+  {"wk_time_based_stop_batch", (DL_FUNC)&wk_time_based_stop_batch, 7},
+  {"wk_time_based_stop_reset", (DL_FUNC)&wk_time_based_stop_reset, 1},
+  {"wk_time_of_day_return_profile_new", (DL_FUNC)&wk_time_of_day_return_profile_new, 2},
+  {"wk_time_of_day_return_profile_update", (DL_FUNC)&wk_time_of_day_return_profile_update, 8},
+  {"wk_time_of_day_return_profile_reset", (DL_FUNC)&wk_time_of_day_return_profile_reset, 1},
+  {"wk_tower_top_bottom_new", (DL_FUNC)&wk_tower_top_bottom_new, 0},
+  {"wk_tower_top_bottom_update", (DL_FUNC)&wk_tower_top_bottom_update, 7},
+  {"wk_tower_top_bottom_batch", (DL_FUNC)&wk_tower_top_bottom_batch, 7},
+  {"wk_tower_top_bottom_reset", (DL_FUNC)&wk_tower_top_bottom_reset, 1},
+  {"wk_tpo_profile_new", (DL_FUNC)&wk_tpo_profile_new, 2},
+  {"wk_tpo_profile_update", (DL_FUNC)&wk_tpo_profile_update, 8},
+  {"wk_tpo_profile_reset", (DL_FUNC)&wk_tpo_profile_reset, 1},
+  {"wk_trade_imbalance_new", (DL_FUNC)&wk_trade_imbalance_new, 1},
+  {"wk_trade_imbalance_update", (DL_FUNC)&wk_trade_imbalance_update, 5},
+  {"wk_trade_imbalance_reset", (DL_FUNC)&wk_trade_imbalance_reset, 1},
+  {"wk_trade_sign_autocorrelation_new", (DL_FUNC)&wk_trade_sign_autocorrelation_new, 1},
+  {"wk_trade_sign_autocorrelation_update", (DL_FUNC)&wk_trade_sign_autocorrelation_update, 5},
+  {"wk_trade_sign_autocorrelation_reset", (DL_FUNC)&wk_trade_sign_autocorrelation_reset, 1},
+  {"wk_trade_volume_index_new", (DL_FUNC)&wk_trade_volume_index_new, 1},
+  {"wk_trade_volume_index_update", (DL_FUNC)&wk_trade_volume_index_update, 7},
+  {"wk_trade_volume_index_batch", (DL_FUNC)&wk_trade_volume_index_batch, 7},
+  {"wk_trade_volume_index_reset", (DL_FUNC)&wk_trade_volume_index_reset, 1},
+  {"wk_trend_label_new", (DL_FUNC)&wk_trend_label_new, 1},
+  {"wk_trend_label_update", (DL_FUNC)&wk_trend_label_update, 2},
+  {"wk_trend_label_batch", (DL_FUNC)&wk_trend_label_batch, 2},
+  {"wk_trend_label_reset", (DL_FUNC)&wk_trend_label_reset, 1},
+  {"wk_trend_strength_index_new", (DL_FUNC)&wk_trend_strength_index_new, 1},
+  {"wk_trend_strength_index_update", (DL_FUNC)&wk_trend_strength_index_update, 2},
+  {"wk_trend_strength_index_batch", (DL_FUNC)&wk_trend_strength_index_batch, 2},
+  {"wk_trend_strength_index_reset", (DL_FUNC)&wk_trend_strength_index_reset, 1},
+  {"wk_trendflex_new", (DL_FUNC)&wk_trendflex_new, 1},
+  {"wk_trendflex_update", (DL_FUNC)&wk_trendflex_update, 2},
+  {"wk_trendflex_batch", (DL_FUNC)&wk_trendflex_batch, 2},
+  {"wk_trendflex_reset", (DL_FUNC)&wk_trendflex_reset, 1},
+  {"wk_treynor_ratio_new", (DL_FUNC)&wk_treynor_ratio_new, 2},
+  {"wk_treynor_ratio_update", (DL_FUNC)&wk_treynor_ratio_update, 3},
+  {"wk_treynor_ratio_batch", (DL_FUNC)&wk_treynor_ratio_batch, 3},
+  {"wk_treynor_ratio_reset", (DL_FUNC)&wk_treynor_ratio_reset, 1},
+  {"wk_triangle_new", (DL_FUNC)&wk_triangle_new, 0},
+  {"wk_triangle_update", (DL_FUNC)&wk_triangle_update, 7},
+  {"wk_triangle_batch", (DL_FUNC)&wk_triangle_batch, 7},
+  {"wk_triangle_reset", (DL_FUNC)&wk_triangle_reset, 1},
+  {"wk_trima_new", (DL_FUNC)&wk_trima_new, 1},
+  {"wk_trima_update", (DL_FUNC)&wk_trima_update, 2},
+  {"wk_trima_batch", (DL_FUNC)&wk_trima_batch, 2},
+  {"wk_trima_reset", (DL_FUNC)&wk_trima_reset, 1},
+  {"wk_trin_new", (DL_FUNC)&wk_trin_new, 0},
+  {"wk_trin_update", (DL_FUNC)&wk_trin_update, 8},
+  {"wk_trin_reset", (DL_FUNC)&wk_trin_reset, 1},
+  {"wk_triple_top_bottom_new", (DL_FUNC)&wk_triple_top_bottom_new, 0},
+  {"wk_triple_top_bottom_update", (DL_FUNC)&wk_triple_top_bottom_update, 7},
+  {"wk_triple_top_bottom_batch", (DL_FUNC)&wk_triple_top_bottom_batch, 7},
+  {"wk_triple_top_bottom_reset", (DL_FUNC)&wk_triple_top_bottom_reset, 1},
+  {"wk_tristar_new", (DL_FUNC)&wk_tristar_new, 0},
+  {"wk_tristar_update", (DL_FUNC)&wk_tristar_update, 7},
+  {"wk_tristar_batch", (DL_FUNC)&wk_tristar_batch, 7},
+  {"wk_tristar_reset", (DL_FUNC)&wk_tristar_reset, 1},
+  {"wk_trix_new", (DL_FUNC)&wk_trix_new, 1},
+  {"wk_trix_update", (DL_FUNC)&wk_trix_update, 2},
+  {"wk_trix_batch", (DL_FUNC)&wk_trix_batch, 2},
+  {"wk_trix_reset", (DL_FUNC)&wk_trix_reset, 1},
+  {"wk_true_range_new", (DL_FUNC)&wk_true_range_new, 0},
+  {"wk_true_range_update", (DL_FUNC)&wk_true_range_update, 7},
+  {"wk_true_range_batch", (DL_FUNC)&wk_true_range_batch, 7},
+  {"wk_true_range_reset", (DL_FUNC)&wk_true_range_reset, 1},
+  {"wk_tsf_new", (DL_FUNC)&wk_tsf_new, 1},
+  {"wk_tsf_update", (DL_FUNC)&wk_tsf_update, 2},
+  {"wk_tsf_batch", (DL_FUNC)&wk_tsf_batch, 2},
+  {"wk_tsf_reset", (DL_FUNC)&wk_tsf_reset, 1},
+  {"wk_tsf_oscillator_new", (DL_FUNC)&wk_tsf_oscillator_new, 1},
+  {"wk_tsf_oscillator_update", (DL_FUNC)&wk_tsf_oscillator_update, 2},
+  {"wk_tsf_oscillator_batch", (DL_FUNC)&wk_tsf_oscillator_batch, 2},
+  {"wk_tsf_oscillator_reset", (DL_FUNC)&wk_tsf_oscillator_reset, 1},
+  {"wk_tsi_new", (DL_FUNC)&wk_tsi_new, 2},
+  {"wk_tsi_update", (DL_FUNC)&wk_tsi_update, 2},
+  {"wk_tsi_batch", (DL_FUNC)&wk_tsi_batch, 2},
+  {"wk_tsi_reset", (DL_FUNC)&wk_tsi_reset, 1},
+  {"wk_tsv_new", (DL_FUNC)&wk_tsv_new, 1},
+  {"wk_tsv_update", (DL_FUNC)&wk_tsv_update, 7},
+  {"wk_tsv_batch", (DL_FUNC)&wk_tsv_batch, 7},
+  {"wk_tsv_reset", (DL_FUNC)&wk_tsv_reset, 1},
+  {"wk_ttm_squeeze_new", (DL_FUNC)&wk_ttm_squeeze_new, 3},
+  {"wk_ttm_squeeze_update", (DL_FUNC)&wk_ttm_squeeze_update, 7},
+  {"wk_ttm_squeeze_reset", (DL_FUNC)&wk_ttm_squeeze_reset, 1},
+  {"wk_ttm_trend_new", (DL_FUNC)&wk_ttm_trend_new, 1},
+  {"wk_ttm_trend_update", (DL_FUNC)&wk_ttm_trend_update, 7},
+  {"wk_ttm_trend_batch", (DL_FUNC)&wk_ttm_trend_batch, 7},
+  {"wk_ttm_trend_reset", (DL_FUNC)&wk_ttm_trend_reset, 1},
+  {"wk_turn_of_month_new", (DL_FUNC)&wk_turn_of_month_new, 3},
+  {"wk_turn_of_month_update", (DL_FUNC)&wk_turn_of_month_update, 7},
+  {"wk_turn_of_month_batch", (DL_FUNC)&wk_turn_of_month_batch, 7},
+  {"wk_turn_of_month_reset", (DL_FUNC)&wk_turn_of_month_reset, 1},
+  {"wk_tweezer_new", (DL_FUNC)&wk_tweezer_new, 0},
+  {"wk_tweezer_update", (DL_FUNC)&wk_tweezer_update, 7},
+  {"wk_tweezer_batch", (DL_FUNC)&wk_tweezer_batch, 7},
+  {"wk_tweezer_reset", (DL_FUNC)&wk_tweezer_reset, 1},
+  {"wk_twiggs_money_flow_new", (DL_FUNC)&wk_twiggs_money_flow_new, 1},
+  {"wk_twiggs_money_flow_update", (DL_FUNC)&wk_twiggs_money_flow_update, 7},
+  {"wk_twiggs_money_flow_batch", (DL_FUNC)&wk_twiggs_money_flow_batch, 7},
+  {"wk_twiggs_money_flow_reset", (DL_FUNC)&wk_twiggs_money_flow_reset, 1},
+  {"wk_two_crows_new", (DL_FUNC)&wk_two_crows_new, 0},
+  {"wk_two_crows_update", (DL_FUNC)&wk_two_crows_update, 7},
+  {"wk_two_crows_batch", (DL_FUNC)&wk_two_crows_batch, 7},
+  {"wk_two_crows_reset", (DL_FUNC)&wk_two_crows_reset, 1},
+  {"wk_typical_price_new", (DL_FUNC)&wk_typical_price_new, 0},
+  {"wk_typical_price_update", (DL_FUNC)&wk_typical_price_update, 7},
+  {"wk_typical_price_batch", (DL_FUNC)&wk_typical_price_batch, 7},
+  {"wk_typical_price_reset", (DL_FUNC)&wk_typical_price_reset, 1},
+  {"wk_ulcer_index_new", (DL_FUNC)&wk_ulcer_index_new, 1},
+  {"wk_ulcer_index_update", (DL_FUNC)&wk_ulcer_index_update, 2},
+  {"wk_ulcer_index_batch", (DL_FUNC)&wk_ulcer_index_batch, 2},
+  {"wk_ulcer_index_reset", (DL_FUNC)&wk_ulcer_index_reset, 1},
+  {"wk_ultimate_oscillator_new", (DL_FUNC)&wk_ultimate_oscillator_new, 3},
+  {"wk_ultimate_oscillator_update", (DL_FUNC)&wk_ultimate_oscillator_update, 7},
+  {"wk_ultimate_oscillator_batch", (DL_FUNC)&wk_ultimate_oscillator_batch, 7},
+  {"wk_ultimate_oscillator_reset", (DL_FUNC)&wk_ultimate_oscillator_reset, 1},
+  {"wk_unique_three_river_new", (DL_FUNC)&wk_unique_three_river_new, 0},
+  {"wk_unique_three_river_update", (DL_FUNC)&wk_unique_three_river_update, 7},
+  {"wk_unique_three_river_batch", (DL_FUNC)&wk_unique_three_river_batch, 7},
+  {"wk_unique_three_river_reset", (DL_FUNC)&wk_unique_three_river_reset, 1},
+  {"wk_universal_oscillator_new", (DL_FUNC)&wk_universal_oscillator_new, 1},
+  {"wk_universal_oscillator_update", (DL_FUNC)&wk_universal_oscillator_update, 2},
+  {"wk_universal_oscillator_batch", (DL_FUNC)&wk_universal_oscillator_batch, 2},
+  {"wk_universal_oscillator_reset", (DL_FUNC)&wk_universal_oscillator_reset, 1},
+  {"wk_up_down_volume_ratio_new", (DL_FUNC)&wk_up_down_volume_ratio_new, 0},
+  {"wk_up_down_volume_ratio_update", (DL_FUNC)&wk_up_down_volume_ratio_update, 8},
+  {"wk_up_down_volume_ratio_reset", (DL_FUNC)&wk_up_down_volume_ratio_reset, 1},
+  {"wk_upside_gap_three_methods_new", (DL_FUNC)&wk_upside_gap_three_methods_new, 0},
+  {"wk_upside_gap_three_methods_update", (DL_FUNC)&wk_upside_gap_three_methods_update, 7},
+  {"wk_upside_gap_three_methods_batch", (DL_FUNC)&wk_upside_gap_three_methods_batch, 7},
+  {"wk_upside_gap_three_methods_reset", (DL_FUNC)&wk_upside_gap_three_methods_reset, 1},
+  {"wk_upside_gap_two_crows_new", (DL_FUNC)&wk_upside_gap_two_crows_new, 0},
+  {"wk_upside_gap_two_crows_update", (DL_FUNC)&wk_upside_gap_two_crows_update, 7},
+  {"wk_upside_gap_two_crows_batch", (DL_FUNC)&wk_upside_gap_two_crows_batch, 7},
+  {"wk_upside_gap_two_crows_reset", (DL_FUNC)&wk_upside_gap_two_crows_reset, 1},
+  {"wk_upside_potential_ratio_new", (DL_FUNC)&wk_upside_potential_ratio_new, 2},
+  {"wk_upside_potential_ratio_update", (DL_FUNC)&wk_upside_potential_ratio_update, 2},
+  {"wk_upside_potential_ratio_batch", (DL_FUNC)&wk_upside_potential_ratio_batch, 2},
+  {"wk_upside_potential_ratio_reset", (DL_FUNC)&wk_upside_potential_ratio_reset, 1},
+  {"wk_value_area_new", (DL_FUNC)&wk_value_area_new, 3},
+  {"wk_value_area_update", (DL_FUNC)&wk_value_area_update, 7},
+  {"wk_value_area_reset", (DL_FUNC)&wk_value_area_reset, 1},
+  {"wk_value_at_risk_new", (DL_FUNC)&wk_value_at_risk_new, 2},
+  {"wk_value_at_risk_update", (DL_FUNC)&wk_value_at_risk_update, 2},
+  {"wk_value_at_risk_batch", (DL_FUNC)&wk_value_at_risk_batch, 2},
+  {"wk_value_at_risk_reset", (DL_FUNC)&wk_value_at_risk_reset, 1},
+  {"wk_variance_new", (DL_FUNC)&wk_variance_new, 1},
+  {"wk_variance_update", (DL_FUNC)&wk_variance_update, 2},
+  {"wk_variance_batch", (DL_FUNC)&wk_variance_batch, 2},
+  {"wk_variance_reset", (DL_FUNC)&wk_variance_reset, 1},
+  {"wk_variance_ratio_new", (DL_FUNC)&wk_variance_ratio_new, 2},
+  {"wk_variance_ratio_update", (DL_FUNC)&wk_variance_ratio_update, 3},
+  {"wk_variance_ratio_batch", (DL_FUNC)&wk_variance_ratio_batch, 3},
+  {"wk_variance_ratio_reset", (DL_FUNC)&wk_variance_ratio_reset, 1},
+  {"wk_vertical_horizontal_filter_new", (DL_FUNC)&wk_vertical_horizontal_filter_new, 1},
+  {"wk_vertical_horizontal_filter_update", (DL_FUNC)&wk_vertical_horizontal_filter_update, 2},
+  {"wk_vertical_horizontal_filter_batch", (DL_FUNC)&wk_vertical_horizontal_filter_batch, 2},
+  {"wk_vertical_horizontal_filter_reset", (DL_FUNC)&wk_vertical_horizontal_filter_reset, 1},
+  {"wk_vidya_new", (DL_FUNC)&wk_vidya_new, 2},
+  {"wk_vidya_update", (DL_FUNC)&wk_vidya_update, 2},
+  {"wk_vidya_batch", (DL_FUNC)&wk_vidya_batch, 2},
+  {"wk_vidya_reset", (DL_FUNC)&wk_vidya_reset, 1},
+  {"wk_volatility_cone_new", (DL_FUNC)&wk_volatility_cone_new, 2},
+  {"wk_volatility_cone_update", (DL_FUNC)&wk_volatility_cone_update, 7},
+  {"wk_volatility_cone_reset", (DL_FUNC)&wk_volatility_cone_reset, 1},
+  {"wk_volatility_of_volatility_new", (DL_FUNC)&wk_volatility_of_volatility_new, 2},
+  {"wk_volatility_of_volatility_update", (DL_FUNC)&wk_volatility_of_volatility_update, 2},
+  {"wk_volatility_of_volatility_batch", (DL_FUNC)&wk_volatility_of_volatility_batch, 2},
+  {"wk_volatility_of_volatility_reset", (DL_FUNC)&wk_volatility_of_volatility_reset, 1},
+  {"wk_volatility_ratio_new", (DL_FUNC)&wk_volatility_ratio_new, 1},
+  {"wk_volatility_ratio_update", (DL_FUNC)&wk_volatility_ratio_update, 7},
+  {"wk_volatility_ratio_batch", (DL_FUNC)&wk_volatility_ratio_batch, 7},
+  {"wk_volatility_ratio_reset", (DL_FUNC)&wk_volatility_ratio_reset, 1},
+  {"wk_volty_stop_new", (DL_FUNC)&wk_volty_stop_new, 2},
+  {"wk_volty_stop_update", (DL_FUNC)&wk_volty_stop_update, 7},
+  {"wk_volty_stop_batch", (DL_FUNC)&wk_volty_stop_batch, 7},
+  {"wk_volty_stop_reset", (DL_FUNC)&wk_volty_stop_reset, 1},
+  {"wk_volume_bars_new", (DL_FUNC)&wk_volume_bars_new, 1},
+  {"wk_volume_bars_update", (DL_FUNC)&wk_volume_bars_update, 7},
+  {"wk_volume_bars_reset", (DL_FUNC)&wk_volume_bars_reset, 1},
+  {"wk_volume_by_time_profile_new", (DL_FUNC)&wk_volume_by_time_profile_new, 2},
+  {"wk_volume_by_time_profile_update", (DL_FUNC)&wk_volume_by_time_profile_update, 8},
+  {"wk_volume_by_time_profile_reset", (DL_FUNC)&wk_volume_by_time_profile_reset, 1},
+  {"wk_volume_oscillator_new", (DL_FUNC)&wk_volume_oscillator_new, 2},
+  {"wk_volume_oscillator_update", (DL_FUNC)&wk_volume_oscillator_update, 7},
+  {"wk_volume_oscillator_batch", (DL_FUNC)&wk_volume_oscillator_batch, 7},
+  {"wk_volume_oscillator_reset", (DL_FUNC)&wk_volume_oscillator_reset, 1},
+  {"wk_volume_price_trend_new", (DL_FUNC)&wk_volume_price_trend_new, 0},
+  {"wk_volume_price_trend_update", (DL_FUNC)&wk_volume_price_trend_update, 7},
+  {"wk_volume_price_trend_batch", (DL_FUNC)&wk_volume_price_trend_batch, 7},
+  {"wk_volume_price_trend_reset", (DL_FUNC)&wk_volume_price_trend_reset, 1},
+  {"wk_volume_profile_new", (DL_FUNC)&wk_volume_profile_new, 2},
+  {"wk_volume_profile_update", (DL_FUNC)&wk_volume_profile_update, 8},
+  {"wk_volume_profile_reset", (DL_FUNC)&wk_volume_profile_reset, 1},
+  {"wk_volume_rsi_new", (DL_FUNC)&wk_volume_rsi_new, 1},
+  {"wk_volume_rsi_update", (DL_FUNC)&wk_volume_rsi_update, 7},
+  {"wk_volume_rsi_batch", (DL_FUNC)&wk_volume_rsi_batch, 7},
+  {"wk_volume_rsi_reset", (DL_FUNC)&wk_volume_rsi_reset, 1},
+  {"wk_volume_weighted_macd_new", (DL_FUNC)&wk_volume_weighted_macd_new, 3},
+  {"wk_volume_weighted_macd_update", (DL_FUNC)&wk_volume_weighted_macd_update, 7},
+  {"wk_volume_weighted_macd_reset", (DL_FUNC)&wk_volume_weighted_macd_reset, 1},
+  {"wk_volume_weighted_sr_new", (DL_FUNC)&wk_volume_weighted_sr_new, 1},
+  {"wk_volume_weighted_sr_update", (DL_FUNC)&wk_volume_weighted_sr_update, 7},
+  {"wk_volume_weighted_sr_reset", (DL_FUNC)&wk_volume_weighted_sr_reset, 1},
+  {"wk_vortex_new", (DL_FUNC)&wk_vortex_new, 1},
+  {"wk_vortex_update", (DL_FUNC)&wk_vortex_update, 7},
+  {"wk_vortex_reset", (DL_FUNC)&wk_vortex_reset, 1},
+  {"wk_vpin_new", (DL_FUNC)&wk_vpin_new, 2},
+  {"wk_vpin_update", (DL_FUNC)&wk_vpin_update, 5},
+  {"wk_vpin_reset", (DL_FUNC)&wk_vpin_reset, 1},
+  {"wk_vwap_new", (DL_FUNC)&wk_vwap_new, 0},
+  {"wk_vwap_update", (DL_FUNC)&wk_vwap_update, 7},
+  {"wk_vwap_batch", (DL_FUNC)&wk_vwap_batch, 7},
+  {"wk_vwap_reset", (DL_FUNC)&wk_vwap_reset, 1},
+  {"wk_vwap_std_dev_bands_new", (DL_FUNC)&wk_vwap_std_dev_bands_new, 1},
+  {"wk_vwap_std_dev_bands_update", (DL_FUNC)&wk_vwap_std_dev_bands_update, 7},
+  {"wk_vwap_std_dev_bands_reset", (DL_FUNC)&wk_vwap_std_dev_bands_reset, 1},
+  {"wk_vwma_new", (DL_FUNC)&wk_vwma_new, 1},
+  {"wk_vwma_update", (DL_FUNC)&wk_vwma_update, 7},
+  {"wk_vwma_batch", (DL_FUNC)&wk_vwma_batch, 7},
+  {"wk_vwma_reset", (DL_FUNC)&wk_vwma_reset, 1},
+  {"wk_vzo_new", (DL_FUNC)&wk_vzo_new, 1},
+  {"wk_vzo_update", (DL_FUNC)&wk_vzo_update, 7},
+  {"wk_vzo_batch", (DL_FUNC)&wk_vzo_batch, 7},
+  {"wk_vzo_reset", (DL_FUNC)&wk_vzo_reset, 1},
+  {"wk_wad_new", (DL_FUNC)&wk_wad_new, 0},
+  {"wk_wad_update", (DL_FUNC)&wk_wad_update, 7},
+  {"wk_wad_batch", (DL_FUNC)&wk_wad_batch, 7},
+  {"wk_wad_reset", (DL_FUNC)&wk_wad_reset, 1},
+  {"wk_wave_pm_new", (DL_FUNC)&wk_wave_pm_new, 2},
+  {"wk_wave_pm_update", (DL_FUNC)&wk_wave_pm_update, 2},
+  {"wk_wave_pm_batch", (DL_FUNC)&wk_wave_pm_batch, 2},
+  {"wk_wave_pm_reset", (DL_FUNC)&wk_wave_pm_reset, 1},
+  {"wk_wave_trend_new", (DL_FUNC)&wk_wave_trend_new, 3},
+  {"wk_wave_trend_update", (DL_FUNC)&wk_wave_trend_update, 7},
+  {"wk_wave_trend_reset", (DL_FUNC)&wk_wave_trend_reset, 1},
+  {"wk_wedge_new", (DL_FUNC)&wk_wedge_new, 0},
+  {"wk_wedge_update", (DL_FUNC)&wk_wedge_update, 7},
+  {"wk_wedge_batch", (DL_FUNC)&wk_wedge_batch, 7},
+  {"wk_wedge_reset", (DL_FUNC)&wk_wedge_reset, 1},
+  {"wk_weighted_close_new", (DL_FUNC)&wk_weighted_close_new, 0},
+  {"wk_weighted_close_update", (DL_FUNC)&wk_weighted_close_update, 7},
+  {"wk_weighted_close_batch", (DL_FUNC)&wk_weighted_close_batch, 7},
+  {"wk_weighted_close_reset", (DL_FUNC)&wk_weighted_close_reset, 1},
+  {"wk_wick_ratio_new", (DL_FUNC)&wk_wick_ratio_new, 0},
+  {"wk_wick_ratio_update", (DL_FUNC)&wk_wick_ratio_update, 7},
+  {"wk_wick_ratio_batch", (DL_FUNC)&wk_wick_ratio_batch, 7},
+  {"wk_wick_ratio_reset", (DL_FUNC)&wk_wick_ratio_reset, 1},
+  {"wk_williams_fractals_new", (DL_FUNC)&wk_williams_fractals_new, 0},
+  {"wk_williams_fractals_update", (DL_FUNC)&wk_williams_fractals_update, 7},
+  {"wk_williams_fractals_reset", (DL_FUNC)&wk_williams_fractals_reset, 1},
+  {"wk_williams_r_new", (DL_FUNC)&wk_williams_r_new, 1},
+  {"wk_williams_r_update", (DL_FUNC)&wk_williams_r_update, 7},
+  {"wk_williams_r_batch", (DL_FUNC)&wk_williams_r_batch, 7},
+  {"wk_williams_r_reset", (DL_FUNC)&wk_williams_r_reset, 1},
+  {"wk_win_rate_new", (DL_FUNC)&wk_win_rate_new, 1},
+  {"wk_win_rate_update", (DL_FUNC)&wk_win_rate_update, 2},
+  {"wk_win_rate_batch", (DL_FUNC)&wk_win_rate_batch, 2},
+  {"wk_win_rate_reset", (DL_FUNC)&wk_win_rate_reset, 1},
+  {"wk_wma_new", (DL_FUNC)&wk_wma_new, 1},
+  {"wk_wma_update", (DL_FUNC)&wk_wma_update, 2},
+  {"wk_wma_batch", (DL_FUNC)&wk_wma_batch, 2},
+  {"wk_wma_reset", (DL_FUNC)&wk_wma_reset, 1},
+  {"wk_woodie_pivots_new", (DL_FUNC)&wk_woodie_pivots_new, 0},
+  {"wk_woodie_pivots_update", (DL_FUNC)&wk_woodie_pivots_update, 7},
+  {"wk_woodie_pivots_reset", (DL_FUNC)&wk_woodie_pivots_reset, 1},
+  {"wk_yang_zhang_volatility_new", (DL_FUNC)&wk_yang_zhang_volatility_new, 2},
+  {"wk_yang_zhang_volatility_update", (DL_FUNC)&wk_yang_zhang_volatility_update, 7},
+  {"wk_yang_zhang_volatility_batch", (DL_FUNC)&wk_yang_zhang_volatility_batch, 7},
+  {"wk_yang_zhang_volatility_reset", (DL_FUNC)&wk_yang_zhang_volatility_reset, 1},
+  {"wk_yoyo_exit_new", (DL_FUNC)&wk_yoyo_exit_new, 2},
+  {"wk_yoyo_exit_update", (DL_FUNC)&wk_yoyo_exit_update, 7},
+  {"wk_yoyo_exit_batch", (DL_FUNC)&wk_yoyo_exit_batch, 7},
+  {"wk_yoyo_exit_reset", (DL_FUNC)&wk_yoyo_exit_reset, 1},
+  {"wk_z_score_new", (DL_FUNC)&wk_z_score_new, 1},
+  {"wk_z_score_update", (DL_FUNC)&wk_z_score_update, 2},
+  {"wk_z_score_batch", (DL_FUNC)&wk_z_score_batch, 2},
+  {"wk_z_score_reset", (DL_FUNC)&wk_z_score_reset, 1},
+  {"wk_zero_lag_macd_new", (DL_FUNC)&wk_zero_lag_macd_new, 3},
+  {"wk_zero_lag_macd_update", (DL_FUNC)&wk_zero_lag_macd_update, 2},
+  {"wk_zero_lag_macd_reset", (DL_FUNC)&wk_zero_lag_macd_reset, 1},
+  {"wk_zig_zag_new", (DL_FUNC)&wk_zig_zag_new, 1},
+  {"wk_zig_zag_update", (DL_FUNC)&wk_zig_zag_update, 7},
+  {"wk_zig_zag_reset", (DL_FUNC)&wk_zig_zag_reset, 1},
+  {"wk_zlema_new", (DL_FUNC)&wk_zlema_new, 1},
+  {"wk_zlema_update", (DL_FUNC)&wk_zlema_update, 2},
+  {"wk_zlema_batch", (DL_FUNC)&wk_zlema_batch, 2},
+  {"wk_zlema_reset", (DL_FUNC)&wk_zlema_reset, 1},
+  {NULL, NULL, 0}
+};
+
+void R_init_wickra(DllInfo *dll) {
+  R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+  R_useDynamicSymbols(dll, FALSE);
+  R_forceSymbols(dll, FALSE);
+}

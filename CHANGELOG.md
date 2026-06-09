@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- **R binding (`bindings/r`)** — an R package reaching the C ABI hub through R's
+  native `.Call` interface, exposing all 514 indicators as constructors that
+  return a `wickra_indicator` object with `update`/`batch`/`reset` methods. The
+  C glue and R wrappers are generated from `wickra.h`; the native handle is freed
+  by a registered finalizer. Ships a full example suite mirroring the C, C# and
+  Go examples; distributed for r-universe / source install.
 
 ## [0.7.7] - 2026-06-09
 ### Added

@@ -28,6 +28,7 @@ assignees: ""
 - [ ] Should be exposed in the C ABI
 - [ ] Should be exposed in the C# / .NET binding
 - [ ] Should be exposed in the Go binding
+- [ ] Should be exposed in the R binding
 
 ## Additional context
 

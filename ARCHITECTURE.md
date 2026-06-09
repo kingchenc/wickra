@@ -46,8 +46,9 @@ wasm-bindgen). The C ABI is the *hub* every other C-capable language links
 against: it builds to a `cdylib`/`staticlib` plus a generated `wickra.h`, and
 downstream languages link that one artifact rather than each re-wrapping the
 core. C and C++ link it directly; the **C# / .NET** binding (`bindings/csharp`,
-on NuGet) and the **Go** binding (`bindings/go`, cgo) are generated from
-`wickra.h`, with Java / R planned the same way.
+on NuGet), the **Go** binding (`bindings/go`, cgo) and the **R** binding
+(`bindings/r`, `.Call`) are generated from `wickra.h`, with Java planned the
+same way.
 
 | Crate | Path | What it owns | Public deps |
 |---|---|---|---|

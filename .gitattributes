@@ -16,3 +16,11 @@ bindings/c/include/wickra.h text eol=lf
 go.mod text eol=lf
 go.sum text eol=lf
 
+# R binding: `R CMD check` requires LF in sources, Makevars and shell scripts.
+*.R text eol=lf
+*.Rd text eol=lf
+bindings/r/configure.win text eol=lf
+bindings/r/src/Makevars text eol=lf
+bindings/r/src/Makevars.win text eol=lf
+bindings/r/src/wickra.c text eol=lf
+

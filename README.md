@@ -20,7 +20,7 @@
 
 Wickra is a multi-language technical-analysis library with a Rust core and
 native bindings for Python, Node.js and WebAssembly, plus a C ABI that C, C++,
-C# / .NET, Go and any other C-capable language links against. Every indicator is a
+C# / .NET, Go, R and any other C-capable language links against. Every indicator is a
 state machine that updates in O(1) per new data point, so live trading bots and
 historical backtests share the exact same implementation.
 
@@ -51,7 +51,8 @@ Full documentation lives at **[docs.wickra.org](https://docs.wickra.org)**:
   [WASM](https://docs.wickra.org/Quickstart-WASM),
   [C](https://docs.wickra.org/Quickstart-C),
   [C#](https://docs.wickra.org/Quickstart-CSharp),
-  [Go](https://docs.wickra.org/Quickstart-Go).
+  [Go](https://docs.wickra.org/Quickstart-Go),
+  [R](https://docs.wickra.org/Quickstart-R).
 - **Indicators** — a per-indicator deep dive (formula, parameters, warmup) for
   every one of the 514 indicators; start at the
   [indicators overview](https://docs.wickra.org/Indicators-Overview).
@@ -77,7 +78,7 @@ times to get there.
   metrics — every single one updating in **O(1) per tick**. TA-Lib ships ~150 and
   none of them stream.
 - **One Rust core, five first-class targets.** Native **Python · Node.js ·
-  WebAssembly · Rust** plus a **C ABI** for C / C++, C# / .NET, Go and any other C-capable language —
+  WebAssembly · Rust** plus a **C ABI** for C / C++, C# / .NET, Go, R and any other C-capable language —
   identical math, identical results, zero per-language reimplementation and zero
   GIL bottleneck.
 - **Correct by construction, not by hope.** Every `update` validates its input,
@@ -102,7 +103,7 @@ Every other library forces one of those compromises. Wickra doesn't:
 | Library          | Install     | Streaming   | Languages                   | Indicators | Active |
 |------------------|-------------|-------------|-----------------------------|-----------:|--------|
 | **★&nbsp;Wickra**| **clean**   | **yes, O(1)** | **Rust · Python · Node · WASM** | **514** | **yes** |
-|                  |             |               | **C · C# · Go**                 |            |        |
+|                  |             |               | **C · C# · Go · R**                 |            |        |
 | kand             | clean       | yes         | Python · WASM · Rust        |       ~60  | yes    |
 | ta-rs            | clean       | yes         | Rust only                   |       ~30  | stale  |
 | yata             | clean       | partial     | Rust only                   |       ~35  | yes    |
@@ -174,7 +175,7 @@ construct it in signed mode (`Doji::new().signed()`, `Doji(signed=True)`,
 `new Doji(true)`) for a dragonfly / gravestone `±1` reading.
 
 Adding a new indicator means implementing one trait in Rust; every binding
-inherits it automatically (the C ABI — and the C# and Go bindings generated from
+inherits it automatically (the C ABI — and the C#, Go and R bindings generated from
 it — regenerate from the core).
 
 ## Languages
@@ -188,6 +189,7 @@ it — regenerate from the core).
 | C / C++ (C ABI)   | header + library, see [`bindings/c`](bindings/c) | `examples/c/streaming.c` |
 | C# / .NET (C ABI) | `dotnet add package Wickra`, see [`bindings/csharp`](bindings/csharp) | `examples/csharp/streaming` |
 | Go (cgo, C ABI)   | `go get github.com/wickra-lib/wickra/bindings/go`, see [`bindings/go`](bindings/go) | `examples/go/streaming` |
+| R (`.Call`, C ABI) | `R CMD INSTALL bindings/r`, see [`bindings/r`](bindings/r) | `examples/r/streaming.R` |
 
 Each binding ships several runnable examples (streaming, backtest, live feed);
 [`examples/README.md`](examples/README.md) is the full cross-language index.
@@ -259,7 +261,8 @@ wickra/
 │   ├── wasm/                wasm-bindgen (browsers, bundlers, Node)
 │   ├── c/                   C ABI (cdylib + staticlib) + generated include/wickra.h
 │   ├── csharp/              .NET binding over the C ABI (publishes on NuGet)
-│   └── go/                  Go binding over the C ABI via cgo (module tag)
+│   ├── go/                  Go binding over the C ABI via cgo (module tag)
+│   └── r/                   R binding over the C ABI via .Call (R package)
 ├── examples/                examples/README.md indexes every language
 │   ├── data/                real BTCUSDT OHLCV datasets, one per timeframe
 │   ├── rust/                Rust workspace member (`wickra-examples`)
@@ -268,7 +271,8 @@ wickra/
 │   ├── wasm/                browser demo for `wickra-wasm`
 │   ├── c/                   C smoke + streaming, C++ RAII wrapper
 │   ├── csharp/              streaming, backtest, strategies (load `Wickra`)
-│   └── go/                  streaming, backtest, strategies (cgo binding)
+│   ├── go/                  streaming, backtest, strategies (cgo binding)
+│   └── r/                   streaming, backtest, strategies (.Call binding)
 └── .github/workflows/       CI and release pipelines
 ```
 
@@ -308,6 +312,10 @@ dotnet test bindings/csharp/Wickra.Tests/Wickra.Tests.csproj
 # Go binding (requires a C compiler for cgo; links the C ABI above)
 cp target/release/libwickra.so bindings/go/lib/   # .dylib on macOS, wickra.dll on Windows
 cd bindings/go && go test ./...
+
+# R binding (requires a C toolchain / Rtools; links the C ABI above)
+WICKRA_INCLUDE_DIR="$PWD/bindings/c/include" WICKRA_LIB_DIR="$PWD/target/release" \
+  R CMD INSTALL bindings/r
 ```
 
 ## Testing
@@ -329,6 +337,8 @@ Every layer is covered; run the suites with the commands in
   and reference values.
 - `bindings/go`: `go test` cases covering one indicator per FFI archetype
   (scalar/batch, multi-output, bars, profile, array input), reset, and lifecycle.
+- `bindings/r`: `testthat` cases covering one indicator per FFI archetype
+  (scalar/batch, multi-output, bars, profile, array input), reset, and validation.
 
 ## Contributing
 

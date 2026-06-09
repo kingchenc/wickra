@@ -30,7 +30,7 @@ assignees: ""
 ## Environment
 
 - Wickra version:
-- Language / binding: <!-- Rust crate / Python / Node / WASM / C ABI / C# (.NET) / Go -->
+- Language / binding: <!-- Rust crate / Python / Node / WASM / C ABI / C# (.NET) / Go / R -->
 - OS and architecture:
 - Rust / Python / Node / .NET version (If relevant):
 

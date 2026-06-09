@@ -1,0 +1,5 @@
+# The Wickra C ABI header and library are not vendored; point the build at them
+# via WICKRA_INCLUDE_DIR (containing wickra.h) and WICKRA_LIB_DIR (containing
+# libwickra). Build the library first with: cargo build -p wickra-c --release.
+PKG_CPPFLAGS = -I$(WICKRA_INCLUDE_DIR)
+PKG_LIBS = -L$(WICKRA_LIB_DIR) -lwickra -Wl,-rpath,$(WICKRA_LIB_DIR)
