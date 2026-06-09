@@ -5,7 +5,7 @@ All notable changes to Wickra are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.7.8] - 2026-06-09
 ### Added
 - **R binding (`bindings/r`)** — an R package reaching the C ABI hub through R's
   native `.Call` interface, exposing all 514 indicators as constructors that
@@ -1450,7 +1450,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.7.7...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.7.8...HEAD
+[0.7.8]: https://github.com/wickra-lib/wickra/compare/v0.7.7...v0.7.8
 [0.7.7]: https://github.com/wickra-lib/wickra/compare/v0.7.6...v0.7.7
 [0.7.6]: https://github.com/wickra-lib/wickra/compare/v0.7.5...v0.7.6
 [0.7.5]: https://github.com/wickra-lib/wickra/compare/v0.7.4...v0.7.5

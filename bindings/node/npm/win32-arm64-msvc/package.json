@@ -1,6 +1,6 @@
 {
   "name": "wickra-win32-arm64-msvc",
-  "version": "0.7.7",
+  "version": "0.7.8",
   "description": "Native binding for wickra (Windows arm64 MSVC). Installed automatically as an optional dependency of wickra on matching platforms.",
   "main": "wickra.win32-arm64-msvc.node",
   "files": [
