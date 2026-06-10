@@ -46,7 +46,9 @@ high <- pmax(close, mid) + 1.5
 low <- pmin(close, mid) - 1.5
 open <- mid
 volume <- 1000 + (idx %% 97L) * 13
-timestamp <- as.integer(idx)
+# `numeric` (double), not integer: the candle batch path coerces the timestamp
+# column with REAL(), which rejects an integer vector.
+timestamp <- as.numeric(idx)
 
 # Median elapsed-ns over a few repetitions, after one warmup pass.
 time_ns <- function(fn, reps = 3L) {
