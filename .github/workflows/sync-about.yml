@@ -341,13 +341,19 @@ jobs:
           # are never matched.
           sed -i -E "s/^(\| \[?(crates\.io|PyPI|npm|NuGet|Maven Central|Go|r-universe)\]?.*\| )[0-9]+\.[0-9]+\.[0-9]+/\1${version}/" overview.md
           sed -i -E "s/(published crate is at version .)[0-9]+\.[0-9]+\.[0-9]+/\1${version}/" Quickstart-Rust.md
+          # Quickstart-Java is the only quickstart whose install block pins a
+          # version (the Maven `<version>` tag and the `org.wickra:wickra:<v>`
+          # Gradle coordinate). Java publishes on every release, so it tracks the
+          # same ${version}.
+          sed -i -E "s|<version>[0-9]+\.[0-9]+\.[0-9]+</version>|<version>${version}</version>|" Quickstart-Java.md
+          sed -i -E "s|(org\.wickra:wickra:)[0-9]+\.[0-9]+\.[0-9]+|\1${version}|" Quickstart-Java.md
           if git diff --quiet; then
             echo "Docs version already at ${version}."
             exit 0
           fi
           git config user.name "wickra-bot"
           git config user.email "wickra-bot@users.noreply.github.com"
-          git add overview.md Quickstart-Rust.md
+          git add overview.md Quickstart-Rust.md Quickstart-Java.md
           git commit -m "chore: sync published version to ${version}"
           if ! git push 2>/dev/null; then
             echo "::warning::push to wickra-lib/wickra-docs failed — ABOUT_SYNC_TOKEN likely lacks write (findings P10.0a)."
@@ -433,6 +439,14 @@ jobs:
           sed -i -E "s/(Latest:\*\* \[.wickra(-wasm)? )[0-9]+\.[0-9]+\.[0-9]+/\1${version}/" api/*.md
           sed -i -E "s/(text: .v)[0-9]+\.[0-9]+\.[0-9]+/\1${version}/" .vitepress/config.ts
           sed -i -E "s/(.wickra-wasm.: .\^)[0-9]+\.[0-9]+\.[0-9]+/\1${version}/" package.json
+          # Java is the only target whose install snippet pins a version: the
+          # Maven `<version>` tag in the api/java.md dependency block and the
+          # home-page install tab in index.md, plus any `org.wickra:wickra:<v>`
+          # Gradle coordinate. Java publishes on every release, so it tracks the
+          # same ${version} as the rest. (Other languages' api/*.md carry a
+          # "Latest:" line handled above; Java uses the XML snippet instead.)
+          sed -i -E "s|<version>[0-9]+\.[0-9]+\.[0-9]+</version>|<version>${version}</version>|" api/java.md index.md
+          sed -i -E "s|(org\.wickra:wickra:)[0-9]+\.[0-9]+\.[0-9]+|\1${version}|" api/java.md index.md
           # Keep package-lock.json in sync with the package.json bump. The site's
           # Cloudflare build runs `npm clean-install` (npm ci), which hard-fails
           # with EUSAGE if the lockfile still pins the previous wickra-wasm —
@@ -451,7 +465,7 @@ jobs:
           fi
           git config user.name "wickra-bot"
           git config user.email "wickra-bot@users.noreply.github.com"
-          git add api/*.md .vitepress/config.ts package.json package-lock.json
+          git add api/*.md index.md .vitepress/config.ts package.json package-lock.json
           git commit -m "chore: sync published version to ${version}"
           if ! git push 2>/dev/null; then
             echo "::warning::push to wickra-lib/webpage failed — ABOUT_SYNC_TOKEN likely lacks write (findings P10.0a)."
