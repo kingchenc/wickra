@@ -117,13 +117,20 @@ multi-out). Two things fall out of the numbers:
   ABI and P/Invoke-style calls are nearly free, while managed or interpreted
   per-call marshalling (cgo, FFM, the R/WASM boundary) costs more per tick.
 
+The Rust core ships the same benchmark with **no** FFI boundary
+(`examples/rust/.../throughput.rs`) — it is the ceiling each binding is measured
+against and the value the batch paths converge towards.
+
 These are throughput numbers, not competitive numbers — the "Wickra is fast"
 claim lives in sections 1 and 2 (Rust core + the Python/Rust cross-library runs).
 
-Run any binding's benchmark (build the C ABI library first where it links one):
+Run any target's benchmark (build the C ABI library first where it links one):
 
 ```bash
+cargo run -p wickra-examples --release --bin throughput           # Rust core baseline (no FFI)
+
 node bindings/node/benchmarks/throughput.js                       # native napi-rs
+( cd bindings/python && python -m benchmarks.throughput )         # native PyO3
 ( cd bindings/wasm && wasm-pack build --target nodejs --out-dir pkg-node --release ) \
   && node bindings/wasm/benchmarks/throughput.mjs                 # wasm boundary
 
