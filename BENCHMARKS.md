@@ -121,6 +121,29 @@ The Rust core ships the same benchmark with **no** FFI boundary
 (`examples/rust/.../throughput.rs`) — it is the ceiling each binding is measured
 against and the value the batch paths converge towards.
 
+`SMA(20)`, 200 000 bars, median of 3 runs, on the reference machine (Windows 11,
+AMD Ryzen 9 9950X):
+
+| Target               | streaming (Mupd/s) | batch (Mupd/s) |
+|----------------------|-------------------:|---------------:|
+| Rust core (no FFI)   |                391 |            500 |
+| C                    |                383 |            330 |
+| C# / .NET            |                337 |            244 |
+| Python               |                 33 |            488 |
+| Java                 |                 28 |            175 |
+| Go                   |                 24 |            400 |
+| WebAssembly          |                 19 |            167 |
+| Node.js              |                 17 |             10 |
+| R                    |                0.1 |            193 |
+
+Streaming spans more than three orders of magnitude — the raw C ABI (383) is
+nearly the FFI-free Rust ceiling (391), while R's per-call interpreter overhead
+(0.1) makes streaming ~2000× slower than its own batch. Batch converges near the
+core speed for the zero-copy bindings (numpy, slices, typed arrays); the two
+outliers are Node — whose napi `batch` boxes every element into a JS `Array` —
+and R. These are machine-dependent and reflect FFI overhead, not algorithm
+speed.
+
 These are throughput numbers, not competitive numbers — the "Wickra is fast"
 claim lives in sections 1 and 2 (Rust core + the Python/Rust cross-library runs).
 
