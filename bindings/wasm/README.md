@@ -46,6 +46,18 @@ Constructors mirror the other bindings (`new SMA(20)`, `new MACD(12, 26, 9)`,
 `new BollingerBands(20, 2.0)`, …); `update()` returns the latest value or
 `null` while the indicator is still warming up.
 
+## Benchmark
+
+`benchmarks/throughput.mjs` reports streaming and batch updates-per-second for
+`SMA`, `ATR` and `MACD`. It measures this binding's FFI overhead, not a
+cross-library ratio (the same Rust core runs under every binding) — see the
+repository [BENCHMARKS.md](https://github.com/wickra-lib/wickra/blob/main/BENCHMARKS.md) §3.
+
+```bash
+wasm-pack build --target nodejs --out-dir pkg-node --release
+node benchmarks/throughput.mjs
+```
+
 ## Documentation
 
 The full indicator catalogue, guides, quickstarts, and API reference live in

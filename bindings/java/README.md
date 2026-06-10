@@ -76,6 +76,19 @@ values — the equivalence is enforced by the test suite. Multi-output indicator
 indicator owns a native handle freed by a `Cleaner`; `close()` releases it
 eagerly (use try-with-resources).
 
+## Benchmark
+
+`benchmarks/` reports streaming and batch updates-per-second for `SMA`, `ATR`
+and `MACD`. It measures this binding's FFI overhead, not a cross-library ratio
+(the same Rust core runs under every binding) — see the repository
+[BENCHMARKS.md](https://github.com/wickra-lib/wickra/blob/main/BENCHMARKS.md) §3.
+
+```bash
+cargo build -p wickra-c --release
+mvn -q install -DskipTests
+mvn -q -f benchmarks exec:exec -Dexec.mainClass=org.wickra.benchmarks.Throughput
+```
+
 ## Documentation
 
 The full indicator catalogue, guides, quickstarts, and API reference live in

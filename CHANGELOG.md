@@ -5,6 +5,20 @@ All notable changes to Wickra are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Added
+- **Per-binding throughput benchmarks** — every target now ships a `throughput`
+  benchmark mirroring the Node `throughput.js`: streaming and batch
+  updates-per-second for `SMA(20)`, `ATR(14)` and `MACD(12,26,9)` over a
+  synthetic OHLCV series. New for Python (`bindings/python/benchmarks/`), C
+  (`bindings/c/benchmarks/`), C# (`bindings/csharp/benchmarks/`), Go
+  (`bindings/go/benchmarks/`), Java (`bindings/java/benchmarks/`), R
+  (`bindings/r/benchmarks/`), WebAssembly (`bindings/wasm/benchmarks/`) and the
+  Rust core baseline (`examples/rust/.../throughput.rs`, no FFI). They measure
+  each binding's FFI overhead — the same Rust core runs underneath all of them —
+  and are documented in [BENCHMARKS.md](BENCHMARKS.md) §3, not a cross-library
+  speed claim.
+
 ## [0.8.2] - 2026-06-10
 ### Fixed
 - **R binding builds for WebAssembly** — `bindings/r/configure` now builds the

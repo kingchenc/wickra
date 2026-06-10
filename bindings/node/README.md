@@ -47,6 +47,18 @@ for (const price of liveFeed) {
 `batch(prices)` and feeding the same prices through `update()` produce
 identical values — the equivalence is enforced by the test suite.
 
+## Benchmark
+
+`benchmarks/throughput.js` reports streaming and batch updates-per-second for
+`SMA`, `ATR` and `MACD`. It measures this binding's FFI overhead, not a
+cross-library ratio (the same Rust core runs under every binding) — see the
+repository [BENCHMARKS.md](https://github.com/wickra-lib/wickra/blob/main/BENCHMARKS.md) §3.
+
+```bash
+npx napi build --platform --release
+node benchmarks/throughput.js
+```
+
 ## Documentation
 
 The full indicator catalogue, guides, quickstarts, and API reference live in

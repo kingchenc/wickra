@@ -52,6 +52,18 @@ foreach (var price in liveFeed)
 values — the equivalence is enforced by the test suite. Multi-output indicators
 (MACD, Bollinger, ADX, …) return a nullable `record struct`, `null` while warming up.
 
+## Benchmark
+
+`benchmarks/` reports streaming and batch updates-per-second for `SMA`, `ATR`
+and `MACD`. It measures this binding's FFI overhead, not a cross-library ratio
+(the same Rust core runs under every binding) — see the repository
+[BENCHMARKS.md](https://github.com/wickra-lib/wickra/blob/main/BENCHMARKS.md) §3.
+
+```bash
+cargo build -p wickra-c --release
+dotnet run -c Release --project benchmarks
+```
+
 ## Documentation
 
 The full indicator catalogue, guides, quickstarts, and API reference live in
