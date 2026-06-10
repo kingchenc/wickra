@@ -46,6 +46,24 @@ for price in live_feed:
 `batch(prices)` and feeding the same prices through `update()` produce
 identical values — the equivalence is enforced by the test suite.
 
+## Benchmark
+
+Two benchmarks ship with the binding:
+
+- `benchmarks/throughput.py` — streaming and batch updates-per-second for `SMA`,
+  `ATR` and `MACD`. This is per-binding FFI overhead (the same Rust core runs
+  under every binding), not a cross-library ratio.
+- `benchmarks/compare_libraries.py` — the cross-library comparison against
+  TA-Lib, pandas-ta, tulipy and finta that backs the headline speedups.
+
+```bash
+maturin develop --release
+python -m benchmarks.throughput
+python -m benchmarks.compare_libraries   # cross-library; auto-detects installed peers
+```
+
+See the repository [BENCHMARKS.md](https://github.com/wickra-lib/wickra/blob/main/BENCHMARKS.md).
+
 ## Documentation
 
 The full indicator catalogue, guides, quickstarts, and API reference live in
