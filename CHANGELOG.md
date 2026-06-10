@@ -5,7 +5,7 @@ All notable changes to Wickra are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.8.3] - 2026-06-10
 ### Added
 - **Per-binding throughput benchmarks** — every target now ships a `throughput`
   benchmark mirroring the Node `throughput.js`: streaming and batch
@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   each binding's FFI overhead — the same Rust core runs underneath all of them —
   and are documented in [BENCHMARKS.md](BENCHMARKS.md) §3, not a cross-library
   speed claim.
+- **C ABI archetype test** — `examples/c/archetypes.c` exercises one indicator
+  per FFI archetype (scalar, multi-output, bars, profile, array input) through
+  the C boundary, matching the Go/R/Java suites.
 
 ## [0.8.2] - 2026-06-10
 ### Fixed
@@ -1508,7 +1511,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.8.2...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.8.3...HEAD
+[0.8.3]: https://github.com/wickra-lib/wickra/compare/v0.8.2...v0.8.3
 [0.8.2]: https://github.com/wickra-lib/wickra/compare/v0.8.1...v0.8.2
 [0.8.1]: https://github.com/wickra-lib/wickra/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/wickra-lib/wickra/compare/v0.7.9...v0.8.0
