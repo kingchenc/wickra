@@ -64,6 +64,7 @@ endfunction()
 
 # Offline examples — built and run as ctests.
 add_wickra_example(smoke smoke.c TRUE)                 # links the boundary, asserts values
+add_wickra_example(archetypes archetypes.c TRUE)       # one indicator per FFI archetype
 add_wickra_example(streaming streaming.c TRUE)         # multi-indicator tick stream
 add_wickra_example(cpp_smoke smoke.cpp TRUE)           # C++ RAII wrapper (wickra.hpp)
 add_wickra_example(backtest backtest.c TRUE)           # indicator basket over a CSV
