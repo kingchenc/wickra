@@ -94,3 +94,45 @@ cargo bench -p wickra-bench            # Rust core vs kand / ta-rs / yata
 pip install -e bindings/python[bench]  # Python peers
 python -m benchmarks.compare_libraries
 ```
+
+## 3. Per-binding throughput — the cost of the boundary
+
+The sections above compare Wickra against other libraries, which only exists for
+Python and Rust (there is no comparable streaming TA library for C, C#, Go, Java,
+R or WebAssembly to benchmark against). Every binding calls the **same** Rust
+core, so these per-binding benchmarks are **not** a speed claim and **not** a
+cross-library ratio — they document the raw cost of crossing each language's FFI
+boundary, in million updates per second (Mupd/s).
+
+Each binding ships a small `throughput` benchmark that feeds a synthetic OHLCV
+series through three indicators chosen by call-signature archetype — `SMA(20)`
+(1-in → 1-out), `ATR(14)` (multi-in → 1-out) and `MACD(12,26,9)` (1-in →
+multi-out). Two things fall out of the numbers:
+
+- **Batch converges.** A `batch` call crosses the boundary once and the Rust core
+  computes the whole series internally, so batch throughput is roughly the same
+  in every binding — close to the core speed.
+- **Streaming reveals the boundary.** A per-tick `update` crosses the boundary
+  once per value, so streaming throughput is where the bindings differ: the raw C
+  ABI and P/Invoke-style calls are nearly free, while managed or interpreted
+  per-call marshalling (cgo, FFM, the R/WASM boundary) costs more per tick.
+
+These are throughput numbers, not competitive numbers — the "Wickra is fast"
+claim lives in sections 1 and 2 (Rust core + the Python/Rust cross-library runs).
+
+Run any binding's benchmark (build the C ABI library first where it links one):
+
+```bash
+node bindings/node/benchmarks/throughput.js                       # native napi-rs
+( cd bindings/wasm && wasm-pack build --target nodejs --out-dir pkg-node --release ) \
+  && node bindings/wasm/benchmarks/throughput.mjs                 # wasm boundary
+
+cargo build -p wickra-c --release                                 # the C ABI hub
+cmake -S bindings/c/benchmarks -B build/cbench && cmake --build build/cbench \
+  && ./build/cbench/throughput                                    # raw C ABI
+dotnet run -c Release --project bindings/csharp/benchmarks        # C# / .NET (P/Invoke)
+( cd bindings/go/benchmarks && go run . )                         # Go (cgo)
+mvn -q -f bindings/java install -DskipTests \
+  && mvn -q -f bindings/java/benchmarks exec:exec -Dexec.mainClass=org.wickra.benchmarks.Throughput
+Rscript bindings/r/benchmarks/throughput.R                        # R (.Call)
+```

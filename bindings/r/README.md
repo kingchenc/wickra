@@ -59,6 +59,17 @@ indicators take the OHLCV fields plus a timestamp, e.g.
 `update(atr, open, high, low, close, volume, timestamp)`. The native handle is
 freed automatically when the object is garbage-collected.
 
+## Benchmark
+
+`benchmarks/throughput.R` reports streaming and batch updates-per-second for
+`SMA`, `ATR` and `MACD`. It measures this binding's FFI overhead, not a
+cross-library ratio (the same Rust core runs under every binding) — see the
+repository [BENCHMARKS.md](https://github.com/wickra-lib/wickra/blob/main/BENCHMARKS.md) §3.
+
+```bash
+Rscript benchmarks/throughput.R
+```
+
 ## Documentation
 
 The full indicator catalogue, guides, quickstarts, and API reference live in the

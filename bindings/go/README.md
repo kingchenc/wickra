@@ -88,6 +88,17 @@ values — the equivalence is enforced by the test suite. Multi-output indicator
 Every indicator owns a native handle freed by `Close()`; a finalizer is wired as
 a backstop, but call `Close()` (e.g. with `defer`) to release memory promptly.
 
+## Benchmark
+
+`benchmarks/throughput.go` reports streaming and batch updates-per-second for
+`SMA`, `ATR` and `MACD`. It measures this binding's FFI overhead, not a
+cross-library ratio (the same Rust core runs under every binding) — see the
+repository [BENCHMARKS.md](https://github.com/wickra-lib/wickra/blob/main/BENCHMARKS.md) §3.
+
+```bash
+cd benchmarks && go run .
+```
+
 ## Documentation
 
 The full indicator catalogue, guides, quickstarts, and API reference live in the

@@ -54,6 +54,20 @@ Multi-output indicators (MACD, Bollinger, ADX, …) take a pointer to a `#[repr(
 struct and return a `bool`. The optional `wickra.hpp` wraps any handle in a
 move-only `wickra::Handle` for exception-safe C++ lifetimes.
 
+## Benchmark
+
+`benchmarks/throughput.c` reports streaming and batch updates-per-second for
+`SMA`, `ATR` and `MACD`. As the thinnest binding it is the floor of the
+per-binding FFI overhead — not a cross-library ratio (the same Rust core runs
+under every binding); see the repository
+[BENCHMARKS.md](https://github.com/wickra-lib/wickra/blob/main/BENCHMARKS.md) §3.
+
+```bash
+cargo build -p wickra-c --release
+cmake -S benchmarks -B build && cmake --build build
+./build/throughput
+```
+
 ## Documentation
 
 The full indicator catalogue, guides, quickstarts, and API reference live in
