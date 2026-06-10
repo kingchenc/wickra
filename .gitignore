@@ -55,6 +55,7 @@ bindings/node/npm-debug.log*
 
 # WASM build output
 bindings/wasm/pkg/
+bindings/wasm/pkg-node/
 
 # Python venv
 .venv/
