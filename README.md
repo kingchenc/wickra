@@ -344,6 +344,10 @@ Every layer is covered; run the suites with the commands in
   values across all indicators.
 - `bindings/wasm`: `wasm-bindgen-test` cases for constructors, equivalence,
   and reference values.
+- `bindings/c`: Rust unit tests over the FFI boundary, plus C and C++ smoke
+  tests and offline example `ctest`s run on the three OSes.
+- `bindings/csharp`: `dotnet test` cases covering one indicator per FFI archetype
+  (scalar/batch, multi-output, bars, profile, array input) plus SMA reference values.
 - `bindings/go`: `go test` cases covering one indicator per FFI archetype
   (scalar/batch, multi-output, bars, profile, array input), reset, and lifecycle.
 - `bindings/r`: `testthat` cases covering one indicator per FFI archetype
