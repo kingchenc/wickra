@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Standalone throughput benchmark for the Wickra C# binding.
+       See Program.cs for run instructions. Requires the C ABI library; the
+       binding's dev DllImportResolver falls back to target/release. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <AssemblyName>Wickra.Benchmarks</AssemblyName>
+    <RootNamespace>Wickra.Benchmarks</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Wickra\Wickra.csproj" />
+  </ItemGroup>
+
+</Project>
