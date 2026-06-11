@@ -84,6 +84,9 @@ impl Indicator for StepTrailingStop {
     type Output = f64;
 
     fn update(&mut self, close: f64) -> Option<f64> {
+        if !close.is_finite() {
+            return None;
+        }
         let stop = match self.prev_stop {
             Some(prev) => {
                 if self.long {

@@ -80,6 +80,9 @@ impl Indicator for QuartileBands {
     type Output = QuartileBandsOutput;
 
     fn update(&mut self, value: f64) -> Option<QuartileBandsOutput> {
+        if !value.is_finite() {
+            return None;
+        }
         if self.window.len() == self.period {
             self.window.pop_front();
         }

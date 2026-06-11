@@ -96,6 +96,9 @@ impl Indicator for MedianChannel {
     type Output = MedianChannelOutput;
 
     fn update(&mut self, value: f64) -> Option<MedianChannelOutput> {
+        if !value.is_finite() {
+            return None;
+        }
         if self.window.len() == self.period {
             self.window.pop_front();
         }

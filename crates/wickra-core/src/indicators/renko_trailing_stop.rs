@@ -74,6 +74,9 @@ impl Indicator for RenkoTrailingStop {
     type Output = f64;
 
     fn update(&mut self, close: f64) -> Option<f64> {
+        if !close.is_finite() {
+            return None;
+        }
         let anchor = match self.anchor {
             Some(prev) => {
                 if self.long {

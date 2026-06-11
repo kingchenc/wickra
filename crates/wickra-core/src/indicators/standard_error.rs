@@ -93,6 +93,9 @@ impl Indicator for StandardError {
     type Output = f64;
 
     fn update(&mut self, value: f64) -> Option<f64> {
+        if !value.is_finite() {
+            return None;
+        }
         if self.window.len() == self.period {
             // Slide: pop oldest, shift indices, then push the new value at index n − 1.
             let y0 = self.window.pop_front().expect("non-empty");

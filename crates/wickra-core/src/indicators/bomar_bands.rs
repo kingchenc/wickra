@@ -106,6 +106,9 @@ impl Indicator for BomarBands {
     type Output = BomarBandsOutput;
 
     fn update(&mut self, value: f64) -> Option<BomarBandsOutput> {
+        if !value.is_finite() {
+            return None;
+        }
         if self.window.len() == self.period {
             self.window.pop_front();
         }

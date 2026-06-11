@@ -73,6 +73,9 @@ impl Indicator for TsfOscillator {
     type Output = f64;
 
     fn update(&mut self, input: f64) -> Option<f64> {
+        if !input.is_finite() {
+            return None;
+        }
         let forecast = self.tsf.update(input)?;
         // Hold the previous value if the close is zero — the percentage form
         // is undefined and a return of inf would propagate badly.

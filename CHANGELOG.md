@@ -5,6 +5,35 @@ All notable changes to Wickra are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Fixed
+- A single non-finite (NaN/inf) tick no longer poisons indicator state.
+  The 16 pairwise running-sum/buffer indicators fixed first (`Beta`,
+  `BetaNeutralSpread`, `Cointegration`, `HasbrouckInformationShare`,
+  `PearsonCorrelation`, `RollingCorrelation`, `RollingCovariance`,
+  `DistanceSsd`, `GrangerCausality`, `KendallTau`, `LeadLagCrossCorrelation`,
+  `OuHalfLife`, `SpearmanCorrelation`, `SpreadAr1Coefficient`, `SpreadHurst`,
+  `VarianceRatio`) were joined by 38 more scalar/pairwise indicators the new
+  property harness surfaced (the linear-regression family, rolling quantiles
+  and IQR, `Variance`/`StdDev`-derived stats, `Kurtosis`/`Skewness`, the
+  trailing stops, `KalmanHedgeRatio`, `SpreadBollingerBands`, and more). Every
+  `f64` / `(f64, f64)` indicator now rejects non-finite input and returns
+  `None`, matching the streaming-robustness guarantee — and the harness enforces
+  it going forward.
+
+### Added
+- Catalogue-wide property-based invariant harness
+  (`crates/wickra-core/tests/invariants.rs`) asserting `batch == streaming`,
+  `reset == fresh`, and non-finite-input rejection for every indicator and
+  bar-builder.
+
+### Changed
+- CI: every job now has a runtime cap and the historically flaky Node test step
+  auto-retries, so a wedged runner fails fast instead of hanging for hours.
+- Documentation accuracy fixes in `SECURITY.md`, `ARCHITECTURE.md`, and
+  `THREAT_MODEL.md` (supported version, indicator count, WASM test coverage,
+  numerical-stability notes, and the C-ABI panic strategy).
+
 ## [0.8.3] - 2026-06-10
 ### Added
 - **Per-binding throughput benchmarks** — every target now ships a `throughput`

@@ -106,6 +106,9 @@ impl Indicator for StandardErrorBands {
     type Output = StandardErrorBandsOutput;
 
     fn update(&mut self, value: f64) -> Option<StandardErrorBandsOutput> {
+        if !value.is_finite() {
+            return None;
+        }
         if self.window.len() == self.period {
             self.window.pop_front();
         }

@@ -77,6 +77,9 @@ impl Indicator for LinRegIntercept {
     type Output = f64;
 
     fn update(&mut self, value: f64) -> Option<f64> {
+        if !value.is_finite() {
+            return None;
+        }
         if self.window.len() == self.period {
             let y0 = self.window.pop_front().expect("non-empty");
             self.sum_xy = self.sum_xy - self.sum_y + y0;

@@ -99,6 +99,9 @@ impl Indicator for LinearRegression {
     type Output = f64;
 
     fn update(&mut self, value: f64) -> Option<f64> {
+        if !value.is_finite() {
+            return None;
+        }
         if self.window.len() == self.period {
             // Sliding phase: pop the oldest, then shift every remaining index
             // down by 1 in the running `sum_xy`. The identity
