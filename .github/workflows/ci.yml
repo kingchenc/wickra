@@ -34,6 +34,7 @@ jobs:
   rust:
     name: Rust ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
     strategy:
       fail-fast: false
       matrix:
@@ -104,6 +105,7 @@ jobs:
   examples-smoke:
     name: Examples (syntax smoke)
     runs-on: ubuntu-latest
+    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -193,6 +195,7 @@ jobs:
   clippy-bindings:
     name: Clippy bindings
     runs-on: ubuntu-latest
+    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -276,6 +279,7 @@ jobs:
   msrv:
     name: ${{ matrix.name }}
     runs-on: ubuntu-latest
+    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
     strategy:
       fail-fast: false
       matrix:
@@ -324,6 +328,7 @@ jobs:
   coverage:
     name: Coverage
     runs-on: ubuntu-latest
+    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -365,6 +370,7 @@ jobs:
   supply-chain:
     name: Supply-chain (cargo-deny)
     runs-on: ubuntu-latest
+    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -383,6 +389,7 @@ jobs:
   fuzz-smoke:
     name: Fuzz (smoke)
     runs-on: ubuntu-latest
+    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -436,6 +443,7 @@ jobs:
   python:
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
     strategy:
       fail-fast: false
       matrix:
@@ -517,6 +525,7 @@ jobs:
   wasm:
     name: WASM build
     runs-on: ubuntu-latest
+    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -560,6 +569,7 @@ jobs:
   node:
     name: Node ${{ matrix.node-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
     strategy:
       fail-fast: false
       matrix:
@@ -618,13 +628,22 @@ jobs:
         # exist yet for win32-x64-msvc).
         run: npx napi build --platform --release
 
+      # The Node test process has wedged on macOS runners (the step hung for
+      # 1h+ while the same tests passed in ~1.5 min elsewhere). Wrap it so a
+      # hung attempt is killed after 6 min and retried once, rather than
+      # running up to the job-level backstop. A normal run is under a minute.
       - name: Run Node tests
-        working-directory: bindings/node
-        run: node --test __tests__/
+        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
+        with:
+          timeout_minutes: 6
+          max_attempts: 2
+          command: cd bindings/node && node --test __tests__/
+          shell: bash
 
   c-abi:
     name: C ABI on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
     strategy:
       fail-fast: false
       matrix:
@@ -680,6 +699,7 @@ jobs:
   csharp:
     name: C# on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
     strategy:
       fail-fast: false
       matrix:
@@ -730,6 +750,7 @@ jobs:
   go:
     name: Go on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
     strategy:
       fail-fast: false
       matrix:
@@ -852,6 +873,7 @@ jobs:
   r:
     name: R on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
     strategy:
       fail-fast: false
       matrix:
@@ -923,6 +945,7 @@ jobs:
   java:
     name: Java on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 20 # backstop: cap a wedged job instead of GitHub's 6h default (slowest real job ~5 min)
     strategy:
       fail-fast: false
       matrix:
