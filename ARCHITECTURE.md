@@ -7,7 +7,7 @@ for the day-to-day workflow.
 
 ## Workspace layout
 
-Wickra is a Cargo workspace of three Rust crates plus three binding crates.
+Wickra is a Cargo workspace of three Rust crates plus four binding crates.
 The split is deliberate: every concern that one user might want to disable
 or replace lives behind a separate crate boundary.
 
@@ -20,7 +20,7 @@ or replace lives behind a separate crate boundary.
    ┌───────────▼──────────┐            ┌──────────▼─────────┐
    │    wickra-core       │            │    wickra-data     │
    │   indicator engine   │            │  i/o + aggregation │
-   │   • 214 indicators   │            │  • CSV reader      │
+   │   • 514 indicators   │            │  • CSV reader      │
    │   • Indicator trait  │            │  • Tick aggregator │
    │   • BatchExt impl    │            │  • Resampler       │
    │   • OHLCV / Candle   │            │  • Live feeds      │
@@ -203,14 +203,17 @@ typed object arrays for Node/WASM).
 
 A handful of indicators need care beyond naive accumulation:
 
-- **Welford's online variance** is used in `StdDev`, `Variance`, `ZScore`,
-  `BollingerBands`, and several others. Standard sum-of-squares is
-  catastrophically lossy for low-variance inputs; Welford's recurrence
-  keeps O(eps) error.
-- **Kahan summation** is used wherever rolling sums could span > 1e6
-  elements without resetting — currently only Hurst-exponent's R/S
-  chunks. Most rolling sums are bounded by the window size and don't need
-  it.
+- **Rolling variance is running-sum, not Welford.** The sliding-window
+  variance family — `StdDev`, `Variance`, `ZScore`, `Bollinger` — keeps
+  running `Σx` and `Σx²` over the window and reports `var = Σx²/n − mean²`,
+  clamping to zero the tiny negative values floating-point cancellation can
+  produce. `Bollinger` periodically reseeds its `Σx²` from the live window
+  so error cannot accumulate over a long stream. Welford's online algorithm
+  (an incremental `M2` accumulator) does **not** transfer cleanly to a
+  sliding window — removing the oldest point from `M2` is numerically
+  unstable — so it is used only where the statistic is *not* a fixed
+  window: `IntradayVolatilityProfile` and `SeasonalZScore` accumulate
+  per-bucket variance that way.
 - **Logarithm bases** matter for some indicators (Hurst, MFI). Wickra
   uses natural log everywhere unless the reference math explicitly
   requires `log10` or `log2` — and then it documents the choice in the
@@ -327,9 +330,9 @@ re-discovering them.
 - **`FAMILIES` (from PR #60) is hand-maintained.** Adding a new
   indicator requires a separate entry in `FAMILIES`. The
   `total_count_matches_expected` test will fail if you forget.
-- **WASM does not have automated tests yet.** Smoke-validated only
-  through the manual examples. Adding `wasm-bindgen-test` coverage is
-  on the roadmap.
+- **WASM is covered by `wasm-bindgen-test`.** `bindings/wasm/src/lib.rs`
+  carries 21 in-crate tests (run under `wasm-pack test` in CI), in
+  addition to the manual browser examples.
 
 For the high-level project goals see [`ROADMAP.md`](ROADMAP.md); for
 day-to-day contribution mechanics see [`CONTRIBUTING.md`](CONTRIBUTING.md).
