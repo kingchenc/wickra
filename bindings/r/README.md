@@ -1,4 +1,4 @@
-# Wickra — R
+# Wickra — R <img src="man/figures/logo.png" align="right" height="120" alt="Wickra logo" />
 
 [![CI](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml/badge.svg)](https://github.com/wickra-lib/wickra/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/wickra-lib/wickra/branch/main/graph/badge.svg)](https://codecov.io/gh/wickra-lib/wickra)

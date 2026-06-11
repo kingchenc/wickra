@@ -48,6 +48,7 @@ bench = [
 
 [project.urls]
 Homepage = "https://github.com/wickra-lib/wickra"
+Documentation = "https://docs.wickra.org"
 Repository = "https://github.com/wickra-lib/wickra"
 Issues = "https://github.com/wickra-lib/wickra/issues"
 

@@ -20,6 +20,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>technical-analysis;indicators;trading;finance;streaming;ffi;native</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -42,6 +43,7 @@
 
   <ItemGroup>
     <None Include="..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <!--
