@@ -5,6 +5,28 @@ All notable changes to Wickra are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Fixed
+- Pairwise indicators no longer let a single non-finite (NaN/inf) tick poison
+  their state. Sixteen indicators (`Beta`, `BetaNeutralSpread`, `Cointegration`,
+  `HasbrouckInformationShare`, `PearsonCorrelation`, `RollingCorrelation`,
+  `RollingCovariance`, `DistanceSsd`, `GrangerCausality`, `KendallTau`,
+  `LeadLagCrossCorrelation`, `OuHalfLife`, `SpearmanCorrelation`,
+  `SpreadAr1Coefficient`, `SpreadHurst`, `VarianceRatio`) now reject non-finite
+  input and return `None`, matching the streaming-robustness guarantee.
+
+### Added
+- Catalogue-wide property-based invariant harness
+  (`crates/wickra-core/tests/invariants.rs`) asserting `batch == streaming` and
+  `reset == fresh` for every indicator and bar-builder.
+
+### Changed
+- CI: every job now has a runtime cap and the historically flaky Node test step
+  auto-retries, so a wedged runner fails fast instead of hanging for hours.
+- Documentation accuracy fixes in `SECURITY.md`, `ARCHITECTURE.md`, and
+  `THREAT_MODEL.md` (supported version, indicator count, WASM test coverage,
+  numerical-stability notes, and the C-ABI panic strategy).
+
 ## [0.8.3] - 2026-06-10
 ### Added
 - **Per-binding throughput benchmarks** — every target now ships a `throughput`

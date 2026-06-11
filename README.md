@@ -334,7 +334,10 @@ Every layer is covered; run the suites with the commands in
 
 - `wickra-core`: unit tests per indicator — textbook reference values
   (Wilder RSI, Bollinger Bands, MACD, ATR, Stochastic), `batch == streaming`
-  equivalence, `reset` semantics, NaN/Inf handling, and property tests.
+  equivalence, `reset` semantics, NaN/Inf handling, and property tests. A
+  catalogue-wide property harness (`tests/invariants.rs`) additionally asserts
+  `batch == streaming` and `reset == fresh` for **every** indicator and
+  bar-builder.
 - `wickra-data`: unit tests for CSV decoding, the tick aggregator, the
   resampler, and the Binance payload parser.
 - `bindings/python`: pytest covering smoke checks, streaming/batch
