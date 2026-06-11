@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.8.5] - 2026-06-11
 ### Fixed
 - The R binding's golden-fixture parity test now skips gracefully when the shared
   `testdata/golden` fixtures are not bundled with the package — standalone
@@ -1548,7 +1550,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.8.4...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.8.5...HEAD
+[0.8.5]: https://github.com/wickra-lib/wickra/compare/v0.8.4...v0.8.5
 [0.8.4]: https://github.com/wickra-lib/wickra/compare/v0.8.3...v0.8.4
 [0.8.3]: https://github.com/wickra-lib/wickra/compare/v0.8.2...v0.8.3
 [0.8.2]: https://github.com/wickra-lib/wickra/compare/v0.8.1...v0.8.2
