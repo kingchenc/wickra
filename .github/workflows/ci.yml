@@ -933,7 +933,7 @@ jobs:
         # chunks here (knit, no pandoc needed) to catch a broken example before it
         # reaches the published build.
         run: |
-          Rscript -e 'install.packages("knitr")'
+          Rscript -e 'install.packages("knitr", repos = Sys.getenv("RSPM", unset = "https://cloud.r-project.org"))'
           Rscript -e 'knitr::knit("bindings/r/vignettes/getting-started.Rmd", output = tempfile(fileext = ".md"), quiet = TRUE); cat("vignette code OK\n")'
 
       - name: Run the offline R examples
