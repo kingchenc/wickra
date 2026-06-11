@@ -11,10 +11,6 @@
 //!    other validated input types cannot be non-finite, so this applies to the
 //!    `f64` and `(f64, f64)` families. This is the regression net that would have
 //!    caught the pairwise non-finite bug (#251).
-//!
-//! (Warmup-exactness — "nothing emitted before `warmup_period`" — was evaluated
-//! and left out: it is not universal, as many multi-component and candlestick
-//! indicators emit before `warmup_period` by design.)
 
 use proptest::prelude::*;
 use wickra_core::*;
