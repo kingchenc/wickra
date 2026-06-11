@@ -98,6 +98,9 @@ impl Indicator for VarianceRatio {
 
     fn update(&mut self, input: (f64, f64)) -> Option<f64> {
         let (a, b) = input;
+        if !a.is_finite() || !b.is_finite() {
+            return None;
+        }
         if self.window.len() == self.period {
             self.window.pop_front();
         }
@@ -263,5 +266,17 @@ mod tests {
         let mut vr = VarianceRatio::new(32, 3).unwrap();
         let streamed: Vec<_> = pairs.iter().map(|p| vr.update(*p)).collect();
         assert_eq!(batch, streamed);
+    }
+
+    #[test]
+    fn non_finite_input_returns_none() {
+        let mut vr = VarianceRatio::new(4, 2).unwrap();
+        assert_eq!(vr.update((f64::NAN, 1.0)), None);
+        assert_eq!(vr.update((1.0, f64::INFINITY)), None);
+        // The rejected ticks leave no trace: a fresh window still warms up.
+        assert_eq!(vr.update((1.0, 0.0)), None);
+        assert_eq!(vr.update((2.0, 0.0)), None);
+        assert_eq!(vr.update((3.0, 0.0)), None);
+        assert!(vr.update((4.0, 0.0)).is_some());
     }
 }

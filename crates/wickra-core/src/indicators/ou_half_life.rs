@@ -80,6 +80,9 @@ impl Indicator for OuHalfLife {
 
     fn update(&mut self, input: (f64, f64)) -> Option<f64> {
         let (a, b) = input;
+        if !a.is_finite() || !b.is_finite() {
+            return None;
+        }
         if self.window.len() == self.period {
             self.window.pop_front();
         }
@@ -241,5 +244,17 @@ mod tests {
         let mut hl = OuHalfLife::new(25).unwrap();
         let streamed: Vec<_> = pairs.iter().map(|p| hl.update(*p)).collect();
         assert_eq!(batch, streamed);
+    }
+
+    #[test]
+    fn non_finite_input_returns_none() {
+        let mut hl = OuHalfLife::new(4).unwrap();
+        assert_eq!(hl.update((f64::NAN, 1.0)), None);
+        assert_eq!(hl.update((1.0, f64::INFINITY)), None);
+        // The rejected ticks leave no trace: a fresh window still warms up.
+        assert_eq!(hl.update((1.0, 0.0)), None);
+        assert_eq!(hl.update((2.0, 0.0)), None);
+        assert_eq!(hl.update((3.0, 0.0)), None);
+        assert!(hl.update((4.0, 0.0)).is_some());
     }
 }

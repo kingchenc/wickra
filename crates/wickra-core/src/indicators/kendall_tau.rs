@@ -130,6 +130,9 @@ impl Indicator for KendallTau {
     type Output = f64;
 
     fn update(&mut self, input: (f64, f64)) -> Option<f64> {
+        if !input.0.is_finite() || !input.1.is_finite() {
+            return None;
+        }
         if self.window.len() == self.period {
             self.window.pop_front();
         }
@@ -292,5 +295,15 @@ mod tests {
         assert_eq!(k.update((2.0, 2.0)), None);
         let v = k.update((3.0, 3.0)).unwrap();
         assert!((-1.0..=1.0).contains(&v), "got {v}");
+    }
+
+    #[test]
+    fn non_finite_input_returns_none() {
+        let mut k = KendallTau::new(2).unwrap();
+        assert_eq!(k.update((f64::NAN, 1.0)), None);
+        assert_eq!(k.update((1.0, f64::INFINITY)), None);
+        // The rejected ticks leave no trace: a fresh window still warms up.
+        assert_eq!(k.update((1.0, 2.0)), None);
+        assert!(k.update((2.0, 5.0)).is_some());
     }
 }
