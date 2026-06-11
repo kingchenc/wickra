@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- The R binding's golden-fixture parity test now skips gracefully when the shared
+  `testdata/golden` fixtures are not bundled with the package — standalone
+  r-universe / CRAN builds package only `bindings/r`, so the repo-root fixtures
+  are unreachable there. The parity stays enforced by the repository CI, where
+  the fixtures are present.
 
 ## [0.8.4] - 2026-06-11
 ### Fixed
