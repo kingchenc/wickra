@@ -8,8 +8,12 @@ Description: R bindings for the Wickra technical-analysis library over its C ABI
     the Rust core and the other language bindings, so that live and historical
     evaluation use the exact same implementation.
 License: MIT + file LICENSE | Apache License 2.0
-URL: https://github.com/wickra-lib/wickra, https://docs.wickra.org
+URL: https://github.com/wickra-lib/wickra, https://docs.wickra.org,
+    https://wickra-lib.r-universe.dev
 BugReports: https://github.com/wickra-lib/wickra/issues
+X-schema.org-keywords: technical-analysis, indicators, streaming, trading,
+    finance, quant, algorithmic-trading, backtesting, time-series, ta-lib,
+    candlestick, market-data
 Encoding: UTF-8
 NeedsCompilation: yes
 SystemRequirements: the Wickra C ABI shared library, downloaded automatically at

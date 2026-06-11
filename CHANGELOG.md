@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Package registry metadata for better discoverability:
+  - R (R-universe): added the R-universe URL and `X-schema.org-keywords` to the
+    R `DESCRIPTION`, plus a package logo at `bindings/r/man/figures/logo.png`
+    (pkgdown convention).
+  - Python (PyPI): added a `Documentation` project URL.
+  - C# (NuGet): added a package icon via `PackageIcon`.
 
 ## [0.8.5] - 2026-06-11
 ### Fixed
