@@ -419,13 +419,13 @@ The library is provided **as is**, without warranty of any kind; see
 
 <p align="center">
   <a href="https://github.com/wickra-lib/wickra/stargazers">
-    <img alt="GitHub stars" src="https://img.shields.io/github/stars/wickra-lib/wickra?style=for-the-badge&logo=github&logoColor=white&color=ffd866">
+    <img alt="GitHub stars" src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/stars.svg">
   </a>
   <a href="https://github.com/wickra-lib/wickra/network/members">
-    <img alt="GitHub forks" src="https://img.shields.io/github/forks/wickra-lib/wickra?style=for-the-badge&logo=github&logoColor=white&color=78dce8">
+    <img alt="GitHub forks" src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/forks.svg">
   </a>
   <a href="https://github.com/wickra-lib/wickra/issues">
-    <img alt="GitHub issues" src="https://img.shields.io/github/issues/wickra-lib/wickra?style=for-the-badge&logo=github&logoColor=white&color=ff6188">
+    <img alt="GitHub issues" src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/issues.svg">
   </a>
 </p>
 
@@ -436,6 +436,6 @@ The library is provided **as is**, without warranty of any kind; see
 <p align="center">
   <a href="https://star-history.com/#wickra-lib/wickra&Date">
     <img alt="Wickra star history" width="640"
-         src="https://api.star-history.com/svg?repos=wickra-lib/wickra&type=Date&theme=dark">
+         src="https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/star-history.svg">
   </a>
 </p>
