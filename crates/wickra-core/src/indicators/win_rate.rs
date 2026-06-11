@@ -66,6 +66,9 @@ impl Indicator for WinRate {
     type Output = f64;
 
     fn update(&mut self, ret: f64) -> Option<f64> {
+        if !ret.is_finite() {
+            return None;
+        }
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("window is non-empty");
             if old > 0.0 {

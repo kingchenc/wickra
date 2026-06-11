@@ -116,6 +116,9 @@ impl Indicator for SpreadBollingerBands {
 
     fn update(&mut self, input: (f64, f64)) -> Option<SpreadBollingerBandsOutput> {
         let (a, b) = input;
+        if !a.is_finite() || !b.is_finite() {
+            return None;
+        }
         let spread = a - b;
         if self.window.len() == self.period {
             let old = self.window.pop_front().expect("non-empty");

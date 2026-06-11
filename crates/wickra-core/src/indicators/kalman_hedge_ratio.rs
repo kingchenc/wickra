@@ -116,6 +116,9 @@ impl Indicator for KalmanHedgeRatio {
 
     fn update(&mut self, input: (f64, f64)) -> Option<KalmanHedgeRatioOutput> {
         let (a, b) = input;
+        if !a.is_finite() || !b.is_finite() {
+            return None;
+        }
         // Predicted state covariance: add the transition noise to the diagonal
         // (the very first observation starts from a zero prior).
         let mut cov_pred = self.cov;

@@ -89,6 +89,9 @@ impl Indicator for MedianAbsoluteDeviation {
     type Output = f64;
 
     fn update(&mut self, value: f64) -> Option<f64> {
+        if !value.is_finite() {
+            return None;
+        }
         if self.window.len() == self.period {
             self.window.pop_front();
         }

@@ -74,6 +74,9 @@ impl Indicator for PercentageTrailingStop {
     type Output = f64;
 
     fn update(&mut self, close: f64) -> Option<f64> {
+        if !close.is_finite() {
+            return None;
+        }
         let step = close.abs() * self.percent / 100.0;
         let stop = match self.prev_stop {
             Some(prev) => {

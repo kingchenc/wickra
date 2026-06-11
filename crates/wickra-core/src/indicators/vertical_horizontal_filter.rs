@@ -68,6 +68,9 @@ impl Indicator for VerticalHorizontalFilter {
     type Output = f64;
 
     fn update(&mut self, value: f64) -> Option<f64> {
+        if !value.is_finite() {
+            return None;
+        }
         if self.closes.len() == self.period {
             self.closes.pop_front();
         }

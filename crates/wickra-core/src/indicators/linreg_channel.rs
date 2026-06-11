@@ -98,6 +98,9 @@ impl Indicator for LinRegChannel {
     type Output = LinRegChannelOutput;
 
     fn update(&mut self, value: f64) -> Option<LinRegChannelOutput> {
+        if !value.is_finite() {
+            return None;
+        }
         if self.window.len() == self.period {
             self.window.pop_front();
         }

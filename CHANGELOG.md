@@ -7,18 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
-- Pairwise indicators no longer let a single non-finite (NaN/inf) tick poison
-  their state. Sixteen indicators (`Beta`, `BetaNeutralSpread`, `Cointegration`,
-  `HasbrouckInformationShare`, `PearsonCorrelation`, `RollingCorrelation`,
-  `RollingCovariance`, `DistanceSsd`, `GrangerCausality`, `KendallTau`,
-  `LeadLagCrossCorrelation`, `OuHalfLife`, `SpearmanCorrelation`,
-  `SpreadAr1Coefficient`, `SpreadHurst`, `VarianceRatio`) now reject non-finite
-  input and return `None`, matching the streaming-robustness guarantee.
+- A single non-finite (NaN/inf) tick no longer poisons indicator state.
+  The 16 pairwise running-sum/buffer indicators fixed first (`Beta`,
+  `BetaNeutralSpread`, `Cointegration`, `HasbrouckInformationShare`,
+  `PearsonCorrelation`, `RollingCorrelation`, `RollingCovariance`,
+  `DistanceSsd`, `GrangerCausality`, `KendallTau`, `LeadLagCrossCorrelation`,
+  `OuHalfLife`, `SpearmanCorrelation`, `SpreadAr1Coefficient`, `SpreadHurst`,
+  `VarianceRatio`) were joined by 38 more scalar/pairwise indicators the new
+  property harness surfaced (the linear-regression family, rolling quantiles
+  and IQR, `Variance`/`StdDev`-derived stats, `Kurtosis`/`Skewness`, the
+  trailing stops, `KalmanHedgeRatio`, `SpreadBollingerBands`, and more). Every
+  `f64` / `(f64, f64)` indicator now rejects non-finite input and returns
+  `None`, matching the streaming-robustness guarantee — and the harness enforces
+  it going forward.
 
 ### Added
 - Catalogue-wide property-based invariant harness
-  (`crates/wickra-core/tests/invariants.rs`) asserting `batch == streaming` and
-  `reset == fresh` for every indicator and bar-builder.
+  (`crates/wickra-core/tests/invariants.rs`) asserting `batch == streaming`,
+  `reset == fresh`, and non-finite-input rejection for every indicator and
+  bar-builder.
 
 ### Changed
 - CI: every job now has a runtime cap and the historically flaky Node test step

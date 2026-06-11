@@ -1,23 +1,20 @@
 //! Property-based invariants every indicator must uphold.
 //!
-//! Two *universal* properties are checked against random input sequences, rolled
-//! out over the whole catalogue so a regression in any single indicator surfaces
-//! here:
+//! Three properties are checked against random input sequences, rolled out over
+//! the whole catalogue so a regression in any single indicator surfaces here:
 //!
 //! 1. **batch == streaming** — `batch()` must replay `update()` exactly.
 //! 2. **reset == fresh** — after `reset()`, re-feeding the same data must match
 //!    a freshly constructed instance.
+//! 3. **non-finite is rejected without poisoning** — a NaN/inf tick returns
+//!    `None` and leaves state identical to never having seen it. `Candle` and the
+//!    other validated input types cannot be non-finite, so this applies to the
+//!    `f64` and `(f64, f64)` families. This is the regression net that would have
+//!    caught the pairwise non-finite bug (#251).
 //!
-//! Two further properties were evaluated and deliberately left out of the shared
-//! harness:
-//!
-//! - **warmup-exactness** ("nothing emitted before `warmup_period`") is *not*
-//!   universal — many multi-component and candlestick indicators emit earlier by
-//!   design (`warmup_period` is an upper bound), so it produced false positives.
-//! - **non-finite rejection** is a real guarantee but ~38 scalar/pairwise
-//!   indicators currently violate it (tracked separately); re-add this check
-//!   here once those are guarded, and it becomes the permanent regression net
-//!   that would have caught PR #251.
+//! (Warmup-exactness — "nothing emitted before `warmup_period`" — was evaluated
+//! and left out: it is not universal, as many multi-component and candlestick
+//! indicators emit before `warmup_period` by design.)
 
 use proptest::prelude::*;
 use wickra_core::*;
@@ -83,6 +80,56 @@ where
     Ok(())
 }
 
+// Non-finite rejection for the `f64` family: a NaN/inf tick returns `None` and
+// does not poison state (the poisoned run must match a clean one). Only applies
+// to scalar/pairwise inputs — `Candle` and the exotic types validate finiteness
+// at construction.
+fn check_scalar_nonfinite<I>(
+    make: impl Fn() -> I,
+    xs: &[f64],
+) -> std::result::Result<(), TestCaseError>
+where
+    I: Indicator<Input = f64>,
+    I::Output: std::fmt::Debug,
+{
+    let mut s = make();
+    let clean: Vec<_> = xs.iter().map(|&x| s.update(x)).collect();
+    let mut g = make();
+    prop_assert!(g.update(f64::NAN).is_none(), "NaN not rejected");
+    prop_assert!(g.update(f64::INFINITY).is_none(), "inf not rejected");
+    prop_assert!(g.update(f64::NEG_INFINITY).is_none(), "-inf not rejected");
+    let poisoned: Vec<_> = xs.iter().map(|&x| g.update(x)).collect();
+    prop_assert_eq!(
+        format!("{poisoned:?}"),
+        format!("{clean:?}"),
+        "non-finite poisoned state"
+    );
+    Ok(())
+}
+
+// Non-finite rejection for the `(f64, f64)` family.
+fn check_pairwise_nonfinite<I>(
+    make: impl Fn() -> I,
+    xs: &[(f64, f64)],
+) -> std::result::Result<(), TestCaseError>
+where
+    I: Indicator<Input = (f64, f64)>,
+    I::Output: std::fmt::Debug,
+{
+    let mut s = make();
+    let clean: Vec<_> = xs.iter().map(|&p| s.update(p)).collect();
+    let mut g = make();
+    prop_assert!(g.update((f64::NAN, 1.0)).is_none(), "NaN not rejected");
+    prop_assert!(g.update((1.0, f64::INFINITY)).is_none(), "inf not rejected");
+    let poisoned: Vec<_> = xs.iter().map(|&p| g.update(p)).collect();
+    prop_assert_eq!(
+        format!("{poisoned:?}"),
+        format!("{clean:?}"),
+        "non-finite poisoned state"
+    );
+    Ok(())
+}
+
 // --- per-family roll-out macros ----------------------------------------------
 
 macro_rules! scalar_inv {
@@ -92,6 +139,7 @@ macro_rules! scalar_inv {
             #[test]
             fn $name(xs in prop::collection::vec(-1.0e6f64..1.0e6, 0..160)) {
                 check_seq(|| { $($ctor)+ }, &xs)?;
+                check_scalar_nonfinite(|| { $($ctor)+ }, &xs)?;
             }
         }
     };
@@ -131,6 +179,7 @@ macro_rules! pair_inv {
                 xs in prop::collection::vec((-1.0e6f64..1.0e6, -1.0e6f64..1.0e6), 0..160)
             ) {
                 check_seq(|| { $($ctor)+ }, &xs)?;
+                check_pairwise_nonfinite(|| { $($ctor)+ }, &xs)?;
             }
         }
     };

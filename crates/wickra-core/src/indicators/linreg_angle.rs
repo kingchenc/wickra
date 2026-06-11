@@ -57,6 +57,9 @@ impl Indicator for LinRegAngle {
     type Output = f64;
 
     fn update(&mut self, value: f64) -> Option<f64> {
+        if !value.is_finite() {
+            return None;
+        }
         self.slope.update(value).map(|s| s.atan().to_degrees())
     }
 

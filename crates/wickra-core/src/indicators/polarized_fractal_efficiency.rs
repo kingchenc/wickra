@@ -82,6 +82,9 @@ impl Indicator for PolarizedFractalEfficiency {
     type Output = f64;
 
     fn update(&mut self, close: f64) -> Option<f64> {
+        if !close.is_finite() {
+            return None;
+        }
         if let Some(prev) = self.prev_close {
             let diff = close - prev;
             let segment = diff.mul_add(diff, 1.0).sqrt();

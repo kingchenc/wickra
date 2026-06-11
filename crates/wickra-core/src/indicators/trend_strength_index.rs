@@ -75,6 +75,9 @@ impl Indicator for TrendStrengthIndex {
     type Output = f64;
 
     fn update(&mut self, price: f64) -> Option<f64> {
+        if !price.is_finite() {
+            return None;
+        }
         self.buf.push_back(price);
         if self.buf.len() > self.period {
             self.buf.pop_front();
