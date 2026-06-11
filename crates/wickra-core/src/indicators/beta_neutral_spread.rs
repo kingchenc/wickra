@@ -88,6 +88,9 @@ impl Indicator for BetaNeutralSpread {
 
     fn update(&mut self, input: (f64, f64)) -> Option<f64> {
         let (a, b) = input;
+        if !a.is_finite() || !b.is_finite() {
+            return None;
+        }
         if self.window.len() == self.period {
             let (oa, ob) = self.window.pop_front().expect("non-empty");
             self.sum_a -= oa;
@@ -243,5 +246,16 @@ mod tests {
         let mut s = BetaNeutralSpread::new(20).unwrap();
         let streamed: Vec<_> = pairs.iter().map(|p| s.update(*p)).collect();
         assert_eq!(batch, streamed);
+    }
+
+    #[test]
+    fn non_finite_input_returns_none() {
+        let mut s = BetaNeutralSpread::new(3).unwrap();
+        assert_eq!(s.update((f64::NAN, 1.0)), None);
+        assert_eq!(s.update((1.0, f64::INFINITY)), None);
+        // The rejected ticks leave no trace: a fresh window still warms up.
+        assert_eq!(s.update((1.0, 2.0)), None);
+        assert_eq!(s.update((2.0, 5.0)), None);
+        assert!(s.update((3.0, 7.0)).is_some());
     }
 }

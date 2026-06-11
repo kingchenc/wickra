@@ -90,6 +90,9 @@ impl Indicator for RollingCorrelation {
 
     fn update(&mut self, input: (f64, f64)) -> Option<f64> {
         let (x, y) = input;
+        if !x.is_finite() || !y.is_finite() {
+            return None;
+        }
         let Some((px, py)) = self.prev else {
             // First level in each channel: store it, no return yet.
             self.prev = Some((x, y));
@@ -271,5 +274,16 @@ mod tests {
         let mut rc = RollingCorrelation::new(14).unwrap();
         let streamed: Vec<_> = pairs.iter().map(|p| rc.update(*p)).collect();
         assert_eq!(batch, streamed);
+    }
+
+    #[test]
+    fn non_finite_input_returns_none() {
+        let mut rc = RollingCorrelation::new(2).unwrap();
+        assert_eq!(rc.update((f64::NAN, 1.0)), None);
+        assert_eq!(rc.update((1.0, f64::INFINITY)), None);
+        // First finite tick seeds prev; two more returns fill the window.
+        assert_eq!(rc.update((1.0, 1.0)), None);
+        assert_eq!(rc.update((2.0, 3.0)), None);
+        assert!(rc.update((3.0, 5.0)).is_some());
     }
 }
