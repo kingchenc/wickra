@@ -84,6 +84,9 @@ impl Indicator for SpreadHurst {
 
     fn update(&mut self, input: (f64, f64)) -> Option<f64> {
         let (a, b) = input;
+        if !a.is_finite() || !b.is_finite() {
+            return None;
+        }
         if self.window.len() == self.period {
             self.window.pop_front();
         }
@@ -267,5 +270,17 @@ mod tests {
         let mut h = SpreadHurst::new(32).unwrap();
         let streamed: Vec<_> = pairs.iter().map(|p| h.update(*p)).collect();
         assert_eq!(batch, streamed);
+    }
+
+    #[test]
+    fn non_finite_input_returns_none() {
+        let mut h = SpreadHurst::new(8).unwrap();
+        assert_eq!(h.update((f64::NAN, 1.0)), None);
+        assert_eq!(h.update((1.0, f64::INFINITY)), None);
+        // The rejected ticks leave no trace: a fresh window still warms up.
+        for t in 0..7 {
+            assert_eq!(h.update((f64::from(t), 0.0)), None);
+        }
+        assert!(h.update((7.0, 0.0)).is_some());
     }
 }

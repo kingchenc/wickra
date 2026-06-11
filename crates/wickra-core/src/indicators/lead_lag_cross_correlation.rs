@@ -152,6 +152,9 @@ impl Indicator for LeadLagCrossCorrelation {
 
     fn update(&mut self, input: (f64, f64)) -> Option<LeadLagCrossCorrelationOutput> {
         let (a, b) = input;
+        if !a.is_finite() || !b.is_finite() {
+            return None;
+        }
         if self.a_buf.len() == self.len {
             self.a_buf.pop_front();
             self.b_buf.pop_front();
@@ -320,5 +323,18 @@ mod tests {
         let mut ll = LeadLagCrossCorrelation::new(12, 5).unwrap();
         let streamed: Vec<_> = pairs.iter().map(|p| ll.update(*p)).collect();
         assert_eq!(batch, streamed);
+    }
+
+    #[test]
+    fn non_finite_input_returns_none() {
+        // len = window + 2*max_lag = 2 + 2 = 4 finite ticks fill the buffers.
+        let mut ll = LeadLagCrossCorrelation::new(2, 1).unwrap();
+        assert_eq!(ll.update((f64::NAN, 1.0)), None);
+        assert_eq!(ll.update((1.0, f64::INFINITY)), None);
+        // The rejected ticks leave no trace: a fresh window still warms up.
+        assert_eq!(ll.update((1.0, 2.0)), None);
+        assert_eq!(ll.update((2.0, 1.0)), None);
+        assert_eq!(ll.update((3.0, 4.0)), None);
+        assert!(ll.update((4.0, 2.0)).is_some());
     }
 }

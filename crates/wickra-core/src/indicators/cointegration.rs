@@ -116,6 +116,9 @@ impl Indicator for Cointegration {
 
     fn update(&mut self, input: (f64, f64)) -> Option<CointegrationOutput> {
         let (a, b) = input;
+        if !a.is_finite() || !b.is_finite() {
+            return None;
+        }
         if self.window.len() == self.period {
             let (oa, ob) = self.window.pop_front().expect("non-empty");
             self.sum_a -= oa;
@@ -442,5 +445,17 @@ mod tests {
         let mut c = Cointegration::new(25, 2).unwrap();
         let streamed: Vec<_> = pairs.iter().map(|p| c.update(*p)).collect();
         assert_eq!(batch, streamed);
+    }
+
+    #[test]
+    fn non_finite_input_returns_none() {
+        let mut c = Cointegration::new(4, 0).unwrap();
+        assert_eq!(c.update((f64::NAN, 1.0)), None);
+        assert_eq!(c.update((1.0, f64::INFINITY)), None);
+        // The rejected ticks leave no trace: a fresh window still warms up.
+        assert_eq!(c.update((1.0, 2.0)), None);
+        assert_eq!(c.update((2.0, 5.0)), None);
+        assert_eq!(c.update((3.0, 7.0)), None);
+        assert!(c.update((4.0, 11.0)).is_some());
     }
 }

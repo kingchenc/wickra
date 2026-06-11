@@ -89,6 +89,9 @@ impl Indicator for SpreadAr1Coefficient {
 
     fn update(&mut self, input: (f64, f64)) -> Option<f64> {
         let (a, b) = input;
+        if !a.is_finite() || !b.is_finite() {
+            return None;
+        }
         if self.window.len() == self.period {
             self.window.pop_front();
         }
@@ -247,5 +250,17 @@ mod tests {
         let mut ar1 = SpreadAr1Coefficient::new(25).unwrap();
         let streamed: Vec<_> = pairs.iter().map(|p| ar1.update(*p)).collect();
         assert_eq!(batch, streamed);
+    }
+
+    #[test]
+    fn non_finite_input_returns_none() {
+        let mut ar1 = SpreadAr1Coefficient::new(4).unwrap();
+        assert_eq!(ar1.update((f64::NAN, 1.0)), None);
+        assert_eq!(ar1.update((1.0, f64::INFINITY)), None);
+        // The rejected ticks leave no trace: a fresh window still warms up.
+        assert_eq!(ar1.update((1.0, 0.0)), None);
+        assert_eq!(ar1.update((2.0, 0.0)), None);
+        assert_eq!(ar1.update((3.0, 0.0)), None);
+        assert!(ar1.update((4.0, 0.0)).is_some());
     }
 }
