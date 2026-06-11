@@ -11,3 +11,4 @@
 ^src/wickra-c$
 ^src/Makevars$
 ^\.gitignore$
+^data-raw$

@@ -926,6 +926,16 @@ jobs:
           R CMD INSTALL bindings/r
           Rscript -e 'library(testthat); library(wickra); test_dir("bindings/r/tests/testthat", stop_on_failure = TRUE)'
 
+      - name: Build the vignette code
+        shell: bash
+        # The getting-started vignette runs at R CMD check time on r-universe /
+        # CRAN (with pandoc); this job only INSTALLs, so execute the vignette's R
+        # chunks here (knit, no pandoc needed) to catch a broken example before it
+        # reaches the published build.
+        run: |
+          Rscript -e 'install.packages("knitr", repos = Sys.getenv("RSPM", unset = "https://cloud.r-project.org"))'
+          Rscript -e 'knitr::knit("bindings/r/vignettes/getting-started.Rmd", output = tempfile(fileext = ".md"), quiet = TRUE); cat("vignette code OK\n")'
+
       - name: Run the offline R examples
         shell: bash
         # No loader-path exports: the installed package is self-contained (bundled
