@@ -1,0 +1,113 @@
+---
+title: "Getting started with wickra"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with wickra}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+`wickra` exposes the Wickra technical-analysis library in R over its C ABI hub.
+Every indicator is a constructor returning a `wickra_indicator`; you feed it data
+one observation at a time with `update()` (an O(1) streaming step) or run a whole
+series at once with `batch()`. Both paths share the exact same Rust core, so a
+live feed and a historical backtest compute identical values.
+
+```{r}
+library(wickra)
+```
+
+## A sample series
+
+The package ships a small synthetic OHLCV series, `sample_ohlcv`, for examples
+(a seeded random walk — not real market data).
+
+```{r}
+head(sample_ohlcv)
+```
+
+## Batch: a whole series at once
+
+Scalar indicators run over a vector with `batch()`. Warmup positions are `NA`.
+
+```{r}
+sma <- Sma(20)
+sma_values <- batch(sma, sample_ohlcv$close)
+tail(sma_values)
+```
+
+## Streaming: one observation at a time
+
+The same indicator fed tick-by-tick with `update()` returns the identical
+values — an equivalence the test suite enforces for every indicator.
+
+```{r}
+sma_stream <- Sma(20)
+streamed <- vapply(sample_ohlcv$close, function(p) update(sma_stream, p), numeric(1))
+
+same_warmup <- all(is.na(streamed) == is.na(sma_values))
+same_values <- all(streamed == sma_values, na.rm = TRUE)
+c(batch_equals_streaming = same_warmup && same_values)
+```
+
+A typical streaming loop reacts to each value as it arrives:
+
+```{r}
+rsi <- Rsi(14)
+overbought_days <- 0L
+for (price in sample_ohlcv$close) {
+  v <- update(rsi, price)            # NA during warmup
+  if (!is.na(v) && v > 70) overbought_days <- overbought_days + 1L
+}
+overbought_days
+```
+
+## Multi-output indicators
+
+Indicators with several outputs return a *named* numeric vector (`NA` while
+warming up). MACD is the classic example — line, signal, and histogram:
+
+```{r}
+macd <- MacdIndicator(12, 26, 9)
+last_macd <- c(macd = NA, signal = NA, histogram = NA)
+for (price in sample_ohlcv$close) last_macd <- update(macd, price)
+last_macd
+```
+
+## Candle indicators
+
+Indicators that need the whole bar take the OHLCV fields plus a timestamp:
+
+```{r}
+atr <- Atr(14)
+last_atr <- NA_real_
+for (i in seq_len(nrow(sample_ohlcv))) {
+  last_atr <- update(
+    atr,
+    sample_ohlcv$open[i], sample_ohlcv$high[i], sample_ohlcv$low[i],
+    sample_ohlcv$close[i], sample_ohlcv$volume[i], i - 1
+  )
+}
+last_atr
+```
+
+## Resetting state
+
+`reset()` returns an indicator to its warmup state so the same object can be
+reused on a fresh series:
+
+```{r}
+reset(sma)
+update(sma, 100)   # NaN — warming up again
+```
+
+## Next steps
+
+- Full indicator catalogue, guides, and per-indicator reference:
+  <https://docs.wickra.org>.
+- Every constructor (`Sma()`, `Rsi()`, `MacdIndicator()`, `Atr()`, …) is listed
+  in this package's help index.
