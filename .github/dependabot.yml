@@ -76,3 +76,41 @@ updates:
       default-days: 7
     commit-message:
       prefix: "deps(maven)"
+
+  # C# binding (NuGet). The published Wickra.csproj is a thin C-ABI wrapper with
+  # no external packages, but the test and benchmark projects pull xunit,
+  # Microsoft.NET.Test.Sdk and BenchmarkDotNet.
+  - package-ecosystem: nuget
+    directories:
+      - "/bindings/csharp/Wickra.Tests"
+      - "/bindings/csharp/benchmarks"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: "deps(nuget)"
+
+  # Node examples (npm) — separate from the binding's own package.json.
+  - package-ecosystem: npm
+    directory: "/examples/node"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: "deps(npm)"
+
+  # Go examples (Go modules). The binding's own go.mod has no external deps;
+  # the examples pull coder/websocket.
+  - package-ecosystem: gomod
+    directory: "/examples/go"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: "deps(gomod)"
