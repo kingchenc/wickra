@@ -10,6 +10,9 @@ updates:
       default-days: 7
     commit-message:
       prefix: "deps(cargo)"
+    groups:
+      cargo:
+        patterns: ["*"]
 
   # Node binding npm dependencies.
   - package-ecosystem: npm
@@ -21,6 +24,9 @@ updates:
       default-days: 7
     commit-message:
       prefix: "deps(npm)"
+    groups:
+      node-binding:
+        patterns: ["*"]
 
   # Python binding pip dependencies.
   - package-ecosystem: pip
@@ -32,6 +38,9 @@ updates:
       default-days: 7
     commit-message:
       prefix: "deps(pip)"
+    groups:
+      python-binding:
+        patterns: ["*"]
 
   # Hash-pinned CI/bench Python tooling under .github/requirements/. Each
   # <name>.in is the loose source; the matching hash-locked <name>.txt is the
@@ -47,6 +56,9 @@ updates:
       default-days: 7
     commit-message:
       prefix: "deps(ci-pip)"
+    groups:
+      ci-pip:
+        patterns: ["*"]
 
   # GitHub Actions — keeps the SHA-pinned actions current (Dependabot reads
   # the version comment after each pinned SHA and bumps both together).
@@ -59,6 +71,9 @@ updates:
       default-days: 7
     commit-message:
       prefix: "deps(actions)"
+    groups:
+      github-actions:
+        patterns: ["*"]
 
   # Java binding + examples (Maven). Tracks the C-ABI binding's build plugins
   # (e.g. central-publishing-maven-plugin) and the examples' jackson dependency,
@@ -76,6 +91,9 @@ updates:
       default-days: 7
     commit-message:
       prefix: "deps(maven)"
+    groups:
+      maven:
+        patterns: ["*"]
 
   # C# binding (NuGet). The published Wickra.csproj is a thin C-ABI wrapper with
   # no external packages, but the test and benchmark projects pull xunit,
@@ -91,6 +109,9 @@ updates:
       default-days: 7
     commit-message:
       prefix: "deps(nuget)"
+    groups:
+      nuget:
+        patterns: ["*"]
 
   # Node examples (npm) — separate from the binding's own package.json.
   - package-ecosystem: npm
@@ -102,6 +123,9 @@ updates:
       default-days: 7
     commit-message:
       prefix: "deps(npm)"
+    groups:
+      node-examples:
+        patterns: ["*"]
 
   # Go examples (Go modules). The binding's own go.mod has no external deps;
   # the examples pull coder/websocket.
@@ -114,3 +138,6 @@ updates:
       default-days: 7
     commit-message:
       prefix: "deps(gomod)"
+    groups:
+      go-examples:
+        patterns: ["*"]
