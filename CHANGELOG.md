@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.9] - 2026-06-12
+
+Maintenance release: supply-chain and CI housekeeping only. No library code or
+public API changes.
+
+### Security
+- Triaged the pyo3 advisories RUSTSEC-2026-0176 (out-of-bounds read in
+  `PyList`/`PyTuple` `nth`/`nth_back`) and RUSTSEC-2026-0177 (missing `Sync`
+  bound on `PyCFunction::new_closure`) as **not affecting Wickra**: neither
+  vulnerable API is reachable from the Python binding. Both are fixed in pyo3
+  0.29, but rust-numpy 0.28 pins pyo3 `^0.28`, so the upgrade is blocked
+  upstream; the advisories are recorded with their not-affected rationale in
+  `deny.toml` and `osv-scanner.toml` and will be cleared once rust-numpy 0.29
+  ships.
+
+### Changed
+- Java binding: bumped `central-publishing-maven-plugin` 0.5.0 → 0.10.0 (the
+  Maven Central publishing plugin used at release time).
+- Bumped the SHA-pinned GitHub Actions used in CI (`actions/checkout`,
+  `actions/setup-go`, `actions/setup-java`, `github/codeql-action`,
+  `taiki-e/install-action`) to their latest releases.
+- Added a Maven ecosystem to Dependabot so the Java binding's build plugins and
+  dependencies are tracked going forward.
+
+
 ## [0.8.8] - 2026-06-11
 ### Fixed
 - R binding: declare `Depends: R (>= 2.10)`, clearing the `R CMD check` warning
@@ -1572,7 +1597,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.8.8...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.8.9...HEAD
+[0.8.9]: https://github.com/wickra-lib/wickra/compare/v0.8.8...v0.8.9
 [0.8.8]: https://github.com/wickra-lib/wickra/compare/v0.8.7...v0.8.8
 [0.8.7]: https://github.com/wickra-lib/wickra/compare/v0.8.6...v0.8.7
 [0.8.6]: https://github.com/wickra-lib/wickra/compare/v0.8.5...v0.8.6
