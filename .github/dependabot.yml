@@ -59,3 +59,20 @@ updates:
       default-days: 7
     commit-message:
       prefix: "deps(actions)"
+
+  # Java binding + examples (Maven). Tracks the C-ABI binding's build plugins
+  # (e.g. central-publishing-maven-plugin) and the examples' jackson dependency,
+  # which had no Dependabot coverage before — a stale publishing plugin slipped
+  # through unnoticed until an OSV scan flagged it.
+  - package-ecosystem: maven
+    directories:
+      - "/bindings/java"
+      - "/bindings/java/benchmarks"
+      - "/examples/java"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: "deps(maven)"
