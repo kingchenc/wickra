@@ -15,6 +15,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the language label, lists C and C++ separately, prefers `Node.js` and `WASM` in
   prose, and frames the C ABI as a hub (`C ABI hub → …`) rather than a
   language-list entry. Documentation only — no code or public API changes.
+- Python binding: upgraded `pyo3` and `rust-numpy` from 0.28 to 0.29. No public
+  API changes; the full test suite passes unchanged.
+
+### Security
+- Resolved the pyo3 advisories RUSTSEC-2026-0176 (out-of-bounds read in
+  `PyList`/`PyTuple` `nth`/`nth_back`) and RUSTSEC-2026-0177 (missing `Sync`
+  bound on `PyCFunction::new_closure`) by upgrading to pyo3 0.29, which fixes
+  both. The upgrade was previously blocked upstream by rust-numpy 0.28 pinning
+  pyo3 `^0.28`; rust-numpy 0.29 lifts that pin. The not-affected exceptions are
+  removed from `deny.toml` and `osv-scanner.toml`.
 
 ## [0.9.0] - 2026-06-13
 
