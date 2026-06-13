@@ -37,6 +37,21 @@ fn is_small(candle: Candle) -> bool {
 }
 
 /// Tower Top / Bottom — three-bar reversal detector.
+/// # Example
+///
+/// ```
+/// use wickra_core::{TowerTopBottom, Candle, Indicator};
+///
+/// let mut indicator = TowerTopBottom::new();
+/// // `None` during warmup, then `Some(_)` once enough bars are seen.
+/// let mut out = None;
+/// for i in 0..40i64 {
+///     let p = 100.0 + (i as f64 * 0.4).sin() * 5.0;
+///     let candle = Candle::new(p, p + 1.5, p - 1.5, p + 0.3, 1_000.0, i).unwrap();
+///     out = indicator.update(candle);
+/// }
+/// let _ = out;
+/// ```
 #[derive(Debug, Clone, Default)]
 pub struct TowerTopBottom {
     c1: Option<Candle>,
