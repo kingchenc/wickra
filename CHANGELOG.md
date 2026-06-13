@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-06-13
+
+Maintenance release: Java build-dependency updates and CI/Dependabot
+housekeeping only. No library code or public API changes.
+
+### Changed
+- Java binding: upgraded the test framework to JUnit Jupiter 6.1.0 (from
+  5.10.2) and bumped the Maven build plugins — `maven-compiler-plugin`
+  3.13.0 → 3.15.0, `maven-surefire-plugin` 3.2.5 → 3.5.6, `maven-jar-plugin`
+  3.4.1 → 3.5.0, `maven-source-plugin` 3.3.1 → 3.4.0, `maven-javadoc-plugin`
+  3.7.0 → 3.12.0, and `maven-gpg-plugin` 3.2.4 → 3.2.8.
+- Java benchmarks and examples: bumped `maven-compiler-plugin` to 3.15.0 and
+  `exec-maven-plugin` to 3.6.3; examples bumped `jackson-databind` 2.17.1 →
+  2.22.0.
+- Grouped Dependabot updates per ecosystem into a single pull request and
+  extended tracking to the NuGet (C#) binding and the Node/Go examples.
+
+
 ## [0.8.9] - 2026-06-12
 
 Maintenance release: supply-chain and CI housekeeping only. No library code or
@@ -1597,7 +1615,8 @@ public API changes.
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.8.9...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/wickra-lib/wickra/compare/v0.8.9...v0.9.0
 [0.8.9]: https://github.com/wickra-lib/wickra/compare/v0.8.8...v0.8.9
 [0.8.8]: https://github.com/wickra-lib/wickra/compare/v0.8.7...v0.8.8
 [0.8.7]: https://github.com/wickra-lib/wickra/compare/v0.8.6...v0.8.7
