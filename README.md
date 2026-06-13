@@ -22,8 +22,8 @@
 **Streaming-first technical indicators. Install with `pip install wickra` — no system dependencies.**
 
 Wickra is a multi-language technical-analysis library with a Rust core and
-native bindings for Python, Node.js and WebAssembly, plus a C ABI that C, C++,
-C# / .NET, Go, Java, R and any other C-capable language links against. Every indicator is a
+native bindings for Python, Node.js and WASM, plus a C ABI that C, C++,
+C#, Go, Java, R and any other C-capable language links against. Every indicator is a
 state machine that updates in O(1) per new data point, so live trading bots and
 historical backtests share the exact same implementation.
 
@@ -81,8 +81,8 @@ times to get there.
   breadth, Renko/Kagi/Point&Figure bars, Ehlers DSP cycles, risk/performance
   metrics — every single one updating in **O(1) per tick**. TA-Lib ships ~150 and
   none of them stream.
-- **One Rust core, five first-class targets.** Native **Python · Node.js ·
-  WebAssembly · Rust** plus a **C ABI** for C / C++, C# / .NET, Go, Java, R and any other C-capable language —
+- **One Rust core, five first-class targets.** Native **Rust · Python · Node.js ·
+  WASM** plus a **C ABI** for C, C++, C#, Go, Java, R and any other C-capable language —
   identical math, identical results, zero per-language reimplementation and zero
   GIL bottleneck.
 - **Correct by construction, not by hope.** Every `update` validates its input,
@@ -106,7 +106,7 @@ Every other library forces one of those compromises. Wickra doesn't:
 
 | Library          | Install     | Streaming   | Languages                   | Indicators | Active |
 |------------------|-------------|-------------|-----------------------------|-----------:|--------|
-| **★&nbsp;Wickra**| **clean**   | **yes, O(1)** | **Rust · Python · Node · WASM · C · C# · Go · Java · R** | **514** | **yes** |
+| **★&nbsp;Wickra**| **clean**   | **yes, O(1)** | **Rust · Python · Node.js · WASM · C · C++ · C# · Go · Java · R** | **514** | **yes** |
 | kand             | clean       | yes         | Python · WASM · Rust        |       ~60  | yes    |
 | ta-rs            | clean       | yes         | Rust only                   |       ~30  | stale  |
 | yata             | clean       | partial     | Rust only                   |       ~35  | yes    |
@@ -190,7 +190,7 @@ it — regenerate from the core).
 | Browser / WASM    | `npm install wickra-wasm`                     | `examples/wasm/index.html` |
 | Rust              | `cargo add wickra`                            | `examples/rust/src/bin/backtest.rs` |
 | C / C++ (C ABI)   | header + library, see [`bindings/c`](bindings/c) | `examples/c/streaming.c` |
-| C# / .NET (C ABI) | `dotnet add package Wickra`, see [`bindings/csharp`](bindings/csharp) | `examples/csharp/streaming` |
+| C# (C ABI) | `dotnet add package Wickra`, see [`bindings/csharp`](bindings/csharp) | `examples/csharp/streaming` |
 | Go (cgo, C ABI)   | `go get github.com/wickra-lib/wickra/bindings/go`, see [`bindings/go`](bindings/go) | `examples/go/streaming` |
 | Java (FFM, C ABI)  | Maven Central `org.wickra:wickra`, see [`bindings/java`](bindings/java) | `examples/java` (`Streaming`) |
 | R (`.Call`, C ABI) | `R CMD INSTALL bindings/r`, see [`bindings/r`](bindings/r) | `examples/r/streaming.R` |
@@ -264,7 +264,7 @@ wickra/
 │   ├── node/                napi-rs (publishes on npm)
 │   ├── wasm/                wasm-bindgen (browsers, bundlers, Node)
 │   ├── c/                   C ABI (cdylib + staticlib) + generated include/wickra.h
-│   ├── csharp/              .NET binding over the C ABI (publishes on NuGet)
+│   ├── csharp/              C# binding over the C ABI (publishes on NuGet)
 │   ├── go/                  Go binding over the C ABI via cgo (module tag)
 │   ├── r/                   R binding over the C ABI via .Call (R package)
 │   └── java/                Java binding over the C ABI via the FFM API (Maven Central)
@@ -312,7 +312,7 @@ cargo build -p wickra-c --release
 cmake -S examples/c -B examples/c/build -DWICKRA_LIB_DIR="$PWD/target/release"
 cmake --build examples/c/build && ctest --test-dir examples/c/build --output-on-failure
 
-# C# / .NET binding (requires the .NET 8 SDK; links the C ABI above)
+# C# binding (requires the .NET 8 SDK; links the C ABI above)
 dotnet test bindings/csharp/Wickra.Tests/Wickra.Tests.csproj
 
 # Go binding (requires a C compiler for cgo; links the C ABI above)

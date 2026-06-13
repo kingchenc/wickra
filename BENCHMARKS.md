@@ -98,8 +98,8 @@ python -m benchmarks.compare_libraries
 ## 3. Per-binding throughput — the cost of the boundary
 
 The sections above compare Wickra against other libraries, which only exists for
-Python and Rust (there is no comparable streaming TA library for C, C#, Go, Java,
-R or WebAssembly to benchmark against). Every binding calls the **same** Rust
+Python and Rust (there is no comparable streaming TA library for C, C++, C#, Go, Java,
+R or WASM to benchmark against). Every binding calls the **same** Rust
 core, so these per-binding benchmarks are **not** a speed claim and **not** a
 cross-library ratio — they document the raw cost of crossing each language's FFI
 boundary, in million updates per second (Mupd/s).
@@ -127,12 +127,12 @@ AMD Ryzen 9 9950X):
 | Target               | streaming (Mupd/s) | batch (Mupd/s) |
 |----------------------|-------------------:|---------------:|
 | Rust core (no FFI)   |                391 |            500 |
-| C                    |                383 |            330 |
-| C# / .NET            |                337 |            244 |
+| C / C++              |                383 |            330 |
+| C#                   |                337 |            244 |
 | Python               |                 33 |            488 |
 | Java                 |                 28 |            175 |
 | Go                   |                 24 |            400 |
-| WebAssembly          |                 19 |            167 |
+| WASM                 |                 19 |            167 |
 | Node.js              |                 17 |             10 |
 | R                    |                0.1 |            193 |
 
@@ -160,7 +160,7 @@ node bindings/node/benchmarks/throughput.js                       # native napi-
 cargo build -p wickra-c --release                                 # the C ABI hub
 cmake -S bindings/c/benchmarks -B build/cbench && cmake --build build/cbench \
   && ./build/cbench/throughput                                    # raw C ABI
-dotnet run -c Release --project bindings/csharp/benchmarks        # C# / .NET (P/Invoke)
+dotnet run -c Release --project bindings/csharp/benchmarks        # C# (P/Invoke)
 ( cd bindings/go/benchmarks && go run . )                         # Go (cgo)
 mvn -q -f bindings/java install -DskipTests \
   && mvn -q -f bindings/java/benchmarks exec:exec -Dexec.mainClass=org.wickra.benchmarks.Throughput
