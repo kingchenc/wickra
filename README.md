@@ -202,6 +202,29 @@ The wickra-core crate is `unsafe`-forbidden, so the native bindings are
 memory-safe end to end. The C ABI runs the same safe core; only its thin FFI
 boundary uses `unsafe`, and the caller owns handle lifetimes (`_new` / `_free`).
 
+## Requirements
+
+The minimum supported version per language. Prebuilt packages (Rust, Python,
+Node.js, WASM, C#) need only the runtime; the C-ABI bindings that compile on
+install — Go (cgo) and R (`.Call`) — also need a C compiler, and Java runs with
+`--enable-native-access=ALL-UNNAMED`.
+
+| Language    | Package                              | Minimum supported          |
+|-------------|--------------------------------------|----------------------------|
+| Rust        | crates.io · `wickra`                 | 1.86 (MSRV)                |
+| Python      | PyPI · `wickra` (abi3 wheel)         | 3.9 (tested through 3.13)  |
+| Node.js     | npm · `wickra` (N-API 8)             | 20 (tested on 22 · 24 LTS) |
+| WASM        | npm · `wickra-wasm`                  | any modern JS engine       |
+| C           | `wickra.h` + library (releases)      | C99 compiler               |
+| C++         | `wickra.hpp` over the C ABI          | C++14 compiler             |
+| C#          | NuGet · `Wickra`                     | .NET 8 (`net8.0`)          |
+| Go          | module · `wickra-lib/wickra-go`      | Go 1.23 (cgo)              |
+| Java        | Maven Central · `org.wickra:wickra`  | Java 22 (FFM / Panama)     |
+| R           | source package                       | R ≥ 2.10 (Rtools on Win.)  |
+
+Full per-language detail (runtime vs. build-from-source) is on the
+[Requirements page](https://docs.wickra.org/Requirements) in the docs.
+
 ## Rust API
 
 ```rust
