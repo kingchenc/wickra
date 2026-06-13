@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Standardised programming-language naming and ordering across all docs, READMEs,
+  the documentation site, marketing site, organization profile and GitHub
+  repository descriptions. Canonical list:
+  `Rust, Python, Node.js, WASM, C, C++, C#, Go, Java, R`. Uses C# (not .NET) as
+  the language label, lists C and C++ separately, prefers `Node.js` and `WASM` in
+  prose, and frames the C ABI as a hub (`C ABI hub → …`) rather than a
+  language-list entry. Documentation only — no code or public API changes.
+
 ## [0.9.0] - 2026-06-13
 
 Maintenance release: Java build-dependency updates and CI/Dependabot
