@@ -15,9 +15,9 @@ assignees: []
 - [ ] Rust crate (`wickra`)
 - [ ] Python (`pip install wickra`)
 - [ ] Node.js (`npm install wickra`)
-- [ ] WebAssembly
+- [ ] WASM
 - [ ] C ABI (`bindings/c`)
-- [ ] C# / .NET (`Wickra` on NuGet)
+- [ ] C# (`Wickra` on NuGet)
 - [ ] Go (`bindings/go`)
 - [ ] Java (`org.wickra:wickra` on Maven Central)
 - [ ] R (`bindings/r`)
@@ -31,7 +31,7 @@ assignees: []
 | Binding version      | `e.g. python 0.4.2 / node 0.4.2`       |
 | OS / arch            | `e.g. Windows 11 x86_64, Linux glibc`  |
 | Rust toolchain       | `rustc --version` (If building from source) |
-| Python / Node / .NET version | `python --version` / `node --version` / `dotnet --version` |
+| Python / Node.js / .NET version | `python --version` / `node --version` / `dotnet --version` |
 
 ## Minimal reproducer
 

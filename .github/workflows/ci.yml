@@ -975,18 +975,19 @@ jobs:
 
       # The binding links the C ABI hub at runtime through the Java FFM API; build
       # it first so WickraNative's development fallback finds
-      # target/release/wickra.{so,dylib,dll}. JDK 22+ is required for the final FFM
-      # API, so it is installed explicitly (runners ship 17/21).
+      # target/release/wickra.{so,dylib,dll}. The FFM API is final since JDK 22; we
+      # build on the 25 LTS (22 is EOL; the pom pins bytecode to release 22 so the
+      # runtime floor stays Java 22). Installed explicitly (runners ship 17/21).
       - name: Build the C ABI library
         run: cargo build -p wickra-c --release
 
-      - name: Set up JDK 22
+      - name: Set up JDK 25
         id: setup-java
         continue-on-error: true
         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           distribution: temurin
-          java-version: "22"
+          java-version: "25"
           cache: maven
 
       - name: Retry JDK setup (CDN flake)
@@ -996,12 +997,12 @@ jobs:
           echo "::warning::setup-java failed (likely CDN flake), waiting 30s before retry..."
           sleep 30
 
-      - name: Set up JDK 22 (retry)
+      - name: Set up JDK 25 (retry)
         if: steps.setup-java.outcome == 'failure'
         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           distribution: temurin
-          java-version: "22"
+          java-version: "25"
           cache: maven
 
       - name: Java info

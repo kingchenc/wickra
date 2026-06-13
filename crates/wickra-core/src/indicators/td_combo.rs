@@ -38,6 +38,21 @@ enum Direction {
 }
 
 /// TD Combo — aggressive countdown variant.
+/// # Example
+///
+/// ```
+/// use wickra_core::{TdCombo, Candle, Indicator};
+///
+/// let mut indicator = TdCombo::new(4, 9, 2, 13).unwrap();
+/// // `None` during warmup, then `Some(_)` once enough bars are seen.
+/// let mut out = None;
+/// for i in 0..40i64 {
+///     let p = 100.0 + (i as f64 * 0.4).sin() * 5.0;
+///     let candle = Candle::new(p, p + 1.5, p - 1.5, p + 0.3, 1_000.0, i).unwrap();
+///     out = indicator.update(candle);
+/// }
+/// let _ = out;
+/// ```
 #[derive(Debug, Clone)]
 pub struct TdCombo {
     setup_lookback: usize,

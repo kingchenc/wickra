@@ -1,6 +1,6 @@
 # Wickra WASM examples
 
-Browser demos for the `wickra-wasm` WebAssembly binding. Every demo loads
+Browser demos for the `wickra-wasm` WASM binding. Every demo loads
 the module the same way (`init()` then construct indicators) so the
 patterns transfer one-to-one to your own page.
 
@@ -61,4 +61,4 @@ indicators tracks those.
 - [Quickstart: WASM](https://docs.wickra.org/Quickstart-WASM) — module-load
   flow, `wasm-pack` targets, and the streaming API.
 - [examples/README.md](../README.md) — cross-language index, including
-  the Rust, Python, Node, C and C# siblings of every demo above.
+  the Rust, Python, Node.js, C and C# siblings of every demo above.
