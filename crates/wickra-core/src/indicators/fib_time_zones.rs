@@ -28,6 +28,21 @@ pub struct FibTimeZonesOutput {
 /// pivot has confirmed.
 ///
 /// See `crates/wickra-core/src/indicators/fib_time_zones.rs`.
+/// # Example
+///
+/// ```
+/// use wickra_core::{FibTimeZones, Candle, Indicator};
+///
+/// let mut indicator = FibTimeZones::new();
+/// // `None` during warmup, then `Some(_)` once enough bars are seen.
+/// let mut out = None;
+/// for i in 0..40i64 {
+///     let p = 100.0 + (i as f64 * 0.4).sin() * 5.0;
+///     let candle = Candle::new(p, p + 1.5, p - 1.5, p + 0.3, 1_000.0, i).unwrap();
+///     out = indicator.update(candle);
+/// }
+/// let _ = out;
+/// ```
 #[derive(Debug, Clone)]
 pub struct FibTimeZones {
     swing: SwingTracker,
