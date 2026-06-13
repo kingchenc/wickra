@@ -7,6 +7,19 @@ test_that("scalar update returns the textbook value", {
   expect_equal(v, 4)
 })
 
+test_that("warmup_period and is_ready report the warmup transition", {
+  s <- Sma(3)
+  expect_equal(warmup_period(s), 3L)
+  expect_false(is_ready(s))
+  update(s, 1)
+  update(s, 2)
+  expect_false(is_ready(s))
+  update(s, 3)
+  expect_true(is_ready(s))
+  reset(s)
+  expect_false(is_ready(s))
+})
+
 test_that("batch matches streaming", {
   input <- c(1, 2, 3, 4, 5, 6, 7, 8)
   stream <- Sma(3)

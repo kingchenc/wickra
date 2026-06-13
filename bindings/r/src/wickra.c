@@ -34,6 +34,14 @@ SEXP wk_abandoned_baby_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(1);
   return out;
 }
+SEXP wk_abandoned_baby_warmup_period(SEXP e) {
+  struct AbandonedBaby *h = (struct AbandonedBaby *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_abandoned_baby_warmup_period(h));
+}
+SEXP wk_abandoned_baby_is_ready(SEXP e) {
+  struct AbandonedBaby *h = (struct AbandonedBaby *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_abandoned_baby_is_ready(h));
+}
 SEXP wk_abandoned_baby_reset(SEXP e) {
   struct AbandonedBaby *h = (struct AbandonedBaby *)R_ExternalPtrAddr(e);
   wickra_abandoned_baby_reset(h);
@@ -67,6 +75,14 @@ SEXP wk_abcd_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
   UNPROTECT(1);
   return out;
 }
+SEXP wk_abcd_warmup_period(SEXP e) {
+  struct Abcd *h = (struct Abcd *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_abcd_warmup_period(h));
+}
+SEXP wk_abcd_is_ready(SEXP e) {
+  struct Abcd *h = (struct Abcd *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_abcd_is_ready(h));
+}
 SEXP wk_abcd_reset(SEXP e) {
   struct Abcd *h = (struct Abcd *)R_ExternalPtrAddr(e);
   wickra_abcd_reset(h);
@@ -89,6 +105,14 @@ SEXP wk_absolute_breadth_index_new(void) {
 SEXP wk_absolute_breadth_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct AbsoluteBreadthIndex *h = (struct AbsoluteBreadthIndex *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_absolute_breadth_index_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_absolute_breadth_index_warmup_period(SEXP e) {
+  struct AbsoluteBreadthIndex *h = (struct AbsoluteBreadthIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_absolute_breadth_index_warmup_period(h));
+}
+SEXP wk_absolute_breadth_index_is_ready(SEXP e) {
+  struct AbsoluteBreadthIndex *h = (struct AbsoluteBreadthIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_absolute_breadth_index_is_ready(h));
 }
 SEXP wk_absolute_breadth_index_reset(SEXP e) {
   struct AbsoluteBreadthIndex *h = (struct AbsoluteBreadthIndex *)R_ExternalPtrAddr(e);
@@ -125,6 +149,14 @@ SEXP wk_acceleration_bands_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SE
   UNPROTECT(2);
   return r;
 }
+SEXP wk_acceleration_bands_warmup_period(SEXP e) {
+  struct AccelerationBands *h = (struct AccelerationBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_acceleration_bands_warmup_period(h));
+}
+SEXP wk_acceleration_bands_is_ready(SEXP e) {
+  struct AccelerationBands *h = (struct AccelerationBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_acceleration_bands_is_ready(h));
+}
 SEXP wk_acceleration_bands_reset(SEXP e) {
   struct AccelerationBands *h = (struct AccelerationBands *)R_ExternalPtrAddr(e);
   wickra_acceleration_bands_reset(h);
@@ -157,6 +189,14 @@ SEXP wk_accelerator_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3,
   wickra_accelerator_oscillator_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_accelerator_oscillator_warmup_period(SEXP e) {
+  struct AcceleratorOscillator *h = (struct AcceleratorOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_accelerator_oscillator_warmup_period(h));
+}
+SEXP wk_accelerator_oscillator_is_ready(SEXP e) {
+  struct AcceleratorOscillator *h = (struct AcceleratorOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_accelerator_oscillator_is_ready(h));
 }
 SEXP wk_accelerator_oscillator_reset(SEXP e) {
   struct AcceleratorOscillator *h = (struct AcceleratorOscillator *)R_ExternalPtrAddr(e);
@@ -191,6 +231,14 @@ SEXP wk_ad_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
   UNPROTECT(1);
   return out;
 }
+SEXP wk_ad_oscillator_warmup_period(SEXP e) {
+  struct AdOscillator *h = (struct AdOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_ad_oscillator_warmup_period(h));
+}
+SEXP wk_ad_oscillator_is_ready(SEXP e) {
+  struct AdOscillator *h = (struct AdOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_ad_oscillator_is_ready(h));
+}
 SEXP wk_ad_oscillator_reset(SEXP e) {
   struct AdOscillator *h = (struct AdOscillator *)R_ExternalPtrAddr(e);
   wickra_ad_oscillator_reset(h);
@@ -213,6 +261,14 @@ SEXP wk_ad_volume_line_new(void) {
 SEXP wk_ad_volume_line_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct AdVolumeLine *h = (struct AdVolumeLine *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_ad_volume_line_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_ad_volume_line_warmup_period(SEXP e) {
+  struct AdVolumeLine *h = (struct AdVolumeLine *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_ad_volume_line_warmup_period(h));
+}
+SEXP wk_ad_volume_line_is_ready(SEXP e) {
+  struct AdVolumeLine *h = (struct AdVolumeLine *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_ad_volume_line_is_ready(h));
 }
 SEXP wk_ad_volume_line_reset(SEXP e) {
   struct AdVolumeLine *h = (struct AdVolumeLine *)R_ExternalPtrAddr(e);
@@ -247,6 +303,14 @@ SEXP wk_adaptive_cci_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_adaptive_cci_warmup_period(SEXP e) {
+  struct AdaptiveCci *h = (struct AdaptiveCci *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_adaptive_cci_warmup_period(h));
+}
+SEXP wk_adaptive_cci_is_ready(SEXP e) {
+  struct AdaptiveCci *h = (struct AdaptiveCci *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_adaptive_cci_is_ready(h));
+}
 SEXP wk_adaptive_cci_reset(SEXP e) {
   struct AdaptiveCci *h = (struct AdaptiveCci *)R_ExternalPtrAddr(e);
   wickra_adaptive_cci_reset(h);
@@ -277,6 +341,14 @@ SEXP wk_adaptive_cycle_batch(SEXP e, SEXP a0) {
   wickra_adaptive_cycle_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_adaptive_cycle_warmup_period(SEXP e) {
+  struct AdaptiveCycle *h = (struct AdaptiveCycle *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_adaptive_cycle_warmup_period(h));
+}
+SEXP wk_adaptive_cycle_is_ready(SEXP e) {
+  struct AdaptiveCycle *h = (struct AdaptiveCycle *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_adaptive_cycle_is_ready(h));
 }
 SEXP wk_adaptive_cycle_reset(SEXP e) {
   struct AdaptiveCycle *h = (struct AdaptiveCycle *)R_ExternalPtrAddr(e);
@@ -309,6 +381,14 @@ SEXP wk_adaptive_laguerre_filter_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_adaptive_laguerre_filter_warmup_period(SEXP e) {
+  struct AdaptiveLaguerreFilter *h = (struct AdaptiveLaguerreFilter *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_adaptive_laguerre_filter_warmup_period(h));
+}
+SEXP wk_adaptive_laguerre_filter_is_ready(SEXP e) {
+  struct AdaptiveLaguerreFilter *h = (struct AdaptiveLaguerreFilter *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_adaptive_laguerre_filter_is_ready(h));
+}
 SEXP wk_adaptive_laguerre_filter_reset(SEXP e) {
   struct AdaptiveLaguerreFilter *h = (struct AdaptiveLaguerreFilter *)R_ExternalPtrAddr(e);
   wickra_adaptive_laguerre_filter_reset(h);
@@ -339,6 +419,14 @@ SEXP wk_adaptive_rsi_batch(SEXP e, SEXP a0) {
   wickra_adaptive_rsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_adaptive_rsi_warmup_period(SEXP e) {
+  struct AdaptiveRsi *h = (struct AdaptiveRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_adaptive_rsi_warmup_period(h));
+}
+SEXP wk_adaptive_rsi_is_ready(SEXP e) {
+  struct AdaptiveRsi *h = (struct AdaptiveRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_adaptive_rsi_is_ready(h));
 }
 SEXP wk_adaptive_rsi_reset(SEXP e) {
   struct AdaptiveRsi *h = (struct AdaptiveRsi *)R_ExternalPtrAddr(e);
@@ -373,6 +461,14 @@ SEXP wk_adl_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_adl_warmup_period(SEXP e) {
+  struct Adl *h = (struct Adl *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_adl_warmup_period(h));
+}
+SEXP wk_adl_is_ready(SEXP e) {
+  struct Adl *h = (struct Adl *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_adl_is_ready(h));
+}
 SEXP wk_adl_reset(SEXP e) {
   struct Adl *h = (struct Adl *)R_ExternalPtrAddr(e);
   wickra_adl_reset(h);
@@ -406,6 +502,14 @@ SEXP wk_advance_block_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
   UNPROTECT(1);
   return out;
 }
+SEXP wk_advance_block_warmup_period(SEXP e) {
+  struct AdvanceBlock *h = (struct AdvanceBlock *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_advance_block_warmup_period(h));
+}
+SEXP wk_advance_block_is_ready(SEXP e) {
+  struct AdvanceBlock *h = (struct AdvanceBlock *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_advance_block_is_ready(h));
+}
 SEXP wk_advance_block_reset(SEXP e) {
   struct AdvanceBlock *h = (struct AdvanceBlock *)R_ExternalPtrAddr(e);
   wickra_advance_block_reset(h);
@@ -429,6 +533,14 @@ SEXP wk_advance_decline_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   struct AdvanceDecline *h = (struct AdvanceDecline *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_advance_decline_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
+SEXP wk_advance_decline_warmup_period(SEXP e) {
+  struct AdvanceDecline *h = (struct AdvanceDecline *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_advance_decline_warmup_period(h));
+}
+SEXP wk_advance_decline_is_ready(SEXP e) {
+  struct AdvanceDecline *h = (struct AdvanceDecline *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_advance_decline_is_ready(h));
+}
 SEXP wk_advance_decline_reset(SEXP e) {
   struct AdvanceDecline *h = (struct AdvanceDecline *)R_ExternalPtrAddr(e);
   wickra_advance_decline_reset(h);
@@ -451,6 +563,14 @@ SEXP wk_advance_decline_ratio_new(void) {
 SEXP wk_advance_decline_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct AdvanceDeclineRatio *h = (struct AdvanceDeclineRatio *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_advance_decline_ratio_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_advance_decline_ratio_warmup_period(SEXP e) {
+  struct AdvanceDeclineRatio *h = (struct AdvanceDeclineRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_advance_decline_ratio_warmup_period(h));
+}
+SEXP wk_advance_decline_ratio_is_ready(SEXP e) {
+  struct AdvanceDeclineRatio *h = (struct AdvanceDeclineRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_advance_decline_ratio_is_ready(h));
 }
 SEXP wk_advance_decline_ratio_reset(SEXP e) {
   struct AdvanceDeclineRatio *h = (struct AdvanceDeclineRatio *)R_ExternalPtrAddr(e);
@@ -487,6 +607,14 @@ SEXP wk_adx_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
   UNPROTECT(2);
   return r;
 }
+SEXP wk_adx_warmup_period(SEXP e) {
+  struct Adx *h = (struct Adx *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_adx_warmup_period(h));
+}
+SEXP wk_adx_is_ready(SEXP e) {
+  struct Adx *h = (struct Adx *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_adx_is_ready(h));
+}
 SEXP wk_adx_reset(SEXP e) {
   struct Adx *h = (struct Adx *)R_ExternalPtrAddr(e);
   wickra_adx_reset(h);
@@ -519,6 +647,14 @@ SEXP wk_adxr_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
   wickra_adxr_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_adxr_warmup_period(SEXP e) {
+  struct Adxr *h = (struct Adxr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_adxr_warmup_period(h));
+}
+SEXP wk_adxr_is_ready(SEXP e) {
+  struct Adxr *h = (struct Adxr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_adxr_is_ready(h));
 }
 SEXP wk_adxr_reset(SEXP e) {
   struct Adxr *h = (struct Adxr *)R_ExternalPtrAddr(e);
@@ -555,6 +691,14 @@ SEXP wk_alligator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   UNPROTECT(2);
   return r;
 }
+SEXP wk_alligator_warmup_period(SEXP e) {
+  struct Alligator *h = (struct Alligator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_alligator_warmup_period(h));
+}
+SEXP wk_alligator_is_ready(SEXP e) {
+  struct Alligator *h = (struct Alligator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_alligator_is_ready(h));
+}
 SEXP wk_alligator_reset(SEXP e) {
   struct Alligator *h = (struct Alligator *)R_ExternalPtrAddr(e);
   wickra_alligator_reset(h);
@@ -585,6 +729,14 @@ SEXP wk_alma_batch(SEXP e, SEXP a0) {
   wickra_alma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_alma_warmup_period(SEXP e) {
+  struct Alma *h = (struct Alma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_alma_warmup_period(h));
+}
+SEXP wk_alma_is_ready(SEXP e) {
+  struct Alma *h = (struct Alma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_alma_is_ready(h));
 }
 SEXP wk_alma_reset(SEXP e) {
   struct Alma *h = (struct Alma *)R_ExternalPtrAddr(e);
@@ -617,6 +769,14 @@ SEXP wk_alpha_batch(SEXP e, SEXP a0, SEXP a1) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_alpha_warmup_period(SEXP e) {
+  struct Alpha *h = (struct Alpha *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_alpha_warmup_period(h));
+}
+SEXP wk_alpha_is_ready(SEXP e) {
+  struct Alpha *h = (struct Alpha *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_alpha_is_ready(h));
+}
 SEXP wk_alpha_reset(SEXP e) {
   struct Alpha *h = (struct Alpha *)R_ExternalPtrAddr(e);
   wickra_alpha_reset(h);
@@ -639,6 +799,14 @@ SEXP wk_amihud_illiquidity_new(SEXP a0) {
 SEXP wk_amihud_illiquidity_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct AmihudIlliquidity *h = (struct AmihudIlliquidity *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_amihud_illiquidity_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
+}
+SEXP wk_amihud_illiquidity_warmup_period(SEXP e) {
+  struct AmihudIlliquidity *h = (struct AmihudIlliquidity *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_amihud_illiquidity_warmup_period(h));
+}
+SEXP wk_amihud_illiquidity_is_ready(SEXP e) {
+  struct AmihudIlliquidity *h = (struct AmihudIlliquidity *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_amihud_illiquidity_is_ready(h));
 }
 SEXP wk_amihud_illiquidity_reset(SEXP e) {
   struct AmihudIlliquidity *h = (struct AmihudIlliquidity *)R_ExternalPtrAddr(e);
@@ -670,6 +838,14 @@ SEXP wk_anchored_rsi_batch(SEXP e, SEXP a0) {
   wickra_anchored_rsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_anchored_rsi_warmup_period(SEXP e) {
+  struct AnchoredRsi *h = (struct AnchoredRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_anchored_rsi_warmup_period(h));
+}
+SEXP wk_anchored_rsi_is_ready(SEXP e) {
+  struct AnchoredRsi *h = (struct AnchoredRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_anchored_rsi_is_ready(h));
 }
 SEXP wk_anchored_rsi_reset(SEXP e) {
   struct AnchoredRsi *h = (struct AnchoredRsi *)R_ExternalPtrAddr(e);
@@ -703,6 +879,14 @@ SEXP wk_anchored_vwap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
   wickra_anchored_vwap_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_anchored_vwap_warmup_period(SEXP e) {
+  struct AnchoredVwap *h = (struct AnchoredVwap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_anchored_vwap_warmup_period(h));
+}
+SEXP wk_anchored_vwap_is_ready(SEXP e) {
+  struct AnchoredVwap *h = (struct AnchoredVwap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_anchored_vwap_is_ready(h));
 }
 SEXP wk_anchored_vwap_reset(SEXP e) {
   struct AnchoredVwap *h = (struct AnchoredVwap *)R_ExternalPtrAddr(e);
@@ -739,6 +923,14 @@ SEXP wk_andrews_pitchfork_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   UNPROTECT(2);
   return r;
 }
+SEXP wk_andrews_pitchfork_warmup_period(SEXP e) {
+  struct AndrewsPitchfork *h = (struct AndrewsPitchfork *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_andrews_pitchfork_warmup_period(h));
+}
+SEXP wk_andrews_pitchfork_is_ready(SEXP e) {
+  struct AndrewsPitchfork *h = (struct AndrewsPitchfork *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_andrews_pitchfork_is_ready(h));
+}
 SEXP wk_andrews_pitchfork_reset(SEXP e) {
   struct AndrewsPitchfork *h = (struct AndrewsPitchfork *)R_ExternalPtrAddr(e);
   wickra_andrews_pitchfork_reset(h);
@@ -769,6 +961,14 @@ SEXP wk_apo_batch(SEXP e, SEXP a0) {
   wickra_apo_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_apo_warmup_period(SEXP e) {
+  struct Apo *h = (struct Apo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_apo_warmup_period(h));
+}
+SEXP wk_apo_is_ready(SEXP e) {
+  struct Apo *h = (struct Apo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_apo_is_ready(h));
 }
 SEXP wk_apo_reset(SEXP e) {
   struct Apo *h = (struct Apo *)R_ExternalPtrAddr(e);
@@ -803,6 +1003,14 @@ SEXP wk_aroon_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a
   UNPROTECT(2);
   return r;
 }
+SEXP wk_aroon_warmup_period(SEXP e) {
+  struct Aroon *h = (struct Aroon *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_aroon_warmup_period(h));
+}
+SEXP wk_aroon_is_ready(SEXP e) {
+  struct Aroon *h = (struct Aroon *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_aroon_is_ready(h));
+}
 SEXP wk_aroon_reset(SEXP e) {
   struct Aroon *h = (struct Aroon *)R_ExternalPtrAddr(e);
   wickra_aroon_reset(h);
@@ -836,6 +1044,14 @@ SEXP wk_aroon_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_aroon_oscillator_warmup_period(SEXP e) {
+  struct AroonOscillator *h = (struct AroonOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_aroon_oscillator_warmup_period(h));
+}
+SEXP wk_aroon_oscillator_is_ready(SEXP e) {
+  struct AroonOscillator *h = (struct AroonOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_aroon_oscillator_is_ready(h));
+}
 SEXP wk_aroon_oscillator_reset(SEXP e) {
   struct AroonOscillator *h = (struct AroonOscillator *)R_ExternalPtrAddr(e);
   wickra_aroon_oscillator_reset(h);
@@ -868,6 +1084,14 @@ SEXP wk_atr_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) 
   wickra_atr_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_atr_warmup_period(SEXP e) {
+  struct Atr *h = (struct Atr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_atr_warmup_period(h));
+}
+SEXP wk_atr_is_ready(SEXP e) {
+  struct Atr *h = (struct Atr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_atr_is_ready(h));
 }
 SEXP wk_atr_reset(SEXP e) {
   struct Atr *h = (struct Atr *)R_ExternalPtrAddr(e);
@@ -904,6 +1128,14 @@ SEXP wk_atr_bands_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   UNPROTECT(2);
   return r;
 }
+SEXP wk_atr_bands_warmup_period(SEXP e) {
+  struct AtrBands *h = (struct AtrBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_atr_bands_warmup_period(h));
+}
+SEXP wk_atr_bands_is_ready(SEXP e) {
+  struct AtrBands *h = (struct AtrBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_atr_bands_is_ready(h));
+}
 SEXP wk_atr_bands_reset(SEXP e) {
   struct AtrBands *h = (struct AtrBands *)R_ExternalPtrAddr(e);
   wickra_atr_bands_reset(h);
@@ -937,6 +1169,14 @@ SEXP wk_atr_ratchet_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_atr_ratchet_warmup_period(SEXP e) {
+  struct AtrRatchet *h = (struct AtrRatchet *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_atr_ratchet_warmup_period(h));
+}
+SEXP wk_atr_ratchet_is_ready(SEXP e) {
+  struct AtrRatchet *h = (struct AtrRatchet *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_atr_ratchet_is_ready(h));
+}
 SEXP wk_atr_ratchet_reset(SEXP e) {
   struct AtrRatchet *h = (struct AtrRatchet *)R_ExternalPtrAddr(e);
   wickra_atr_ratchet_reset(h);
@@ -969,6 +1209,14 @@ SEXP wk_atr_trailing_stop_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   wickra_atr_trailing_stop_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_atr_trailing_stop_warmup_period(SEXP e) {
+  struct AtrTrailingStop *h = (struct AtrTrailingStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_atr_trailing_stop_warmup_period(h));
+}
+SEXP wk_atr_trailing_stop_is_ready(SEXP e) {
+  struct AtrTrailingStop *h = (struct AtrTrailingStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_atr_trailing_stop_is_ready(h));
 }
 SEXP wk_atr_trailing_stop_reset(SEXP e) {
   struct AtrTrailingStop *h = (struct AtrTrailingStop *)R_ExternalPtrAddr(e);
@@ -1013,6 +1261,14 @@ SEXP wk_auto_fib_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   UNPROTECT(2);
   return r;
 }
+SEXP wk_auto_fib_warmup_period(SEXP e) {
+  struct AutoFib *h = (struct AutoFib *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_auto_fib_warmup_period(h));
+}
+SEXP wk_auto_fib_is_ready(SEXP e) {
+  struct AutoFib *h = (struct AutoFib *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_auto_fib_is_ready(h));
+}
 SEXP wk_auto_fib_reset(SEXP e) {
   struct AutoFib *h = (struct AutoFib *)R_ExternalPtrAddr(e);
   wickra_auto_fib_reset(h);
@@ -1044,6 +1300,14 @@ SEXP wk_autocorrelation_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_autocorrelation_warmup_period(SEXP e) {
+  struct Autocorrelation *h = (struct Autocorrelation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_autocorrelation_warmup_period(h));
+}
+SEXP wk_autocorrelation_is_ready(SEXP e) {
+  struct Autocorrelation *h = (struct Autocorrelation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_autocorrelation_is_ready(h));
+}
 SEXP wk_autocorrelation_reset(SEXP e) {
   struct Autocorrelation *h = (struct Autocorrelation *)R_ExternalPtrAddr(e);
   wickra_autocorrelation_reset(h);
@@ -1074,6 +1338,14 @@ SEXP wk_autocorrelation_periodogram_batch(SEXP e, SEXP a0) {
   wickra_autocorrelation_periodogram_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_autocorrelation_periodogram_warmup_period(SEXP e) {
+  struct AutocorrelationPeriodogram *h = (struct AutocorrelationPeriodogram *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_autocorrelation_periodogram_warmup_period(h));
+}
+SEXP wk_autocorrelation_periodogram_is_ready(SEXP e) {
+  struct AutocorrelationPeriodogram *h = (struct AutocorrelationPeriodogram *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_autocorrelation_periodogram_is_ready(h));
 }
 SEXP wk_autocorrelation_periodogram_reset(SEXP e) {
   struct AutocorrelationPeriodogram *h = (struct AutocorrelationPeriodogram *)R_ExternalPtrAddr(e);
@@ -1108,6 +1380,14 @@ SEXP wk_average_daily_range_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SE
   UNPROTECT(1);
   return out;
 }
+SEXP wk_average_daily_range_warmup_period(SEXP e) {
+  struct AverageDailyRange *h = (struct AverageDailyRange *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_average_daily_range_warmup_period(h));
+}
+SEXP wk_average_daily_range_is_ready(SEXP e) {
+  struct AverageDailyRange *h = (struct AverageDailyRange *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_average_daily_range_is_ready(h));
+}
 SEXP wk_average_daily_range_reset(SEXP e) {
   struct AverageDailyRange *h = (struct AverageDailyRange *)R_ExternalPtrAddr(e);
   wickra_average_daily_range_reset(h);
@@ -1138,6 +1418,14 @@ SEXP wk_average_drawdown_batch(SEXP e, SEXP a0) {
   wickra_average_drawdown_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_average_drawdown_warmup_period(SEXP e) {
+  struct AverageDrawdown *h = (struct AverageDrawdown *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_average_drawdown_warmup_period(h));
+}
+SEXP wk_average_drawdown_is_ready(SEXP e) {
+  struct AverageDrawdown *h = (struct AverageDrawdown *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_average_drawdown_is_ready(h));
 }
 SEXP wk_average_drawdown_reset(SEXP e) {
   struct AverageDrawdown *h = (struct AverageDrawdown *)R_ExternalPtrAddr(e);
@@ -1172,6 +1460,14 @@ SEXP wk_avg_price_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   UNPROTECT(1);
   return out;
 }
+SEXP wk_avg_price_warmup_period(SEXP e) {
+  struct AvgPrice *h = (struct AvgPrice *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_avg_price_warmup_period(h));
+}
+SEXP wk_avg_price_is_ready(SEXP e) {
+  struct AvgPrice *h = (struct AvgPrice *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_avg_price_is_ready(h));
+}
 SEXP wk_avg_price_reset(SEXP e) {
   struct AvgPrice *h = (struct AvgPrice *)R_ExternalPtrAddr(e);
   wickra_avg_price_reset(h);
@@ -1204,6 +1500,14 @@ SEXP wk_awesome_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   wickra_awesome_oscillator_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_awesome_oscillator_warmup_period(SEXP e) {
+  struct AwesomeOscillator *h = (struct AwesomeOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_awesome_oscillator_warmup_period(h));
+}
+SEXP wk_awesome_oscillator_is_ready(SEXP e) {
+  struct AwesomeOscillator *h = (struct AwesomeOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_awesome_oscillator_is_ready(h));
 }
 SEXP wk_awesome_oscillator_reset(SEXP e) {
   struct AwesomeOscillator *h = (struct AwesomeOscillator *)R_ExternalPtrAddr(e);
@@ -1238,6 +1542,14 @@ SEXP wk_awesome_oscillator_histogram_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SE
   UNPROTECT(1);
   return out;
 }
+SEXP wk_awesome_oscillator_histogram_warmup_period(SEXP e) {
+  struct AwesomeOscillatorHistogram *h = (struct AwesomeOscillatorHistogram *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_awesome_oscillator_histogram_warmup_period(h));
+}
+SEXP wk_awesome_oscillator_histogram_is_ready(SEXP e) {
+  struct AwesomeOscillatorHistogram *h = (struct AwesomeOscillatorHistogram *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_awesome_oscillator_histogram_is_ready(h));
+}
 SEXP wk_awesome_oscillator_histogram_reset(SEXP e) {
   struct AwesomeOscillatorHistogram *h = (struct AwesomeOscillatorHistogram *)R_ExternalPtrAddr(e);
   wickra_awesome_oscillator_histogram_reset(h);
@@ -1271,6 +1583,14 @@ SEXP wk_balance_of_power_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_balance_of_power_warmup_period(SEXP e) {
+  struct BalanceOfPower *h = (struct BalanceOfPower *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_balance_of_power_warmup_period(h));
+}
+SEXP wk_balance_of_power_is_ready(SEXP e) {
+  struct BalanceOfPower *h = (struct BalanceOfPower *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_balance_of_power_is_ready(h));
+}
 SEXP wk_balance_of_power_reset(SEXP e) {
   struct BalanceOfPower *h = (struct BalanceOfPower *)R_ExternalPtrAddr(e);
   wickra_balance_of_power_reset(h);
@@ -1301,6 +1621,14 @@ SEXP wk_bandpass_filter_batch(SEXP e, SEXP a0) {
   wickra_bandpass_filter_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_bandpass_filter_warmup_period(SEXP e) {
+  struct BandpassFilter *h = (struct BandpassFilter *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_bandpass_filter_warmup_period(h));
+}
+SEXP wk_bandpass_filter_is_ready(SEXP e) {
+  struct BandpassFilter *h = (struct BandpassFilter *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_bandpass_filter_is_ready(h));
 }
 SEXP wk_bandpass_filter_reset(SEXP e) {
   struct BandpassFilter *h = (struct BandpassFilter *)R_ExternalPtrAddr(e);
@@ -1335,6 +1663,14 @@ SEXP wk_bat_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_bat_warmup_period(SEXP e) {
+  struct Bat *h = (struct Bat *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_bat_warmup_period(h));
+}
+SEXP wk_bat_is_ready(SEXP e) {
+  struct Bat *h = (struct Bat *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_bat_is_ready(h));
+}
 SEXP wk_bat_reset(SEXP e) {
   struct Bat *h = (struct Bat *)R_ExternalPtrAddr(e);
   wickra_bat_reset(h);
@@ -1368,6 +1704,14 @@ SEXP wk_belt_hold_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   UNPROTECT(1);
   return out;
 }
+SEXP wk_belt_hold_warmup_period(SEXP e) {
+  struct BeltHold *h = (struct BeltHold *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_belt_hold_warmup_period(h));
+}
+SEXP wk_belt_hold_is_ready(SEXP e) {
+  struct BeltHold *h = (struct BeltHold *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_belt_hold_is_ready(h));
+}
 SEXP wk_belt_hold_reset(SEXP e) {
   struct BeltHold *h = (struct BeltHold *)R_ExternalPtrAddr(e);
   wickra_belt_hold_reset(h);
@@ -1399,6 +1743,14 @@ SEXP wk_beta_batch(SEXP e, SEXP a0, SEXP a1) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_beta_warmup_period(SEXP e) {
+  struct Beta *h = (struct Beta *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_beta_warmup_period(h));
+}
+SEXP wk_beta_is_ready(SEXP e) {
+  struct Beta *h = (struct Beta *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_beta_is_ready(h));
+}
 SEXP wk_beta_reset(SEXP e) {
   struct Beta *h = (struct Beta *)R_ExternalPtrAddr(e);
   wickra_beta_reset(h);
@@ -1429,6 +1781,14 @@ SEXP wk_beta_neutral_spread_batch(SEXP e, SEXP a0, SEXP a1) {
   wickra_beta_neutral_spread_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_beta_neutral_spread_warmup_period(SEXP e) {
+  struct BetaNeutralSpread *h = (struct BetaNeutralSpread *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_beta_neutral_spread_warmup_period(h));
+}
+SEXP wk_beta_neutral_spread_is_ready(SEXP e) {
+  struct BetaNeutralSpread *h = (struct BetaNeutralSpread *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_beta_neutral_spread_is_ready(h));
 }
 SEXP wk_beta_neutral_spread_reset(SEXP e) {
   struct BetaNeutralSpread *h = (struct BetaNeutralSpread *)R_ExternalPtrAddr(e);
@@ -1463,6 +1823,14 @@ SEXP wk_better_volume_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
   UNPROTECT(1);
   return out;
 }
+SEXP wk_better_volume_warmup_period(SEXP e) {
+  struct BetterVolume *h = (struct BetterVolume *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_better_volume_warmup_period(h));
+}
+SEXP wk_better_volume_is_ready(SEXP e) {
+  struct BetterVolume *h = (struct BetterVolume *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_better_volume_is_ready(h));
+}
 SEXP wk_better_volume_reset(SEXP e) {
   struct BetterVolume *h = (struct BetterVolume *)R_ExternalPtrAddr(e);
   wickra_better_volume_reset(h);
@@ -1493,6 +1861,14 @@ SEXP wk_bipower_variation_batch(SEXP e, SEXP a0) {
   wickra_bipower_variation_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_bipower_variation_warmup_period(SEXP e) {
+  struct BipowerVariation *h = (struct BipowerVariation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_bipower_variation_warmup_period(h));
+}
+SEXP wk_bipower_variation_is_ready(SEXP e) {
+  struct BipowerVariation *h = (struct BipowerVariation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_bipower_variation_is_ready(h));
 }
 SEXP wk_bipower_variation_reset(SEXP e) {
   struct BipowerVariation *h = (struct BipowerVariation *)R_ExternalPtrAddr(e);
@@ -1526,6 +1902,14 @@ SEXP wk_body_size_pct_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
   wickra_body_size_pct_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_body_size_pct_warmup_period(SEXP e) {
+  struct BodySizePct *h = (struct BodySizePct *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_body_size_pct_warmup_period(h));
+}
+SEXP wk_body_size_pct_is_ready(SEXP e) {
+  struct BodySizePct *h = (struct BodySizePct *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_body_size_pct_is_ready(h));
 }
 SEXP wk_body_size_pct_reset(SEXP e) {
   struct BodySizePct *h = (struct BodySizePct *)R_ExternalPtrAddr(e);
@@ -1564,6 +1948,14 @@ SEXP wk_bollinger_bands_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_bollinger_bands_warmup_period(SEXP e) {
+  struct BollingerBands *h = (struct BollingerBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_bollinger_bands_warmup_period(h));
+}
+SEXP wk_bollinger_bands_is_ready(SEXP e) {
+  struct BollingerBands *h = (struct BollingerBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_bollinger_bands_is_ready(h));
+}
 SEXP wk_bollinger_bands_reset(SEXP e) {
   struct BollingerBands *h = (struct BollingerBands *)R_ExternalPtrAddr(e);
   wickra_bollinger_bands_reset(h);
@@ -1594,6 +1986,14 @@ SEXP wk_bollinger_bandwidth_batch(SEXP e, SEXP a0) {
   wickra_bollinger_bandwidth_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_bollinger_bandwidth_warmup_period(SEXP e) {
+  struct BollingerBandwidth *h = (struct BollingerBandwidth *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_bollinger_bandwidth_warmup_period(h));
+}
+SEXP wk_bollinger_bandwidth_is_ready(SEXP e) {
+  struct BollingerBandwidth *h = (struct BollingerBandwidth *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_bollinger_bandwidth_is_ready(h));
 }
 SEXP wk_bollinger_bandwidth_reset(SEXP e) {
   struct BollingerBandwidth *h = (struct BollingerBandwidth *)R_ExternalPtrAddr(e);
@@ -1630,6 +2030,14 @@ SEXP wk_bomar_bands_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_bomar_bands_warmup_period(SEXP e) {
+  struct BomarBands *h = (struct BomarBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_bomar_bands_warmup_period(h));
+}
+SEXP wk_bomar_bands_is_ready(SEXP e) {
+  struct BomarBands *h = (struct BomarBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_bomar_bands_is_ready(h));
+}
 SEXP wk_bomar_bands_reset(SEXP e) {
   struct BomarBands *h = (struct BomarBands *)R_ExternalPtrAddr(e);
   wickra_bomar_bands_reset(h);
@@ -1652,6 +2060,14 @@ SEXP wk_breadth_thrust_new(SEXP a0) {
 SEXP wk_breadth_thrust_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct BreadthThrust *h = (struct BreadthThrust *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_breadth_thrust_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_breadth_thrust_warmup_period(SEXP e) {
+  struct BreadthThrust *h = (struct BreadthThrust *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_breadth_thrust_warmup_period(h));
+}
+SEXP wk_breadth_thrust_is_ready(SEXP e) {
+  struct BreadthThrust *h = (struct BreadthThrust *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_breadth_thrust_is_ready(h));
 }
 SEXP wk_breadth_thrust_reset(SEXP e) {
   struct BreadthThrust *h = (struct BreadthThrust *)R_ExternalPtrAddr(e);
@@ -1686,6 +2102,14 @@ SEXP wk_breakaway_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   UNPROTECT(1);
   return out;
 }
+SEXP wk_breakaway_warmup_period(SEXP e) {
+  struct Breakaway *h = (struct Breakaway *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_breakaway_warmup_period(h));
+}
+SEXP wk_breakaway_is_ready(SEXP e) {
+  struct Breakaway *h = (struct Breakaway *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_breakaway_is_ready(h));
+}
 SEXP wk_breakaway_reset(SEXP e) {
   struct Breakaway *h = (struct Breakaway *)R_ExternalPtrAddr(e);
   wickra_breakaway_reset(h);
@@ -1708,6 +2132,14 @@ SEXP wk_bullish_percent_index_new(void) {
 SEXP wk_bullish_percent_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct BullishPercentIndex *h = (struct BullishPercentIndex *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_bullish_percent_index_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_bullish_percent_index_warmup_period(SEXP e) {
+  struct BullishPercentIndex *h = (struct BullishPercentIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_bullish_percent_index_warmup_period(h));
+}
+SEXP wk_bullish_percent_index_is_ready(SEXP e) {
+  struct BullishPercentIndex *h = (struct BullishPercentIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_bullish_percent_index_is_ready(h));
 }
 SEXP wk_bullish_percent_index_reset(SEXP e) {
   struct BullishPercentIndex *h = (struct BullishPercentIndex *)R_ExternalPtrAddr(e);
@@ -1739,6 +2171,14 @@ SEXP wk_burke_ratio_batch(SEXP e, SEXP a0) {
   wickra_burke_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_burke_ratio_warmup_period(SEXP e) {
+  struct BurkeRatio *h = (struct BurkeRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_burke_ratio_warmup_period(h));
+}
+SEXP wk_burke_ratio_is_ready(SEXP e) {
+  struct BurkeRatio *h = (struct BurkeRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_burke_ratio_is_ready(h));
 }
 SEXP wk_burke_ratio_reset(SEXP e) {
   struct BurkeRatio *h = (struct BurkeRatio *)R_ExternalPtrAddr(e);
@@ -1773,6 +2213,14 @@ SEXP wk_butterfly_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   UNPROTECT(1);
   return out;
 }
+SEXP wk_butterfly_warmup_period(SEXP e) {
+  struct Butterfly *h = (struct Butterfly *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_butterfly_warmup_period(h));
+}
+SEXP wk_butterfly_is_ready(SEXP e) {
+  struct Butterfly *h = (struct Butterfly *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_butterfly_is_ready(h));
+}
 SEXP wk_butterfly_reset(SEXP e) {
   struct Butterfly *h = (struct Butterfly *)R_ExternalPtrAddr(e);
   wickra_butterfly_reset(h);
@@ -1795,6 +2243,14 @@ SEXP wk_calendar_spread_new(void) {
 SEXP wk_calendar_spread_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
   struct CalendarSpread *h = (struct CalendarSpread *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_calendar_spread_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_calendar_spread_warmup_period(SEXP e) {
+  struct CalendarSpread *h = (struct CalendarSpread *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_calendar_spread_warmup_period(h));
+}
+SEXP wk_calendar_spread_is_ready(SEXP e) {
+  struct CalendarSpread *h = (struct CalendarSpread *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_calendar_spread_is_ready(h));
 }
 SEXP wk_calendar_spread_reset(SEXP e) {
   struct CalendarSpread *h = (struct CalendarSpread *)R_ExternalPtrAddr(e);
@@ -1826,6 +2282,14 @@ SEXP wk_calmar_ratio_batch(SEXP e, SEXP a0) {
   wickra_calmar_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_calmar_ratio_warmup_period(SEXP e) {
+  struct CalmarRatio *h = (struct CalmarRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_calmar_ratio_warmup_period(h));
+}
+SEXP wk_calmar_ratio_is_ready(SEXP e) {
+  struct CalmarRatio *h = (struct CalmarRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_calmar_ratio_is_ready(h));
 }
 SEXP wk_calmar_ratio_reset(SEXP e) {
   struct CalmarRatio *h = (struct CalmarRatio *)R_ExternalPtrAddr(e);
@@ -1874,6 +2338,14 @@ SEXP wk_camarilla_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   UNPROTECT(2);
   return r;
 }
+SEXP wk_camarilla_warmup_period(SEXP e) {
+  struct Camarilla *h = (struct Camarilla *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_camarilla_warmup_period(h));
+}
+SEXP wk_camarilla_is_ready(SEXP e) {
+  struct Camarilla *h = (struct Camarilla *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_camarilla_is_ready(h));
+}
 SEXP wk_camarilla_reset(SEXP e) {
   struct Camarilla *h = (struct Camarilla *)R_ExternalPtrAddr(e);
   wickra_camarilla_reset(h);
@@ -1906,6 +2378,14 @@ SEXP wk_candle_volume_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_candle_volume_warmup_period(SEXP e) {
+  struct CandleVolume *h = (struct CandleVolume *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_candle_volume_warmup_period(h));
+}
+SEXP wk_candle_volume_is_ready(SEXP e) {
+  struct CandleVolume *h = (struct CandleVolume *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_candle_volume_is_ready(h));
 }
 SEXP wk_candle_volume_reset(SEXP e) {
   struct CandleVolume *h = (struct CandleVolume *)R_ExternalPtrAddr(e);
@@ -1940,6 +2420,14 @@ SEXP wk_cci_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_cci_warmup_period(SEXP e) {
+  struct Cci *h = (struct Cci *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_cci_warmup_period(h));
+}
+SEXP wk_cci_is_ready(SEXP e) {
+  struct Cci *h = (struct Cci *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_cci_is_ready(h));
+}
 SEXP wk_cci_reset(SEXP e) {
   struct Cci *h = (struct Cci *)R_ExternalPtrAddr(e);
   wickra_cci_reset(h);
@@ -1970,6 +2458,14 @@ SEXP wk_center_of_gravity_batch(SEXP e, SEXP a0) {
   wickra_center_of_gravity_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_center_of_gravity_warmup_period(SEXP e) {
+  struct CenterOfGravity *h = (struct CenterOfGravity *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_center_of_gravity_warmup_period(h));
+}
+SEXP wk_center_of_gravity_is_ready(SEXP e) {
+  struct CenterOfGravity *h = (struct CenterOfGravity *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_center_of_gravity_is_ready(h));
 }
 SEXP wk_center_of_gravity_reset(SEXP e) {
   struct CenterOfGravity *h = (struct CenterOfGravity *)R_ExternalPtrAddr(e);
@@ -2006,6 +2502,14 @@ SEXP wk_central_pivot_range_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, S
   UNPROTECT(2);
   return r;
 }
+SEXP wk_central_pivot_range_warmup_period(SEXP e) {
+  struct CentralPivotRange *h = (struct CentralPivotRange *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_central_pivot_range_warmup_period(h));
+}
+SEXP wk_central_pivot_range_is_ready(SEXP e) {
+  struct CentralPivotRange *h = (struct CentralPivotRange *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_central_pivot_range_is_ready(h));
+}
 SEXP wk_central_pivot_range_reset(SEXP e) {
   struct CentralPivotRange *h = (struct CentralPivotRange *)R_ExternalPtrAddr(e);
   wickra_central_pivot_range_reset(h);
@@ -2036,6 +2540,14 @@ SEXP wk_cfo_batch(SEXP e, SEXP a0) {
   wickra_cfo_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_cfo_warmup_period(SEXP e) {
+  struct Cfo *h = (struct Cfo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_cfo_warmup_period(h));
+}
+SEXP wk_cfo_is_ready(SEXP e) {
+  struct Cfo *h = (struct Cfo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_cfo_is_ready(h));
 }
 SEXP wk_cfo_reset(SEXP e) {
   struct Cfo *h = (struct Cfo *)R_ExternalPtrAddr(e);
@@ -2070,6 +2582,14 @@ SEXP wk_chaikin_money_flow_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   UNPROTECT(1);
   return out;
 }
+SEXP wk_chaikin_money_flow_warmup_period(SEXP e) {
+  struct ChaikinMoneyFlow *h = (struct ChaikinMoneyFlow *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_chaikin_money_flow_warmup_period(h));
+}
+SEXP wk_chaikin_money_flow_is_ready(SEXP e) {
+  struct ChaikinMoneyFlow *h = (struct ChaikinMoneyFlow *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_chaikin_money_flow_is_ready(h));
+}
 SEXP wk_chaikin_money_flow_reset(SEXP e) {
   struct ChaikinMoneyFlow *h = (struct ChaikinMoneyFlow *)R_ExternalPtrAddr(e);
   wickra_chaikin_money_flow_reset(h);
@@ -2102,6 +2622,14 @@ SEXP wk_chaikin_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   wickra_chaikin_oscillator_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_chaikin_oscillator_warmup_period(SEXP e) {
+  struct ChaikinOscillator *h = (struct ChaikinOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_chaikin_oscillator_warmup_period(h));
+}
+SEXP wk_chaikin_oscillator_is_ready(SEXP e) {
+  struct ChaikinOscillator *h = (struct ChaikinOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_chaikin_oscillator_is_ready(h));
 }
 SEXP wk_chaikin_oscillator_reset(SEXP e) {
   struct ChaikinOscillator *h = (struct ChaikinOscillator *)R_ExternalPtrAddr(e);
@@ -2136,6 +2664,14 @@ SEXP wk_chaikin_volatility_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   UNPROTECT(1);
   return out;
 }
+SEXP wk_chaikin_volatility_warmup_period(SEXP e) {
+  struct ChaikinVolatility *h = (struct ChaikinVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_chaikin_volatility_warmup_period(h));
+}
+SEXP wk_chaikin_volatility_is_ready(SEXP e) {
+  struct ChaikinVolatility *h = (struct ChaikinVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_chaikin_volatility_is_ready(h));
+}
 SEXP wk_chaikin_volatility_reset(SEXP e) {
   struct ChaikinVolatility *h = (struct ChaikinVolatility *)R_ExternalPtrAddr(e);
   wickra_chaikin_volatility_reset(h);
@@ -2168,6 +2704,14 @@ SEXP wk_chande_kroll_stop_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_chande_kroll_stop_warmup_period(SEXP e) {
+  struct ChandeKrollStop *h = (struct ChandeKrollStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_chande_kroll_stop_warmup_period(h));
+}
+SEXP wk_chande_kroll_stop_is_ready(SEXP e) {
+  struct ChandeKrollStop *h = (struct ChandeKrollStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_chande_kroll_stop_is_ready(h));
 }
 SEXP wk_chande_kroll_stop_reset(SEXP e) {
   struct ChandeKrollStop *h = (struct ChandeKrollStop *)R_ExternalPtrAddr(e);
@@ -2202,6 +2746,14 @@ SEXP wk_chandelier_exit_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_chandelier_exit_warmup_period(SEXP e) {
+  struct ChandelierExit *h = (struct ChandelierExit *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_chandelier_exit_warmup_period(h));
+}
+SEXP wk_chandelier_exit_is_ready(SEXP e) {
+  struct ChandelierExit *h = (struct ChandelierExit *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_chandelier_exit_is_ready(h));
+}
 SEXP wk_chandelier_exit_reset(SEXP e) {
   struct ChandelierExit *h = (struct ChandelierExit *)R_ExternalPtrAddr(e);
   wickra_chandelier_exit_reset(h);
@@ -2234,6 +2786,14 @@ SEXP wk_choppiness_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   wickra_choppiness_index_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_choppiness_index_warmup_period(SEXP e) {
+  struct ChoppinessIndex *h = (struct ChoppinessIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_choppiness_index_warmup_period(h));
+}
+SEXP wk_choppiness_index_is_ready(SEXP e) {
+  struct ChoppinessIndex *h = (struct ChoppinessIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_choppiness_index_is_ready(h));
 }
 SEXP wk_choppiness_index_reset(SEXP e) {
   struct ChoppinessIndex *h = (struct ChoppinessIndex *)R_ExternalPtrAddr(e);
@@ -2278,6 +2838,14 @@ SEXP wk_classic_pivots_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   UNPROTECT(2);
   return r;
 }
+SEXP wk_classic_pivots_warmup_period(SEXP e) {
+  struct ClassicPivots *h = (struct ClassicPivots *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_classic_pivots_warmup_period(h));
+}
+SEXP wk_classic_pivots_is_ready(SEXP e) {
+  struct ClassicPivots *h = (struct ClassicPivots *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_classic_pivots_is_ready(h));
+}
 SEXP wk_classic_pivots_reset(SEXP e) {
   struct ClassicPivots *h = (struct ClassicPivots *)R_ExternalPtrAddr(e);
   wickra_classic_pivots_reset(h);
@@ -2310,6 +2878,14 @@ SEXP wk_close_vs_open_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
   wickra_close_vs_open_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_close_vs_open_warmup_period(SEXP e) {
+  struct CloseVsOpen *h = (struct CloseVsOpen *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_close_vs_open_warmup_period(h));
+}
+SEXP wk_close_vs_open_is_ready(SEXP e) {
+  struct CloseVsOpen *h = (struct CloseVsOpen *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_close_vs_open_is_ready(h));
 }
 SEXP wk_close_vs_open_reset(SEXP e) {
   struct CloseVsOpen *h = (struct CloseVsOpen *)R_ExternalPtrAddr(e);
@@ -2344,6 +2920,14 @@ SEXP wk_closing_marubozu_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_closing_marubozu_warmup_period(SEXP e) {
+  struct ClosingMarubozu *h = (struct ClosingMarubozu *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_closing_marubozu_warmup_period(h));
+}
+SEXP wk_closing_marubozu_is_ready(SEXP e) {
+  struct ClosingMarubozu *h = (struct ClosingMarubozu *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_closing_marubozu_is_ready(h));
+}
 SEXP wk_closing_marubozu_reset(SEXP e) {
   struct ClosingMarubozu *h = (struct ClosingMarubozu *)R_ExternalPtrAddr(e);
   wickra_closing_marubozu_reset(h);
@@ -2375,6 +2959,14 @@ SEXP wk_cmo_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_cmo_warmup_period(SEXP e) {
+  struct Cmo *h = (struct Cmo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_cmo_warmup_period(h));
+}
+SEXP wk_cmo_is_ready(SEXP e) {
+  struct Cmo *h = (struct Cmo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_cmo_is_ready(h));
+}
 SEXP wk_cmo_reset(SEXP e) {
   struct Cmo *h = (struct Cmo *)R_ExternalPtrAddr(e);
   wickra_cmo_reset(h);
@@ -2405,6 +2997,14 @@ SEXP wk_coefficient_of_variation_batch(SEXP e, SEXP a0) {
   wickra_coefficient_of_variation_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_coefficient_of_variation_warmup_period(SEXP e) {
+  struct CoefficientOfVariation *h = (struct CoefficientOfVariation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_coefficient_of_variation_warmup_period(h));
+}
+SEXP wk_coefficient_of_variation_is_ready(SEXP e) {
+  struct CoefficientOfVariation *h = (struct CoefficientOfVariation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_coefficient_of_variation_is_ready(h));
 }
 SEXP wk_coefficient_of_variation_reset(SEXP e) {
   struct CoefficientOfVariation *h = (struct CoefficientOfVariation *)R_ExternalPtrAddr(e);
@@ -2441,6 +3041,14 @@ SEXP wk_cointegration_update(SEXP e, SEXP a0, SEXP a1) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_cointegration_warmup_period(SEXP e) {
+  struct Cointegration *h = (struct Cointegration *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_cointegration_warmup_period(h));
+}
+SEXP wk_cointegration_is_ready(SEXP e) {
+  struct Cointegration *h = (struct Cointegration *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_cointegration_is_ready(h));
+}
 SEXP wk_cointegration_reset(SEXP e) {
   struct Cointegration *h = (struct Cointegration *)R_ExternalPtrAddr(e);
   wickra_cointegration_reset(h);
@@ -2471,6 +3079,14 @@ SEXP wk_common_sense_ratio_batch(SEXP e, SEXP a0) {
   wickra_common_sense_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_common_sense_ratio_warmup_period(SEXP e) {
+  struct CommonSenseRatio *h = (struct CommonSenseRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_common_sense_ratio_warmup_period(h));
+}
+SEXP wk_common_sense_ratio_is_ready(SEXP e) {
+  struct CommonSenseRatio *h = (struct CommonSenseRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_common_sense_ratio_is_ready(h));
 }
 SEXP wk_common_sense_ratio_reset(SEXP e) {
   struct CommonSenseRatio *h = (struct CommonSenseRatio *)R_ExternalPtrAddr(e);
@@ -2507,6 +3123,14 @@ SEXP wk_composite_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   UNPROTECT(2);
   return r;
 }
+SEXP wk_composite_profile_warmup_period(SEXP e) {
+  struct CompositeProfile *h = (struct CompositeProfile *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_composite_profile_warmup_period(h));
+}
+SEXP wk_composite_profile_is_ready(SEXP e) {
+  struct CompositeProfile *h = (struct CompositeProfile *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_composite_profile_is_ready(h));
+}
 SEXP wk_composite_profile_reset(SEXP e) {
   struct CompositeProfile *h = (struct CompositeProfile *)R_ExternalPtrAddr(e);
   wickra_composite_profile_reset(h);
@@ -2540,6 +3164,14 @@ SEXP wk_concealing_baby_swallow_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3
   UNPROTECT(1);
   return out;
 }
+SEXP wk_concealing_baby_swallow_warmup_period(SEXP e) {
+  struct ConcealingBabySwallow *h = (struct ConcealingBabySwallow *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_concealing_baby_swallow_warmup_period(h));
+}
+SEXP wk_concealing_baby_swallow_is_ready(SEXP e) {
+  struct ConcealingBabySwallow *h = (struct ConcealingBabySwallow *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_concealing_baby_swallow_is_ready(h));
+}
 SEXP wk_concealing_baby_swallow_reset(SEXP e) {
   struct ConcealingBabySwallow *h = (struct ConcealingBabySwallow *)R_ExternalPtrAddr(e);
   wickra_concealing_baby_swallow_reset(h);
@@ -2570,6 +3202,14 @@ SEXP wk_conditional_value_at_risk_batch(SEXP e, SEXP a0) {
   wickra_conditional_value_at_risk_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_conditional_value_at_risk_warmup_period(SEXP e) {
+  struct ConditionalValueAtRisk *h = (struct ConditionalValueAtRisk *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_conditional_value_at_risk_warmup_period(h));
+}
+SEXP wk_conditional_value_at_risk_is_ready(SEXP e) {
+  struct ConditionalValueAtRisk *h = (struct ConditionalValueAtRisk *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_conditional_value_at_risk_is_ready(h));
 }
 SEXP wk_conditional_value_at_risk_reset(SEXP e) {
   struct ConditionalValueAtRisk *h = (struct ConditionalValueAtRisk *)R_ExternalPtrAddr(e);
@@ -2602,6 +3242,14 @@ SEXP wk_connors_rsi_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_connors_rsi_warmup_period(SEXP e) {
+  struct ConnorsRsi *h = (struct ConnorsRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_connors_rsi_warmup_period(h));
+}
+SEXP wk_connors_rsi_is_ready(SEXP e) {
+  struct ConnorsRsi *h = (struct ConnorsRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_connors_rsi_is_ready(h));
+}
 SEXP wk_connors_rsi_reset(SEXP e) {
   struct ConnorsRsi *h = (struct ConnorsRsi *)R_ExternalPtrAddr(e);
   wickra_connors_rsi_reset(h);
@@ -2633,6 +3281,14 @@ SEXP wk_coppock_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_coppock_warmup_period(SEXP e) {
+  struct Coppock *h = (struct Coppock *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_coppock_warmup_period(h));
+}
+SEXP wk_coppock_is_ready(SEXP e) {
+  struct Coppock *h = (struct Coppock *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_coppock_is_ready(h));
+}
 SEXP wk_coppock_reset(SEXP e) {
   struct Coppock *h = (struct Coppock *)R_ExternalPtrAddr(e);
   wickra_coppock_reset(h);
@@ -2663,6 +3319,14 @@ SEXP wk_correlation_trend_indicator_batch(SEXP e, SEXP a0) {
   wickra_correlation_trend_indicator_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_correlation_trend_indicator_warmup_period(SEXP e) {
+  struct CorrelationTrendIndicator *h = (struct CorrelationTrendIndicator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_correlation_trend_indicator_warmup_period(h));
+}
+SEXP wk_correlation_trend_indicator_is_ready(SEXP e) {
+  struct CorrelationTrendIndicator *h = (struct CorrelationTrendIndicator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_correlation_trend_indicator_is_ready(h));
 }
 SEXP wk_correlation_trend_indicator_reset(SEXP e) {
   struct CorrelationTrendIndicator *h = (struct CorrelationTrendIndicator *)R_ExternalPtrAddr(e);
@@ -2697,6 +3361,14 @@ SEXP wk_counterattack_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
   UNPROTECT(1);
   return out;
 }
+SEXP wk_counterattack_warmup_period(SEXP e) {
+  struct Counterattack *h = (struct Counterattack *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_counterattack_warmup_period(h));
+}
+SEXP wk_counterattack_is_ready(SEXP e) {
+  struct Counterattack *h = (struct Counterattack *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_counterattack_is_ready(h));
+}
 SEXP wk_counterattack_reset(SEXP e) {
   struct Counterattack *h = (struct Counterattack *)R_ExternalPtrAddr(e);
   wickra_counterattack_reset(h);
@@ -2730,6 +3402,14 @@ SEXP wk_crab_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
   UNPROTECT(1);
   return out;
 }
+SEXP wk_crab_warmup_period(SEXP e) {
+  struct Crab *h = (struct Crab *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_crab_warmup_period(h));
+}
+SEXP wk_crab_is_ready(SEXP e) {
+  struct Crab *h = (struct Crab *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_crab_is_ready(h));
+}
 SEXP wk_crab_reset(SEXP e) {
   struct Crab *h = (struct Crab *)R_ExternalPtrAddr(e);
   wickra_crab_reset(h);
@@ -2753,6 +3433,14 @@ SEXP wk_cumulative_volume_delta_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a
   struct CumulativeVolumeDelta *h = (struct CumulativeVolumeDelta *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_cumulative_volume_delta_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
 }
+SEXP wk_cumulative_volume_delta_warmup_period(SEXP e) {
+  struct CumulativeVolumeDelta *h = (struct CumulativeVolumeDelta *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_cumulative_volume_delta_warmup_period(h));
+}
+SEXP wk_cumulative_volume_delta_is_ready(SEXP e) {
+  struct CumulativeVolumeDelta *h = (struct CumulativeVolumeDelta *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_cumulative_volume_delta_is_ready(h));
+}
 SEXP wk_cumulative_volume_delta_reset(SEXP e) {
   struct CumulativeVolumeDelta *h = (struct CumulativeVolumeDelta *)R_ExternalPtrAddr(e);
   wickra_cumulative_volume_delta_reset(h);
@@ -2775,6 +3463,14 @@ SEXP wk_cumulative_volume_index_new(void) {
 SEXP wk_cumulative_volume_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct CumulativeVolumeIndex *h = (struct CumulativeVolumeIndex *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_cumulative_volume_index_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_cumulative_volume_index_warmup_period(SEXP e) {
+  struct CumulativeVolumeIndex *h = (struct CumulativeVolumeIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_cumulative_volume_index_warmup_period(h));
+}
+SEXP wk_cumulative_volume_index_is_ready(SEXP e) {
+  struct CumulativeVolumeIndex *h = (struct CumulativeVolumeIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_cumulative_volume_index_is_ready(h));
 }
 SEXP wk_cumulative_volume_index_reset(SEXP e) {
   struct CumulativeVolumeIndex *h = (struct CumulativeVolumeIndex *)R_ExternalPtrAddr(e);
@@ -2809,6 +3505,14 @@ SEXP wk_cup_and_handle_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(1);
   return out;
 }
+SEXP wk_cup_and_handle_warmup_period(SEXP e) {
+  struct CupAndHandle *h = (struct CupAndHandle *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_cup_and_handle_warmup_period(h));
+}
+SEXP wk_cup_and_handle_is_ready(SEXP e) {
+  struct CupAndHandle *h = (struct CupAndHandle *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_cup_and_handle_is_ready(h));
+}
 SEXP wk_cup_and_handle_reset(SEXP e) {
   struct CupAndHandle *h = (struct CupAndHandle *)R_ExternalPtrAddr(e);
   wickra_cup_and_handle_reset(h);
@@ -2839,6 +3543,14 @@ SEXP wk_cybernetic_cycle_batch(SEXP e, SEXP a0) {
   wickra_cybernetic_cycle_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_cybernetic_cycle_warmup_period(SEXP e) {
+  struct CyberneticCycle *h = (struct CyberneticCycle *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_cybernetic_cycle_warmup_period(h));
+}
+SEXP wk_cybernetic_cycle_is_ready(SEXP e) {
+  struct CyberneticCycle *h = (struct CyberneticCycle *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_cybernetic_cycle_is_ready(h));
 }
 SEXP wk_cybernetic_cycle_reset(SEXP e) {
   struct CyberneticCycle *h = (struct CyberneticCycle *)R_ExternalPtrAddr(e);
@@ -2873,6 +3585,14 @@ SEXP wk_cypher_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a
   UNPROTECT(1);
   return out;
 }
+SEXP wk_cypher_warmup_period(SEXP e) {
+  struct Cypher *h = (struct Cypher *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_cypher_warmup_period(h));
+}
+SEXP wk_cypher_is_ready(SEXP e) {
+  struct Cypher *h = (struct Cypher *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_cypher_is_ready(h));
+}
 SEXP wk_cypher_reset(SEXP e) {
   struct Cypher *h = (struct Cypher *)R_ExternalPtrAddr(e);
   wickra_cypher_reset(h);
@@ -2902,6 +3622,14 @@ SEXP wk_day_of_week_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, S
   for (R_xlen_t i = 0; i < n; i++) REAL(vv)[i] = REAL(values)[i];
   UNPROTECT(2);
   return vv;
+}
+SEXP wk_day_of_week_profile_warmup_period(SEXP e) {
+  struct DayOfWeekProfile *h = (struct DayOfWeekProfile *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_day_of_week_profile_warmup_period(h));
+}
+SEXP wk_day_of_week_profile_is_ready(SEXP e) {
+  struct DayOfWeekProfile *h = (struct DayOfWeekProfile *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_day_of_week_profile_is_ready(h));
 }
 SEXP wk_day_of_week_profile_reset(SEXP e) {
   struct DayOfWeekProfile *h = (struct DayOfWeekProfile *)R_ExternalPtrAddr(e);
@@ -2934,6 +3662,14 @@ SEXP wk_decycler_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_decycler_warmup_period(SEXP e) {
+  struct Decycler *h = (struct Decycler *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_decycler_warmup_period(h));
+}
+SEXP wk_decycler_is_ready(SEXP e) {
+  struct Decycler *h = (struct Decycler *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_decycler_is_ready(h));
+}
 SEXP wk_decycler_reset(SEXP e) {
   struct Decycler *h = (struct Decycler *)R_ExternalPtrAddr(e);
   wickra_decycler_reset(h);
@@ -2965,6 +3701,14 @@ SEXP wk_decycler_oscillator_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_decycler_oscillator_warmup_period(SEXP e) {
+  struct DecyclerOscillator *h = (struct DecyclerOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_decycler_oscillator_warmup_period(h));
+}
+SEXP wk_decycler_oscillator_is_ready(SEXP e) {
+  struct DecyclerOscillator *h = (struct DecyclerOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_decycler_oscillator_is_ready(h));
+}
 SEXP wk_decycler_oscillator_reset(SEXP e) {
   struct DecyclerOscillator *h = (struct DecyclerOscillator *)R_ExternalPtrAddr(e);
   wickra_decycler_oscillator_reset(h);
@@ -2995,6 +3739,14 @@ SEXP wk_dema_batch(SEXP e, SEXP a0) {
   wickra_dema_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_dema_warmup_period(SEXP e) {
+  struct Dema *h = (struct Dema *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_dema_warmup_period(h));
+}
+SEXP wk_dema_is_ready(SEXP e) {
+  struct Dema *h = (struct Dema *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_dema_is_ready(h));
 }
 SEXP wk_dema_reset(SEXP e) {
   struct Dema *h = (struct Dema *)R_ExternalPtrAddr(e);
@@ -3028,6 +3780,14 @@ SEXP wk_demand_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   wickra_demand_index_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_demand_index_warmup_period(SEXP e) {
+  struct DemandIndex *h = (struct DemandIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_demand_index_warmup_period(h));
+}
+SEXP wk_demand_index_is_ready(SEXP e) {
+  struct DemandIndex *h = (struct DemandIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_demand_index_is_ready(h));
 }
 SEXP wk_demand_index_reset(SEXP e) {
   struct DemandIndex *h = (struct DemandIndex *)R_ExternalPtrAddr(e);
@@ -3064,6 +3824,14 @@ SEXP wk_demark_pivots_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(2);
   return r;
 }
+SEXP wk_demark_pivots_warmup_period(SEXP e) {
+  struct DemarkPivots *h = (struct DemarkPivots *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_demark_pivots_warmup_period(h));
+}
+SEXP wk_demark_pivots_is_ready(SEXP e) {
+  struct DemarkPivots *h = (struct DemarkPivots *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_demark_pivots_is_ready(h));
+}
 SEXP wk_demark_pivots_reset(SEXP e) {
   struct DemarkPivots *h = (struct DemarkPivots *)R_ExternalPtrAddr(e);
   wickra_demark_pivots_reset(h);
@@ -3086,6 +3854,14 @@ SEXP wk_depth_slope_new(void) {
 SEXP wk_depth_slope_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct DepthSlope *h = (struct DepthSlope *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_depth_slope_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
+}
+SEXP wk_depth_slope_warmup_period(SEXP e) {
+  struct DepthSlope *h = (struct DepthSlope *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_depth_slope_warmup_period(h));
+}
+SEXP wk_depth_slope_is_ready(SEXP e) {
+  struct DepthSlope *h = (struct DepthSlope *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_depth_slope_is_ready(h));
 }
 SEXP wk_depth_slope_reset(SEXP e) {
   struct DepthSlope *h = (struct DepthSlope *)R_ExternalPtrAddr(e);
@@ -3118,6 +3894,14 @@ SEXP wk_derivative_oscillator_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_derivative_oscillator_warmup_period(SEXP e) {
+  struct DerivativeOscillator *h = (struct DerivativeOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_derivative_oscillator_warmup_period(h));
+}
+SEXP wk_derivative_oscillator_is_ready(SEXP e) {
+  struct DerivativeOscillator *h = (struct DerivativeOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_derivative_oscillator_is_ready(h));
+}
 SEXP wk_derivative_oscillator_reset(SEXP e) {
   struct DerivativeOscillator *h = (struct DerivativeOscillator *)R_ExternalPtrAddr(e);
   wickra_derivative_oscillator_reset(h);
@@ -3148,6 +3932,14 @@ SEXP wk_detrended_std_dev_batch(SEXP e, SEXP a0) {
   wickra_detrended_std_dev_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_detrended_std_dev_warmup_period(SEXP e) {
+  struct DetrendedStdDev *h = (struct DetrendedStdDev *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_detrended_std_dev_warmup_period(h));
+}
+SEXP wk_detrended_std_dev_is_ready(SEXP e) {
+  struct DetrendedStdDev *h = (struct DetrendedStdDev *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_detrended_std_dev_is_ready(h));
 }
 SEXP wk_detrended_std_dev_reset(SEXP e) {
   struct DetrendedStdDev *h = (struct DetrendedStdDev *)R_ExternalPtrAddr(e);
@@ -3180,6 +3972,14 @@ SEXP wk_disparity_index_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_disparity_index_warmup_period(SEXP e) {
+  struct DisparityIndex *h = (struct DisparityIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_disparity_index_warmup_period(h));
+}
+SEXP wk_disparity_index_is_ready(SEXP e) {
+  struct DisparityIndex *h = (struct DisparityIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_disparity_index_is_ready(h));
+}
 SEXP wk_disparity_index_reset(SEXP e) {
   struct DisparityIndex *h = (struct DisparityIndex *)R_ExternalPtrAddr(e);
   wickra_disparity_index_reset(h);
@@ -3210,6 +4010,14 @@ SEXP wk_distance_ssd_batch(SEXP e, SEXP a0, SEXP a1) {
   wickra_distance_ssd_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_distance_ssd_warmup_period(SEXP e) {
+  struct DistanceSsd *h = (struct DistanceSsd *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_distance_ssd_warmup_period(h));
+}
+SEXP wk_distance_ssd_is_ready(SEXP e) {
+  struct DistanceSsd *h = (struct DistanceSsd *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_distance_ssd_is_ready(h));
 }
 SEXP wk_distance_ssd_reset(SEXP e) {
   struct DistanceSsd *h = (struct DistanceSsd *)R_ExternalPtrAddr(e);
@@ -3244,6 +4052,14 @@ SEXP wk_doji_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
   UNPROTECT(1);
   return out;
 }
+SEXP wk_doji_warmup_period(SEXP e) {
+  struct Doji *h = (struct Doji *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_doji_warmup_period(h));
+}
+SEXP wk_doji_is_ready(SEXP e) {
+  struct Doji *h = (struct Doji *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_doji_is_ready(h));
+}
 SEXP wk_doji_reset(SEXP e) {
   struct Doji *h = (struct Doji *)R_ExternalPtrAddr(e);
   wickra_doji_reset(h);
@@ -3276,6 +4092,14 @@ SEXP wk_doji_star_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   wickra_doji_star_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_doji_star_warmup_period(SEXP e) {
+  struct DojiStar *h = (struct DojiStar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_doji_star_warmup_period(h));
+}
+SEXP wk_doji_star_is_ready(SEXP e) {
+  struct DojiStar *h = (struct DojiStar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_doji_star_is_ready(h));
 }
 SEXP wk_doji_star_reset(SEXP e) {
   struct DojiStar *h = (struct DojiStar *)R_ExternalPtrAddr(e);
@@ -3357,6 +4181,14 @@ SEXP wk_donchian_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   UNPROTECT(2);
   return r;
 }
+SEXP wk_donchian_warmup_period(SEXP e) {
+  struct Donchian *h = (struct Donchian *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_donchian_warmup_period(h));
+}
+SEXP wk_donchian_is_ready(SEXP e) {
+  struct Donchian *h = (struct Donchian *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_donchian_is_ready(h));
+}
 SEXP wk_donchian_reset(SEXP e) {
   struct Donchian *h = (struct Donchian *)R_ExternalPtrAddr(e);
   wickra_donchian_reset(h);
@@ -3389,6 +4221,14 @@ SEXP wk_donchian_stop_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_donchian_stop_warmup_period(SEXP e) {
+  struct DonchianStop *h = (struct DonchianStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_donchian_stop_warmup_period(h));
+}
+SEXP wk_donchian_stop_is_ready(SEXP e) {
+  struct DonchianStop *h = (struct DonchianStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_donchian_stop_is_ready(h));
 }
 SEXP wk_donchian_stop_reset(SEXP e) {
   struct DonchianStop *h = (struct DonchianStop *)R_ExternalPtrAddr(e);
@@ -3429,6 +4269,14 @@ SEXP wk_double_bollinger_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_double_bollinger_warmup_period(SEXP e) {
+  struct DoubleBollinger *h = (struct DoubleBollinger *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_double_bollinger_warmup_period(h));
+}
+SEXP wk_double_bollinger_is_ready(SEXP e) {
+  struct DoubleBollinger *h = (struct DoubleBollinger *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_double_bollinger_is_ready(h));
+}
 SEXP wk_double_bollinger_reset(SEXP e) {
   struct DoubleBollinger *h = (struct DoubleBollinger *)R_ExternalPtrAddr(e);
   wickra_double_bollinger_reset(h);
@@ -3461,6 +4309,14 @@ SEXP wk_double_top_bottom_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   wickra_double_top_bottom_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_double_top_bottom_warmup_period(SEXP e) {
+  struct DoubleTopBottom *h = (struct DoubleTopBottom *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_double_top_bottom_warmup_period(h));
+}
+SEXP wk_double_top_bottom_is_ready(SEXP e) {
+  struct DoubleTopBottom *h = (struct DoubleTopBottom *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_double_top_bottom_is_ready(h));
 }
 SEXP wk_double_top_bottom_reset(SEXP e) {
   struct DoubleTopBottom *h = (struct DoubleTopBottom *)R_ExternalPtrAddr(e);
@@ -3495,6 +4351,14 @@ SEXP wk_downside_gap_three_methods_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP
   UNPROTECT(1);
   return out;
 }
+SEXP wk_downside_gap_three_methods_warmup_period(SEXP e) {
+  struct DownsideGapThreeMethods *h = (struct DownsideGapThreeMethods *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_downside_gap_three_methods_warmup_period(h));
+}
+SEXP wk_downside_gap_three_methods_is_ready(SEXP e) {
+  struct DownsideGapThreeMethods *h = (struct DownsideGapThreeMethods *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_downside_gap_three_methods_is_ready(h));
+}
 SEXP wk_downside_gap_three_methods_reset(SEXP e) {
   struct DownsideGapThreeMethods *h = (struct DownsideGapThreeMethods *)R_ExternalPtrAddr(e);
   wickra_downside_gap_three_methods_reset(h);
@@ -3525,6 +4389,14 @@ SEXP wk_dpo_batch(SEXP e, SEXP a0) {
   wickra_dpo_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_dpo_warmup_period(SEXP e) {
+  struct Dpo *h = (struct Dpo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_dpo_warmup_period(h));
+}
+SEXP wk_dpo_is_ready(SEXP e) {
+  struct Dpo *h = (struct Dpo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_dpo_is_ready(h));
 }
 SEXP wk_dpo_reset(SEXP e) {
   struct Dpo *h = (struct Dpo *)R_ExternalPtrAddr(e);
@@ -3559,6 +4431,14 @@ SEXP wk_dragonfly_doji_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(1);
   return out;
 }
+SEXP wk_dragonfly_doji_warmup_period(SEXP e) {
+  struct DragonflyDoji *h = (struct DragonflyDoji *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_dragonfly_doji_warmup_period(h));
+}
+SEXP wk_dragonfly_doji_is_ready(SEXP e) {
+  struct DragonflyDoji *h = (struct DragonflyDoji *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_dragonfly_doji_is_ready(h));
+}
 SEXP wk_dragonfly_doji_reset(SEXP e) {
   struct DragonflyDoji *h = (struct DragonflyDoji *)R_ExternalPtrAddr(e);
   wickra_dragonfly_doji_reset(h);
@@ -3589,6 +4469,14 @@ SEXP wk_drawdown_duration_batch(SEXP e, SEXP a0) {
   wickra_drawdown_duration_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_drawdown_duration_warmup_period(SEXP e) {
+  struct DrawdownDuration *h = (struct DrawdownDuration *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_drawdown_duration_warmup_period(h));
+}
+SEXP wk_drawdown_duration_is_ready(SEXP e) {
+  struct DrawdownDuration *h = (struct DrawdownDuration *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_drawdown_duration_is_ready(h));
 }
 SEXP wk_drawdown_duration_reset(SEXP e) {
   struct DrawdownDuration *h = (struct DrawdownDuration *)R_ExternalPtrAddr(e);
@@ -3623,6 +4511,14 @@ SEXP wk_dumpling_top_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_dumpling_top_warmup_period(SEXP e) {
+  struct DumplingTop *h = (struct DumplingTop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_dumpling_top_warmup_period(h));
+}
+SEXP wk_dumpling_top_is_ready(SEXP e) {
+  struct DumplingTop *h = (struct DumplingTop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_dumpling_top_is_ready(h));
+}
 SEXP wk_dumpling_top_reset(SEXP e) {
   struct DumplingTop *h = (struct DumplingTop *)R_ExternalPtrAddr(e);
   wickra_dumpling_top_reset(h);
@@ -3656,6 +4552,14 @@ SEXP wk_dx_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_dx_warmup_period(SEXP e) {
+  struct Dx *h = (struct Dx *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_dx_warmup_period(h));
+}
+SEXP wk_dx_is_ready(SEXP e) {
+  struct Dx *h = (struct Dx *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_dx_is_ready(h));
+}
 SEXP wk_dx_reset(SEXP e) {
   struct Dx *h = (struct Dx *)R_ExternalPtrAddr(e);
   wickra_dx_reset(h);
@@ -3686,6 +4590,14 @@ SEXP wk_dynamic_momentum_index_batch(SEXP e, SEXP a0) {
   wickra_dynamic_momentum_index_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_dynamic_momentum_index_warmup_period(SEXP e) {
+  struct DynamicMomentumIndex *h = (struct DynamicMomentumIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_dynamic_momentum_index_warmup_period(h));
+}
+SEXP wk_dynamic_momentum_index_is_ready(SEXP e) {
+  struct DynamicMomentumIndex *h = (struct DynamicMomentumIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_dynamic_momentum_index_is_ready(h));
 }
 SEXP wk_dynamic_momentum_index_reset(SEXP e) {
   struct DynamicMomentumIndex *h = (struct DynamicMomentumIndex *)R_ExternalPtrAddr(e);
@@ -3720,6 +4632,14 @@ SEXP wk_ease_of_movement_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_ease_of_movement_warmup_period(SEXP e) {
+  struct EaseOfMovement *h = (struct EaseOfMovement *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_ease_of_movement_warmup_period(h));
+}
+SEXP wk_ease_of_movement_is_ready(SEXP e) {
+  struct EaseOfMovement *h = (struct EaseOfMovement *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_ease_of_movement_is_ready(h));
+}
 SEXP wk_ease_of_movement_reset(SEXP e) {
   struct EaseOfMovement *h = (struct EaseOfMovement *)R_ExternalPtrAddr(e);
   wickra_ease_of_movement_reset(h);
@@ -3742,6 +4662,14 @@ SEXP wk_effective_spread_new(void) {
 SEXP wk_effective_spread_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4) {
   struct EffectiveSpread *h = (struct EffectiveSpread *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_effective_spread_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3), Rf_asReal(a4)));
+}
+SEXP wk_effective_spread_warmup_period(SEXP e) {
+  struct EffectiveSpread *h = (struct EffectiveSpread *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_effective_spread_warmup_period(h));
+}
+SEXP wk_effective_spread_is_ready(SEXP e) {
+  struct EffectiveSpread *h = (struct EffectiveSpread *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_effective_spread_is_ready(h));
 }
 SEXP wk_effective_spread_reset(SEXP e) {
   struct EffectiveSpread *h = (struct EffectiveSpread *)R_ExternalPtrAddr(e);
@@ -3774,6 +4702,14 @@ SEXP wk_ehlers_stochastic_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_ehlers_stochastic_warmup_period(SEXP e) {
+  struct EhlersStochastic *h = (struct EhlersStochastic *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_ehlers_stochastic_warmup_period(h));
+}
+SEXP wk_ehlers_stochastic_is_ready(SEXP e) {
+  struct EhlersStochastic *h = (struct EhlersStochastic *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_ehlers_stochastic_is_ready(h));
+}
 SEXP wk_ehlers_stochastic_reset(SEXP e) {
   struct EhlersStochastic *h = (struct EhlersStochastic *)R_ExternalPtrAddr(e);
   wickra_ehlers_stochastic_reset(h);
@@ -3805,6 +4741,14 @@ SEXP wk_ehma_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_ehma_warmup_period(SEXP e) {
+  struct Ehma *h = (struct Ehma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_ehma_warmup_period(h));
+}
+SEXP wk_ehma_is_ready(SEXP e) {
+  struct Ehma *h = (struct Ehma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_ehma_is_ready(h));
+}
 SEXP wk_ehma_reset(SEXP e) {
   struct Ehma *h = (struct Ehma *)R_ExternalPtrAddr(e);
   wickra_ehma_reset(h);
@@ -3835,6 +4779,14 @@ SEXP wk_elder_impulse_batch(SEXP e, SEXP a0) {
   wickra_elder_impulse_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_elder_impulse_warmup_period(SEXP e) {
+  struct ElderImpulse *h = (struct ElderImpulse *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_elder_impulse_warmup_period(h));
+}
+SEXP wk_elder_impulse_is_ready(SEXP e) {
+  struct ElderImpulse *h = (struct ElderImpulse *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_elder_impulse_is_ready(h));
 }
 SEXP wk_elder_impulse_reset(SEXP e) {
   struct ElderImpulse *h = (struct ElderImpulse *)R_ExternalPtrAddr(e);
@@ -3869,6 +4821,14 @@ SEXP wk_elder_ray_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   UNPROTECT(2);
   return r;
 }
+SEXP wk_elder_ray_warmup_period(SEXP e) {
+  struct ElderRay *h = (struct ElderRay *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_elder_ray_warmup_period(h));
+}
+SEXP wk_elder_ray_is_ready(SEXP e) {
+  struct ElderRay *h = (struct ElderRay *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_elder_ray_is_ready(h));
+}
 SEXP wk_elder_ray_reset(SEXP e) {
   struct ElderRay *h = (struct ElderRay *)R_ExternalPtrAddr(e);
   wickra_elder_ray_reset(h);
@@ -3902,6 +4862,14 @@ SEXP wk_elder_safe_zone_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_elder_safe_zone_warmup_period(SEXP e) {
+  struct ElderSafeZone *h = (struct ElderSafeZone *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_elder_safe_zone_warmup_period(h));
+}
+SEXP wk_elder_safe_zone_is_ready(SEXP e) {
+  struct ElderSafeZone *h = (struct ElderSafeZone *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_elder_safe_zone_is_ready(h));
+}
 SEXP wk_elder_safe_zone_reset(SEXP e) {
   struct ElderSafeZone *h = (struct ElderSafeZone *)R_ExternalPtrAddr(e);
   wickra_elder_safe_zone_reset(h);
@@ -3933,6 +4901,14 @@ SEXP wk_ema_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_ema_warmup_period(SEXP e) {
+  struct Ema *h = (struct Ema *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_ema_warmup_period(h));
+}
+SEXP wk_ema_is_ready(SEXP e) {
+  struct Ema *h = (struct Ema *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_ema_is_ready(h));
+}
 SEXP wk_ema_reset(SEXP e) {
   struct Ema *h = (struct Ema *)R_ExternalPtrAddr(e);
   wickra_ema_reset(h);
@@ -3963,6 +4939,14 @@ SEXP wk_empirical_mode_decomposition_batch(SEXP e, SEXP a0) {
   wickra_empirical_mode_decomposition_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_empirical_mode_decomposition_warmup_period(SEXP e) {
+  struct EmpiricalModeDecomposition *h = (struct EmpiricalModeDecomposition *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_empirical_mode_decomposition_warmup_period(h));
+}
+SEXP wk_empirical_mode_decomposition_is_ready(SEXP e) {
+  struct EmpiricalModeDecomposition *h = (struct EmpiricalModeDecomposition *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_empirical_mode_decomposition_is_ready(h));
 }
 SEXP wk_empirical_mode_decomposition_reset(SEXP e) {
   struct EmpiricalModeDecomposition *h = (struct EmpiricalModeDecomposition *)R_ExternalPtrAddr(e);
@@ -3997,6 +4981,14 @@ SEXP wk_engulfing_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   UNPROTECT(1);
   return out;
 }
+SEXP wk_engulfing_warmup_period(SEXP e) {
+  struct Engulfing *h = (struct Engulfing *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_engulfing_warmup_period(h));
+}
+SEXP wk_engulfing_is_ready(SEXP e) {
+  struct Engulfing *h = (struct Engulfing *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_engulfing_is_ready(h));
+}
 SEXP wk_engulfing_reset(SEXP e) {
   struct Engulfing *h = (struct Engulfing *)R_ExternalPtrAddr(e);
   wickra_engulfing_reset(h);
@@ -4030,6 +5022,14 @@ SEXP wk_equivolume_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
   UNPROTECT(2);
   return r;
 }
+SEXP wk_equivolume_warmup_period(SEXP e) {
+  struct Equivolume *h = (struct Equivolume *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_equivolume_warmup_period(h));
+}
+SEXP wk_equivolume_is_ready(SEXP e) {
+  struct Equivolume *h = (struct Equivolume *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_equivolume_is_ready(h));
+}
 SEXP wk_equivolume_reset(SEXP e) {
   struct Equivolume *h = (struct Equivolume *)R_ExternalPtrAddr(e);
   wickra_equivolume_reset(h);
@@ -4052,6 +5052,14 @@ SEXP wk_estimated_leverage_ratio_new(void) {
 SEXP wk_estimated_leverage_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
   struct EstimatedLeverageRatio *h = (struct EstimatedLeverageRatio *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_estimated_leverage_ratio_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_estimated_leverage_ratio_warmup_period(SEXP e) {
+  struct EstimatedLeverageRatio *h = (struct EstimatedLeverageRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_estimated_leverage_ratio_warmup_period(h));
+}
+SEXP wk_estimated_leverage_ratio_is_ready(SEXP e) {
+  struct EstimatedLeverageRatio *h = (struct EstimatedLeverageRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_estimated_leverage_ratio_is_ready(h));
 }
 SEXP wk_estimated_leverage_ratio_reset(SEXP e) {
   struct EstimatedLeverageRatio *h = (struct EstimatedLeverageRatio *)R_ExternalPtrAddr(e);
@@ -4083,6 +5091,14 @@ SEXP wk_even_better_sinewave_batch(SEXP e, SEXP a0) {
   wickra_even_better_sinewave_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_even_better_sinewave_warmup_period(SEXP e) {
+  struct EvenBetterSinewave *h = (struct EvenBetterSinewave *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_even_better_sinewave_warmup_period(h));
+}
+SEXP wk_even_better_sinewave_is_ready(SEXP e) {
+  struct EvenBetterSinewave *h = (struct EvenBetterSinewave *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_even_better_sinewave_is_ready(h));
 }
 SEXP wk_even_better_sinewave_reset(SEXP e) {
   struct EvenBetterSinewave *h = (struct EvenBetterSinewave *)R_ExternalPtrAddr(e);
@@ -4117,6 +5133,14 @@ SEXP wk_evening_doji_star_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   UNPROTECT(1);
   return out;
 }
+SEXP wk_evening_doji_star_warmup_period(SEXP e) {
+  struct EveningDojiStar *h = (struct EveningDojiStar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_evening_doji_star_warmup_period(h));
+}
+SEXP wk_evening_doji_star_is_ready(SEXP e) {
+  struct EveningDojiStar *h = (struct EveningDojiStar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_evening_doji_star_is_ready(h));
+}
 SEXP wk_evening_doji_star_reset(SEXP e) {
   struct EveningDojiStar *h = (struct EveningDojiStar *)R_ExternalPtrAddr(e);
   wickra_evening_doji_star_reset(h);
@@ -4150,6 +5174,14 @@ SEXP wk_evwma_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5
   UNPROTECT(1);
   return out;
 }
+SEXP wk_evwma_warmup_period(SEXP e) {
+  struct Evwma *h = (struct Evwma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_evwma_warmup_period(h));
+}
+SEXP wk_evwma_is_ready(SEXP e) {
+  struct Evwma *h = (struct Evwma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_evwma_is_ready(h));
+}
 SEXP wk_evwma_reset(SEXP e) {
   struct Evwma *h = (struct Evwma *)R_ExternalPtrAddr(e);
   wickra_evwma_reset(h);
@@ -4181,6 +5213,14 @@ SEXP wk_ewma_volatility_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_ewma_volatility_warmup_period(SEXP e) {
+  struct EwmaVolatility *h = (struct EwmaVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_ewma_volatility_warmup_period(h));
+}
+SEXP wk_ewma_volatility_is_ready(SEXP e) {
+  struct EwmaVolatility *h = (struct EwmaVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_ewma_volatility_is_ready(h));
+}
 SEXP wk_ewma_volatility_reset(SEXP e) {
   struct EwmaVolatility *h = (struct EwmaVolatility *)R_ExternalPtrAddr(e);
   wickra_ewma_volatility_reset(h);
@@ -4211,6 +5251,14 @@ SEXP wk_expectancy_batch(SEXP e, SEXP a0) {
   wickra_expectancy_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_expectancy_warmup_period(SEXP e) {
+  struct Expectancy *h = (struct Expectancy *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_expectancy_warmup_period(h));
+}
+SEXP wk_expectancy_is_ready(SEXP e) {
+  struct Expectancy *h = (struct Expectancy *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_expectancy_is_ready(h));
 }
 SEXP wk_expectancy_reset(SEXP e) {
   struct Expectancy *h = (struct Expectancy *)R_ExternalPtrAddr(e);
@@ -4245,6 +5293,14 @@ SEXP wk_falling_three_methods_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_falling_three_methods_warmup_period(SEXP e) {
+  struct FallingThreeMethods *h = (struct FallingThreeMethods *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_falling_three_methods_warmup_period(h));
+}
+SEXP wk_falling_three_methods_is_ready(SEXP e) {
+  struct FallingThreeMethods *h = (struct FallingThreeMethods *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_falling_three_methods_is_ready(h));
+}
 SEXP wk_falling_three_methods_reset(SEXP e) {
   struct FallingThreeMethods *h = (struct FallingThreeMethods *)R_ExternalPtrAddr(e);
   wickra_falling_three_methods_reset(h);
@@ -4275,6 +5331,14 @@ SEXP wk_fama_batch(SEXP e, SEXP a0) {
   wickra_fama_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_fama_warmup_period(SEXP e) {
+  struct Fama *h = (struct Fama *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_fama_warmup_period(h));
+}
+SEXP wk_fama_is_ready(SEXP e) {
+  struct Fama *h = (struct Fama *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_fama_is_ready(h));
 }
 SEXP wk_fama_reset(SEXP e) {
   struct Fama *h = (struct Fama *)R_ExternalPtrAddr(e);
@@ -4310,6 +5374,14 @@ SEXP wk_fib_arcs_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_fib_arcs_warmup_period(SEXP e) {
+  struct FibArcs *h = (struct FibArcs *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_fib_arcs_warmup_period(h));
+}
+SEXP wk_fib_arcs_is_ready(SEXP e) {
+  struct FibArcs *h = (struct FibArcs *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_fib_arcs_is_ready(h));
 }
 SEXP wk_fib_arcs_reset(SEXP e) {
   struct FibArcs *h = (struct FibArcs *)R_ExternalPtrAddr(e);
@@ -4348,6 +5420,14 @@ SEXP wk_fib_channel_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_fib_channel_warmup_period(SEXP e) {
+  struct FibChannel *h = (struct FibChannel *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_fib_channel_warmup_period(h));
+}
+SEXP wk_fib_channel_is_ready(SEXP e) {
+  struct FibChannel *h = (struct FibChannel *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_fib_channel_is_ready(h));
+}
 SEXP wk_fib_channel_reset(SEXP e) {
   struct FibChannel *h = (struct FibChannel *)R_ExternalPtrAddr(e);
   wickra_fib_channel_reset(h);
@@ -4380,6 +5460,14 @@ SEXP wk_fib_confluence_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_fib_confluence_warmup_period(SEXP e) {
+  struct FibConfluence *h = (struct FibConfluence *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_fib_confluence_warmup_period(h));
+}
+SEXP wk_fib_confluence_is_ready(SEXP e) {
+  struct FibConfluence *h = (struct FibConfluence *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_fib_confluence_is_ready(h));
 }
 SEXP wk_fib_confluence_reset(SEXP e) {
   struct FibConfluence *h = (struct FibConfluence *)R_ExternalPtrAddr(e);
@@ -4420,6 +5508,14 @@ SEXP wk_fib_extension_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(2);
   return r;
 }
+SEXP wk_fib_extension_warmup_period(SEXP e) {
+  struct FibExtension *h = (struct FibExtension *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_fib_extension_warmup_period(h));
+}
+SEXP wk_fib_extension_is_ready(SEXP e) {
+  struct FibExtension *h = (struct FibExtension *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_fib_extension_is_ready(h));
+}
 SEXP wk_fib_extension_reset(SEXP e) {
   struct FibExtension *h = (struct FibExtension *)R_ExternalPtrAddr(e);
   wickra_fib_extension_reset(h);
@@ -4454,6 +5550,14 @@ SEXP wk_fib_fan_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_fib_fan_warmup_period(SEXP e) {
+  struct FibFan *h = (struct FibFan *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_fib_fan_warmup_period(h));
+}
+SEXP wk_fib_fan_is_ready(SEXP e) {
+  struct FibFan *h = (struct FibFan *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_fib_fan_is_ready(h));
 }
 SEXP wk_fib_fan_reset(SEXP e) {
   struct FibFan *h = (struct FibFan *)R_ExternalPtrAddr(e);
@@ -4491,6 +5595,14 @@ SEXP wk_fib_projection_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_fib_projection_warmup_period(SEXP e) {
+  struct FibProjection *h = (struct FibProjection *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_fib_projection_warmup_period(h));
+}
+SEXP wk_fib_projection_is_ready(SEXP e) {
+  struct FibProjection *h = (struct FibProjection *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_fib_projection_is_ready(h));
 }
 SEXP wk_fib_projection_reset(SEXP e) {
   struct FibProjection *h = (struct FibProjection *)R_ExternalPtrAddr(e);
@@ -4535,6 +5647,14 @@ SEXP wk_fib_retracement_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_fib_retracement_warmup_period(SEXP e) {
+  struct FibRetracement *h = (struct FibRetracement *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_fib_retracement_warmup_period(h));
+}
+SEXP wk_fib_retracement_is_ready(SEXP e) {
+  struct FibRetracement *h = (struct FibRetracement *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_fib_retracement_is_ready(h));
+}
 SEXP wk_fib_retracement_reset(SEXP e) {
   struct FibRetracement *h = (struct FibRetracement *)R_ExternalPtrAddr(e);
   wickra_fib_retracement_reset(h);
@@ -4567,6 +5687,14 @@ SEXP wk_fib_time_zones_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_fib_time_zones_warmup_period(SEXP e) {
+  struct FibTimeZones *h = (struct FibTimeZones *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_fib_time_zones_warmup_period(h));
+}
+SEXP wk_fib_time_zones_is_ready(SEXP e) {
+  struct FibTimeZones *h = (struct FibTimeZones *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_fib_time_zones_is_ready(h));
 }
 SEXP wk_fib_time_zones_reset(SEXP e) {
   struct FibTimeZones *h = (struct FibTimeZones *)R_ExternalPtrAddr(e);
@@ -4611,6 +5739,14 @@ SEXP wk_fibonacci_pivots_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   UNPROTECT(2);
   return r;
 }
+SEXP wk_fibonacci_pivots_warmup_period(SEXP e) {
+  struct FibonacciPivots *h = (struct FibonacciPivots *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_fibonacci_pivots_warmup_period(h));
+}
+SEXP wk_fibonacci_pivots_is_ready(SEXP e) {
+  struct FibonacciPivots *h = (struct FibonacciPivots *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_fibonacci_pivots_is_ready(h));
+}
 SEXP wk_fibonacci_pivots_reset(SEXP e) {
   struct FibonacciPivots *h = (struct FibonacciPivots *)R_ExternalPtrAddr(e);
   wickra_fibonacci_pivots_reset(h);
@@ -4642,6 +5778,14 @@ SEXP wk_fisher_rsi_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_fisher_rsi_warmup_period(SEXP e) {
+  struct FisherRsi *h = (struct FisherRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_fisher_rsi_warmup_period(h));
+}
+SEXP wk_fisher_rsi_is_ready(SEXP e) {
+  struct FisherRsi *h = (struct FisherRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_fisher_rsi_is_ready(h));
+}
 SEXP wk_fisher_rsi_reset(SEXP e) {
   struct FisherRsi *h = (struct FisherRsi *)R_ExternalPtrAddr(e);
   wickra_fisher_rsi_reset(h);
@@ -4672,6 +5816,14 @@ SEXP wk_fisher_transform_batch(SEXP e, SEXP a0) {
   wickra_fisher_transform_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_fisher_transform_warmup_period(SEXP e) {
+  struct FisherTransform *h = (struct FisherTransform *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_fisher_transform_warmup_period(h));
+}
+SEXP wk_fisher_transform_is_ready(SEXP e) {
+  struct FisherTransform *h = (struct FisherTransform *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_fisher_transform_is_ready(h));
 }
 SEXP wk_fisher_transform_reset(SEXP e) {
   struct FisherTransform *h = (struct FisherTransform *)R_ExternalPtrAddr(e);
@@ -4705,6 +5857,14 @@ SEXP wk_flag_pennant_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   wickra_flag_pennant_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_flag_pennant_warmup_period(SEXP e) {
+  struct FlagPennant *h = (struct FlagPennant *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_flag_pennant_warmup_period(h));
+}
+SEXP wk_flag_pennant_is_ready(SEXP e) {
+  struct FlagPennant *h = (struct FlagPennant *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_flag_pennant_is_ready(h));
 }
 SEXP wk_flag_pennant_reset(SEXP e) {
   struct FlagPennant *h = (struct FlagPennant *)R_ExternalPtrAddr(e);
@@ -4745,6 +5905,14 @@ SEXP wk_footprint_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   UNPROTECT(3);
   return r;
 }
+SEXP wk_footprint_warmup_period(SEXP e) {
+  struct Footprint *h = (struct Footprint *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_footprint_warmup_period(h));
+}
+SEXP wk_footprint_is_ready(SEXP e) {
+  struct Footprint *h = (struct Footprint *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_footprint_is_ready(h));
+}
 SEXP wk_footprint_reset(SEXP e) {
   struct Footprint *h = (struct Footprint *)R_ExternalPtrAddr(e);
   wickra_footprint_reset(h);
@@ -4777,6 +5945,14 @@ SEXP wk_force_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
   wickra_force_index_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_force_index_warmup_period(SEXP e) {
+  struct ForceIndex *h = (struct ForceIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_force_index_warmup_period(h));
+}
+SEXP wk_force_index_is_ready(SEXP e) {
+  struct ForceIndex *h = (struct ForceIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_force_index_is_ready(h));
 }
 SEXP wk_force_index_reset(SEXP e) {
   struct ForceIndex *h = (struct ForceIndex *)R_ExternalPtrAddr(e);
@@ -4811,6 +5987,14 @@ SEXP wk_fractal_chaos_bands_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, S
   UNPROTECT(2);
   return r;
 }
+SEXP wk_fractal_chaos_bands_warmup_period(SEXP e) {
+  struct FractalChaosBands *h = (struct FractalChaosBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_fractal_chaos_bands_warmup_period(h));
+}
+SEXP wk_fractal_chaos_bands_is_ready(SEXP e) {
+  struct FractalChaosBands *h = (struct FractalChaosBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_fractal_chaos_bands_is_ready(h));
+}
 SEXP wk_fractal_chaos_bands_reset(SEXP e) {
   struct FractalChaosBands *h = (struct FractalChaosBands *)R_ExternalPtrAddr(e);
   wickra_fractal_chaos_bands_reset(h);
@@ -4841,6 +6025,14 @@ SEXP wk_frama_batch(SEXP e, SEXP a0) {
   wickra_frama_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_frama_warmup_period(SEXP e) {
+  struct Frama *h = (struct Frama *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_frama_warmup_period(h));
+}
+SEXP wk_frama_is_ready(SEXP e) {
+  struct Frama *h = (struct Frama *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_frama_is_ready(h));
 }
 SEXP wk_frama_reset(SEXP e) {
   struct Frama *h = (struct Frama *)R_ExternalPtrAddr(e);
@@ -4875,6 +6067,14 @@ SEXP wk_fry_pan_bottom_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(1);
   return out;
 }
+SEXP wk_fry_pan_bottom_warmup_period(SEXP e) {
+  struct FryPanBottom *h = (struct FryPanBottom *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_fry_pan_bottom_warmup_period(h));
+}
+SEXP wk_fry_pan_bottom_is_ready(SEXP e) {
+  struct FryPanBottom *h = (struct FryPanBottom *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_fry_pan_bottom_is_ready(h));
+}
 SEXP wk_fry_pan_bottom_reset(SEXP e) {
   struct FryPanBottom *h = (struct FryPanBottom *)R_ExternalPtrAddr(e);
   wickra_fry_pan_bottom_reset(h);
@@ -4897,6 +6097,14 @@ SEXP wk_funding_basis_new(void) {
 SEXP wk_funding_basis_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
   struct FundingBasis *h = (struct FundingBasis *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_funding_basis_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_funding_basis_warmup_period(SEXP e) {
+  struct FundingBasis *h = (struct FundingBasis *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_funding_basis_warmup_period(h));
+}
+SEXP wk_funding_basis_is_ready(SEXP e) {
+  struct FundingBasis *h = (struct FundingBasis *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_funding_basis_is_ready(h));
 }
 SEXP wk_funding_basis_reset(SEXP e) {
   struct FundingBasis *h = (struct FundingBasis *)R_ExternalPtrAddr(e);
@@ -4921,6 +6129,14 @@ SEXP wk_funding_implied_apr_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, S
   struct FundingImpliedApr *h = (struct FundingImpliedApr *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_funding_implied_apr_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
 }
+SEXP wk_funding_implied_apr_warmup_period(SEXP e) {
+  struct FundingImpliedApr *h = (struct FundingImpliedApr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_funding_implied_apr_warmup_period(h));
+}
+SEXP wk_funding_implied_apr_is_ready(SEXP e) {
+  struct FundingImpliedApr *h = (struct FundingImpliedApr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_funding_implied_apr_is_ready(h));
+}
 SEXP wk_funding_implied_apr_reset(SEXP e) {
   struct FundingImpliedApr *h = (struct FundingImpliedApr *)R_ExternalPtrAddr(e);
   wickra_funding_implied_apr_reset(h);
@@ -4943,6 +6159,14 @@ SEXP wk_funding_rate_new(void) {
 SEXP wk_funding_rate_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
   struct FundingRate *h = (struct FundingRate *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_funding_rate_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_funding_rate_warmup_period(SEXP e) {
+  struct FundingRate *h = (struct FundingRate *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_funding_rate_warmup_period(h));
+}
+SEXP wk_funding_rate_is_ready(SEXP e) {
+  struct FundingRate *h = (struct FundingRate *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_funding_rate_is_ready(h));
 }
 SEXP wk_funding_rate_reset(SEXP e) {
   struct FundingRate *h = (struct FundingRate *)R_ExternalPtrAddr(e);
@@ -4967,6 +6191,14 @@ SEXP wk_funding_rate_mean_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   struct FundingRateMean *h = (struct FundingRateMean *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_funding_rate_mean_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
 }
+SEXP wk_funding_rate_mean_warmup_period(SEXP e) {
+  struct FundingRateMean *h = (struct FundingRateMean *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_funding_rate_mean_warmup_period(h));
+}
+SEXP wk_funding_rate_mean_is_ready(SEXP e) {
+  struct FundingRateMean *h = (struct FundingRateMean *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_funding_rate_mean_is_ready(h));
+}
 SEXP wk_funding_rate_mean_reset(SEXP e) {
   struct FundingRateMean *h = (struct FundingRateMean *)R_ExternalPtrAddr(e);
   wickra_funding_rate_mean_reset(h);
@@ -4989,6 +6221,14 @@ SEXP wk_funding_rate_z_score_new(SEXP a0) {
 SEXP wk_funding_rate_z_score_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
   struct FundingRateZScore *h = (struct FundingRateZScore *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_funding_rate_z_score_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_funding_rate_z_score_warmup_period(SEXP e) {
+  struct FundingRateZScore *h = (struct FundingRateZScore *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_funding_rate_z_score_warmup_period(h));
+}
+SEXP wk_funding_rate_z_score_is_ready(SEXP e) {
+  struct FundingRateZScore *h = (struct FundingRateZScore *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_funding_rate_z_score_is_ready(h));
 }
 SEXP wk_funding_rate_z_score_reset(SEXP e) {
   struct FundingRateZScore *h = (struct FundingRateZScore *)R_ExternalPtrAddr(e);
@@ -5021,6 +6261,14 @@ SEXP wk_gain_loss_ratio_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_gain_loss_ratio_warmup_period(SEXP e) {
+  struct GainLossRatio *h = (struct GainLossRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_gain_loss_ratio_warmup_period(h));
+}
+SEXP wk_gain_loss_ratio_is_ready(SEXP e) {
+  struct GainLossRatio *h = (struct GainLossRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_gain_loss_ratio_is_ready(h));
+}
 SEXP wk_gain_loss_ratio_reset(SEXP e) {
   struct GainLossRatio *h = (struct GainLossRatio *)R_ExternalPtrAddr(e);
   wickra_gain_loss_ratio_reset(h);
@@ -5051,6 +6299,14 @@ SEXP wk_gain_to_pain_ratio_batch(SEXP e, SEXP a0) {
   wickra_gain_to_pain_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_gain_to_pain_ratio_warmup_period(SEXP e) {
+  struct GainToPainRatio *h = (struct GainToPainRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_gain_to_pain_ratio_warmup_period(h));
+}
+SEXP wk_gain_to_pain_ratio_is_ready(SEXP e) {
+  struct GainToPainRatio *h = (struct GainToPainRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_gain_to_pain_ratio_is_ready(h));
 }
 SEXP wk_gain_to_pain_ratio_reset(SEXP e) {
   struct GainToPainRatio *h = (struct GainToPainRatio *)R_ExternalPtrAddr(e);
@@ -5085,6 +6341,14 @@ SEXP wk_gap_side_by_side_white_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3,
   UNPROTECT(1);
   return out;
 }
+SEXP wk_gap_side_by_side_white_warmup_period(SEXP e) {
+  struct GapSideBySideWhite *h = (struct GapSideBySideWhite *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_gap_side_by_side_white_warmup_period(h));
+}
+SEXP wk_gap_side_by_side_white_is_ready(SEXP e) {
+  struct GapSideBySideWhite *h = (struct GapSideBySideWhite *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_gap_side_by_side_white_is_ready(h));
+}
 SEXP wk_gap_side_by_side_white_reset(SEXP e) {
   struct GapSideBySideWhite *h = (struct GapSideBySideWhite *)R_ExternalPtrAddr(e);
   wickra_gap_side_by_side_white_reset(h);
@@ -5115,6 +6379,14 @@ SEXP wk_garch11_batch(SEXP e, SEXP a0) {
   wickra_garch11_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_garch11_warmup_period(SEXP e) {
+  struct Garch11 *h = (struct Garch11 *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_garch11_warmup_period(h));
+}
+SEXP wk_garch11_is_ready(SEXP e) {
+  struct Garch11 *h = (struct Garch11 *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_garch11_is_ready(h));
 }
 SEXP wk_garch11_reset(SEXP e) {
   struct Garch11 *h = (struct Garch11 *)R_ExternalPtrAddr(e);
@@ -5149,6 +6421,14 @@ SEXP wk_garman_klass_volatility_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3
   UNPROTECT(1);
   return out;
 }
+SEXP wk_garman_klass_volatility_warmup_period(SEXP e) {
+  struct GarmanKlassVolatility *h = (struct GarmanKlassVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_garman_klass_volatility_warmup_period(h));
+}
+SEXP wk_garman_klass_volatility_is_ready(SEXP e) {
+  struct GarmanKlassVolatility *h = (struct GarmanKlassVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_garman_klass_volatility_is_ready(h));
+}
 SEXP wk_garman_klass_volatility_reset(SEXP e) {
   struct GarmanKlassVolatility *h = (struct GarmanKlassVolatility *)R_ExternalPtrAddr(e);
   wickra_garman_klass_volatility_reset(h);
@@ -5181,6 +6461,14 @@ SEXP wk_gartley_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
   wickra_gartley_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_gartley_warmup_period(SEXP e) {
+  struct Gartley *h = (struct Gartley *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_gartley_warmup_period(h));
+}
+SEXP wk_gartley_is_ready(SEXP e) {
+  struct Gartley *h = (struct Gartley *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_gartley_is_ready(h));
 }
 SEXP wk_gartley_reset(SEXP e) {
   struct Gartley *h = (struct Gartley *)R_ExternalPtrAddr(e);
@@ -5215,6 +6503,14 @@ SEXP wk_gator_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   UNPROTECT(2);
   return r;
 }
+SEXP wk_gator_oscillator_warmup_period(SEXP e) {
+  struct GatorOscillator *h = (struct GatorOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_gator_oscillator_warmup_period(h));
+}
+SEXP wk_gator_oscillator_is_ready(SEXP e) {
+  struct GatorOscillator *h = (struct GatorOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_gator_oscillator_is_ready(h));
+}
 SEXP wk_gator_oscillator_reset(SEXP e) {
   struct GatorOscillator *h = (struct GatorOscillator *)R_ExternalPtrAddr(e);
   wickra_gator_oscillator_reset(h);
@@ -5246,6 +6542,14 @@ SEXP wk_generalized_dema_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_generalized_dema_warmup_period(SEXP e) {
+  struct GeneralizedDema *h = (struct GeneralizedDema *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_generalized_dema_warmup_period(h));
+}
+SEXP wk_generalized_dema_is_ready(SEXP e) {
+  struct GeneralizedDema *h = (struct GeneralizedDema *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_generalized_dema_is_ready(h));
+}
 SEXP wk_generalized_dema_reset(SEXP e) {
   struct GeneralizedDema *h = (struct GeneralizedDema *)R_ExternalPtrAddr(e);
   wickra_generalized_dema_reset(h);
@@ -5276,6 +6580,14 @@ SEXP wk_geometric_ma_batch(SEXP e, SEXP a0) {
   wickra_geometric_ma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_geometric_ma_warmup_period(SEXP e) {
+  struct GeometricMa *h = (struct GeometricMa *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_geometric_ma_warmup_period(h));
+}
+SEXP wk_geometric_ma_is_ready(SEXP e) {
+  struct GeometricMa *h = (struct GeometricMa *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_geometric_ma_is_ready(h));
 }
 SEXP wk_geometric_ma_reset(SEXP e) {
   struct GeometricMa *h = (struct GeometricMa *)R_ExternalPtrAddr(e);
@@ -5312,6 +6624,14 @@ SEXP wk_golden_pocket_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(2);
   return r;
 }
+SEXP wk_golden_pocket_warmup_period(SEXP e) {
+  struct GoldenPocket *h = (struct GoldenPocket *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_golden_pocket_warmup_period(h));
+}
+SEXP wk_golden_pocket_is_ready(SEXP e) {
+  struct GoldenPocket *h = (struct GoldenPocket *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_golden_pocket_is_ready(h));
+}
 SEXP wk_golden_pocket_reset(SEXP e) {
   struct GoldenPocket *h = (struct GoldenPocket *)R_ExternalPtrAddr(e);
   wickra_golden_pocket_reset(h);
@@ -5342,6 +6662,14 @@ SEXP wk_granger_causality_batch(SEXP e, SEXP a0, SEXP a1) {
   wickra_granger_causality_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_granger_causality_warmup_period(SEXP e) {
+  struct GrangerCausality *h = (struct GrangerCausality *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_granger_causality_warmup_period(h));
+}
+SEXP wk_granger_causality_is_ready(SEXP e) {
+  struct GrangerCausality *h = (struct GrangerCausality *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_granger_causality_is_ready(h));
 }
 SEXP wk_granger_causality_reset(SEXP e) {
   struct GrangerCausality *h = (struct GrangerCausality *)R_ExternalPtrAddr(e);
@@ -5376,6 +6704,14 @@ SEXP wk_gravestone_doji_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   UNPROTECT(1);
   return out;
 }
+SEXP wk_gravestone_doji_warmup_period(SEXP e) {
+  struct GravestoneDoji *h = (struct GravestoneDoji *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_gravestone_doji_warmup_period(h));
+}
+SEXP wk_gravestone_doji_is_ready(SEXP e) {
+  struct GravestoneDoji *h = (struct GravestoneDoji *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_gravestone_doji_is_ready(h));
+}
 SEXP wk_gravestone_doji_reset(SEXP e) {
   struct GravestoneDoji *h = (struct GravestoneDoji *)R_ExternalPtrAddr(e);
   wickra_gravestone_doji_reset(h);
@@ -5408,6 +6744,14 @@ SEXP wk_hammer_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a
   wickra_hammer_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_hammer_warmup_period(SEXP e) {
+  struct Hammer *h = (struct Hammer *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_hammer_warmup_period(h));
+}
+SEXP wk_hammer_is_ready(SEXP e) {
+  struct Hammer *h = (struct Hammer *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_hammer_is_ready(h));
 }
 SEXP wk_hammer_reset(SEXP e) {
   struct Hammer *h = (struct Hammer *)R_ExternalPtrAddr(e);
@@ -5442,6 +6786,14 @@ SEXP wk_hanging_man_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
   UNPROTECT(1);
   return out;
 }
+SEXP wk_hanging_man_warmup_period(SEXP e) {
+  struct HangingMan *h = (struct HangingMan *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_hanging_man_warmup_period(h));
+}
+SEXP wk_hanging_man_is_ready(SEXP e) {
+  struct HangingMan *h = (struct HangingMan *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_hanging_man_is_ready(h));
+}
 SEXP wk_hanging_man_reset(SEXP e) {
   struct HangingMan *h = (struct HangingMan *)R_ExternalPtrAddr(e);
   wickra_hanging_man_reset(h);
@@ -5474,6 +6826,14 @@ SEXP wk_harami_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a
   wickra_harami_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_harami_warmup_period(SEXP e) {
+  struct Harami *h = (struct Harami *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_harami_warmup_period(h));
+}
+SEXP wk_harami_is_ready(SEXP e) {
+  struct Harami *h = (struct Harami *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_harami_is_ready(h));
 }
 SEXP wk_harami_reset(SEXP e) {
   struct Harami *h = (struct Harami *)R_ExternalPtrAddr(e);
@@ -5508,6 +6868,14 @@ SEXP wk_harami_cross_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_harami_cross_warmup_period(SEXP e) {
+  struct HaramiCross *h = (struct HaramiCross *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_harami_cross_warmup_period(h));
+}
+SEXP wk_harami_cross_is_ready(SEXP e) {
+  struct HaramiCross *h = (struct HaramiCross *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_harami_cross_is_ready(h));
+}
 SEXP wk_harami_cross_reset(SEXP e) {
   struct HaramiCross *h = (struct HaramiCross *)R_ExternalPtrAddr(e);
   wickra_harami_cross_reset(h);
@@ -5538,6 +6906,14 @@ SEXP wk_hasbrouck_information_share_batch(SEXP e, SEXP a0, SEXP a1) {
   wickra_hasbrouck_information_share_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_hasbrouck_information_share_warmup_period(SEXP e) {
+  struct HasbrouckInformationShare *h = (struct HasbrouckInformationShare *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_hasbrouck_information_share_warmup_period(h));
+}
+SEXP wk_hasbrouck_information_share_is_ready(SEXP e) {
+  struct HasbrouckInformationShare *h = (struct HasbrouckInformationShare *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_hasbrouck_information_share_is_ready(h));
 }
 SEXP wk_hasbrouck_information_share_reset(SEXP e) {
   struct HasbrouckInformationShare *h = (struct HasbrouckInformationShare *)R_ExternalPtrAddr(e);
@@ -5571,6 +6947,14 @@ SEXP wk_head_and_shoulders_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   wickra_head_and_shoulders_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_head_and_shoulders_warmup_period(SEXP e) {
+  struct HeadAndShoulders *h = (struct HeadAndShoulders *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_head_and_shoulders_warmup_period(h));
+}
+SEXP wk_head_and_shoulders_is_ready(SEXP e) {
+  struct HeadAndShoulders *h = (struct HeadAndShoulders *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_head_and_shoulders_is_ready(h));
 }
 SEXP wk_head_and_shoulders_reset(SEXP e) {
   struct HeadAndShoulders *h = (struct HeadAndShoulders *)R_ExternalPtrAddr(e);
@@ -5609,6 +6993,14 @@ SEXP wk_heikin_ashi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_heikin_ashi_warmup_period(SEXP e) {
+  struct HeikinAshi *h = (struct HeikinAshi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_heikin_ashi_warmup_period(h));
+}
+SEXP wk_heikin_ashi_is_ready(SEXP e) {
+  struct HeikinAshi *h = (struct HeikinAshi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_heikin_ashi_is_ready(h));
+}
 SEXP wk_heikin_ashi_reset(SEXP e) {
   struct HeikinAshi *h = (struct HeikinAshi *)R_ExternalPtrAddr(e);
   wickra_heikin_ashi_reset(h);
@@ -5641,6 +7033,14 @@ SEXP wk_heikin_ashi_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3,
   wickra_heikin_ashi_oscillator_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_heikin_ashi_oscillator_warmup_period(SEXP e) {
+  struct HeikinAshiOscillator *h = (struct HeikinAshiOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_heikin_ashi_oscillator_warmup_period(h));
+}
+SEXP wk_heikin_ashi_oscillator_is_ready(SEXP e) {
+  struct HeikinAshiOscillator *h = (struct HeikinAshiOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_heikin_ashi_oscillator_is_ready(h));
 }
 SEXP wk_heikin_ashi_oscillator_reset(SEXP e) {
   struct HeikinAshiOscillator *h = (struct HeikinAshiOscillator *)R_ExternalPtrAddr(e);
@@ -5675,6 +7075,14 @@ SEXP wk_hi_lo_activator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   UNPROTECT(1);
   return out;
 }
+SEXP wk_hi_lo_activator_warmup_period(SEXP e) {
+  struct HiLoActivator *h = (struct HiLoActivator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_hi_lo_activator_warmup_period(h));
+}
+SEXP wk_hi_lo_activator_is_ready(SEXP e) {
+  struct HiLoActivator *h = (struct HiLoActivator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_hi_lo_activator_is_ready(h));
+}
 SEXP wk_hi_lo_activator_reset(SEXP e) {
   struct HiLoActivator *h = (struct HiLoActivator *)R_ExternalPtrAddr(e);
   wickra_hi_lo_activator_reset(h);
@@ -5697,6 +7105,14 @@ SEXP wk_high_low_index_new(SEXP a0) {
 SEXP wk_high_low_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct HighLowIndex *h = (struct HighLowIndex *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_high_low_index_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_high_low_index_warmup_period(SEXP e) {
+  struct HighLowIndex *h = (struct HighLowIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_high_low_index_warmup_period(h));
+}
+SEXP wk_high_low_index_is_ready(SEXP e) {
+  struct HighLowIndex *h = (struct HighLowIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_high_low_index_is_ready(h));
 }
 SEXP wk_high_low_index_reset(SEXP e) {
   struct HighLowIndex *h = (struct HighLowIndex *)R_ExternalPtrAddr(e);
@@ -5731,6 +7147,14 @@ SEXP wk_high_low_range_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(1);
   return out;
 }
+SEXP wk_high_low_range_warmup_period(SEXP e) {
+  struct HighLowRange *h = (struct HighLowRange *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_high_low_range_warmup_period(h));
+}
+SEXP wk_high_low_range_is_ready(SEXP e) {
+  struct HighLowRange *h = (struct HighLowRange *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_high_low_range_is_ready(h));
+}
 SEXP wk_high_low_range_reset(SEXP e) {
   struct HighLowRange *h = (struct HighLowRange *)R_ExternalPtrAddr(e);
   wickra_high_low_range_reset(h);
@@ -5763,6 +7187,14 @@ SEXP wk_high_low_volume_nodes_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3,
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_high_low_volume_nodes_warmup_period(SEXP e) {
+  struct HighLowVolumeNodes *h = (struct HighLowVolumeNodes *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_high_low_volume_nodes_warmup_period(h));
+}
+SEXP wk_high_low_volume_nodes_is_ready(SEXP e) {
+  struct HighLowVolumeNodes *h = (struct HighLowVolumeNodes *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_high_low_volume_nodes_is_ready(h));
 }
 SEXP wk_high_low_volume_nodes_reset(SEXP e) {
   struct HighLowVolumeNodes *h = (struct HighLowVolumeNodes *)R_ExternalPtrAddr(e);
@@ -5797,6 +7229,14 @@ SEXP wk_high_wave_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   UNPROTECT(1);
   return out;
 }
+SEXP wk_high_wave_warmup_period(SEXP e) {
+  struct HighWave *h = (struct HighWave *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_high_wave_warmup_period(h));
+}
+SEXP wk_high_wave_is_ready(SEXP e) {
+  struct HighWave *h = (struct HighWave *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_high_wave_is_ready(h));
+}
 SEXP wk_high_wave_reset(SEXP e) {
   struct HighWave *h = (struct HighWave *)R_ExternalPtrAddr(e);
   wickra_high_wave_reset(h);
@@ -5827,6 +7267,14 @@ SEXP wk_highpass_filter_batch(SEXP e, SEXP a0) {
   wickra_highpass_filter_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_highpass_filter_warmup_period(SEXP e) {
+  struct HighpassFilter *h = (struct HighpassFilter *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_highpass_filter_warmup_period(h));
+}
+SEXP wk_highpass_filter_is_ready(SEXP e) {
+  struct HighpassFilter *h = (struct HighpassFilter *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_highpass_filter_is_ready(h));
 }
 SEXP wk_highpass_filter_reset(SEXP e) {
   struct HighpassFilter *h = (struct HighpassFilter *)R_ExternalPtrAddr(e);
@@ -5861,6 +7309,14 @@ SEXP wk_hikkake_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_hikkake_warmup_period(SEXP e) {
+  struct Hikkake *h = (struct Hikkake *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_hikkake_warmup_period(h));
+}
+SEXP wk_hikkake_is_ready(SEXP e) {
+  struct Hikkake *h = (struct Hikkake *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_hikkake_is_ready(h));
+}
 SEXP wk_hikkake_reset(SEXP e) {
   struct Hikkake *h = (struct Hikkake *)R_ExternalPtrAddr(e);
   wickra_hikkake_reset(h);
@@ -5894,6 +7350,14 @@ SEXP wk_hikkake_modified_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_hikkake_modified_warmup_period(SEXP e) {
+  struct HikkakeModified *h = (struct HikkakeModified *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_hikkake_modified_warmup_period(h));
+}
+SEXP wk_hikkake_modified_is_ready(SEXP e) {
+  struct HikkakeModified *h = (struct HikkakeModified *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_hikkake_modified_is_ready(h));
+}
 SEXP wk_hikkake_modified_reset(SEXP e) {
   struct HikkakeModified *h = (struct HikkakeModified *)R_ExternalPtrAddr(e);
   wickra_hikkake_modified_reset(h);
@@ -5924,6 +7388,14 @@ SEXP wk_hilbert_dominant_cycle_batch(SEXP e, SEXP a0) {
   wickra_hilbert_dominant_cycle_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_hilbert_dominant_cycle_warmup_period(SEXP e) {
+  struct HilbertDominantCycle *h = (struct HilbertDominantCycle *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_hilbert_dominant_cycle_warmup_period(h));
+}
+SEXP wk_hilbert_dominant_cycle_is_ready(SEXP e) {
+  struct HilbertDominantCycle *h = (struct HilbertDominantCycle *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_hilbert_dominant_cycle_is_ready(h));
 }
 SEXP wk_hilbert_dominant_cycle_reset(SEXP e) {
   struct HilbertDominantCycle *h = (struct HilbertDominantCycle *)R_ExternalPtrAddr(e);
@@ -5956,6 +7428,14 @@ SEXP wk_historical_volatility_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_historical_volatility_warmup_period(SEXP e) {
+  struct HistoricalVolatility *h = (struct HistoricalVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_historical_volatility_warmup_period(h));
+}
+SEXP wk_historical_volatility_is_ready(SEXP e) {
+  struct HistoricalVolatility *h = (struct HistoricalVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_historical_volatility_is_ready(h));
+}
 SEXP wk_historical_volatility_reset(SEXP e) {
   struct HistoricalVolatility *h = (struct HistoricalVolatility *)R_ExternalPtrAddr(e);
   wickra_historical_volatility_reset(h);
@@ -5987,6 +7467,14 @@ SEXP wk_hma_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_hma_warmup_period(SEXP e) {
+  struct Hma *h = (struct Hma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_hma_warmup_period(h));
+}
+SEXP wk_hma_is_ready(SEXP e) {
+  struct Hma *h = (struct Hma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_hma_is_ready(h));
+}
 SEXP wk_hma_reset(SEXP e) {
   struct Hma *h = (struct Hma *)R_ExternalPtrAddr(e);
   wickra_hma_reset(h);
@@ -6017,6 +7505,14 @@ SEXP wk_holt_winters_batch(SEXP e, SEXP a0) {
   wickra_holt_winters_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_holt_winters_warmup_period(SEXP e) {
+  struct HoltWinters *h = (struct HoltWinters *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_holt_winters_warmup_period(h));
+}
+SEXP wk_holt_winters_is_ready(SEXP e) {
+  struct HoltWinters *h = (struct HoltWinters *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_holt_winters_is_ready(h));
 }
 SEXP wk_holt_winters_reset(SEXP e) {
   struct HoltWinters *h = (struct HoltWinters *)R_ExternalPtrAddr(e);
@@ -6051,6 +7547,14 @@ SEXP wk_homing_pigeon_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
   UNPROTECT(1);
   return out;
 }
+SEXP wk_homing_pigeon_warmup_period(SEXP e) {
+  struct HomingPigeon *h = (struct HomingPigeon *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_homing_pigeon_warmup_period(h));
+}
+SEXP wk_homing_pigeon_is_ready(SEXP e) {
+  struct HomingPigeon *h = (struct HomingPigeon *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_homing_pigeon_is_ready(h));
+}
 SEXP wk_homing_pigeon_reset(SEXP e) {
   struct HomingPigeon *h = (struct HomingPigeon *)R_ExternalPtrAddr(e);
   wickra_homing_pigeon_reset(h);
@@ -6081,6 +7585,14 @@ SEXP wk_ht_dc_phase_batch(SEXP e, SEXP a0) {
   wickra_ht_dc_phase_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_ht_dc_phase_warmup_period(SEXP e) {
+  struct HtDcPhase *h = (struct HtDcPhase *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_ht_dc_phase_warmup_period(h));
+}
+SEXP wk_ht_dc_phase_is_ready(SEXP e) {
+  struct HtDcPhase *h = (struct HtDcPhase *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_ht_dc_phase_is_ready(h));
 }
 SEXP wk_ht_dc_phase_reset(SEXP e) {
   struct HtDcPhase *h = (struct HtDcPhase *)R_ExternalPtrAddr(e);
@@ -6115,6 +7627,14 @@ SEXP wk_ht_phasor_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_ht_phasor_warmup_period(SEXP e) {
+  struct HtPhasor *h = (struct HtPhasor *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_ht_phasor_warmup_period(h));
+}
+SEXP wk_ht_phasor_is_ready(SEXP e) {
+  struct HtPhasor *h = (struct HtPhasor *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_ht_phasor_is_ready(h));
+}
 SEXP wk_ht_phasor_reset(SEXP e) {
   struct HtPhasor *h = (struct HtPhasor *)R_ExternalPtrAddr(e);
   wickra_ht_phasor_reset(h);
@@ -6145,6 +7665,14 @@ SEXP wk_ht_trend_mode_batch(SEXP e, SEXP a0) {
   wickra_ht_trend_mode_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_ht_trend_mode_warmup_period(SEXP e) {
+  struct HtTrendMode *h = (struct HtTrendMode *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_ht_trend_mode_warmup_period(h));
+}
+SEXP wk_ht_trend_mode_is_ready(SEXP e) {
+  struct HtTrendMode *h = (struct HtTrendMode *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_ht_trend_mode_is_ready(h));
 }
 SEXP wk_ht_trend_mode_reset(SEXP e) {
   struct HtTrendMode *h = (struct HtTrendMode *)R_ExternalPtrAddr(e);
@@ -6181,6 +7709,14 @@ SEXP wk_hurst_channel_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(2);
   return r;
 }
+SEXP wk_hurst_channel_warmup_period(SEXP e) {
+  struct HurstChannel *h = (struct HurstChannel *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_hurst_channel_warmup_period(h));
+}
+SEXP wk_hurst_channel_is_ready(SEXP e) {
+  struct HurstChannel *h = (struct HurstChannel *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_hurst_channel_is_ready(h));
+}
 SEXP wk_hurst_channel_reset(SEXP e) {
   struct HurstChannel *h = (struct HurstChannel *)R_ExternalPtrAddr(e);
   wickra_hurst_channel_reset(h);
@@ -6211,6 +7747,14 @@ SEXP wk_hurst_exponent_batch(SEXP e, SEXP a0) {
   wickra_hurst_exponent_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_hurst_exponent_warmup_period(SEXP e) {
+  struct HurstExponent *h = (struct HurstExponent *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_hurst_exponent_warmup_period(h));
+}
+SEXP wk_hurst_exponent_is_ready(SEXP e) {
+  struct HurstExponent *h = (struct HurstExponent *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_hurst_exponent_is_ready(h));
 }
 SEXP wk_hurst_exponent_reset(SEXP e) {
   struct HurstExponent *h = (struct HurstExponent *)R_ExternalPtrAddr(e);
@@ -6251,6 +7795,14 @@ SEXP wk_ichimoku_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   UNPROTECT(2);
   return r;
 }
+SEXP wk_ichimoku_warmup_period(SEXP e) {
+  struct Ichimoku *h = (struct Ichimoku *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_ichimoku_warmup_period(h));
+}
+SEXP wk_ichimoku_is_ready(SEXP e) {
+  struct Ichimoku *h = (struct Ichimoku *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_ichimoku_is_ready(h));
+}
 SEXP wk_ichimoku_reset(SEXP e) {
   struct Ichimoku *h = (struct Ichimoku *)R_ExternalPtrAddr(e);
   wickra_ichimoku_reset(h);
@@ -6283,6 +7835,14 @@ SEXP wk_identical_three_crows_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, 
   wickra_identical_three_crows_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_identical_three_crows_warmup_period(SEXP e) {
+  struct IdenticalThreeCrows *h = (struct IdenticalThreeCrows *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_identical_three_crows_warmup_period(h));
+}
+SEXP wk_identical_three_crows_is_ready(SEXP e) {
+  struct IdenticalThreeCrows *h = (struct IdenticalThreeCrows *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_identical_three_crows_is_ready(h));
 }
 SEXP wk_identical_three_crows_reset(SEXP e) {
   struct IdenticalThreeCrows *h = (struct IdenticalThreeCrows *)R_ExternalPtrAddr(e);
@@ -6362,6 +7922,14 @@ SEXP wk_in_neck_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_in_neck_warmup_period(SEXP e) {
+  struct InNeck *h = (struct InNeck *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_in_neck_warmup_period(h));
+}
+SEXP wk_in_neck_is_ready(SEXP e) {
+  struct InNeck *h = (struct InNeck *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_in_neck_is_ready(h));
+}
 SEXP wk_in_neck_reset(SEXP e) {
   struct InNeck *h = (struct InNeck *)R_ExternalPtrAddr(e);
   wickra_in_neck_reset(h);
@@ -6395,6 +7963,14 @@ SEXP wk_inertia_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_inertia_warmup_period(SEXP e) {
+  struct Inertia *h = (struct Inertia *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_inertia_warmup_period(h));
+}
+SEXP wk_inertia_is_ready(SEXP e) {
+  struct Inertia *h = (struct Inertia *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_inertia_is_ready(h));
+}
 SEXP wk_inertia_reset(SEXP e) {
   struct Inertia *h = (struct Inertia *)R_ExternalPtrAddr(e);
   wickra_inertia_reset(h);
@@ -6425,6 +8001,14 @@ SEXP wk_information_ratio_batch(SEXP e, SEXP a0, SEXP a1) {
   wickra_information_ratio_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_information_ratio_warmup_period(SEXP e) {
+  struct InformationRatio *h = (struct InformationRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_information_ratio_warmup_period(h));
+}
+SEXP wk_information_ratio_is_ready(SEXP e) {
+  struct InformationRatio *h = (struct InformationRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_information_ratio_is_ready(h));
 }
 SEXP wk_information_ratio_reset(SEXP e) {
   struct InformationRatio *h = (struct InformationRatio *)R_ExternalPtrAddr(e);
@@ -6459,6 +8043,14 @@ SEXP wk_initial_balance_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_initial_balance_warmup_period(SEXP e) {
+  struct InitialBalance *h = (struct InitialBalance *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_initial_balance_warmup_period(h));
+}
+SEXP wk_initial_balance_is_ready(SEXP e) {
+  struct InitialBalance *h = (struct InitialBalance *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_initial_balance_is_ready(h));
+}
 SEXP wk_initial_balance_reset(SEXP e) {
   struct InitialBalance *h = (struct InitialBalance *)R_ExternalPtrAddr(e);
   wickra_initial_balance_reset(h);
@@ -6489,6 +8081,14 @@ SEXP wk_instantaneous_trendline_batch(SEXP e, SEXP a0) {
   wickra_instantaneous_trendline_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_instantaneous_trendline_warmup_period(SEXP e) {
+  struct InstantaneousTrendline *h = (struct InstantaneousTrendline *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_instantaneous_trendline_warmup_period(h));
+}
+SEXP wk_instantaneous_trendline_is_ready(SEXP e) {
+  struct InstantaneousTrendline *h = (struct InstantaneousTrendline *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_instantaneous_trendline_is_ready(h));
 }
 SEXP wk_instantaneous_trendline_reset(SEXP e) {
   struct InstantaneousTrendline *h = (struct InstantaneousTrendline *)R_ExternalPtrAddr(e);
@@ -6523,6 +8123,14 @@ SEXP wk_intraday_intensity_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   UNPROTECT(1);
   return out;
 }
+SEXP wk_intraday_intensity_warmup_period(SEXP e) {
+  struct IntradayIntensity *h = (struct IntradayIntensity *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_intraday_intensity_warmup_period(h));
+}
+SEXP wk_intraday_intensity_is_ready(SEXP e) {
+  struct IntradayIntensity *h = (struct IntradayIntensity *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_intraday_intensity_is_ready(h));
+}
 SEXP wk_intraday_intensity_reset(SEXP e) {
   struct IntradayIntensity *h = (struct IntradayIntensity *)R_ExternalPtrAddr(e);
   wickra_intraday_intensity_reset(h);
@@ -6556,6 +8164,14 @@ SEXP wk_intraday_momentum_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3
   UNPROTECT(1);
   return out;
 }
+SEXP wk_intraday_momentum_index_warmup_period(SEXP e) {
+  struct IntradayMomentumIndex *h = (struct IntradayMomentumIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_intraday_momentum_index_warmup_period(h));
+}
+SEXP wk_intraday_momentum_index_is_ready(SEXP e) {
+  struct IntradayMomentumIndex *h = (struct IntradayMomentumIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_intraday_momentum_index_is_ready(h));
+}
 SEXP wk_intraday_momentum_index_reset(SEXP e) {
   struct IntradayMomentumIndex *h = (struct IntradayMomentumIndex *)R_ExternalPtrAddr(e);
   wickra_intraday_momentum_index_reset(h);
@@ -6585,6 +8201,14 @@ SEXP wk_intraday_volatility_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SE
   for (R_xlen_t i = 0; i < n; i++) REAL(vv)[i] = REAL(values)[i];
   UNPROTECT(2);
   return vv;
+}
+SEXP wk_intraday_volatility_profile_warmup_period(SEXP e) {
+  struct IntradayVolatilityProfile *h = (struct IntradayVolatilityProfile *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_intraday_volatility_profile_warmup_period(h));
+}
+SEXP wk_intraday_volatility_profile_is_ready(SEXP e) {
+  struct IntradayVolatilityProfile *h = (struct IntradayVolatilityProfile *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_intraday_volatility_profile_is_ready(h));
 }
 SEXP wk_intraday_volatility_profile_reset(SEXP e) {
   struct IntradayVolatilityProfile *h = (struct IntradayVolatilityProfile *)R_ExternalPtrAddr(e);
@@ -6616,6 +8240,14 @@ SEXP wk_inverse_fisher_transform_batch(SEXP e, SEXP a0) {
   wickra_inverse_fisher_transform_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_inverse_fisher_transform_warmup_period(SEXP e) {
+  struct InverseFisherTransform *h = (struct InverseFisherTransform *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_inverse_fisher_transform_warmup_period(h));
+}
+SEXP wk_inverse_fisher_transform_is_ready(SEXP e) {
+  struct InverseFisherTransform *h = (struct InverseFisherTransform *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_inverse_fisher_transform_is_ready(h));
 }
 SEXP wk_inverse_fisher_transform_reset(SEXP e) {
   struct InverseFisherTransform *h = (struct InverseFisherTransform *)R_ExternalPtrAddr(e);
@@ -6650,6 +8282,14 @@ SEXP wk_inverted_hammer_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   UNPROTECT(1);
   return out;
 }
+SEXP wk_inverted_hammer_warmup_period(SEXP e) {
+  struct InvertedHammer *h = (struct InvertedHammer *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_inverted_hammer_warmup_period(h));
+}
+SEXP wk_inverted_hammer_is_ready(SEXP e) {
+  struct InvertedHammer *h = (struct InvertedHammer *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_inverted_hammer_is_ready(h));
+}
 SEXP wk_inverted_hammer_reset(SEXP e) {
   struct InvertedHammer *h = (struct InvertedHammer *)R_ExternalPtrAddr(e);
   wickra_inverted_hammer_reset(h);
@@ -6680,6 +8320,14 @@ SEXP wk_jarque_bera_batch(SEXP e, SEXP a0) {
   wickra_jarque_bera_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_jarque_bera_warmup_period(SEXP e) {
+  struct JarqueBera *h = (struct JarqueBera *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_jarque_bera_warmup_period(h));
+}
+SEXP wk_jarque_bera_is_ready(SEXP e) {
+  struct JarqueBera *h = (struct JarqueBera *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_jarque_bera_is_ready(h));
 }
 SEXP wk_jarque_bera_reset(SEXP e) {
   struct JarqueBera *h = (struct JarqueBera *)R_ExternalPtrAddr(e);
@@ -6712,6 +8360,14 @@ SEXP wk_jma_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_jma_warmup_period(SEXP e) {
+  struct Jma *h = (struct Jma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_jma_warmup_period(h));
+}
+SEXP wk_jma_is_ready(SEXP e) {
+  struct Jma *h = (struct Jma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_jma_is_ready(h));
+}
 SEXP wk_jma_reset(SEXP e) {
   struct Jma *h = (struct Jma *)R_ExternalPtrAddr(e);
   wickra_jma_reset(h);
@@ -6743,6 +8399,14 @@ SEXP wk_jump_indicator_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_jump_indicator_warmup_period(SEXP e) {
+  struct JumpIndicator *h = (struct JumpIndicator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_jump_indicator_warmup_period(h));
+}
+SEXP wk_jump_indicator_is_ready(SEXP e) {
+  struct JumpIndicator *h = (struct JumpIndicator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_jump_indicator_is_ready(h));
+}
 SEXP wk_jump_indicator_reset(SEXP e) {
   struct JumpIndicator *h = (struct JumpIndicator *)R_ExternalPtrAddr(e);
   wickra_jump_indicator_reset(h);
@@ -6773,6 +8437,14 @@ SEXP wk_k_ratio_batch(SEXP e, SEXP a0) {
   wickra_k_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_k_ratio_warmup_period(SEXP e) {
+  struct KRatio *h = (struct KRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_k_ratio_warmup_period(h));
+}
+SEXP wk_k_ratio_is_ready(SEXP e) {
+  struct KRatio *h = (struct KRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_k_ratio_is_ready(h));
 }
 SEXP wk_k_ratio_reset(SEXP e) {
   struct KRatio *h = (struct KRatio *)R_ExternalPtrAddr(e);
@@ -6848,6 +8520,14 @@ SEXP wk_kalman_hedge_ratio_update(SEXP e, SEXP a0, SEXP a1) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_kalman_hedge_ratio_warmup_period(SEXP e) {
+  struct KalmanHedgeRatio *h = (struct KalmanHedgeRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_kalman_hedge_ratio_warmup_period(h));
+}
+SEXP wk_kalman_hedge_ratio_is_ready(SEXP e) {
+  struct KalmanHedgeRatio *h = (struct KalmanHedgeRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_kalman_hedge_ratio_is_ready(h));
+}
 SEXP wk_kalman_hedge_ratio_reset(SEXP e) {
   struct KalmanHedgeRatio *h = (struct KalmanHedgeRatio *)R_ExternalPtrAddr(e);
   wickra_kalman_hedge_ratio_reset(h);
@@ -6878,6 +8558,14 @@ SEXP wk_kama_batch(SEXP e, SEXP a0) {
   wickra_kama_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_kama_warmup_period(SEXP e) {
+  struct Kama *h = (struct Kama *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_kama_warmup_period(h));
+}
+SEXP wk_kama_is_ready(SEXP e) {
+  struct Kama *h = (struct Kama *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_kama_is_ready(h));
 }
 SEXP wk_kama_reset(SEXP e) {
   struct Kama *h = (struct Kama *)R_ExternalPtrAddr(e);
@@ -6912,6 +8600,14 @@ SEXP wk_kase_dev_stop_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(2);
   return r;
 }
+SEXP wk_kase_dev_stop_warmup_period(SEXP e) {
+  struct KaseDevStop *h = (struct KaseDevStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_kase_dev_stop_warmup_period(h));
+}
+SEXP wk_kase_dev_stop_is_ready(SEXP e) {
+  struct KaseDevStop *h = (struct KaseDevStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_kase_dev_stop_is_ready(h));
+}
 SEXP wk_kase_dev_stop_reset(SEXP e) {
   struct KaseDevStop *h = (struct KaseDevStop *)R_ExternalPtrAddr(e);
   wickra_kase_dev_stop_reset(h);
@@ -6945,6 +8641,14 @@ SEXP wk_kase_permission_stochastic_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEX
   UNPROTECT(2);
   return r;
 }
+SEXP wk_kase_permission_stochastic_warmup_period(SEXP e) {
+  struct KasePermissionStochastic *h = (struct KasePermissionStochastic *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_kase_permission_stochastic_warmup_period(h));
+}
+SEXP wk_kase_permission_stochastic_is_ready(SEXP e) {
+  struct KasePermissionStochastic *h = (struct KasePermissionStochastic *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_kase_permission_stochastic_is_ready(h));
+}
 SEXP wk_kase_permission_stochastic_reset(SEXP e) {
   struct KasePermissionStochastic *h = (struct KasePermissionStochastic *)R_ExternalPtrAddr(e);
   wickra_kase_permission_stochastic_reset(h);
@@ -6975,6 +8679,14 @@ SEXP wk_kelly_criterion_batch(SEXP e, SEXP a0) {
   wickra_kelly_criterion_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_kelly_criterion_warmup_period(SEXP e) {
+  struct KellyCriterion *h = (struct KellyCriterion *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_kelly_criterion_warmup_period(h));
+}
+SEXP wk_kelly_criterion_is_ready(SEXP e) {
+  struct KellyCriterion *h = (struct KellyCriterion *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_kelly_criterion_is_ready(h));
 }
 SEXP wk_kelly_criterion_reset(SEXP e) {
   struct KellyCriterion *h = (struct KellyCriterion *)R_ExternalPtrAddr(e);
@@ -7011,6 +8723,14 @@ SEXP wk_keltner_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
   UNPROTECT(2);
   return r;
 }
+SEXP wk_keltner_warmup_period(SEXP e) {
+  struct Keltner *h = (struct Keltner *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_keltner_warmup_period(h));
+}
+SEXP wk_keltner_is_ready(SEXP e) {
+  struct Keltner *h = (struct Keltner *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_keltner_is_ready(h));
+}
 SEXP wk_keltner_reset(SEXP e) {
   struct Keltner *h = (struct Keltner *)R_ExternalPtrAddr(e);
   wickra_keltner_reset(h);
@@ -7041,6 +8761,14 @@ SEXP wk_kendall_tau_batch(SEXP e, SEXP a0, SEXP a1) {
   wickra_kendall_tau_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_kendall_tau_warmup_period(SEXP e) {
+  struct KendallTau *h = (struct KendallTau *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_kendall_tau_warmup_period(h));
+}
+SEXP wk_kendall_tau_is_ready(SEXP e) {
+  struct KendallTau *h = (struct KendallTau *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_kendall_tau_is_ready(h));
 }
 SEXP wk_kendall_tau_reset(SEXP e) {
   struct KendallTau *h = (struct KendallTau *)R_ExternalPtrAddr(e);
@@ -7075,6 +8803,14 @@ SEXP wk_kicking_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_kicking_warmup_period(SEXP e) {
+  struct Kicking *h = (struct Kicking *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_kicking_warmup_period(h));
+}
+SEXP wk_kicking_is_ready(SEXP e) {
+  struct Kicking *h = (struct Kicking *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_kicking_is_ready(h));
+}
 SEXP wk_kicking_reset(SEXP e) {
   struct Kicking *h = (struct Kicking *)R_ExternalPtrAddr(e);
   wickra_kicking_reset(h);
@@ -7107,6 +8843,14 @@ SEXP wk_kicking_by_length_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   wickra_kicking_by_length_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_kicking_by_length_warmup_period(SEXP e) {
+  struct KickingByLength *h = (struct KickingByLength *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_kicking_by_length_warmup_period(h));
+}
+SEXP wk_kicking_by_length_is_ready(SEXP e) {
+  struct KickingByLength *h = (struct KickingByLength *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_kicking_by_length_is_ready(h));
 }
 SEXP wk_kicking_by_length_reset(SEXP e) {
   struct KickingByLength *h = (struct KickingByLength *)R_ExternalPtrAddr(e);
@@ -7141,6 +8885,14 @@ SEXP wk_kst_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_kst_warmup_period(SEXP e) {
+  struct Kst *h = (struct Kst *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_kst_warmup_period(h));
+}
+SEXP wk_kst_is_ready(SEXP e) {
+  struct Kst *h = (struct Kst *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_kst_is_ready(h));
+}
 SEXP wk_kst_reset(SEXP e) {
   struct Kst *h = (struct Kst *)R_ExternalPtrAddr(e);
   wickra_kst_reset(h);
@@ -7171,6 +8923,14 @@ SEXP wk_kurtosis_batch(SEXP e, SEXP a0) {
   wickra_kurtosis_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_kurtosis_warmup_period(SEXP e) {
+  struct Kurtosis *h = (struct Kurtosis *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_kurtosis_warmup_period(h));
+}
+SEXP wk_kurtosis_is_ready(SEXP e) {
+  struct Kurtosis *h = (struct Kurtosis *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_kurtosis_is_ready(h));
 }
 SEXP wk_kurtosis_reset(SEXP e) {
   struct Kurtosis *h = (struct Kurtosis *)R_ExternalPtrAddr(e);
@@ -7205,6 +8965,14 @@ SEXP wk_kvo_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_kvo_warmup_period(SEXP e) {
+  struct Kvo *h = (struct Kvo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_kvo_warmup_period(h));
+}
+SEXP wk_kvo_is_ready(SEXP e) {
+  struct Kvo *h = (struct Kvo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_kvo_is_ready(h));
+}
 SEXP wk_kvo_reset(SEXP e) {
   struct Kvo *h = (struct Kvo *)R_ExternalPtrAddr(e);
   wickra_kvo_reset(h);
@@ -7227,6 +8995,14 @@ SEXP wk_kyles_lambda_new(SEXP a0) {
 SEXP wk_kyles_lambda_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4) {
   struct KylesLambda *h = (struct KylesLambda *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_kyles_lambda_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3), Rf_asReal(a4)));
+}
+SEXP wk_kyles_lambda_warmup_period(SEXP e) {
+  struct KylesLambda *h = (struct KylesLambda *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_kyles_lambda_warmup_period(h));
+}
+SEXP wk_kyles_lambda_is_ready(SEXP e) {
+  struct KylesLambda *h = (struct KylesLambda *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_kyles_lambda_is_ready(h));
 }
 SEXP wk_kyles_lambda_reset(SEXP e) {
   struct KylesLambda *h = (struct KylesLambda *)R_ExternalPtrAddr(e);
@@ -7261,6 +9037,14 @@ SEXP wk_ladder_bottom_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
   UNPROTECT(1);
   return out;
 }
+SEXP wk_ladder_bottom_warmup_period(SEXP e) {
+  struct LadderBottom *h = (struct LadderBottom *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_ladder_bottom_warmup_period(h));
+}
+SEXP wk_ladder_bottom_is_ready(SEXP e) {
+  struct LadderBottom *h = (struct LadderBottom *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_ladder_bottom_is_ready(h));
+}
 SEXP wk_ladder_bottom_reset(SEXP e) {
   struct LadderBottom *h = (struct LadderBottom *)R_ExternalPtrAddr(e);
   wickra_ladder_bottom_reset(h);
@@ -7291,6 +9075,14 @@ SEXP wk_laguerre_rsi_batch(SEXP e, SEXP a0) {
   wickra_laguerre_rsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_laguerre_rsi_warmup_period(SEXP e) {
+  struct LaguerreRsi *h = (struct LaguerreRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_laguerre_rsi_warmup_period(h));
+}
+SEXP wk_laguerre_rsi_is_ready(SEXP e) {
+  struct LaguerreRsi *h = (struct LaguerreRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_laguerre_rsi_is_ready(h));
 }
 SEXP wk_laguerre_rsi_reset(SEXP e) {
   struct LaguerreRsi *h = (struct LaguerreRsi *)R_ExternalPtrAddr(e);
@@ -7325,6 +9117,14 @@ SEXP wk_lead_lag_cross_correlation_update(SEXP e, SEXP a0, SEXP a1) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_lead_lag_cross_correlation_warmup_period(SEXP e) {
+  struct LeadLagCrossCorrelation *h = (struct LeadLagCrossCorrelation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_lead_lag_cross_correlation_warmup_period(h));
+}
+SEXP wk_lead_lag_cross_correlation_is_ready(SEXP e) {
+  struct LeadLagCrossCorrelation *h = (struct LeadLagCrossCorrelation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_lead_lag_cross_correlation_is_ready(h));
+}
 SEXP wk_lead_lag_cross_correlation_reset(SEXP e) {
   struct LeadLagCrossCorrelation *h = (struct LeadLagCrossCorrelation *)R_ExternalPtrAddr(e);
   wickra_lead_lag_cross_correlation_reset(h);
@@ -7355,6 +9155,14 @@ SEXP wk_lin_reg_angle_batch(SEXP e, SEXP a0) {
   wickra_lin_reg_angle_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_lin_reg_angle_warmup_period(SEXP e) {
+  struct LinRegAngle *h = (struct LinRegAngle *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_lin_reg_angle_warmup_period(h));
+}
+SEXP wk_lin_reg_angle_is_ready(SEXP e) {
+  struct LinRegAngle *h = (struct LinRegAngle *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_lin_reg_angle_is_ready(h));
 }
 SEXP wk_lin_reg_angle_reset(SEXP e) {
   struct LinRegAngle *h = (struct LinRegAngle *)R_ExternalPtrAddr(e);
@@ -7391,6 +9199,14 @@ SEXP wk_lin_reg_channel_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_lin_reg_channel_warmup_period(SEXP e) {
+  struct LinRegChannel *h = (struct LinRegChannel *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_lin_reg_channel_warmup_period(h));
+}
+SEXP wk_lin_reg_channel_is_ready(SEXP e) {
+  struct LinRegChannel *h = (struct LinRegChannel *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_lin_reg_channel_is_ready(h));
+}
 SEXP wk_lin_reg_channel_reset(SEXP e) {
   struct LinRegChannel *h = (struct LinRegChannel *)R_ExternalPtrAddr(e);
   wickra_lin_reg_channel_reset(h);
@@ -7421,6 +9237,14 @@ SEXP wk_lin_reg_intercept_batch(SEXP e, SEXP a0) {
   wickra_lin_reg_intercept_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_lin_reg_intercept_warmup_period(SEXP e) {
+  struct LinRegIntercept *h = (struct LinRegIntercept *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_lin_reg_intercept_warmup_period(h));
+}
+SEXP wk_lin_reg_intercept_is_ready(SEXP e) {
+  struct LinRegIntercept *h = (struct LinRegIntercept *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_lin_reg_intercept_is_ready(h));
 }
 SEXP wk_lin_reg_intercept_reset(SEXP e) {
   struct LinRegIntercept *h = (struct LinRegIntercept *)R_ExternalPtrAddr(e);
@@ -7453,6 +9277,14 @@ SEXP wk_lin_reg_slope_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_lin_reg_slope_warmup_period(SEXP e) {
+  struct LinRegSlope *h = (struct LinRegSlope *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_lin_reg_slope_warmup_period(h));
+}
+SEXP wk_lin_reg_slope_is_ready(SEXP e) {
+  struct LinRegSlope *h = (struct LinRegSlope *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_lin_reg_slope_is_ready(h));
+}
 SEXP wk_lin_reg_slope_reset(SEXP e) {
   struct LinRegSlope *h = (struct LinRegSlope *)R_ExternalPtrAddr(e);
   wickra_lin_reg_slope_reset(h);
@@ -7483,6 +9315,14 @@ SEXP wk_linear_regression_batch(SEXP e, SEXP a0) {
   wickra_linear_regression_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_linear_regression_warmup_period(SEXP e) {
+  struct LinearRegression *h = (struct LinearRegression *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_linear_regression_warmup_period(h));
+}
+SEXP wk_linear_regression_is_ready(SEXP e) {
+  struct LinearRegression *h = (struct LinearRegression *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_linear_regression_is_ready(h));
 }
 SEXP wk_linear_regression_reset(SEXP e) {
   struct LinearRegression *h = (struct LinearRegression *)R_ExternalPtrAddr(e);
@@ -7523,6 +9363,14 @@ SEXP wk_liquidation_features_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_liquidation_features_warmup_period(SEXP e) {
+  struct LiquidationFeatures *h = (struct LiquidationFeatures *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_liquidation_features_warmup_period(h));
+}
+SEXP wk_liquidation_features_is_ready(SEXP e) {
+  struct LiquidationFeatures *h = (struct LiquidationFeatures *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_liquidation_features_is_ready(h));
+}
 SEXP wk_liquidation_features_reset(SEXP e) {
   struct LiquidationFeatures *h = (struct LiquidationFeatures *)R_ExternalPtrAddr(e);
   wickra_liquidation_features_reset(h);
@@ -7553,6 +9401,14 @@ SEXP wk_log_return_batch(SEXP e, SEXP a0) {
   wickra_log_return_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_log_return_warmup_period(SEXP e) {
+  struct LogReturn *h = (struct LogReturn *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_log_return_warmup_period(h));
+}
+SEXP wk_log_return_is_ready(SEXP e) {
+  struct LogReturn *h = (struct LogReturn *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_log_return_is_ready(h));
 }
 SEXP wk_log_return_reset(SEXP e) {
   struct LogReturn *h = (struct LogReturn *)R_ExternalPtrAddr(e);
@@ -7587,6 +9443,14 @@ SEXP wk_long_legged_doji_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_long_legged_doji_warmup_period(SEXP e) {
+  struct LongLeggedDoji *h = (struct LongLeggedDoji *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_long_legged_doji_warmup_period(h));
+}
+SEXP wk_long_legged_doji_is_ready(SEXP e) {
+  struct LongLeggedDoji *h = (struct LongLeggedDoji *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_long_legged_doji_is_ready(h));
+}
 SEXP wk_long_legged_doji_reset(SEXP e) {
   struct LongLeggedDoji *h = (struct LongLeggedDoji *)R_ExternalPtrAddr(e);
   wickra_long_legged_doji_reset(h);
@@ -7620,6 +9484,14 @@ SEXP wk_long_line_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   UNPROTECT(1);
   return out;
 }
+SEXP wk_long_line_warmup_period(SEXP e) {
+  struct LongLine *h = (struct LongLine *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_long_line_warmup_period(h));
+}
+SEXP wk_long_line_is_ready(SEXP e) {
+  struct LongLine *h = (struct LongLine *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_long_line_is_ready(h));
+}
 SEXP wk_long_line_reset(SEXP e) {
   struct LongLine *h = (struct LongLine *)R_ExternalPtrAddr(e);
   wickra_long_line_reset(h);
@@ -7642,6 +9514,14 @@ SEXP wk_long_short_ratio_new(void) {
 SEXP wk_long_short_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
   struct LongShortRatio *h = (struct LongShortRatio *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_long_short_ratio_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_long_short_ratio_warmup_period(SEXP e) {
+  struct LongShortRatio *h = (struct LongShortRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_long_short_ratio_warmup_period(h));
+}
+SEXP wk_long_short_ratio_is_ready(SEXP e) {
+  struct LongShortRatio *h = (struct LongShortRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_long_short_ratio_is_ready(h));
 }
 SEXP wk_long_short_ratio_reset(SEXP e) {
   struct LongShortRatio *h = (struct LongShortRatio *)R_ExternalPtrAddr(e);
@@ -7673,6 +9553,14 @@ SEXP wk_m2_measure_batch(SEXP e, SEXP a0) {
   wickra_m2_measure_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_m2_measure_warmup_period(SEXP e) {
+  struct M2Measure *h = (struct M2Measure *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_m2_measure_warmup_period(h));
+}
+SEXP wk_m2_measure_is_ready(SEXP e) {
+  struct M2Measure *h = (struct M2Measure *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_m2_measure_is_ready(h));
 }
 SEXP wk_m2_measure_reset(SEXP e) {
   struct M2Measure *h = (struct M2Measure *)R_ExternalPtrAddr(e);
@@ -7709,6 +9597,14 @@ SEXP wk_ma_envelope_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_ma_envelope_warmup_period(SEXP e) {
+  struct MaEnvelope *h = (struct MaEnvelope *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_ma_envelope_warmup_period(h));
+}
+SEXP wk_ma_envelope_is_ready(SEXP e) {
+  struct MaEnvelope *h = (struct MaEnvelope *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_ma_envelope_is_ready(h));
+}
 SEXP wk_ma_envelope_reset(SEXP e) {
   struct MaEnvelope *h = (struct MaEnvelope *)R_ExternalPtrAddr(e);
   wickra_ma_envelope_reset(h);
@@ -7743,6 +9639,14 @@ SEXP wk_macd_ext_update(SEXP e, SEXP a0) {
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_macd_ext_warmup_period(SEXP e) {
+  struct MacdExt *h = (struct MacdExt *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_macd_ext_warmup_period(h));
+}
+SEXP wk_macd_ext_is_ready(SEXP e) {
+  struct MacdExt *h = (struct MacdExt *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_macd_ext_is_ready(h));
 }
 SEXP wk_macd_ext_reset(SEXP e) {
   struct MacdExt *h = (struct MacdExt *)R_ExternalPtrAddr(e);
@@ -7779,6 +9683,14 @@ SEXP wk_macd_fix_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_macd_fix_warmup_period(SEXP e) {
+  struct MacdFix *h = (struct MacdFix *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_macd_fix_warmup_period(h));
+}
+SEXP wk_macd_fix_is_ready(SEXP e) {
+  struct MacdFix *h = (struct MacdFix *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_macd_fix_is_ready(h));
+}
 SEXP wk_macd_fix_reset(SEXP e) {
   struct MacdFix *h = (struct MacdFix *)R_ExternalPtrAddr(e);
   wickra_macd_fix_reset(h);
@@ -7809,6 +9721,14 @@ SEXP wk_macd_histogram_batch(SEXP e, SEXP a0) {
   wickra_macd_histogram_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_macd_histogram_warmup_period(SEXP e) {
+  struct MacdHistogram *h = (struct MacdHistogram *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_macd_histogram_warmup_period(h));
+}
+SEXP wk_macd_histogram_is_ready(SEXP e) {
+  struct MacdHistogram *h = (struct MacdHistogram *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_macd_histogram_is_ready(h));
 }
 SEXP wk_macd_histogram_reset(SEXP e) {
   struct MacdHistogram *h = (struct MacdHistogram *)R_ExternalPtrAddr(e);
@@ -7845,6 +9765,14 @@ SEXP wk_macd_indicator_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_macd_indicator_warmup_period(SEXP e) {
+  struct MacdIndicator *h = (struct MacdIndicator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_macd_indicator_warmup_period(h));
+}
+SEXP wk_macd_indicator_is_ready(SEXP e) {
+  struct MacdIndicator *h = (struct MacdIndicator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_macd_indicator_is_ready(h));
+}
 SEXP wk_macd_indicator_reset(SEXP e) {
   struct MacdIndicator *h = (struct MacdIndicator *)R_ExternalPtrAddr(e);
   wickra_macd_indicator_reset(h);
@@ -7877,6 +9805,14 @@ SEXP wk_mama_update(SEXP e, SEXP a0) {
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_mama_warmup_period(SEXP e) {
+  struct Mama *h = (struct Mama *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_mama_warmup_period(h));
+}
+SEXP wk_mama_is_ready(SEXP e) {
+  struct Mama *h = (struct Mama *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_mama_is_ready(h));
 }
 SEXP wk_mama_reset(SEXP e) {
   struct Mama *h = (struct Mama *)R_ExternalPtrAddr(e);
@@ -7911,6 +9847,14 @@ SEXP wk_market_facilitation_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_market_facilitation_index_warmup_period(SEXP e) {
+  struct MarketFacilitationIndex *h = (struct MarketFacilitationIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_market_facilitation_index_warmup_period(h));
+}
+SEXP wk_market_facilitation_index_is_ready(SEXP e) {
+  struct MarketFacilitationIndex *h = (struct MarketFacilitationIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_market_facilitation_index_is_ready(h));
+}
 SEXP wk_market_facilitation_index_reset(SEXP e) {
   struct MarketFacilitationIndex *h = (struct MarketFacilitationIndex *)R_ExternalPtrAddr(e);
   wickra_market_facilitation_index_reset(h);
@@ -7941,6 +9885,14 @@ SEXP wk_martin_ratio_batch(SEXP e, SEXP a0) {
   wickra_martin_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_martin_ratio_warmup_period(SEXP e) {
+  struct MartinRatio *h = (struct MartinRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_martin_ratio_warmup_period(h));
+}
+SEXP wk_martin_ratio_is_ready(SEXP e) {
+  struct MartinRatio *h = (struct MartinRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_martin_ratio_is_ready(h));
 }
 SEXP wk_martin_ratio_reset(SEXP e) {
   struct MartinRatio *h = (struct MartinRatio *)R_ExternalPtrAddr(e);
@@ -7975,6 +9927,14 @@ SEXP wk_marubozu_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
   UNPROTECT(1);
   return out;
 }
+SEXP wk_marubozu_warmup_period(SEXP e) {
+  struct Marubozu *h = (struct Marubozu *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_marubozu_warmup_period(h));
+}
+SEXP wk_marubozu_is_ready(SEXP e) {
+  struct Marubozu *h = (struct Marubozu *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_marubozu_is_ready(h));
+}
 SEXP wk_marubozu_reset(SEXP e) {
   struct Marubozu *h = (struct Marubozu *)R_ExternalPtrAddr(e);
   wickra_marubozu_reset(h);
@@ -8007,6 +9967,14 @@ SEXP wk_mass_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   wickra_mass_index_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_mass_index_warmup_period(SEXP e) {
+  struct MassIndex *h = (struct MassIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_mass_index_warmup_period(h));
+}
+SEXP wk_mass_index_is_ready(SEXP e) {
+  struct MassIndex *h = (struct MassIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_mass_index_is_ready(h));
 }
 SEXP wk_mass_index_reset(SEXP e) {
   struct MassIndex *h = (struct MassIndex *)R_ExternalPtrAddr(e);
@@ -8041,6 +10009,14 @@ SEXP wk_mat_hold_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
   UNPROTECT(1);
   return out;
 }
+SEXP wk_mat_hold_warmup_period(SEXP e) {
+  struct MatHold *h = (struct MatHold *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_mat_hold_warmup_period(h));
+}
+SEXP wk_mat_hold_is_ready(SEXP e) {
+  struct MatHold *h = (struct MatHold *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_mat_hold_is_ready(h));
+}
 SEXP wk_mat_hold_reset(SEXP e) {
   struct MatHold *h = (struct MatHold *)R_ExternalPtrAddr(e);
   wickra_mat_hold_reset(h);
@@ -8074,6 +10050,14 @@ SEXP wk_matching_low_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_matching_low_warmup_period(SEXP e) {
+  struct MatchingLow *h = (struct MatchingLow *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_matching_low_warmup_period(h));
+}
+SEXP wk_matching_low_is_ready(SEXP e) {
+  struct MatchingLow *h = (struct MatchingLow *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_matching_low_is_ready(h));
+}
 SEXP wk_matching_low_reset(SEXP e) {
   struct MatchingLow *h = (struct MatchingLow *)R_ExternalPtrAddr(e);
   wickra_matching_low_reset(h);
@@ -8105,6 +10089,14 @@ SEXP wk_max_drawdown_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_max_drawdown_warmup_period(SEXP e) {
+  struct MaxDrawdown *h = (struct MaxDrawdown *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_max_drawdown_warmup_period(h));
+}
+SEXP wk_max_drawdown_is_ready(SEXP e) {
+  struct MaxDrawdown *h = (struct MaxDrawdown *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_max_drawdown_is_ready(h));
+}
 SEXP wk_max_drawdown_reset(SEXP e) {
   struct MaxDrawdown *h = (struct MaxDrawdown *)R_ExternalPtrAddr(e);
   wickra_max_drawdown_reset(h);
@@ -8128,6 +10120,14 @@ SEXP wk_mc_clellan_oscillator_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3,
   struct McClellanOscillator *h = (struct McClellanOscillator *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_mc_clellan_oscillator_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
+SEXP wk_mc_clellan_oscillator_warmup_period(SEXP e) {
+  struct McClellanOscillator *h = (struct McClellanOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_mc_clellan_oscillator_warmup_period(h));
+}
+SEXP wk_mc_clellan_oscillator_is_ready(SEXP e) {
+  struct McClellanOscillator *h = (struct McClellanOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_mc_clellan_oscillator_is_ready(h));
+}
 SEXP wk_mc_clellan_oscillator_reset(SEXP e) {
   struct McClellanOscillator *h = (struct McClellanOscillator *)R_ExternalPtrAddr(e);
   wickra_mc_clellan_oscillator_reset(h);
@@ -8150,6 +10150,14 @@ SEXP wk_mc_clellan_summation_index_new(void) {
 SEXP wk_mc_clellan_summation_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct McClellanSummationIndex *h = (struct McClellanSummationIndex *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_mc_clellan_summation_index_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_mc_clellan_summation_index_warmup_period(SEXP e) {
+  struct McClellanSummationIndex *h = (struct McClellanSummationIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_mc_clellan_summation_index_warmup_period(h));
+}
+SEXP wk_mc_clellan_summation_index_is_ready(SEXP e) {
+  struct McClellanSummationIndex *h = (struct McClellanSummationIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_mc_clellan_summation_index_is_ready(h));
 }
 SEXP wk_mc_clellan_summation_index_reset(SEXP e) {
   struct McClellanSummationIndex *h = (struct McClellanSummationIndex *)R_ExternalPtrAddr(e);
@@ -8182,6 +10190,14 @@ SEXP wk_mc_ginley_dynamic_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_mc_ginley_dynamic_warmup_period(SEXP e) {
+  struct McGinleyDynamic *h = (struct McGinleyDynamic *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_mc_ginley_dynamic_warmup_period(h));
+}
+SEXP wk_mc_ginley_dynamic_is_ready(SEXP e) {
+  struct McGinleyDynamic *h = (struct McGinleyDynamic *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_mc_ginley_dynamic_is_ready(h));
+}
 SEXP wk_mc_ginley_dynamic_reset(SEXP e) {
   struct McGinleyDynamic *h = (struct McGinleyDynamic *)R_ExternalPtrAddr(e);
   wickra_mc_ginley_dynamic_reset(h);
@@ -8212,6 +10228,14 @@ SEXP wk_median_absolute_deviation_batch(SEXP e, SEXP a0) {
   wickra_median_absolute_deviation_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_median_absolute_deviation_warmup_period(SEXP e) {
+  struct MedianAbsoluteDeviation *h = (struct MedianAbsoluteDeviation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_median_absolute_deviation_warmup_period(h));
+}
+SEXP wk_median_absolute_deviation_is_ready(SEXP e) {
+  struct MedianAbsoluteDeviation *h = (struct MedianAbsoluteDeviation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_median_absolute_deviation_is_ready(h));
 }
 SEXP wk_median_absolute_deviation_reset(SEXP e) {
   struct MedianAbsoluteDeviation *h = (struct MedianAbsoluteDeviation *)R_ExternalPtrAddr(e);
@@ -8248,6 +10272,14 @@ SEXP wk_median_channel_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_median_channel_warmup_period(SEXP e) {
+  struct MedianChannel *h = (struct MedianChannel *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_median_channel_warmup_period(h));
+}
+SEXP wk_median_channel_is_ready(SEXP e) {
+  struct MedianChannel *h = (struct MedianChannel *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_median_channel_is_ready(h));
+}
 SEXP wk_median_channel_reset(SEXP e) {
   struct MedianChannel *h = (struct MedianChannel *)R_ExternalPtrAddr(e);
   wickra_median_channel_reset(h);
@@ -8278,6 +10310,14 @@ SEXP wk_median_ma_batch(SEXP e, SEXP a0) {
   wickra_median_ma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_median_ma_warmup_period(SEXP e) {
+  struct MedianMa *h = (struct MedianMa *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_median_ma_warmup_period(h));
+}
+SEXP wk_median_ma_is_ready(SEXP e) {
+  struct MedianMa *h = (struct MedianMa *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_median_ma_is_ready(h));
 }
 SEXP wk_median_ma_reset(SEXP e) {
   struct MedianMa *h = (struct MedianMa *)R_ExternalPtrAddr(e);
@@ -8312,6 +10352,14 @@ SEXP wk_median_price_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_median_price_warmup_period(SEXP e) {
+  struct MedianPrice *h = (struct MedianPrice *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_median_price_warmup_period(h));
+}
+SEXP wk_median_price_is_ready(SEXP e) {
+  struct MedianPrice *h = (struct MedianPrice *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_median_price_is_ready(h));
+}
 SEXP wk_median_price_reset(SEXP e) {
   struct MedianPrice *h = (struct MedianPrice *)R_ExternalPtrAddr(e);
   wickra_median_price_reset(h);
@@ -8345,6 +10393,14 @@ SEXP wk_mfi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_mfi_warmup_period(SEXP e) {
+  struct Mfi *h = (struct Mfi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_mfi_warmup_period(h));
+}
+SEXP wk_mfi_is_ready(SEXP e) {
+  struct Mfi *h = (struct Mfi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_mfi_is_ready(h));
+}
 SEXP wk_mfi_reset(SEXP e) {
   struct Mfi *h = (struct Mfi *)R_ExternalPtrAddr(e);
   wickra_mfi_reset(h);
@@ -8367,6 +10423,14 @@ SEXP wk_microprice_new(void) {
 SEXP wk_microprice_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct Microprice *h = (struct Microprice *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_microprice_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
+}
+SEXP wk_microprice_warmup_period(SEXP e) {
+  struct Microprice *h = (struct Microprice *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_microprice_warmup_period(h));
+}
+SEXP wk_microprice_is_ready(SEXP e) {
+  struct Microprice *h = (struct Microprice *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_microprice_is_ready(h));
 }
 SEXP wk_microprice_reset(SEXP e) {
   struct Microprice *h = (struct Microprice *)R_ExternalPtrAddr(e);
@@ -8398,6 +10462,14 @@ SEXP wk_mid_point_batch(SEXP e, SEXP a0) {
   wickra_mid_point_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_mid_point_warmup_period(SEXP e) {
+  struct MidPoint *h = (struct MidPoint *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_mid_point_warmup_period(h));
+}
+SEXP wk_mid_point_is_ready(SEXP e) {
+  struct MidPoint *h = (struct MidPoint *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_mid_point_is_ready(h));
 }
 SEXP wk_mid_point_reset(SEXP e) {
   struct MidPoint *h = (struct MidPoint *)R_ExternalPtrAddr(e);
@@ -8432,6 +10504,14 @@ SEXP wk_mid_price_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   UNPROTECT(1);
   return out;
 }
+SEXP wk_mid_price_warmup_period(SEXP e) {
+  struct MidPrice *h = (struct MidPrice *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_mid_price_warmup_period(h));
+}
+SEXP wk_mid_price_is_ready(SEXP e) {
+  struct MidPrice *h = (struct MidPrice *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_mid_price_is_ready(h));
+}
 SEXP wk_mid_price_reset(SEXP e) {
   struct MidPrice *h = (struct MidPrice *)R_ExternalPtrAddr(e);
   wickra_mid_price_reset(h);
@@ -8464,6 +10544,14 @@ SEXP wk_minus_di_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
   wickra_minus_di_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_minus_di_warmup_period(SEXP e) {
+  struct MinusDi *h = (struct MinusDi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_minus_di_warmup_period(h));
+}
+SEXP wk_minus_di_is_ready(SEXP e) {
+  struct MinusDi *h = (struct MinusDi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_minus_di_is_ready(h));
 }
 SEXP wk_minus_di_reset(SEXP e) {
   struct MinusDi *h = (struct MinusDi *)R_ExternalPtrAddr(e);
@@ -8498,6 +10586,14 @@ SEXP wk_minus_dm_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
   UNPROTECT(1);
   return out;
 }
+SEXP wk_minus_dm_warmup_period(SEXP e) {
+  struct MinusDm *h = (struct MinusDm *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_minus_dm_warmup_period(h));
+}
+SEXP wk_minus_dm_is_ready(SEXP e) {
+  struct MinusDm *h = (struct MinusDm *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_minus_dm_is_ready(h));
+}
 SEXP wk_minus_dm_reset(SEXP e) {
   struct MinusDm *h = (struct MinusDm *)R_ExternalPtrAddr(e);
   wickra_minus_dm_reset(h);
@@ -8531,6 +10627,14 @@ SEXP wk_modified_ma_stop_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   UNPROTECT(2);
   return r;
 }
+SEXP wk_modified_ma_stop_warmup_period(SEXP e) {
+  struct ModifiedMaStop *h = (struct ModifiedMaStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_modified_ma_stop_warmup_period(h));
+}
+SEXP wk_modified_ma_stop_is_ready(SEXP e) {
+  struct ModifiedMaStop *h = (struct ModifiedMaStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_modified_ma_stop_is_ready(h));
+}
 SEXP wk_modified_ma_stop_reset(SEXP e) {
   struct ModifiedMaStop *h = (struct ModifiedMaStop *)R_ExternalPtrAddr(e);
   wickra_modified_ma_stop_reset(h);
@@ -8561,6 +10665,14 @@ SEXP wk_mom_batch(SEXP e, SEXP a0) {
   wickra_mom_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_mom_warmup_period(SEXP e) {
+  struct Mom *h = (struct Mom *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_mom_warmup_period(h));
+}
+SEXP wk_mom_is_ready(SEXP e) {
+  struct Mom *h = (struct Mom *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_mom_is_ready(h));
 }
 SEXP wk_mom_reset(SEXP e) {
   struct Mom *h = (struct Mom *)R_ExternalPtrAddr(e);
@@ -8595,6 +10707,14 @@ SEXP wk_morning_doji_star_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   UNPROTECT(1);
   return out;
 }
+SEXP wk_morning_doji_star_warmup_period(SEXP e) {
+  struct MorningDojiStar *h = (struct MorningDojiStar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_morning_doji_star_warmup_period(h));
+}
+SEXP wk_morning_doji_star_is_ready(SEXP e) {
+  struct MorningDojiStar *h = (struct MorningDojiStar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_morning_doji_star_is_ready(h));
+}
 SEXP wk_morning_doji_star_reset(SEXP e) {
   struct MorningDojiStar *h = (struct MorningDojiStar *)R_ExternalPtrAddr(e);
   wickra_morning_doji_star_reset(h);
@@ -8627,6 +10747,14 @@ SEXP wk_morning_evening_star_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, S
   wickra_morning_evening_star_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_morning_evening_star_warmup_period(SEXP e) {
+  struct MorningEveningStar *h = (struct MorningEveningStar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_morning_evening_star_warmup_period(h));
+}
+SEXP wk_morning_evening_star_is_ready(SEXP e) {
+  struct MorningEveningStar *h = (struct MorningEveningStar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_morning_evening_star_is_ready(h));
 }
 SEXP wk_morning_evening_star_reset(SEXP e) {
   struct MorningEveningStar *h = (struct MorningEveningStar *)R_ExternalPtrAddr(e);
@@ -8675,6 +10803,14 @@ SEXP wk_murrey_math_lines_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   UNPROTECT(2);
   return r;
 }
+SEXP wk_murrey_math_lines_warmup_period(SEXP e) {
+  struct MurreyMathLines *h = (struct MurreyMathLines *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_murrey_math_lines_warmup_period(h));
+}
+SEXP wk_murrey_math_lines_is_ready(SEXP e) {
+  struct MurreyMathLines *h = (struct MurreyMathLines *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_murrey_math_lines_is_ready(h));
+}
 SEXP wk_murrey_math_lines_reset(SEXP e) {
   struct MurreyMathLines *h = (struct MurreyMathLines *)R_ExternalPtrAddr(e);
   wickra_murrey_math_lines_reset(h);
@@ -8707,6 +10843,14 @@ SEXP wk_naked_poc_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   wickra_naked_poc_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_naked_poc_warmup_period(SEXP e) {
+  struct NakedPoc *h = (struct NakedPoc *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_naked_poc_warmup_period(h));
+}
+SEXP wk_naked_poc_is_ready(SEXP e) {
+  struct NakedPoc *h = (struct NakedPoc *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_naked_poc_is_ready(h));
 }
 SEXP wk_naked_poc_reset(SEXP e) {
   struct NakedPoc *h = (struct NakedPoc *)R_ExternalPtrAddr(e);
@@ -8741,6 +10885,14 @@ SEXP wk_natr_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
   UNPROTECT(1);
   return out;
 }
+SEXP wk_natr_warmup_period(SEXP e) {
+  struct Natr *h = (struct Natr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_natr_warmup_period(h));
+}
+SEXP wk_natr_is_ready(SEXP e) {
+  struct Natr *h = (struct Natr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_natr_is_ready(h));
+}
 SEXP wk_natr_reset(SEXP e) {
   struct Natr *h = (struct Natr *)R_ExternalPtrAddr(e);
   wickra_natr_reset(h);
@@ -8763,6 +10915,14 @@ SEXP wk_new_highs_new_lows_new(void) {
 SEXP wk_new_highs_new_lows_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct NewHighsNewLows *h = (struct NewHighsNewLows *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_new_highs_new_lows_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_new_highs_new_lows_warmup_period(SEXP e) {
+  struct NewHighsNewLows *h = (struct NewHighsNewLows *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_new_highs_new_lows_warmup_period(h));
+}
+SEXP wk_new_highs_new_lows_is_ready(SEXP e) {
+  struct NewHighsNewLows *h = (struct NewHighsNewLows *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_new_highs_new_lows_is_ready(h));
 }
 SEXP wk_new_highs_new_lows_reset(SEXP e) {
   struct NewHighsNewLows *h = (struct NewHighsNewLows *)R_ExternalPtrAddr(e);
@@ -8797,6 +10957,14 @@ SEXP wk_new_price_lines_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   UNPROTECT(1);
   return out;
 }
+SEXP wk_new_price_lines_warmup_period(SEXP e) {
+  struct NewPriceLines *h = (struct NewPriceLines *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_new_price_lines_warmup_period(h));
+}
+SEXP wk_new_price_lines_is_ready(SEXP e) {
+  struct NewPriceLines *h = (struct NewPriceLines *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_new_price_lines_is_ready(h));
+}
 SEXP wk_new_price_lines_reset(SEXP e) {
   struct NewPriceLines *h = (struct NewPriceLines *)R_ExternalPtrAddr(e);
   wickra_new_price_lines_reset(h);
@@ -8829,6 +10997,14 @@ SEXP wk_nrtr_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_nrtr_warmup_period(SEXP e) {
+  struct Nrtr *h = (struct Nrtr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_nrtr_warmup_period(h));
+}
+SEXP wk_nrtr_is_ready(SEXP e) {
+  struct Nrtr *h = (struct Nrtr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_nrtr_is_ready(h));
 }
 SEXP wk_nrtr_reset(SEXP e) {
   struct Nrtr *h = (struct Nrtr *)R_ExternalPtrAddr(e);
@@ -8863,6 +11039,14 @@ SEXP wk_nvi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_nvi_warmup_period(SEXP e) {
+  struct Nvi *h = (struct Nvi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_nvi_warmup_period(h));
+}
+SEXP wk_nvi_is_ready(SEXP e) {
+  struct Nvi *h = (struct Nvi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_nvi_is_ready(h));
+}
 SEXP wk_nvi_reset(SEXP e) {
   struct Nvi *h = (struct Nvi *)R_ExternalPtrAddr(e);
   wickra_nvi_reset(h);
@@ -8896,6 +11080,14 @@ SEXP wk_obv_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_obv_warmup_period(SEXP e) {
+  struct Obv *h = (struct Obv *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_obv_warmup_period(h));
+}
+SEXP wk_obv_is_ready(SEXP e) {
+  struct Obv *h = (struct Obv *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_obv_is_ready(h));
+}
 SEXP wk_obv_reset(SEXP e) {
   struct Obv *h = (struct Obv *)R_ExternalPtrAddr(e);
   wickra_obv_reset(h);
@@ -8918,6 +11110,14 @@ SEXP wk_oi_price_divergence_new(SEXP a0) {
 SEXP wk_oi_price_divergence_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
   struct OIPriceDivergence *h = (struct OIPriceDivergence *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_oi_price_divergence_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_oi_price_divergence_warmup_period(SEXP e) {
+  struct OIPriceDivergence *h = (struct OIPriceDivergence *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_oi_price_divergence_warmup_period(h));
+}
+SEXP wk_oi_price_divergence_is_ready(SEXP e) {
+  struct OIPriceDivergence *h = (struct OIPriceDivergence *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_oi_price_divergence_is_ready(h));
 }
 SEXP wk_oi_price_divergence_reset(SEXP e) {
   struct OIPriceDivergence *h = (struct OIPriceDivergence *)R_ExternalPtrAddr(e);
@@ -8942,6 +11142,14 @@ SEXP wk_oi_to_volume_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SE
   struct OiToVolumeRatio *h = (struct OiToVolumeRatio *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_oi_to_volume_ratio_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
 }
+SEXP wk_oi_to_volume_ratio_warmup_period(SEXP e) {
+  struct OiToVolumeRatio *h = (struct OiToVolumeRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_oi_to_volume_ratio_warmup_period(h));
+}
+SEXP wk_oi_to_volume_ratio_is_ready(SEXP e) {
+  struct OiToVolumeRatio *h = (struct OiToVolumeRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_oi_to_volume_ratio_is_ready(h));
+}
 SEXP wk_oi_to_volume_ratio_reset(SEXP e) {
   struct OiToVolumeRatio *h = (struct OiToVolumeRatio *)R_ExternalPtrAddr(e);
   wickra_oi_to_volume_ratio_reset(h);
@@ -8964,6 +11172,14 @@ SEXP wk_oi_weighted_new(void) {
 SEXP wk_oi_weighted_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
   struct OIWeighted *h = (struct OIWeighted *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_oi_weighted_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_oi_weighted_warmup_period(SEXP e) {
+  struct OIWeighted *h = (struct OIWeighted *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_oi_weighted_warmup_period(h));
+}
+SEXP wk_oi_weighted_is_ready(SEXP e) {
+  struct OIWeighted *h = (struct OIWeighted *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_oi_weighted_is_ready(h));
 }
 SEXP wk_oi_weighted_reset(SEXP e) {
   struct OIWeighted *h = (struct OIWeighted *)R_ExternalPtrAddr(e);
@@ -8995,6 +11211,14 @@ SEXP wk_omega_ratio_batch(SEXP e, SEXP a0) {
   wickra_omega_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_omega_ratio_warmup_period(SEXP e) {
+  struct OmegaRatio *h = (struct OmegaRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_omega_ratio_warmup_period(h));
+}
+SEXP wk_omega_ratio_is_ready(SEXP e) {
+  struct OmegaRatio *h = (struct OmegaRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_omega_ratio_is_ready(h));
 }
 SEXP wk_omega_ratio_reset(SEXP e) {
   struct OmegaRatio *h = (struct OmegaRatio *)R_ExternalPtrAddr(e);
@@ -9029,6 +11253,14 @@ SEXP wk_on_neck_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_on_neck_warmup_period(SEXP e) {
+  struct OnNeck *h = (struct OnNeck *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_on_neck_warmup_period(h));
+}
+SEXP wk_on_neck_is_ready(SEXP e) {
+  struct OnNeck *h = (struct OnNeck *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_on_neck_is_ready(h));
+}
 SEXP wk_on_neck_reset(SEXP e) {
   struct OnNeck *h = (struct OnNeck *)R_ExternalPtrAddr(e);
   wickra_on_neck_reset(h);
@@ -9052,6 +11284,14 @@ SEXP wk_open_interest_delta_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, S
   struct OpenInterestDelta *h = (struct OpenInterestDelta *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_open_interest_delta_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
 }
+SEXP wk_open_interest_delta_warmup_period(SEXP e) {
+  struct OpenInterestDelta *h = (struct OpenInterestDelta *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_open_interest_delta_warmup_period(h));
+}
+SEXP wk_open_interest_delta_is_ready(SEXP e) {
+  struct OpenInterestDelta *h = (struct OpenInterestDelta *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_open_interest_delta_is_ready(h));
+}
 SEXP wk_open_interest_delta_reset(SEXP e) {
   struct OpenInterestDelta *h = (struct OpenInterestDelta *)R_ExternalPtrAddr(e);
   wickra_open_interest_delta_reset(h);
@@ -9074,6 +11314,14 @@ SEXP wk_open_interest_momentum_new(SEXP a0) {
 SEXP wk_open_interest_momentum_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
   struct OpenInterestMomentum *h = (struct OpenInterestMomentum *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_open_interest_momentum_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_open_interest_momentum_warmup_period(SEXP e) {
+  struct OpenInterestMomentum *h = (struct OpenInterestMomentum *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_open_interest_momentum_warmup_period(h));
+}
+SEXP wk_open_interest_momentum_is_ready(SEXP e) {
+  struct OpenInterestMomentum *h = (struct OpenInterestMomentum *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_open_interest_momentum_is_ready(h));
 }
 SEXP wk_open_interest_momentum_reset(SEXP e) {
   struct OpenInterestMomentum *h = (struct OpenInterestMomentum *)R_ExternalPtrAddr(e);
@@ -9107,6 +11355,14 @@ SEXP wk_opening_marubozu_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   wickra_opening_marubozu_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_opening_marubozu_warmup_period(SEXP e) {
+  struct OpeningMarubozu *h = (struct OpeningMarubozu *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_opening_marubozu_warmup_period(h));
+}
+SEXP wk_opening_marubozu_is_ready(SEXP e) {
+  struct OpeningMarubozu *h = (struct OpeningMarubozu *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_opening_marubozu_is_ready(h));
 }
 SEXP wk_opening_marubozu_reset(SEXP e) {
   struct OpeningMarubozu *h = (struct OpeningMarubozu *)R_ExternalPtrAddr(e);
@@ -9143,6 +11399,14 @@ SEXP wk_opening_range_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(2);
   return r;
 }
+SEXP wk_opening_range_warmup_period(SEXP e) {
+  struct OpeningRange *h = (struct OpeningRange *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_opening_range_warmup_period(h));
+}
+SEXP wk_opening_range_is_ready(SEXP e) {
+  struct OpeningRange *h = (struct OpeningRange *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_opening_range_is_ready(h));
+}
 SEXP wk_opening_range_reset(SEXP e) {
   struct OpeningRange *h = (struct OpeningRange *)R_ExternalPtrAddr(e);
   wickra_opening_range_reset(h);
@@ -9165,6 +11429,14 @@ SEXP wk_order_book_imbalance_full_new(void) {
 SEXP wk_order_book_imbalance_full_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct OrderBookImbalanceFull *h = (struct OrderBookImbalanceFull *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_order_book_imbalance_full_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
+}
+SEXP wk_order_book_imbalance_full_warmup_period(SEXP e) {
+  struct OrderBookImbalanceFull *h = (struct OrderBookImbalanceFull *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_order_book_imbalance_full_warmup_period(h));
+}
+SEXP wk_order_book_imbalance_full_is_ready(SEXP e) {
+  struct OrderBookImbalanceFull *h = (struct OrderBookImbalanceFull *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_order_book_imbalance_full_is_ready(h));
 }
 SEXP wk_order_book_imbalance_full_reset(SEXP e) {
   struct OrderBookImbalanceFull *h = (struct OrderBookImbalanceFull *)R_ExternalPtrAddr(e);
@@ -9189,6 +11461,14 @@ SEXP wk_order_book_imbalance_top1_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP
   struct OrderBookImbalanceTop1 *h = (struct OrderBookImbalanceTop1 *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_order_book_imbalance_top1_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
 }
+SEXP wk_order_book_imbalance_top1_warmup_period(SEXP e) {
+  struct OrderBookImbalanceTop1 *h = (struct OrderBookImbalanceTop1 *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_order_book_imbalance_top1_warmup_period(h));
+}
+SEXP wk_order_book_imbalance_top1_is_ready(SEXP e) {
+  struct OrderBookImbalanceTop1 *h = (struct OrderBookImbalanceTop1 *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_order_book_imbalance_top1_is_ready(h));
+}
 SEXP wk_order_book_imbalance_top1_reset(SEXP e) {
   struct OrderBookImbalanceTop1 *h = (struct OrderBookImbalanceTop1 *)R_ExternalPtrAddr(e);
   wickra_order_book_imbalance_top1_reset(h);
@@ -9212,6 +11492,14 @@ SEXP wk_order_book_imbalance_top_n_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEX
   struct OrderBookImbalanceTopN *h = (struct OrderBookImbalanceTopN *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_order_book_imbalance_top_n_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
 }
+SEXP wk_order_book_imbalance_top_n_warmup_period(SEXP e) {
+  struct OrderBookImbalanceTopN *h = (struct OrderBookImbalanceTopN *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_order_book_imbalance_top_n_warmup_period(h));
+}
+SEXP wk_order_book_imbalance_top_n_is_ready(SEXP e) {
+  struct OrderBookImbalanceTopN *h = (struct OrderBookImbalanceTopN *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_order_book_imbalance_top_n_is_ready(h));
+}
 SEXP wk_order_book_imbalance_top_n_reset(SEXP e) {
   struct OrderBookImbalanceTopN *h = (struct OrderBookImbalanceTopN *)R_ExternalPtrAddr(e);
   wickra_order_book_imbalance_top_n_reset(h);
@@ -9234,6 +11522,14 @@ SEXP wk_order_flow_imbalance_new(SEXP a0) {
 SEXP wk_order_flow_imbalance_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct OrderFlowImbalance *h = (struct OrderFlowImbalance *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_order_flow_imbalance_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
+}
+SEXP wk_order_flow_imbalance_warmup_period(SEXP e) {
+  struct OrderFlowImbalance *h = (struct OrderFlowImbalance *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_order_flow_imbalance_warmup_period(h));
+}
+SEXP wk_order_flow_imbalance_is_ready(SEXP e) {
+  struct OrderFlowImbalance *h = (struct OrderFlowImbalance *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_order_flow_imbalance_is_ready(h));
 }
 SEXP wk_order_flow_imbalance_reset(SEXP e) {
   struct OrderFlowImbalance *h = (struct OrderFlowImbalance *)R_ExternalPtrAddr(e);
@@ -9265,6 +11561,14 @@ SEXP wk_ou_half_life_batch(SEXP e, SEXP a0, SEXP a1) {
   wickra_ou_half_life_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_ou_half_life_warmup_period(SEXP e) {
+  struct OuHalfLife *h = (struct OuHalfLife *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_ou_half_life_warmup_period(h));
+}
+SEXP wk_ou_half_life_is_ready(SEXP e) {
+  struct OuHalfLife *h = (struct OuHalfLife *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_ou_half_life_is_ready(h));
 }
 SEXP wk_ou_half_life_reset(SEXP e) {
   struct OuHalfLife *h = (struct OuHalfLife *)R_ExternalPtrAddr(e);
@@ -9299,6 +11603,14 @@ SEXP wk_overnight_gap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
   UNPROTECT(1);
   return out;
 }
+SEXP wk_overnight_gap_warmup_period(SEXP e) {
+  struct OvernightGap *h = (struct OvernightGap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_overnight_gap_warmup_period(h));
+}
+SEXP wk_overnight_gap_is_ready(SEXP e) {
+  struct OvernightGap *h = (struct OvernightGap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_overnight_gap_is_ready(h));
+}
 SEXP wk_overnight_gap_reset(SEXP e) {
   struct OvernightGap *h = (struct OvernightGap *)R_ExternalPtrAddr(e);
   wickra_overnight_gap_reset(h);
@@ -9332,6 +11644,14 @@ SEXP wk_overnight_intraday_return_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP
   UNPROTECT(2);
   return r;
 }
+SEXP wk_overnight_intraday_return_warmup_period(SEXP e) {
+  struct OvernightIntradayReturn *h = (struct OvernightIntradayReturn *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_overnight_intraday_return_warmup_period(h));
+}
+SEXP wk_overnight_intraday_return_is_ready(SEXP e) {
+  struct OvernightIntradayReturn *h = (struct OvernightIntradayReturn *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_overnight_intraday_return_is_ready(h));
+}
 SEXP wk_overnight_intraday_return_reset(SEXP e) {
   struct OvernightIntradayReturn *h = (struct OvernightIntradayReturn *)R_ExternalPtrAddr(e);
   wickra_overnight_intraday_return_reset(h);
@@ -9362,6 +11682,14 @@ SEXP wk_pain_index_batch(SEXP e, SEXP a0) {
   wickra_pain_index_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_pain_index_warmup_period(SEXP e) {
+  struct PainIndex *h = (struct PainIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_pain_index_warmup_period(h));
+}
+SEXP wk_pain_index_is_ready(SEXP e) {
+  struct PainIndex *h = (struct PainIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_pain_index_is_ready(h));
 }
 SEXP wk_pain_index_reset(SEXP e) {
   struct PainIndex *h = (struct PainIndex *)R_ExternalPtrAddr(e);
@@ -9394,6 +11722,14 @@ SEXP wk_pair_spread_z_score_batch(SEXP e, SEXP a0, SEXP a1) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_pair_spread_z_score_warmup_period(SEXP e) {
+  struct PairSpreadZScore *h = (struct PairSpreadZScore *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_pair_spread_z_score_warmup_period(h));
+}
+SEXP wk_pair_spread_z_score_is_ready(SEXP e) {
+  struct PairSpreadZScore *h = (struct PairSpreadZScore *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_pair_spread_z_score_is_ready(h));
+}
 SEXP wk_pair_spread_z_score_reset(SEXP e) {
   struct PairSpreadZScore *h = (struct PairSpreadZScore *)R_ExternalPtrAddr(e);
   wickra_pair_spread_z_score_reset(h);
@@ -9424,6 +11760,14 @@ SEXP wk_pairwise_beta_batch(SEXP e, SEXP a0, SEXP a1) {
   wickra_pairwise_beta_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_pairwise_beta_warmup_period(SEXP e) {
+  struct PairwiseBeta *h = (struct PairwiseBeta *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_pairwise_beta_warmup_period(h));
+}
+SEXP wk_pairwise_beta_is_ready(SEXP e) {
+  struct PairwiseBeta *h = (struct PairwiseBeta *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_pairwise_beta_is_ready(h));
 }
 SEXP wk_pairwise_beta_reset(SEXP e) {
   struct PairwiseBeta *h = (struct PairwiseBeta *)R_ExternalPtrAddr(e);
@@ -9458,6 +11802,14 @@ SEXP wk_parkinson_volatility_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, S
   UNPROTECT(1);
   return out;
 }
+SEXP wk_parkinson_volatility_warmup_period(SEXP e) {
+  struct ParkinsonVolatility *h = (struct ParkinsonVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_parkinson_volatility_warmup_period(h));
+}
+SEXP wk_parkinson_volatility_is_ready(SEXP e) {
+  struct ParkinsonVolatility *h = (struct ParkinsonVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_parkinson_volatility_is_ready(h));
+}
 SEXP wk_parkinson_volatility_reset(SEXP e) {
   struct ParkinsonVolatility *h = (struct ParkinsonVolatility *)R_ExternalPtrAddr(e);
   wickra_parkinson_volatility_reset(h);
@@ -9489,6 +11841,14 @@ SEXP wk_pearson_correlation_batch(SEXP e, SEXP a0, SEXP a1) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_pearson_correlation_warmup_period(SEXP e) {
+  struct PearsonCorrelation *h = (struct PearsonCorrelation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_pearson_correlation_warmup_period(h));
+}
+SEXP wk_pearson_correlation_is_ready(SEXP e) {
+  struct PearsonCorrelation *h = (struct PearsonCorrelation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_pearson_correlation_is_ready(h));
+}
 SEXP wk_pearson_correlation_reset(SEXP e) {
   struct PearsonCorrelation *h = (struct PearsonCorrelation *)R_ExternalPtrAddr(e);
   wickra_pearson_correlation_reset(h);
@@ -9511,6 +11871,14 @@ SEXP wk_percent_above_ma_new(void) {
 SEXP wk_percent_above_ma_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct PercentAboveMa *h = (struct PercentAboveMa *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_percent_above_ma_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_percent_above_ma_warmup_period(SEXP e) {
+  struct PercentAboveMa *h = (struct PercentAboveMa *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_percent_above_ma_warmup_period(h));
+}
+SEXP wk_percent_above_ma_is_ready(SEXP e) {
+  struct PercentAboveMa *h = (struct PercentAboveMa *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_percent_above_ma_is_ready(h));
 }
 SEXP wk_percent_above_ma_reset(SEXP e) {
   struct PercentAboveMa *h = (struct PercentAboveMa *)R_ExternalPtrAddr(e);
@@ -9543,6 +11911,14 @@ SEXP wk_percent_b_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_percent_b_warmup_period(SEXP e) {
+  struct PercentB *h = (struct PercentB *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_percent_b_warmup_period(h));
+}
+SEXP wk_percent_b_is_ready(SEXP e) {
+  struct PercentB *h = (struct PercentB *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_percent_b_is_ready(h));
+}
 SEXP wk_percent_b_reset(SEXP e) {
   struct PercentB *h = (struct PercentB *)R_ExternalPtrAddr(e);
   wickra_percent_b_reset(h);
@@ -9574,6 +11950,14 @@ SEXP wk_percentage_trailing_stop_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_percentage_trailing_stop_warmup_period(SEXP e) {
+  struct PercentageTrailingStop *h = (struct PercentageTrailingStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_percentage_trailing_stop_warmup_period(h));
+}
+SEXP wk_percentage_trailing_stop_is_ready(SEXP e) {
+  struct PercentageTrailingStop *h = (struct PercentageTrailingStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_percentage_trailing_stop_is_ready(h));
+}
 SEXP wk_percentage_trailing_stop_reset(SEXP e) {
   struct PercentageTrailingStop *h = (struct PercentageTrailingStop *)R_ExternalPtrAddr(e);
   wickra_percentage_trailing_stop_reset(h);
@@ -9596,6 +11980,14 @@ SEXP wk_perpetual_premium_index_new(void) {
 SEXP wk_perpetual_premium_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
   struct PerpetualPremiumIndex *h = (struct PerpetualPremiumIndex *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_perpetual_premium_index_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_perpetual_premium_index_warmup_period(SEXP e) {
+  struct PerpetualPremiumIndex *h = (struct PerpetualPremiumIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_perpetual_premium_index_warmup_period(h));
+}
+SEXP wk_perpetual_premium_index_is_ready(SEXP e) {
+  struct PerpetualPremiumIndex *h = (struct PerpetualPremiumIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_perpetual_premium_index_is_ready(h));
 }
 SEXP wk_perpetual_premium_index_reset(SEXP e) {
   struct PerpetualPremiumIndex *h = (struct PerpetualPremiumIndex *)R_ExternalPtrAddr(e);
@@ -9630,6 +12022,14 @@ SEXP wk_pgo_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_pgo_warmup_period(SEXP e) {
+  struct Pgo *h = (struct Pgo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_pgo_warmup_period(h));
+}
+SEXP wk_pgo_is_ready(SEXP e) {
+  struct Pgo *h = (struct Pgo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_pgo_is_ready(h));
+}
 SEXP wk_pgo_reset(SEXP e) {
   struct Pgo *h = (struct Pgo *)R_ExternalPtrAddr(e);
   wickra_pgo_reset(h);
@@ -9663,6 +12063,14 @@ SEXP wk_piercing_dark_cloud_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SE
   UNPROTECT(1);
   return out;
 }
+SEXP wk_piercing_dark_cloud_warmup_period(SEXP e) {
+  struct PiercingDarkCloud *h = (struct PiercingDarkCloud *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_piercing_dark_cloud_warmup_period(h));
+}
+SEXP wk_piercing_dark_cloud_is_ready(SEXP e) {
+  struct PiercingDarkCloud *h = (struct PiercingDarkCloud *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_piercing_dark_cloud_is_ready(h));
+}
 SEXP wk_piercing_dark_cloud_reset(SEXP e) {
   struct PiercingDarkCloud *h = (struct PiercingDarkCloud *)R_ExternalPtrAddr(e);
   wickra_piercing_dark_cloud_reset(h);
@@ -9685,6 +12093,14 @@ SEXP wk_pin_new(SEXP a0) {
 SEXP wk_pin_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct Pin *h = (struct Pin *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_pin_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
+}
+SEXP wk_pin_warmup_period(SEXP e) {
+  struct Pin *h = (struct Pin *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_pin_warmup_period(h));
+}
+SEXP wk_pin_is_ready(SEXP e) {
+  struct Pin *h = (struct Pin *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_pin_is_ready(h));
 }
 SEXP wk_pin_reset(SEXP e) {
   struct Pin *h = (struct Pin *)R_ExternalPtrAddr(e);
@@ -9719,6 +12135,14 @@ SEXP wk_pivot_reversal_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(1);
   return out;
 }
+SEXP wk_pivot_reversal_warmup_period(SEXP e) {
+  struct PivotReversal *h = (struct PivotReversal *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_pivot_reversal_warmup_period(h));
+}
+SEXP wk_pivot_reversal_is_ready(SEXP e) {
+  struct PivotReversal *h = (struct PivotReversal *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_pivot_reversal_is_ready(h));
+}
 SEXP wk_pivot_reversal_reset(SEXP e) {
   struct PivotReversal *h = (struct PivotReversal *)R_ExternalPtrAddr(e);
   wickra_pivot_reversal_reset(h);
@@ -9751,6 +12175,14 @@ SEXP wk_plus_di_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
   wickra_plus_di_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_plus_di_warmup_period(SEXP e) {
+  struct PlusDi *h = (struct PlusDi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_plus_di_warmup_period(h));
+}
+SEXP wk_plus_di_is_ready(SEXP e) {
+  struct PlusDi *h = (struct PlusDi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_plus_di_is_ready(h));
 }
 SEXP wk_plus_di_reset(SEXP e) {
   struct PlusDi *h = (struct PlusDi *)R_ExternalPtrAddr(e);
@@ -9785,6 +12217,14 @@ SEXP wk_plus_dm_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_plus_dm_warmup_period(SEXP e) {
+  struct PlusDm *h = (struct PlusDm *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_plus_dm_warmup_period(h));
+}
+SEXP wk_plus_dm_is_ready(SEXP e) {
+  struct PlusDm *h = (struct PlusDm *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_plus_dm_is_ready(h));
+}
 SEXP wk_plus_dm_reset(SEXP e) {
   struct PlusDm *h = (struct PlusDm *)R_ExternalPtrAddr(e);
   wickra_plus_dm_reset(h);
@@ -9815,6 +12255,14 @@ SEXP wk_pmo_batch(SEXP e, SEXP a0) {
   wickra_pmo_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_pmo_warmup_period(SEXP e) {
+  struct Pmo *h = (struct Pmo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_pmo_warmup_period(h));
+}
+SEXP wk_pmo_is_ready(SEXP e) {
+  struct Pmo *h = (struct Pmo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_pmo_is_ready(h));
 }
 SEXP wk_pmo_reset(SEXP e) {
   struct Pmo *h = (struct Pmo *)R_ExternalPtrAddr(e);
@@ -9886,6 +12334,14 @@ SEXP wk_polarized_fractal_efficiency_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_polarized_fractal_efficiency_warmup_period(SEXP e) {
+  struct PolarizedFractalEfficiency *h = (struct PolarizedFractalEfficiency *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_polarized_fractal_efficiency_warmup_period(h));
+}
+SEXP wk_polarized_fractal_efficiency_is_ready(SEXP e) {
+  struct PolarizedFractalEfficiency *h = (struct PolarizedFractalEfficiency *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_polarized_fractal_efficiency_is_ready(h));
+}
 SEXP wk_polarized_fractal_efficiency_reset(SEXP e) {
   struct PolarizedFractalEfficiency *h = (struct PolarizedFractalEfficiency *)R_ExternalPtrAddr(e);
   wickra_polarized_fractal_efficiency_reset(h);
@@ -9917,6 +12373,14 @@ SEXP wk_ppo_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_ppo_warmup_period(SEXP e) {
+  struct Ppo *h = (struct Ppo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_ppo_warmup_period(h));
+}
+SEXP wk_ppo_is_ready(SEXP e) {
+  struct Ppo *h = (struct Ppo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_ppo_is_ready(h));
+}
 SEXP wk_ppo_reset(SEXP e) {
   struct Ppo *h = (struct Ppo *)R_ExternalPtrAddr(e);
   wickra_ppo_reset(h);
@@ -9947,6 +12411,14 @@ SEXP wk_ppo_histogram_batch(SEXP e, SEXP a0) {
   wickra_ppo_histogram_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_ppo_histogram_warmup_period(SEXP e) {
+  struct PpoHistogram *h = (struct PpoHistogram *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_ppo_histogram_warmup_period(h));
+}
+SEXP wk_ppo_histogram_is_ready(SEXP e) {
+  struct PpoHistogram *h = (struct PpoHistogram *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_ppo_histogram_is_ready(h));
 }
 SEXP wk_ppo_histogram_reset(SEXP e) {
   struct PpoHistogram *h = (struct PpoHistogram *)R_ExternalPtrAddr(e);
@@ -9981,6 +12453,14 @@ SEXP wk_profile_shape_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
   UNPROTECT(1);
   return out;
 }
+SEXP wk_profile_shape_warmup_period(SEXP e) {
+  struct ProfileShape *h = (struct ProfileShape *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_profile_shape_warmup_period(h));
+}
+SEXP wk_profile_shape_is_ready(SEXP e) {
+  struct ProfileShape *h = (struct ProfileShape *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_profile_shape_is_ready(h));
+}
 SEXP wk_profile_shape_reset(SEXP e) {
   struct ProfileShape *h = (struct ProfileShape *)R_ExternalPtrAddr(e);
   wickra_profile_shape_reset(h);
@@ -10011,6 +12491,14 @@ SEXP wk_profit_factor_batch(SEXP e, SEXP a0) {
   wickra_profit_factor_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_profit_factor_warmup_period(SEXP e) {
+  struct ProfitFactor *h = (struct ProfitFactor *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_profit_factor_warmup_period(h));
+}
+SEXP wk_profit_factor_is_ready(SEXP e) {
+  struct ProfitFactor *h = (struct ProfitFactor *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_profit_factor_is_ready(h));
 }
 SEXP wk_profit_factor_reset(SEXP e) {
   struct ProfitFactor *h = (struct ProfitFactor *)R_ExternalPtrAddr(e);
@@ -10047,6 +12535,14 @@ SEXP wk_projection_bands_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   UNPROTECT(2);
   return r;
 }
+SEXP wk_projection_bands_warmup_period(SEXP e) {
+  struct ProjectionBands *h = (struct ProjectionBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_projection_bands_warmup_period(h));
+}
+SEXP wk_projection_bands_is_ready(SEXP e) {
+  struct ProjectionBands *h = (struct ProjectionBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_projection_bands_is_ready(h));
+}
 SEXP wk_projection_bands_reset(SEXP e) {
   struct ProjectionBands *h = (struct ProjectionBands *)R_ExternalPtrAddr(e);
   wickra_projection_bands_reset(h);
@@ -10079,6 +12575,14 @@ SEXP wk_projection_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, 
   wickra_projection_oscillator_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_projection_oscillator_warmup_period(SEXP e) {
+  struct ProjectionOscillator *h = (struct ProjectionOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_projection_oscillator_warmup_period(h));
+}
+SEXP wk_projection_oscillator_is_ready(SEXP e) {
+  struct ProjectionOscillator *h = (struct ProjectionOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_projection_oscillator_is_ready(h));
 }
 SEXP wk_projection_oscillator_reset(SEXP e) {
   struct ProjectionOscillator *h = (struct ProjectionOscillator *)R_ExternalPtrAddr(e);
@@ -10113,6 +12617,14 @@ SEXP wk_psar_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
   UNPROTECT(1);
   return out;
 }
+SEXP wk_psar_warmup_period(SEXP e) {
+  struct Psar *h = (struct Psar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_psar_warmup_period(h));
+}
+SEXP wk_psar_is_ready(SEXP e) {
+  struct Psar *h = (struct Psar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_psar_is_ready(h));
+}
 SEXP wk_psar_reset(SEXP e) {
   struct Psar *h = (struct Psar *)R_ExternalPtrAddr(e);
   wickra_psar_reset(h);
@@ -10145,6 +12657,14 @@ SEXP wk_pvi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) 
   wickra_pvi_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_pvi_warmup_period(SEXP e) {
+  struct Pvi *h = (struct Pvi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_pvi_warmup_period(h));
+}
+SEXP wk_pvi_is_ready(SEXP e) {
+  struct Pvi *h = (struct Pvi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_pvi_is_ready(h));
 }
 SEXP wk_pvi_reset(SEXP e) {
   struct Pvi *h = (struct Pvi *)R_ExternalPtrAddr(e);
@@ -10179,6 +12699,14 @@ SEXP wk_qqe_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_qqe_warmup_period(SEXP e) {
+  struct Qqe *h = (struct Qqe *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_qqe_warmup_period(h));
+}
+SEXP wk_qqe_is_ready(SEXP e) {
+  struct Qqe *h = (struct Qqe *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_qqe_is_ready(h));
+}
 SEXP wk_qqe_reset(SEXP e) {
   struct Qqe *h = (struct Qqe *)R_ExternalPtrAddr(e);
   wickra_qqe_reset(h);
@@ -10211,6 +12739,14 @@ SEXP wk_qstick_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a
   wickra_qstick_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_qstick_warmup_period(SEXP e) {
+  struct Qstick *h = (struct Qstick *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_qstick_warmup_period(h));
+}
+SEXP wk_qstick_is_ready(SEXP e) {
+  struct Qstick *h = (struct Qstick *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_qstick_is_ready(h));
 }
 SEXP wk_qstick_reset(SEXP e) {
   struct Qstick *h = (struct Qstick *)R_ExternalPtrAddr(e);
@@ -10247,6 +12783,14 @@ SEXP wk_quartile_bands_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_quartile_bands_warmup_period(SEXP e) {
+  struct QuartileBands *h = (struct QuartileBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_quartile_bands_warmup_period(h));
+}
+SEXP wk_quartile_bands_is_ready(SEXP e) {
+  struct QuartileBands *h = (struct QuartileBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_quartile_bands_is_ready(h));
+}
 SEXP wk_quartile_bands_reset(SEXP e) {
   struct QuartileBands *h = (struct QuartileBands *)R_ExternalPtrAddr(e);
   wickra_quartile_bands_reset(h);
@@ -10269,6 +12813,14 @@ SEXP wk_quoted_spread_new(void) {
 SEXP wk_quoted_spread_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct QuotedSpread *h = (struct QuotedSpread *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_quoted_spread_update(h, (double *)REAL(a0), (double *)REAL(a1), (uintptr_t)Rf_xlength(a0), (double *)REAL(a2), (double *)REAL(a3), (uintptr_t)Rf_xlength(a2)));
+}
+SEXP wk_quoted_spread_warmup_period(SEXP e) {
+  struct QuotedSpread *h = (struct QuotedSpread *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_quoted_spread_warmup_period(h));
+}
+SEXP wk_quoted_spread_is_ready(SEXP e) {
+  struct QuotedSpread *h = (struct QuotedSpread *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_quoted_spread_is_ready(h));
 }
 SEXP wk_quoted_spread_reset(SEXP e) {
   struct QuotedSpread *h = (struct QuotedSpread *)R_ExternalPtrAddr(e);
@@ -10300,6 +12852,14 @@ SEXP wk_r_squared_batch(SEXP e, SEXP a0) {
   wickra_r_squared_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_r_squared_warmup_period(SEXP e) {
+  struct RSquared *h = (struct RSquared *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_r_squared_warmup_period(h));
+}
+SEXP wk_r_squared_is_ready(SEXP e) {
+  struct RSquared *h = (struct RSquared *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_r_squared_is_ready(h));
 }
 SEXP wk_r_squared_reset(SEXP e) {
   struct RSquared *h = (struct RSquared *)R_ExternalPtrAddr(e);
@@ -10363,6 +12923,14 @@ SEXP wk_realized_spread_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   struct RealizedSpread *h = (struct RealizedSpread *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_realized_spread_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3), Rf_asReal(a4)));
 }
+SEXP wk_realized_spread_warmup_period(SEXP e) {
+  struct RealizedSpread *h = (struct RealizedSpread *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_realized_spread_warmup_period(h));
+}
+SEXP wk_realized_spread_is_ready(SEXP e) {
+  struct RealizedSpread *h = (struct RealizedSpread *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_realized_spread_is_ready(h));
+}
 SEXP wk_realized_spread_reset(SEXP e) {
   struct RealizedSpread *h = (struct RealizedSpread *)R_ExternalPtrAddr(e);
   wickra_realized_spread_reset(h);
@@ -10394,6 +12962,14 @@ SEXP wk_realized_volatility_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_realized_volatility_warmup_period(SEXP e) {
+  struct RealizedVolatility *h = (struct RealizedVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_realized_volatility_warmup_period(h));
+}
+SEXP wk_realized_volatility_is_ready(SEXP e) {
+  struct RealizedVolatility *h = (struct RealizedVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_realized_volatility_is_ready(h));
+}
 SEXP wk_realized_volatility_reset(SEXP e) {
   struct RealizedVolatility *h = (struct RealizedVolatility *)R_ExternalPtrAddr(e);
   wickra_realized_volatility_reset(h);
@@ -10424,6 +13000,14 @@ SEXP wk_recovery_factor_batch(SEXP e, SEXP a0) {
   wickra_recovery_factor_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_recovery_factor_warmup_period(SEXP e) {
+  struct RecoveryFactor *h = (struct RecoveryFactor *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_recovery_factor_warmup_period(h));
+}
+SEXP wk_recovery_factor_is_ready(SEXP e) {
+  struct RecoveryFactor *h = (struct RecoveryFactor *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_recovery_factor_is_ready(h));
 }
 SEXP wk_recovery_factor_reset(SEXP e) {
   struct RecoveryFactor *h = (struct RecoveryFactor *)R_ExternalPtrAddr(e);
@@ -10458,6 +13042,14 @@ SEXP wk_rectangle_range_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   UNPROTECT(1);
   return out;
 }
+SEXP wk_rectangle_range_warmup_period(SEXP e) {
+  struct RectangleRange *h = (struct RectangleRange *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_rectangle_range_warmup_period(h));
+}
+SEXP wk_rectangle_range_is_ready(SEXP e) {
+  struct RectangleRange *h = (struct RectangleRange *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_rectangle_range_is_ready(h));
+}
 SEXP wk_rectangle_range_reset(SEXP e) {
   struct RectangleRange *h = (struct RectangleRange *)R_ExternalPtrAddr(e);
   wickra_rectangle_range_reset(h);
@@ -10489,6 +13081,14 @@ SEXP wk_reflex_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_reflex_warmup_period(SEXP e) {
+  struct Reflex *h = (struct Reflex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_reflex_warmup_period(h));
+}
+SEXP wk_reflex_is_ready(SEXP e) {
+  struct Reflex *h = (struct Reflex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_reflex_is_ready(h));
+}
 SEXP wk_reflex_reset(SEXP e) {
   struct Reflex *h = (struct Reflex *)R_ExternalPtrAddr(e);
   wickra_reflex_reset(h);
@@ -10519,6 +13119,14 @@ SEXP wk_regime_label_batch(SEXP e, SEXP a0) {
   wickra_regime_label_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_regime_label_warmup_period(SEXP e) {
+  struct RegimeLabel *h = (struct RegimeLabel *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_regime_label_warmup_period(h));
+}
+SEXP wk_regime_label_is_ready(SEXP e) {
+  struct RegimeLabel *h = (struct RegimeLabel *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_regime_label_is_ready(h));
 }
 SEXP wk_regime_label_reset(SEXP e) {
   struct RegimeLabel *h = (struct RegimeLabel *)R_ExternalPtrAddr(e);
@@ -10554,6 +13162,14 @@ SEXP wk_relative_strength_ab_update(SEXP e, SEXP a0, SEXP a1) {
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_relative_strength_ab_warmup_period(SEXP e) {
+  struct RelativeStrengthAB *h = (struct RelativeStrengthAB *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_relative_strength_ab_warmup_period(h));
+}
+SEXP wk_relative_strength_ab_is_ready(SEXP e) {
+  struct RelativeStrengthAB *h = (struct RelativeStrengthAB *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_relative_strength_ab_is_ready(h));
 }
 SEXP wk_relative_strength_ab_reset(SEXP e) {
   struct RelativeStrengthAB *h = (struct RelativeStrengthAB *)R_ExternalPtrAddr(e);
@@ -10625,6 +13241,14 @@ SEXP wk_renko_trailing_stop_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_renko_trailing_stop_warmup_period(SEXP e) {
+  struct RenkoTrailingStop *h = (struct RenkoTrailingStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_renko_trailing_stop_warmup_period(h));
+}
+SEXP wk_renko_trailing_stop_is_ready(SEXP e) {
+  struct RenkoTrailingStop *h = (struct RenkoTrailingStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_renko_trailing_stop_is_ready(h));
+}
 SEXP wk_renko_trailing_stop_reset(SEXP e) {
   struct RenkoTrailingStop *h = (struct RenkoTrailingStop *)R_ExternalPtrAddr(e);
   wickra_renko_trailing_stop_reset(h);
@@ -10657,6 +13281,14 @@ SEXP wk_rickshaw_man_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   wickra_rickshaw_man_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_rickshaw_man_warmup_period(SEXP e) {
+  struct RickshawMan *h = (struct RickshawMan *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_rickshaw_man_warmup_period(h));
+}
+SEXP wk_rickshaw_man_is_ready(SEXP e) {
+  struct RickshawMan *h = (struct RickshawMan *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_rickshaw_man_is_ready(h));
 }
 SEXP wk_rickshaw_man_reset(SEXP e) {
   struct RickshawMan *h = (struct RickshawMan *)R_ExternalPtrAddr(e);
@@ -10691,6 +13323,14 @@ SEXP wk_rising_three_methods_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, S
   UNPROTECT(1);
   return out;
 }
+SEXP wk_rising_three_methods_warmup_period(SEXP e) {
+  struct RisingThreeMethods *h = (struct RisingThreeMethods *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_rising_three_methods_warmup_period(h));
+}
+SEXP wk_rising_three_methods_is_ready(SEXP e) {
+  struct RisingThreeMethods *h = (struct RisingThreeMethods *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_rising_three_methods_is_ready(h));
+}
 SEXP wk_rising_three_methods_reset(SEXP e) {
   struct RisingThreeMethods *h = (struct RisingThreeMethods *)R_ExternalPtrAddr(e);
   wickra_rising_three_methods_reset(h);
@@ -10721,6 +13361,14 @@ SEXP wk_rmi_batch(SEXP e, SEXP a0) {
   wickra_rmi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_rmi_warmup_period(SEXP e) {
+  struct Rmi *h = (struct Rmi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_rmi_warmup_period(h));
+}
+SEXP wk_rmi_is_ready(SEXP e) {
+  struct Rmi *h = (struct Rmi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_rmi_is_ready(h));
 }
 SEXP wk_rmi_reset(SEXP e) {
   struct Rmi *h = (struct Rmi *)R_ExternalPtrAddr(e);
@@ -10753,6 +13401,14 @@ SEXP wk_roc_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_roc_warmup_period(SEXP e) {
+  struct Roc *h = (struct Roc *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_roc_warmup_period(h));
+}
+SEXP wk_roc_is_ready(SEXP e) {
+  struct Roc *h = (struct Roc *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_roc_is_ready(h));
+}
 SEXP wk_roc_reset(SEXP e) {
   struct Roc *h = (struct Roc *)R_ExternalPtrAddr(e);
   wickra_roc_reset(h);
@@ -10783,6 +13439,14 @@ SEXP wk_rocp_batch(SEXP e, SEXP a0) {
   wickra_rocp_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_rocp_warmup_period(SEXP e) {
+  struct Rocp *h = (struct Rocp *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_rocp_warmup_period(h));
+}
+SEXP wk_rocp_is_ready(SEXP e) {
+  struct Rocp *h = (struct Rocp *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_rocp_is_ready(h));
 }
 SEXP wk_rocp_reset(SEXP e) {
   struct Rocp *h = (struct Rocp *)R_ExternalPtrAddr(e);
@@ -10815,6 +13479,14 @@ SEXP wk_rocr_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_rocr_warmup_period(SEXP e) {
+  struct Rocr *h = (struct Rocr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_rocr_warmup_period(h));
+}
+SEXP wk_rocr_is_ready(SEXP e) {
+  struct Rocr *h = (struct Rocr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_rocr_is_ready(h));
+}
 SEXP wk_rocr_reset(SEXP e) {
   struct Rocr *h = (struct Rocr *)R_ExternalPtrAddr(e);
   wickra_rocr_reset(h);
@@ -10845,6 +13517,14 @@ SEXP wk_rocr100_batch(SEXP e, SEXP a0) {
   wickra_rocr100_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_rocr100_warmup_period(SEXP e) {
+  struct Rocr100 *h = (struct Rocr100 *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_rocr100_warmup_period(h));
+}
+SEXP wk_rocr100_is_ready(SEXP e) {
+  struct Rocr100 *h = (struct Rocr100 *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_rocr100_is_ready(h));
 }
 SEXP wk_rocr100_reset(SEXP e) {
   struct Rocr100 *h = (struct Rocr100 *)R_ExternalPtrAddr(e);
@@ -10879,6 +13559,14 @@ SEXP wk_rogers_satchell_volatility_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP
   UNPROTECT(1);
   return out;
 }
+SEXP wk_rogers_satchell_volatility_warmup_period(SEXP e) {
+  struct RogersSatchellVolatility *h = (struct RogersSatchellVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_rogers_satchell_volatility_warmup_period(h));
+}
+SEXP wk_rogers_satchell_volatility_is_ready(SEXP e) {
+  struct RogersSatchellVolatility *h = (struct RogersSatchellVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_rogers_satchell_volatility_is_ready(h));
+}
 SEXP wk_rogers_satchell_volatility_reset(SEXP e) {
   struct RogersSatchellVolatility *h = (struct RogersSatchellVolatility *)R_ExternalPtrAddr(e);
   wickra_rogers_satchell_volatility_reset(h);
@@ -10901,6 +13589,14 @@ SEXP wk_roll_measure_new(SEXP a0) {
 SEXP wk_roll_measure_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct RollMeasure *h = (struct RollMeasure *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_roll_measure_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
+}
+SEXP wk_roll_measure_warmup_period(SEXP e) {
+  struct RollMeasure *h = (struct RollMeasure *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_roll_measure_warmup_period(h));
+}
+SEXP wk_roll_measure_is_ready(SEXP e) {
+  struct RollMeasure *h = (struct RollMeasure *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_roll_measure_is_ready(h));
 }
 SEXP wk_roll_measure_reset(SEXP e) {
   struct RollMeasure *h = (struct RollMeasure *)R_ExternalPtrAddr(e);
@@ -10933,6 +13629,14 @@ SEXP wk_rolling_correlation_batch(SEXP e, SEXP a0, SEXP a1) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_rolling_correlation_warmup_period(SEXP e) {
+  struct RollingCorrelation *h = (struct RollingCorrelation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_rolling_correlation_warmup_period(h));
+}
+SEXP wk_rolling_correlation_is_ready(SEXP e) {
+  struct RollingCorrelation *h = (struct RollingCorrelation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_rolling_correlation_is_ready(h));
+}
 SEXP wk_rolling_correlation_reset(SEXP e) {
   struct RollingCorrelation *h = (struct RollingCorrelation *)R_ExternalPtrAddr(e);
   wickra_rolling_correlation_reset(h);
@@ -10963,6 +13667,14 @@ SEXP wk_rolling_covariance_batch(SEXP e, SEXP a0, SEXP a1) {
   wickra_rolling_covariance_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_rolling_covariance_warmup_period(SEXP e) {
+  struct RollingCovariance *h = (struct RollingCovariance *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_rolling_covariance_warmup_period(h));
+}
+SEXP wk_rolling_covariance_is_ready(SEXP e) {
+  struct RollingCovariance *h = (struct RollingCovariance *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_rolling_covariance_is_ready(h));
 }
 SEXP wk_rolling_covariance_reset(SEXP e) {
   struct RollingCovariance *h = (struct RollingCovariance *)R_ExternalPtrAddr(e);
@@ -10995,6 +13707,14 @@ SEXP wk_rolling_iqr_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_rolling_iqr_warmup_period(SEXP e) {
+  struct RollingIqr *h = (struct RollingIqr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_rolling_iqr_warmup_period(h));
+}
+SEXP wk_rolling_iqr_is_ready(SEXP e) {
+  struct RollingIqr *h = (struct RollingIqr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_rolling_iqr_is_ready(h));
+}
 SEXP wk_rolling_iqr_reset(SEXP e) {
   struct RollingIqr *h = (struct RollingIqr *)R_ExternalPtrAddr(e);
   wickra_rolling_iqr_reset(h);
@@ -11025,6 +13745,14 @@ SEXP wk_rolling_min_max_scaler_batch(SEXP e, SEXP a0) {
   wickra_rolling_min_max_scaler_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_rolling_min_max_scaler_warmup_period(SEXP e) {
+  struct RollingMinMaxScaler *h = (struct RollingMinMaxScaler *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_rolling_min_max_scaler_warmup_period(h));
+}
+SEXP wk_rolling_min_max_scaler_is_ready(SEXP e) {
+  struct RollingMinMaxScaler *h = (struct RollingMinMaxScaler *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_rolling_min_max_scaler_is_ready(h));
 }
 SEXP wk_rolling_min_max_scaler_reset(SEXP e) {
   struct RollingMinMaxScaler *h = (struct RollingMinMaxScaler *)R_ExternalPtrAddr(e);
@@ -11057,6 +13785,14 @@ SEXP wk_rolling_percentile_rank_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_rolling_percentile_rank_warmup_period(SEXP e) {
+  struct RollingPercentileRank *h = (struct RollingPercentileRank *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_rolling_percentile_rank_warmup_period(h));
+}
+SEXP wk_rolling_percentile_rank_is_ready(SEXP e) {
+  struct RollingPercentileRank *h = (struct RollingPercentileRank *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_rolling_percentile_rank_is_ready(h));
+}
 SEXP wk_rolling_percentile_rank_reset(SEXP e) {
   struct RollingPercentileRank *h = (struct RollingPercentileRank *)R_ExternalPtrAddr(e);
   wickra_rolling_percentile_rank_reset(h);
@@ -11087,6 +13823,14 @@ SEXP wk_rolling_quantile_batch(SEXP e, SEXP a0) {
   wickra_rolling_quantile_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_rolling_quantile_warmup_period(SEXP e) {
+  struct RollingQuantile *h = (struct RollingQuantile *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_rolling_quantile_warmup_period(h));
+}
+SEXP wk_rolling_quantile_is_ready(SEXP e) {
+  struct RollingQuantile *h = (struct RollingQuantile *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_rolling_quantile_is_ready(h));
 }
 SEXP wk_rolling_quantile_reset(SEXP e) {
   struct RollingQuantile *h = (struct RollingQuantile *)R_ExternalPtrAddr(e);
@@ -11121,6 +13865,14 @@ SEXP wk_rolling_vwap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_rolling_vwap_warmup_period(SEXP e) {
+  struct RollingVwap *h = (struct RollingVwap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_rolling_vwap_warmup_period(h));
+}
+SEXP wk_rolling_vwap_is_ready(SEXP e) {
+  struct RollingVwap *h = (struct RollingVwap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_rolling_vwap_is_ready(h));
+}
 SEXP wk_rolling_vwap_reset(SEXP e) {
   struct RollingVwap *h = (struct RollingVwap *)R_ExternalPtrAddr(e);
   wickra_rolling_vwap_reset(h);
@@ -11151,6 +13903,14 @@ SEXP wk_roofing_filter_batch(SEXP e, SEXP a0) {
   wickra_roofing_filter_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_roofing_filter_warmup_period(SEXP e) {
+  struct RoofingFilter *h = (struct RoofingFilter *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_roofing_filter_warmup_period(h));
+}
+SEXP wk_roofing_filter_is_ready(SEXP e) {
+  struct RoofingFilter *h = (struct RoofingFilter *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_roofing_filter_is_ready(h));
 }
 SEXP wk_roofing_filter_reset(SEXP e) {
   struct RoofingFilter *h = (struct RoofingFilter *)R_ExternalPtrAddr(e);
@@ -11183,6 +13943,14 @@ SEXP wk_rsi_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_rsi_warmup_period(SEXP e) {
+  struct Rsi *h = (struct Rsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_rsi_warmup_period(h));
+}
+SEXP wk_rsi_is_ready(SEXP e) {
+  struct Rsi *h = (struct Rsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_rsi_is_ready(h));
+}
 SEXP wk_rsi_reset(SEXP e) {
   struct Rsi *h = (struct Rsi *)R_ExternalPtrAddr(e);
   wickra_rsi_reset(h);
@@ -11213,6 +13981,14 @@ SEXP wk_rsx_batch(SEXP e, SEXP a0) {
   wickra_rsx_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_rsx_warmup_period(SEXP e) {
+  struct Rsx *h = (struct Rsx *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_rsx_warmup_period(h));
+}
+SEXP wk_rsx_is_ready(SEXP e) {
+  struct Rsx *h = (struct Rsx *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_rsx_is_ready(h));
 }
 SEXP wk_rsx_reset(SEXP e) {
   struct Rsx *h = (struct Rsx *)R_ExternalPtrAddr(e);
@@ -11292,6 +14068,14 @@ SEXP wk_rvi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_rvi_warmup_period(SEXP e) {
+  struct Rvi *h = (struct Rvi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_rvi_warmup_period(h));
+}
+SEXP wk_rvi_is_ready(SEXP e) {
+  struct Rvi *h = (struct Rvi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_rvi_is_ready(h));
+}
 SEXP wk_rvi_reset(SEXP e) {
   struct Rvi *h = (struct Rvi *)R_ExternalPtrAddr(e);
   wickra_rvi_reset(h);
@@ -11322,6 +14106,14 @@ SEXP wk_rvi_volatility_batch(SEXP e, SEXP a0) {
   wickra_rvi_volatility_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_rvi_volatility_warmup_period(SEXP e) {
+  struct RviVolatility *h = (struct RviVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_rvi_volatility_warmup_period(h));
+}
+SEXP wk_rvi_volatility_is_ready(SEXP e) {
+  struct RviVolatility *h = (struct RviVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_rvi_volatility_is_ready(h));
 }
 SEXP wk_rvi_volatility_reset(SEXP e) {
   struct RviVolatility *h = (struct RviVolatility *)R_ExternalPtrAddr(e);
@@ -11356,6 +14148,14 @@ SEXP wk_rwi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
   UNPROTECT(2);
   return r;
 }
+SEXP wk_rwi_warmup_period(SEXP e) {
+  struct Rwi *h = (struct Rwi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_rwi_warmup_period(h));
+}
+SEXP wk_rwi_is_ready(SEXP e) {
+  struct Rwi *h = (struct Rwi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_rwi_is_ready(h));
+}
 SEXP wk_rwi_reset(SEXP e) {
   struct Rwi *h = (struct Rwi *)R_ExternalPtrAddr(e);
   wickra_rwi_reset(h);
@@ -11386,6 +14186,14 @@ SEXP wk_sample_entropy_batch(SEXP e, SEXP a0) {
   wickra_sample_entropy_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_sample_entropy_warmup_period(SEXP e) {
+  struct SampleEntropy *h = (struct SampleEntropy *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_sample_entropy_warmup_period(h));
+}
+SEXP wk_sample_entropy_is_ready(SEXP e) {
+  struct SampleEntropy *h = (struct SampleEntropy *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_sample_entropy_is_ready(h));
 }
 SEXP wk_sample_entropy_reset(SEXP e) {
   struct SampleEntropy *h = (struct SampleEntropy *)R_ExternalPtrAddr(e);
@@ -11420,6 +14228,14 @@ SEXP wk_sar_ext_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_sar_ext_warmup_period(SEXP e) {
+  struct SarExt *h = (struct SarExt *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_sar_ext_warmup_period(h));
+}
+SEXP wk_sar_ext_is_ready(SEXP e) {
+  struct SarExt *h = (struct SarExt *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_sar_ext_is_ready(h));
+}
 SEXP wk_sar_ext_reset(SEXP e) {
   struct SarExt *h = (struct SarExt *)R_ExternalPtrAddr(e);
   wickra_sar_ext_reset(h);
@@ -11452,6 +14268,14 @@ SEXP wk_seasonal_z_score_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   wickra_seasonal_z_score_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_seasonal_z_score_warmup_period(SEXP e) {
+  struct SeasonalZScore *h = (struct SeasonalZScore *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_seasonal_z_score_warmup_period(h));
+}
+SEXP wk_seasonal_z_score_is_ready(SEXP e) {
+  struct SeasonalZScore *h = (struct SeasonalZScore *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_seasonal_z_score_is_ready(h));
 }
 SEXP wk_seasonal_z_score_reset(SEXP e) {
   struct SeasonalZScore *h = (struct SeasonalZScore *)R_ExternalPtrAddr(e);
@@ -11486,6 +14310,14 @@ SEXP wk_separating_lines_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_separating_lines_warmup_period(SEXP e) {
+  struct SeparatingLines *h = (struct SeparatingLines *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_separating_lines_warmup_period(h));
+}
+SEXP wk_separating_lines_is_ready(SEXP e) {
+  struct SeparatingLines *h = (struct SeparatingLines *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_separating_lines_is_ready(h));
+}
 SEXP wk_separating_lines_reset(SEXP e) {
   struct SeparatingLines *h = (struct SeparatingLines *)R_ExternalPtrAddr(e);
   wickra_separating_lines_reset(h);
@@ -11518,6 +14350,14 @@ SEXP wk_session_high_low_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_session_high_low_warmup_period(SEXP e) {
+  struct SessionHighLow *h = (struct SessionHighLow *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_session_high_low_warmup_period(h));
+}
+SEXP wk_session_high_low_is_ready(SEXP e) {
+  struct SessionHighLow *h = (struct SessionHighLow *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_session_high_low_is_ready(h));
 }
 SEXP wk_session_high_low_reset(SEXP e) {
   struct SessionHighLow *h = (struct SessionHighLow *)R_ExternalPtrAddr(e);
@@ -11554,6 +14394,14 @@ SEXP wk_session_range_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(2);
   return r;
 }
+SEXP wk_session_range_warmup_period(SEXP e) {
+  struct SessionRange *h = (struct SessionRange *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_session_range_warmup_period(h));
+}
+SEXP wk_session_range_is_ready(SEXP e) {
+  struct SessionRange *h = (struct SessionRange *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_session_range_is_ready(h));
+}
 SEXP wk_session_range_reset(SEXP e) {
   struct SessionRange *h = (struct SessionRange *)R_ExternalPtrAddr(e);
   wickra_session_range_reset(h);
@@ -11587,6 +14435,14 @@ SEXP wk_session_vwap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_session_vwap_warmup_period(SEXP e) {
+  struct SessionVwap *h = (struct SessionVwap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_session_vwap_warmup_period(h));
+}
+SEXP wk_session_vwap_is_ready(SEXP e) {
+  struct SessionVwap *h = (struct SessionVwap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_session_vwap_is_ready(h));
+}
 SEXP wk_session_vwap_reset(SEXP e) {
   struct SessionVwap *h = (struct SessionVwap *)R_ExternalPtrAddr(e);
   wickra_session_vwap_reset(h);
@@ -11617,6 +14473,14 @@ SEXP wk_shannon_entropy_batch(SEXP e, SEXP a0) {
   wickra_shannon_entropy_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_shannon_entropy_warmup_period(SEXP e) {
+  struct ShannonEntropy *h = (struct ShannonEntropy *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_shannon_entropy_warmup_period(h));
+}
+SEXP wk_shannon_entropy_is_ready(SEXP e) {
+  struct ShannonEntropy *h = (struct ShannonEntropy *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_shannon_entropy_is_ready(h));
 }
 SEXP wk_shannon_entropy_reset(SEXP e) {
   struct ShannonEntropy *h = (struct ShannonEntropy *)R_ExternalPtrAddr(e);
@@ -11651,6 +14515,14 @@ SEXP wk_shark_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5
   UNPROTECT(1);
   return out;
 }
+SEXP wk_shark_warmup_period(SEXP e) {
+  struct Shark *h = (struct Shark *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_shark_warmup_period(h));
+}
+SEXP wk_shark_is_ready(SEXP e) {
+  struct Shark *h = (struct Shark *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_shark_is_ready(h));
+}
 SEXP wk_shark_reset(SEXP e) {
   struct Shark *h = (struct Shark *)R_ExternalPtrAddr(e);
   wickra_shark_reset(h);
@@ -11681,6 +14553,14 @@ SEXP wk_sharpe_ratio_batch(SEXP e, SEXP a0) {
   wickra_sharpe_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_sharpe_ratio_warmup_period(SEXP e) {
+  struct SharpeRatio *h = (struct SharpeRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_sharpe_ratio_warmup_period(h));
+}
+SEXP wk_sharpe_ratio_is_ready(SEXP e) {
+  struct SharpeRatio *h = (struct SharpeRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_sharpe_ratio_is_ready(h));
 }
 SEXP wk_sharpe_ratio_reset(SEXP e) {
   struct SharpeRatio *h = (struct SharpeRatio *)R_ExternalPtrAddr(e);
@@ -11715,6 +14595,14 @@ SEXP wk_shooting_star_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
   UNPROTECT(1);
   return out;
 }
+SEXP wk_shooting_star_warmup_period(SEXP e) {
+  struct ShootingStar *h = (struct ShootingStar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_shooting_star_warmup_period(h));
+}
+SEXP wk_shooting_star_is_ready(SEXP e) {
+  struct ShootingStar *h = (struct ShootingStar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_shooting_star_is_ready(h));
+}
 SEXP wk_shooting_star_reset(SEXP e) {
   struct ShootingStar *h = (struct ShootingStar *)R_ExternalPtrAddr(e);
   wickra_shooting_star_reset(h);
@@ -11748,6 +14636,14 @@ SEXP wk_short_line_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   UNPROTECT(1);
   return out;
 }
+SEXP wk_short_line_warmup_period(SEXP e) {
+  struct ShortLine *h = (struct ShortLine *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_short_line_warmup_period(h));
+}
+SEXP wk_short_line_is_ready(SEXP e) {
+  struct ShortLine *h = (struct ShortLine *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_short_line_is_ready(h));
+}
 SEXP wk_short_line_reset(SEXP e) {
   struct ShortLine *h = (struct ShortLine *)R_ExternalPtrAddr(e);
   wickra_short_line_reset(h);
@@ -11770,6 +14666,14 @@ SEXP wk_signed_volume_new(void) {
 SEXP wk_signed_volume_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct SignedVolume *h = (struct SignedVolume *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_signed_volume_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
+}
+SEXP wk_signed_volume_warmup_period(SEXP e) {
+  struct SignedVolume *h = (struct SignedVolume *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_signed_volume_warmup_period(h));
+}
+SEXP wk_signed_volume_is_ready(SEXP e) {
+  struct SignedVolume *h = (struct SignedVolume *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_signed_volume_is_ready(h));
 }
 SEXP wk_signed_volume_reset(SEXP e) {
   struct SignedVolume *h = (struct SignedVolume *)R_ExternalPtrAddr(e);
@@ -11802,6 +14706,14 @@ SEXP wk_sine_wave_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_sine_wave_warmup_period(SEXP e) {
+  struct SineWave *h = (struct SineWave *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_sine_wave_warmup_period(h));
+}
+SEXP wk_sine_wave_is_ready(SEXP e) {
+  struct SineWave *h = (struct SineWave *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_sine_wave_is_ready(h));
+}
 SEXP wk_sine_wave_reset(SEXP e) {
   struct SineWave *h = (struct SineWave *)R_ExternalPtrAddr(e);
   wickra_sine_wave_reset(h);
@@ -11832,6 +14744,14 @@ SEXP wk_sine_weighted_ma_batch(SEXP e, SEXP a0) {
   wickra_sine_weighted_ma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_sine_weighted_ma_warmup_period(SEXP e) {
+  struct SineWeightedMa *h = (struct SineWeightedMa *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_sine_weighted_ma_warmup_period(h));
+}
+SEXP wk_sine_weighted_ma_is_ready(SEXP e) {
+  struct SineWeightedMa *h = (struct SineWeightedMa *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_sine_weighted_ma_is_ready(h));
 }
 SEXP wk_sine_weighted_ma_reset(SEXP e) {
   struct SineWeightedMa *h = (struct SineWeightedMa *)R_ExternalPtrAddr(e);
@@ -11866,6 +14786,14 @@ SEXP wk_single_prints_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
   UNPROTECT(1);
   return out;
 }
+SEXP wk_single_prints_warmup_period(SEXP e) {
+  struct SinglePrints *h = (struct SinglePrints *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_single_prints_warmup_period(h));
+}
+SEXP wk_single_prints_is_ready(SEXP e) {
+  struct SinglePrints *h = (struct SinglePrints *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_single_prints_is_ready(h));
+}
 SEXP wk_single_prints_reset(SEXP e) {
   struct SinglePrints *h = (struct SinglePrints *)R_ExternalPtrAddr(e);
   wickra_single_prints_reset(h);
@@ -11897,6 +14825,14 @@ SEXP wk_skewness_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_skewness_warmup_period(SEXP e) {
+  struct Skewness *h = (struct Skewness *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_skewness_warmup_period(h));
+}
+SEXP wk_skewness_is_ready(SEXP e) {
+  struct Skewness *h = (struct Skewness *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_skewness_is_ready(h));
+}
 SEXP wk_skewness_reset(SEXP e) {
   struct Skewness *h = (struct Skewness *)R_ExternalPtrAddr(e);
   wickra_skewness_reset(h);
@@ -11927,6 +14863,14 @@ SEXP wk_sma_batch(SEXP e, SEXP a0) {
   wickra_sma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_sma_warmup_period(SEXP e) {
+  struct Sma *h = (struct Sma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_sma_warmup_period(h));
+}
+SEXP wk_sma_is_ready(SEXP e) {
+  struct Sma *h = (struct Sma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_sma_is_ready(h));
 }
 SEXP wk_sma_reset(SEXP e) {
   struct Sma *h = (struct Sma *)R_ExternalPtrAddr(e);
@@ -11961,6 +14905,14 @@ SEXP wk_smi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_smi_warmup_period(SEXP e) {
+  struct Smi *h = (struct Smi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_smi_warmup_period(h));
+}
+SEXP wk_smi_is_ready(SEXP e) {
+  struct Smi *h = (struct Smi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_smi_is_ready(h));
+}
 SEXP wk_smi_reset(SEXP e) {
   struct Smi *h = (struct Smi *)R_ExternalPtrAddr(e);
   wickra_smi_reset(h);
@@ -11991,6 +14943,14 @@ SEXP wk_smma_batch(SEXP e, SEXP a0) {
   wickra_smma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_smma_warmup_period(SEXP e) {
+  struct Smma *h = (struct Smma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_smma_warmup_period(h));
+}
+SEXP wk_smma_is_ready(SEXP e) {
+  struct Smma *h = (struct Smma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_smma_is_ready(h));
 }
 SEXP wk_smma_reset(SEXP e) {
   struct Smma *h = (struct Smma *)R_ExternalPtrAddr(e);
@@ -12029,6 +14989,14 @@ SEXP wk_smoothed_heikin_ashi_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_smoothed_heikin_ashi_warmup_period(SEXP e) {
+  struct SmoothedHeikinAshi *h = (struct SmoothedHeikinAshi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_smoothed_heikin_ashi_warmup_period(h));
+}
+SEXP wk_smoothed_heikin_ashi_is_ready(SEXP e) {
+  struct SmoothedHeikinAshi *h = (struct SmoothedHeikinAshi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_smoothed_heikin_ashi_is_ready(h));
+}
 SEXP wk_smoothed_heikin_ashi_reset(SEXP e) {
   struct SmoothedHeikinAshi *h = (struct SmoothedHeikinAshi *)R_ExternalPtrAddr(e);
   wickra_smoothed_heikin_ashi_reset(h);
@@ -12060,6 +15028,14 @@ SEXP wk_sortino_ratio_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_sortino_ratio_warmup_period(SEXP e) {
+  struct SortinoRatio *h = (struct SortinoRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_sortino_ratio_warmup_period(h));
+}
+SEXP wk_sortino_ratio_is_ready(SEXP e) {
+  struct SortinoRatio *h = (struct SortinoRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_sortino_ratio_is_ready(h));
+}
 SEXP wk_sortino_ratio_reset(SEXP e) {
   struct SortinoRatio *h = (struct SortinoRatio *)R_ExternalPtrAddr(e);
   wickra_sortino_ratio_reset(h);
@@ -12090,6 +15066,14 @@ SEXP wk_spearman_correlation_batch(SEXP e, SEXP a0, SEXP a1) {
   wickra_spearman_correlation_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_spearman_correlation_warmup_period(SEXP e) {
+  struct SpearmanCorrelation *h = (struct SpearmanCorrelation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_spearman_correlation_warmup_period(h));
+}
+SEXP wk_spearman_correlation_is_ready(SEXP e) {
+  struct SpearmanCorrelation *h = (struct SpearmanCorrelation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_spearman_correlation_is_ready(h));
 }
 SEXP wk_spearman_correlation_reset(SEXP e) {
   struct SpearmanCorrelation *h = (struct SpearmanCorrelation *)R_ExternalPtrAddr(e);
@@ -12124,6 +15108,14 @@ SEXP wk_spinning_top_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_spinning_top_warmup_period(SEXP e) {
+  struct SpinningTop *h = (struct SpinningTop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_spinning_top_warmup_period(h));
+}
+SEXP wk_spinning_top_is_ready(SEXP e) {
+  struct SpinningTop *h = (struct SpinningTop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_spinning_top_is_ready(h));
+}
 SEXP wk_spinning_top_reset(SEXP e) {
   struct SpinningTop *h = (struct SpinningTop *)R_ExternalPtrAddr(e);
   wickra_spinning_top_reset(h);
@@ -12154,6 +15146,14 @@ SEXP wk_spread_ar1_coefficient_batch(SEXP e, SEXP a0, SEXP a1) {
   wickra_spread_ar1_coefficient_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_spread_ar1_coefficient_warmup_period(SEXP e) {
+  struct SpreadAr1Coefficient *h = (struct SpreadAr1Coefficient *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_spread_ar1_coefficient_warmup_period(h));
+}
+SEXP wk_spread_ar1_coefficient_is_ready(SEXP e) {
+  struct SpreadAr1Coefficient *h = (struct SpreadAr1Coefficient *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_spread_ar1_coefficient_is_ready(h));
 }
 SEXP wk_spread_ar1_coefficient_reset(SEXP e) {
   struct SpreadAr1Coefficient *h = (struct SpreadAr1Coefficient *)R_ExternalPtrAddr(e);
@@ -12192,6 +15192,14 @@ SEXP wk_spread_bollinger_bands_update(SEXP e, SEXP a0, SEXP a1) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_spread_bollinger_bands_warmup_period(SEXP e) {
+  struct SpreadBollingerBands *h = (struct SpreadBollingerBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_spread_bollinger_bands_warmup_period(h));
+}
+SEXP wk_spread_bollinger_bands_is_ready(SEXP e) {
+  struct SpreadBollingerBands *h = (struct SpreadBollingerBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_spread_bollinger_bands_is_ready(h));
+}
 SEXP wk_spread_bollinger_bands_reset(SEXP e) {
   struct SpreadBollingerBands *h = (struct SpreadBollingerBands *)R_ExternalPtrAddr(e);
   wickra_spread_bollinger_bands_reset(h);
@@ -12222,6 +15230,14 @@ SEXP wk_spread_hurst_batch(SEXP e, SEXP a0, SEXP a1) {
   wickra_spread_hurst_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_spread_hurst_warmup_period(SEXP e) {
+  struct SpreadHurst *h = (struct SpreadHurst *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_spread_hurst_warmup_period(h));
+}
+SEXP wk_spread_hurst_is_ready(SEXP e) {
+  struct SpreadHurst *h = (struct SpreadHurst *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_spread_hurst_is_ready(h));
 }
 SEXP wk_spread_hurst_reset(SEXP e) {
   struct SpreadHurst *h = (struct SpreadHurst *)R_ExternalPtrAddr(e);
@@ -12256,6 +15272,14 @@ SEXP wk_stalled_pattern_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   UNPROTECT(1);
   return out;
 }
+SEXP wk_stalled_pattern_warmup_period(SEXP e) {
+  struct StalledPattern *h = (struct StalledPattern *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_stalled_pattern_warmup_period(h));
+}
+SEXP wk_stalled_pattern_is_ready(SEXP e) {
+  struct StalledPattern *h = (struct StalledPattern *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_stalled_pattern_is_ready(h));
+}
 SEXP wk_stalled_pattern_reset(SEXP e) {
   struct StalledPattern *h = (struct StalledPattern *)R_ExternalPtrAddr(e);
   wickra_stalled_pattern_reset(h);
@@ -12286,6 +15310,14 @@ SEXP wk_standard_error_batch(SEXP e, SEXP a0) {
   wickra_standard_error_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_standard_error_warmup_period(SEXP e) {
+  struct StandardError *h = (struct StandardError *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_standard_error_warmup_period(h));
+}
+SEXP wk_standard_error_is_ready(SEXP e) {
+  struct StandardError *h = (struct StandardError *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_standard_error_is_ready(h));
 }
 SEXP wk_standard_error_reset(SEXP e) {
   struct StandardError *h = (struct StandardError *)R_ExternalPtrAddr(e);
@@ -12322,6 +15354,14 @@ SEXP wk_standard_error_bands_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_standard_error_bands_warmup_period(SEXP e) {
+  struct StandardErrorBands *h = (struct StandardErrorBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_standard_error_bands_warmup_period(h));
+}
+SEXP wk_standard_error_bands_is_ready(SEXP e) {
+  struct StandardErrorBands *h = (struct StandardErrorBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_standard_error_bands_is_ready(h));
+}
 SEXP wk_standard_error_bands_reset(SEXP e) {
   struct StandardErrorBands *h = (struct StandardErrorBands *)R_ExternalPtrAddr(e);
   wickra_standard_error_bands_reset(h);
@@ -12357,6 +15397,14 @@ SEXP wk_starc_bands_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_starc_bands_warmup_period(SEXP e) {
+  struct StarcBands *h = (struct StarcBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_starc_bands_warmup_period(h));
+}
+SEXP wk_starc_bands_is_ready(SEXP e) {
+  struct StarcBands *h = (struct StarcBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_starc_bands_is_ready(h));
+}
 SEXP wk_starc_bands_reset(SEXP e) {
   struct StarcBands *h = (struct StarcBands *)R_ExternalPtrAddr(e);
   wickra_starc_bands_reset(h);
@@ -12387,6 +15435,14 @@ SEXP wk_stc_batch(SEXP e, SEXP a0) {
   wickra_stc_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_stc_warmup_period(SEXP e) {
+  struct Stc *h = (struct Stc *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_stc_warmup_period(h));
+}
+SEXP wk_stc_is_ready(SEXP e) {
+  struct Stc *h = (struct Stc *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_stc_is_ready(h));
 }
 SEXP wk_stc_reset(SEXP e) {
   struct Stc *h = (struct Stc *)R_ExternalPtrAddr(e);
@@ -12419,6 +15475,14 @@ SEXP wk_std_dev_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_std_dev_warmup_period(SEXP e) {
+  struct StdDev *h = (struct StdDev *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_std_dev_warmup_period(h));
+}
+SEXP wk_std_dev_is_ready(SEXP e) {
+  struct StdDev *h = (struct StdDev *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_std_dev_is_ready(h));
+}
 SEXP wk_std_dev_reset(SEXP e) {
   struct StdDev *h = (struct StdDev *)R_ExternalPtrAddr(e);
   wickra_std_dev_reset(h);
@@ -12450,6 +15514,14 @@ SEXP wk_step_trailing_stop_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_step_trailing_stop_warmup_period(SEXP e) {
+  struct StepTrailingStop *h = (struct StepTrailingStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_step_trailing_stop_warmup_period(h));
+}
+SEXP wk_step_trailing_stop_is_ready(SEXP e) {
+  struct StepTrailingStop *h = (struct StepTrailingStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_step_trailing_stop_is_ready(h));
+}
 SEXP wk_step_trailing_stop_reset(SEXP e) {
   struct StepTrailingStop *h = (struct StepTrailingStop *)R_ExternalPtrAddr(e);
   wickra_step_trailing_stop_reset(h);
@@ -12480,6 +15552,14 @@ SEXP wk_sterling_ratio_batch(SEXP e, SEXP a0) {
   wickra_sterling_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_sterling_ratio_warmup_period(SEXP e) {
+  struct SterlingRatio *h = (struct SterlingRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_sterling_ratio_warmup_period(h));
+}
+SEXP wk_sterling_ratio_is_ready(SEXP e) {
+  struct SterlingRatio *h = (struct SterlingRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_sterling_ratio_is_ready(h));
 }
 SEXP wk_sterling_ratio_reset(SEXP e) {
   struct SterlingRatio *h = (struct SterlingRatio *)R_ExternalPtrAddr(e);
@@ -12514,6 +15594,14 @@ SEXP wk_stick_sandwich_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(1);
   return out;
 }
+SEXP wk_stick_sandwich_warmup_period(SEXP e) {
+  struct StickSandwich *h = (struct StickSandwich *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_stick_sandwich_warmup_period(h));
+}
+SEXP wk_stick_sandwich_is_ready(SEXP e) {
+  struct StickSandwich *h = (struct StickSandwich *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_stick_sandwich_is_ready(h));
+}
 SEXP wk_stick_sandwich_reset(SEXP e) {
   struct StickSandwich *h = (struct StickSandwich *)R_ExternalPtrAddr(e);
   wickra_stick_sandwich_reset(h);
@@ -12544,6 +15632,14 @@ SEXP wk_stoch_rsi_batch(SEXP e, SEXP a0) {
   wickra_stoch_rsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_stoch_rsi_warmup_period(SEXP e) {
+  struct StochRsi *h = (struct StochRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_stoch_rsi_warmup_period(h));
+}
+SEXP wk_stoch_rsi_is_ready(SEXP e) {
+  struct StochRsi *h = (struct StochRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_stoch_rsi_is_ready(h));
 }
 SEXP wk_stoch_rsi_reset(SEXP e) {
   struct StochRsi *h = (struct StochRsi *)R_ExternalPtrAddr(e);
@@ -12578,6 +15674,14 @@ SEXP wk_stochastic_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
   UNPROTECT(2);
   return r;
 }
+SEXP wk_stochastic_warmup_period(SEXP e) {
+  struct Stochastic *h = (struct Stochastic *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_stochastic_warmup_period(h));
+}
+SEXP wk_stochastic_is_ready(SEXP e) {
+  struct Stochastic *h = (struct Stochastic *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_stochastic_is_ready(h));
+}
 SEXP wk_stochastic_reset(SEXP e) {
   struct Stochastic *h = (struct Stochastic *)R_ExternalPtrAddr(e);
   wickra_stochastic_reset(h);
@@ -12611,6 +15715,14 @@ SEXP wk_stochastic_cci_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(1);
   return out;
 }
+SEXP wk_stochastic_cci_warmup_period(SEXP e) {
+  struct StochasticCci *h = (struct StochasticCci *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_stochastic_cci_warmup_period(h));
+}
+SEXP wk_stochastic_cci_is_ready(SEXP e) {
+  struct StochasticCci *h = (struct StochasticCci *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_stochastic_cci_is_ready(h));
+}
 SEXP wk_stochastic_cci_reset(SEXP e) {
   struct StochasticCci *h = (struct StochasticCci *)R_ExternalPtrAddr(e);
   wickra_stochastic_cci_reset(h);
@@ -12641,6 +15753,14 @@ SEXP wk_super_smoother_batch(SEXP e, SEXP a0) {
   wickra_super_smoother_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_super_smoother_warmup_period(SEXP e) {
+  struct SuperSmoother *h = (struct SuperSmoother *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_super_smoother_warmup_period(h));
+}
+SEXP wk_super_smoother_is_ready(SEXP e) {
+  struct SuperSmoother *h = (struct SuperSmoother *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_super_smoother_is_ready(h));
 }
 SEXP wk_super_smoother_reset(SEXP e) {
   struct SuperSmoother *h = (struct SuperSmoother *)R_ExternalPtrAddr(e);
@@ -12675,6 +15795,14 @@ SEXP wk_super_trend_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_super_trend_warmup_period(SEXP e) {
+  struct SuperTrend *h = (struct SuperTrend *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_super_trend_warmup_period(h));
+}
+SEXP wk_super_trend_is_ready(SEXP e) {
+  struct SuperTrend *h = (struct SuperTrend *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_super_trend_is_ready(h));
+}
 SEXP wk_super_trend_reset(SEXP e) {
   struct SuperTrend *h = (struct SuperTrend *)R_ExternalPtrAddr(e);
   wickra_super_trend_reset(h);
@@ -12705,6 +15833,14 @@ SEXP wk_t3_batch(SEXP e, SEXP a0) {
   wickra_t3_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_t3_warmup_period(SEXP e) {
+  struct T3 *h = (struct T3 *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_t3_warmup_period(h));
+}
+SEXP wk_t3_is_ready(SEXP e) {
+  struct T3 *h = (struct T3 *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_t3_is_ready(h));
 }
 SEXP wk_t3_reset(SEXP e) {
   struct T3 *h = (struct T3 *)R_ExternalPtrAddr(e);
@@ -12737,6 +15873,14 @@ SEXP wk_tail_ratio_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_tail_ratio_warmup_period(SEXP e) {
+  struct TailRatio *h = (struct TailRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_tail_ratio_warmup_period(h));
+}
+SEXP wk_tail_ratio_is_ready(SEXP e) {
+  struct TailRatio *h = (struct TailRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_tail_ratio_is_ready(h));
+}
 SEXP wk_tail_ratio_reset(SEXP e) {
   struct TailRatio *h = (struct TailRatio *)R_ExternalPtrAddr(e);
   wickra_tail_ratio_reset(h);
@@ -12759,6 +15903,14 @@ SEXP wk_taker_buy_sell_ratio_new(void) {
 SEXP wk_taker_buy_sell_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
   struct TakerBuySellRatio *h = (struct TakerBuySellRatio *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_taker_buy_sell_ratio_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_taker_buy_sell_ratio_warmup_period(SEXP e) {
+  struct TakerBuySellRatio *h = (struct TakerBuySellRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_taker_buy_sell_ratio_warmup_period(h));
+}
+SEXP wk_taker_buy_sell_ratio_is_ready(SEXP e) {
+  struct TakerBuySellRatio *h = (struct TakerBuySellRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_taker_buy_sell_ratio_is_ready(h));
 }
 SEXP wk_taker_buy_sell_ratio_reset(SEXP e) {
   struct TakerBuySellRatio *h = (struct TakerBuySellRatio *)R_ExternalPtrAddr(e);
@@ -12793,6 +15945,14 @@ SEXP wk_takuri_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a
   UNPROTECT(1);
   return out;
 }
+SEXP wk_takuri_warmup_period(SEXP e) {
+  struct Takuri *h = (struct Takuri *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_takuri_warmup_period(h));
+}
+SEXP wk_takuri_is_ready(SEXP e) {
+  struct Takuri *h = (struct Takuri *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_takuri_is_ready(h));
+}
 SEXP wk_takuri_reset(SEXP e) {
   struct Takuri *h = (struct Takuri *)R_ExternalPtrAddr(e);
   wickra_takuri_reset(h);
@@ -12825,6 +15985,14 @@ SEXP wk_tasuki_gap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   wickra_tasuki_gap_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_tasuki_gap_warmup_period(SEXP e) {
+  struct TasukiGap *h = (struct TasukiGap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_tasuki_gap_warmup_period(h));
+}
+SEXP wk_tasuki_gap_is_ready(SEXP e) {
+  struct TasukiGap *h = (struct TasukiGap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_tasuki_gap_is_ready(h));
 }
 SEXP wk_tasuki_gap_reset(SEXP e) {
   struct TasukiGap *h = (struct TasukiGap *)R_ExternalPtrAddr(e);
@@ -12859,6 +16027,14 @@ SEXP wk_td_camouflage_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
   UNPROTECT(1);
   return out;
 }
+SEXP wk_td_camouflage_warmup_period(SEXP e) {
+  struct TdCamouflage *h = (struct TdCamouflage *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_td_camouflage_warmup_period(h));
+}
+SEXP wk_td_camouflage_is_ready(SEXP e) {
+  struct TdCamouflage *h = (struct TdCamouflage *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_td_camouflage_is_ready(h));
+}
 SEXP wk_td_camouflage_reset(SEXP e) {
   struct TdCamouflage *h = (struct TdCamouflage *)R_ExternalPtrAddr(e);
   wickra_td_camouflage_reset(h);
@@ -12891,6 +16067,14 @@ SEXP wk_td_clop_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
   wickra_td_clop_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_td_clop_warmup_period(SEXP e) {
+  struct TdClop *h = (struct TdClop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_td_clop_warmup_period(h));
+}
+SEXP wk_td_clop_is_ready(SEXP e) {
+  struct TdClop *h = (struct TdClop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_td_clop_is_ready(h));
 }
 SEXP wk_td_clop_reset(SEXP e) {
   struct TdClop *h = (struct TdClop *)R_ExternalPtrAddr(e);
@@ -12925,6 +16109,14 @@ SEXP wk_td_clopwin_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   UNPROTECT(1);
   return out;
 }
+SEXP wk_td_clopwin_warmup_period(SEXP e) {
+  struct TdClopwin *h = (struct TdClopwin *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_td_clopwin_warmup_period(h));
+}
+SEXP wk_td_clopwin_is_ready(SEXP e) {
+  struct TdClopwin *h = (struct TdClopwin *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_td_clopwin_is_ready(h));
+}
 SEXP wk_td_clopwin_reset(SEXP e) {
   struct TdClopwin *h = (struct TdClopwin *)R_ExternalPtrAddr(e);
   wickra_td_clopwin_reset(h);
@@ -12957,6 +16149,14 @@ SEXP wk_td_combo_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
   wickra_td_combo_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_td_combo_warmup_period(SEXP e) {
+  struct TdCombo *h = (struct TdCombo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_td_combo_warmup_period(h));
+}
+SEXP wk_td_combo_is_ready(SEXP e) {
+  struct TdCombo *h = (struct TdCombo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_td_combo_is_ready(h));
 }
 SEXP wk_td_combo_reset(SEXP e) {
   struct TdCombo *h = (struct TdCombo *)R_ExternalPtrAddr(e);
@@ -12991,6 +16191,14 @@ SEXP wk_td_countdown_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_td_countdown_warmup_period(SEXP e) {
+  struct TdCountdown *h = (struct TdCountdown *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_td_countdown_warmup_period(h));
+}
+SEXP wk_td_countdown_is_ready(SEXP e) {
+  struct TdCountdown *h = (struct TdCountdown *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_td_countdown_is_ready(h));
+}
 SEXP wk_td_countdown_reset(SEXP e) {
   struct TdCountdown *h = (struct TdCountdown *)R_ExternalPtrAddr(e);
   wickra_td_countdown_reset(h);
@@ -13023,6 +16231,14 @@ SEXP wk_td_d_wave_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   wickra_td_d_wave_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_td_d_wave_warmup_period(SEXP e) {
+  struct TdDWave *h = (struct TdDWave *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_td_d_wave_warmup_period(h));
+}
+SEXP wk_td_d_wave_is_ready(SEXP e) {
+  struct TdDWave *h = (struct TdDWave *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_td_d_wave_is_ready(h));
 }
 SEXP wk_td_d_wave_reset(SEXP e) {
   struct TdDWave *h = (struct TdDWave *)R_ExternalPtrAddr(e);
@@ -13057,6 +16273,14 @@ SEXP wk_td_de_marker_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_td_de_marker_warmup_period(SEXP e) {
+  struct TdDeMarker *h = (struct TdDeMarker *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_td_de_marker_warmup_period(h));
+}
+SEXP wk_td_de_marker_is_ready(SEXP e) {
+  struct TdDeMarker *h = (struct TdDeMarker *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_td_de_marker_is_ready(h));
+}
 SEXP wk_td_de_marker_reset(SEXP e) {
   struct TdDeMarker *h = (struct TdDeMarker *)R_ExternalPtrAddr(e);
   wickra_td_de_marker_reset(h);
@@ -13089,6 +16313,14 @@ SEXP wk_td_differential_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   wickra_td_differential_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_td_differential_warmup_period(SEXP e) {
+  struct TdDifferential *h = (struct TdDifferential *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_td_differential_warmup_period(h));
+}
+SEXP wk_td_differential_is_ready(SEXP e) {
+  struct TdDifferential *h = (struct TdDifferential *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_td_differential_is_ready(h));
 }
 SEXP wk_td_differential_reset(SEXP e) {
   struct TdDifferential *h = (struct TdDifferential *)R_ExternalPtrAddr(e);
@@ -13123,6 +16355,14 @@ SEXP wk_td_lines_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   UNPROTECT(2);
   return r;
 }
+SEXP wk_td_lines_warmup_period(SEXP e) {
+  struct TdLines *h = (struct TdLines *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_td_lines_warmup_period(h));
+}
+SEXP wk_td_lines_is_ready(SEXP e) {
+  struct TdLines *h = (struct TdLines *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_td_lines_is_ready(h));
+}
 SEXP wk_td_lines_reset(SEXP e) {
   struct TdLines *h = (struct TdLines *)R_ExternalPtrAddr(e);
   wickra_td_lines_reset(h);
@@ -13155,6 +16395,14 @@ SEXP wk_td_moving_average_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_td_moving_average_warmup_period(SEXP e) {
+  struct TdMovingAverage *h = (struct TdMovingAverage *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_td_moving_average_warmup_period(h));
+}
+SEXP wk_td_moving_average_is_ready(SEXP e) {
+  struct TdMovingAverage *h = (struct TdMovingAverage *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_td_moving_average_is_ready(h));
 }
 SEXP wk_td_moving_average_reset(SEXP e) {
   struct TdMovingAverage *h = (struct TdMovingAverage *)R_ExternalPtrAddr(e);
@@ -13189,6 +16437,14 @@ SEXP wk_td_open_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_td_open_warmup_period(SEXP e) {
+  struct TdOpen *h = (struct TdOpen *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_td_open_warmup_period(h));
+}
+SEXP wk_td_open_is_ready(SEXP e) {
+  struct TdOpen *h = (struct TdOpen *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_td_open_is_ready(h));
+}
 SEXP wk_td_open_reset(SEXP e) {
   struct TdOpen *h = (struct TdOpen *)R_ExternalPtrAddr(e);
   wickra_td_open_reset(h);
@@ -13221,6 +16477,14 @@ SEXP wk_td_pressure_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
   wickra_td_pressure_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_td_pressure_warmup_period(SEXP e) {
+  struct TdPressure *h = (struct TdPressure *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_td_pressure_warmup_period(h));
+}
+SEXP wk_td_pressure_is_ready(SEXP e) {
+  struct TdPressure *h = (struct TdPressure *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_td_pressure_is_ready(h));
 }
 SEXP wk_td_pressure_reset(SEXP e) {
   struct TdPressure *h = (struct TdPressure *)R_ExternalPtrAddr(e);
@@ -13255,6 +16519,14 @@ SEXP wk_td_propulsion_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
   UNPROTECT(1);
   return out;
 }
+SEXP wk_td_propulsion_warmup_period(SEXP e) {
+  struct TdPropulsion *h = (struct TdPropulsion *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_td_propulsion_warmup_period(h));
+}
+SEXP wk_td_propulsion_is_ready(SEXP e) {
+  struct TdPropulsion *h = (struct TdPropulsion *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_td_propulsion_is_ready(h));
+}
 SEXP wk_td_propulsion_reset(SEXP e) {
   struct TdPropulsion *h = (struct TdPropulsion *)R_ExternalPtrAddr(e);
   wickra_td_propulsion_reset(h);
@@ -13287,6 +16559,14 @@ SEXP wk_td_range_projection_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, S
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_td_range_projection_warmup_period(SEXP e) {
+  struct TdRangeProjection *h = (struct TdRangeProjection *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_td_range_projection_warmup_period(h));
+}
+SEXP wk_td_range_projection_is_ready(SEXP e) {
+  struct TdRangeProjection *h = (struct TdRangeProjection *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_td_range_projection_is_ready(h));
 }
 SEXP wk_td_range_projection_reset(SEXP e) {
   struct TdRangeProjection *h = (struct TdRangeProjection *)R_ExternalPtrAddr(e);
@@ -13321,6 +16601,14 @@ SEXP wk_td_rei_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a
   UNPROTECT(1);
   return out;
 }
+SEXP wk_td_rei_warmup_period(SEXP e) {
+  struct TdRei *h = (struct TdRei *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_td_rei_warmup_period(h));
+}
+SEXP wk_td_rei_is_ready(SEXP e) {
+  struct TdRei *h = (struct TdRei *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_td_rei_is_ready(h));
+}
 SEXP wk_td_rei_reset(SEXP e) {
   struct TdRei *h = (struct TdRei *)R_ExternalPtrAddr(e);
   wickra_td_rei_reset(h);
@@ -13353,6 +16641,14 @@ SEXP wk_td_risk_level_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_td_risk_level_warmup_period(SEXP e) {
+  struct TdRiskLevel *h = (struct TdRiskLevel *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_td_risk_level_warmup_period(h));
+}
+SEXP wk_td_risk_level_is_ready(SEXP e) {
+  struct TdRiskLevel *h = (struct TdRiskLevel *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_td_risk_level_is_ready(h));
 }
 SEXP wk_td_risk_level_reset(SEXP e) {
   struct TdRiskLevel *h = (struct TdRiskLevel *)R_ExternalPtrAddr(e);
@@ -13389,6 +16685,14 @@ SEXP wk_td_sequential_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(2);
   return r;
 }
+SEXP wk_td_sequential_warmup_period(SEXP e) {
+  struct TdSequential *h = (struct TdSequential *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_td_sequential_warmup_period(h));
+}
+SEXP wk_td_sequential_is_ready(SEXP e) {
+  struct TdSequential *h = (struct TdSequential *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_td_sequential_is_ready(h));
+}
 SEXP wk_td_sequential_reset(SEXP e) {
   struct TdSequential *h = (struct TdSequential *)R_ExternalPtrAddr(e);
   wickra_td_sequential_reset(h);
@@ -13421,6 +16725,14 @@ SEXP wk_td_setup_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
   wickra_td_setup_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_td_setup_warmup_period(SEXP e) {
+  struct TdSetup *h = (struct TdSetup *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_td_setup_warmup_period(h));
+}
+SEXP wk_td_setup_is_ready(SEXP e) {
+  struct TdSetup *h = (struct TdSetup *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_td_setup_is_ready(h));
 }
 SEXP wk_td_setup_reset(SEXP e) {
   struct TdSetup *h = (struct TdSetup *)R_ExternalPtrAddr(e);
@@ -13455,6 +16767,14 @@ SEXP wk_td_trap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_td_trap_warmup_period(SEXP e) {
+  struct TdTrap *h = (struct TdTrap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_td_trap_warmup_period(h));
+}
+SEXP wk_td_trap_is_ready(SEXP e) {
+  struct TdTrap *h = (struct TdTrap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_td_trap_is_ready(h));
+}
 SEXP wk_td_trap_reset(SEXP e) {
   struct TdTrap *h = (struct TdTrap *)R_ExternalPtrAddr(e);
   wickra_td_trap_reset(h);
@@ -13486,6 +16806,14 @@ SEXP wk_tema_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_tema_warmup_period(SEXP e) {
+  struct Tema *h = (struct Tema *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_tema_warmup_period(h));
+}
+SEXP wk_tema_is_ready(SEXP e) {
+  struct Tema *h = (struct Tema *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_tema_is_ready(h));
+}
 SEXP wk_tema_reset(SEXP e) {
   struct Tema *h = (struct Tema *)R_ExternalPtrAddr(e);
   wickra_tema_reset(h);
@@ -13508,6 +16836,14 @@ SEXP wk_term_structure_basis_new(void) {
 SEXP wk_term_structure_basis_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6, SEXP a7, SEXP a8, SEXP a9, SEXP a10, SEXP a11) {
   struct TermStructureBasis *h = (struct TermStructureBasis *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_term_structure_basis_update(h, Rf_asReal(a0), Rf_asReal(a1), Rf_asReal(a2), Rf_asReal(a3), Rf_asReal(a4), Rf_asReal(a5), Rf_asReal(a6), Rf_asReal(a7), Rf_asReal(a8), Rf_asReal(a9), Rf_asReal(a10), (int64_t)Rf_asReal(a11)));
+}
+SEXP wk_term_structure_basis_warmup_period(SEXP e) {
+  struct TermStructureBasis *h = (struct TermStructureBasis *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_term_structure_basis_warmup_period(h));
+}
+SEXP wk_term_structure_basis_is_ready(SEXP e) {
+  struct TermStructureBasis *h = (struct TermStructureBasis *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_term_structure_basis_is_ready(h));
 }
 SEXP wk_term_structure_basis_reset(SEXP e) {
   struct TermStructureBasis *h = (struct TermStructureBasis *)R_ExternalPtrAddr(e);
@@ -13542,6 +16878,14 @@ SEXP wk_three_drives_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_three_drives_warmup_period(SEXP e) {
+  struct ThreeDrives *h = (struct ThreeDrives *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_three_drives_warmup_period(h));
+}
+SEXP wk_three_drives_is_ready(SEXP e) {
+  struct ThreeDrives *h = (struct ThreeDrives *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_three_drives_is_ready(h));
+}
 SEXP wk_three_drives_reset(SEXP e) {
   struct ThreeDrives *h = (struct ThreeDrives *)R_ExternalPtrAddr(e);
   wickra_three_drives_reset(h);
@@ -13575,6 +16919,14 @@ SEXP wk_three_inside_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_three_inside_warmup_period(SEXP e) {
+  struct ThreeInside *h = (struct ThreeInside *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_three_inside_warmup_period(h));
+}
+SEXP wk_three_inside_is_ready(SEXP e) {
+  struct ThreeInside *h = (struct ThreeInside *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_three_inside_is_ready(h));
+}
 SEXP wk_three_inside_reset(SEXP e) {
   struct ThreeInside *h = (struct ThreeInside *)R_ExternalPtrAddr(e);
   wickra_three_inside_reset(h);
@@ -13607,6 +16959,14 @@ SEXP wk_three_line_break_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   wickra_three_line_break_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_three_line_break_warmup_period(SEXP e) {
+  struct ThreeLineBreak *h = (struct ThreeLineBreak *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_three_line_break_warmup_period(h));
+}
+SEXP wk_three_line_break_is_ready(SEXP e) {
+  struct ThreeLineBreak *h = (struct ThreeLineBreak *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_three_line_break_is_ready(h));
 }
 SEXP wk_three_line_break_reset(SEXP e) {
   struct ThreeLineBreak *h = (struct ThreeLineBreak *)R_ExternalPtrAddr(e);
@@ -13680,6 +17040,14 @@ SEXP wk_three_line_strike_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   UNPROTECT(1);
   return out;
 }
+SEXP wk_three_line_strike_warmup_period(SEXP e) {
+  struct ThreeLineStrike *h = (struct ThreeLineStrike *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_three_line_strike_warmup_period(h));
+}
+SEXP wk_three_line_strike_is_ready(SEXP e) {
+  struct ThreeLineStrike *h = (struct ThreeLineStrike *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_three_line_strike_is_ready(h));
+}
 SEXP wk_three_line_strike_reset(SEXP e) {
   struct ThreeLineStrike *h = (struct ThreeLineStrike *)R_ExternalPtrAddr(e);
   wickra_three_line_strike_reset(h);
@@ -13712,6 +17080,14 @@ SEXP wk_three_outside_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
   wickra_three_outside_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_three_outside_warmup_period(SEXP e) {
+  struct ThreeOutside *h = (struct ThreeOutside *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_three_outside_warmup_period(h));
+}
+SEXP wk_three_outside_is_ready(SEXP e) {
+  struct ThreeOutside *h = (struct ThreeOutside *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_three_outside_is_ready(h));
 }
 SEXP wk_three_outside_reset(SEXP e) {
   struct ThreeOutside *h = (struct ThreeOutside *)R_ExternalPtrAddr(e);
@@ -13746,6 +17122,14 @@ SEXP wk_three_soldiers_or_crows_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3
   UNPROTECT(1);
   return out;
 }
+SEXP wk_three_soldiers_or_crows_warmup_period(SEXP e) {
+  struct ThreeSoldiersOrCrows *h = (struct ThreeSoldiersOrCrows *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_three_soldiers_or_crows_warmup_period(h));
+}
+SEXP wk_three_soldiers_or_crows_is_ready(SEXP e) {
+  struct ThreeSoldiersOrCrows *h = (struct ThreeSoldiersOrCrows *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_three_soldiers_or_crows_is_ready(h));
+}
 SEXP wk_three_soldiers_or_crows_reset(SEXP e) {
   struct ThreeSoldiersOrCrows *h = (struct ThreeSoldiersOrCrows *)R_ExternalPtrAddr(e);
   wickra_three_soldiers_or_crows_reset(h);
@@ -13779,6 +17163,14 @@ SEXP wk_three_stars_in_south_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, S
   UNPROTECT(1);
   return out;
 }
+SEXP wk_three_stars_in_south_warmup_period(SEXP e) {
+  struct ThreeStarsInSouth *h = (struct ThreeStarsInSouth *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_three_stars_in_south_warmup_period(h));
+}
+SEXP wk_three_stars_in_south_is_ready(SEXP e) {
+  struct ThreeStarsInSouth *h = (struct ThreeStarsInSouth *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_three_stars_in_south_is_ready(h));
+}
 SEXP wk_three_stars_in_south_reset(SEXP e) {
   struct ThreeStarsInSouth *h = (struct ThreeStarsInSouth *)R_ExternalPtrAddr(e);
   wickra_three_stars_in_south_reset(h);
@@ -13811,6 +17203,14 @@ SEXP wk_thrusting_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   wickra_thrusting_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_thrusting_warmup_period(SEXP e) {
+  struct Thrusting *h = (struct Thrusting *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_thrusting_warmup_period(h));
+}
+SEXP wk_thrusting_is_ready(SEXP e) {
+  struct Thrusting *h = (struct Thrusting *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_thrusting_is_ready(h));
 }
 SEXP wk_thrusting_reset(SEXP e) {
   struct Thrusting *h = (struct Thrusting *)R_ExternalPtrAddr(e);
@@ -13878,6 +17278,14 @@ SEXP wk_tick_index_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
   struct TickIndex *h = (struct TickIndex *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_tick_index_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
 }
+SEXP wk_tick_index_warmup_period(SEXP e) {
+  struct TickIndex *h = (struct TickIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_tick_index_warmup_period(h));
+}
+SEXP wk_tick_index_is_ready(SEXP e) {
+  struct TickIndex *h = (struct TickIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_tick_index_is_ready(h));
+}
 SEXP wk_tick_index_reset(SEXP e) {
   struct TickIndex *h = (struct TickIndex *)R_ExternalPtrAddr(e);
   wickra_tick_index_reset(h);
@@ -13908,6 +17316,14 @@ SEXP wk_tii_batch(SEXP e, SEXP a0) {
   wickra_tii_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_tii_warmup_period(SEXP e) {
+  struct Tii *h = (struct Tii *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_tii_warmup_period(h));
+}
+SEXP wk_tii_is_ready(SEXP e) {
+  struct Tii *h = (struct Tii *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_tii_is_ready(h));
 }
 SEXP wk_tii_reset(SEXP e) {
   struct Tii *h = (struct Tii *)R_ExternalPtrAddr(e);
@@ -13942,6 +17358,14 @@ SEXP wk_time_based_stop_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   UNPROTECT(1);
   return out;
 }
+SEXP wk_time_based_stop_warmup_period(SEXP e) {
+  struct TimeBasedStop *h = (struct TimeBasedStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_time_based_stop_warmup_period(h));
+}
+SEXP wk_time_based_stop_is_ready(SEXP e) {
+  struct TimeBasedStop *h = (struct TimeBasedStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_time_based_stop_is_ready(h));
+}
 SEXP wk_time_based_stop_reset(SEXP e) {
   struct TimeBasedStop *h = (struct TimeBasedStop *)R_ExternalPtrAddr(e);
   wickra_time_based_stop_reset(h);
@@ -13971,6 +17395,14 @@ SEXP wk_time_of_day_return_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEX
   for (R_xlen_t i = 0; i < n; i++) REAL(vv)[i] = REAL(values)[i];
   UNPROTECT(2);
   return vv;
+}
+SEXP wk_time_of_day_return_profile_warmup_period(SEXP e) {
+  struct TimeOfDayReturnProfile *h = (struct TimeOfDayReturnProfile *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_time_of_day_return_profile_warmup_period(h));
+}
+SEXP wk_time_of_day_return_profile_is_ready(SEXP e) {
+  struct TimeOfDayReturnProfile *h = (struct TimeOfDayReturnProfile *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_time_of_day_return_profile_is_ready(h));
 }
 SEXP wk_time_of_day_return_profile_reset(SEXP e) {
   struct TimeOfDayReturnProfile *h = (struct TimeOfDayReturnProfile *)R_ExternalPtrAddr(e);
@@ -14004,6 +17436,14 @@ SEXP wk_tower_top_bottom_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   wickra_tower_top_bottom_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_tower_top_bottom_warmup_period(SEXP e) {
+  struct TowerTopBottom *h = (struct TowerTopBottom *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_tower_top_bottom_warmup_period(h));
+}
+SEXP wk_tower_top_bottom_is_ready(SEXP e) {
+  struct TowerTopBottom *h = (struct TowerTopBottom *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_tower_top_bottom_is_ready(h));
 }
 SEXP wk_tower_top_bottom_reset(SEXP e) {
   struct TowerTopBottom *h = (struct TowerTopBottom *)R_ExternalPtrAddr(e);
@@ -14045,6 +17485,14 @@ SEXP wk_tpo_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   UNPROTECT(4);
   return out;
 }
+SEXP wk_tpo_profile_warmup_period(SEXP e) {
+  struct TpoProfile *h = (struct TpoProfile *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_tpo_profile_warmup_period(h));
+}
+SEXP wk_tpo_profile_is_ready(SEXP e) {
+  struct TpoProfile *h = (struct TpoProfile *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_tpo_profile_is_ready(h));
+}
 SEXP wk_tpo_profile_reset(SEXP e) {
   struct TpoProfile *h = (struct TpoProfile *)R_ExternalPtrAddr(e);
   wickra_tpo_profile_reset(h);
@@ -14068,6 +17516,14 @@ SEXP wk_trade_imbalance_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct TradeImbalance *h = (struct TradeImbalance *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_trade_imbalance_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
 }
+SEXP wk_trade_imbalance_warmup_period(SEXP e) {
+  struct TradeImbalance *h = (struct TradeImbalance *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_trade_imbalance_warmup_period(h));
+}
+SEXP wk_trade_imbalance_is_ready(SEXP e) {
+  struct TradeImbalance *h = (struct TradeImbalance *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_trade_imbalance_is_ready(h));
+}
 SEXP wk_trade_imbalance_reset(SEXP e) {
   struct TradeImbalance *h = (struct TradeImbalance *)R_ExternalPtrAddr(e);
   wickra_trade_imbalance_reset(h);
@@ -14090,6 +17546,14 @@ SEXP wk_trade_sign_autocorrelation_new(SEXP a0) {
 SEXP wk_trade_sign_autocorrelation_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct TradeSignAutocorrelation *h = (struct TradeSignAutocorrelation *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_trade_sign_autocorrelation_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
+}
+SEXP wk_trade_sign_autocorrelation_warmup_period(SEXP e) {
+  struct TradeSignAutocorrelation *h = (struct TradeSignAutocorrelation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_trade_sign_autocorrelation_warmup_period(h));
+}
+SEXP wk_trade_sign_autocorrelation_is_ready(SEXP e) {
+  struct TradeSignAutocorrelation *h = (struct TradeSignAutocorrelation *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_trade_sign_autocorrelation_is_ready(h));
 }
 SEXP wk_trade_sign_autocorrelation_reset(SEXP e) {
   struct TradeSignAutocorrelation *h = (struct TradeSignAutocorrelation *)R_ExternalPtrAddr(e);
@@ -14124,6 +17588,14 @@ SEXP wk_trade_volume_index_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   UNPROTECT(1);
   return out;
 }
+SEXP wk_trade_volume_index_warmup_period(SEXP e) {
+  struct TradeVolumeIndex *h = (struct TradeVolumeIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_trade_volume_index_warmup_period(h));
+}
+SEXP wk_trade_volume_index_is_ready(SEXP e) {
+  struct TradeVolumeIndex *h = (struct TradeVolumeIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_trade_volume_index_is_ready(h));
+}
 SEXP wk_trade_volume_index_reset(SEXP e) {
   struct TradeVolumeIndex *h = (struct TradeVolumeIndex *)R_ExternalPtrAddr(e);
   wickra_trade_volume_index_reset(h);
@@ -14154,6 +17626,14 @@ SEXP wk_trend_label_batch(SEXP e, SEXP a0) {
   wickra_trend_label_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_trend_label_warmup_period(SEXP e) {
+  struct TrendLabel *h = (struct TrendLabel *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_trend_label_warmup_period(h));
+}
+SEXP wk_trend_label_is_ready(SEXP e) {
+  struct TrendLabel *h = (struct TrendLabel *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_trend_label_is_ready(h));
 }
 SEXP wk_trend_label_reset(SEXP e) {
   struct TrendLabel *h = (struct TrendLabel *)R_ExternalPtrAddr(e);
@@ -14186,6 +17666,14 @@ SEXP wk_trend_strength_index_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_trend_strength_index_warmup_period(SEXP e) {
+  struct TrendStrengthIndex *h = (struct TrendStrengthIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_trend_strength_index_warmup_period(h));
+}
+SEXP wk_trend_strength_index_is_ready(SEXP e) {
+  struct TrendStrengthIndex *h = (struct TrendStrengthIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_trend_strength_index_is_ready(h));
+}
 SEXP wk_trend_strength_index_reset(SEXP e) {
   struct TrendStrengthIndex *h = (struct TrendStrengthIndex *)R_ExternalPtrAddr(e);
   wickra_trend_strength_index_reset(h);
@@ -14217,6 +17705,14 @@ SEXP wk_trendflex_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_trendflex_warmup_period(SEXP e) {
+  struct Trendflex *h = (struct Trendflex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_trendflex_warmup_period(h));
+}
+SEXP wk_trendflex_is_ready(SEXP e) {
+  struct Trendflex *h = (struct Trendflex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_trendflex_is_ready(h));
+}
 SEXP wk_trendflex_reset(SEXP e) {
   struct Trendflex *h = (struct Trendflex *)R_ExternalPtrAddr(e);
   wickra_trendflex_reset(h);
@@ -14247,6 +17743,14 @@ SEXP wk_treynor_ratio_batch(SEXP e, SEXP a0, SEXP a1) {
   wickra_treynor_ratio_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_treynor_ratio_warmup_period(SEXP e) {
+  struct TreynorRatio *h = (struct TreynorRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_treynor_ratio_warmup_period(h));
+}
+SEXP wk_treynor_ratio_is_ready(SEXP e) {
+  struct TreynorRatio *h = (struct TreynorRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_treynor_ratio_is_ready(h));
 }
 SEXP wk_treynor_ratio_reset(SEXP e) {
   struct TreynorRatio *h = (struct TreynorRatio *)R_ExternalPtrAddr(e);
@@ -14281,6 +17785,14 @@ SEXP wk_triangle_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
   UNPROTECT(1);
   return out;
 }
+SEXP wk_triangle_warmup_period(SEXP e) {
+  struct Triangle *h = (struct Triangle *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_triangle_warmup_period(h));
+}
+SEXP wk_triangle_is_ready(SEXP e) {
+  struct Triangle *h = (struct Triangle *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_triangle_is_ready(h));
+}
 SEXP wk_triangle_reset(SEXP e) {
   struct Triangle *h = (struct Triangle *)R_ExternalPtrAddr(e);
   wickra_triangle_reset(h);
@@ -14312,6 +17824,14 @@ SEXP wk_trima_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_trima_warmup_period(SEXP e) {
+  struct Trima *h = (struct Trima *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_trima_warmup_period(h));
+}
+SEXP wk_trima_is_ready(SEXP e) {
+  struct Trima *h = (struct Trima *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_trima_is_ready(h));
+}
 SEXP wk_trima_reset(SEXP e) {
   struct Trima *h = (struct Trima *)R_ExternalPtrAddr(e);
   wickra_trima_reset(h);
@@ -14334,6 +17854,14 @@ SEXP wk_trin_new(void) {
 SEXP wk_trin_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct Trin *h = (struct Trin *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_trin_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_trin_warmup_period(SEXP e) {
+  struct Trin *h = (struct Trin *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_trin_warmup_period(h));
+}
+SEXP wk_trin_is_ready(SEXP e) {
+  struct Trin *h = (struct Trin *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_trin_is_ready(h));
 }
 SEXP wk_trin_reset(SEXP e) {
   struct Trin *h = (struct Trin *)R_ExternalPtrAddr(e);
@@ -14368,6 +17896,14 @@ SEXP wk_triple_top_bottom_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   UNPROTECT(1);
   return out;
 }
+SEXP wk_triple_top_bottom_warmup_period(SEXP e) {
+  struct TripleTopBottom *h = (struct TripleTopBottom *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_triple_top_bottom_warmup_period(h));
+}
+SEXP wk_triple_top_bottom_is_ready(SEXP e) {
+  struct TripleTopBottom *h = (struct TripleTopBottom *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_triple_top_bottom_is_ready(h));
+}
 SEXP wk_triple_top_bottom_reset(SEXP e) {
   struct TripleTopBottom *h = (struct TripleTopBottom *)R_ExternalPtrAddr(e);
   wickra_triple_top_bottom_reset(h);
@@ -14401,6 +17937,14 @@ SEXP wk_tristar_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_tristar_warmup_period(SEXP e) {
+  struct Tristar *h = (struct Tristar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_tristar_warmup_period(h));
+}
+SEXP wk_tristar_is_ready(SEXP e) {
+  struct Tristar *h = (struct Tristar *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_tristar_is_ready(h));
+}
 SEXP wk_tristar_reset(SEXP e) {
   struct Tristar *h = (struct Tristar *)R_ExternalPtrAddr(e);
   wickra_tristar_reset(h);
@@ -14431,6 +17975,14 @@ SEXP wk_trix_batch(SEXP e, SEXP a0) {
   wickra_trix_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_trix_warmup_period(SEXP e) {
+  struct Trix *h = (struct Trix *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_trix_warmup_period(h));
+}
+SEXP wk_trix_is_ready(SEXP e) {
+  struct Trix *h = (struct Trix *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_trix_is_ready(h));
 }
 SEXP wk_trix_reset(SEXP e) {
   struct Trix *h = (struct Trix *)R_ExternalPtrAddr(e);
@@ -14465,6 +18017,14 @@ SEXP wk_true_range_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   UNPROTECT(1);
   return out;
 }
+SEXP wk_true_range_warmup_period(SEXP e) {
+  struct TrueRange *h = (struct TrueRange *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_true_range_warmup_period(h));
+}
+SEXP wk_true_range_is_ready(SEXP e) {
+  struct TrueRange *h = (struct TrueRange *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_true_range_is_ready(h));
+}
 SEXP wk_true_range_reset(SEXP e) {
   struct TrueRange *h = (struct TrueRange *)R_ExternalPtrAddr(e);
   wickra_true_range_reset(h);
@@ -14495,6 +18055,14 @@ SEXP wk_tsf_batch(SEXP e, SEXP a0) {
   wickra_tsf_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_tsf_warmup_period(SEXP e) {
+  struct Tsf *h = (struct Tsf *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_tsf_warmup_period(h));
+}
+SEXP wk_tsf_is_ready(SEXP e) {
+  struct Tsf *h = (struct Tsf *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_tsf_is_ready(h));
 }
 SEXP wk_tsf_reset(SEXP e) {
   struct Tsf *h = (struct Tsf *)R_ExternalPtrAddr(e);
@@ -14527,6 +18095,14 @@ SEXP wk_tsf_oscillator_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_tsf_oscillator_warmup_period(SEXP e) {
+  struct TsfOscillator *h = (struct TsfOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_tsf_oscillator_warmup_period(h));
+}
+SEXP wk_tsf_oscillator_is_ready(SEXP e) {
+  struct TsfOscillator *h = (struct TsfOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_tsf_oscillator_is_ready(h));
+}
 SEXP wk_tsf_oscillator_reset(SEXP e) {
   struct TsfOscillator *h = (struct TsfOscillator *)R_ExternalPtrAddr(e);
   wickra_tsf_oscillator_reset(h);
@@ -14557,6 +18133,14 @@ SEXP wk_tsi_batch(SEXP e, SEXP a0) {
   wickra_tsi_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_tsi_warmup_period(SEXP e) {
+  struct Tsi *h = (struct Tsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_tsi_warmup_period(h));
+}
+SEXP wk_tsi_is_ready(SEXP e) {
+  struct Tsi *h = (struct Tsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_tsi_is_ready(h));
 }
 SEXP wk_tsi_reset(SEXP e) {
   struct Tsi *h = (struct Tsi *)R_ExternalPtrAddr(e);
@@ -14591,6 +18175,14 @@ SEXP wk_tsv_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_tsv_warmup_period(SEXP e) {
+  struct Tsv *h = (struct Tsv *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_tsv_warmup_period(h));
+}
+SEXP wk_tsv_is_ready(SEXP e) {
+  struct Tsv *h = (struct Tsv *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_tsv_is_ready(h));
+}
 SEXP wk_tsv_reset(SEXP e) {
   struct Tsv *h = (struct Tsv *)R_ExternalPtrAddr(e);
   wickra_tsv_reset(h);
@@ -14623,6 +18215,14 @@ SEXP wk_ttm_squeeze_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, 
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_ttm_squeeze_warmup_period(SEXP e) {
+  struct TtmSqueeze *h = (struct TtmSqueeze *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_ttm_squeeze_warmup_period(h));
+}
+SEXP wk_ttm_squeeze_is_ready(SEXP e) {
+  struct TtmSqueeze *h = (struct TtmSqueeze *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_ttm_squeeze_is_ready(h));
 }
 SEXP wk_ttm_squeeze_reset(SEXP e) {
   struct TtmSqueeze *h = (struct TtmSqueeze *)R_ExternalPtrAddr(e);
@@ -14657,6 +18257,14 @@ SEXP wk_ttm_trend_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   UNPROTECT(1);
   return out;
 }
+SEXP wk_ttm_trend_warmup_period(SEXP e) {
+  struct TtmTrend *h = (struct TtmTrend *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_ttm_trend_warmup_period(h));
+}
+SEXP wk_ttm_trend_is_ready(SEXP e) {
+  struct TtmTrend *h = (struct TtmTrend *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_ttm_trend_is_ready(h));
+}
 SEXP wk_ttm_trend_reset(SEXP e) {
   struct TtmTrend *h = (struct TtmTrend *)R_ExternalPtrAddr(e);
   wickra_ttm_trend_reset(h);
@@ -14689,6 +18297,14 @@ SEXP wk_turn_of_month_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
   wickra_turn_of_month_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_turn_of_month_warmup_period(SEXP e) {
+  struct TurnOfMonth *h = (struct TurnOfMonth *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_turn_of_month_warmup_period(h));
+}
+SEXP wk_turn_of_month_is_ready(SEXP e) {
+  struct TurnOfMonth *h = (struct TurnOfMonth *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_turn_of_month_is_ready(h));
 }
 SEXP wk_turn_of_month_reset(SEXP e) {
   struct TurnOfMonth *h = (struct TurnOfMonth *)R_ExternalPtrAddr(e);
@@ -14723,6 +18339,14 @@ SEXP wk_tweezer_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_tweezer_warmup_period(SEXP e) {
+  struct Tweezer *h = (struct Tweezer *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_tweezer_warmup_period(h));
+}
+SEXP wk_tweezer_is_ready(SEXP e) {
+  struct Tweezer *h = (struct Tweezer *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_tweezer_is_ready(h));
+}
 SEXP wk_tweezer_reset(SEXP e) {
   struct Tweezer *h = (struct Tweezer *)R_ExternalPtrAddr(e);
   wickra_tweezer_reset(h);
@@ -14755,6 +18379,14 @@ SEXP wk_twiggs_money_flow_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   wickra_twiggs_money_flow_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_twiggs_money_flow_warmup_period(SEXP e) {
+  struct TwiggsMoneyFlow *h = (struct TwiggsMoneyFlow *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_twiggs_money_flow_warmup_period(h));
+}
+SEXP wk_twiggs_money_flow_is_ready(SEXP e) {
+  struct TwiggsMoneyFlow *h = (struct TwiggsMoneyFlow *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_twiggs_money_flow_is_ready(h));
 }
 SEXP wk_twiggs_money_flow_reset(SEXP e) {
   struct TwiggsMoneyFlow *h = (struct TwiggsMoneyFlow *)R_ExternalPtrAddr(e);
@@ -14789,6 +18421,14 @@ SEXP wk_two_crows_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   UNPROTECT(1);
   return out;
 }
+SEXP wk_two_crows_warmup_period(SEXP e) {
+  struct TwoCrows *h = (struct TwoCrows *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_two_crows_warmup_period(h));
+}
+SEXP wk_two_crows_is_ready(SEXP e) {
+  struct TwoCrows *h = (struct TwoCrows *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_two_crows_is_ready(h));
+}
 SEXP wk_two_crows_reset(SEXP e) {
   struct TwoCrows *h = (struct TwoCrows *)R_ExternalPtrAddr(e);
   wickra_two_crows_reset(h);
@@ -14822,6 +18462,14 @@ SEXP wk_typical_price_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4,
   UNPROTECT(1);
   return out;
 }
+SEXP wk_typical_price_warmup_period(SEXP e) {
+  struct TypicalPrice *h = (struct TypicalPrice *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_typical_price_warmup_period(h));
+}
+SEXP wk_typical_price_is_ready(SEXP e) {
+  struct TypicalPrice *h = (struct TypicalPrice *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_typical_price_is_ready(h));
+}
 SEXP wk_typical_price_reset(SEXP e) {
   struct TypicalPrice *h = (struct TypicalPrice *)R_ExternalPtrAddr(e);
   wickra_typical_price_reset(h);
@@ -14852,6 +18500,14 @@ SEXP wk_ulcer_index_batch(SEXP e, SEXP a0) {
   wickra_ulcer_index_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_ulcer_index_warmup_period(SEXP e) {
+  struct UlcerIndex *h = (struct UlcerIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_ulcer_index_warmup_period(h));
+}
+SEXP wk_ulcer_index_is_ready(SEXP e) {
+  struct UlcerIndex *h = (struct UlcerIndex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_ulcer_index_is_ready(h));
 }
 SEXP wk_ulcer_index_reset(SEXP e) {
   struct UlcerIndex *h = (struct UlcerIndex *)R_ExternalPtrAddr(e);
@@ -14886,6 +18542,14 @@ SEXP wk_ultimate_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SE
   UNPROTECT(1);
   return out;
 }
+SEXP wk_ultimate_oscillator_warmup_period(SEXP e) {
+  struct UltimateOscillator *h = (struct UltimateOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_ultimate_oscillator_warmup_period(h));
+}
+SEXP wk_ultimate_oscillator_is_ready(SEXP e) {
+  struct UltimateOscillator *h = (struct UltimateOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_ultimate_oscillator_is_ready(h));
+}
 SEXP wk_ultimate_oscillator_reset(SEXP e) {
   struct UltimateOscillator *h = (struct UltimateOscillator *)R_ExternalPtrAddr(e);
   wickra_ultimate_oscillator_reset(h);
@@ -14919,6 +18583,14 @@ SEXP wk_unique_three_river_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   UNPROTECT(1);
   return out;
 }
+SEXP wk_unique_three_river_warmup_period(SEXP e) {
+  struct UniqueThreeRiver *h = (struct UniqueThreeRiver *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_unique_three_river_warmup_period(h));
+}
+SEXP wk_unique_three_river_is_ready(SEXP e) {
+  struct UniqueThreeRiver *h = (struct UniqueThreeRiver *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_unique_three_river_is_ready(h));
+}
 SEXP wk_unique_three_river_reset(SEXP e) {
   struct UniqueThreeRiver *h = (struct UniqueThreeRiver *)R_ExternalPtrAddr(e);
   wickra_unique_three_river_reset(h);
@@ -14950,6 +18622,14 @@ SEXP wk_universal_oscillator_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_universal_oscillator_warmup_period(SEXP e) {
+  struct UniversalOscillator *h = (struct UniversalOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_universal_oscillator_warmup_period(h));
+}
+SEXP wk_universal_oscillator_is_ready(SEXP e) {
+  struct UniversalOscillator *h = (struct UniversalOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_universal_oscillator_is_ready(h));
+}
 SEXP wk_universal_oscillator_reset(SEXP e) {
   struct UniversalOscillator *h = (struct UniversalOscillator *)R_ExternalPtrAddr(e);
   wickra_universal_oscillator_reset(h);
@@ -14972,6 +18652,14 @@ SEXP wk_up_down_volume_ratio_new(void) {
 SEXP wk_up_down_volume_ratio_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5, SEXP a6) {
   struct UpDownVolumeRatio *h = (struct UpDownVolumeRatio *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_up_down_volume_ratio_update(h, (double *)REAL(a0), (double *)REAL(a1), (bool *)REAL(a2), (bool *)REAL(a3), (bool *)REAL(a4), (bool *)REAL(a5), (uintptr_t)Rf_xlength(a0), (int64_t)Rf_asReal(a6)));
+}
+SEXP wk_up_down_volume_ratio_warmup_period(SEXP e) {
+  struct UpDownVolumeRatio *h = (struct UpDownVolumeRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_up_down_volume_ratio_warmup_period(h));
+}
+SEXP wk_up_down_volume_ratio_is_ready(SEXP e) {
+  struct UpDownVolumeRatio *h = (struct UpDownVolumeRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_up_down_volume_ratio_is_ready(h));
 }
 SEXP wk_up_down_volume_ratio_reset(SEXP e) {
   struct UpDownVolumeRatio *h = (struct UpDownVolumeRatio *)R_ExternalPtrAddr(e);
@@ -15006,6 +18694,14 @@ SEXP wk_upside_gap_three_methods_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a
   UNPROTECT(1);
   return out;
 }
+SEXP wk_upside_gap_three_methods_warmup_period(SEXP e) {
+  struct UpsideGapThreeMethods *h = (struct UpsideGapThreeMethods *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_upside_gap_three_methods_warmup_period(h));
+}
+SEXP wk_upside_gap_three_methods_is_ready(SEXP e) {
+  struct UpsideGapThreeMethods *h = (struct UpsideGapThreeMethods *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_upside_gap_three_methods_is_ready(h));
+}
 SEXP wk_upside_gap_three_methods_reset(SEXP e) {
   struct UpsideGapThreeMethods *h = (struct UpsideGapThreeMethods *)R_ExternalPtrAddr(e);
   wickra_upside_gap_three_methods_reset(h);
@@ -15039,6 +18735,14 @@ SEXP wk_upside_gap_two_crows_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, S
   UNPROTECT(1);
   return out;
 }
+SEXP wk_upside_gap_two_crows_warmup_period(SEXP e) {
+  struct UpsideGapTwoCrows *h = (struct UpsideGapTwoCrows *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_upside_gap_two_crows_warmup_period(h));
+}
+SEXP wk_upside_gap_two_crows_is_ready(SEXP e) {
+  struct UpsideGapTwoCrows *h = (struct UpsideGapTwoCrows *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_upside_gap_two_crows_is_ready(h));
+}
 SEXP wk_upside_gap_two_crows_reset(SEXP e) {
   struct UpsideGapTwoCrows *h = (struct UpsideGapTwoCrows *)R_ExternalPtrAddr(e);
   wickra_upside_gap_two_crows_reset(h);
@@ -15069,6 +18773,14 @@ SEXP wk_upside_potential_ratio_batch(SEXP e, SEXP a0) {
   wickra_upside_potential_ratio_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_upside_potential_ratio_warmup_period(SEXP e) {
+  struct UpsidePotentialRatio *h = (struct UpsidePotentialRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_upside_potential_ratio_warmup_period(h));
+}
+SEXP wk_upside_potential_ratio_is_ready(SEXP e) {
+  struct UpsidePotentialRatio *h = (struct UpsidePotentialRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_upside_potential_ratio_is_ready(h));
 }
 SEXP wk_upside_potential_ratio_reset(SEXP e) {
   struct UpsidePotentialRatio *h = (struct UpsidePotentialRatio *)R_ExternalPtrAddr(e);
@@ -15105,6 +18817,14 @@ SEXP wk_value_area_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
   UNPROTECT(2);
   return r;
 }
+SEXP wk_value_area_warmup_period(SEXP e) {
+  struct ValueArea *h = (struct ValueArea *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_value_area_warmup_period(h));
+}
+SEXP wk_value_area_is_ready(SEXP e) {
+  struct ValueArea *h = (struct ValueArea *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_value_area_is_ready(h));
+}
 SEXP wk_value_area_reset(SEXP e) {
   struct ValueArea *h = (struct ValueArea *)R_ExternalPtrAddr(e);
   wickra_value_area_reset(h);
@@ -15135,6 +18855,14 @@ SEXP wk_value_at_risk_batch(SEXP e, SEXP a0) {
   wickra_value_at_risk_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_value_at_risk_warmup_period(SEXP e) {
+  struct ValueAtRisk *h = (struct ValueAtRisk *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_value_at_risk_warmup_period(h));
+}
+SEXP wk_value_at_risk_is_ready(SEXP e) {
+  struct ValueAtRisk *h = (struct ValueAtRisk *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_value_at_risk_is_ready(h));
 }
 SEXP wk_value_at_risk_reset(SEXP e) {
   struct ValueAtRisk *h = (struct ValueAtRisk *)R_ExternalPtrAddr(e);
@@ -15167,6 +18895,14 @@ SEXP wk_variance_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_variance_warmup_period(SEXP e) {
+  struct Variance *h = (struct Variance *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_variance_warmup_period(h));
+}
+SEXP wk_variance_is_ready(SEXP e) {
+  struct Variance *h = (struct Variance *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_variance_is_ready(h));
+}
 SEXP wk_variance_reset(SEXP e) {
   struct Variance *h = (struct Variance *)R_ExternalPtrAddr(e);
   wickra_variance_reset(h);
@@ -15197,6 +18933,14 @@ SEXP wk_variance_ratio_batch(SEXP e, SEXP a0, SEXP a1) {
   wickra_variance_ratio_batch(h, REAL(a0), REAL(a1), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_variance_ratio_warmup_period(SEXP e) {
+  struct VarianceRatio *h = (struct VarianceRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_variance_ratio_warmup_period(h));
+}
+SEXP wk_variance_ratio_is_ready(SEXP e) {
+  struct VarianceRatio *h = (struct VarianceRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_variance_ratio_is_ready(h));
 }
 SEXP wk_variance_ratio_reset(SEXP e) {
   struct VarianceRatio *h = (struct VarianceRatio *)R_ExternalPtrAddr(e);
@@ -15229,6 +18973,14 @@ SEXP wk_vertical_horizontal_filter_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_vertical_horizontal_filter_warmup_period(SEXP e) {
+  struct VerticalHorizontalFilter *h = (struct VerticalHorizontalFilter *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_vertical_horizontal_filter_warmup_period(h));
+}
+SEXP wk_vertical_horizontal_filter_is_ready(SEXP e) {
+  struct VerticalHorizontalFilter *h = (struct VerticalHorizontalFilter *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_vertical_horizontal_filter_is_ready(h));
+}
 SEXP wk_vertical_horizontal_filter_reset(SEXP e) {
   struct VerticalHorizontalFilter *h = (struct VerticalHorizontalFilter *)R_ExternalPtrAddr(e);
   wickra_vertical_horizontal_filter_reset(h);
@@ -15259,6 +19011,14 @@ SEXP wk_vidya_batch(SEXP e, SEXP a0) {
   wickra_vidya_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_vidya_warmup_period(SEXP e) {
+  struct Vidya *h = (struct Vidya *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_vidya_warmup_period(h));
+}
+SEXP wk_vidya_is_ready(SEXP e) {
+  struct Vidya *h = (struct Vidya *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_vidya_is_ready(h));
 }
 SEXP wk_vidya_reset(SEXP e) {
   struct Vidya *h = (struct Vidya *)R_ExternalPtrAddr(e);
@@ -15299,6 +19059,14 @@ SEXP wk_volatility_cone_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_volatility_cone_warmup_period(SEXP e) {
+  struct VolatilityCone *h = (struct VolatilityCone *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_volatility_cone_warmup_period(h));
+}
+SEXP wk_volatility_cone_is_ready(SEXP e) {
+  struct VolatilityCone *h = (struct VolatilityCone *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_volatility_cone_is_ready(h));
+}
 SEXP wk_volatility_cone_reset(SEXP e) {
   struct VolatilityCone *h = (struct VolatilityCone *)R_ExternalPtrAddr(e);
   wickra_volatility_cone_reset(h);
@@ -15329,6 +19097,14 @@ SEXP wk_volatility_of_volatility_batch(SEXP e, SEXP a0) {
   wickra_volatility_of_volatility_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_volatility_of_volatility_warmup_period(SEXP e) {
+  struct VolatilityOfVolatility *h = (struct VolatilityOfVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_volatility_of_volatility_warmup_period(h));
+}
+SEXP wk_volatility_of_volatility_is_ready(SEXP e) {
+  struct VolatilityOfVolatility *h = (struct VolatilityOfVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_volatility_of_volatility_is_ready(h));
 }
 SEXP wk_volatility_of_volatility_reset(SEXP e) {
   struct VolatilityOfVolatility *h = (struct VolatilityOfVolatility *)R_ExternalPtrAddr(e);
@@ -15363,6 +19139,14 @@ SEXP wk_volatility_ratio_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_volatility_ratio_warmup_period(SEXP e) {
+  struct VolatilityRatio *h = (struct VolatilityRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_volatility_ratio_warmup_period(h));
+}
+SEXP wk_volatility_ratio_is_ready(SEXP e) {
+  struct VolatilityRatio *h = (struct VolatilityRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_volatility_ratio_is_ready(h));
+}
 SEXP wk_volatility_ratio_reset(SEXP e) {
   struct VolatilityRatio *h = (struct VolatilityRatio *)R_ExternalPtrAddr(e);
   wickra_volatility_ratio_reset(h);
@@ -15395,6 +19179,14 @@ SEXP wk_volty_stop_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   wickra_volty_stop_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_volty_stop_warmup_period(SEXP e) {
+  struct VoltyStop *h = (struct VoltyStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_volty_stop_warmup_period(h));
+}
+SEXP wk_volty_stop_is_ready(SEXP e) {
+  struct VoltyStop *h = (struct VoltyStop *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_volty_stop_is_ready(h));
 }
 SEXP wk_volty_stop_reset(SEXP e) {
   struct VoltyStop *h = (struct VoltyStop *)R_ExternalPtrAddr(e);
@@ -15469,6 +19261,14 @@ SEXP wk_volume_by_time_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3
   UNPROTECT(2);
   return vv;
 }
+SEXP wk_volume_by_time_profile_warmup_period(SEXP e) {
+  struct VolumeByTimeProfile *h = (struct VolumeByTimeProfile *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_volume_by_time_profile_warmup_period(h));
+}
+SEXP wk_volume_by_time_profile_is_ready(SEXP e) {
+  struct VolumeByTimeProfile *h = (struct VolumeByTimeProfile *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_volume_by_time_profile_is_ready(h));
+}
 SEXP wk_volume_by_time_profile_reset(SEXP e) {
   struct VolumeByTimeProfile *h = (struct VolumeByTimeProfile *)R_ExternalPtrAddr(e);
   wickra_volume_by_time_profile_reset(h);
@@ -15502,6 +19302,14 @@ SEXP wk_volume_oscillator_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP
   UNPROTECT(1);
   return out;
 }
+SEXP wk_volume_oscillator_warmup_period(SEXP e) {
+  struct VolumeOscillator *h = (struct VolumeOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_volume_oscillator_warmup_period(h));
+}
+SEXP wk_volume_oscillator_is_ready(SEXP e) {
+  struct VolumeOscillator *h = (struct VolumeOscillator *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_volume_oscillator_is_ready(h));
+}
 SEXP wk_volume_oscillator_reset(SEXP e) {
   struct VolumeOscillator *h = (struct VolumeOscillator *)R_ExternalPtrAddr(e);
   wickra_volume_oscillator_reset(h);
@@ -15534,6 +19342,14 @@ SEXP wk_volume_price_trend_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   wickra_volume_price_trend_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_volume_price_trend_warmup_period(SEXP e) {
+  struct VolumePriceTrend *h = (struct VolumePriceTrend *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_volume_price_trend_warmup_period(h));
+}
+SEXP wk_volume_price_trend_is_ready(SEXP e) {
+  struct VolumePriceTrend *h = (struct VolumePriceTrend *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_volume_price_trend_is_ready(h));
 }
 SEXP wk_volume_price_trend_reset(SEXP e) {
   struct VolumePriceTrend *h = (struct VolumePriceTrend *)R_ExternalPtrAddr(e);
@@ -15575,6 +19391,14 @@ SEXP wk_volume_profile_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a
   UNPROTECT(4);
   return out;
 }
+SEXP wk_volume_profile_warmup_period(SEXP e) {
+  struct VolumeProfile *h = (struct VolumeProfile *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_volume_profile_warmup_period(h));
+}
+SEXP wk_volume_profile_is_ready(SEXP e) {
+  struct VolumeProfile *h = (struct VolumeProfile *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_volume_profile_is_ready(h));
+}
 SEXP wk_volume_profile_reset(SEXP e) {
   struct VolumeProfile *h = (struct VolumeProfile *)R_ExternalPtrAddr(e);
   wickra_volume_profile_reset(h);
@@ -15607,6 +19431,14 @@ SEXP wk_volume_rsi_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   wickra_volume_rsi_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_volume_rsi_warmup_period(SEXP e) {
+  struct VolumeRsi *h = (struct VolumeRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_volume_rsi_warmup_period(h));
+}
+SEXP wk_volume_rsi_is_ready(SEXP e) {
+  struct VolumeRsi *h = (struct VolumeRsi *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_volume_rsi_is_ready(h));
 }
 SEXP wk_volume_rsi_reset(SEXP e) {
   struct VolumeRsi *h = (struct VolumeRsi *)R_ExternalPtrAddr(e);
@@ -15643,6 +19475,14 @@ SEXP wk_volume_weighted_macd_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_volume_weighted_macd_warmup_period(SEXP e) {
+  struct VolumeWeightedMacd *h = (struct VolumeWeightedMacd *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_volume_weighted_macd_warmup_period(h));
+}
+SEXP wk_volume_weighted_macd_is_ready(SEXP e) {
+  struct VolumeWeightedMacd *h = (struct VolumeWeightedMacd *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_volume_weighted_macd_is_ready(h));
+}
 SEXP wk_volume_weighted_macd_reset(SEXP e) {
   struct VolumeWeightedMacd *h = (struct VolumeWeightedMacd *)R_ExternalPtrAddr(e);
   wickra_volume_weighted_macd_reset(h);
@@ -15675,6 +19515,14 @@ SEXP wk_volume_weighted_sr_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SE
   Rf_setAttrib(r, R_NamesSymbol, nm);
   UNPROTECT(2);
   return r;
+}
+SEXP wk_volume_weighted_sr_warmup_period(SEXP e) {
+  struct VolumeWeightedSr *h = (struct VolumeWeightedSr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_volume_weighted_sr_warmup_period(h));
+}
+SEXP wk_volume_weighted_sr_is_ready(SEXP e) {
+  struct VolumeWeightedSr *h = (struct VolumeWeightedSr *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_volume_weighted_sr_is_ready(h));
 }
 SEXP wk_volume_weighted_sr_reset(SEXP e) {
   struct VolumeWeightedSr *h = (struct VolumeWeightedSr *)R_ExternalPtrAddr(e);
@@ -15709,6 +19557,14 @@ SEXP wk_vortex_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP 
   UNPROTECT(2);
   return r;
 }
+SEXP wk_vortex_warmup_period(SEXP e) {
+  struct Vortex *h = (struct Vortex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_vortex_warmup_period(h));
+}
+SEXP wk_vortex_is_ready(SEXP e) {
+  struct Vortex *h = (struct Vortex *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_vortex_is_ready(h));
+}
 SEXP wk_vortex_reset(SEXP e) {
   struct Vortex *h = (struct Vortex *)R_ExternalPtrAddr(e);
   wickra_vortex_reset(h);
@@ -15731,6 +19587,14 @@ SEXP wk_vpin_new(SEXP a0, SEXP a1) {
 SEXP wk_vpin_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3) {
   struct Vpin *h = (struct Vpin *)R_ExternalPtrAddr(e);
   return Rf_ScalarReal(wickra_vpin_update(h, Rf_asReal(a0), Rf_asReal(a1), (bool)(Rf_asLogical(a2) == TRUE), (int64_t)Rf_asReal(a3)));
+}
+SEXP wk_vpin_warmup_period(SEXP e) {
+  struct Vpin *h = (struct Vpin *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_vpin_warmup_period(h));
+}
+SEXP wk_vpin_is_ready(SEXP e) {
+  struct Vpin *h = (struct Vpin *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_vpin_is_ready(h));
 }
 SEXP wk_vpin_reset(SEXP e) {
   struct Vpin *h = (struct Vpin *)R_ExternalPtrAddr(e);
@@ -15764,6 +19628,14 @@ SEXP wk_vwap_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
   wickra_vwap_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_vwap_warmup_period(SEXP e) {
+  struct Vwap *h = (struct Vwap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_vwap_warmup_period(h));
+}
+SEXP wk_vwap_is_ready(SEXP e) {
+  struct Vwap *h = (struct Vwap *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_vwap_is_ready(h));
 }
 SEXP wk_vwap_reset(SEXP e) {
   struct Vwap *h = (struct Vwap *)R_ExternalPtrAddr(e);
@@ -15802,6 +19674,14 @@ SEXP wk_vwap_std_dev_bands_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SE
   UNPROTECT(2);
   return r;
 }
+SEXP wk_vwap_std_dev_bands_warmup_period(SEXP e) {
+  struct VwapStdDevBands *h = (struct VwapStdDevBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_vwap_std_dev_bands_warmup_period(h));
+}
+SEXP wk_vwap_std_dev_bands_is_ready(SEXP e) {
+  struct VwapStdDevBands *h = (struct VwapStdDevBands *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_vwap_std_dev_bands_is_ready(h));
+}
 SEXP wk_vwap_std_dev_bands_reset(SEXP e) {
   struct VwapStdDevBands *h = (struct VwapStdDevBands *)R_ExternalPtrAddr(e);
   wickra_vwap_std_dev_bands_reset(h);
@@ -15834,6 +19714,14 @@ SEXP wk_vwma_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5)
   wickra_vwma_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_vwma_warmup_period(SEXP e) {
+  struct Vwma *h = (struct Vwma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_vwma_warmup_period(h));
+}
+SEXP wk_vwma_is_ready(SEXP e) {
+  struct Vwma *h = (struct Vwma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_vwma_is_ready(h));
 }
 SEXP wk_vwma_reset(SEXP e) {
   struct Vwma *h = (struct Vwma *)R_ExternalPtrAddr(e);
@@ -15868,6 +19756,14 @@ SEXP wk_vzo_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_vzo_warmup_period(SEXP e) {
+  struct Vzo *h = (struct Vzo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_vzo_warmup_period(h));
+}
+SEXP wk_vzo_is_ready(SEXP e) {
+  struct Vzo *h = (struct Vzo *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_vzo_is_ready(h));
+}
 SEXP wk_vzo_reset(SEXP e) {
   struct Vzo *h = (struct Vzo *)R_ExternalPtrAddr(e);
   wickra_vzo_reset(h);
@@ -15901,6 +19797,14 @@ SEXP wk_wad_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5) 
   UNPROTECT(1);
   return out;
 }
+SEXP wk_wad_warmup_period(SEXP e) {
+  struct Wad *h = (struct Wad *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_wad_warmup_period(h));
+}
+SEXP wk_wad_is_ready(SEXP e) {
+  struct Wad *h = (struct Wad *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_wad_is_ready(h));
+}
 SEXP wk_wad_reset(SEXP e) {
   struct Wad *h = (struct Wad *)R_ExternalPtrAddr(e);
   wickra_wad_reset(h);
@@ -15931,6 +19835,14 @@ SEXP wk_wave_pm_batch(SEXP e, SEXP a0) {
   wickra_wave_pm_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_wave_pm_warmup_period(SEXP e) {
+  struct WavePm *h = (struct WavePm *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_wave_pm_warmup_period(h));
+}
+SEXP wk_wave_pm_is_ready(SEXP e) {
+  struct WavePm *h = (struct WavePm *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_wave_pm_is_ready(h));
 }
 SEXP wk_wave_pm_reset(SEXP e) {
   struct WavePm *h = (struct WavePm *)R_ExternalPtrAddr(e);
@@ -15965,6 +19877,14 @@ SEXP wk_wave_trend_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, S
   UNPROTECT(2);
   return r;
 }
+SEXP wk_wave_trend_warmup_period(SEXP e) {
+  struct WaveTrend *h = (struct WaveTrend *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_wave_trend_warmup_period(h));
+}
+SEXP wk_wave_trend_is_ready(SEXP e) {
+  struct WaveTrend *h = (struct WaveTrend *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_wave_trend_is_ready(h));
+}
 SEXP wk_wave_trend_reset(SEXP e) {
   struct WaveTrend *h = (struct WaveTrend *)R_ExternalPtrAddr(e);
   wickra_wave_trend_reset(h);
@@ -15997,6 +19917,14 @@ SEXP wk_wedge_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP a5
   wickra_wedge_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_wedge_warmup_period(SEXP e) {
+  struct Wedge *h = (struct Wedge *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_wedge_warmup_period(h));
+}
+SEXP wk_wedge_is_ready(SEXP e) {
+  struct Wedge *h = (struct Wedge *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_wedge_is_ready(h));
 }
 SEXP wk_wedge_reset(SEXP e) {
   struct Wedge *h = (struct Wedge *)R_ExternalPtrAddr(e);
@@ -16031,6 +19959,14 @@ SEXP wk_weighted_close_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(1);
   return out;
 }
+SEXP wk_weighted_close_warmup_period(SEXP e) {
+  struct WeightedClose *h = (struct WeightedClose *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_weighted_close_warmup_period(h));
+}
+SEXP wk_weighted_close_is_ready(SEXP e) {
+  struct WeightedClose *h = (struct WeightedClose *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_weighted_close_is_ready(h));
+}
 SEXP wk_weighted_close_reset(SEXP e) {
   struct WeightedClose *h = (struct WeightedClose *)R_ExternalPtrAddr(e);
   wickra_weighted_close_reset(h);
@@ -16063,6 +19999,14 @@ SEXP wk_wick_ratio_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   wickra_wick_ratio_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_wick_ratio_warmup_period(SEXP e) {
+  struct WickRatio *h = (struct WickRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_wick_ratio_warmup_period(h));
+}
+SEXP wk_wick_ratio_is_ready(SEXP e) {
+  struct WickRatio *h = (struct WickRatio *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_wick_ratio_is_ready(h));
 }
 SEXP wk_wick_ratio_reset(SEXP e) {
   struct WickRatio *h = (struct WickRatio *)R_ExternalPtrAddr(e);
@@ -16097,6 +20041,14 @@ SEXP wk_williams_fractals_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEX
   UNPROTECT(2);
   return r;
 }
+SEXP wk_williams_fractals_warmup_period(SEXP e) {
+  struct WilliamsFractals *h = (struct WilliamsFractals *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_williams_fractals_warmup_period(h));
+}
+SEXP wk_williams_fractals_is_ready(SEXP e) {
+  struct WilliamsFractals *h = (struct WilliamsFractals *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_williams_fractals_is_ready(h));
+}
 SEXP wk_williams_fractals_reset(SEXP e) {
   struct WilliamsFractals *h = (struct WilliamsFractals *)R_ExternalPtrAddr(e);
   wickra_williams_fractals_reset(h);
@@ -16130,6 +20082,14 @@ SEXP wk_williams_r_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SE
   UNPROTECT(1);
   return out;
 }
+SEXP wk_williams_r_warmup_period(SEXP e) {
+  struct WilliamsR *h = (struct WilliamsR *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_williams_r_warmup_period(h));
+}
+SEXP wk_williams_r_is_ready(SEXP e) {
+  struct WilliamsR *h = (struct WilliamsR *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_williams_r_is_ready(h));
+}
 SEXP wk_williams_r_reset(SEXP e) {
   struct WilliamsR *h = (struct WilliamsR *)R_ExternalPtrAddr(e);
   wickra_williams_r_reset(h);
@@ -16161,6 +20121,14 @@ SEXP wk_win_rate_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_win_rate_warmup_period(SEXP e) {
+  struct WinRate *h = (struct WinRate *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_win_rate_warmup_period(h));
+}
+SEXP wk_win_rate_is_ready(SEXP e) {
+  struct WinRate *h = (struct WinRate *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_win_rate_is_ready(h));
+}
 SEXP wk_win_rate_reset(SEXP e) {
   struct WinRate *h = (struct WinRate *)R_ExternalPtrAddr(e);
   wickra_win_rate_reset(h);
@@ -16191,6 +20159,14 @@ SEXP wk_wma_batch(SEXP e, SEXP a0) {
   wickra_wma_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_wma_warmup_period(SEXP e) {
+  struct Wma *h = (struct Wma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_wma_warmup_period(h));
+}
+SEXP wk_wma_is_ready(SEXP e) {
+  struct Wma *h = (struct Wma *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_wma_is_ready(h));
 }
 SEXP wk_wma_reset(SEXP e) {
   struct Wma *h = (struct Wma *)R_ExternalPtrAddr(e);
@@ -16231,6 +20207,14 @@ SEXP wk_woodie_pivots_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4
   UNPROTECT(2);
   return r;
 }
+SEXP wk_woodie_pivots_warmup_period(SEXP e) {
+  struct WoodiePivots *h = (struct WoodiePivots *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_woodie_pivots_warmup_period(h));
+}
+SEXP wk_woodie_pivots_is_ready(SEXP e) {
+  struct WoodiePivots *h = (struct WoodiePivots *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_woodie_pivots_is_ready(h));
+}
 SEXP wk_woodie_pivots_reset(SEXP e) {
   struct WoodiePivots *h = (struct WoodiePivots *)R_ExternalPtrAddr(e);
   wickra_woodie_pivots_reset(h);
@@ -16263,6 +20247,14 @@ SEXP wk_yang_zhang_volatility_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, 
   wickra_yang_zhang_volatility_batch(h, REAL(a0), REAL(a1), REAL(a2), REAL(a3), REAL(a4), b5, REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_yang_zhang_volatility_warmup_period(SEXP e) {
+  struct YangZhangVolatility *h = (struct YangZhangVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_yang_zhang_volatility_warmup_period(h));
+}
+SEXP wk_yang_zhang_volatility_is_ready(SEXP e) {
+  struct YangZhangVolatility *h = (struct YangZhangVolatility *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_yang_zhang_volatility_is_ready(h));
 }
 SEXP wk_yang_zhang_volatility_reset(SEXP e) {
   struct YangZhangVolatility *h = (struct YangZhangVolatility *)R_ExternalPtrAddr(e);
@@ -16297,6 +20289,14 @@ SEXP wk_yoyo_exit_batch(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEX
   UNPROTECT(1);
   return out;
 }
+SEXP wk_yoyo_exit_warmup_period(SEXP e) {
+  struct YoyoExit *h = (struct YoyoExit *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_yoyo_exit_warmup_period(h));
+}
+SEXP wk_yoyo_exit_is_ready(SEXP e) {
+  struct YoyoExit *h = (struct YoyoExit *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_yoyo_exit_is_ready(h));
+}
 SEXP wk_yoyo_exit_reset(SEXP e) {
   struct YoyoExit *h = (struct YoyoExit *)R_ExternalPtrAddr(e);
   wickra_yoyo_exit_reset(h);
@@ -16327,6 +20327,14 @@ SEXP wk_z_score_batch(SEXP e, SEXP a0) {
   wickra_z_score_batch(h, REAL(a0), REAL(out), (uintptr_t)n);
   UNPROTECT(1);
   return out;
+}
+SEXP wk_z_score_warmup_period(SEXP e) {
+  struct ZScore *h = (struct ZScore *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_z_score_warmup_period(h));
+}
+SEXP wk_z_score_is_ready(SEXP e) {
+  struct ZScore *h = (struct ZScore *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_z_score_is_ready(h));
 }
 SEXP wk_z_score_reset(SEXP e) {
   struct ZScore *h = (struct ZScore *)R_ExternalPtrAddr(e);
@@ -16363,6 +20371,14 @@ SEXP wk_zero_lag_macd_update(SEXP e, SEXP a0) {
   UNPROTECT(2);
   return r;
 }
+SEXP wk_zero_lag_macd_warmup_period(SEXP e) {
+  struct ZeroLagMacd *h = (struct ZeroLagMacd *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_zero_lag_macd_warmup_period(h));
+}
+SEXP wk_zero_lag_macd_is_ready(SEXP e) {
+  struct ZeroLagMacd *h = (struct ZeroLagMacd *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_zero_lag_macd_is_ready(h));
+}
 SEXP wk_zero_lag_macd_reset(SEXP e) {
   struct ZeroLagMacd *h = (struct ZeroLagMacd *)R_ExternalPtrAddr(e);
   wickra_zero_lag_macd_reset(h);
@@ -16396,6 +20412,14 @@ SEXP wk_zig_zag_update(SEXP e, SEXP a0, SEXP a1, SEXP a2, SEXP a3, SEXP a4, SEXP
   UNPROTECT(2);
   return r;
 }
+SEXP wk_zig_zag_warmup_period(SEXP e) {
+  struct ZigZag *h = (struct ZigZag *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_zig_zag_warmup_period(h));
+}
+SEXP wk_zig_zag_is_ready(SEXP e) {
+  struct ZigZag *h = (struct ZigZag *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_zig_zag_is_ready(h));
+}
 SEXP wk_zig_zag_reset(SEXP e) {
   struct ZigZag *h = (struct ZigZag *)R_ExternalPtrAddr(e);
   wickra_zig_zag_reset(h);
@@ -16427,6 +20451,14 @@ SEXP wk_zlema_batch(SEXP e, SEXP a0) {
   UNPROTECT(1);
   return out;
 }
+SEXP wk_zlema_warmup_period(SEXP e) {
+  struct Zlema *h = (struct Zlema *)R_ExternalPtrAddr(e);
+  return Rf_ScalarInteger((int)wickra_zlema_warmup_period(h));
+}
+SEXP wk_zlema_is_ready(SEXP e) {
+  struct Zlema *h = (struct Zlema *)R_ExternalPtrAddr(e);
+  return Rf_ScalarLogical(wickra_zlema_is_ready(h));
+}
 SEXP wk_zlema_reset(SEXP e) {
   struct Zlema *h = (struct Zlema *)R_ExternalPtrAddr(e);
   wickra_zlema_reset(h);
@@ -16437,722 +20469,1112 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_abandoned_baby_new", (DL_FUNC)&wk_abandoned_baby_new, 0},
   {"wk_abandoned_baby_update", (DL_FUNC)&wk_abandoned_baby_update, 7},
   {"wk_abandoned_baby_batch", (DL_FUNC)&wk_abandoned_baby_batch, 7},
+  {"wk_abandoned_baby_warmup_period", (DL_FUNC)&wk_abandoned_baby_warmup_period, 1},
+  {"wk_abandoned_baby_is_ready", (DL_FUNC)&wk_abandoned_baby_is_ready, 1},
   {"wk_abandoned_baby_reset", (DL_FUNC)&wk_abandoned_baby_reset, 1},
   {"wk_abcd_new", (DL_FUNC)&wk_abcd_new, 0},
   {"wk_abcd_update", (DL_FUNC)&wk_abcd_update, 7},
   {"wk_abcd_batch", (DL_FUNC)&wk_abcd_batch, 7},
+  {"wk_abcd_warmup_period", (DL_FUNC)&wk_abcd_warmup_period, 1},
+  {"wk_abcd_is_ready", (DL_FUNC)&wk_abcd_is_ready, 1},
   {"wk_abcd_reset", (DL_FUNC)&wk_abcd_reset, 1},
   {"wk_absolute_breadth_index_new", (DL_FUNC)&wk_absolute_breadth_index_new, 0},
   {"wk_absolute_breadth_index_update", (DL_FUNC)&wk_absolute_breadth_index_update, 8},
+  {"wk_absolute_breadth_index_warmup_period", (DL_FUNC)&wk_absolute_breadth_index_warmup_period, 1},
+  {"wk_absolute_breadth_index_is_ready", (DL_FUNC)&wk_absolute_breadth_index_is_ready, 1},
   {"wk_absolute_breadth_index_reset", (DL_FUNC)&wk_absolute_breadth_index_reset, 1},
   {"wk_acceleration_bands_new", (DL_FUNC)&wk_acceleration_bands_new, 2},
   {"wk_acceleration_bands_update", (DL_FUNC)&wk_acceleration_bands_update, 7},
+  {"wk_acceleration_bands_warmup_period", (DL_FUNC)&wk_acceleration_bands_warmup_period, 1},
+  {"wk_acceleration_bands_is_ready", (DL_FUNC)&wk_acceleration_bands_is_ready, 1},
   {"wk_acceleration_bands_reset", (DL_FUNC)&wk_acceleration_bands_reset, 1},
   {"wk_accelerator_oscillator_new", (DL_FUNC)&wk_accelerator_oscillator_new, 3},
   {"wk_accelerator_oscillator_update", (DL_FUNC)&wk_accelerator_oscillator_update, 7},
   {"wk_accelerator_oscillator_batch", (DL_FUNC)&wk_accelerator_oscillator_batch, 7},
+  {"wk_accelerator_oscillator_warmup_period", (DL_FUNC)&wk_accelerator_oscillator_warmup_period, 1},
+  {"wk_accelerator_oscillator_is_ready", (DL_FUNC)&wk_accelerator_oscillator_is_ready, 1},
   {"wk_accelerator_oscillator_reset", (DL_FUNC)&wk_accelerator_oscillator_reset, 1},
   {"wk_ad_oscillator_new", (DL_FUNC)&wk_ad_oscillator_new, 0},
   {"wk_ad_oscillator_update", (DL_FUNC)&wk_ad_oscillator_update, 7},
   {"wk_ad_oscillator_batch", (DL_FUNC)&wk_ad_oscillator_batch, 7},
+  {"wk_ad_oscillator_warmup_period", (DL_FUNC)&wk_ad_oscillator_warmup_period, 1},
+  {"wk_ad_oscillator_is_ready", (DL_FUNC)&wk_ad_oscillator_is_ready, 1},
   {"wk_ad_oscillator_reset", (DL_FUNC)&wk_ad_oscillator_reset, 1},
   {"wk_ad_volume_line_new", (DL_FUNC)&wk_ad_volume_line_new, 0},
   {"wk_ad_volume_line_update", (DL_FUNC)&wk_ad_volume_line_update, 8},
+  {"wk_ad_volume_line_warmup_period", (DL_FUNC)&wk_ad_volume_line_warmup_period, 1},
+  {"wk_ad_volume_line_is_ready", (DL_FUNC)&wk_ad_volume_line_is_ready, 1},
   {"wk_ad_volume_line_reset", (DL_FUNC)&wk_ad_volume_line_reset, 1},
   {"wk_adaptive_cci_new", (DL_FUNC)&wk_adaptive_cci_new, 1},
   {"wk_adaptive_cci_update", (DL_FUNC)&wk_adaptive_cci_update, 7},
   {"wk_adaptive_cci_batch", (DL_FUNC)&wk_adaptive_cci_batch, 7},
+  {"wk_adaptive_cci_warmup_period", (DL_FUNC)&wk_adaptive_cci_warmup_period, 1},
+  {"wk_adaptive_cci_is_ready", (DL_FUNC)&wk_adaptive_cci_is_ready, 1},
   {"wk_adaptive_cci_reset", (DL_FUNC)&wk_adaptive_cci_reset, 1},
   {"wk_adaptive_cycle_new", (DL_FUNC)&wk_adaptive_cycle_new, 0},
   {"wk_adaptive_cycle_update", (DL_FUNC)&wk_adaptive_cycle_update, 2},
   {"wk_adaptive_cycle_batch", (DL_FUNC)&wk_adaptive_cycle_batch, 2},
+  {"wk_adaptive_cycle_warmup_period", (DL_FUNC)&wk_adaptive_cycle_warmup_period, 1},
+  {"wk_adaptive_cycle_is_ready", (DL_FUNC)&wk_adaptive_cycle_is_ready, 1},
   {"wk_adaptive_cycle_reset", (DL_FUNC)&wk_adaptive_cycle_reset, 1},
   {"wk_adaptive_laguerre_filter_new", (DL_FUNC)&wk_adaptive_laguerre_filter_new, 1},
   {"wk_adaptive_laguerre_filter_update", (DL_FUNC)&wk_adaptive_laguerre_filter_update, 2},
   {"wk_adaptive_laguerre_filter_batch", (DL_FUNC)&wk_adaptive_laguerre_filter_batch, 2},
+  {"wk_adaptive_laguerre_filter_warmup_period", (DL_FUNC)&wk_adaptive_laguerre_filter_warmup_period, 1},
+  {"wk_adaptive_laguerre_filter_is_ready", (DL_FUNC)&wk_adaptive_laguerre_filter_is_ready, 1},
   {"wk_adaptive_laguerre_filter_reset", (DL_FUNC)&wk_adaptive_laguerre_filter_reset, 1},
   {"wk_adaptive_rsi_new", (DL_FUNC)&wk_adaptive_rsi_new, 1},
   {"wk_adaptive_rsi_update", (DL_FUNC)&wk_adaptive_rsi_update, 2},
   {"wk_adaptive_rsi_batch", (DL_FUNC)&wk_adaptive_rsi_batch, 2},
+  {"wk_adaptive_rsi_warmup_period", (DL_FUNC)&wk_adaptive_rsi_warmup_period, 1},
+  {"wk_adaptive_rsi_is_ready", (DL_FUNC)&wk_adaptive_rsi_is_ready, 1},
   {"wk_adaptive_rsi_reset", (DL_FUNC)&wk_adaptive_rsi_reset, 1},
   {"wk_adl_new", (DL_FUNC)&wk_adl_new, 0},
   {"wk_adl_update", (DL_FUNC)&wk_adl_update, 7},
   {"wk_adl_batch", (DL_FUNC)&wk_adl_batch, 7},
+  {"wk_adl_warmup_period", (DL_FUNC)&wk_adl_warmup_period, 1},
+  {"wk_adl_is_ready", (DL_FUNC)&wk_adl_is_ready, 1},
   {"wk_adl_reset", (DL_FUNC)&wk_adl_reset, 1},
   {"wk_advance_block_new", (DL_FUNC)&wk_advance_block_new, 0},
   {"wk_advance_block_update", (DL_FUNC)&wk_advance_block_update, 7},
   {"wk_advance_block_batch", (DL_FUNC)&wk_advance_block_batch, 7},
+  {"wk_advance_block_warmup_period", (DL_FUNC)&wk_advance_block_warmup_period, 1},
+  {"wk_advance_block_is_ready", (DL_FUNC)&wk_advance_block_is_ready, 1},
   {"wk_advance_block_reset", (DL_FUNC)&wk_advance_block_reset, 1},
   {"wk_advance_decline_new", (DL_FUNC)&wk_advance_decline_new, 0},
   {"wk_advance_decline_update", (DL_FUNC)&wk_advance_decline_update, 8},
+  {"wk_advance_decline_warmup_period", (DL_FUNC)&wk_advance_decline_warmup_period, 1},
+  {"wk_advance_decline_is_ready", (DL_FUNC)&wk_advance_decline_is_ready, 1},
   {"wk_advance_decline_reset", (DL_FUNC)&wk_advance_decline_reset, 1},
   {"wk_advance_decline_ratio_new", (DL_FUNC)&wk_advance_decline_ratio_new, 0},
   {"wk_advance_decline_ratio_update", (DL_FUNC)&wk_advance_decline_ratio_update, 8},
+  {"wk_advance_decline_ratio_warmup_period", (DL_FUNC)&wk_advance_decline_ratio_warmup_period, 1},
+  {"wk_advance_decline_ratio_is_ready", (DL_FUNC)&wk_advance_decline_ratio_is_ready, 1},
   {"wk_advance_decline_ratio_reset", (DL_FUNC)&wk_advance_decline_ratio_reset, 1},
   {"wk_adx_new", (DL_FUNC)&wk_adx_new, 1},
   {"wk_adx_update", (DL_FUNC)&wk_adx_update, 7},
+  {"wk_adx_warmup_period", (DL_FUNC)&wk_adx_warmup_period, 1},
+  {"wk_adx_is_ready", (DL_FUNC)&wk_adx_is_ready, 1},
   {"wk_adx_reset", (DL_FUNC)&wk_adx_reset, 1},
   {"wk_adxr_new", (DL_FUNC)&wk_adxr_new, 1},
   {"wk_adxr_update", (DL_FUNC)&wk_adxr_update, 7},
   {"wk_adxr_batch", (DL_FUNC)&wk_adxr_batch, 7},
+  {"wk_adxr_warmup_period", (DL_FUNC)&wk_adxr_warmup_period, 1},
+  {"wk_adxr_is_ready", (DL_FUNC)&wk_adxr_is_ready, 1},
   {"wk_adxr_reset", (DL_FUNC)&wk_adxr_reset, 1},
   {"wk_alligator_new", (DL_FUNC)&wk_alligator_new, 3},
   {"wk_alligator_update", (DL_FUNC)&wk_alligator_update, 7},
+  {"wk_alligator_warmup_period", (DL_FUNC)&wk_alligator_warmup_period, 1},
+  {"wk_alligator_is_ready", (DL_FUNC)&wk_alligator_is_ready, 1},
   {"wk_alligator_reset", (DL_FUNC)&wk_alligator_reset, 1},
   {"wk_alma_new", (DL_FUNC)&wk_alma_new, 3},
   {"wk_alma_update", (DL_FUNC)&wk_alma_update, 2},
   {"wk_alma_batch", (DL_FUNC)&wk_alma_batch, 2},
+  {"wk_alma_warmup_period", (DL_FUNC)&wk_alma_warmup_period, 1},
+  {"wk_alma_is_ready", (DL_FUNC)&wk_alma_is_ready, 1},
   {"wk_alma_reset", (DL_FUNC)&wk_alma_reset, 1},
   {"wk_alpha_new", (DL_FUNC)&wk_alpha_new, 2},
   {"wk_alpha_update", (DL_FUNC)&wk_alpha_update, 3},
   {"wk_alpha_batch", (DL_FUNC)&wk_alpha_batch, 3},
+  {"wk_alpha_warmup_period", (DL_FUNC)&wk_alpha_warmup_period, 1},
+  {"wk_alpha_is_ready", (DL_FUNC)&wk_alpha_is_ready, 1},
   {"wk_alpha_reset", (DL_FUNC)&wk_alpha_reset, 1},
   {"wk_amihud_illiquidity_new", (DL_FUNC)&wk_amihud_illiquidity_new, 1},
   {"wk_amihud_illiquidity_update", (DL_FUNC)&wk_amihud_illiquidity_update, 5},
+  {"wk_amihud_illiquidity_warmup_period", (DL_FUNC)&wk_amihud_illiquidity_warmup_period, 1},
+  {"wk_amihud_illiquidity_is_ready", (DL_FUNC)&wk_amihud_illiquidity_is_ready, 1},
   {"wk_amihud_illiquidity_reset", (DL_FUNC)&wk_amihud_illiquidity_reset, 1},
   {"wk_anchored_rsi_new", (DL_FUNC)&wk_anchored_rsi_new, 0},
   {"wk_anchored_rsi_update", (DL_FUNC)&wk_anchored_rsi_update, 2},
   {"wk_anchored_rsi_batch", (DL_FUNC)&wk_anchored_rsi_batch, 2},
+  {"wk_anchored_rsi_warmup_period", (DL_FUNC)&wk_anchored_rsi_warmup_period, 1},
+  {"wk_anchored_rsi_is_ready", (DL_FUNC)&wk_anchored_rsi_is_ready, 1},
   {"wk_anchored_rsi_reset", (DL_FUNC)&wk_anchored_rsi_reset, 1},
   {"wk_anchored_vwap_new", (DL_FUNC)&wk_anchored_vwap_new, 0},
   {"wk_anchored_vwap_update", (DL_FUNC)&wk_anchored_vwap_update, 7},
   {"wk_anchored_vwap_batch", (DL_FUNC)&wk_anchored_vwap_batch, 7},
+  {"wk_anchored_vwap_warmup_period", (DL_FUNC)&wk_anchored_vwap_warmup_period, 1},
+  {"wk_anchored_vwap_is_ready", (DL_FUNC)&wk_anchored_vwap_is_ready, 1},
   {"wk_anchored_vwap_reset", (DL_FUNC)&wk_anchored_vwap_reset, 1},
   {"wk_andrews_pitchfork_new", (DL_FUNC)&wk_andrews_pitchfork_new, 1},
   {"wk_andrews_pitchfork_update", (DL_FUNC)&wk_andrews_pitchfork_update, 7},
+  {"wk_andrews_pitchfork_warmup_period", (DL_FUNC)&wk_andrews_pitchfork_warmup_period, 1},
+  {"wk_andrews_pitchfork_is_ready", (DL_FUNC)&wk_andrews_pitchfork_is_ready, 1},
   {"wk_andrews_pitchfork_reset", (DL_FUNC)&wk_andrews_pitchfork_reset, 1},
   {"wk_apo_new", (DL_FUNC)&wk_apo_new, 2},
   {"wk_apo_update", (DL_FUNC)&wk_apo_update, 2},
   {"wk_apo_batch", (DL_FUNC)&wk_apo_batch, 2},
+  {"wk_apo_warmup_period", (DL_FUNC)&wk_apo_warmup_period, 1},
+  {"wk_apo_is_ready", (DL_FUNC)&wk_apo_is_ready, 1},
   {"wk_apo_reset", (DL_FUNC)&wk_apo_reset, 1},
   {"wk_aroon_new", (DL_FUNC)&wk_aroon_new, 1},
   {"wk_aroon_update", (DL_FUNC)&wk_aroon_update, 7},
+  {"wk_aroon_warmup_period", (DL_FUNC)&wk_aroon_warmup_period, 1},
+  {"wk_aroon_is_ready", (DL_FUNC)&wk_aroon_is_ready, 1},
   {"wk_aroon_reset", (DL_FUNC)&wk_aroon_reset, 1},
   {"wk_aroon_oscillator_new", (DL_FUNC)&wk_aroon_oscillator_new, 1},
   {"wk_aroon_oscillator_update", (DL_FUNC)&wk_aroon_oscillator_update, 7},
   {"wk_aroon_oscillator_batch", (DL_FUNC)&wk_aroon_oscillator_batch, 7},
+  {"wk_aroon_oscillator_warmup_period", (DL_FUNC)&wk_aroon_oscillator_warmup_period, 1},
+  {"wk_aroon_oscillator_is_ready", (DL_FUNC)&wk_aroon_oscillator_is_ready, 1},
   {"wk_aroon_oscillator_reset", (DL_FUNC)&wk_aroon_oscillator_reset, 1},
   {"wk_atr_new", (DL_FUNC)&wk_atr_new, 1},
   {"wk_atr_update", (DL_FUNC)&wk_atr_update, 7},
   {"wk_atr_batch", (DL_FUNC)&wk_atr_batch, 7},
+  {"wk_atr_warmup_period", (DL_FUNC)&wk_atr_warmup_period, 1},
+  {"wk_atr_is_ready", (DL_FUNC)&wk_atr_is_ready, 1},
   {"wk_atr_reset", (DL_FUNC)&wk_atr_reset, 1},
   {"wk_atr_bands_new", (DL_FUNC)&wk_atr_bands_new, 2},
   {"wk_atr_bands_update", (DL_FUNC)&wk_atr_bands_update, 7},
+  {"wk_atr_bands_warmup_period", (DL_FUNC)&wk_atr_bands_warmup_period, 1},
+  {"wk_atr_bands_is_ready", (DL_FUNC)&wk_atr_bands_is_ready, 1},
   {"wk_atr_bands_reset", (DL_FUNC)&wk_atr_bands_reset, 1},
   {"wk_atr_ratchet_new", (DL_FUNC)&wk_atr_ratchet_new, 3},
   {"wk_atr_ratchet_update", (DL_FUNC)&wk_atr_ratchet_update, 7},
+  {"wk_atr_ratchet_warmup_period", (DL_FUNC)&wk_atr_ratchet_warmup_period, 1},
+  {"wk_atr_ratchet_is_ready", (DL_FUNC)&wk_atr_ratchet_is_ready, 1},
   {"wk_atr_ratchet_reset", (DL_FUNC)&wk_atr_ratchet_reset, 1},
   {"wk_atr_trailing_stop_new", (DL_FUNC)&wk_atr_trailing_stop_new, 2},
   {"wk_atr_trailing_stop_update", (DL_FUNC)&wk_atr_trailing_stop_update, 7},
   {"wk_atr_trailing_stop_batch", (DL_FUNC)&wk_atr_trailing_stop_batch, 7},
+  {"wk_atr_trailing_stop_warmup_period", (DL_FUNC)&wk_atr_trailing_stop_warmup_period, 1},
+  {"wk_atr_trailing_stop_is_ready", (DL_FUNC)&wk_atr_trailing_stop_is_ready, 1},
   {"wk_atr_trailing_stop_reset", (DL_FUNC)&wk_atr_trailing_stop_reset, 1},
   {"wk_auto_fib_new", (DL_FUNC)&wk_auto_fib_new, 0},
   {"wk_auto_fib_update", (DL_FUNC)&wk_auto_fib_update, 7},
+  {"wk_auto_fib_warmup_period", (DL_FUNC)&wk_auto_fib_warmup_period, 1},
+  {"wk_auto_fib_is_ready", (DL_FUNC)&wk_auto_fib_is_ready, 1},
   {"wk_auto_fib_reset", (DL_FUNC)&wk_auto_fib_reset, 1},
   {"wk_autocorrelation_new", (DL_FUNC)&wk_autocorrelation_new, 2},
   {"wk_autocorrelation_update", (DL_FUNC)&wk_autocorrelation_update, 2},
   {"wk_autocorrelation_batch", (DL_FUNC)&wk_autocorrelation_batch, 2},
+  {"wk_autocorrelation_warmup_period", (DL_FUNC)&wk_autocorrelation_warmup_period, 1},
+  {"wk_autocorrelation_is_ready", (DL_FUNC)&wk_autocorrelation_is_ready, 1},
   {"wk_autocorrelation_reset", (DL_FUNC)&wk_autocorrelation_reset, 1},
   {"wk_autocorrelation_periodogram_new", (DL_FUNC)&wk_autocorrelation_periodogram_new, 2},
   {"wk_autocorrelation_periodogram_update", (DL_FUNC)&wk_autocorrelation_periodogram_update, 2},
   {"wk_autocorrelation_periodogram_batch", (DL_FUNC)&wk_autocorrelation_periodogram_batch, 2},
+  {"wk_autocorrelation_periodogram_warmup_period", (DL_FUNC)&wk_autocorrelation_periodogram_warmup_period, 1},
+  {"wk_autocorrelation_periodogram_is_ready", (DL_FUNC)&wk_autocorrelation_periodogram_is_ready, 1},
   {"wk_autocorrelation_periodogram_reset", (DL_FUNC)&wk_autocorrelation_periodogram_reset, 1},
   {"wk_average_daily_range_new", (DL_FUNC)&wk_average_daily_range_new, 2},
   {"wk_average_daily_range_update", (DL_FUNC)&wk_average_daily_range_update, 7},
   {"wk_average_daily_range_batch", (DL_FUNC)&wk_average_daily_range_batch, 7},
+  {"wk_average_daily_range_warmup_period", (DL_FUNC)&wk_average_daily_range_warmup_period, 1},
+  {"wk_average_daily_range_is_ready", (DL_FUNC)&wk_average_daily_range_is_ready, 1},
   {"wk_average_daily_range_reset", (DL_FUNC)&wk_average_daily_range_reset, 1},
   {"wk_average_drawdown_new", (DL_FUNC)&wk_average_drawdown_new, 1},
   {"wk_average_drawdown_update", (DL_FUNC)&wk_average_drawdown_update, 2},
   {"wk_average_drawdown_batch", (DL_FUNC)&wk_average_drawdown_batch, 2},
+  {"wk_average_drawdown_warmup_period", (DL_FUNC)&wk_average_drawdown_warmup_period, 1},
+  {"wk_average_drawdown_is_ready", (DL_FUNC)&wk_average_drawdown_is_ready, 1},
   {"wk_average_drawdown_reset", (DL_FUNC)&wk_average_drawdown_reset, 1},
   {"wk_avg_price_new", (DL_FUNC)&wk_avg_price_new, 0},
   {"wk_avg_price_update", (DL_FUNC)&wk_avg_price_update, 7},
   {"wk_avg_price_batch", (DL_FUNC)&wk_avg_price_batch, 7},
+  {"wk_avg_price_warmup_period", (DL_FUNC)&wk_avg_price_warmup_period, 1},
+  {"wk_avg_price_is_ready", (DL_FUNC)&wk_avg_price_is_ready, 1},
   {"wk_avg_price_reset", (DL_FUNC)&wk_avg_price_reset, 1},
   {"wk_awesome_oscillator_new", (DL_FUNC)&wk_awesome_oscillator_new, 2},
   {"wk_awesome_oscillator_update", (DL_FUNC)&wk_awesome_oscillator_update, 7},
   {"wk_awesome_oscillator_batch", (DL_FUNC)&wk_awesome_oscillator_batch, 7},
+  {"wk_awesome_oscillator_warmup_period", (DL_FUNC)&wk_awesome_oscillator_warmup_period, 1},
+  {"wk_awesome_oscillator_is_ready", (DL_FUNC)&wk_awesome_oscillator_is_ready, 1},
   {"wk_awesome_oscillator_reset", (DL_FUNC)&wk_awesome_oscillator_reset, 1},
   {"wk_awesome_oscillator_histogram_new", (DL_FUNC)&wk_awesome_oscillator_histogram_new, 3},
   {"wk_awesome_oscillator_histogram_update", (DL_FUNC)&wk_awesome_oscillator_histogram_update, 7},
   {"wk_awesome_oscillator_histogram_batch", (DL_FUNC)&wk_awesome_oscillator_histogram_batch, 7},
+  {"wk_awesome_oscillator_histogram_warmup_period", (DL_FUNC)&wk_awesome_oscillator_histogram_warmup_period, 1},
+  {"wk_awesome_oscillator_histogram_is_ready", (DL_FUNC)&wk_awesome_oscillator_histogram_is_ready, 1},
   {"wk_awesome_oscillator_histogram_reset", (DL_FUNC)&wk_awesome_oscillator_histogram_reset, 1},
   {"wk_balance_of_power_new", (DL_FUNC)&wk_balance_of_power_new, 0},
   {"wk_balance_of_power_update", (DL_FUNC)&wk_balance_of_power_update, 7},
   {"wk_balance_of_power_batch", (DL_FUNC)&wk_balance_of_power_batch, 7},
+  {"wk_balance_of_power_warmup_period", (DL_FUNC)&wk_balance_of_power_warmup_period, 1},
+  {"wk_balance_of_power_is_ready", (DL_FUNC)&wk_balance_of_power_is_ready, 1},
   {"wk_balance_of_power_reset", (DL_FUNC)&wk_balance_of_power_reset, 1},
   {"wk_bandpass_filter_new", (DL_FUNC)&wk_bandpass_filter_new, 2},
   {"wk_bandpass_filter_update", (DL_FUNC)&wk_bandpass_filter_update, 2},
   {"wk_bandpass_filter_batch", (DL_FUNC)&wk_bandpass_filter_batch, 2},
+  {"wk_bandpass_filter_warmup_period", (DL_FUNC)&wk_bandpass_filter_warmup_period, 1},
+  {"wk_bandpass_filter_is_ready", (DL_FUNC)&wk_bandpass_filter_is_ready, 1},
   {"wk_bandpass_filter_reset", (DL_FUNC)&wk_bandpass_filter_reset, 1},
   {"wk_bat_new", (DL_FUNC)&wk_bat_new, 0},
   {"wk_bat_update", (DL_FUNC)&wk_bat_update, 7},
   {"wk_bat_batch", (DL_FUNC)&wk_bat_batch, 7},
+  {"wk_bat_warmup_period", (DL_FUNC)&wk_bat_warmup_period, 1},
+  {"wk_bat_is_ready", (DL_FUNC)&wk_bat_is_ready, 1},
   {"wk_bat_reset", (DL_FUNC)&wk_bat_reset, 1},
   {"wk_belt_hold_new", (DL_FUNC)&wk_belt_hold_new, 0},
   {"wk_belt_hold_update", (DL_FUNC)&wk_belt_hold_update, 7},
   {"wk_belt_hold_batch", (DL_FUNC)&wk_belt_hold_batch, 7},
+  {"wk_belt_hold_warmup_period", (DL_FUNC)&wk_belt_hold_warmup_period, 1},
+  {"wk_belt_hold_is_ready", (DL_FUNC)&wk_belt_hold_is_ready, 1},
   {"wk_belt_hold_reset", (DL_FUNC)&wk_belt_hold_reset, 1},
   {"wk_beta_new", (DL_FUNC)&wk_beta_new, 1},
   {"wk_beta_update", (DL_FUNC)&wk_beta_update, 3},
   {"wk_beta_batch", (DL_FUNC)&wk_beta_batch, 3},
+  {"wk_beta_warmup_period", (DL_FUNC)&wk_beta_warmup_period, 1},
+  {"wk_beta_is_ready", (DL_FUNC)&wk_beta_is_ready, 1},
   {"wk_beta_reset", (DL_FUNC)&wk_beta_reset, 1},
   {"wk_beta_neutral_spread_new", (DL_FUNC)&wk_beta_neutral_spread_new, 1},
   {"wk_beta_neutral_spread_update", (DL_FUNC)&wk_beta_neutral_spread_update, 3},
   {"wk_beta_neutral_spread_batch", (DL_FUNC)&wk_beta_neutral_spread_batch, 3},
+  {"wk_beta_neutral_spread_warmup_period", (DL_FUNC)&wk_beta_neutral_spread_warmup_period, 1},
+  {"wk_beta_neutral_spread_is_ready", (DL_FUNC)&wk_beta_neutral_spread_is_ready, 1},
   {"wk_beta_neutral_spread_reset", (DL_FUNC)&wk_beta_neutral_spread_reset, 1},
   {"wk_better_volume_new", (DL_FUNC)&wk_better_volume_new, 1},
   {"wk_better_volume_update", (DL_FUNC)&wk_better_volume_update, 7},
   {"wk_better_volume_batch", (DL_FUNC)&wk_better_volume_batch, 7},
+  {"wk_better_volume_warmup_period", (DL_FUNC)&wk_better_volume_warmup_period, 1},
+  {"wk_better_volume_is_ready", (DL_FUNC)&wk_better_volume_is_ready, 1},
   {"wk_better_volume_reset", (DL_FUNC)&wk_better_volume_reset, 1},
   {"wk_bipower_variation_new", (DL_FUNC)&wk_bipower_variation_new, 1},
   {"wk_bipower_variation_update", (DL_FUNC)&wk_bipower_variation_update, 2},
   {"wk_bipower_variation_batch", (DL_FUNC)&wk_bipower_variation_batch, 2},
+  {"wk_bipower_variation_warmup_period", (DL_FUNC)&wk_bipower_variation_warmup_period, 1},
+  {"wk_bipower_variation_is_ready", (DL_FUNC)&wk_bipower_variation_is_ready, 1},
   {"wk_bipower_variation_reset", (DL_FUNC)&wk_bipower_variation_reset, 1},
   {"wk_body_size_pct_new", (DL_FUNC)&wk_body_size_pct_new, 0},
   {"wk_body_size_pct_update", (DL_FUNC)&wk_body_size_pct_update, 7},
   {"wk_body_size_pct_batch", (DL_FUNC)&wk_body_size_pct_batch, 7},
+  {"wk_body_size_pct_warmup_period", (DL_FUNC)&wk_body_size_pct_warmup_period, 1},
+  {"wk_body_size_pct_is_ready", (DL_FUNC)&wk_body_size_pct_is_ready, 1},
   {"wk_body_size_pct_reset", (DL_FUNC)&wk_body_size_pct_reset, 1},
   {"wk_bollinger_bands_new", (DL_FUNC)&wk_bollinger_bands_new, 2},
   {"wk_bollinger_bands_update", (DL_FUNC)&wk_bollinger_bands_update, 2},
+  {"wk_bollinger_bands_warmup_period", (DL_FUNC)&wk_bollinger_bands_warmup_period, 1},
+  {"wk_bollinger_bands_is_ready", (DL_FUNC)&wk_bollinger_bands_is_ready, 1},
   {"wk_bollinger_bands_reset", (DL_FUNC)&wk_bollinger_bands_reset, 1},
   {"wk_bollinger_bandwidth_new", (DL_FUNC)&wk_bollinger_bandwidth_new, 2},
   {"wk_bollinger_bandwidth_update", (DL_FUNC)&wk_bollinger_bandwidth_update, 2},
   {"wk_bollinger_bandwidth_batch", (DL_FUNC)&wk_bollinger_bandwidth_batch, 2},
+  {"wk_bollinger_bandwidth_warmup_period", (DL_FUNC)&wk_bollinger_bandwidth_warmup_period, 1},
+  {"wk_bollinger_bandwidth_is_ready", (DL_FUNC)&wk_bollinger_bandwidth_is_ready, 1},
   {"wk_bollinger_bandwidth_reset", (DL_FUNC)&wk_bollinger_bandwidth_reset, 1},
   {"wk_bomar_bands_new", (DL_FUNC)&wk_bomar_bands_new, 2},
   {"wk_bomar_bands_update", (DL_FUNC)&wk_bomar_bands_update, 2},
+  {"wk_bomar_bands_warmup_period", (DL_FUNC)&wk_bomar_bands_warmup_period, 1},
+  {"wk_bomar_bands_is_ready", (DL_FUNC)&wk_bomar_bands_is_ready, 1},
   {"wk_bomar_bands_reset", (DL_FUNC)&wk_bomar_bands_reset, 1},
   {"wk_breadth_thrust_new", (DL_FUNC)&wk_breadth_thrust_new, 1},
   {"wk_breadth_thrust_update", (DL_FUNC)&wk_breadth_thrust_update, 8},
+  {"wk_breadth_thrust_warmup_period", (DL_FUNC)&wk_breadth_thrust_warmup_period, 1},
+  {"wk_breadth_thrust_is_ready", (DL_FUNC)&wk_breadth_thrust_is_ready, 1},
   {"wk_breadth_thrust_reset", (DL_FUNC)&wk_breadth_thrust_reset, 1},
   {"wk_breakaway_new", (DL_FUNC)&wk_breakaway_new, 0},
   {"wk_breakaway_update", (DL_FUNC)&wk_breakaway_update, 7},
   {"wk_breakaway_batch", (DL_FUNC)&wk_breakaway_batch, 7},
+  {"wk_breakaway_warmup_period", (DL_FUNC)&wk_breakaway_warmup_period, 1},
+  {"wk_breakaway_is_ready", (DL_FUNC)&wk_breakaway_is_ready, 1},
   {"wk_breakaway_reset", (DL_FUNC)&wk_breakaway_reset, 1},
   {"wk_bullish_percent_index_new", (DL_FUNC)&wk_bullish_percent_index_new, 0},
   {"wk_bullish_percent_index_update", (DL_FUNC)&wk_bullish_percent_index_update, 8},
+  {"wk_bullish_percent_index_warmup_period", (DL_FUNC)&wk_bullish_percent_index_warmup_period, 1},
+  {"wk_bullish_percent_index_is_ready", (DL_FUNC)&wk_bullish_percent_index_is_ready, 1},
   {"wk_bullish_percent_index_reset", (DL_FUNC)&wk_bullish_percent_index_reset, 1},
   {"wk_burke_ratio_new", (DL_FUNC)&wk_burke_ratio_new, 1},
   {"wk_burke_ratio_update", (DL_FUNC)&wk_burke_ratio_update, 2},
   {"wk_burke_ratio_batch", (DL_FUNC)&wk_burke_ratio_batch, 2},
+  {"wk_burke_ratio_warmup_period", (DL_FUNC)&wk_burke_ratio_warmup_period, 1},
+  {"wk_burke_ratio_is_ready", (DL_FUNC)&wk_burke_ratio_is_ready, 1},
   {"wk_burke_ratio_reset", (DL_FUNC)&wk_burke_ratio_reset, 1},
   {"wk_butterfly_new", (DL_FUNC)&wk_butterfly_new, 0},
   {"wk_butterfly_update", (DL_FUNC)&wk_butterfly_update, 7},
   {"wk_butterfly_batch", (DL_FUNC)&wk_butterfly_batch, 7},
+  {"wk_butterfly_warmup_period", (DL_FUNC)&wk_butterfly_warmup_period, 1},
+  {"wk_butterfly_is_ready", (DL_FUNC)&wk_butterfly_is_ready, 1},
   {"wk_butterfly_reset", (DL_FUNC)&wk_butterfly_reset, 1},
   {"wk_calendar_spread_new", (DL_FUNC)&wk_calendar_spread_new, 0},
   {"wk_calendar_spread_update", (DL_FUNC)&wk_calendar_spread_update, 13},
+  {"wk_calendar_spread_warmup_period", (DL_FUNC)&wk_calendar_spread_warmup_period, 1},
+  {"wk_calendar_spread_is_ready", (DL_FUNC)&wk_calendar_spread_is_ready, 1},
   {"wk_calendar_spread_reset", (DL_FUNC)&wk_calendar_spread_reset, 1},
   {"wk_calmar_ratio_new", (DL_FUNC)&wk_calmar_ratio_new, 1},
   {"wk_calmar_ratio_update", (DL_FUNC)&wk_calmar_ratio_update, 2},
   {"wk_calmar_ratio_batch", (DL_FUNC)&wk_calmar_ratio_batch, 2},
+  {"wk_calmar_ratio_warmup_period", (DL_FUNC)&wk_calmar_ratio_warmup_period, 1},
+  {"wk_calmar_ratio_is_ready", (DL_FUNC)&wk_calmar_ratio_is_ready, 1},
   {"wk_calmar_ratio_reset", (DL_FUNC)&wk_calmar_ratio_reset, 1},
   {"wk_camarilla_new", (DL_FUNC)&wk_camarilla_new, 0},
   {"wk_camarilla_update", (DL_FUNC)&wk_camarilla_update, 7},
+  {"wk_camarilla_warmup_period", (DL_FUNC)&wk_camarilla_warmup_period, 1},
+  {"wk_camarilla_is_ready", (DL_FUNC)&wk_camarilla_is_ready, 1},
   {"wk_camarilla_reset", (DL_FUNC)&wk_camarilla_reset, 1},
   {"wk_candle_volume_new", (DL_FUNC)&wk_candle_volume_new, 1},
   {"wk_candle_volume_update", (DL_FUNC)&wk_candle_volume_update, 7},
+  {"wk_candle_volume_warmup_period", (DL_FUNC)&wk_candle_volume_warmup_period, 1},
+  {"wk_candle_volume_is_ready", (DL_FUNC)&wk_candle_volume_is_ready, 1},
   {"wk_candle_volume_reset", (DL_FUNC)&wk_candle_volume_reset, 1},
   {"wk_cci_new", (DL_FUNC)&wk_cci_new, 1},
   {"wk_cci_update", (DL_FUNC)&wk_cci_update, 7},
   {"wk_cci_batch", (DL_FUNC)&wk_cci_batch, 7},
+  {"wk_cci_warmup_period", (DL_FUNC)&wk_cci_warmup_period, 1},
+  {"wk_cci_is_ready", (DL_FUNC)&wk_cci_is_ready, 1},
   {"wk_cci_reset", (DL_FUNC)&wk_cci_reset, 1},
   {"wk_center_of_gravity_new", (DL_FUNC)&wk_center_of_gravity_new, 1},
   {"wk_center_of_gravity_update", (DL_FUNC)&wk_center_of_gravity_update, 2},
   {"wk_center_of_gravity_batch", (DL_FUNC)&wk_center_of_gravity_batch, 2},
+  {"wk_center_of_gravity_warmup_period", (DL_FUNC)&wk_center_of_gravity_warmup_period, 1},
+  {"wk_center_of_gravity_is_ready", (DL_FUNC)&wk_center_of_gravity_is_ready, 1},
   {"wk_center_of_gravity_reset", (DL_FUNC)&wk_center_of_gravity_reset, 1},
   {"wk_central_pivot_range_new", (DL_FUNC)&wk_central_pivot_range_new, 0},
   {"wk_central_pivot_range_update", (DL_FUNC)&wk_central_pivot_range_update, 7},
+  {"wk_central_pivot_range_warmup_period", (DL_FUNC)&wk_central_pivot_range_warmup_period, 1},
+  {"wk_central_pivot_range_is_ready", (DL_FUNC)&wk_central_pivot_range_is_ready, 1},
   {"wk_central_pivot_range_reset", (DL_FUNC)&wk_central_pivot_range_reset, 1},
   {"wk_cfo_new", (DL_FUNC)&wk_cfo_new, 1},
   {"wk_cfo_update", (DL_FUNC)&wk_cfo_update, 2},
   {"wk_cfo_batch", (DL_FUNC)&wk_cfo_batch, 2},
+  {"wk_cfo_warmup_period", (DL_FUNC)&wk_cfo_warmup_period, 1},
+  {"wk_cfo_is_ready", (DL_FUNC)&wk_cfo_is_ready, 1},
   {"wk_cfo_reset", (DL_FUNC)&wk_cfo_reset, 1},
   {"wk_chaikin_money_flow_new", (DL_FUNC)&wk_chaikin_money_flow_new, 1},
   {"wk_chaikin_money_flow_update", (DL_FUNC)&wk_chaikin_money_flow_update, 7},
   {"wk_chaikin_money_flow_batch", (DL_FUNC)&wk_chaikin_money_flow_batch, 7},
+  {"wk_chaikin_money_flow_warmup_period", (DL_FUNC)&wk_chaikin_money_flow_warmup_period, 1},
+  {"wk_chaikin_money_flow_is_ready", (DL_FUNC)&wk_chaikin_money_flow_is_ready, 1},
   {"wk_chaikin_money_flow_reset", (DL_FUNC)&wk_chaikin_money_flow_reset, 1},
   {"wk_chaikin_oscillator_new", (DL_FUNC)&wk_chaikin_oscillator_new, 2},
   {"wk_chaikin_oscillator_update", (DL_FUNC)&wk_chaikin_oscillator_update, 7},
   {"wk_chaikin_oscillator_batch", (DL_FUNC)&wk_chaikin_oscillator_batch, 7},
+  {"wk_chaikin_oscillator_warmup_period", (DL_FUNC)&wk_chaikin_oscillator_warmup_period, 1},
+  {"wk_chaikin_oscillator_is_ready", (DL_FUNC)&wk_chaikin_oscillator_is_ready, 1},
   {"wk_chaikin_oscillator_reset", (DL_FUNC)&wk_chaikin_oscillator_reset, 1},
   {"wk_chaikin_volatility_new", (DL_FUNC)&wk_chaikin_volatility_new, 2},
   {"wk_chaikin_volatility_update", (DL_FUNC)&wk_chaikin_volatility_update, 7},
   {"wk_chaikin_volatility_batch", (DL_FUNC)&wk_chaikin_volatility_batch, 7},
+  {"wk_chaikin_volatility_warmup_period", (DL_FUNC)&wk_chaikin_volatility_warmup_period, 1},
+  {"wk_chaikin_volatility_is_ready", (DL_FUNC)&wk_chaikin_volatility_is_ready, 1},
   {"wk_chaikin_volatility_reset", (DL_FUNC)&wk_chaikin_volatility_reset, 1},
   {"wk_chande_kroll_stop_new", (DL_FUNC)&wk_chande_kroll_stop_new, 3},
   {"wk_chande_kroll_stop_update", (DL_FUNC)&wk_chande_kroll_stop_update, 7},
+  {"wk_chande_kroll_stop_warmup_period", (DL_FUNC)&wk_chande_kroll_stop_warmup_period, 1},
+  {"wk_chande_kroll_stop_is_ready", (DL_FUNC)&wk_chande_kroll_stop_is_ready, 1},
   {"wk_chande_kroll_stop_reset", (DL_FUNC)&wk_chande_kroll_stop_reset, 1},
   {"wk_chandelier_exit_new", (DL_FUNC)&wk_chandelier_exit_new, 2},
   {"wk_chandelier_exit_update", (DL_FUNC)&wk_chandelier_exit_update, 7},
+  {"wk_chandelier_exit_warmup_period", (DL_FUNC)&wk_chandelier_exit_warmup_period, 1},
+  {"wk_chandelier_exit_is_ready", (DL_FUNC)&wk_chandelier_exit_is_ready, 1},
   {"wk_chandelier_exit_reset", (DL_FUNC)&wk_chandelier_exit_reset, 1},
   {"wk_choppiness_index_new", (DL_FUNC)&wk_choppiness_index_new, 1},
   {"wk_choppiness_index_update", (DL_FUNC)&wk_choppiness_index_update, 7},
   {"wk_choppiness_index_batch", (DL_FUNC)&wk_choppiness_index_batch, 7},
+  {"wk_choppiness_index_warmup_period", (DL_FUNC)&wk_choppiness_index_warmup_period, 1},
+  {"wk_choppiness_index_is_ready", (DL_FUNC)&wk_choppiness_index_is_ready, 1},
   {"wk_choppiness_index_reset", (DL_FUNC)&wk_choppiness_index_reset, 1},
   {"wk_classic_pivots_new", (DL_FUNC)&wk_classic_pivots_new, 0},
   {"wk_classic_pivots_update", (DL_FUNC)&wk_classic_pivots_update, 7},
+  {"wk_classic_pivots_warmup_period", (DL_FUNC)&wk_classic_pivots_warmup_period, 1},
+  {"wk_classic_pivots_is_ready", (DL_FUNC)&wk_classic_pivots_is_ready, 1},
   {"wk_classic_pivots_reset", (DL_FUNC)&wk_classic_pivots_reset, 1},
   {"wk_close_vs_open_new", (DL_FUNC)&wk_close_vs_open_new, 0},
   {"wk_close_vs_open_update", (DL_FUNC)&wk_close_vs_open_update, 7},
   {"wk_close_vs_open_batch", (DL_FUNC)&wk_close_vs_open_batch, 7},
+  {"wk_close_vs_open_warmup_period", (DL_FUNC)&wk_close_vs_open_warmup_period, 1},
+  {"wk_close_vs_open_is_ready", (DL_FUNC)&wk_close_vs_open_is_ready, 1},
   {"wk_close_vs_open_reset", (DL_FUNC)&wk_close_vs_open_reset, 1},
   {"wk_closing_marubozu_new", (DL_FUNC)&wk_closing_marubozu_new, 0},
   {"wk_closing_marubozu_update", (DL_FUNC)&wk_closing_marubozu_update, 7},
   {"wk_closing_marubozu_batch", (DL_FUNC)&wk_closing_marubozu_batch, 7},
+  {"wk_closing_marubozu_warmup_period", (DL_FUNC)&wk_closing_marubozu_warmup_period, 1},
+  {"wk_closing_marubozu_is_ready", (DL_FUNC)&wk_closing_marubozu_is_ready, 1},
   {"wk_closing_marubozu_reset", (DL_FUNC)&wk_closing_marubozu_reset, 1},
   {"wk_cmo_new", (DL_FUNC)&wk_cmo_new, 1},
   {"wk_cmo_update", (DL_FUNC)&wk_cmo_update, 2},
   {"wk_cmo_batch", (DL_FUNC)&wk_cmo_batch, 2},
+  {"wk_cmo_warmup_period", (DL_FUNC)&wk_cmo_warmup_period, 1},
+  {"wk_cmo_is_ready", (DL_FUNC)&wk_cmo_is_ready, 1},
   {"wk_cmo_reset", (DL_FUNC)&wk_cmo_reset, 1},
   {"wk_coefficient_of_variation_new", (DL_FUNC)&wk_coefficient_of_variation_new, 1},
   {"wk_coefficient_of_variation_update", (DL_FUNC)&wk_coefficient_of_variation_update, 2},
   {"wk_coefficient_of_variation_batch", (DL_FUNC)&wk_coefficient_of_variation_batch, 2},
+  {"wk_coefficient_of_variation_warmup_period", (DL_FUNC)&wk_coefficient_of_variation_warmup_period, 1},
+  {"wk_coefficient_of_variation_is_ready", (DL_FUNC)&wk_coefficient_of_variation_is_ready, 1},
   {"wk_coefficient_of_variation_reset", (DL_FUNC)&wk_coefficient_of_variation_reset, 1},
   {"wk_cointegration_new", (DL_FUNC)&wk_cointegration_new, 2},
   {"wk_cointegration_update", (DL_FUNC)&wk_cointegration_update, 3},
+  {"wk_cointegration_warmup_period", (DL_FUNC)&wk_cointegration_warmup_period, 1},
+  {"wk_cointegration_is_ready", (DL_FUNC)&wk_cointegration_is_ready, 1},
   {"wk_cointegration_reset", (DL_FUNC)&wk_cointegration_reset, 1},
   {"wk_common_sense_ratio_new", (DL_FUNC)&wk_common_sense_ratio_new, 1},
   {"wk_common_sense_ratio_update", (DL_FUNC)&wk_common_sense_ratio_update, 2},
   {"wk_common_sense_ratio_batch", (DL_FUNC)&wk_common_sense_ratio_batch, 2},
+  {"wk_common_sense_ratio_warmup_period", (DL_FUNC)&wk_common_sense_ratio_warmup_period, 1},
+  {"wk_common_sense_ratio_is_ready", (DL_FUNC)&wk_common_sense_ratio_is_ready, 1},
   {"wk_common_sense_ratio_reset", (DL_FUNC)&wk_common_sense_ratio_reset, 1},
   {"wk_composite_profile_new", (DL_FUNC)&wk_composite_profile_new, 3},
   {"wk_composite_profile_update", (DL_FUNC)&wk_composite_profile_update, 7},
+  {"wk_composite_profile_warmup_period", (DL_FUNC)&wk_composite_profile_warmup_period, 1},
+  {"wk_composite_profile_is_ready", (DL_FUNC)&wk_composite_profile_is_ready, 1},
   {"wk_composite_profile_reset", (DL_FUNC)&wk_composite_profile_reset, 1},
   {"wk_concealing_baby_swallow_new", (DL_FUNC)&wk_concealing_baby_swallow_new, 0},
   {"wk_concealing_baby_swallow_update", (DL_FUNC)&wk_concealing_baby_swallow_update, 7},
   {"wk_concealing_baby_swallow_batch", (DL_FUNC)&wk_concealing_baby_swallow_batch, 7},
+  {"wk_concealing_baby_swallow_warmup_period", (DL_FUNC)&wk_concealing_baby_swallow_warmup_period, 1},
+  {"wk_concealing_baby_swallow_is_ready", (DL_FUNC)&wk_concealing_baby_swallow_is_ready, 1},
   {"wk_concealing_baby_swallow_reset", (DL_FUNC)&wk_concealing_baby_swallow_reset, 1},
   {"wk_conditional_value_at_risk_new", (DL_FUNC)&wk_conditional_value_at_risk_new, 2},
   {"wk_conditional_value_at_risk_update", (DL_FUNC)&wk_conditional_value_at_risk_update, 2},
   {"wk_conditional_value_at_risk_batch", (DL_FUNC)&wk_conditional_value_at_risk_batch, 2},
+  {"wk_conditional_value_at_risk_warmup_period", (DL_FUNC)&wk_conditional_value_at_risk_warmup_period, 1},
+  {"wk_conditional_value_at_risk_is_ready", (DL_FUNC)&wk_conditional_value_at_risk_is_ready, 1},
   {"wk_conditional_value_at_risk_reset", (DL_FUNC)&wk_conditional_value_at_risk_reset, 1},
   {"wk_connors_rsi_new", (DL_FUNC)&wk_connors_rsi_new, 3},
   {"wk_connors_rsi_update", (DL_FUNC)&wk_connors_rsi_update, 2},
   {"wk_connors_rsi_batch", (DL_FUNC)&wk_connors_rsi_batch, 2},
+  {"wk_connors_rsi_warmup_period", (DL_FUNC)&wk_connors_rsi_warmup_period, 1},
+  {"wk_connors_rsi_is_ready", (DL_FUNC)&wk_connors_rsi_is_ready, 1},
   {"wk_connors_rsi_reset", (DL_FUNC)&wk_connors_rsi_reset, 1},
   {"wk_coppock_new", (DL_FUNC)&wk_coppock_new, 3},
   {"wk_coppock_update", (DL_FUNC)&wk_coppock_update, 2},
   {"wk_coppock_batch", (DL_FUNC)&wk_coppock_batch, 2},
+  {"wk_coppock_warmup_period", (DL_FUNC)&wk_coppock_warmup_period, 1},
+  {"wk_coppock_is_ready", (DL_FUNC)&wk_coppock_is_ready, 1},
   {"wk_coppock_reset", (DL_FUNC)&wk_coppock_reset, 1},
   {"wk_correlation_trend_indicator_new", (DL_FUNC)&wk_correlation_trend_indicator_new, 1},
   {"wk_correlation_trend_indicator_update", (DL_FUNC)&wk_correlation_trend_indicator_update, 2},
   {"wk_correlation_trend_indicator_batch", (DL_FUNC)&wk_correlation_trend_indicator_batch, 2},
+  {"wk_correlation_trend_indicator_warmup_period", (DL_FUNC)&wk_correlation_trend_indicator_warmup_period, 1},
+  {"wk_correlation_trend_indicator_is_ready", (DL_FUNC)&wk_correlation_trend_indicator_is_ready, 1},
   {"wk_correlation_trend_indicator_reset", (DL_FUNC)&wk_correlation_trend_indicator_reset, 1},
   {"wk_counterattack_new", (DL_FUNC)&wk_counterattack_new, 0},
   {"wk_counterattack_update", (DL_FUNC)&wk_counterattack_update, 7},
   {"wk_counterattack_batch", (DL_FUNC)&wk_counterattack_batch, 7},
+  {"wk_counterattack_warmup_period", (DL_FUNC)&wk_counterattack_warmup_period, 1},
+  {"wk_counterattack_is_ready", (DL_FUNC)&wk_counterattack_is_ready, 1},
   {"wk_counterattack_reset", (DL_FUNC)&wk_counterattack_reset, 1},
   {"wk_crab_new", (DL_FUNC)&wk_crab_new, 0},
   {"wk_crab_update", (DL_FUNC)&wk_crab_update, 7},
   {"wk_crab_batch", (DL_FUNC)&wk_crab_batch, 7},
+  {"wk_crab_warmup_period", (DL_FUNC)&wk_crab_warmup_period, 1},
+  {"wk_crab_is_ready", (DL_FUNC)&wk_crab_is_ready, 1},
   {"wk_crab_reset", (DL_FUNC)&wk_crab_reset, 1},
   {"wk_cumulative_volume_delta_new", (DL_FUNC)&wk_cumulative_volume_delta_new, 0},
   {"wk_cumulative_volume_delta_update", (DL_FUNC)&wk_cumulative_volume_delta_update, 5},
+  {"wk_cumulative_volume_delta_warmup_period", (DL_FUNC)&wk_cumulative_volume_delta_warmup_period, 1},
+  {"wk_cumulative_volume_delta_is_ready", (DL_FUNC)&wk_cumulative_volume_delta_is_ready, 1},
   {"wk_cumulative_volume_delta_reset", (DL_FUNC)&wk_cumulative_volume_delta_reset, 1},
   {"wk_cumulative_volume_index_new", (DL_FUNC)&wk_cumulative_volume_index_new, 0},
   {"wk_cumulative_volume_index_update", (DL_FUNC)&wk_cumulative_volume_index_update, 8},
+  {"wk_cumulative_volume_index_warmup_period", (DL_FUNC)&wk_cumulative_volume_index_warmup_period, 1},
+  {"wk_cumulative_volume_index_is_ready", (DL_FUNC)&wk_cumulative_volume_index_is_ready, 1},
   {"wk_cumulative_volume_index_reset", (DL_FUNC)&wk_cumulative_volume_index_reset, 1},
   {"wk_cup_and_handle_new", (DL_FUNC)&wk_cup_and_handle_new, 0},
   {"wk_cup_and_handle_update", (DL_FUNC)&wk_cup_and_handle_update, 7},
   {"wk_cup_and_handle_batch", (DL_FUNC)&wk_cup_and_handle_batch, 7},
+  {"wk_cup_and_handle_warmup_period", (DL_FUNC)&wk_cup_and_handle_warmup_period, 1},
+  {"wk_cup_and_handle_is_ready", (DL_FUNC)&wk_cup_and_handle_is_ready, 1},
   {"wk_cup_and_handle_reset", (DL_FUNC)&wk_cup_and_handle_reset, 1},
   {"wk_cybernetic_cycle_new", (DL_FUNC)&wk_cybernetic_cycle_new, 1},
   {"wk_cybernetic_cycle_update", (DL_FUNC)&wk_cybernetic_cycle_update, 2},
   {"wk_cybernetic_cycle_batch", (DL_FUNC)&wk_cybernetic_cycle_batch, 2},
+  {"wk_cybernetic_cycle_warmup_period", (DL_FUNC)&wk_cybernetic_cycle_warmup_period, 1},
+  {"wk_cybernetic_cycle_is_ready", (DL_FUNC)&wk_cybernetic_cycle_is_ready, 1},
   {"wk_cybernetic_cycle_reset", (DL_FUNC)&wk_cybernetic_cycle_reset, 1},
   {"wk_cypher_new", (DL_FUNC)&wk_cypher_new, 0},
   {"wk_cypher_update", (DL_FUNC)&wk_cypher_update, 7},
   {"wk_cypher_batch", (DL_FUNC)&wk_cypher_batch, 7},
+  {"wk_cypher_warmup_period", (DL_FUNC)&wk_cypher_warmup_period, 1},
+  {"wk_cypher_is_ready", (DL_FUNC)&wk_cypher_is_ready, 1},
   {"wk_cypher_reset", (DL_FUNC)&wk_cypher_reset, 1},
   {"wk_day_of_week_profile_new", (DL_FUNC)&wk_day_of_week_profile_new, 1},
   {"wk_day_of_week_profile_update", (DL_FUNC)&wk_day_of_week_profile_update, 8},
+  {"wk_day_of_week_profile_warmup_period", (DL_FUNC)&wk_day_of_week_profile_warmup_period, 1},
+  {"wk_day_of_week_profile_is_ready", (DL_FUNC)&wk_day_of_week_profile_is_ready, 1},
   {"wk_day_of_week_profile_reset", (DL_FUNC)&wk_day_of_week_profile_reset, 1},
   {"wk_decycler_new", (DL_FUNC)&wk_decycler_new, 1},
   {"wk_decycler_update", (DL_FUNC)&wk_decycler_update, 2},
   {"wk_decycler_batch", (DL_FUNC)&wk_decycler_batch, 2},
+  {"wk_decycler_warmup_period", (DL_FUNC)&wk_decycler_warmup_period, 1},
+  {"wk_decycler_is_ready", (DL_FUNC)&wk_decycler_is_ready, 1},
   {"wk_decycler_reset", (DL_FUNC)&wk_decycler_reset, 1},
   {"wk_decycler_oscillator_new", (DL_FUNC)&wk_decycler_oscillator_new, 2},
   {"wk_decycler_oscillator_update", (DL_FUNC)&wk_decycler_oscillator_update, 2},
   {"wk_decycler_oscillator_batch", (DL_FUNC)&wk_decycler_oscillator_batch, 2},
+  {"wk_decycler_oscillator_warmup_period", (DL_FUNC)&wk_decycler_oscillator_warmup_period, 1},
+  {"wk_decycler_oscillator_is_ready", (DL_FUNC)&wk_decycler_oscillator_is_ready, 1},
   {"wk_decycler_oscillator_reset", (DL_FUNC)&wk_decycler_oscillator_reset, 1},
   {"wk_dema_new", (DL_FUNC)&wk_dema_new, 1},
   {"wk_dema_update", (DL_FUNC)&wk_dema_update, 2},
   {"wk_dema_batch", (DL_FUNC)&wk_dema_batch, 2},
+  {"wk_dema_warmup_period", (DL_FUNC)&wk_dema_warmup_period, 1},
+  {"wk_dema_is_ready", (DL_FUNC)&wk_dema_is_ready, 1},
   {"wk_dema_reset", (DL_FUNC)&wk_dema_reset, 1},
   {"wk_demand_index_new", (DL_FUNC)&wk_demand_index_new, 1},
   {"wk_demand_index_update", (DL_FUNC)&wk_demand_index_update, 7},
   {"wk_demand_index_batch", (DL_FUNC)&wk_demand_index_batch, 7},
+  {"wk_demand_index_warmup_period", (DL_FUNC)&wk_demand_index_warmup_period, 1},
+  {"wk_demand_index_is_ready", (DL_FUNC)&wk_demand_index_is_ready, 1},
   {"wk_demand_index_reset", (DL_FUNC)&wk_demand_index_reset, 1},
   {"wk_demark_pivots_new", (DL_FUNC)&wk_demark_pivots_new, 0},
   {"wk_demark_pivots_update", (DL_FUNC)&wk_demark_pivots_update, 7},
+  {"wk_demark_pivots_warmup_period", (DL_FUNC)&wk_demark_pivots_warmup_period, 1},
+  {"wk_demark_pivots_is_ready", (DL_FUNC)&wk_demark_pivots_is_ready, 1},
   {"wk_demark_pivots_reset", (DL_FUNC)&wk_demark_pivots_reset, 1},
   {"wk_depth_slope_new", (DL_FUNC)&wk_depth_slope_new, 0},
   {"wk_depth_slope_update", (DL_FUNC)&wk_depth_slope_update, 5},
+  {"wk_depth_slope_warmup_period", (DL_FUNC)&wk_depth_slope_warmup_period, 1},
+  {"wk_depth_slope_is_ready", (DL_FUNC)&wk_depth_slope_is_ready, 1},
   {"wk_depth_slope_reset", (DL_FUNC)&wk_depth_slope_reset, 1},
   {"wk_derivative_oscillator_new", (DL_FUNC)&wk_derivative_oscillator_new, 4},
   {"wk_derivative_oscillator_update", (DL_FUNC)&wk_derivative_oscillator_update, 2},
   {"wk_derivative_oscillator_batch", (DL_FUNC)&wk_derivative_oscillator_batch, 2},
+  {"wk_derivative_oscillator_warmup_period", (DL_FUNC)&wk_derivative_oscillator_warmup_period, 1},
+  {"wk_derivative_oscillator_is_ready", (DL_FUNC)&wk_derivative_oscillator_is_ready, 1},
   {"wk_derivative_oscillator_reset", (DL_FUNC)&wk_derivative_oscillator_reset, 1},
   {"wk_detrended_std_dev_new", (DL_FUNC)&wk_detrended_std_dev_new, 1},
   {"wk_detrended_std_dev_update", (DL_FUNC)&wk_detrended_std_dev_update, 2},
   {"wk_detrended_std_dev_batch", (DL_FUNC)&wk_detrended_std_dev_batch, 2},
+  {"wk_detrended_std_dev_warmup_period", (DL_FUNC)&wk_detrended_std_dev_warmup_period, 1},
+  {"wk_detrended_std_dev_is_ready", (DL_FUNC)&wk_detrended_std_dev_is_ready, 1},
   {"wk_detrended_std_dev_reset", (DL_FUNC)&wk_detrended_std_dev_reset, 1},
   {"wk_disparity_index_new", (DL_FUNC)&wk_disparity_index_new, 1},
   {"wk_disparity_index_update", (DL_FUNC)&wk_disparity_index_update, 2},
   {"wk_disparity_index_batch", (DL_FUNC)&wk_disparity_index_batch, 2},
+  {"wk_disparity_index_warmup_period", (DL_FUNC)&wk_disparity_index_warmup_period, 1},
+  {"wk_disparity_index_is_ready", (DL_FUNC)&wk_disparity_index_is_ready, 1},
   {"wk_disparity_index_reset", (DL_FUNC)&wk_disparity_index_reset, 1},
   {"wk_distance_ssd_new", (DL_FUNC)&wk_distance_ssd_new, 1},
   {"wk_distance_ssd_update", (DL_FUNC)&wk_distance_ssd_update, 3},
   {"wk_distance_ssd_batch", (DL_FUNC)&wk_distance_ssd_batch, 3},
+  {"wk_distance_ssd_warmup_period", (DL_FUNC)&wk_distance_ssd_warmup_period, 1},
+  {"wk_distance_ssd_is_ready", (DL_FUNC)&wk_distance_ssd_is_ready, 1},
   {"wk_distance_ssd_reset", (DL_FUNC)&wk_distance_ssd_reset, 1},
   {"wk_doji_new", (DL_FUNC)&wk_doji_new, 0},
   {"wk_doji_update", (DL_FUNC)&wk_doji_update, 7},
   {"wk_doji_batch", (DL_FUNC)&wk_doji_batch, 7},
+  {"wk_doji_warmup_period", (DL_FUNC)&wk_doji_warmup_period, 1},
+  {"wk_doji_is_ready", (DL_FUNC)&wk_doji_is_ready, 1},
   {"wk_doji_reset", (DL_FUNC)&wk_doji_reset, 1},
   {"wk_doji_star_new", (DL_FUNC)&wk_doji_star_new, 0},
   {"wk_doji_star_update", (DL_FUNC)&wk_doji_star_update, 7},
   {"wk_doji_star_batch", (DL_FUNC)&wk_doji_star_batch, 7},
+  {"wk_doji_star_warmup_period", (DL_FUNC)&wk_doji_star_warmup_period, 1},
+  {"wk_doji_star_is_ready", (DL_FUNC)&wk_doji_star_is_ready, 1},
   {"wk_doji_star_reset", (DL_FUNC)&wk_doji_star_reset, 1},
   {"wk_dollar_bars_new", (DL_FUNC)&wk_dollar_bars_new, 1},
   {"wk_dollar_bars_update", (DL_FUNC)&wk_dollar_bars_update, 7},
   {"wk_dollar_bars_reset", (DL_FUNC)&wk_dollar_bars_reset, 1},
   {"wk_donchian_new", (DL_FUNC)&wk_donchian_new, 1},
   {"wk_donchian_update", (DL_FUNC)&wk_donchian_update, 7},
+  {"wk_donchian_warmup_period", (DL_FUNC)&wk_donchian_warmup_period, 1},
+  {"wk_donchian_is_ready", (DL_FUNC)&wk_donchian_is_ready, 1},
   {"wk_donchian_reset", (DL_FUNC)&wk_donchian_reset, 1},
   {"wk_donchian_stop_new", (DL_FUNC)&wk_donchian_stop_new, 1},
   {"wk_donchian_stop_update", (DL_FUNC)&wk_donchian_stop_update, 7},
+  {"wk_donchian_stop_warmup_period", (DL_FUNC)&wk_donchian_stop_warmup_period, 1},
+  {"wk_donchian_stop_is_ready", (DL_FUNC)&wk_donchian_stop_is_ready, 1},
   {"wk_donchian_stop_reset", (DL_FUNC)&wk_donchian_stop_reset, 1},
   {"wk_double_bollinger_new", (DL_FUNC)&wk_double_bollinger_new, 3},
   {"wk_double_bollinger_update", (DL_FUNC)&wk_double_bollinger_update, 2},
+  {"wk_double_bollinger_warmup_period", (DL_FUNC)&wk_double_bollinger_warmup_period, 1},
+  {"wk_double_bollinger_is_ready", (DL_FUNC)&wk_double_bollinger_is_ready, 1},
   {"wk_double_bollinger_reset", (DL_FUNC)&wk_double_bollinger_reset, 1},
   {"wk_double_top_bottom_new", (DL_FUNC)&wk_double_top_bottom_new, 0},
   {"wk_double_top_bottom_update", (DL_FUNC)&wk_double_top_bottom_update, 7},
   {"wk_double_top_bottom_batch", (DL_FUNC)&wk_double_top_bottom_batch, 7},
+  {"wk_double_top_bottom_warmup_period", (DL_FUNC)&wk_double_top_bottom_warmup_period, 1},
+  {"wk_double_top_bottom_is_ready", (DL_FUNC)&wk_double_top_bottom_is_ready, 1},
   {"wk_double_top_bottom_reset", (DL_FUNC)&wk_double_top_bottom_reset, 1},
   {"wk_downside_gap_three_methods_new", (DL_FUNC)&wk_downside_gap_three_methods_new, 0},
   {"wk_downside_gap_three_methods_update", (DL_FUNC)&wk_downside_gap_three_methods_update, 7},
   {"wk_downside_gap_three_methods_batch", (DL_FUNC)&wk_downside_gap_three_methods_batch, 7},
+  {"wk_downside_gap_three_methods_warmup_period", (DL_FUNC)&wk_downside_gap_three_methods_warmup_period, 1},
+  {"wk_downside_gap_three_methods_is_ready", (DL_FUNC)&wk_downside_gap_three_methods_is_ready, 1},
   {"wk_downside_gap_three_methods_reset", (DL_FUNC)&wk_downside_gap_three_methods_reset, 1},
   {"wk_dpo_new", (DL_FUNC)&wk_dpo_new, 1},
   {"wk_dpo_update", (DL_FUNC)&wk_dpo_update, 2},
   {"wk_dpo_batch", (DL_FUNC)&wk_dpo_batch, 2},
+  {"wk_dpo_warmup_period", (DL_FUNC)&wk_dpo_warmup_period, 1},
+  {"wk_dpo_is_ready", (DL_FUNC)&wk_dpo_is_ready, 1},
   {"wk_dpo_reset", (DL_FUNC)&wk_dpo_reset, 1},
   {"wk_dragonfly_doji_new", (DL_FUNC)&wk_dragonfly_doji_new, 0},
   {"wk_dragonfly_doji_update", (DL_FUNC)&wk_dragonfly_doji_update, 7},
   {"wk_dragonfly_doji_batch", (DL_FUNC)&wk_dragonfly_doji_batch, 7},
+  {"wk_dragonfly_doji_warmup_period", (DL_FUNC)&wk_dragonfly_doji_warmup_period, 1},
+  {"wk_dragonfly_doji_is_ready", (DL_FUNC)&wk_dragonfly_doji_is_ready, 1},
   {"wk_dragonfly_doji_reset", (DL_FUNC)&wk_dragonfly_doji_reset, 1},
   {"wk_drawdown_duration_new", (DL_FUNC)&wk_drawdown_duration_new, 0},
   {"wk_drawdown_duration_update", (DL_FUNC)&wk_drawdown_duration_update, 2},
   {"wk_drawdown_duration_batch", (DL_FUNC)&wk_drawdown_duration_batch, 2},
+  {"wk_drawdown_duration_warmup_period", (DL_FUNC)&wk_drawdown_duration_warmup_period, 1},
+  {"wk_drawdown_duration_is_ready", (DL_FUNC)&wk_drawdown_duration_is_ready, 1},
   {"wk_drawdown_duration_reset", (DL_FUNC)&wk_drawdown_duration_reset, 1},
   {"wk_dumpling_top_new", (DL_FUNC)&wk_dumpling_top_new, 1},
   {"wk_dumpling_top_update", (DL_FUNC)&wk_dumpling_top_update, 7},
   {"wk_dumpling_top_batch", (DL_FUNC)&wk_dumpling_top_batch, 7},
+  {"wk_dumpling_top_warmup_period", (DL_FUNC)&wk_dumpling_top_warmup_period, 1},
+  {"wk_dumpling_top_is_ready", (DL_FUNC)&wk_dumpling_top_is_ready, 1},
   {"wk_dumpling_top_reset", (DL_FUNC)&wk_dumpling_top_reset, 1},
   {"wk_dx_new", (DL_FUNC)&wk_dx_new, 1},
   {"wk_dx_update", (DL_FUNC)&wk_dx_update, 7},
   {"wk_dx_batch", (DL_FUNC)&wk_dx_batch, 7},
+  {"wk_dx_warmup_period", (DL_FUNC)&wk_dx_warmup_period, 1},
+  {"wk_dx_is_ready", (DL_FUNC)&wk_dx_is_ready, 1},
   {"wk_dx_reset", (DL_FUNC)&wk_dx_reset, 1},
   {"wk_dynamic_momentum_index_new", (DL_FUNC)&wk_dynamic_momentum_index_new, 1},
   {"wk_dynamic_momentum_index_update", (DL_FUNC)&wk_dynamic_momentum_index_update, 2},
   {"wk_dynamic_momentum_index_batch", (DL_FUNC)&wk_dynamic_momentum_index_batch, 2},
+  {"wk_dynamic_momentum_index_warmup_period", (DL_FUNC)&wk_dynamic_momentum_index_warmup_period, 1},
+  {"wk_dynamic_momentum_index_is_ready", (DL_FUNC)&wk_dynamic_momentum_index_is_ready, 1},
   {"wk_dynamic_momentum_index_reset", (DL_FUNC)&wk_dynamic_momentum_index_reset, 1},
   {"wk_ease_of_movement_new", (DL_FUNC)&wk_ease_of_movement_new, 1},
   {"wk_ease_of_movement_update", (DL_FUNC)&wk_ease_of_movement_update, 7},
   {"wk_ease_of_movement_batch", (DL_FUNC)&wk_ease_of_movement_batch, 7},
+  {"wk_ease_of_movement_warmup_period", (DL_FUNC)&wk_ease_of_movement_warmup_period, 1},
+  {"wk_ease_of_movement_is_ready", (DL_FUNC)&wk_ease_of_movement_is_ready, 1},
   {"wk_ease_of_movement_reset", (DL_FUNC)&wk_ease_of_movement_reset, 1},
   {"wk_effective_spread_new", (DL_FUNC)&wk_effective_spread_new, 0},
   {"wk_effective_spread_update", (DL_FUNC)&wk_effective_spread_update, 6},
+  {"wk_effective_spread_warmup_period", (DL_FUNC)&wk_effective_spread_warmup_period, 1},
+  {"wk_effective_spread_is_ready", (DL_FUNC)&wk_effective_spread_is_ready, 1},
   {"wk_effective_spread_reset", (DL_FUNC)&wk_effective_spread_reset, 1},
   {"wk_ehlers_stochastic_new", (DL_FUNC)&wk_ehlers_stochastic_new, 1},
   {"wk_ehlers_stochastic_update", (DL_FUNC)&wk_ehlers_stochastic_update, 2},
   {"wk_ehlers_stochastic_batch", (DL_FUNC)&wk_ehlers_stochastic_batch, 2},
+  {"wk_ehlers_stochastic_warmup_period", (DL_FUNC)&wk_ehlers_stochastic_warmup_period, 1},
+  {"wk_ehlers_stochastic_is_ready", (DL_FUNC)&wk_ehlers_stochastic_is_ready, 1},
   {"wk_ehlers_stochastic_reset", (DL_FUNC)&wk_ehlers_stochastic_reset, 1},
   {"wk_ehma_new", (DL_FUNC)&wk_ehma_new, 1},
   {"wk_ehma_update", (DL_FUNC)&wk_ehma_update, 2},
   {"wk_ehma_batch", (DL_FUNC)&wk_ehma_batch, 2},
+  {"wk_ehma_warmup_period", (DL_FUNC)&wk_ehma_warmup_period, 1},
+  {"wk_ehma_is_ready", (DL_FUNC)&wk_ehma_is_ready, 1},
   {"wk_ehma_reset", (DL_FUNC)&wk_ehma_reset, 1},
   {"wk_elder_impulse_new", (DL_FUNC)&wk_elder_impulse_new, 4},
   {"wk_elder_impulse_update", (DL_FUNC)&wk_elder_impulse_update, 2},
   {"wk_elder_impulse_batch", (DL_FUNC)&wk_elder_impulse_batch, 2},
+  {"wk_elder_impulse_warmup_period", (DL_FUNC)&wk_elder_impulse_warmup_period, 1},
+  {"wk_elder_impulse_is_ready", (DL_FUNC)&wk_elder_impulse_is_ready, 1},
   {"wk_elder_impulse_reset", (DL_FUNC)&wk_elder_impulse_reset, 1},
   {"wk_elder_ray_new", (DL_FUNC)&wk_elder_ray_new, 1},
   {"wk_elder_ray_update", (DL_FUNC)&wk_elder_ray_update, 7},
+  {"wk_elder_ray_warmup_period", (DL_FUNC)&wk_elder_ray_warmup_period, 1},
+  {"wk_elder_ray_is_ready", (DL_FUNC)&wk_elder_ray_is_ready, 1},
   {"wk_elder_ray_reset", (DL_FUNC)&wk_elder_ray_reset, 1},
   {"wk_elder_safe_zone_new", (DL_FUNC)&wk_elder_safe_zone_new, 2},
   {"wk_elder_safe_zone_update", (DL_FUNC)&wk_elder_safe_zone_update, 7},
+  {"wk_elder_safe_zone_warmup_period", (DL_FUNC)&wk_elder_safe_zone_warmup_period, 1},
+  {"wk_elder_safe_zone_is_ready", (DL_FUNC)&wk_elder_safe_zone_is_ready, 1},
   {"wk_elder_safe_zone_reset", (DL_FUNC)&wk_elder_safe_zone_reset, 1},
   {"wk_ema_new", (DL_FUNC)&wk_ema_new, 1},
   {"wk_ema_update", (DL_FUNC)&wk_ema_update, 2},
   {"wk_ema_batch", (DL_FUNC)&wk_ema_batch, 2},
+  {"wk_ema_warmup_period", (DL_FUNC)&wk_ema_warmup_period, 1},
+  {"wk_ema_is_ready", (DL_FUNC)&wk_ema_is_ready, 1},
   {"wk_ema_reset", (DL_FUNC)&wk_ema_reset, 1},
   {"wk_empirical_mode_decomposition_new", (DL_FUNC)&wk_empirical_mode_decomposition_new, 2},
   {"wk_empirical_mode_decomposition_update", (DL_FUNC)&wk_empirical_mode_decomposition_update, 2},
   {"wk_empirical_mode_decomposition_batch", (DL_FUNC)&wk_empirical_mode_decomposition_batch, 2},
+  {"wk_empirical_mode_decomposition_warmup_period", (DL_FUNC)&wk_empirical_mode_decomposition_warmup_period, 1},
+  {"wk_empirical_mode_decomposition_is_ready", (DL_FUNC)&wk_empirical_mode_decomposition_is_ready, 1},
   {"wk_empirical_mode_decomposition_reset", (DL_FUNC)&wk_empirical_mode_decomposition_reset, 1},
   {"wk_engulfing_new", (DL_FUNC)&wk_engulfing_new, 0},
   {"wk_engulfing_update", (DL_FUNC)&wk_engulfing_update, 7},
   {"wk_engulfing_batch", (DL_FUNC)&wk_engulfing_batch, 7},
+  {"wk_engulfing_warmup_period", (DL_FUNC)&wk_engulfing_warmup_period, 1},
+  {"wk_engulfing_is_ready", (DL_FUNC)&wk_engulfing_is_ready, 1},
   {"wk_engulfing_reset", (DL_FUNC)&wk_engulfing_reset, 1},
   {"wk_equivolume_new", (DL_FUNC)&wk_equivolume_new, 1},
   {"wk_equivolume_update", (DL_FUNC)&wk_equivolume_update, 7},
+  {"wk_equivolume_warmup_period", (DL_FUNC)&wk_equivolume_warmup_period, 1},
+  {"wk_equivolume_is_ready", (DL_FUNC)&wk_equivolume_is_ready, 1},
   {"wk_equivolume_reset", (DL_FUNC)&wk_equivolume_reset, 1},
   {"wk_estimated_leverage_ratio_new", (DL_FUNC)&wk_estimated_leverage_ratio_new, 0},
   {"wk_estimated_leverage_ratio_update", (DL_FUNC)&wk_estimated_leverage_ratio_update, 13},
+  {"wk_estimated_leverage_ratio_warmup_period", (DL_FUNC)&wk_estimated_leverage_ratio_warmup_period, 1},
+  {"wk_estimated_leverage_ratio_is_ready", (DL_FUNC)&wk_estimated_leverage_ratio_is_ready, 1},
   {"wk_estimated_leverage_ratio_reset", (DL_FUNC)&wk_estimated_leverage_ratio_reset, 1},
   {"wk_even_better_sinewave_new", (DL_FUNC)&wk_even_better_sinewave_new, 2},
   {"wk_even_better_sinewave_update", (DL_FUNC)&wk_even_better_sinewave_update, 2},
   {"wk_even_better_sinewave_batch", (DL_FUNC)&wk_even_better_sinewave_batch, 2},
+  {"wk_even_better_sinewave_warmup_period", (DL_FUNC)&wk_even_better_sinewave_warmup_period, 1},
+  {"wk_even_better_sinewave_is_ready", (DL_FUNC)&wk_even_better_sinewave_is_ready, 1},
   {"wk_even_better_sinewave_reset", (DL_FUNC)&wk_even_better_sinewave_reset, 1},
   {"wk_evening_doji_star_new", (DL_FUNC)&wk_evening_doji_star_new, 0},
   {"wk_evening_doji_star_update", (DL_FUNC)&wk_evening_doji_star_update, 7},
   {"wk_evening_doji_star_batch", (DL_FUNC)&wk_evening_doji_star_batch, 7},
+  {"wk_evening_doji_star_warmup_period", (DL_FUNC)&wk_evening_doji_star_warmup_period, 1},
+  {"wk_evening_doji_star_is_ready", (DL_FUNC)&wk_evening_doji_star_is_ready, 1},
   {"wk_evening_doji_star_reset", (DL_FUNC)&wk_evening_doji_star_reset, 1},
   {"wk_evwma_new", (DL_FUNC)&wk_evwma_new, 1},
   {"wk_evwma_update", (DL_FUNC)&wk_evwma_update, 7},
   {"wk_evwma_batch", (DL_FUNC)&wk_evwma_batch, 7},
+  {"wk_evwma_warmup_period", (DL_FUNC)&wk_evwma_warmup_period, 1},
+  {"wk_evwma_is_ready", (DL_FUNC)&wk_evwma_is_ready, 1},
   {"wk_evwma_reset", (DL_FUNC)&wk_evwma_reset, 1},
   {"wk_ewma_volatility_new", (DL_FUNC)&wk_ewma_volatility_new, 1},
   {"wk_ewma_volatility_update", (DL_FUNC)&wk_ewma_volatility_update, 2},
   {"wk_ewma_volatility_batch", (DL_FUNC)&wk_ewma_volatility_batch, 2},
+  {"wk_ewma_volatility_warmup_period", (DL_FUNC)&wk_ewma_volatility_warmup_period, 1},
+  {"wk_ewma_volatility_is_ready", (DL_FUNC)&wk_ewma_volatility_is_ready, 1},
   {"wk_ewma_volatility_reset", (DL_FUNC)&wk_ewma_volatility_reset, 1},
   {"wk_expectancy_new", (DL_FUNC)&wk_expectancy_new, 1},
   {"wk_expectancy_update", (DL_FUNC)&wk_expectancy_update, 2},
   {"wk_expectancy_batch", (DL_FUNC)&wk_expectancy_batch, 2},
+  {"wk_expectancy_warmup_period", (DL_FUNC)&wk_expectancy_warmup_period, 1},
+  {"wk_expectancy_is_ready", (DL_FUNC)&wk_expectancy_is_ready, 1},
   {"wk_expectancy_reset", (DL_FUNC)&wk_expectancy_reset, 1},
   {"wk_falling_three_methods_new", (DL_FUNC)&wk_falling_three_methods_new, 0},
   {"wk_falling_three_methods_update", (DL_FUNC)&wk_falling_three_methods_update, 7},
   {"wk_falling_three_methods_batch", (DL_FUNC)&wk_falling_three_methods_batch, 7},
+  {"wk_falling_three_methods_warmup_period", (DL_FUNC)&wk_falling_three_methods_warmup_period, 1},
+  {"wk_falling_three_methods_is_ready", (DL_FUNC)&wk_falling_three_methods_is_ready, 1},
   {"wk_falling_three_methods_reset", (DL_FUNC)&wk_falling_three_methods_reset, 1},
   {"wk_fama_new", (DL_FUNC)&wk_fama_new, 2},
   {"wk_fama_update", (DL_FUNC)&wk_fama_update, 2},
   {"wk_fama_batch", (DL_FUNC)&wk_fama_batch, 2},
+  {"wk_fama_warmup_period", (DL_FUNC)&wk_fama_warmup_period, 1},
+  {"wk_fama_is_ready", (DL_FUNC)&wk_fama_is_ready, 1},
   {"wk_fama_reset", (DL_FUNC)&wk_fama_reset, 1},
   {"wk_fib_arcs_new", (DL_FUNC)&wk_fib_arcs_new, 0},
   {"wk_fib_arcs_update", (DL_FUNC)&wk_fib_arcs_update, 7},
+  {"wk_fib_arcs_warmup_period", (DL_FUNC)&wk_fib_arcs_warmup_period, 1},
+  {"wk_fib_arcs_is_ready", (DL_FUNC)&wk_fib_arcs_is_ready, 1},
   {"wk_fib_arcs_reset", (DL_FUNC)&wk_fib_arcs_reset, 1},
   {"wk_fib_channel_new", (DL_FUNC)&wk_fib_channel_new, 0},
   {"wk_fib_channel_update", (DL_FUNC)&wk_fib_channel_update, 7},
+  {"wk_fib_channel_warmup_period", (DL_FUNC)&wk_fib_channel_warmup_period, 1},
+  {"wk_fib_channel_is_ready", (DL_FUNC)&wk_fib_channel_is_ready, 1},
   {"wk_fib_channel_reset", (DL_FUNC)&wk_fib_channel_reset, 1},
   {"wk_fib_confluence_new", (DL_FUNC)&wk_fib_confluence_new, 0},
   {"wk_fib_confluence_update", (DL_FUNC)&wk_fib_confluence_update, 7},
+  {"wk_fib_confluence_warmup_period", (DL_FUNC)&wk_fib_confluence_warmup_period, 1},
+  {"wk_fib_confluence_is_ready", (DL_FUNC)&wk_fib_confluence_is_ready, 1},
   {"wk_fib_confluence_reset", (DL_FUNC)&wk_fib_confluence_reset, 1},
   {"wk_fib_extension_new", (DL_FUNC)&wk_fib_extension_new, 0},
   {"wk_fib_extension_update", (DL_FUNC)&wk_fib_extension_update, 7},
+  {"wk_fib_extension_warmup_period", (DL_FUNC)&wk_fib_extension_warmup_period, 1},
+  {"wk_fib_extension_is_ready", (DL_FUNC)&wk_fib_extension_is_ready, 1},
   {"wk_fib_extension_reset", (DL_FUNC)&wk_fib_extension_reset, 1},
   {"wk_fib_fan_new", (DL_FUNC)&wk_fib_fan_new, 0},
   {"wk_fib_fan_update", (DL_FUNC)&wk_fib_fan_update, 7},
+  {"wk_fib_fan_warmup_period", (DL_FUNC)&wk_fib_fan_warmup_period, 1},
+  {"wk_fib_fan_is_ready", (DL_FUNC)&wk_fib_fan_is_ready, 1},
   {"wk_fib_fan_reset", (DL_FUNC)&wk_fib_fan_reset, 1},
   {"wk_fib_projection_new", (DL_FUNC)&wk_fib_projection_new, 0},
   {"wk_fib_projection_update", (DL_FUNC)&wk_fib_projection_update, 7},
+  {"wk_fib_projection_warmup_period", (DL_FUNC)&wk_fib_projection_warmup_period, 1},
+  {"wk_fib_projection_is_ready", (DL_FUNC)&wk_fib_projection_is_ready, 1},
   {"wk_fib_projection_reset", (DL_FUNC)&wk_fib_projection_reset, 1},
   {"wk_fib_retracement_new", (DL_FUNC)&wk_fib_retracement_new, 0},
   {"wk_fib_retracement_update", (DL_FUNC)&wk_fib_retracement_update, 7},
+  {"wk_fib_retracement_warmup_period", (DL_FUNC)&wk_fib_retracement_warmup_period, 1},
+  {"wk_fib_retracement_is_ready", (DL_FUNC)&wk_fib_retracement_is_ready, 1},
   {"wk_fib_retracement_reset", (DL_FUNC)&wk_fib_retracement_reset, 1},
   {"wk_fib_time_zones_new", (DL_FUNC)&wk_fib_time_zones_new, 0},
   {"wk_fib_time_zones_update", (DL_FUNC)&wk_fib_time_zones_update, 7},
+  {"wk_fib_time_zones_warmup_period", (DL_FUNC)&wk_fib_time_zones_warmup_period, 1},
+  {"wk_fib_time_zones_is_ready", (DL_FUNC)&wk_fib_time_zones_is_ready, 1},
   {"wk_fib_time_zones_reset", (DL_FUNC)&wk_fib_time_zones_reset, 1},
   {"wk_fibonacci_pivots_new", (DL_FUNC)&wk_fibonacci_pivots_new, 0},
   {"wk_fibonacci_pivots_update", (DL_FUNC)&wk_fibonacci_pivots_update, 7},
+  {"wk_fibonacci_pivots_warmup_period", (DL_FUNC)&wk_fibonacci_pivots_warmup_period, 1},
+  {"wk_fibonacci_pivots_is_ready", (DL_FUNC)&wk_fibonacci_pivots_is_ready, 1},
   {"wk_fibonacci_pivots_reset", (DL_FUNC)&wk_fibonacci_pivots_reset, 1},
   {"wk_fisher_rsi_new", (DL_FUNC)&wk_fisher_rsi_new, 1},
   {"wk_fisher_rsi_update", (DL_FUNC)&wk_fisher_rsi_update, 2},
   {"wk_fisher_rsi_batch", (DL_FUNC)&wk_fisher_rsi_batch, 2},
+  {"wk_fisher_rsi_warmup_period", (DL_FUNC)&wk_fisher_rsi_warmup_period, 1},
+  {"wk_fisher_rsi_is_ready", (DL_FUNC)&wk_fisher_rsi_is_ready, 1},
   {"wk_fisher_rsi_reset", (DL_FUNC)&wk_fisher_rsi_reset, 1},
   {"wk_fisher_transform_new", (DL_FUNC)&wk_fisher_transform_new, 1},
   {"wk_fisher_transform_update", (DL_FUNC)&wk_fisher_transform_update, 2},
   {"wk_fisher_transform_batch", (DL_FUNC)&wk_fisher_transform_batch, 2},
+  {"wk_fisher_transform_warmup_period", (DL_FUNC)&wk_fisher_transform_warmup_period, 1},
+  {"wk_fisher_transform_is_ready", (DL_FUNC)&wk_fisher_transform_is_ready, 1},
   {"wk_fisher_transform_reset", (DL_FUNC)&wk_fisher_transform_reset, 1},
   {"wk_flag_pennant_new", (DL_FUNC)&wk_flag_pennant_new, 0},
   {"wk_flag_pennant_update", (DL_FUNC)&wk_flag_pennant_update, 7},
   {"wk_flag_pennant_batch", (DL_FUNC)&wk_flag_pennant_batch, 7},
+  {"wk_flag_pennant_warmup_period", (DL_FUNC)&wk_flag_pennant_warmup_period, 1},
+  {"wk_flag_pennant_is_ready", (DL_FUNC)&wk_flag_pennant_is_ready, 1},
   {"wk_flag_pennant_reset", (DL_FUNC)&wk_flag_pennant_reset, 1},
   {"wk_footprint_new", (DL_FUNC)&wk_footprint_new, 1},
   {"wk_footprint_update", (DL_FUNC)&wk_footprint_update, 5},
+  {"wk_footprint_warmup_period", (DL_FUNC)&wk_footprint_warmup_period, 1},
+  {"wk_footprint_is_ready", (DL_FUNC)&wk_footprint_is_ready, 1},
   {"wk_footprint_reset", (DL_FUNC)&wk_footprint_reset, 1},
   {"wk_force_index_new", (DL_FUNC)&wk_force_index_new, 1},
   {"wk_force_index_update", (DL_FUNC)&wk_force_index_update, 7},
   {"wk_force_index_batch", (DL_FUNC)&wk_force_index_batch, 7},
+  {"wk_force_index_warmup_period", (DL_FUNC)&wk_force_index_warmup_period, 1},
+  {"wk_force_index_is_ready", (DL_FUNC)&wk_force_index_is_ready, 1},
   {"wk_force_index_reset", (DL_FUNC)&wk_force_index_reset, 1},
   {"wk_fractal_chaos_bands_new", (DL_FUNC)&wk_fractal_chaos_bands_new, 1},
   {"wk_fractal_chaos_bands_update", (DL_FUNC)&wk_fractal_chaos_bands_update, 7},
+  {"wk_fractal_chaos_bands_warmup_period", (DL_FUNC)&wk_fractal_chaos_bands_warmup_period, 1},
+  {"wk_fractal_chaos_bands_is_ready", (DL_FUNC)&wk_fractal_chaos_bands_is_ready, 1},
   {"wk_fractal_chaos_bands_reset", (DL_FUNC)&wk_fractal_chaos_bands_reset, 1},
   {"wk_frama_new", (DL_FUNC)&wk_frama_new, 1},
   {"wk_frama_update", (DL_FUNC)&wk_frama_update, 2},
   {"wk_frama_batch", (DL_FUNC)&wk_frama_batch, 2},
+  {"wk_frama_warmup_period", (DL_FUNC)&wk_frama_warmup_period, 1},
+  {"wk_frama_is_ready", (DL_FUNC)&wk_frama_is_ready, 1},
   {"wk_frama_reset", (DL_FUNC)&wk_frama_reset, 1},
   {"wk_fry_pan_bottom_new", (DL_FUNC)&wk_fry_pan_bottom_new, 1},
   {"wk_fry_pan_bottom_update", (DL_FUNC)&wk_fry_pan_bottom_update, 7},
   {"wk_fry_pan_bottom_batch", (DL_FUNC)&wk_fry_pan_bottom_batch, 7},
+  {"wk_fry_pan_bottom_warmup_period", (DL_FUNC)&wk_fry_pan_bottom_warmup_period, 1},
+  {"wk_fry_pan_bottom_is_ready", (DL_FUNC)&wk_fry_pan_bottom_is_ready, 1},
   {"wk_fry_pan_bottom_reset", (DL_FUNC)&wk_fry_pan_bottom_reset, 1},
   {"wk_funding_basis_new", (DL_FUNC)&wk_funding_basis_new, 0},
   {"wk_funding_basis_update", (DL_FUNC)&wk_funding_basis_update, 13},
+  {"wk_funding_basis_warmup_period", (DL_FUNC)&wk_funding_basis_warmup_period, 1},
+  {"wk_funding_basis_is_ready", (DL_FUNC)&wk_funding_basis_is_ready, 1},
   {"wk_funding_basis_reset", (DL_FUNC)&wk_funding_basis_reset, 1},
   {"wk_funding_implied_apr_new", (DL_FUNC)&wk_funding_implied_apr_new, 1},
   {"wk_funding_implied_apr_update", (DL_FUNC)&wk_funding_implied_apr_update, 13},
+  {"wk_funding_implied_apr_warmup_period", (DL_FUNC)&wk_funding_implied_apr_warmup_period, 1},
+  {"wk_funding_implied_apr_is_ready", (DL_FUNC)&wk_funding_implied_apr_is_ready, 1},
   {"wk_funding_implied_apr_reset", (DL_FUNC)&wk_funding_implied_apr_reset, 1},
   {"wk_funding_rate_new", (DL_FUNC)&wk_funding_rate_new, 0},
   {"wk_funding_rate_update", (DL_FUNC)&wk_funding_rate_update, 13},
+  {"wk_funding_rate_warmup_period", (DL_FUNC)&wk_funding_rate_warmup_period, 1},
+  {"wk_funding_rate_is_ready", (DL_FUNC)&wk_funding_rate_is_ready, 1},
   {"wk_funding_rate_reset", (DL_FUNC)&wk_funding_rate_reset, 1},
   {"wk_funding_rate_mean_new", (DL_FUNC)&wk_funding_rate_mean_new, 1},
   {"wk_funding_rate_mean_update", (DL_FUNC)&wk_funding_rate_mean_update, 13},
+  {"wk_funding_rate_mean_warmup_period", (DL_FUNC)&wk_funding_rate_mean_warmup_period, 1},
+  {"wk_funding_rate_mean_is_ready", (DL_FUNC)&wk_funding_rate_mean_is_ready, 1},
   {"wk_funding_rate_mean_reset", (DL_FUNC)&wk_funding_rate_mean_reset, 1},
   {"wk_funding_rate_z_score_new", (DL_FUNC)&wk_funding_rate_z_score_new, 1},
   {"wk_funding_rate_z_score_update", (DL_FUNC)&wk_funding_rate_z_score_update, 13},
+  {"wk_funding_rate_z_score_warmup_period", (DL_FUNC)&wk_funding_rate_z_score_warmup_period, 1},
+  {"wk_funding_rate_z_score_is_ready", (DL_FUNC)&wk_funding_rate_z_score_is_ready, 1},
   {"wk_funding_rate_z_score_reset", (DL_FUNC)&wk_funding_rate_z_score_reset, 1},
   {"wk_gain_loss_ratio_new", (DL_FUNC)&wk_gain_loss_ratio_new, 1},
   {"wk_gain_loss_ratio_update", (DL_FUNC)&wk_gain_loss_ratio_update, 2},
   {"wk_gain_loss_ratio_batch", (DL_FUNC)&wk_gain_loss_ratio_batch, 2},
+  {"wk_gain_loss_ratio_warmup_period", (DL_FUNC)&wk_gain_loss_ratio_warmup_period, 1},
+  {"wk_gain_loss_ratio_is_ready", (DL_FUNC)&wk_gain_loss_ratio_is_ready, 1},
   {"wk_gain_loss_ratio_reset", (DL_FUNC)&wk_gain_loss_ratio_reset, 1},
   {"wk_gain_to_pain_ratio_new", (DL_FUNC)&wk_gain_to_pain_ratio_new, 1},
   {"wk_gain_to_pain_ratio_update", (DL_FUNC)&wk_gain_to_pain_ratio_update, 2},
   {"wk_gain_to_pain_ratio_batch", (DL_FUNC)&wk_gain_to_pain_ratio_batch, 2},
+  {"wk_gain_to_pain_ratio_warmup_period", (DL_FUNC)&wk_gain_to_pain_ratio_warmup_period, 1},
+  {"wk_gain_to_pain_ratio_is_ready", (DL_FUNC)&wk_gain_to_pain_ratio_is_ready, 1},
   {"wk_gain_to_pain_ratio_reset", (DL_FUNC)&wk_gain_to_pain_ratio_reset, 1},
   {"wk_gap_side_by_side_white_new", (DL_FUNC)&wk_gap_side_by_side_white_new, 0},
   {"wk_gap_side_by_side_white_update", (DL_FUNC)&wk_gap_side_by_side_white_update, 7},
   {"wk_gap_side_by_side_white_batch", (DL_FUNC)&wk_gap_side_by_side_white_batch, 7},
+  {"wk_gap_side_by_side_white_warmup_period", (DL_FUNC)&wk_gap_side_by_side_white_warmup_period, 1},
+  {"wk_gap_side_by_side_white_is_ready", (DL_FUNC)&wk_gap_side_by_side_white_is_ready, 1},
   {"wk_gap_side_by_side_white_reset", (DL_FUNC)&wk_gap_side_by_side_white_reset, 1},
   {"wk_garch11_new", (DL_FUNC)&wk_garch11_new, 3},
   {"wk_garch11_update", (DL_FUNC)&wk_garch11_update, 2},
   {"wk_garch11_batch", (DL_FUNC)&wk_garch11_batch, 2},
+  {"wk_garch11_warmup_period", (DL_FUNC)&wk_garch11_warmup_period, 1},
+  {"wk_garch11_is_ready", (DL_FUNC)&wk_garch11_is_ready, 1},
   {"wk_garch11_reset", (DL_FUNC)&wk_garch11_reset, 1},
   {"wk_garman_klass_volatility_new", (DL_FUNC)&wk_garman_klass_volatility_new, 2},
   {"wk_garman_klass_volatility_update", (DL_FUNC)&wk_garman_klass_volatility_update, 7},
   {"wk_garman_klass_volatility_batch", (DL_FUNC)&wk_garman_klass_volatility_batch, 7},
+  {"wk_garman_klass_volatility_warmup_period", (DL_FUNC)&wk_garman_klass_volatility_warmup_period, 1},
+  {"wk_garman_klass_volatility_is_ready", (DL_FUNC)&wk_garman_klass_volatility_is_ready, 1},
   {"wk_garman_klass_volatility_reset", (DL_FUNC)&wk_garman_klass_volatility_reset, 1},
   {"wk_gartley_new", (DL_FUNC)&wk_gartley_new, 0},
   {"wk_gartley_update", (DL_FUNC)&wk_gartley_update, 7},
   {"wk_gartley_batch", (DL_FUNC)&wk_gartley_batch, 7},
+  {"wk_gartley_warmup_period", (DL_FUNC)&wk_gartley_warmup_period, 1},
+  {"wk_gartley_is_ready", (DL_FUNC)&wk_gartley_is_ready, 1},
   {"wk_gartley_reset", (DL_FUNC)&wk_gartley_reset, 1},
   {"wk_gator_oscillator_new", (DL_FUNC)&wk_gator_oscillator_new, 3},
   {"wk_gator_oscillator_update", (DL_FUNC)&wk_gator_oscillator_update, 7},
+  {"wk_gator_oscillator_warmup_period", (DL_FUNC)&wk_gator_oscillator_warmup_period, 1},
+  {"wk_gator_oscillator_is_ready", (DL_FUNC)&wk_gator_oscillator_is_ready, 1},
   {"wk_gator_oscillator_reset", (DL_FUNC)&wk_gator_oscillator_reset, 1},
   {"wk_generalized_dema_new", (DL_FUNC)&wk_generalized_dema_new, 2},
   {"wk_generalized_dema_update", (DL_FUNC)&wk_generalized_dema_update, 2},
   {"wk_generalized_dema_batch", (DL_FUNC)&wk_generalized_dema_batch, 2},
+  {"wk_generalized_dema_warmup_period", (DL_FUNC)&wk_generalized_dema_warmup_period, 1},
+  {"wk_generalized_dema_is_ready", (DL_FUNC)&wk_generalized_dema_is_ready, 1},
   {"wk_generalized_dema_reset", (DL_FUNC)&wk_generalized_dema_reset, 1},
   {"wk_geometric_ma_new", (DL_FUNC)&wk_geometric_ma_new, 1},
   {"wk_geometric_ma_update", (DL_FUNC)&wk_geometric_ma_update, 2},
   {"wk_geometric_ma_batch", (DL_FUNC)&wk_geometric_ma_batch, 2},
+  {"wk_geometric_ma_warmup_period", (DL_FUNC)&wk_geometric_ma_warmup_period, 1},
+  {"wk_geometric_ma_is_ready", (DL_FUNC)&wk_geometric_ma_is_ready, 1},
   {"wk_geometric_ma_reset", (DL_FUNC)&wk_geometric_ma_reset, 1},
   {"wk_golden_pocket_new", (DL_FUNC)&wk_golden_pocket_new, 0},
   {"wk_golden_pocket_update", (DL_FUNC)&wk_golden_pocket_update, 7},
+  {"wk_golden_pocket_warmup_period", (DL_FUNC)&wk_golden_pocket_warmup_period, 1},
+  {"wk_golden_pocket_is_ready", (DL_FUNC)&wk_golden_pocket_is_ready, 1},
   {"wk_golden_pocket_reset", (DL_FUNC)&wk_golden_pocket_reset, 1},
   {"wk_granger_causality_new", (DL_FUNC)&wk_granger_causality_new, 2},
   {"wk_granger_causality_update", (DL_FUNC)&wk_granger_causality_update, 3},
   {"wk_granger_causality_batch", (DL_FUNC)&wk_granger_causality_batch, 3},
+  {"wk_granger_causality_warmup_period", (DL_FUNC)&wk_granger_causality_warmup_period, 1},
+  {"wk_granger_causality_is_ready", (DL_FUNC)&wk_granger_causality_is_ready, 1},
   {"wk_granger_causality_reset", (DL_FUNC)&wk_granger_causality_reset, 1},
   {"wk_gravestone_doji_new", (DL_FUNC)&wk_gravestone_doji_new, 0},
   {"wk_gravestone_doji_update", (DL_FUNC)&wk_gravestone_doji_update, 7},
   {"wk_gravestone_doji_batch", (DL_FUNC)&wk_gravestone_doji_batch, 7},
+  {"wk_gravestone_doji_warmup_period", (DL_FUNC)&wk_gravestone_doji_warmup_period, 1},
+  {"wk_gravestone_doji_is_ready", (DL_FUNC)&wk_gravestone_doji_is_ready, 1},
   {"wk_gravestone_doji_reset", (DL_FUNC)&wk_gravestone_doji_reset, 1},
   {"wk_hammer_new", (DL_FUNC)&wk_hammer_new, 0},
   {"wk_hammer_update", (DL_FUNC)&wk_hammer_update, 7},
   {"wk_hammer_batch", (DL_FUNC)&wk_hammer_batch, 7},
+  {"wk_hammer_warmup_period", (DL_FUNC)&wk_hammer_warmup_period, 1},
+  {"wk_hammer_is_ready", (DL_FUNC)&wk_hammer_is_ready, 1},
   {"wk_hammer_reset", (DL_FUNC)&wk_hammer_reset, 1},
   {"wk_hanging_man_new", (DL_FUNC)&wk_hanging_man_new, 0},
   {"wk_hanging_man_update", (DL_FUNC)&wk_hanging_man_update, 7},
   {"wk_hanging_man_batch", (DL_FUNC)&wk_hanging_man_batch, 7},
+  {"wk_hanging_man_warmup_period", (DL_FUNC)&wk_hanging_man_warmup_period, 1},
+  {"wk_hanging_man_is_ready", (DL_FUNC)&wk_hanging_man_is_ready, 1},
   {"wk_hanging_man_reset", (DL_FUNC)&wk_hanging_man_reset, 1},
   {"wk_harami_new", (DL_FUNC)&wk_harami_new, 0},
   {"wk_harami_update", (DL_FUNC)&wk_harami_update, 7},
   {"wk_harami_batch", (DL_FUNC)&wk_harami_batch, 7},
+  {"wk_harami_warmup_period", (DL_FUNC)&wk_harami_warmup_period, 1},
+  {"wk_harami_is_ready", (DL_FUNC)&wk_harami_is_ready, 1},
   {"wk_harami_reset", (DL_FUNC)&wk_harami_reset, 1},
   {"wk_harami_cross_new", (DL_FUNC)&wk_harami_cross_new, 0},
   {"wk_harami_cross_update", (DL_FUNC)&wk_harami_cross_update, 7},
   {"wk_harami_cross_batch", (DL_FUNC)&wk_harami_cross_batch, 7},
+  {"wk_harami_cross_warmup_period", (DL_FUNC)&wk_harami_cross_warmup_period, 1},
+  {"wk_harami_cross_is_ready", (DL_FUNC)&wk_harami_cross_is_ready, 1},
   {"wk_harami_cross_reset", (DL_FUNC)&wk_harami_cross_reset, 1},
   {"wk_hasbrouck_information_share_new", (DL_FUNC)&wk_hasbrouck_information_share_new, 1},
   {"wk_hasbrouck_information_share_update", (DL_FUNC)&wk_hasbrouck_information_share_update, 3},
   {"wk_hasbrouck_information_share_batch", (DL_FUNC)&wk_hasbrouck_information_share_batch, 3},
+  {"wk_hasbrouck_information_share_warmup_period", (DL_FUNC)&wk_hasbrouck_information_share_warmup_period, 1},
+  {"wk_hasbrouck_information_share_is_ready", (DL_FUNC)&wk_hasbrouck_information_share_is_ready, 1},
   {"wk_hasbrouck_information_share_reset", (DL_FUNC)&wk_hasbrouck_information_share_reset, 1},
   {"wk_head_and_shoulders_new", (DL_FUNC)&wk_head_and_shoulders_new, 0},
   {"wk_head_and_shoulders_update", (DL_FUNC)&wk_head_and_shoulders_update, 7},
   {"wk_head_and_shoulders_batch", (DL_FUNC)&wk_head_and_shoulders_batch, 7},
+  {"wk_head_and_shoulders_warmup_period", (DL_FUNC)&wk_head_and_shoulders_warmup_period, 1},
+  {"wk_head_and_shoulders_is_ready", (DL_FUNC)&wk_head_and_shoulders_is_ready, 1},
   {"wk_head_and_shoulders_reset", (DL_FUNC)&wk_head_and_shoulders_reset, 1},
   {"wk_heikin_ashi_new", (DL_FUNC)&wk_heikin_ashi_new, 0},
   {"wk_heikin_ashi_update", (DL_FUNC)&wk_heikin_ashi_update, 7},
+  {"wk_heikin_ashi_warmup_period", (DL_FUNC)&wk_heikin_ashi_warmup_period, 1},
+  {"wk_heikin_ashi_is_ready", (DL_FUNC)&wk_heikin_ashi_is_ready, 1},
   {"wk_heikin_ashi_reset", (DL_FUNC)&wk_heikin_ashi_reset, 1},
   {"wk_heikin_ashi_oscillator_new", (DL_FUNC)&wk_heikin_ashi_oscillator_new, 1},
   {"wk_heikin_ashi_oscillator_update", (DL_FUNC)&wk_heikin_ashi_oscillator_update, 7},
   {"wk_heikin_ashi_oscillator_batch", (DL_FUNC)&wk_heikin_ashi_oscillator_batch, 7},
+  {"wk_heikin_ashi_oscillator_warmup_period", (DL_FUNC)&wk_heikin_ashi_oscillator_warmup_period, 1},
+  {"wk_heikin_ashi_oscillator_is_ready", (DL_FUNC)&wk_heikin_ashi_oscillator_is_ready, 1},
   {"wk_heikin_ashi_oscillator_reset", (DL_FUNC)&wk_heikin_ashi_oscillator_reset, 1},
   {"wk_hi_lo_activator_new", (DL_FUNC)&wk_hi_lo_activator_new, 1},
   {"wk_hi_lo_activator_update", (DL_FUNC)&wk_hi_lo_activator_update, 7},
   {"wk_hi_lo_activator_batch", (DL_FUNC)&wk_hi_lo_activator_batch, 7},
+  {"wk_hi_lo_activator_warmup_period", (DL_FUNC)&wk_hi_lo_activator_warmup_period, 1},
+  {"wk_hi_lo_activator_is_ready", (DL_FUNC)&wk_hi_lo_activator_is_ready, 1},
   {"wk_hi_lo_activator_reset", (DL_FUNC)&wk_hi_lo_activator_reset, 1},
   {"wk_high_low_index_new", (DL_FUNC)&wk_high_low_index_new, 1},
   {"wk_high_low_index_update", (DL_FUNC)&wk_high_low_index_update, 8},
+  {"wk_high_low_index_warmup_period", (DL_FUNC)&wk_high_low_index_warmup_period, 1},
+  {"wk_high_low_index_is_ready", (DL_FUNC)&wk_high_low_index_is_ready, 1},
   {"wk_high_low_index_reset", (DL_FUNC)&wk_high_low_index_reset, 1},
   {"wk_high_low_range_new", (DL_FUNC)&wk_high_low_range_new, 0},
   {"wk_high_low_range_update", (DL_FUNC)&wk_high_low_range_update, 7},
   {"wk_high_low_range_batch", (DL_FUNC)&wk_high_low_range_batch, 7},
+  {"wk_high_low_range_warmup_period", (DL_FUNC)&wk_high_low_range_warmup_period, 1},
+  {"wk_high_low_range_is_ready", (DL_FUNC)&wk_high_low_range_is_ready, 1},
   {"wk_high_low_range_reset", (DL_FUNC)&wk_high_low_range_reset, 1},
   {"wk_high_low_volume_nodes_new", (DL_FUNC)&wk_high_low_volume_nodes_new, 2},
   {"wk_high_low_volume_nodes_update", (DL_FUNC)&wk_high_low_volume_nodes_update, 7},
+  {"wk_high_low_volume_nodes_warmup_period", (DL_FUNC)&wk_high_low_volume_nodes_warmup_period, 1},
+  {"wk_high_low_volume_nodes_is_ready", (DL_FUNC)&wk_high_low_volume_nodes_is_ready, 1},
   {"wk_high_low_volume_nodes_reset", (DL_FUNC)&wk_high_low_volume_nodes_reset, 1},
   {"wk_high_wave_new", (DL_FUNC)&wk_high_wave_new, 0},
   {"wk_high_wave_update", (DL_FUNC)&wk_high_wave_update, 7},
   {"wk_high_wave_batch", (DL_FUNC)&wk_high_wave_batch, 7},
+  {"wk_high_wave_warmup_period", (DL_FUNC)&wk_high_wave_warmup_period, 1},
+  {"wk_high_wave_is_ready", (DL_FUNC)&wk_high_wave_is_ready, 1},
   {"wk_high_wave_reset", (DL_FUNC)&wk_high_wave_reset, 1},
   {"wk_highpass_filter_new", (DL_FUNC)&wk_highpass_filter_new, 1},
   {"wk_highpass_filter_update", (DL_FUNC)&wk_highpass_filter_update, 2},
   {"wk_highpass_filter_batch", (DL_FUNC)&wk_highpass_filter_batch, 2},
+  {"wk_highpass_filter_warmup_period", (DL_FUNC)&wk_highpass_filter_warmup_period, 1},
+  {"wk_highpass_filter_is_ready", (DL_FUNC)&wk_highpass_filter_is_ready, 1},
   {"wk_highpass_filter_reset", (DL_FUNC)&wk_highpass_filter_reset, 1},
   {"wk_hikkake_new", (DL_FUNC)&wk_hikkake_new, 0},
   {"wk_hikkake_update", (DL_FUNC)&wk_hikkake_update, 7},
   {"wk_hikkake_batch", (DL_FUNC)&wk_hikkake_batch, 7},
+  {"wk_hikkake_warmup_period", (DL_FUNC)&wk_hikkake_warmup_period, 1},
+  {"wk_hikkake_is_ready", (DL_FUNC)&wk_hikkake_is_ready, 1},
   {"wk_hikkake_reset", (DL_FUNC)&wk_hikkake_reset, 1},
   {"wk_hikkake_modified_new", (DL_FUNC)&wk_hikkake_modified_new, 0},
   {"wk_hikkake_modified_update", (DL_FUNC)&wk_hikkake_modified_update, 7},
   {"wk_hikkake_modified_batch", (DL_FUNC)&wk_hikkake_modified_batch, 7},
+  {"wk_hikkake_modified_warmup_period", (DL_FUNC)&wk_hikkake_modified_warmup_period, 1},
+  {"wk_hikkake_modified_is_ready", (DL_FUNC)&wk_hikkake_modified_is_ready, 1},
   {"wk_hikkake_modified_reset", (DL_FUNC)&wk_hikkake_modified_reset, 1},
   {"wk_hilbert_dominant_cycle_new", (DL_FUNC)&wk_hilbert_dominant_cycle_new, 0},
   {"wk_hilbert_dominant_cycle_update", (DL_FUNC)&wk_hilbert_dominant_cycle_update, 2},
   {"wk_hilbert_dominant_cycle_batch", (DL_FUNC)&wk_hilbert_dominant_cycle_batch, 2},
+  {"wk_hilbert_dominant_cycle_warmup_period", (DL_FUNC)&wk_hilbert_dominant_cycle_warmup_period, 1},
+  {"wk_hilbert_dominant_cycle_is_ready", (DL_FUNC)&wk_hilbert_dominant_cycle_is_ready, 1},
   {"wk_hilbert_dominant_cycle_reset", (DL_FUNC)&wk_hilbert_dominant_cycle_reset, 1},
   {"wk_historical_volatility_new", (DL_FUNC)&wk_historical_volatility_new, 2},
   {"wk_historical_volatility_update", (DL_FUNC)&wk_historical_volatility_update, 2},
   {"wk_historical_volatility_batch", (DL_FUNC)&wk_historical_volatility_batch, 2},
+  {"wk_historical_volatility_warmup_period", (DL_FUNC)&wk_historical_volatility_warmup_period, 1},
+  {"wk_historical_volatility_is_ready", (DL_FUNC)&wk_historical_volatility_is_ready, 1},
   {"wk_historical_volatility_reset", (DL_FUNC)&wk_historical_volatility_reset, 1},
   {"wk_hma_new", (DL_FUNC)&wk_hma_new, 1},
   {"wk_hma_update", (DL_FUNC)&wk_hma_update, 2},
   {"wk_hma_batch", (DL_FUNC)&wk_hma_batch, 2},
+  {"wk_hma_warmup_period", (DL_FUNC)&wk_hma_warmup_period, 1},
+  {"wk_hma_is_ready", (DL_FUNC)&wk_hma_is_ready, 1},
   {"wk_hma_reset", (DL_FUNC)&wk_hma_reset, 1},
   {"wk_holt_winters_new", (DL_FUNC)&wk_holt_winters_new, 2},
   {"wk_holt_winters_update", (DL_FUNC)&wk_holt_winters_update, 2},
   {"wk_holt_winters_batch", (DL_FUNC)&wk_holt_winters_batch, 2},
+  {"wk_holt_winters_warmup_period", (DL_FUNC)&wk_holt_winters_warmup_period, 1},
+  {"wk_holt_winters_is_ready", (DL_FUNC)&wk_holt_winters_is_ready, 1},
   {"wk_holt_winters_reset", (DL_FUNC)&wk_holt_winters_reset, 1},
   {"wk_homing_pigeon_new", (DL_FUNC)&wk_homing_pigeon_new, 0},
   {"wk_homing_pigeon_update", (DL_FUNC)&wk_homing_pigeon_update, 7},
   {"wk_homing_pigeon_batch", (DL_FUNC)&wk_homing_pigeon_batch, 7},
+  {"wk_homing_pigeon_warmup_period", (DL_FUNC)&wk_homing_pigeon_warmup_period, 1},
+  {"wk_homing_pigeon_is_ready", (DL_FUNC)&wk_homing_pigeon_is_ready, 1},
   {"wk_homing_pigeon_reset", (DL_FUNC)&wk_homing_pigeon_reset, 1},
   {"wk_ht_dc_phase_new", (DL_FUNC)&wk_ht_dc_phase_new, 0},
   {"wk_ht_dc_phase_update", (DL_FUNC)&wk_ht_dc_phase_update, 2},
   {"wk_ht_dc_phase_batch", (DL_FUNC)&wk_ht_dc_phase_batch, 2},
+  {"wk_ht_dc_phase_warmup_period", (DL_FUNC)&wk_ht_dc_phase_warmup_period, 1},
+  {"wk_ht_dc_phase_is_ready", (DL_FUNC)&wk_ht_dc_phase_is_ready, 1},
   {"wk_ht_dc_phase_reset", (DL_FUNC)&wk_ht_dc_phase_reset, 1},
   {"wk_ht_phasor_new", (DL_FUNC)&wk_ht_phasor_new, 0},
   {"wk_ht_phasor_update", (DL_FUNC)&wk_ht_phasor_update, 2},
+  {"wk_ht_phasor_warmup_period", (DL_FUNC)&wk_ht_phasor_warmup_period, 1},
+  {"wk_ht_phasor_is_ready", (DL_FUNC)&wk_ht_phasor_is_ready, 1},
   {"wk_ht_phasor_reset", (DL_FUNC)&wk_ht_phasor_reset, 1},
   {"wk_ht_trend_mode_new", (DL_FUNC)&wk_ht_trend_mode_new, 0},
   {"wk_ht_trend_mode_update", (DL_FUNC)&wk_ht_trend_mode_update, 2},
   {"wk_ht_trend_mode_batch", (DL_FUNC)&wk_ht_trend_mode_batch, 2},
+  {"wk_ht_trend_mode_warmup_period", (DL_FUNC)&wk_ht_trend_mode_warmup_period, 1},
+  {"wk_ht_trend_mode_is_ready", (DL_FUNC)&wk_ht_trend_mode_is_ready, 1},
   {"wk_ht_trend_mode_reset", (DL_FUNC)&wk_ht_trend_mode_reset, 1},
   {"wk_hurst_channel_new", (DL_FUNC)&wk_hurst_channel_new, 2},
   {"wk_hurst_channel_update", (DL_FUNC)&wk_hurst_channel_update, 7},
+  {"wk_hurst_channel_warmup_period", (DL_FUNC)&wk_hurst_channel_warmup_period, 1},
+  {"wk_hurst_channel_is_ready", (DL_FUNC)&wk_hurst_channel_is_ready, 1},
   {"wk_hurst_channel_reset", (DL_FUNC)&wk_hurst_channel_reset, 1},
   {"wk_hurst_exponent_new", (DL_FUNC)&wk_hurst_exponent_new, 2},
   {"wk_hurst_exponent_update", (DL_FUNC)&wk_hurst_exponent_update, 2},
   {"wk_hurst_exponent_batch", (DL_FUNC)&wk_hurst_exponent_batch, 2},
+  {"wk_hurst_exponent_warmup_period", (DL_FUNC)&wk_hurst_exponent_warmup_period, 1},
+  {"wk_hurst_exponent_is_ready", (DL_FUNC)&wk_hurst_exponent_is_ready, 1},
   {"wk_hurst_exponent_reset", (DL_FUNC)&wk_hurst_exponent_reset, 1},
   {"wk_ichimoku_new", (DL_FUNC)&wk_ichimoku_new, 4},
   {"wk_ichimoku_update", (DL_FUNC)&wk_ichimoku_update, 7},
+  {"wk_ichimoku_warmup_period", (DL_FUNC)&wk_ichimoku_warmup_period, 1},
+  {"wk_ichimoku_is_ready", (DL_FUNC)&wk_ichimoku_is_ready, 1},
   {"wk_ichimoku_reset", (DL_FUNC)&wk_ichimoku_reset, 1},
   {"wk_identical_three_crows_new", (DL_FUNC)&wk_identical_three_crows_new, 0},
   {"wk_identical_three_crows_update", (DL_FUNC)&wk_identical_three_crows_update, 7},
   {"wk_identical_three_crows_batch", (DL_FUNC)&wk_identical_three_crows_batch, 7},
+  {"wk_identical_three_crows_warmup_period", (DL_FUNC)&wk_identical_three_crows_warmup_period, 1},
+  {"wk_identical_three_crows_is_ready", (DL_FUNC)&wk_identical_three_crows_is_ready, 1},
   {"wk_identical_three_crows_reset", (DL_FUNC)&wk_identical_three_crows_reset, 1},
   {"wk_imbalance_bars_new", (DL_FUNC)&wk_imbalance_bars_new, 1},
   {"wk_imbalance_bars_update", (DL_FUNC)&wk_imbalance_bars_update, 7},
@@ -17160,410 +21582,632 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_in_neck_new", (DL_FUNC)&wk_in_neck_new, 0},
   {"wk_in_neck_update", (DL_FUNC)&wk_in_neck_update, 7},
   {"wk_in_neck_batch", (DL_FUNC)&wk_in_neck_batch, 7},
+  {"wk_in_neck_warmup_period", (DL_FUNC)&wk_in_neck_warmup_period, 1},
+  {"wk_in_neck_is_ready", (DL_FUNC)&wk_in_neck_is_ready, 1},
   {"wk_in_neck_reset", (DL_FUNC)&wk_in_neck_reset, 1},
   {"wk_inertia_new", (DL_FUNC)&wk_inertia_new, 2},
   {"wk_inertia_update", (DL_FUNC)&wk_inertia_update, 7},
   {"wk_inertia_batch", (DL_FUNC)&wk_inertia_batch, 7},
+  {"wk_inertia_warmup_period", (DL_FUNC)&wk_inertia_warmup_period, 1},
+  {"wk_inertia_is_ready", (DL_FUNC)&wk_inertia_is_ready, 1},
   {"wk_inertia_reset", (DL_FUNC)&wk_inertia_reset, 1},
   {"wk_information_ratio_new", (DL_FUNC)&wk_information_ratio_new, 1},
   {"wk_information_ratio_update", (DL_FUNC)&wk_information_ratio_update, 3},
   {"wk_information_ratio_batch", (DL_FUNC)&wk_information_ratio_batch, 3},
+  {"wk_information_ratio_warmup_period", (DL_FUNC)&wk_information_ratio_warmup_period, 1},
+  {"wk_information_ratio_is_ready", (DL_FUNC)&wk_information_ratio_is_ready, 1},
   {"wk_information_ratio_reset", (DL_FUNC)&wk_information_ratio_reset, 1},
   {"wk_initial_balance_new", (DL_FUNC)&wk_initial_balance_new, 1},
   {"wk_initial_balance_update", (DL_FUNC)&wk_initial_balance_update, 7},
+  {"wk_initial_balance_warmup_period", (DL_FUNC)&wk_initial_balance_warmup_period, 1},
+  {"wk_initial_balance_is_ready", (DL_FUNC)&wk_initial_balance_is_ready, 1},
   {"wk_initial_balance_reset", (DL_FUNC)&wk_initial_balance_reset, 1},
   {"wk_instantaneous_trendline_new", (DL_FUNC)&wk_instantaneous_trendline_new, 1},
   {"wk_instantaneous_trendline_update", (DL_FUNC)&wk_instantaneous_trendline_update, 2},
   {"wk_instantaneous_trendline_batch", (DL_FUNC)&wk_instantaneous_trendline_batch, 2},
+  {"wk_instantaneous_trendline_warmup_period", (DL_FUNC)&wk_instantaneous_trendline_warmup_period, 1},
+  {"wk_instantaneous_trendline_is_ready", (DL_FUNC)&wk_instantaneous_trendline_is_ready, 1},
   {"wk_instantaneous_trendline_reset", (DL_FUNC)&wk_instantaneous_trendline_reset, 1},
   {"wk_intraday_intensity_new", (DL_FUNC)&wk_intraday_intensity_new, 0},
   {"wk_intraday_intensity_update", (DL_FUNC)&wk_intraday_intensity_update, 7},
   {"wk_intraday_intensity_batch", (DL_FUNC)&wk_intraday_intensity_batch, 7},
+  {"wk_intraday_intensity_warmup_period", (DL_FUNC)&wk_intraday_intensity_warmup_period, 1},
+  {"wk_intraday_intensity_is_ready", (DL_FUNC)&wk_intraday_intensity_is_ready, 1},
   {"wk_intraday_intensity_reset", (DL_FUNC)&wk_intraday_intensity_reset, 1},
   {"wk_intraday_momentum_index_new", (DL_FUNC)&wk_intraday_momentum_index_new, 1},
   {"wk_intraday_momentum_index_update", (DL_FUNC)&wk_intraday_momentum_index_update, 7},
   {"wk_intraday_momentum_index_batch", (DL_FUNC)&wk_intraday_momentum_index_batch, 7},
+  {"wk_intraday_momentum_index_warmup_period", (DL_FUNC)&wk_intraday_momentum_index_warmup_period, 1},
+  {"wk_intraday_momentum_index_is_ready", (DL_FUNC)&wk_intraday_momentum_index_is_ready, 1},
   {"wk_intraday_momentum_index_reset", (DL_FUNC)&wk_intraday_momentum_index_reset, 1},
   {"wk_intraday_volatility_profile_new", (DL_FUNC)&wk_intraday_volatility_profile_new, 2},
   {"wk_intraday_volatility_profile_update", (DL_FUNC)&wk_intraday_volatility_profile_update, 8},
+  {"wk_intraday_volatility_profile_warmup_period", (DL_FUNC)&wk_intraday_volatility_profile_warmup_period, 1},
+  {"wk_intraday_volatility_profile_is_ready", (DL_FUNC)&wk_intraday_volatility_profile_is_ready, 1},
   {"wk_intraday_volatility_profile_reset", (DL_FUNC)&wk_intraday_volatility_profile_reset, 1},
   {"wk_inverse_fisher_transform_new", (DL_FUNC)&wk_inverse_fisher_transform_new, 1},
   {"wk_inverse_fisher_transform_update", (DL_FUNC)&wk_inverse_fisher_transform_update, 2},
   {"wk_inverse_fisher_transform_batch", (DL_FUNC)&wk_inverse_fisher_transform_batch, 2},
+  {"wk_inverse_fisher_transform_warmup_period", (DL_FUNC)&wk_inverse_fisher_transform_warmup_period, 1},
+  {"wk_inverse_fisher_transform_is_ready", (DL_FUNC)&wk_inverse_fisher_transform_is_ready, 1},
   {"wk_inverse_fisher_transform_reset", (DL_FUNC)&wk_inverse_fisher_transform_reset, 1},
   {"wk_inverted_hammer_new", (DL_FUNC)&wk_inverted_hammer_new, 0},
   {"wk_inverted_hammer_update", (DL_FUNC)&wk_inverted_hammer_update, 7},
   {"wk_inverted_hammer_batch", (DL_FUNC)&wk_inverted_hammer_batch, 7},
+  {"wk_inverted_hammer_warmup_period", (DL_FUNC)&wk_inverted_hammer_warmup_period, 1},
+  {"wk_inverted_hammer_is_ready", (DL_FUNC)&wk_inverted_hammer_is_ready, 1},
   {"wk_inverted_hammer_reset", (DL_FUNC)&wk_inverted_hammer_reset, 1},
   {"wk_jarque_bera_new", (DL_FUNC)&wk_jarque_bera_new, 1},
   {"wk_jarque_bera_update", (DL_FUNC)&wk_jarque_bera_update, 2},
   {"wk_jarque_bera_batch", (DL_FUNC)&wk_jarque_bera_batch, 2},
+  {"wk_jarque_bera_warmup_period", (DL_FUNC)&wk_jarque_bera_warmup_period, 1},
+  {"wk_jarque_bera_is_ready", (DL_FUNC)&wk_jarque_bera_is_ready, 1},
   {"wk_jarque_bera_reset", (DL_FUNC)&wk_jarque_bera_reset, 1},
   {"wk_jma_new", (DL_FUNC)&wk_jma_new, 3},
   {"wk_jma_update", (DL_FUNC)&wk_jma_update, 2},
   {"wk_jma_batch", (DL_FUNC)&wk_jma_batch, 2},
+  {"wk_jma_warmup_period", (DL_FUNC)&wk_jma_warmup_period, 1},
+  {"wk_jma_is_ready", (DL_FUNC)&wk_jma_is_ready, 1},
   {"wk_jma_reset", (DL_FUNC)&wk_jma_reset, 1},
   {"wk_jump_indicator_new", (DL_FUNC)&wk_jump_indicator_new, 2},
   {"wk_jump_indicator_update", (DL_FUNC)&wk_jump_indicator_update, 2},
   {"wk_jump_indicator_batch", (DL_FUNC)&wk_jump_indicator_batch, 2},
+  {"wk_jump_indicator_warmup_period", (DL_FUNC)&wk_jump_indicator_warmup_period, 1},
+  {"wk_jump_indicator_is_ready", (DL_FUNC)&wk_jump_indicator_is_ready, 1},
   {"wk_jump_indicator_reset", (DL_FUNC)&wk_jump_indicator_reset, 1},
   {"wk_k_ratio_new", (DL_FUNC)&wk_k_ratio_new, 1},
   {"wk_k_ratio_update", (DL_FUNC)&wk_k_ratio_update, 2},
   {"wk_k_ratio_batch", (DL_FUNC)&wk_k_ratio_batch, 2},
+  {"wk_k_ratio_warmup_period", (DL_FUNC)&wk_k_ratio_warmup_period, 1},
+  {"wk_k_ratio_is_ready", (DL_FUNC)&wk_k_ratio_is_ready, 1},
   {"wk_k_ratio_reset", (DL_FUNC)&wk_k_ratio_reset, 1},
   {"wk_kagi_bars_new", (DL_FUNC)&wk_kagi_bars_new, 1},
   {"wk_kagi_bars_update", (DL_FUNC)&wk_kagi_bars_update, 7},
   {"wk_kagi_bars_reset", (DL_FUNC)&wk_kagi_bars_reset, 1},
   {"wk_kalman_hedge_ratio_new", (DL_FUNC)&wk_kalman_hedge_ratio_new, 2},
   {"wk_kalman_hedge_ratio_update", (DL_FUNC)&wk_kalman_hedge_ratio_update, 3},
+  {"wk_kalman_hedge_ratio_warmup_period", (DL_FUNC)&wk_kalman_hedge_ratio_warmup_period, 1},
+  {"wk_kalman_hedge_ratio_is_ready", (DL_FUNC)&wk_kalman_hedge_ratio_is_ready, 1},
   {"wk_kalman_hedge_ratio_reset", (DL_FUNC)&wk_kalman_hedge_ratio_reset, 1},
   {"wk_kama_new", (DL_FUNC)&wk_kama_new, 3},
   {"wk_kama_update", (DL_FUNC)&wk_kama_update, 2},
   {"wk_kama_batch", (DL_FUNC)&wk_kama_batch, 2},
+  {"wk_kama_warmup_period", (DL_FUNC)&wk_kama_warmup_period, 1},
+  {"wk_kama_is_ready", (DL_FUNC)&wk_kama_is_ready, 1},
   {"wk_kama_reset", (DL_FUNC)&wk_kama_reset, 1},
   {"wk_kase_dev_stop_new", (DL_FUNC)&wk_kase_dev_stop_new, 2},
   {"wk_kase_dev_stop_update", (DL_FUNC)&wk_kase_dev_stop_update, 7},
+  {"wk_kase_dev_stop_warmup_period", (DL_FUNC)&wk_kase_dev_stop_warmup_period, 1},
+  {"wk_kase_dev_stop_is_ready", (DL_FUNC)&wk_kase_dev_stop_is_ready, 1},
   {"wk_kase_dev_stop_reset", (DL_FUNC)&wk_kase_dev_stop_reset, 1},
   {"wk_kase_permission_stochastic_new", (DL_FUNC)&wk_kase_permission_stochastic_new, 2},
   {"wk_kase_permission_stochastic_update", (DL_FUNC)&wk_kase_permission_stochastic_update, 7},
+  {"wk_kase_permission_stochastic_warmup_period", (DL_FUNC)&wk_kase_permission_stochastic_warmup_period, 1},
+  {"wk_kase_permission_stochastic_is_ready", (DL_FUNC)&wk_kase_permission_stochastic_is_ready, 1},
   {"wk_kase_permission_stochastic_reset", (DL_FUNC)&wk_kase_permission_stochastic_reset, 1},
   {"wk_kelly_criterion_new", (DL_FUNC)&wk_kelly_criterion_new, 1},
   {"wk_kelly_criterion_update", (DL_FUNC)&wk_kelly_criterion_update, 2},
   {"wk_kelly_criterion_batch", (DL_FUNC)&wk_kelly_criterion_batch, 2},
+  {"wk_kelly_criterion_warmup_period", (DL_FUNC)&wk_kelly_criterion_warmup_period, 1},
+  {"wk_kelly_criterion_is_ready", (DL_FUNC)&wk_kelly_criterion_is_ready, 1},
   {"wk_kelly_criterion_reset", (DL_FUNC)&wk_kelly_criterion_reset, 1},
   {"wk_keltner_new", (DL_FUNC)&wk_keltner_new, 3},
   {"wk_keltner_update", (DL_FUNC)&wk_keltner_update, 7},
+  {"wk_keltner_warmup_period", (DL_FUNC)&wk_keltner_warmup_period, 1},
+  {"wk_keltner_is_ready", (DL_FUNC)&wk_keltner_is_ready, 1},
   {"wk_keltner_reset", (DL_FUNC)&wk_keltner_reset, 1},
   {"wk_kendall_tau_new", (DL_FUNC)&wk_kendall_tau_new, 1},
   {"wk_kendall_tau_update", (DL_FUNC)&wk_kendall_tau_update, 3},
   {"wk_kendall_tau_batch", (DL_FUNC)&wk_kendall_tau_batch, 3},
+  {"wk_kendall_tau_warmup_period", (DL_FUNC)&wk_kendall_tau_warmup_period, 1},
+  {"wk_kendall_tau_is_ready", (DL_FUNC)&wk_kendall_tau_is_ready, 1},
   {"wk_kendall_tau_reset", (DL_FUNC)&wk_kendall_tau_reset, 1},
   {"wk_kicking_new", (DL_FUNC)&wk_kicking_new, 0},
   {"wk_kicking_update", (DL_FUNC)&wk_kicking_update, 7},
   {"wk_kicking_batch", (DL_FUNC)&wk_kicking_batch, 7},
+  {"wk_kicking_warmup_period", (DL_FUNC)&wk_kicking_warmup_period, 1},
+  {"wk_kicking_is_ready", (DL_FUNC)&wk_kicking_is_ready, 1},
   {"wk_kicking_reset", (DL_FUNC)&wk_kicking_reset, 1},
   {"wk_kicking_by_length_new", (DL_FUNC)&wk_kicking_by_length_new, 0},
   {"wk_kicking_by_length_update", (DL_FUNC)&wk_kicking_by_length_update, 7},
   {"wk_kicking_by_length_batch", (DL_FUNC)&wk_kicking_by_length_batch, 7},
+  {"wk_kicking_by_length_warmup_period", (DL_FUNC)&wk_kicking_by_length_warmup_period, 1},
+  {"wk_kicking_by_length_is_ready", (DL_FUNC)&wk_kicking_by_length_is_ready, 1},
   {"wk_kicking_by_length_reset", (DL_FUNC)&wk_kicking_by_length_reset, 1},
   {"wk_kst_new", (DL_FUNC)&wk_kst_new, 9},
   {"wk_kst_update", (DL_FUNC)&wk_kst_update, 2},
+  {"wk_kst_warmup_period", (DL_FUNC)&wk_kst_warmup_period, 1},
+  {"wk_kst_is_ready", (DL_FUNC)&wk_kst_is_ready, 1},
   {"wk_kst_reset", (DL_FUNC)&wk_kst_reset, 1},
   {"wk_kurtosis_new", (DL_FUNC)&wk_kurtosis_new, 1},
   {"wk_kurtosis_update", (DL_FUNC)&wk_kurtosis_update, 2},
   {"wk_kurtosis_batch", (DL_FUNC)&wk_kurtosis_batch, 2},
+  {"wk_kurtosis_warmup_period", (DL_FUNC)&wk_kurtosis_warmup_period, 1},
+  {"wk_kurtosis_is_ready", (DL_FUNC)&wk_kurtosis_is_ready, 1},
   {"wk_kurtosis_reset", (DL_FUNC)&wk_kurtosis_reset, 1},
   {"wk_kvo_new", (DL_FUNC)&wk_kvo_new, 2},
   {"wk_kvo_update", (DL_FUNC)&wk_kvo_update, 7},
   {"wk_kvo_batch", (DL_FUNC)&wk_kvo_batch, 7},
+  {"wk_kvo_warmup_period", (DL_FUNC)&wk_kvo_warmup_period, 1},
+  {"wk_kvo_is_ready", (DL_FUNC)&wk_kvo_is_ready, 1},
   {"wk_kvo_reset", (DL_FUNC)&wk_kvo_reset, 1},
   {"wk_kyles_lambda_new", (DL_FUNC)&wk_kyles_lambda_new, 1},
   {"wk_kyles_lambda_update", (DL_FUNC)&wk_kyles_lambda_update, 6},
+  {"wk_kyles_lambda_warmup_period", (DL_FUNC)&wk_kyles_lambda_warmup_period, 1},
+  {"wk_kyles_lambda_is_ready", (DL_FUNC)&wk_kyles_lambda_is_ready, 1},
   {"wk_kyles_lambda_reset", (DL_FUNC)&wk_kyles_lambda_reset, 1},
   {"wk_ladder_bottom_new", (DL_FUNC)&wk_ladder_bottom_new, 0},
   {"wk_ladder_bottom_update", (DL_FUNC)&wk_ladder_bottom_update, 7},
   {"wk_ladder_bottom_batch", (DL_FUNC)&wk_ladder_bottom_batch, 7},
+  {"wk_ladder_bottom_warmup_period", (DL_FUNC)&wk_ladder_bottom_warmup_period, 1},
+  {"wk_ladder_bottom_is_ready", (DL_FUNC)&wk_ladder_bottom_is_ready, 1},
   {"wk_ladder_bottom_reset", (DL_FUNC)&wk_ladder_bottom_reset, 1},
   {"wk_laguerre_rsi_new", (DL_FUNC)&wk_laguerre_rsi_new, 1},
   {"wk_laguerre_rsi_update", (DL_FUNC)&wk_laguerre_rsi_update, 2},
   {"wk_laguerre_rsi_batch", (DL_FUNC)&wk_laguerre_rsi_batch, 2},
+  {"wk_laguerre_rsi_warmup_period", (DL_FUNC)&wk_laguerre_rsi_warmup_period, 1},
+  {"wk_laguerre_rsi_is_ready", (DL_FUNC)&wk_laguerre_rsi_is_ready, 1},
   {"wk_laguerre_rsi_reset", (DL_FUNC)&wk_laguerre_rsi_reset, 1},
   {"wk_lead_lag_cross_correlation_new", (DL_FUNC)&wk_lead_lag_cross_correlation_new, 2},
   {"wk_lead_lag_cross_correlation_update", (DL_FUNC)&wk_lead_lag_cross_correlation_update, 3},
+  {"wk_lead_lag_cross_correlation_warmup_period", (DL_FUNC)&wk_lead_lag_cross_correlation_warmup_period, 1},
+  {"wk_lead_lag_cross_correlation_is_ready", (DL_FUNC)&wk_lead_lag_cross_correlation_is_ready, 1},
   {"wk_lead_lag_cross_correlation_reset", (DL_FUNC)&wk_lead_lag_cross_correlation_reset, 1},
   {"wk_lin_reg_angle_new", (DL_FUNC)&wk_lin_reg_angle_new, 1},
   {"wk_lin_reg_angle_update", (DL_FUNC)&wk_lin_reg_angle_update, 2},
   {"wk_lin_reg_angle_batch", (DL_FUNC)&wk_lin_reg_angle_batch, 2},
+  {"wk_lin_reg_angle_warmup_period", (DL_FUNC)&wk_lin_reg_angle_warmup_period, 1},
+  {"wk_lin_reg_angle_is_ready", (DL_FUNC)&wk_lin_reg_angle_is_ready, 1},
   {"wk_lin_reg_angle_reset", (DL_FUNC)&wk_lin_reg_angle_reset, 1},
   {"wk_lin_reg_channel_new", (DL_FUNC)&wk_lin_reg_channel_new, 2},
   {"wk_lin_reg_channel_update", (DL_FUNC)&wk_lin_reg_channel_update, 2},
+  {"wk_lin_reg_channel_warmup_period", (DL_FUNC)&wk_lin_reg_channel_warmup_period, 1},
+  {"wk_lin_reg_channel_is_ready", (DL_FUNC)&wk_lin_reg_channel_is_ready, 1},
   {"wk_lin_reg_channel_reset", (DL_FUNC)&wk_lin_reg_channel_reset, 1},
   {"wk_lin_reg_intercept_new", (DL_FUNC)&wk_lin_reg_intercept_new, 1},
   {"wk_lin_reg_intercept_update", (DL_FUNC)&wk_lin_reg_intercept_update, 2},
   {"wk_lin_reg_intercept_batch", (DL_FUNC)&wk_lin_reg_intercept_batch, 2},
+  {"wk_lin_reg_intercept_warmup_period", (DL_FUNC)&wk_lin_reg_intercept_warmup_period, 1},
+  {"wk_lin_reg_intercept_is_ready", (DL_FUNC)&wk_lin_reg_intercept_is_ready, 1},
   {"wk_lin_reg_intercept_reset", (DL_FUNC)&wk_lin_reg_intercept_reset, 1},
   {"wk_lin_reg_slope_new", (DL_FUNC)&wk_lin_reg_slope_new, 1},
   {"wk_lin_reg_slope_update", (DL_FUNC)&wk_lin_reg_slope_update, 2},
   {"wk_lin_reg_slope_batch", (DL_FUNC)&wk_lin_reg_slope_batch, 2},
+  {"wk_lin_reg_slope_warmup_period", (DL_FUNC)&wk_lin_reg_slope_warmup_period, 1},
+  {"wk_lin_reg_slope_is_ready", (DL_FUNC)&wk_lin_reg_slope_is_ready, 1},
   {"wk_lin_reg_slope_reset", (DL_FUNC)&wk_lin_reg_slope_reset, 1},
   {"wk_linear_regression_new", (DL_FUNC)&wk_linear_regression_new, 1},
   {"wk_linear_regression_update", (DL_FUNC)&wk_linear_regression_update, 2},
   {"wk_linear_regression_batch", (DL_FUNC)&wk_linear_regression_batch, 2},
+  {"wk_linear_regression_warmup_period", (DL_FUNC)&wk_linear_regression_warmup_period, 1},
+  {"wk_linear_regression_is_ready", (DL_FUNC)&wk_linear_regression_is_ready, 1},
   {"wk_linear_regression_reset", (DL_FUNC)&wk_linear_regression_reset, 1},
   {"wk_liquidation_features_new", (DL_FUNC)&wk_liquidation_features_new, 0},
   {"wk_liquidation_features_update", (DL_FUNC)&wk_liquidation_features_update, 13},
+  {"wk_liquidation_features_warmup_period", (DL_FUNC)&wk_liquidation_features_warmup_period, 1},
+  {"wk_liquidation_features_is_ready", (DL_FUNC)&wk_liquidation_features_is_ready, 1},
   {"wk_liquidation_features_reset", (DL_FUNC)&wk_liquidation_features_reset, 1},
   {"wk_log_return_new", (DL_FUNC)&wk_log_return_new, 1},
   {"wk_log_return_update", (DL_FUNC)&wk_log_return_update, 2},
   {"wk_log_return_batch", (DL_FUNC)&wk_log_return_batch, 2},
+  {"wk_log_return_warmup_period", (DL_FUNC)&wk_log_return_warmup_period, 1},
+  {"wk_log_return_is_ready", (DL_FUNC)&wk_log_return_is_ready, 1},
   {"wk_log_return_reset", (DL_FUNC)&wk_log_return_reset, 1},
   {"wk_long_legged_doji_new", (DL_FUNC)&wk_long_legged_doji_new, 0},
   {"wk_long_legged_doji_update", (DL_FUNC)&wk_long_legged_doji_update, 7},
   {"wk_long_legged_doji_batch", (DL_FUNC)&wk_long_legged_doji_batch, 7},
+  {"wk_long_legged_doji_warmup_period", (DL_FUNC)&wk_long_legged_doji_warmup_period, 1},
+  {"wk_long_legged_doji_is_ready", (DL_FUNC)&wk_long_legged_doji_is_ready, 1},
   {"wk_long_legged_doji_reset", (DL_FUNC)&wk_long_legged_doji_reset, 1},
   {"wk_long_line_new", (DL_FUNC)&wk_long_line_new, 0},
   {"wk_long_line_update", (DL_FUNC)&wk_long_line_update, 7},
   {"wk_long_line_batch", (DL_FUNC)&wk_long_line_batch, 7},
+  {"wk_long_line_warmup_period", (DL_FUNC)&wk_long_line_warmup_period, 1},
+  {"wk_long_line_is_ready", (DL_FUNC)&wk_long_line_is_ready, 1},
   {"wk_long_line_reset", (DL_FUNC)&wk_long_line_reset, 1},
   {"wk_long_short_ratio_new", (DL_FUNC)&wk_long_short_ratio_new, 0},
   {"wk_long_short_ratio_update", (DL_FUNC)&wk_long_short_ratio_update, 13},
+  {"wk_long_short_ratio_warmup_period", (DL_FUNC)&wk_long_short_ratio_warmup_period, 1},
+  {"wk_long_short_ratio_is_ready", (DL_FUNC)&wk_long_short_ratio_is_ready, 1},
   {"wk_long_short_ratio_reset", (DL_FUNC)&wk_long_short_ratio_reset, 1},
   {"wk_m2_measure_new", (DL_FUNC)&wk_m2_measure_new, 3},
   {"wk_m2_measure_update", (DL_FUNC)&wk_m2_measure_update, 2},
   {"wk_m2_measure_batch", (DL_FUNC)&wk_m2_measure_batch, 2},
+  {"wk_m2_measure_warmup_period", (DL_FUNC)&wk_m2_measure_warmup_period, 1},
+  {"wk_m2_measure_is_ready", (DL_FUNC)&wk_m2_measure_is_ready, 1},
   {"wk_m2_measure_reset", (DL_FUNC)&wk_m2_measure_reset, 1},
   {"wk_ma_envelope_new", (DL_FUNC)&wk_ma_envelope_new, 2},
   {"wk_ma_envelope_update", (DL_FUNC)&wk_ma_envelope_update, 2},
+  {"wk_ma_envelope_warmup_period", (DL_FUNC)&wk_ma_envelope_warmup_period, 1},
+  {"wk_ma_envelope_is_ready", (DL_FUNC)&wk_ma_envelope_is_ready, 1},
   {"wk_ma_envelope_reset", (DL_FUNC)&wk_ma_envelope_reset, 1},
   {"wk_macd_ext_new", (DL_FUNC)&wk_macd_ext_new, 6},
   {"wk_macd_ext_update", (DL_FUNC)&wk_macd_ext_update, 2},
+  {"wk_macd_ext_warmup_period", (DL_FUNC)&wk_macd_ext_warmup_period, 1},
+  {"wk_macd_ext_is_ready", (DL_FUNC)&wk_macd_ext_is_ready, 1},
   {"wk_macd_ext_reset", (DL_FUNC)&wk_macd_ext_reset, 1},
   {"wk_macd_fix_new", (DL_FUNC)&wk_macd_fix_new, 1},
   {"wk_macd_fix_update", (DL_FUNC)&wk_macd_fix_update, 2},
+  {"wk_macd_fix_warmup_period", (DL_FUNC)&wk_macd_fix_warmup_period, 1},
+  {"wk_macd_fix_is_ready", (DL_FUNC)&wk_macd_fix_is_ready, 1},
   {"wk_macd_fix_reset", (DL_FUNC)&wk_macd_fix_reset, 1},
   {"wk_macd_histogram_new", (DL_FUNC)&wk_macd_histogram_new, 3},
   {"wk_macd_histogram_update", (DL_FUNC)&wk_macd_histogram_update, 2},
   {"wk_macd_histogram_batch", (DL_FUNC)&wk_macd_histogram_batch, 2},
+  {"wk_macd_histogram_warmup_period", (DL_FUNC)&wk_macd_histogram_warmup_period, 1},
+  {"wk_macd_histogram_is_ready", (DL_FUNC)&wk_macd_histogram_is_ready, 1},
   {"wk_macd_histogram_reset", (DL_FUNC)&wk_macd_histogram_reset, 1},
   {"wk_macd_indicator_new", (DL_FUNC)&wk_macd_indicator_new, 3},
   {"wk_macd_indicator_update", (DL_FUNC)&wk_macd_indicator_update, 2},
+  {"wk_macd_indicator_warmup_period", (DL_FUNC)&wk_macd_indicator_warmup_period, 1},
+  {"wk_macd_indicator_is_ready", (DL_FUNC)&wk_macd_indicator_is_ready, 1},
   {"wk_macd_indicator_reset", (DL_FUNC)&wk_macd_indicator_reset, 1},
   {"wk_mama_new", (DL_FUNC)&wk_mama_new, 2},
   {"wk_mama_update", (DL_FUNC)&wk_mama_update, 2},
+  {"wk_mama_warmup_period", (DL_FUNC)&wk_mama_warmup_period, 1},
+  {"wk_mama_is_ready", (DL_FUNC)&wk_mama_is_ready, 1},
   {"wk_mama_reset", (DL_FUNC)&wk_mama_reset, 1},
   {"wk_market_facilitation_index_new", (DL_FUNC)&wk_market_facilitation_index_new, 0},
   {"wk_market_facilitation_index_update", (DL_FUNC)&wk_market_facilitation_index_update, 7},
   {"wk_market_facilitation_index_batch", (DL_FUNC)&wk_market_facilitation_index_batch, 7},
+  {"wk_market_facilitation_index_warmup_period", (DL_FUNC)&wk_market_facilitation_index_warmup_period, 1},
+  {"wk_market_facilitation_index_is_ready", (DL_FUNC)&wk_market_facilitation_index_is_ready, 1},
   {"wk_market_facilitation_index_reset", (DL_FUNC)&wk_market_facilitation_index_reset, 1},
   {"wk_martin_ratio_new", (DL_FUNC)&wk_martin_ratio_new, 1},
   {"wk_martin_ratio_update", (DL_FUNC)&wk_martin_ratio_update, 2},
   {"wk_martin_ratio_batch", (DL_FUNC)&wk_martin_ratio_batch, 2},
+  {"wk_martin_ratio_warmup_period", (DL_FUNC)&wk_martin_ratio_warmup_period, 1},
+  {"wk_martin_ratio_is_ready", (DL_FUNC)&wk_martin_ratio_is_ready, 1},
   {"wk_martin_ratio_reset", (DL_FUNC)&wk_martin_ratio_reset, 1},
   {"wk_marubozu_new", (DL_FUNC)&wk_marubozu_new, 0},
   {"wk_marubozu_update", (DL_FUNC)&wk_marubozu_update, 7},
   {"wk_marubozu_batch", (DL_FUNC)&wk_marubozu_batch, 7},
+  {"wk_marubozu_warmup_period", (DL_FUNC)&wk_marubozu_warmup_period, 1},
+  {"wk_marubozu_is_ready", (DL_FUNC)&wk_marubozu_is_ready, 1},
   {"wk_marubozu_reset", (DL_FUNC)&wk_marubozu_reset, 1},
   {"wk_mass_index_new", (DL_FUNC)&wk_mass_index_new, 2},
   {"wk_mass_index_update", (DL_FUNC)&wk_mass_index_update, 7},
   {"wk_mass_index_batch", (DL_FUNC)&wk_mass_index_batch, 7},
+  {"wk_mass_index_warmup_period", (DL_FUNC)&wk_mass_index_warmup_period, 1},
+  {"wk_mass_index_is_ready", (DL_FUNC)&wk_mass_index_is_ready, 1},
   {"wk_mass_index_reset", (DL_FUNC)&wk_mass_index_reset, 1},
   {"wk_mat_hold_new", (DL_FUNC)&wk_mat_hold_new, 0},
   {"wk_mat_hold_update", (DL_FUNC)&wk_mat_hold_update, 7},
   {"wk_mat_hold_batch", (DL_FUNC)&wk_mat_hold_batch, 7},
+  {"wk_mat_hold_warmup_period", (DL_FUNC)&wk_mat_hold_warmup_period, 1},
+  {"wk_mat_hold_is_ready", (DL_FUNC)&wk_mat_hold_is_ready, 1},
   {"wk_mat_hold_reset", (DL_FUNC)&wk_mat_hold_reset, 1},
   {"wk_matching_low_new", (DL_FUNC)&wk_matching_low_new, 0},
   {"wk_matching_low_update", (DL_FUNC)&wk_matching_low_update, 7},
   {"wk_matching_low_batch", (DL_FUNC)&wk_matching_low_batch, 7},
+  {"wk_matching_low_warmup_period", (DL_FUNC)&wk_matching_low_warmup_period, 1},
+  {"wk_matching_low_is_ready", (DL_FUNC)&wk_matching_low_is_ready, 1},
   {"wk_matching_low_reset", (DL_FUNC)&wk_matching_low_reset, 1},
   {"wk_max_drawdown_new", (DL_FUNC)&wk_max_drawdown_new, 1},
   {"wk_max_drawdown_update", (DL_FUNC)&wk_max_drawdown_update, 2},
   {"wk_max_drawdown_batch", (DL_FUNC)&wk_max_drawdown_batch, 2},
+  {"wk_max_drawdown_warmup_period", (DL_FUNC)&wk_max_drawdown_warmup_period, 1},
+  {"wk_max_drawdown_is_ready", (DL_FUNC)&wk_max_drawdown_is_ready, 1},
   {"wk_max_drawdown_reset", (DL_FUNC)&wk_max_drawdown_reset, 1},
   {"wk_mc_clellan_oscillator_new", (DL_FUNC)&wk_mc_clellan_oscillator_new, 0},
   {"wk_mc_clellan_oscillator_update", (DL_FUNC)&wk_mc_clellan_oscillator_update, 8},
+  {"wk_mc_clellan_oscillator_warmup_period", (DL_FUNC)&wk_mc_clellan_oscillator_warmup_period, 1},
+  {"wk_mc_clellan_oscillator_is_ready", (DL_FUNC)&wk_mc_clellan_oscillator_is_ready, 1},
   {"wk_mc_clellan_oscillator_reset", (DL_FUNC)&wk_mc_clellan_oscillator_reset, 1},
   {"wk_mc_clellan_summation_index_new", (DL_FUNC)&wk_mc_clellan_summation_index_new, 0},
   {"wk_mc_clellan_summation_index_update", (DL_FUNC)&wk_mc_clellan_summation_index_update, 8},
+  {"wk_mc_clellan_summation_index_warmup_period", (DL_FUNC)&wk_mc_clellan_summation_index_warmup_period, 1},
+  {"wk_mc_clellan_summation_index_is_ready", (DL_FUNC)&wk_mc_clellan_summation_index_is_ready, 1},
   {"wk_mc_clellan_summation_index_reset", (DL_FUNC)&wk_mc_clellan_summation_index_reset, 1},
   {"wk_mc_ginley_dynamic_new", (DL_FUNC)&wk_mc_ginley_dynamic_new, 1},
   {"wk_mc_ginley_dynamic_update", (DL_FUNC)&wk_mc_ginley_dynamic_update, 2},
   {"wk_mc_ginley_dynamic_batch", (DL_FUNC)&wk_mc_ginley_dynamic_batch, 2},
+  {"wk_mc_ginley_dynamic_warmup_period", (DL_FUNC)&wk_mc_ginley_dynamic_warmup_period, 1},
+  {"wk_mc_ginley_dynamic_is_ready", (DL_FUNC)&wk_mc_ginley_dynamic_is_ready, 1},
   {"wk_mc_ginley_dynamic_reset", (DL_FUNC)&wk_mc_ginley_dynamic_reset, 1},
   {"wk_median_absolute_deviation_new", (DL_FUNC)&wk_median_absolute_deviation_new, 1},
   {"wk_median_absolute_deviation_update", (DL_FUNC)&wk_median_absolute_deviation_update, 2},
   {"wk_median_absolute_deviation_batch", (DL_FUNC)&wk_median_absolute_deviation_batch, 2},
+  {"wk_median_absolute_deviation_warmup_period", (DL_FUNC)&wk_median_absolute_deviation_warmup_period, 1},
+  {"wk_median_absolute_deviation_is_ready", (DL_FUNC)&wk_median_absolute_deviation_is_ready, 1},
   {"wk_median_absolute_deviation_reset", (DL_FUNC)&wk_median_absolute_deviation_reset, 1},
   {"wk_median_channel_new", (DL_FUNC)&wk_median_channel_new, 2},
   {"wk_median_channel_update", (DL_FUNC)&wk_median_channel_update, 2},
+  {"wk_median_channel_warmup_period", (DL_FUNC)&wk_median_channel_warmup_period, 1},
+  {"wk_median_channel_is_ready", (DL_FUNC)&wk_median_channel_is_ready, 1},
   {"wk_median_channel_reset", (DL_FUNC)&wk_median_channel_reset, 1},
   {"wk_median_ma_new", (DL_FUNC)&wk_median_ma_new, 1},
   {"wk_median_ma_update", (DL_FUNC)&wk_median_ma_update, 2},
   {"wk_median_ma_batch", (DL_FUNC)&wk_median_ma_batch, 2},
+  {"wk_median_ma_warmup_period", (DL_FUNC)&wk_median_ma_warmup_period, 1},
+  {"wk_median_ma_is_ready", (DL_FUNC)&wk_median_ma_is_ready, 1},
   {"wk_median_ma_reset", (DL_FUNC)&wk_median_ma_reset, 1},
   {"wk_median_price_new", (DL_FUNC)&wk_median_price_new, 0},
   {"wk_median_price_update", (DL_FUNC)&wk_median_price_update, 7},
   {"wk_median_price_batch", (DL_FUNC)&wk_median_price_batch, 7},
+  {"wk_median_price_warmup_period", (DL_FUNC)&wk_median_price_warmup_period, 1},
+  {"wk_median_price_is_ready", (DL_FUNC)&wk_median_price_is_ready, 1},
   {"wk_median_price_reset", (DL_FUNC)&wk_median_price_reset, 1},
   {"wk_mfi_new", (DL_FUNC)&wk_mfi_new, 1},
   {"wk_mfi_update", (DL_FUNC)&wk_mfi_update, 7},
   {"wk_mfi_batch", (DL_FUNC)&wk_mfi_batch, 7},
+  {"wk_mfi_warmup_period", (DL_FUNC)&wk_mfi_warmup_period, 1},
+  {"wk_mfi_is_ready", (DL_FUNC)&wk_mfi_is_ready, 1},
   {"wk_mfi_reset", (DL_FUNC)&wk_mfi_reset, 1},
   {"wk_microprice_new", (DL_FUNC)&wk_microprice_new, 0},
   {"wk_microprice_update", (DL_FUNC)&wk_microprice_update, 5},
+  {"wk_microprice_warmup_period", (DL_FUNC)&wk_microprice_warmup_period, 1},
+  {"wk_microprice_is_ready", (DL_FUNC)&wk_microprice_is_ready, 1},
   {"wk_microprice_reset", (DL_FUNC)&wk_microprice_reset, 1},
   {"wk_mid_point_new", (DL_FUNC)&wk_mid_point_new, 1},
   {"wk_mid_point_update", (DL_FUNC)&wk_mid_point_update, 2},
   {"wk_mid_point_batch", (DL_FUNC)&wk_mid_point_batch, 2},
+  {"wk_mid_point_warmup_period", (DL_FUNC)&wk_mid_point_warmup_period, 1},
+  {"wk_mid_point_is_ready", (DL_FUNC)&wk_mid_point_is_ready, 1},
   {"wk_mid_point_reset", (DL_FUNC)&wk_mid_point_reset, 1},
   {"wk_mid_price_new", (DL_FUNC)&wk_mid_price_new, 1},
   {"wk_mid_price_update", (DL_FUNC)&wk_mid_price_update, 7},
   {"wk_mid_price_batch", (DL_FUNC)&wk_mid_price_batch, 7},
+  {"wk_mid_price_warmup_period", (DL_FUNC)&wk_mid_price_warmup_period, 1},
+  {"wk_mid_price_is_ready", (DL_FUNC)&wk_mid_price_is_ready, 1},
   {"wk_mid_price_reset", (DL_FUNC)&wk_mid_price_reset, 1},
   {"wk_minus_di_new", (DL_FUNC)&wk_minus_di_new, 1},
   {"wk_minus_di_update", (DL_FUNC)&wk_minus_di_update, 7},
   {"wk_minus_di_batch", (DL_FUNC)&wk_minus_di_batch, 7},
+  {"wk_minus_di_warmup_period", (DL_FUNC)&wk_minus_di_warmup_period, 1},
+  {"wk_minus_di_is_ready", (DL_FUNC)&wk_minus_di_is_ready, 1},
   {"wk_minus_di_reset", (DL_FUNC)&wk_minus_di_reset, 1},
   {"wk_minus_dm_new", (DL_FUNC)&wk_minus_dm_new, 1},
   {"wk_minus_dm_update", (DL_FUNC)&wk_minus_dm_update, 7},
   {"wk_minus_dm_batch", (DL_FUNC)&wk_minus_dm_batch, 7},
+  {"wk_minus_dm_warmup_period", (DL_FUNC)&wk_minus_dm_warmup_period, 1},
+  {"wk_minus_dm_is_ready", (DL_FUNC)&wk_minus_dm_is_ready, 1},
   {"wk_minus_dm_reset", (DL_FUNC)&wk_minus_dm_reset, 1},
   {"wk_modified_ma_stop_new", (DL_FUNC)&wk_modified_ma_stop_new, 1},
   {"wk_modified_ma_stop_update", (DL_FUNC)&wk_modified_ma_stop_update, 7},
+  {"wk_modified_ma_stop_warmup_period", (DL_FUNC)&wk_modified_ma_stop_warmup_period, 1},
+  {"wk_modified_ma_stop_is_ready", (DL_FUNC)&wk_modified_ma_stop_is_ready, 1},
   {"wk_modified_ma_stop_reset", (DL_FUNC)&wk_modified_ma_stop_reset, 1},
   {"wk_mom_new", (DL_FUNC)&wk_mom_new, 1},
   {"wk_mom_update", (DL_FUNC)&wk_mom_update, 2},
   {"wk_mom_batch", (DL_FUNC)&wk_mom_batch, 2},
+  {"wk_mom_warmup_period", (DL_FUNC)&wk_mom_warmup_period, 1},
+  {"wk_mom_is_ready", (DL_FUNC)&wk_mom_is_ready, 1},
   {"wk_mom_reset", (DL_FUNC)&wk_mom_reset, 1},
   {"wk_morning_doji_star_new", (DL_FUNC)&wk_morning_doji_star_new, 0},
   {"wk_morning_doji_star_update", (DL_FUNC)&wk_morning_doji_star_update, 7},
   {"wk_morning_doji_star_batch", (DL_FUNC)&wk_morning_doji_star_batch, 7},
+  {"wk_morning_doji_star_warmup_period", (DL_FUNC)&wk_morning_doji_star_warmup_period, 1},
+  {"wk_morning_doji_star_is_ready", (DL_FUNC)&wk_morning_doji_star_is_ready, 1},
   {"wk_morning_doji_star_reset", (DL_FUNC)&wk_morning_doji_star_reset, 1},
   {"wk_morning_evening_star_new", (DL_FUNC)&wk_morning_evening_star_new, 0},
   {"wk_morning_evening_star_update", (DL_FUNC)&wk_morning_evening_star_update, 7},
   {"wk_morning_evening_star_batch", (DL_FUNC)&wk_morning_evening_star_batch, 7},
+  {"wk_morning_evening_star_warmup_period", (DL_FUNC)&wk_morning_evening_star_warmup_period, 1},
+  {"wk_morning_evening_star_is_ready", (DL_FUNC)&wk_morning_evening_star_is_ready, 1},
   {"wk_morning_evening_star_reset", (DL_FUNC)&wk_morning_evening_star_reset, 1},
   {"wk_murrey_math_lines_new", (DL_FUNC)&wk_murrey_math_lines_new, 1},
   {"wk_murrey_math_lines_update", (DL_FUNC)&wk_murrey_math_lines_update, 7},
+  {"wk_murrey_math_lines_warmup_period", (DL_FUNC)&wk_murrey_math_lines_warmup_period, 1},
+  {"wk_murrey_math_lines_is_ready", (DL_FUNC)&wk_murrey_math_lines_is_ready, 1},
   {"wk_murrey_math_lines_reset", (DL_FUNC)&wk_murrey_math_lines_reset, 1},
   {"wk_naked_poc_new", (DL_FUNC)&wk_naked_poc_new, 2},
   {"wk_naked_poc_update", (DL_FUNC)&wk_naked_poc_update, 7},
   {"wk_naked_poc_batch", (DL_FUNC)&wk_naked_poc_batch, 7},
+  {"wk_naked_poc_warmup_period", (DL_FUNC)&wk_naked_poc_warmup_period, 1},
+  {"wk_naked_poc_is_ready", (DL_FUNC)&wk_naked_poc_is_ready, 1},
   {"wk_naked_poc_reset", (DL_FUNC)&wk_naked_poc_reset, 1},
   {"wk_natr_new", (DL_FUNC)&wk_natr_new, 1},
   {"wk_natr_update", (DL_FUNC)&wk_natr_update, 7},
   {"wk_natr_batch", (DL_FUNC)&wk_natr_batch, 7},
+  {"wk_natr_warmup_period", (DL_FUNC)&wk_natr_warmup_period, 1},
+  {"wk_natr_is_ready", (DL_FUNC)&wk_natr_is_ready, 1},
   {"wk_natr_reset", (DL_FUNC)&wk_natr_reset, 1},
   {"wk_new_highs_new_lows_new", (DL_FUNC)&wk_new_highs_new_lows_new, 0},
   {"wk_new_highs_new_lows_update", (DL_FUNC)&wk_new_highs_new_lows_update, 8},
+  {"wk_new_highs_new_lows_warmup_period", (DL_FUNC)&wk_new_highs_new_lows_warmup_period, 1},
+  {"wk_new_highs_new_lows_is_ready", (DL_FUNC)&wk_new_highs_new_lows_is_ready, 1},
   {"wk_new_highs_new_lows_reset", (DL_FUNC)&wk_new_highs_new_lows_reset, 1},
   {"wk_new_price_lines_new", (DL_FUNC)&wk_new_price_lines_new, 1},
   {"wk_new_price_lines_update", (DL_FUNC)&wk_new_price_lines_update, 7},
   {"wk_new_price_lines_batch", (DL_FUNC)&wk_new_price_lines_batch, 7},
+  {"wk_new_price_lines_warmup_period", (DL_FUNC)&wk_new_price_lines_warmup_period, 1},
+  {"wk_new_price_lines_is_ready", (DL_FUNC)&wk_new_price_lines_is_ready, 1},
   {"wk_new_price_lines_reset", (DL_FUNC)&wk_new_price_lines_reset, 1},
   {"wk_nrtr_new", (DL_FUNC)&wk_nrtr_new, 1},
   {"wk_nrtr_update", (DL_FUNC)&wk_nrtr_update, 7},
+  {"wk_nrtr_warmup_period", (DL_FUNC)&wk_nrtr_warmup_period, 1},
+  {"wk_nrtr_is_ready", (DL_FUNC)&wk_nrtr_is_ready, 1},
   {"wk_nrtr_reset", (DL_FUNC)&wk_nrtr_reset, 1},
   {"wk_nvi_new", (DL_FUNC)&wk_nvi_new, 0},
   {"wk_nvi_update", (DL_FUNC)&wk_nvi_update, 7},
   {"wk_nvi_batch", (DL_FUNC)&wk_nvi_batch, 7},
+  {"wk_nvi_warmup_period", (DL_FUNC)&wk_nvi_warmup_period, 1},
+  {"wk_nvi_is_ready", (DL_FUNC)&wk_nvi_is_ready, 1},
   {"wk_nvi_reset", (DL_FUNC)&wk_nvi_reset, 1},
   {"wk_obv_new", (DL_FUNC)&wk_obv_new, 0},
   {"wk_obv_update", (DL_FUNC)&wk_obv_update, 7},
   {"wk_obv_batch", (DL_FUNC)&wk_obv_batch, 7},
+  {"wk_obv_warmup_period", (DL_FUNC)&wk_obv_warmup_period, 1},
+  {"wk_obv_is_ready", (DL_FUNC)&wk_obv_is_ready, 1},
   {"wk_obv_reset", (DL_FUNC)&wk_obv_reset, 1},
   {"wk_oi_price_divergence_new", (DL_FUNC)&wk_oi_price_divergence_new, 1},
   {"wk_oi_price_divergence_update", (DL_FUNC)&wk_oi_price_divergence_update, 13},
+  {"wk_oi_price_divergence_warmup_period", (DL_FUNC)&wk_oi_price_divergence_warmup_period, 1},
+  {"wk_oi_price_divergence_is_ready", (DL_FUNC)&wk_oi_price_divergence_is_ready, 1},
   {"wk_oi_price_divergence_reset", (DL_FUNC)&wk_oi_price_divergence_reset, 1},
   {"wk_oi_to_volume_ratio_new", (DL_FUNC)&wk_oi_to_volume_ratio_new, 0},
   {"wk_oi_to_volume_ratio_update", (DL_FUNC)&wk_oi_to_volume_ratio_update, 13},
+  {"wk_oi_to_volume_ratio_warmup_period", (DL_FUNC)&wk_oi_to_volume_ratio_warmup_period, 1},
+  {"wk_oi_to_volume_ratio_is_ready", (DL_FUNC)&wk_oi_to_volume_ratio_is_ready, 1},
   {"wk_oi_to_volume_ratio_reset", (DL_FUNC)&wk_oi_to_volume_ratio_reset, 1},
   {"wk_oi_weighted_new", (DL_FUNC)&wk_oi_weighted_new, 0},
   {"wk_oi_weighted_update", (DL_FUNC)&wk_oi_weighted_update, 13},
+  {"wk_oi_weighted_warmup_period", (DL_FUNC)&wk_oi_weighted_warmup_period, 1},
+  {"wk_oi_weighted_is_ready", (DL_FUNC)&wk_oi_weighted_is_ready, 1},
   {"wk_oi_weighted_reset", (DL_FUNC)&wk_oi_weighted_reset, 1},
   {"wk_omega_ratio_new", (DL_FUNC)&wk_omega_ratio_new, 2},
   {"wk_omega_ratio_update", (DL_FUNC)&wk_omega_ratio_update, 2},
   {"wk_omega_ratio_batch", (DL_FUNC)&wk_omega_ratio_batch, 2},
+  {"wk_omega_ratio_warmup_period", (DL_FUNC)&wk_omega_ratio_warmup_period, 1},
+  {"wk_omega_ratio_is_ready", (DL_FUNC)&wk_omega_ratio_is_ready, 1},
   {"wk_omega_ratio_reset", (DL_FUNC)&wk_omega_ratio_reset, 1},
   {"wk_on_neck_new", (DL_FUNC)&wk_on_neck_new, 0},
   {"wk_on_neck_update", (DL_FUNC)&wk_on_neck_update, 7},
   {"wk_on_neck_batch", (DL_FUNC)&wk_on_neck_batch, 7},
+  {"wk_on_neck_warmup_period", (DL_FUNC)&wk_on_neck_warmup_period, 1},
+  {"wk_on_neck_is_ready", (DL_FUNC)&wk_on_neck_is_ready, 1},
   {"wk_on_neck_reset", (DL_FUNC)&wk_on_neck_reset, 1},
   {"wk_open_interest_delta_new", (DL_FUNC)&wk_open_interest_delta_new, 0},
   {"wk_open_interest_delta_update", (DL_FUNC)&wk_open_interest_delta_update, 13},
+  {"wk_open_interest_delta_warmup_period", (DL_FUNC)&wk_open_interest_delta_warmup_period, 1},
+  {"wk_open_interest_delta_is_ready", (DL_FUNC)&wk_open_interest_delta_is_ready, 1},
   {"wk_open_interest_delta_reset", (DL_FUNC)&wk_open_interest_delta_reset, 1},
   {"wk_open_interest_momentum_new", (DL_FUNC)&wk_open_interest_momentum_new, 1},
   {"wk_open_interest_momentum_update", (DL_FUNC)&wk_open_interest_momentum_update, 13},
+  {"wk_open_interest_momentum_warmup_period", (DL_FUNC)&wk_open_interest_momentum_warmup_period, 1},
+  {"wk_open_interest_momentum_is_ready", (DL_FUNC)&wk_open_interest_momentum_is_ready, 1},
   {"wk_open_interest_momentum_reset", (DL_FUNC)&wk_open_interest_momentum_reset, 1},
   {"wk_opening_marubozu_new", (DL_FUNC)&wk_opening_marubozu_new, 0},
   {"wk_opening_marubozu_update", (DL_FUNC)&wk_opening_marubozu_update, 7},
   {"wk_opening_marubozu_batch", (DL_FUNC)&wk_opening_marubozu_batch, 7},
+  {"wk_opening_marubozu_warmup_period", (DL_FUNC)&wk_opening_marubozu_warmup_period, 1},
+  {"wk_opening_marubozu_is_ready", (DL_FUNC)&wk_opening_marubozu_is_ready, 1},
   {"wk_opening_marubozu_reset", (DL_FUNC)&wk_opening_marubozu_reset, 1},
   {"wk_opening_range_new", (DL_FUNC)&wk_opening_range_new, 1},
   {"wk_opening_range_update", (DL_FUNC)&wk_opening_range_update, 7},
+  {"wk_opening_range_warmup_period", (DL_FUNC)&wk_opening_range_warmup_period, 1},
+  {"wk_opening_range_is_ready", (DL_FUNC)&wk_opening_range_is_ready, 1},
   {"wk_opening_range_reset", (DL_FUNC)&wk_opening_range_reset, 1},
   {"wk_order_book_imbalance_full_new", (DL_FUNC)&wk_order_book_imbalance_full_new, 0},
   {"wk_order_book_imbalance_full_update", (DL_FUNC)&wk_order_book_imbalance_full_update, 5},
+  {"wk_order_book_imbalance_full_warmup_period", (DL_FUNC)&wk_order_book_imbalance_full_warmup_period, 1},
+  {"wk_order_book_imbalance_full_is_ready", (DL_FUNC)&wk_order_book_imbalance_full_is_ready, 1},
   {"wk_order_book_imbalance_full_reset", (DL_FUNC)&wk_order_book_imbalance_full_reset, 1},
   {"wk_order_book_imbalance_top1_new", (DL_FUNC)&wk_order_book_imbalance_top1_new, 0},
   {"wk_order_book_imbalance_top1_update", (DL_FUNC)&wk_order_book_imbalance_top1_update, 5},
+  {"wk_order_book_imbalance_top1_warmup_period", (DL_FUNC)&wk_order_book_imbalance_top1_warmup_period, 1},
+  {"wk_order_book_imbalance_top1_is_ready", (DL_FUNC)&wk_order_book_imbalance_top1_is_ready, 1},
   {"wk_order_book_imbalance_top1_reset", (DL_FUNC)&wk_order_book_imbalance_top1_reset, 1},
   {"wk_order_book_imbalance_top_n_new", (DL_FUNC)&wk_order_book_imbalance_top_n_new, 1},
   {"wk_order_book_imbalance_top_n_update", (DL_FUNC)&wk_order_book_imbalance_top_n_update, 5},
+  {"wk_order_book_imbalance_top_n_warmup_period", (DL_FUNC)&wk_order_book_imbalance_top_n_warmup_period, 1},
+  {"wk_order_book_imbalance_top_n_is_ready", (DL_FUNC)&wk_order_book_imbalance_top_n_is_ready, 1},
   {"wk_order_book_imbalance_top_n_reset", (DL_FUNC)&wk_order_book_imbalance_top_n_reset, 1},
   {"wk_order_flow_imbalance_new", (DL_FUNC)&wk_order_flow_imbalance_new, 1},
   {"wk_order_flow_imbalance_update", (DL_FUNC)&wk_order_flow_imbalance_update, 5},
+  {"wk_order_flow_imbalance_warmup_period", (DL_FUNC)&wk_order_flow_imbalance_warmup_period, 1},
+  {"wk_order_flow_imbalance_is_ready", (DL_FUNC)&wk_order_flow_imbalance_is_ready, 1},
   {"wk_order_flow_imbalance_reset", (DL_FUNC)&wk_order_flow_imbalance_reset, 1},
   {"wk_ou_half_life_new", (DL_FUNC)&wk_ou_half_life_new, 1},
   {"wk_ou_half_life_update", (DL_FUNC)&wk_ou_half_life_update, 3},
   {"wk_ou_half_life_batch", (DL_FUNC)&wk_ou_half_life_batch, 3},
+  {"wk_ou_half_life_warmup_period", (DL_FUNC)&wk_ou_half_life_warmup_period, 1},
+  {"wk_ou_half_life_is_ready", (DL_FUNC)&wk_ou_half_life_is_ready, 1},
   {"wk_ou_half_life_reset", (DL_FUNC)&wk_ou_half_life_reset, 1},
   {"wk_overnight_gap_new", (DL_FUNC)&wk_overnight_gap_new, 1},
   {"wk_overnight_gap_update", (DL_FUNC)&wk_overnight_gap_update, 7},
   {"wk_overnight_gap_batch", (DL_FUNC)&wk_overnight_gap_batch, 7},
+  {"wk_overnight_gap_warmup_period", (DL_FUNC)&wk_overnight_gap_warmup_period, 1},
+  {"wk_overnight_gap_is_ready", (DL_FUNC)&wk_overnight_gap_is_ready, 1},
   {"wk_overnight_gap_reset", (DL_FUNC)&wk_overnight_gap_reset, 1},
   {"wk_overnight_intraday_return_new", (DL_FUNC)&wk_overnight_intraday_return_new, 1},
   {"wk_overnight_intraday_return_update", (DL_FUNC)&wk_overnight_intraday_return_update, 7},
+  {"wk_overnight_intraday_return_warmup_period", (DL_FUNC)&wk_overnight_intraday_return_warmup_period, 1},
+  {"wk_overnight_intraday_return_is_ready", (DL_FUNC)&wk_overnight_intraday_return_is_ready, 1},
   {"wk_overnight_intraday_return_reset", (DL_FUNC)&wk_overnight_intraday_return_reset, 1},
   {"wk_pain_index_new", (DL_FUNC)&wk_pain_index_new, 1},
   {"wk_pain_index_update", (DL_FUNC)&wk_pain_index_update, 2},
   {"wk_pain_index_batch", (DL_FUNC)&wk_pain_index_batch, 2},
+  {"wk_pain_index_warmup_period", (DL_FUNC)&wk_pain_index_warmup_period, 1},
+  {"wk_pain_index_is_ready", (DL_FUNC)&wk_pain_index_is_ready, 1},
   {"wk_pain_index_reset", (DL_FUNC)&wk_pain_index_reset, 1},
   {"wk_pair_spread_z_score_new", (DL_FUNC)&wk_pair_spread_z_score_new, 2},
   {"wk_pair_spread_z_score_update", (DL_FUNC)&wk_pair_spread_z_score_update, 3},
   {"wk_pair_spread_z_score_batch", (DL_FUNC)&wk_pair_spread_z_score_batch, 3},
+  {"wk_pair_spread_z_score_warmup_period", (DL_FUNC)&wk_pair_spread_z_score_warmup_period, 1},
+  {"wk_pair_spread_z_score_is_ready", (DL_FUNC)&wk_pair_spread_z_score_is_ready, 1},
   {"wk_pair_spread_z_score_reset", (DL_FUNC)&wk_pair_spread_z_score_reset, 1},
   {"wk_pairwise_beta_new", (DL_FUNC)&wk_pairwise_beta_new, 1},
   {"wk_pairwise_beta_update", (DL_FUNC)&wk_pairwise_beta_update, 3},
   {"wk_pairwise_beta_batch", (DL_FUNC)&wk_pairwise_beta_batch, 3},
+  {"wk_pairwise_beta_warmup_period", (DL_FUNC)&wk_pairwise_beta_warmup_period, 1},
+  {"wk_pairwise_beta_is_ready", (DL_FUNC)&wk_pairwise_beta_is_ready, 1},
   {"wk_pairwise_beta_reset", (DL_FUNC)&wk_pairwise_beta_reset, 1},
   {"wk_parkinson_volatility_new", (DL_FUNC)&wk_parkinson_volatility_new, 2},
   {"wk_parkinson_volatility_update", (DL_FUNC)&wk_parkinson_volatility_update, 7},
   {"wk_parkinson_volatility_batch", (DL_FUNC)&wk_parkinson_volatility_batch, 7},
+  {"wk_parkinson_volatility_warmup_period", (DL_FUNC)&wk_parkinson_volatility_warmup_period, 1},
+  {"wk_parkinson_volatility_is_ready", (DL_FUNC)&wk_parkinson_volatility_is_ready, 1},
   {"wk_parkinson_volatility_reset", (DL_FUNC)&wk_parkinson_volatility_reset, 1},
   {"wk_pearson_correlation_new", (DL_FUNC)&wk_pearson_correlation_new, 1},
   {"wk_pearson_correlation_update", (DL_FUNC)&wk_pearson_correlation_update, 3},
   {"wk_pearson_correlation_batch", (DL_FUNC)&wk_pearson_correlation_batch, 3},
+  {"wk_pearson_correlation_warmup_period", (DL_FUNC)&wk_pearson_correlation_warmup_period, 1},
+  {"wk_pearson_correlation_is_ready", (DL_FUNC)&wk_pearson_correlation_is_ready, 1},
   {"wk_pearson_correlation_reset", (DL_FUNC)&wk_pearson_correlation_reset, 1},
   {"wk_percent_above_ma_new", (DL_FUNC)&wk_percent_above_ma_new, 0},
   {"wk_percent_above_ma_update", (DL_FUNC)&wk_percent_above_ma_update, 8},
+  {"wk_percent_above_ma_warmup_period", (DL_FUNC)&wk_percent_above_ma_warmup_period, 1},
+  {"wk_percent_above_ma_is_ready", (DL_FUNC)&wk_percent_above_ma_is_ready, 1},
   {"wk_percent_above_ma_reset", (DL_FUNC)&wk_percent_above_ma_reset, 1},
   {"wk_percent_b_new", (DL_FUNC)&wk_percent_b_new, 2},
   {"wk_percent_b_update", (DL_FUNC)&wk_percent_b_update, 2},
   {"wk_percent_b_batch", (DL_FUNC)&wk_percent_b_batch, 2},
+  {"wk_percent_b_warmup_period", (DL_FUNC)&wk_percent_b_warmup_period, 1},
+  {"wk_percent_b_is_ready", (DL_FUNC)&wk_percent_b_is_ready, 1},
   {"wk_percent_b_reset", (DL_FUNC)&wk_percent_b_reset, 1},
   {"wk_percentage_trailing_stop_new", (DL_FUNC)&wk_percentage_trailing_stop_new, 1},
   {"wk_percentage_trailing_stop_update", (DL_FUNC)&wk_percentage_trailing_stop_update, 2},
   {"wk_percentage_trailing_stop_batch", (DL_FUNC)&wk_percentage_trailing_stop_batch, 2},
+  {"wk_percentage_trailing_stop_warmup_period", (DL_FUNC)&wk_percentage_trailing_stop_warmup_period, 1},
+  {"wk_percentage_trailing_stop_is_ready", (DL_FUNC)&wk_percentage_trailing_stop_is_ready, 1},
   {"wk_percentage_trailing_stop_reset", (DL_FUNC)&wk_percentage_trailing_stop_reset, 1},
   {"wk_perpetual_premium_index_new", (DL_FUNC)&wk_perpetual_premium_index_new, 0},
   {"wk_perpetual_premium_index_update", (DL_FUNC)&wk_perpetual_premium_index_update, 13},
+  {"wk_perpetual_premium_index_warmup_period", (DL_FUNC)&wk_perpetual_premium_index_warmup_period, 1},
+  {"wk_perpetual_premium_index_is_ready", (DL_FUNC)&wk_perpetual_premium_index_is_ready, 1},
   {"wk_perpetual_premium_index_reset", (DL_FUNC)&wk_perpetual_premium_index_reset, 1},
   {"wk_pgo_new", (DL_FUNC)&wk_pgo_new, 1},
   {"wk_pgo_update", (DL_FUNC)&wk_pgo_update, 7},
   {"wk_pgo_batch", (DL_FUNC)&wk_pgo_batch, 7},
+  {"wk_pgo_warmup_period", (DL_FUNC)&wk_pgo_warmup_period, 1},
+  {"wk_pgo_is_ready", (DL_FUNC)&wk_pgo_is_ready, 1},
   {"wk_pgo_reset", (DL_FUNC)&wk_pgo_reset, 1},
   {"wk_piercing_dark_cloud_new", (DL_FUNC)&wk_piercing_dark_cloud_new, 0},
   {"wk_piercing_dark_cloud_update", (DL_FUNC)&wk_piercing_dark_cloud_update, 7},
   {"wk_piercing_dark_cloud_batch", (DL_FUNC)&wk_piercing_dark_cloud_batch, 7},
+  {"wk_piercing_dark_cloud_warmup_period", (DL_FUNC)&wk_piercing_dark_cloud_warmup_period, 1},
+  {"wk_piercing_dark_cloud_is_ready", (DL_FUNC)&wk_piercing_dark_cloud_is_ready, 1},
   {"wk_piercing_dark_cloud_reset", (DL_FUNC)&wk_piercing_dark_cloud_reset, 1},
   {"wk_pin_new", (DL_FUNC)&wk_pin_new, 1},
   {"wk_pin_update", (DL_FUNC)&wk_pin_update, 5},
+  {"wk_pin_warmup_period", (DL_FUNC)&wk_pin_warmup_period, 1},
+  {"wk_pin_is_ready", (DL_FUNC)&wk_pin_is_ready, 1},
   {"wk_pin_reset", (DL_FUNC)&wk_pin_reset, 1},
   {"wk_pivot_reversal_new", (DL_FUNC)&wk_pivot_reversal_new, 2},
   {"wk_pivot_reversal_update", (DL_FUNC)&wk_pivot_reversal_update, 7},
   {"wk_pivot_reversal_batch", (DL_FUNC)&wk_pivot_reversal_batch, 7},
+  {"wk_pivot_reversal_warmup_period", (DL_FUNC)&wk_pivot_reversal_warmup_period, 1},
+  {"wk_pivot_reversal_is_ready", (DL_FUNC)&wk_pivot_reversal_is_ready, 1},
   {"wk_pivot_reversal_reset", (DL_FUNC)&wk_pivot_reversal_reset, 1},
   {"wk_plus_di_new", (DL_FUNC)&wk_plus_di_new, 1},
   {"wk_plus_di_update", (DL_FUNC)&wk_plus_di_update, 7},
   {"wk_plus_di_batch", (DL_FUNC)&wk_plus_di_batch, 7},
+  {"wk_plus_di_warmup_period", (DL_FUNC)&wk_plus_di_warmup_period, 1},
+  {"wk_plus_di_is_ready", (DL_FUNC)&wk_plus_di_is_ready, 1},
   {"wk_plus_di_reset", (DL_FUNC)&wk_plus_di_reset, 1},
   {"wk_plus_dm_new", (DL_FUNC)&wk_plus_dm_new, 1},
   {"wk_plus_dm_update", (DL_FUNC)&wk_plus_dm_update, 7},
   {"wk_plus_dm_batch", (DL_FUNC)&wk_plus_dm_batch, 7},
+  {"wk_plus_dm_warmup_period", (DL_FUNC)&wk_plus_dm_warmup_period, 1},
+  {"wk_plus_dm_is_ready", (DL_FUNC)&wk_plus_dm_is_ready, 1},
   {"wk_plus_dm_reset", (DL_FUNC)&wk_plus_dm_reset, 1},
   {"wk_pmo_new", (DL_FUNC)&wk_pmo_new, 2},
   {"wk_pmo_update", (DL_FUNC)&wk_pmo_update, 2},
   {"wk_pmo_batch", (DL_FUNC)&wk_pmo_batch, 2},
+  {"wk_pmo_warmup_period", (DL_FUNC)&wk_pmo_warmup_period, 1},
+  {"wk_pmo_is_ready", (DL_FUNC)&wk_pmo_is_ready, 1},
   {"wk_pmo_reset", (DL_FUNC)&wk_pmo_reset, 1},
   {"wk_point_and_figure_bars_new", (DL_FUNC)&wk_point_and_figure_bars_new, 2},
   {"wk_point_and_figure_bars_update", (DL_FUNC)&wk_point_and_figure_bars_update, 7},
@@ -17571,83 +22215,125 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_polarized_fractal_efficiency_new", (DL_FUNC)&wk_polarized_fractal_efficiency_new, 2},
   {"wk_polarized_fractal_efficiency_update", (DL_FUNC)&wk_polarized_fractal_efficiency_update, 2},
   {"wk_polarized_fractal_efficiency_batch", (DL_FUNC)&wk_polarized_fractal_efficiency_batch, 2},
+  {"wk_polarized_fractal_efficiency_warmup_period", (DL_FUNC)&wk_polarized_fractal_efficiency_warmup_period, 1},
+  {"wk_polarized_fractal_efficiency_is_ready", (DL_FUNC)&wk_polarized_fractal_efficiency_is_ready, 1},
   {"wk_polarized_fractal_efficiency_reset", (DL_FUNC)&wk_polarized_fractal_efficiency_reset, 1},
   {"wk_ppo_new", (DL_FUNC)&wk_ppo_new, 2},
   {"wk_ppo_update", (DL_FUNC)&wk_ppo_update, 2},
   {"wk_ppo_batch", (DL_FUNC)&wk_ppo_batch, 2},
+  {"wk_ppo_warmup_period", (DL_FUNC)&wk_ppo_warmup_period, 1},
+  {"wk_ppo_is_ready", (DL_FUNC)&wk_ppo_is_ready, 1},
   {"wk_ppo_reset", (DL_FUNC)&wk_ppo_reset, 1},
   {"wk_ppo_histogram_new", (DL_FUNC)&wk_ppo_histogram_new, 3},
   {"wk_ppo_histogram_update", (DL_FUNC)&wk_ppo_histogram_update, 2},
   {"wk_ppo_histogram_batch", (DL_FUNC)&wk_ppo_histogram_batch, 2},
+  {"wk_ppo_histogram_warmup_period", (DL_FUNC)&wk_ppo_histogram_warmup_period, 1},
+  {"wk_ppo_histogram_is_ready", (DL_FUNC)&wk_ppo_histogram_is_ready, 1},
   {"wk_ppo_histogram_reset", (DL_FUNC)&wk_ppo_histogram_reset, 1},
   {"wk_profile_shape_new", (DL_FUNC)&wk_profile_shape_new, 2},
   {"wk_profile_shape_update", (DL_FUNC)&wk_profile_shape_update, 7},
   {"wk_profile_shape_batch", (DL_FUNC)&wk_profile_shape_batch, 7},
+  {"wk_profile_shape_warmup_period", (DL_FUNC)&wk_profile_shape_warmup_period, 1},
+  {"wk_profile_shape_is_ready", (DL_FUNC)&wk_profile_shape_is_ready, 1},
   {"wk_profile_shape_reset", (DL_FUNC)&wk_profile_shape_reset, 1},
   {"wk_profit_factor_new", (DL_FUNC)&wk_profit_factor_new, 1},
   {"wk_profit_factor_update", (DL_FUNC)&wk_profit_factor_update, 2},
   {"wk_profit_factor_batch", (DL_FUNC)&wk_profit_factor_batch, 2},
+  {"wk_profit_factor_warmup_period", (DL_FUNC)&wk_profit_factor_warmup_period, 1},
+  {"wk_profit_factor_is_ready", (DL_FUNC)&wk_profit_factor_is_ready, 1},
   {"wk_profit_factor_reset", (DL_FUNC)&wk_profit_factor_reset, 1},
   {"wk_projection_bands_new", (DL_FUNC)&wk_projection_bands_new, 1},
   {"wk_projection_bands_update", (DL_FUNC)&wk_projection_bands_update, 7},
+  {"wk_projection_bands_warmup_period", (DL_FUNC)&wk_projection_bands_warmup_period, 1},
+  {"wk_projection_bands_is_ready", (DL_FUNC)&wk_projection_bands_is_ready, 1},
   {"wk_projection_bands_reset", (DL_FUNC)&wk_projection_bands_reset, 1},
   {"wk_projection_oscillator_new", (DL_FUNC)&wk_projection_oscillator_new, 1},
   {"wk_projection_oscillator_update", (DL_FUNC)&wk_projection_oscillator_update, 7},
   {"wk_projection_oscillator_batch", (DL_FUNC)&wk_projection_oscillator_batch, 7},
+  {"wk_projection_oscillator_warmup_period", (DL_FUNC)&wk_projection_oscillator_warmup_period, 1},
+  {"wk_projection_oscillator_is_ready", (DL_FUNC)&wk_projection_oscillator_is_ready, 1},
   {"wk_projection_oscillator_reset", (DL_FUNC)&wk_projection_oscillator_reset, 1},
   {"wk_psar_new", (DL_FUNC)&wk_psar_new, 3},
   {"wk_psar_update", (DL_FUNC)&wk_psar_update, 7},
   {"wk_psar_batch", (DL_FUNC)&wk_psar_batch, 7},
+  {"wk_psar_warmup_period", (DL_FUNC)&wk_psar_warmup_period, 1},
+  {"wk_psar_is_ready", (DL_FUNC)&wk_psar_is_ready, 1},
   {"wk_psar_reset", (DL_FUNC)&wk_psar_reset, 1},
   {"wk_pvi_new", (DL_FUNC)&wk_pvi_new, 0},
   {"wk_pvi_update", (DL_FUNC)&wk_pvi_update, 7},
   {"wk_pvi_batch", (DL_FUNC)&wk_pvi_batch, 7},
+  {"wk_pvi_warmup_period", (DL_FUNC)&wk_pvi_warmup_period, 1},
+  {"wk_pvi_is_ready", (DL_FUNC)&wk_pvi_is_ready, 1},
   {"wk_pvi_reset", (DL_FUNC)&wk_pvi_reset, 1},
   {"wk_qqe_new", (DL_FUNC)&wk_qqe_new, 3},
   {"wk_qqe_update", (DL_FUNC)&wk_qqe_update, 2},
+  {"wk_qqe_warmup_period", (DL_FUNC)&wk_qqe_warmup_period, 1},
+  {"wk_qqe_is_ready", (DL_FUNC)&wk_qqe_is_ready, 1},
   {"wk_qqe_reset", (DL_FUNC)&wk_qqe_reset, 1},
   {"wk_qstick_new", (DL_FUNC)&wk_qstick_new, 1},
   {"wk_qstick_update", (DL_FUNC)&wk_qstick_update, 7},
   {"wk_qstick_batch", (DL_FUNC)&wk_qstick_batch, 7},
+  {"wk_qstick_warmup_period", (DL_FUNC)&wk_qstick_warmup_period, 1},
+  {"wk_qstick_is_ready", (DL_FUNC)&wk_qstick_is_ready, 1},
   {"wk_qstick_reset", (DL_FUNC)&wk_qstick_reset, 1},
   {"wk_quartile_bands_new", (DL_FUNC)&wk_quartile_bands_new, 1},
   {"wk_quartile_bands_update", (DL_FUNC)&wk_quartile_bands_update, 2},
+  {"wk_quartile_bands_warmup_period", (DL_FUNC)&wk_quartile_bands_warmup_period, 1},
+  {"wk_quartile_bands_is_ready", (DL_FUNC)&wk_quartile_bands_is_ready, 1},
   {"wk_quartile_bands_reset", (DL_FUNC)&wk_quartile_bands_reset, 1},
   {"wk_quoted_spread_new", (DL_FUNC)&wk_quoted_spread_new, 0},
   {"wk_quoted_spread_update", (DL_FUNC)&wk_quoted_spread_update, 5},
+  {"wk_quoted_spread_warmup_period", (DL_FUNC)&wk_quoted_spread_warmup_period, 1},
+  {"wk_quoted_spread_is_ready", (DL_FUNC)&wk_quoted_spread_is_ready, 1},
   {"wk_quoted_spread_reset", (DL_FUNC)&wk_quoted_spread_reset, 1},
   {"wk_r_squared_new", (DL_FUNC)&wk_r_squared_new, 1},
   {"wk_r_squared_update", (DL_FUNC)&wk_r_squared_update, 2},
   {"wk_r_squared_batch", (DL_FUNC)&wk_r_squared_batch, 2},
+  {"wk_r_squared_warmup_period", (DL_FUNC)&wk_r_squared_warmup_period, 1},
+  {"wk_r_squared_is_ready", (DL_FUNC)&wk_r_squared_is_ready, 1},
   {"wk_r_squared_reset", (DL_FUNC)&wk_r_squared_reset, 1},
   {"wk_range_bars_new", (DL_FUNC)&wk_range_bars_new, 1},
   {"wk_range_bars_update", (DL_FUNC)&wk_range_bars_update, 7},
   {"wk_range_bars_reset", (DL_FUNC)&wk_range_bars_reset, 1},
   {"wk_realized_spread_new", (DL_FUNC)&wk_realized_spread_new, 1},
   {"wk_realized_spread_update", (DL_FUNC)&wk_realized_spread_update, 6},
+  {"wk_realized_spread_warmup_period", (DL_FUNC)&wk_realized_spread_warmup_period, 1},
+  {"wk_realized_spread_is_ready", (DL_FUNC)&wk_realized_spread_is_ready, 1},
   {"wk_realized_spread_reset", (DL_FUNC)&wk_realized_spread_reset, 1},
   {"wk_realized_volatility_new", (DL_FUNC)&wk_realized_volatility_new, 1},
   {"wk_realized_volatility_update", (DL_FUNC)&wk_realized_volatility_update, 2},
   {"wk_realized_volatility_batch", (DL_FUNC)&wk_realized_volatility_batch, 2},
+  {"wk_realized_volatility_warmup_period", (DL_FUNC)&wk_realized_volatility_warmup_period, 1},
+  {"wk_realized_volatility_is_ready", (DL_FUNC)&wk_realized_volatility_is_ready, 1},
   {"wk_realized_volatility_reset", (DL_FUNC)&wk_realized_volatility_reset, 1},
   {"wk_recovery_factor_new", (DL_FUNC)&wk_recovery_factor_new, 0},
   {"wk_recovery_factor_update", (DL_FUNC)&wk_recovery_factor_update, 2},
   {"wk_recovery_factor_batch", (DL_FUNC)&wk_recovery_factor_batch, 2},
+  {"wk_recovery_factor_warmup_period", (DL_FUNC)&wk_recovery_factor_warmup_period, 1},
+  {"wk_recovery_factor_is_ready", (DL_FUNC)&wk_recovery_factor_is_ready, 1},
   {"wk_recovery_factor_reset", (DL_FUNC)&wk_recovery_factor_reset, 1},
   {"wk_rectangle_range_new", (DL_FUNC)&wk_rectangle_range_new, 0},
   {"wk_rectangle_range_update", (DL_FUNC)&wk_rectangle_range_update, 7},
   {"wk_rectangle_range_batch", (DL_FUNC)&wk_rectangle_range_batch, 7},
+  {"wk_rectangle_range_warmup_period", (DL_FUNC)&wk_rectangle_range_warmup_period, 1},
+  {"wk_rectangle_range_is_ready", (DL_FUNC)&wk_rectangle_range_is_ready, 1},
   {"wk_rectangle_range_reset", (DL_FUNC)&wk_rectangle_range_reset, 1},
   {"wk_reflex_new", (DL_FUNC)&wk_reflex_new, 1},
   {"wk_reflex_update", (DL_FUNC)&wk_reflex_update, 2},
   {"wk_reflex_batch", (DL_FUNC)&wk_reflex_batch, 2},
+  {"wk_reflex_warmup_period", (DL_FUNC)&wk_reflex_warmup_period, 1},
+  {"wk_reflex_is_ready", (DL_FUNC)&wk_reflex_is_ready, 1},
   {"wk_reflex_reset", (DL_FUNC)&wk_reflex_reset, 1},
   {"wk_regime_label_new", (DL_FUNC)&wk_regime_label_new, 2},
   {"wk_regime_label_update", (DL_FUNC)&wk_regime_label_update, 2},
   {"wk_regime_label_batch", (DL_FUNC)&wk_regime_label_batch, 2},
+  {"wk_regime_label_warmup_period", (DL_FUNC)&wk_regime_label_warmup_period, 1},
+  {"wk_regime_label_is_ready", (DL_FUNC)&wk_regime_label_is_ready, 1},
   {"wk_regime_label_reset", (DL_FUNC)&wk_regime_label_reset, 1},
   {"wk_relative_strength_ab_new", (DL_FUNC)&wk_relative_strength_ab_new, 2},
   {"wk_relative_strength_ab_update", (DL_FUNC)&wk_relative_strength_ab_update, 3},
+  {"wk_relative_strength_ab_warmup_period", (DL_FUNC)&wk_relative_strength_ab_warmup_period, 1},
+  {"wk_relative_strength_ab_is_ready", (DL_FUNC)&wk_relative_strength_ab_is_ready, 1},
   {"wk_relative_strength_ab_reset", (DL_FUNC)&wk_relative_strength_ab_reset, 1},
   {"wk_renko_bars_new", (DL_FUNC)&wk_renko_bars_new, 1},
   {"wk_renko_bars_update", (DL_FUNC)&wk_renko_bars_update, 7},
@@ -17655,81 +22341,121 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_renko_trailing_stop_new", (DL_FUNC)&wk_renko_trailing_stop_new, 1},
   {"wk_renko_trailing_stop_update", (DL_FUNC)&wk_renko_trailing_stop_update, 2},
   {"wk_renko_trailing_stop_batch", (DL_FUNC)&wk_renko_trailing_stop_batch, 2},
+  {"wk_renko_trailing_stop_warmup_period", (DL_FUNC)&wk_renko_trailing_stop_warmup_period, 1},
+  {"wk_renko_trailing_stop_is_ready", (DL_FUNC)&wk_renko_trailing_stop_is_ready, 1},
   {"wk_renko_trailing_stop_reset", (DL_FUNC)&wk_renko_trailing_stop_reset, 1},
   {"wk_rickshaw_man_new", (DL_FUNC)&wk_rickshaw_man_new, 0},
   {"wk_rickshaw_man_update", (DL_FUNC)&wk_rickshaw_man_update, 7},
   {"wk_rickshaw_man_batch", (DL_FUNC)&wk_rickshaw_man_batch, 7},
+  {"wk_rickshaw_man_warmup_period", (DL_FUNC)&wk_rickshaw_man_warmup_period, 1},
+  {"wk_rickshaw_man_is_ready", (DL_FUNC)&wk_rickshaw_man_is_ready, 1},
   {"wk_rickshaw_man_reset", (DL_FUNC)&wk_rickshaw_man_reset, 1},
   {"wk_rising_three_methods_new", (DL_FUNC)&wk_rising_three_methods_new, 0},
   {"wk_rising_three_methods_update", (DL_FUNC)&wk_rising_three_methods_update, 7},
   {"wk_rising_three_methods_batch", (DL_FUNC)&wk_rising_three_methods_batch, 7},
+  {"wk_rising_three_methods_warmup_period", (DL_FUNC)&wk_rising_three_methods_warmup_period, 1},
+  {"wk_rising_three_methods_is_ready", (DL_FUNC)&wk_rising_three_methods_is_ready, 1},
   {"wk_rising_three_methods_reset", (DL_FUNC)&wk_rising_three_methods_reset, 1},
   {"wk_rmi_new", (DL_FUNC)&wk_rmi_new, 2},
   {"wk_rmi_update", (DL_FUNC)&wk_rmi_update, 2},
   {"wk_rmi_batch", (DL_FUNC)&wk_rmi_batch, 2},
+  {"wk_rmi_warmup_period", (DL_FUNC)&wk_rmi_warmup_period, 1},
+  {"wk_rmi_is_ready", (DL_FUNC)&wk_rmi_is_ready, 1},
   {"wk_rmi_reset", (DL_FUNC)&wk_rmi_reset, 1},
   {"wk_roc_new", (DL_FUNC)&wk_roc_new, 1},
   {"wk_roc_update", (DL_FUNC)&wk_roc_update, 2},
   {"wk_roc_batch", (DL_FUNC)&wk_roc_batch, 2},
+  {"wk_roc_warmup_period", (DL_FUNC)&wk_roc_warmup_period, 1},
+  {"wk_roc_is_ready", (DL_FUNC)&wk_roc_is_ready, 1},
   {"wk_roc_reset", (DL_FUNC)&wk_roc_reset, 1},
   {"wk_rocp_new", (DL_FUNC)&wk_rocp_new, 1},
   {"wk_rocp_update", (DL_FUNC)&wk_rocp_update, 2},
   {"wk_rocp_batch", (DL_FUNC)&wk_rocp_batch, 2},
+  {"wk_rocp_warmup_period", (DL_FUNC)&wk_rocp_warmup_period, 1},
+  {"wk_rocp_is_ready", (DL_FUNC)&wk_rocp_is_ready, 1},
   {"wk_rocp_reset", (DL_FUNC)&wk_rocp_reset, 1},
   {"wk_rocr_new", (DL_FUNC)&wk_rocr_new, 1},
   {"wk_rocr_update", (DL_FUNC)&wk_rocr_update, 2},
   {"wk_rocr_batch", (DL_FUNC)&wk_rocr_batch, 2},
+  {"wk_rocr_warmup_period", (DL_FUNC)&wk_rocr_warmup_period, 1},
+  {"wk_rocr_is_ready", (DL_FUNC)&wk_rocr_is_ready, 1},
   {"wk_rocr_reset", (DL_FUNC)&wk_rocr_reset, 1},
   {"wk_rocr100_new", (DL_FUNC)&wk_rocr100_new, 1},
   {"wk_rocr100_update", (DL_FUNC)&wk_rocr100_update, 2},
   {"wk_rocr100_batch", (DL_FUNC)&wk_rocr100_batch, 2},
+  {"wk_rocr100_warmup_period", (DL_FUNC)&wk_rocr100_warmup_period, 1},
+  {"wk_rocr100_is_ready", (DL_FUNC)&wk_rocr100_is_ready, 1},
   {"wk_rocr100_reset", (DL_FUNC)&wk_rocr100_reset, 1},
   {"wk_rogers_satchell_volatility_new", (DL_FUNC)&wk_rogers_satchell_volatility_new, 2},
   {"wk_rogers_satchell_volatility_update", (DL_FUNC)&wk_rogers_satchell_volatility_update, 7},
   {"wk_rogers_satchell_volatility_batch", (DL_FUNC)&wk_rogers_satchell_volatility_batch, 7},
+  {"wk_rogers_satchell_volatility_warmup_period", (DL_FUNC)&wk_rogers_satchell_volatility_warmup_period, 1},
+  {"wk_rogers_satchell_volatility_is_ready", (DL_FUNC)&wk_rogers_satchell_volatility_is_ready, 1},
   {"wk_rogers_satchell_volatility_reset", (DL_FUNC)&wk_rogers_satchell_volatility_reset, 1},
   {"wk_roll_measure_new", (DL_FUNC)&wk_roll_measure_new, 1},
   {"wk_roll_measure_update", (DL_FUNC)&wk_roll_measure_update, 5},
+  {"wk_roll_measure_warmup_period", (DL_FUNC)&wk_roll_measure_warmup_period, 1},
+  {"wk_roll_measure_is_ready", (DL_FUNC)&wk_roll_measure_is_ready, 1},
   {"wk_roll_measure_reset", (DL_FUNC)&wk_roll_measure_reset, 1},
   {"wk_rolling_correlation_new", (DL_FUNC)&wk_rolling_correlation_new, 1},
   {"wk_rolling_correlation_update", (DL_FUNC)&wk_rolling_correlation_update, 3},
   {"wk_rolling_correlation_batch", (DL_FUNC)&wk_rolling_correlation_batch, 3},
+  {"wk_rolling_correlation_warmup_period", (DL_FUNC)&wk_rolling_correlation_warmup_period, 1},
+  {"wk_rolling_correlation_is_ready", (DL_FUNC)&wk_rolling_correlation_is_ready, 1},
   {"wk_rolling_correlation_reset", (DL_FUNC)&wk_rolling_correlation_reset, 1},
   {"wk_rolling_covariance_new", (DL_FUNC)&wk_rolling_covariance_new, 1},
   {"wk_rolling_covariance_update", (DL_FUNC)&wk_rolling_covariance_update, 3},
   {"wk_rolling_covariance_batch", (DL_FUNC)&wk_rolling_covariance_batch, 3},
+  {"wk_rolling_covariance_warmup_period", (DL_FUNC)&wk_rolling_covariance_warmup_period, 1},
+  {"wk_rolling_covariance_is_ready", (DL_FUNC)&wk_rolling_covariance_is_ready, 1},
   {"wk_rolling_covariance_reset", (DL_FUNC)&wk_rolling_covariance_reset, 1},
   {"wk_rolling_iqr_new", (DL_FUNC)&wk_rolling_iqr_new, 1},
   {"wk_rolling_iqr_update", (DL_FUNC)&wk_rolling_iqr_update, 2},
   {"wk_rolling_iqr_batch", (DL_FUNC)&wk_rolling_iqr_batch, 2},
+  {"wk_rolling_iqr_warmup_period", (DL_FUNC)&wk_rolling_iqr_warmup_period, 1},
+  {"wk_rolling_iqr_is_ready", (DL_FUNC)&wk_rolling_iqr_is_ready, 1},
   {"wk_rolling_iqr_reset", (DL_FUNC)&wk_rolling_iqr_reset, 1},
   {"wk_rolling_min_max_scaler_new", (DL_FUNC)&wk_rolling_min_max_scaler_new, 1},
   {"wk_rolling_min_max_scaler_update", (DL_FUNC)&wk_rolling_min_max_scaler_update, 2},
   {"wk_rolling_min_max_scaler_batch", (DL_FUNC)&wk_rolling_min_max_scaler_batch, 2},
+  {"wk_rolling_min_max_scaler_warmup_period", (DL_FUNC)&wk_rolling_min_max_scaler_warmup_period, 1},
+  {"wk_rolling_min_max_scaler_is_ready", (DL_FUNC)&wk_rolling_min_max_scaler_is_ready, 1},
   {"wk_rolling_min_max_scaler_reset", (DL_FUNC)&wk_rolling_min_max_scaler_reset, 1},
   {"wk_rolling_percentile_rank_new", (DL_FUNC)&wk_rolling_percentile_rank_new, 1},
   {"wk_rolling_percentile_rank_update", (DL_FUNC)&wk_rolling_percentile_rank_update, 2},
   {"wk_rolling_percentile_rank_batch", (DL_FUNC)&wk_rolling_percentile_rank_batch, 2},
+  {"wk_rolling_percentile_rank_warmup_period", (DL_FUNC)&wk_rolling_percentile_rank_warmup_period, 1},
+  {"wk_rolling_percentile_rank_is_ready", (DL_FUNC)&wk_rolling_percentile_rank_is_ready, 1},
   {"wk_rolling_percentile_rank_reset", (DL_FUNC)&wk_rolling_percentile_rank_reset, 1},
   {"wk_rolling_quantile_new", (DL_FUNC)&wk_rolling_quantile_new, 2},
   {"wk_rolling_quantile_update", (DL_FUNC)&wk_rolling_quantile_update, 2},
   {"wk_rolling_quantile_batch", (DL_FUNC)&wk_rolling_quantile_batch, 2},
+  {"wk_rolling_quantile_warmup_period", (DL_FUNC)&wk_rolling_quantile_warmup_period, 1},
+  {"wk_rolling_quantile_is_ready", (DL_FUNC)&wk_rolling_quantile_is_ready, 1},
   {"wk_rolling_quantile_reset", (DL_FUNC)&wk_rolling_quantile_reset, 1},
   {"wk_rolling_vwap_new", (DL_FUNC)&wk_rolling_vwap_new, 1},
   {"wk_rolling_vwap_update", (DL_FUNC)&wk_rolling_vwap_update, 7},
   {"wk_rolling_vwap_batch", (DL_FUNC)&wk_rolling_vwap_batch, 7},
+  {"wk_rolling_vwap_warmup_period", (DL_FUNC)&wk_rolling_vwap_warmup_period, 1},
+  {"wk_rolling_vwap_is_ready", (DL_FUNC)&wk_rolling_vwap_is_ready, 1},
   {"wk_rolling_vwap_reset", (DL_FUNC)&wk_rolling_vwap_reset, 1},
   {"wk_roofing_filter_new", (DL_FUNC)&wk_roofing_filter_new, 2},
   {"wk_roofing_filter_update", (DL_FUNC)&wk_roofing_filter_update, 2},
   {"wk_roofing_filter_batch", (DL_FUNC)&wk_roofing_filter_batch, 2},
+  {"wk_roofing_filter_warmup_period", (DL_FUNC)&wk_roofing_filter_warmup_period, 1},
+  {"wk_roofing_filter_is_ready", (DL_FUNC)&wk_roofing_filter_is_ready, 1},
   {"wk_roofing_filter_reset", (DL_FUNC)&wk_roofing_filter_reset, 1},
   {"wk_rsi_new", (DL_FUNC)&wk_rsi_new, 1},
   {"wk_rsi_update", (DL_FUNC)&wk_rsi_update, 2},
   {"wk_rsi_batch", (DL_FUNC)&wk_rsi_batch, 2},
+  {"wk_rsi_warmup_period", (DL_FUNC)&wk_rsi_warmup_period, 1},
+  {"wk_rsi_is_ready", (DL_FUNC)&wk_rsi_is_ready, 1},
   {"wk_rsi_reset", (DL_FUNC)&wk_rsi_reset, 1},
   {"wk_rsx_new", (DL_FUNC)&wk_rsx_new, 1},
   {"wk_rsx_update", (DL_FUNC)&wk_rsx_update, 2},
   {"wk_rsx_batch", (DL_FUNC)&wk_rsx_batch, 2},
+  {"wk_rsx_warmup_period", (DL_FUNC)&wk_rsx_warmup_period, 1},
+  {"wk_rsx_is_ready", (DL_FUNC)&wk_rsx_is_ready, 1},
   {"wk_rsx_reset", (DL_FUNC)&wk_rsx_reset, 1},
   {"wk_run_bars_new", (DL_FUNC)&wk_run_bars_new, 1},
   {"wk_run_bars_update", (DL_FUNC)&wk_run_bars_update, 7},
@@ -17737,277 +22463,423 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_rvi_new", (DL_FUNC)&wk_rvi_new, 1},
   {"wk_rvi_update", (DL_FUNC)&wk_rvi_update, 7},
   {"wk_rvi_batch", (DL_FUNC)&wk_rvi_batch, 7},
+  {"wk_rvi_warmup_period", (DL_FUNC)&wk_rvi_warmup_period, 1},
+  {"wk_rvi_is_ready", (DL_FUNC)&wk_rvi_is_ready, 1},
   {"wk_rvi_reset", (DL_FUNC)&wk_rvi_reset, 1},
   {"wk_rvi_volatility_new", (DL_FUNC)&wk_rvi_volatility_new, 1},
   {"wk_rvi_volatility_update", (DL_FUNC)&wk_rvi_volatility_update, 2},
   {"wk_rvi_volatility_batch", (DL_FUNC)&wk_rvi_volatility_batch, 2},
+  {"wk_rvi_volatility_warmup_period", (DL_FUNC)&wk_rvi_volatility_warmup_period, 1},
+  {"wk_rvi_volatility_is_ready", (DL_FUNC)&wk_rvi_volatility_is_ready, 1},
   {"wk_rvi_volatility_reset", (DL_FUNC)&wk_rvi_volatility_reset, 1},
   {"wk_rwi_new", (DL_FUNC)&wk_rwi_new, 1},
   {"wk_rwi_update", (DL_FUNC)&wk_rwi_update, 7},
+  {"wk_rwi_warmup_period", (DL_FUNC)&wk_rwi_warmup_period, 1},
+  {"wk_rwi_is_ready", (DL_FUNC)&wk_rwi_is_ready, 1},
   {"wk_rwi_reset", (DL_FUNC)&wk_rwi_reset, 1},
   {"wk_sample_entropy_new", (DL_FUNC)&wk_sample_entropy_new, 3},
   {"wk_sample_entropy_update", (DL_FUNC)&wk_sample_entropy_update, 2},
   {"wk_sample_entropy_batch", (DL_FUNC)&wk_sample_entropy_batch, 2},
+  {"wk_sample_entropy_warmup_period", (DL_FUNC)&wk_sample_entropy_warmup_period, 1},
+  {"wk_sample_entropy_is_ready", (DL_FUNC)&wk_sample_entropy_is_ready, 1},
   {"wk_sample_entropy_reset", (DL_FUNC)&wk_sample_entropy_reset, 1},
   {"wk_sar_ext_new", (DL_FUNC)&wk_sar_ext_new, 8},
   {"wk_sar_ext_update", (DL_FUNC)&wk_sar_ext_update, 7},
   {"wk_sar_ext_batch", (DL_FUNC)&wk_sar_ext_batch, 7},
+  {"wk_sar_ext_warmup_period", (DL_FUNC)&wk_sar_ext_warmup_period, 1},
+  {"wk_sar_ext_is_ready", (DL_FUNC)&wk_sar_ext_is_ready, 1},
   {"wk_sar_ext_reset", (DL_FUNC)&wk_sar_ext_reset, 1},
   {"wk_seasonal_z_score_new", (DL_FUNC)&wk_seasonal_z_score_new, 1},
   {"wk_seasonal_z_score_update", (DL_FUNC)&wk_seasonal_z_score_update, 7},
   {"wk_seasonal_z_score_batch", (DL_FUNC)&wk_seasonal_z_score_batch, 7},
+  {"wk_seasonal_z_score_warmup_period", (DL_FUNC)&wk_seasonal_z_score_warmup_period, 1},
+  {"wk_seasonal_z_score_is_ready", (DL_FUNC)&wk_seasonal_z_score_is_ready, 1},
   {"wk_seasonal_z_score_reset", (DL_FUNC)&wk_seasonal_z_score_reset, 1},
   {"wk_separating_lines_new", (DL_FUNC)&wk_separating_lines_new, 0},
   {"wk_separating_lines_update", (DL_FUNC)&wk_separating_lines_update, 7},
   {"wk_separating_lines_batch", (DL_FUNC)&wk_separating_lines_batch, 7},
+  {"wk_separating_lines_warmup_period", (DL_FUNC)&wk_separating_lines_warmup_period, 1},
+  {"wk_separating_lines_is_ready", (DL_FUNC)&wk_separating_lines_is_ready, 1},
   {"wk_separating_lines_reset", (DL_FUNC)&wk_separating_lines_reset, 1},
   {"wk_session_high_low_new", (DL_FUNC)&wk_session_high_low_new, 1},
   {"wk_session_high_low_update", (DL_FUNC)&wk_session_high_low_update, 7},
+  {"wk_session_high_low_warmup_period", (DL_FUNC)&wk_session_high_low_warmup_period, 1},
+  {"wk_session_high_low_is_ready", (DL_FUNC)&wk_session_high_low_is_ready, 1},
   {"wk_session_high_low_reset", (DL_FUNC)&wk_session_high_low_reset, 1},
   {"wk_session_range_new", (DL_FUNC)&wk_session_range_new, 1},
   {"wk_session_range_update", (DL_FUNC)&wk_session_range_update, 7},
+  {"wk_session_range_warmup_period", (DL_FUNC)&wk_session_range_warmup_period, 1},
+  {"wk_session_range_is_ready", (DL_FUNC)&wk_session_range_is_ready, 1},
   {"wk_session_range_reset", (DL_FUNC)&wk_session_range_reset, 1},
   {"wk_session_vwap_new", (DL_FUNC)&wk_session_vwap_new, 1},
   {"wk_session_vwap_update", (DL_FUNC)&wk_session_vwap_update, 7},
   {"wk_session_vwap_batch", (DL_FUNC)&wk_session_vwap_batch, 7},
+  {"wk_session_vwap_warmup_period", (DL_FUNC)&wk_session_vwap_warmup_period, 1},
+  {"wk_session_vwap_is_ready", (DL_FUNC)&wk_session_vwap_is_ready, 1},
   {"wk_session_vwap_reset", (DL_FUNC)&wk_session_vwap_reset, 1},
   {"wk_shannon_entropy_new", (DL_FUNC)&wk_shannon_entropy_new, 2},
   {"wk_shannon_entropy_update", (DL_FUNC)&wk_shannon_entropy_update, 2},
   {"wk_shannon_entropy_batch", (DL_FUNC)&wk_shannon_entropy_batch, 2},
+  {"wk_shannon_entropy_warmup_period", (DL_FUNC)&wk_shannon_entropy_warmup_period, 1},
+  {"wk_shannon_entropy_is_ready", (DL_FUNC)&wk_shannon_entropy_is_ready, 1},
   {"wk_shannon_entropy_reset", (DL_FUNC)&wk_shannon_entropy_reset, 1},
   {"wk_shark_new", (DL_FUNC)&wk_shark_new, 0},
   {"wk_shark_update", (DL_FUNC)&wk_shark_update, 7},
   {"wk_shark_batch", (DL_FUNC)&wk_shark_batch, 7},
+  {"wk_shark_warmup_period", (DL_FUNC)&wk_shark_warmup_period, 1},
+  {"wk_shark_is_ready", (DL_FUNC)&wk_shark_is_ready, 1},
   {"wk_shark_reset", (DL_FUNC)&wk_shark_reset, 1},
   {"wk_sharpe_ratio_new", (DL_FUNC)&wk_sharpe_ratio_new, 2},
   {"wk_sharpe_ratio_update", (DL_FUNC)&wk_sharpe_ratio_update, 2},
   {"wk_sharpe_ratio_batch", (DL_FUNC)&wk_sharpe_ratio_batch, 2},
+  {"wk_sharpe_ratio_warmup_period", (DL_FUNC)&wk_sharpe_ratio_warmup_period, 1},
+  {"wk_sharpe_ratio_is_ready", (DL_FUNC)&wk_sharpe_ratio_is_ready, 1},
   {"wk_sharpe_ratio_reset", (DL_FUNC)&wk_sharpe_ratio_reset, 1},
   {"wk_shooting_star_new", (DL_FUNC)&wk_shooting_star_new, 0},
   {"wk_shooting_star_update", (DL_FUNC)&wk_shooting_star_update, 7},
   {"wk_shooting_star_batch", (DL_FUNC)&wk_shooting_star_batch, 7},
+  {"wk_shooting_star_warmup_period", (DL_FUNC)&wk_shooting_star_warmup_period, 1},
+  {"wk_shooting_star_is_ready", (DL_FUNC)&wk_shooting_star_is_ready, 1},
   {"wk_shooting_star_reset", (DL_FUNC)&wk_shooting_star_reset, 1},
   {"wk_short_line_new", (DL_FUNC)&wk_short_line_new, 0},
   {"wk_short_line_update", (DL_FUNC)&wk_short_line_update, 7},
   {"wk_short_line_batch", (DL_FUNC)&wk_short_line_batch, 7},
+  {"wk_short_line_warmup_period", (DL_FUNC)&wk_short_line_warmup_period, 1},
+  {"wk_short_line_is_ready", (DL_FUNC)&wk_short_line_is_ready, 1},
   {"wk_short_line_reset", (DL_FUNC)&wk_short_line_reset, 1},
   {"wk_signed_volume_new", (DL_FUNC)&wk_signed_volume_new, 0},
   {"wk_signed_volume_update", (DL_FUNC)&wk_signed_volume_update, 5},
+  {"wk_signed_volume_warmup_period", (DL_FUNC)&wk_signed_volume_warmup_period, 1},
+  {"wk_signed_volume_is_ready", (DL_FUNC)&wk_signed_volume_is_ready, 1},
   {"wk_signed_volume_reset", (DL_FUNC)&wk_signed_volume_reset, 1},
   {"wk_sine_wave_new", (DL_FUNC)&wk_sine_wave_new, 0},
   {"wk_sine_wave_update", (DL_FUNC)&wk_sine_wave_update, 2},
   {"wk_sine_wave_batch", (DL_FUNC)&wk_sine_wave_batch, 2},
+  {"wk_sine_wave_warmup_period", (DL_FUNC)&wk_sine_wave_warmup_period, 1},
+  {"wk_sine_wave_is_ready", (DL_FUNC)&wk_sine_wave_is_ready, 1},
   {"wk_sine_wave_reset", (DL_FUNC)&wk_sine_wave_reset, 1},
   {"wk_sine_weighted_ma_new", (DL_FUNC)&wk_sine_weighted_ma_new, 1},
   {"wk_sine_weighted_ma_update", (DL_FUNC)&wk_sine_weighted_ma_update, 2},
   {"wk_sine_weighted_ma_batch", (DL_FUNC)&wk_sine_weighted_ma_batch, 2},
+  {"wk_sine_weighted_ma_warmup_period", (DL_FUNC)&wk_sine_weighted_ma_warmup_period, 1},
+  {"wk_sine_weighted_ma_is_ready", (DL_FUNC)&wk_sine_weighted_ma_is_ready, 1},
   {"wk_sine_weighted_ma_reset", (DL_FUNC)&wk_sine_weighted_ma_reset, 1},
   {"wk_single_prints_new", (DL_FUNC)&wk_single_prints_new, 2},
   {"wk_single_prints_update", (DL_FUNC)&wk_single_prints_update, 7},
   {"wk_single_prints_batch", (DL_FUNC)&wk_single_prints_batch, 7},
+  {"wk_single_prints_warmup_period", (DL_FUNC)&wk_single_prints_warmup_period, 1},
+  {"wk_single_prints_is_ready", (DL_FUNC)&wk_single_prints_is_ready, 1},
   {"wk_single_prints_reset", (DL_FUNC)&wk_single_prints_reset, 1},
   {"wk_skewness_new", (DL_FUNC)&wk_skewness_new, 1},
   {"wk_skewness_update", (DL_FUNC)&wk_skewness_update, 2},
   {"wk_skewness_batch", (DL_FUNC)&wk_skewness_batch, 2},
+  {"wk_skewness_warmup_period", (DL_FUNC)&wk_skewness_warmup_period, 1},
+  {"wk_skewness_is_ready", (DL_FUNC)&wk_skewness_is_ready, 1},
   {"wk_skewness_reset", (DL_FUNC)&wk_skewness_reset, 1},
   {"wk_sma_new", (DL_FUNC)&wk_sma_new, 1},
   {"wk_sma_update", (DL_FUNC)&wk_sma_update, 2},
   {"wk_sma_batch", (DL_FUNC)&wk_sma_batch, 2},
+  {"wk_sma_warmup_period", (DL_FUNC)&wk_sma_warmup_period, 1},
+  {"wk_sma_is_ready", (DL_FUNC)&wk_sma_is_ready, 1},
   {"wk_sma_reset", (DL_FUNC)&wk_sma_reset, 1},
   {"wk_smi_new", (DL_FUNC)&wk_smi_new, 3},
   {"wk_smi_update", (DL_FUNC)&wk_smi_update, 7},
   {"wk_smi_batch", (DL_FUNC)&wk_smi_batch, 7},
+  {"wk_smi_warmup_period", (DL_FUNC)&wk_smi_warmup_period, 1},
+  {"wk_smi_is_ready", (DL_FUNC)&wk_smi_is_ready, 1},
   {"wk_smi_reset", (DL_FUNC)&wk_smi_reset, 1},
   {"wk_smma_new", (DL_FUNC)&wk_smma_new, 1},
   {"wk_smma_update", (DL_FUNC)&wk_smma_update, 2},
   {"wk_smma_batch", (DL_FUNC)&wk_smma_batch, 2},
+  {"wk_smma_warmup_period", (DL_FUNC)&wk_smma_warmup_period, 1},
+  {"wk_smma_is_ready", (DL_FUNC)&wk_smma_is_ready, 1},
   {"wk_smma_reset", (DL_FUNC)&wk_smma_reset, 1},
   {"wk_smoothed_heikin_ashi_new", (DL_FUNC)&wk_smoothed_heikin_ashi_new, 1},
   {"wk_smoothed_heikin_ashi_update", (DL_FUNC)&wk_smoothed_heikin_ashi_update, 7},
+  {"wk_smoothed_heikin_ashi_warmup_period", (DL_FUNC)&wk_smoothed_heikin_ashi_warmup_period, 1},
+  {"wk_smoothed_heikin_ashi_is_ready", (DL_FUNC)&wk_smoothed_heikin_ashi_is_ready, 1},
   {"wk_smoothed_heikin_ashi_reset", (DL_FUNC)&wk_smoothed_heikin_ashi_reset, 1},
   {"wk_sortino_ratio_new", (DL_FUNC)&wk_sortino_ratio_new, 2},
   {"wk_sortino_ratio_update", (DL_FUNC)&wk_sortino_ratio_update, 2},
   {"wk_sortino_ratio_batch", (DL_FUNC)&wk_sortino_ratio_batch, 2},
+  {"wk_sortino_ratio_warmup_period", (DL_FUNC)&wk_sortino_ratio_warmup_period, 1},
+  {"wk_sortino_ratio_is_ready", (DL_FUNC)&wk_sortino_ratio_is_ready, 1},
   {"wk_sortino_ratio_reset", (DL_FUNC)&wk_sortino_ratio_reset, 1},
   {"wk_spearman_correlation_new", (DL_FUNC)&wk_spearman_correlation_new, 1},
   {"wk_spearman_correlation_update", (DL_FUNC)&wk_spearman_correlation_update, 3},
   {"wk_spearman_correlation_batch", (DL_FUNC)&wk_spearman_correlation_batch, 3},
+  {"wk_spearman_correlation_warmup_period", (DL_FUNC)&wk_spearman_correlation_warmup_period, 1},
+  {"wk_spearman_correlation_is_ready", (DL_FUNC)&wk_spearman_correlation_is_ready, 1},
   {"wk_spearman_correlation_reset", (DL_FUNC)&wk_spearman_correlation_reset, 1},
   {"wk_spinning_top_new", (DL_FUNC)&wk_spinning_top_new, 0},
   {"wk_spinning_top_update", (DL_FUNC)&wk_spinning_top_update, 7},
   {"wk_spinning_top_batch", (DL_FUNC)&wk_spinning_top_batch, 7},
+  {"wk_spinning_top_warmup_period", (DL_FUNC)&wk_spinning_top_warmup_period, 1},
+  {"wk_spinning_top_is_ready", (DL_FUNC)&wk_spinning_top_is_ready, 1},
   {"wk_spinning_top_reset", (DL_FUNC)&wk_spinning_top_reset, 1},
   {"wk_spread_ar1_coefficient_new", (DL_FUNC)&wk_spread_ar1_coefficient_new, 1},
   {"wk_spread_ar1_coefficient_update", (DL_FUNC)&wk_spread_ar1_coefficient_update, 3},
   {"wk_spread_ar1_coefficient_batch", (DL_FUNC)&wk_spread_ar1_coefficient_batch, 3},
+  {"wk_spread_ar1_coefficient_warmup_period", (DL_FUNC)&wk_spread_ar1_coefficient_warmup_period, 1},
+  {"wk_spread_ar1_coefficient_is_ready", (DL_FUNC)&wk_spread_ar1_coefficient_is_ready, 1},
   {"wk_spread_ar1_coefficient_reset", (DL_FUNC)&wk_spread_ar1_coefficient_reset, 1},
   {"wk_spread_bollinger_bands_new", (DL_FUNC)&wk_spread_bollinger_bands_new, 2},
   {"wk_spread_bollinger_bands_update", (DL_FUNC)&wk_spread_bollinger_bands_update, 3},
+  {"wk_spread_bollinger_bands_warmup_period", (DL_FUNC)&wk_spread_bollinger_bands_warmup_period, 1},
+  {"wk_spread_bollinger_bands_is_ready", (DL_FUNC)&wk_spread_bollinger_bands_is_ready, 1},
   {"wk_spread_bollinger_bands_reset", (DL_FUNC)&wk_spread_bollinger_bands_reset, 1},
   {"wk_spread_hurst_new", (DL_FUNC)&wk_spread_hurst_new, 1},
   {"wk_spread_hurst_update", (DL_FUNC)&wk_spread_hurst_update, 3},
   {"wk_spread_hurst_batch", (DL_FUNC)&wk_spread_hurst_batch, 3},
+  {"wk_spread_hurst_warmup_period", (DL_FUNC)&wk_spread_hurst_warmup_period, 1},
+  {"wk_spread_hurst_is_ready", (DL_FUNC)&wk_spread_hurst_is_ready, 1},
   {"wk_spread_hurst_reset", (DL_FUNC)&wk_spread_hurst_reset, 1},
   {"wk_stalled_pattern_new", (DL_FUNC)&wk_stalled_pattern_new, 0},
   {"wk_stalled_pattern_update", (DL_FUNC)&wk_stalled_pattern_update, 7},
   {"wk_stalled_pattern_batch", (DL_FUNC)&wk_stalled_pattern_batch, 7},
+  {"wk_stalled_pattern_warmup_period", (DL_FUNC)&wk_stalled_pattern_warmup_period, 1},
+  {"wk_stalled_pattern_is_ready", (DL_FUNC)&wk_stalled_pattern_is_ready, 1},
   {"wk_stalled_pattern_reset", (DL_FUNC)&wk_stalled_pattern_reset, 1},
   {"wk_standard_error_new", (DL_FUNC)&wk_standard_error_new, 1},
   {"wk_standard_error_update", (DL_FUNC)&wk_standard_error_update, 2},
   {"wk_standard_error_batch", (DL_FUNC)&wk_standard_error_batch, 2},
+  {"wk_standard_error_warmup_period", (DL_FUNC)&wk_standard_error_warmup_period, 1},
+  {"wk_standard_error_is_ready", (DL_FUNC)&wk_standard_error_is_ready, 1},
   {"wk_standard_error_reset", (DL_FUNC)&wk_standard_error_reset, 1},
   {"wk_standard_error_bands_new", (DL_FUNC)&wk_standard_error_bands_new, 2},
   {"wk_standard_error_bands_update", (DL_FUNC)&wk_standard_error_bands_update, 2},
+  {"wk_standard_error_bands_warmup_period", (DL_FUNC)&wk_standard_error_bands_warmup_period, 1},
+  {"wk_standard_error_bands_is_ready", (DL_FUNC)&wk_standard_error_bands_is_ready, 1},
   {"wk_standard_error_bands_reset", (DL_FUNC)&wk_standard_error_bands_reset, 1},
   {"wk_starc_bands_new", (DL_FUNC)&wk_starc_bands_new, 3},
   {"wk_starc_bands_update", (DL_FUNC)&wk_starc_bands_update, 7},
+  {"wk_starc_bands_warmup_period", (DL_FUNC)&wk_starc_bands_warmup_period, 1},
+  {"wk_starc_bands_is_ready", (DL_FUNC)&wk_starc_bands_is_ready, 1},
   {"wk_starc_bands_reset", (DL_FUNC)&wk_starc_bands_reset, 1},
   {"wk_stc_new", (DL_FUNC)&wk_stc_new, 4},
   {"wk_stc_update", (DL_FUNC)&wk_stc_update, 2},
   {"wk_stc_batch", (DL_FUNC)&wk_stc_batch, 2},
+  {"wk_stc_warmup_period", (DL_FUNC)&wk_stc_warmup_period, 1},
+  {"wk_stc_is_ready", (DL_FUNC)&wk_stc_is_ready, 1},
   {"wk_stc_reset", (DL_FUNC)&wk_stc_reset, 1},
   {"wk_std_dev_new", (DL_FUNC)&wk_std_dev_new, 1},
   {"wk_std_dev_update", (DL_FUNC)&wk_std_dev_update, 2},
   {"wk_std_dev_batch", (DL_FUNC)&wk_std_dev_batch, 2},
+  {"wk_std_dev_warmup_period", (DL_FUNC)&wk_std_dev_warmup_period, 1},
+  {"wk_std_dev_is_ready", (DL_FUNC)&wk_std_dev_is_ready, 1},
   {"wk_std_dev_reset", (DL_FUNC)&wk_std_dev_reset, 1},
   {"wk_step_trailing_stop_new", (DL_FUNC)&wk_step_trailing_stop_new, 1},
   {"wk_step_trailing_stop_update", (DL_FUNC)&wk_step_trailing_stop_update, 2},
   {"wk_step_trailing_stop_batch", (DL_FUNC)&wk_step_trailing_stop_batch, 2},
+  {"wk_step_trailing_stop_warmup_period", (DL_FUNC)&wk_step_trailing_stop_warmup_period, 1},
+  {"wk_step_trailing_stop_is_ready", (DL_FUNC)&wk_step_trailing_stop_is_ready, 1},
   {"wk_step_trailing_stop_reset", (DL_FUNC)&wk_step_trailing_stop_reset, 1},
   {"wk_sterling_ratio_new", (DL_FUNC)&wk_sterling_ratio_new, 1},
   {"wk_sterling_ratio_update", (DL_FUNC)&wk_sterling_ratio_update, 2},
   {"wk_sterling_ratio_batch", (DL_FUNC)&wk_sterling_ratio_batch, 2},
+  {"wk_sterling_ratio_warmup_period", (DL_FUNC)&wk_sterling_ratio_warmup_period, 1},
+  {"wk_sterling_ratio_is_ready", (DL_FUNC)&wk_sterling_ratio_is_ready, 1},
   {"wk_sterling_ratio_reset", (DL_FUNC)&wk_sterling_ratio_reset, 1},
   {"wk_stick_sandwich_new", (DL_FUNC)&wk_stick_sandwich_new, 0},
   {"wk_stick_sandwich_update", (DL_FUNC)&wk_stick_sandwich_update, 7},
   {"wk_stick_sandwich_batch", (DL_FUNC)&wk_stick_sandwich_batch, 7},
+  {"wk_stick_sandwich_warmup_period", (DL_FUNC)&wk_stick_sandwich_warmup_period, 1},
+  {"wk_stick_sandwich_is_ready", (DL_FUNC)&wk_stick_sandwich_is_ready, 1},
   {"wk_stick_sandwich_reset", (DL_FUNC)&wk_stick_sandwich_reset, 1},
   {"wk_stoch_rsi_new", (DL_FUNC)&wk_stoch_rsi_new, 2},
   {"wk_stoch_rsi_update", (DL_FUNC)&wk_stoch_rsi_update, 2},
   {"wk_stoch_rsi_batch", (DL_FUNC)&wk_stoch_rsi_batch, 2},
+  {"wk_stoch_rsi_warmup_period", (DL_FUNC)&wk_stoch_rsi_warmup_period, 1},
+  {"wk_stoch_rsi_is_ready", (DL_FUNC)&wk_stoch_rsi_is_ready, 1},
   {"wk_stoch_rsi_reset", (DL_FUNC)&wk_stoch_rsi_reset, 1},
   {"wk_stochastic_new", (DL_FUNC)&wk_stochastic_new, 2},
   {"wk_stochastic_update", (DL_FUNC)&wk_stochastic_update, 7},
+  {"wk_stochastic_warmup_period", (DL_FUNC)&wk_stochastic_warmup_period, 1},
+  {"wk_stochastic_is_ready", (DL_FUNC)&wk_stochastic_is_ready, 1},
   {"wk_stochastic_reset", (DL_FUNC)&wk_stochastic_reset, 1},
   {"wk_stochastic_cci_new", (DL_FUNC)&wk_stochastic_cci_new, 1},
   {"wk_stochastic_cci_update", (DL_FUNC)&wk_stochastic_cci_update, 7},
   {"wk_stochastic_cci_batch", (DL_FUNC)&wk_stochastic_cci_batch, 7},
+  {"wk_stochastic_cci_warmup_period", (DL_FUNC)&wk_stochastic_cci_warmup_period, 1},
+  {"wk_stochastic_cci_is_ready", (DL_FUNC)&wk_stochastic_cci_is_ready, 1},
   {"wk_stochastic_cci_reset", (DL_FUNC)&wk_stochastic_cci_reset, 1},
   {"wk_super_smoother_new", (DL_FUNC)&wk_super_smoother_new, 1},
   {"wk_super_smoother_update", (DL_FUNC)&wk_super_smoother_update, 2},
   {"wk_super_smoother_batch", (DL_FUNC)&wk_super_smoother_batch, 2},
+  {"wk_super_smoother_warmup_period", (DL_FUNC)&wk_super_smoother_warmup_period, 1},
+  {"wk_super_smoother_is_ready", (DL_FUNC)&wk_super_smoother_is_ready, 1},
   {"wk_super_smoother_reset", (DL_FUNC)&wk_super_smoother_reset, 1},
   {"wk_super_trend_new", (DL_FUNC)&wk_super_trend_new, 2},
   {"wk_super_trend_update", (DL_FUNC)&wk_super_trend_update, 7},
+  {"wk_super_trend_warmup_period", (DL_FUNC)&wk_super_trend_warmup_period, 1},
+  {"wk_super_trend_is_ready", (DL_FUNC)&wk_super_trend_is_ready, 1},
   {"wk_super_trend_reset", (DL_FUNC)&wk_super_trend_reset, 1},
   {"wk_t3_new", (DL_FUNC)&wk_t3_new, 2},
   {"wk_t3_update", (DL_FUNC)&wk_t3_update, 2},
   {"wk_t3_batch", (DL_FUNC)&wk_t3_batch, 2},
+  {"wk_t3_warmup_period", (DL_FUNC)&wk_t3_warmup_period, 1},
+  {"wk_t3_is_ready", (DL_FUNC)&wk_t3_is_ready, 1},
   {"wk_t3_reset", (DL_FUNC)&wk_t3_reset, 1},
   {"wk_tail_ratio_new", (DL_FUNC)&wk_tail_ratio_new, 1},
   {"wk_tail_ratio_update", (DL_FUNC)&wk_tail_ratio_update, 2},
   {"wk_tail_ratio_batch", (DL_FUNC)&wk_tail_ratio_batch, 2},
+  {"wk_tail_ratio_warmup_period", (DL_FUNC)&wk_tail_ratio_warmup_period, 1},
+  {"wk_tail_ratio_is_ready", (DL_FUNC)&wk_tail_ratio_is_ready, 1},
   {"wk_tail_ratio_reset", (DL_FUNC)&wk_tail_ratio_reset, 1},
   {"wk_taker_buy_sell_ratio_new", (DL_FUNC)&wk_taker_buy_sell_ratio_new, 0},
   {"wk_taker_buy_sell_ratio_update", (DL_FUNC)&wk_taker_buy_sell_ratio_update, 13},
+  {"wk_taker_buy_sell_ratio_warmup_period", (DL_FUNC)&wk_taker_buy_sell_ratio_warmup_period, 1},
+  {"wk_taker_buy_sell_ratio_is_ready", (DL_FUNC)&wk_taker_buy_sell_ratio_is_ready, 1},
   {"wk_taker_buy_sell_ratio_reset", (DL_FUNC)&wk_taker_buy_sell_ratio_reset, 1},
   {"wk_takuri_new", (DL_FUNC)&wk_takuri_new, 0},
   {"wk_takuri_update", (DL_FUNC)&wk_takuri_update, 7},
   {"wk_takuri_batch", (DL_FUNC)&wk_takuri_batch, 7},
+  {"wk_takuri_warmup_period", (DL_FUNC)&wk_takuri_warmup_period, 1},
+  {"wk_takuri_is_ready", (DL_FUNC)&wk_takuri_is_ready, 1},
   {"wk_takuri_reset", (DL_FUNC)&wk_takuri_reset, 1},
   {"wk_tasuki_gap_new", (DL_FUNC)&wk_tasuki_gap_new, 0},
   {"wk_tasuki_gap_update", (DL_FUNC)&wk_tasuki_gap_update, 7},
   {"wk_tasuki_gap_batch", (DL_FUNC)&wk_tasuki_gap_batch, 7},
+  {"wk_tasuki_gap_warmup_period", (DL_FUNC)&wk_tasuki_gap_warmup_period, 1},
+  {"wk_tasuki_gap_is_ready", (DL_FUNC)&wk_tasuki_gap_is_ready, 1},
   {"wk_tasuki_gap_reset", (DL_FUNC)&wk_tasuki_gap_reset, 1},
   {"wk_td_camouflage_new", (DL_FUNC)&wk_td_camouflage_new, 0},
   {"wk_td_camouflage_update", (DL_FUNC)&wk_td_camouflage_update, 7},
   {"wk_td_camouflage_batch", (DL_FUNC)&wk_td_camouflage_batch, 7},
+  {"wk_td_camouflage_warmup_period", (DL_FUNC)&wk_td_camouflage_warmup_period, 1},
+  {"wk_td_camouflage_is_ready", (DL_FUNC)&wk_td_camouflage_is_ready, 1},
   {"wk_td_camouflage_reset", (DL_FUNC)&wk_td_camouflage_reset, 1},
   {"wk_td_clop_new", (DL_FUNC)&wk_td_clop_new, 0},
   {"wk_td_clop_update", (DL_FUNC)&wk_td_clop_update, 7},
   {"wk_td_clop_batch", (DL_FUNC)&wk_td_clop_batch, 7},
+  {"wk_td_clop_warmup_period", (DL_FUNC)&wk_td_clop_warmup_period, 1},
+  {"wk_td_clop_is_ready", (DL_FUNC)&wk_td_clop_is_ready, 1},
   {"wk_td_clop_reset", (DL_FUNC)&wk_td_clop_reset, 1},
   {"wk_td_clopwin_new", (DL_FUNC)&wk_td_clopwin_new, 0},
   {"wk_td_clopwin_update", (DL_FUNC)&wk_td_clopwin_update, 7},
   {"wk_td_clopwin_batch", (DL_FUNC)&wk_td_clopwin_batch, 7},
+  {"wk_td_clopwin_warmup_period", (DL_FUNC)&wk_td_clopwin_warmup_period, 1},
+  {"wk_td_clopwin_is_ready", (DL_FUNC)&wk_td_clopwin_is_ready, 1},
   {"wk_td_clopwin_reset", (DL_FUNC)&wk_td_clopwin_reset, 1},
   {"wk_td_combo_new", (DL_FUNC)&wk_td_combo_new, 4},
   {"wk_td_combo_update", (DL_FUNC)&wk_td_combo_update, 7},
   {"wk_td_combo_batch", (DL_FUNC)&wk_td_combo_batch, 7},
+  {"wk_td_combo_warmup_period", (DL_FUNC)&wk_td_combo_warmup_period, 1},
+  {"wk_td_combo_is_ready", (DL_FUNC)&wk_td_combo_is_ready, 1},
   {"wk_td_combo_reset", (DL_FUNC)&wk_td_combo_reset, 1},
   {"wk_td_countdown_new", (DL_FUNC)&wk_td_countdown_new, 4},
   {"wk_td_countdown_update", (DL_FUNC)&wk_td_countdown_update, 7},
   {"wk_td_countdown_batch", (DL_FUNC)&wk_td_countdown_batch, 7},
+  {"wk_td_countdown_warmup_period", (DL_FUNC)&wk_td_countdown_warmup_period, 1},
+  {"wk_td_countdown_is_ready", (DL_FUNC)&wk_td_countdown_is_ready, 1},
   {"wk_td_countdown_reset", (DL_FUNC)&wk_td_countdown_reset, 1},
   {"wk_td_d_wave_new", (DL_FUNC)&wk_td_d_wave_new, 1},
   {"wk_td_d_wave_update", (DL_FUNC)&wk_td_d_wave_update, 7},
   {"wk_td_d_wave_batch", (DL_FUNC)&wk_td_d_wave_batch, 7},
+  {"wk_td_d_wave_warmup_period", (DL_FUNC)&wk_td_d_wave_warmup_period, 1},
+  {"wk_td_d_wave_is_ready", (DL_FUNC)&wk_td_d_wave_is_ready, 1},
   {"wk_td_d_wave_reset", (DL_FUNC)&wk_td_d_wave_reset, 1},
   {"wk_td_de_marker_new", (DL_FUNC)&wk_td_de_marker_new, 1},
   {"wk_td_de_marker_update", (DL_FUNC)&wk_td_de_marker_update, 7},
   {"wk_td_de_marker_batch", (DL_FUNC)&wk_td_de_marker_batch, 7},
+  {"wk_td_de_marker_warmup_period", (DL_FUNC)&wk_td_de_marker_warmup_period, 1},
+  {"wk_td_de_marker_is_ready", (DL_FUNC)&wk_td_de_marker_is_ready, 1},
   {"wk_td_de_marker_reset", (DL_FUNC)&wk_td_de_marker_reset, 1},
   {"wk_td_differential_new", (DL_FUNC)&wk_td_differential_new, 0},
   {"wk_td_differential_update", (DL_FUNC)&wk_td_differential_update, 7},
   {"wk_td_differential_batch", (DL_FUNC)&wk_td_differential_batch, 7},
+  {"wk_td_differential_warmup_period", (DL_FUNC)&wk_td_differential_warmup_period, 1},
+  {"wk_td_differential_is_ready", (DL_FUNC)&wk_td_differential_is_ready, 1},
   {"wk_td_differential_reset", (DL_FUNC)&wk_td_differential_reset, 1},
   {"wk_td_lines_new", (DL_FUNC)&wk_td_lines_new, 2},
   {"wk_td_lines_update", (DL_FUNC)&wk_td_lines_update, 7},
+  {"wk_td_lines_warmup_period", (DL_FUNC)&wk_td_lines_warmup_period, 1},
+  {"wk_td_lines_is_ready", (DL_FUNC)&wk_td_lines_is_ready, 1},
   {"wk_td_lines_reset", (DL_FUNC)&wk_td_lines_reset, 1},
   {"wk_td_moving_average_new", (DL_FUNC)&wk_td_moving_average_new, 2},
   {"wk_td_moving_average_update", (DL_FUNC)&wk_td_moving_average_update, 7},
+  {"wk_td_moving_average_warmup_period", (DL_FUNC)&wk_td_moving_average_warmup_period, 1},
+  {"wk_td_moving_average_is_ready", (DL_FUNC)&wk_td_moving_average_is_ready, 1},
   {"wk_td_moving_average_reset", (DL_FUNC)&wk_td_moving_average_reset, 1},
   {"wk_td_open_new", (DL_FUNC)&wk_td_open_new, 0},
   {"wk_td_open_update", (DL_FUNC)&wk_td_open_update, 7},
   {"wk_td_open_batch", (DL_FUNC)&wk_td_open_batch, 7},
+  {"wk_td_open_warmup_period", (DL_FUNC)&wk_td_open_warmup_period, 1},
+  {"wk_td_open_is_ready", (DL_FUNC)&wk_td_open_is_ready, 1},
   {"wk_td_open_reset", (DL_FUNC)&wk_td_open_reset, 1},
   {"wk_td_pressure_new", (DL_FUNC)&wk_td_pressure_new, 1},
   {"wk_td_pressure_update", (DL_FUNC)&wk_td_pressure_update, 7},
   {"wk_td_pressure_batch", (DL_FUNC)&wk_td_pressure_batch, 7},
+  {"wk_td_pressure_warmup_period", (DL_FUNC)&wk_td_pressure_warmup_period, 1},
+  {"wk_td_pressure_is_ready", (DL_FUNC)&wk_td_pressure_is_ready, 1},
   {"wk_td_pressure_reset", (DL_FUNC)&wk_td_pressure_reset, 1},
   {"wk_td_propulsion_new", (DL_FUNC)&wk_td_propulsion_new, 0},
   {"wk_td_propulsion_update", (DL_FUNC)&wk_td_propulsion_update, 7},
   {"wk_td_propulsion_batch", (DL_FUNC)&wk_td_propulsion_batch, 7},
+  {"wk_td_propulsion_warmup_period", (DL_FUNC)&wk_td_propulsion_warmup_period, 1},
+  {"wk_td_propulsion_is_ready", (DL_FUNC)&wk_td_propulsion_is_ready, 1},
   {"wk_td_propulsion_reset", (DL_FUNC)&wk_td_propulsion_reset, 1},
   {"wk_td_range_projection_new", (DL_FUNC)&wk_td_range_projection_new, 0},
   {"wk_td_range_projection_update", (DL_FUNC)&wk_td_range_projection_update, 7},
+  {"wk_td_range_projection_warmup_period", (DL_FUNC)&wk_td_range_projection_warmup_period, 1},
+  {"wk_td_range_projection_is_ready", (DL_FUNC)&wk_td_range_projection_is_ready, 1},
   {"wk_td_range_projection_reset", (DL_FUNC)&wk_td_range_projection_reset, 1},
   {"wk_td_rei_new", (DL_FUNC)&wk_td_rei_new, 1},
   {"wk_td_rei_update", (DL_FUNC)&wk_td_rei_update, 7},
   {"wk_td_rei_batch", (DL_FUNC)&wk_td_rei_batch, 7},
+  {"wk_td_rei_warmup_period", (DL_FUNC)&wk_td_rei_warmup_period, 1},
+  {"wk_td_rei_is_ready", (DL_FUNC)&wk_td_rei_is_ready, 1},
   {"wk_td_rei_reset", (DL_FUNC)&wk_td_rei_reset, 1},
   {"wk_td_risk_level_new", (DL_FUNC)&wk_td_risk_level_new, 2},
   {"wk_td_risk_level_update", (DL_FUNC)&wk_td_risk_level_update, 7},
+  {"wk_td_risk_level_warmup_period", (DL_FUNC)&wk_td_risk_level_warmup_period, 1},
+  {"wk_td_risk_level_is_ready", (DL_FUNC)&wk_td_risk_level_is_ready, 1},
   {"wk_td_risk_level_reset", (DL_FUNC)&wk_td_risk_level_reset, 1},
   {"wk_td_sequential_new", (DL_FUNC)&wk_td_sequential_new, 4},
   {"wk_td_sequential_update", (DL_FUNC)&wk_td_sequential_update, 7},
+  {"wk_td_sequential_warmup_period", (DL_FUNC)&wk_td_sequential_warmup_period, 1},
+  {"wk_td_sequential_is_ready", (DL_FUNC)&wk_td_sequential_is_ready, 1},
   {"wk_td_sequential_reset", (DL_FUNC)&wk_td_sequential_reset, 1},
   {"wk_td_setup_new", (DL_FUNC)&wk_td_setup_new, 2},
   {"wk_td_setup_update", (DL_FUNC)&wk_td_setup_update, 7},
   {"wk_td_setup_batch", (DL_FUNC)&wk_td_setup_batch, 7},
+  {"wk_td_setup_warmup_period", (DL_FUNC)&wk_td_setup_warmup_period, 1},
+  {"wk_td_setup_is_ready", (DL_FUNC)&wk_td_setup_is_ready, 1},
   {"wk_td_setup_reset", (DL_FUNC)&wk_td_setup_reset, 1},
   {"wk_td_trap_new", (DL_FUNC)&wk_td_trap_new, 0},
   {"wk_td_trap_update", (DL_FUNC)&wk_td_trap_update, 7},
   {"wk_td_trap_batch", (DL_FUNC)&wk_td_trap_batch, 7},
+  {"wk_td_trap_warmup_period", (DL_FUNC)&wk_td_trap_warmup_period, 1},
+  {"wk_td_trap_is_ready", (DL_FUNC)&wk_td_trap_is_ready, 1},
   {"wk_td_trap_reset", (DL_FUNC)&wk_td_trap_reset, 1},
   {"wk_tema_new", (DL_FUNC)&wk_tema_new, 1},
   {"wk_tema_update", (DL_FUNC)&wk_tema_update, 2},
   {"wk_tema_batch", (DL_FUNC)&wk_tema_batch, 2},
+  {"wk_tema_warmup_period", (DL_FUNC)&wk_tema_warmup_period, 1},
+  {"wk_tema_is_ready", (DL_FUNC)&wk_tema_is_ready, 1},
   {"wk_tema_reset", (DL_FUNC)&wk_tema_reset, 1},
   {"wk_term_structure_basis_new", (DL_FUNC)&wk_term_structure_basis_new, 0},
   {"wk_term_structure_basis_update", (DL_FUNC)&wk_term_structure_basis_update, 13},
+  {"wk_term_structure_basis_warmup_period", (DL_FUNC)&wk_term_structure_basis_warmup_period, 1},
+  {"wk_term_structure_basis_is_ready", (DL_FUNC)&wk_term_structure_basis_is_ready, 1},
   {"wk_term_structure_basis_reset", (DL_FUNC)&wk_term_structure_basis_reset, 1},
   {"wk_three_drives_new", (DL_FUNC)&wk_three_drives_new, 0},
   {"wk_three_drives_update", (DL_FUNC)&wk_three_drives_update, 7},
   {"wk_three_drives_batch", (DL_FUNC)&wk_three_drives_batch, 7},
+  {"wk_three_drives_warmup_period", (DL_FUNC)&wk_three_drives_warmup_period, 1},
+  {"wk_three_drives_is_ready", (DL_FUNC)&wk_three_drives_is_ready, 1},
   {"wk_three_drives_reset", (DL_FUNC)&wk_three_drives_reset, 1},
   {"wk_three_inside_new", (DL_FUNC)&wk_three_inside_new, 0},
   {"wk_three_inside_update", (DL_FUNC)&wk_three_inside_update, 7},
   {"wk_three_inside_batch", (DL_FUNC)&wk_three_inside_batch, 7},
+  {"wk_three_inside_warmup_period", (DL_FUNC)&wk_three_inside_warmup_period, 1},
+  {"wk_three_inside_is_ready", (DL_FUNC)&wk_three_inside_is_ready, 1},
   {"wk_three_inside_reset", (DL_FUNC)&wk_three_inside_reset, 1},
   {"wk_three_line_break_new", (DL_FUNC)&wk_three_line_break_new, 1},
   {"wk_three_line_break_update", (DL_FUNC)&wk_three_line_break_update, 7},
   {"wk_three_line_break_batch", (DL_FUNC)&wk_three_line_break_batch, 7},
+  {"wk_three_line_break_warmup_period", (DL_FUNC)&wk_three_line_break_warmup_period, 1},
+  {"wk_three_line_break_is_ready", (DL_FUNC)&wk_three_line_break_is_ready, 1},
   {"wk_three_line_break_reset", (DL_FUNC)&wk_three_line_break_reset, 1},
   {"wk_three_line_break_bars_new", (DL_FUNC)&wk_three_line_break_bars_new, 1},
   {"wk_three_line_break_bars_update", (DL_FUNC)&wk_three_line_break_bars_update, 7},
@@ -18015,322 +22887,490 @@ static const R_CallMethodDef CallEntries[] = {
   {"wk_three_line_strike_new", (DL_FUNC)&wk_three_line_strike_new, 0},
   {"wk_three_line_strike_update", (DL_FUNC)&wk_three_line_strike_update, 7},
   {"wk_three_line_strike_batch", (DL_FUNC)&wk_three_line_strike_batch, 7},
+  {"wk_three_line_strike_warmup_period", (DL_FUNC)&wk_three_line_strike_warmup_period, 1},
+  {"wk_three_line_strike_is_ready", (DL_FUNC)&wk_three_line_strike_is_ready, 1},
   {"wk_three_line_strike_reset", (DL_FUNC)&wk_three_line_strike_reset, 1},
   {"wk_three_outside_new", (DL_FUNC)&wk_three_outside_new, 0},
   {"wk_three_outside_update", (DL_FUNC)&wk_three_outside_update, 7},
   {"wk_three_outside_batch", (DL_FUNC)&wk_three_outside_batch, 7},
+  {"wk_three_outside_warmup_period", (DL_FUNC)&wk_three_outside_warmup_period, 1},
+  {"wk_three_outside_is_ready", (DL_FUNC)&wk_three_outside_is_ready, 1},
   {"wk_three_outside_reset", (DL_FUNC)&wk_three_outside_reset, 1},
   {"wk_three_soldiers_or_crows_new", (DL_FUNC)&wk_three_soldiers_or_crows_new, 0},
   {"wk_three_soldiers_or_crows_update", (DL_FUNC)&wk_three_soldiers_or_crows_update, 7},
   {"wk_three_soldiers_or_crows_batch", (DL_FUNC)&wk_three_soldiers_or_crows_batch, 7},
+  {"wk_three_soldiers_or_crows_warmup_period", (DL_FUNC)&wk_three_soldiers_or_crows_warmup_period, 1},
+  {"wk_three_soldiers_or_crows_is_ready", (DL_FUNC)&wk_three_soldiers_or_crows_is_ready, 1},
   {"wk_three_soldiers_or_crows_reset", (DL_FUNC)&wk_three_soldiers_or_crows_reset, 1},
   {"wk_three_stars_in_south_new", (DL_FUNC)&wk_three_stars_in_south_new, 0},
   {"wk_three_stars_in_south_update", (DL_FUNC)&wk_three_stars_in_south_update, 7},
   {"wk_three_stars_in_south_batch", (DL_FUNC)&wk_three_stars_in_south_batch, 7},
+  {"wk_three_stars_in_south_warmup_period", (DL_FUNC)&wk_three_stars_in_south_warmup_period, 1},
+  {"wk_three_stars_in_south_is_ready", (DL_FUNC)&wk_three_stars_in_south_is_ready, 1},
   {"wk_three_stars_in_south_reset", (DL_FUNC)&wk_three_stars_in_south_reset, 1},
   {"wk_thrusting_new", (DL_FUNC)&wk_thrusting_new, 0},
   {"wk_thrusting_update", (DL_FUNC)&wk_thrusting_update, 7},
   {"wk_thrusting_batch", (DL_FUNC)&wk_thrusting_batch, 7},
+  {"wk_thrusting_warmup_period", (DL_FUNC)&wk_thrusting_warmup_period, 1},
+  {"wk_thrusting_is_ready", (DL_FUNC)&wk_thrusting_is_ready, 1},
   {"wk_thrusting_reset", (DL_FUNC)&wk_thrusting_reset, 1},
   {"wk_tick_bars_new", (DL_FUNC)&wk_tick_bars_new, 1},
   {"wk_tick_bars_update", (DL_FUNC)&wk_tick_bars_update, 7},
   {"wk_tick_bars_reset", (DL_FUNC)&wk_tick_bars_reset, 1},
   {"wk_tick_index_new", (DL_FUNC)&wk_tick_index_new, 0},
   {"wk_tick_index_update", (DL_FUNC)&wk_tick_index_update, 8},
+  {"wk_tick_index_warmup_period", (DL_FUNC)&wk_tick_index_warmup_period, 1},
+  {"wk_tick_index_is_ready", (DL_FUNC)&wk_tick_index_is_ready, 1},
   {"wk_tick_index_reset", (DL_FUNC)&wk_tick_index_reset, 1},
   {"wk_tii_new", (DL_FUNC)&wk_tii_new, 2},
   {"wk_tii_update", (DL_FUNC)&wk_tii_update, 2},
   {"wk_tii_batch", (DL_FUNC)&wk_tii_batch, 2},
+  {"wk_tii_warmup_period", (DL_FUNC)&wk_tii_warmup_period, 1},
+  {"wk_tii_is_ready", (DL_FUNC)&wk_tii_is_ready, 1},
   {"wk_tii_reset", (DL_FUNC)&wk_tii_reset, 1},
   {"wk_time_based_stop_new", (DL_FUNC)&wk_time_based_stop_new, 1},
   {"wk_time_based_stop_update", (DL_FUNC)&wk_time_based_stop_update, 7},
   {"wk_time_based_stop_batch", (DL_FUNC)&wk_time_based_stop_batch, 7},
+  {"wk_time_based_stop_warmup_period", (DL_FUNC)&wk_time_based_stop_warmup_period, 1},
+  {"wk_time_based_stop_is_ready", (DL_FUNC)&wk_time_based_stop_is_ready, 1},
   {"wk_time_based_stop_reset", (DL_FUNC)&wk_time_based_stop_reset, 1},
   {"wk_time_of_day_return_profile_new", (DL_FUNC)&wk_time_of_day_return_profile_new, 2},
   {"wk_time_of_day_return_profile_update", (DL_FUNC)&wk_time_of_day_return_profile_update, 8},
+  {"wk_time_of_day_return_profile_warmup_period", (DL_FUNC)&wk_time_of_day_return_profile_warmup_period, 1},
+  {"wk_time_of_day_return_profile_is_ready", (DL_FUNC)&wk_time_of_day_return_profile_is_ready, 1},
   {"wk_time_of_day_return_profile_reset", (DL_FUNC)&wk_time_of_day_return_profile_reset, 1},
   {"wk_tower_top_bottom_new", (DL_FUNC)&wk_tower_top_bottom_new, 0},
   {"wk_tower_top_bottom_update", (DL_FUNC)&wk_tower_top_bottom_update, 7},
   {"wk_tower_top_bottom_batch", (DL_FUNC)&wk_tower_top_bottom_batch, 7},
+  {"wk_tower_top_bottom_warmup_period", (DL_FUNC)&wk_tower_top_bottom_warmup_period, 1},
+  {"wk_tower_top_bottom_is_ready", (DL_FUNC)&wk_tower_top_bottom_is_ready, 1},
   {"wk_tower_top_bottom_reset", (DL_FUNC)&wk_tower_top_bottom_reset, 1},
   {"wk_tpo_profile_new", (DL_FUNC)&wk_tpo_profile_new, 2},
   {"wk_tpo_profile_update", (DL_FUNC)&wk_tpo_profile_update, 8},
+  {"wk_tpo_profile_warmup_period", (DL_FUNC)&wk_tpo_profile_warmup_period, 1},
+  {"wk_tpo_profile_is_ready", (DL_FUNC)&wk_tpo_profile_is_ready, 1},
   {"wk_tpo_profile_reset", (DL_FUNC)&wk_tpo_profile_reset, 1},
   {"wk_trade_imbalance_new", (DL_FUNC)&wk_trade_imbalance_new, 1},
   {"wk_trade_imbalance_update", (DL_FUNC)&wk_trade_imbalance_update, 5},
+  {"wk_trade_imbalance_warmup_period", (DL_FUNC)&wk_trade_imbalance_warmup_period, 1},
+  {"wk_trade_imbalance_is_ready", (DL_FUNC)&wk_trade_imbalance_is_ready, 1},
   {"wk_trade_imbalance_reset", (DL_FUNC)&wk_trade_imbalance_reset, 1},
   {"wk_trade_sign_autocorrelation_new", (DL_FUNC)&wk_trade_sign_autocorrelation_new, 1},
   {"wk_trade_sign_autocorrelation_update", (DL_FUNC)&wk_trade_sign_autocorrelation_update, 5},
+  {"wk_trade_sign_autocorrelation_warmup_period", (DL_FUNC)&wk_trade_sign_autocorrelation_warmup_period, 1},
+  {"wk_trade_sign_autocorrelation_is_ready", (DL_FUNC)&wk_trade_sign_autocorrelation_is_ready, 1},
   {"wk_trade_sign_autocorrelation_reset", (DL_FUNC)&wk_trade_sign_autocorrelation_reset, 1},
   {"wk_trade_volume_index_new", (DL_FUNC)&wk_trade_volume_index_new, 1},
   {"wk_trade_volume_index_update", (DL_FUNC)&wk_trade_volume_index_update, 7},
   {"wk_trade_volume_index_batch", (DL_FUNC)&wk_trade_volume_index_batch, 7},
+  {"wk_trade_volume_index_warmup_period", (DL_FUNC)&wk_trade_volume_index_warmup_period, 1},
+  {"wk_trade_volume_index_is_ready", (DL_FUNC)&wk_trade_volume_index_is_ready, 1},
   {"wk_trade_volume_index_reset", (DL_FUNC)&wk_trade_volume_index_reset, 1},
   {"wk_trend_label_new", (DL_FUNC)&wk_trend_label_new, 1},
   {"wk_trend_label_update", (DL_FUNC)&wk_trend_label_update, 2},
   {"wk_trend_label_batch", (DL_FUNC)&wk_trend_label_batch, 2},
+  {"wk_trend_label_warmup_period", (DL_FUNC)&wk_trend_label_warmup_period, 1},
+  {"wk_trend_label_is_ready", (DL_FUNC)&wk_trend_label_is_ready, 1},
   {"wk_trend_label_reset", (DL_FUNC)&wk_trend_label_reset, 1},
   {"wk_trend_strength_index_new", (DL_FUNC)&wk_trend_strength_index_new, 1},
   {"wk_trend_strength_index_update", (DL_FUNC)&wk_trend_strength_index_update, 2},
   {"wk_trend_strength_index_batch", (DL_FUNC)&wk_trend_strength_index_batch, 2},
+  {"wk_trend_strength_index_warmup_period", (DL_FUNC)&wk_trend_strength_index_warmup_period, 1},
+  {"wk_trend_strength_index_is_ready", (DL_FUNC)&wk_trend_strength_index_is_ready, 1},
   {"wk_trend_strength_index_reset", (DL_FUNC)&wk_trend_strength_index_reset, 1},
   {"wk_trendflex_new", (DL_FUNC)&wk_trendflex_new, 1},
   {"wk_trendflex_update", (DL_FUNC)&wk_trendflex_update, 2},
   {"wk_trendflex_batch", (DL_FUNC)&wk_trendflex_batch, 2},
+  {"wk_trendflex_warmup_period", (DL_FUNC)&wk_trendflex_warmup_period, 1},
+  {"wk_trendflex_is_ready", (DL_FUNC)&wk_trendflex_is_ready, 1},
   {"wk_trendflex_reset", (DL_FUNC)&wk_trendflex_reset, 1},
   {"wk_treynor_ratio_new", (DL_FUNC)&wk_treynor_ratio_new, 2},
   {"wk_treynor_ratio_update", (DL_FUNC)&wk_treynor_ratio_update, 3},
   {"wk_treynor_ratio_batch", (DL_FUNC)&wk_treynor_ratio_batch, 3},
+  {"wk_treynor_ratio_warmup_period", (DL_FUNC)&wk_treynor_ratio_warmup_period, 1},
+  {"wk_treynor_ratio_is_ready", (DL_FUNC)&wk_treynor_ratio_is_ready, 1},
   {"wk_treynor_ratio_reset", (DL_FUNC)&wk_treynor_ratio_reset, 1},
   {"wk_triangle_new", (DL_FUNC)&wk_triangle_new, 0},
   {"wk_triangle_update", (DL_FUNC)&wk_triangle_update, 7},
   {"wk_triangle_batch", (DL_FUNC)&wk_triangle_batch, 7},
+  {"wk_triangle_warmup_period", (DL_FUNC)&wk_triangle_warmup_period, 1},
+  {"wk_triangle_is_ready", (DL_FUNC)&wk_triangle_is_ready, 1},
   {"wk_triangle_reset", (DL_FUNC)&wk_triangle_reset, 1},
   {"wk_trima_new", (DL_FUNC)&wk_trima_new, 1},
   {"wk_trima_update", (DL_FUNC)&wk_trima_update, 2},
   {"wk_trima_batch", (DL_FUNC)&wk_trima_batch, 2},
+  {"wk_trima_warmup_period", (DL_FUNC)&wk_trima_warmup_period, 1},
+  {"wk_trima_is_ready", (DL_FUNC)&wk_trima_is_ready, 1},
   {"wk_trima_reset", (DL_FUNC)&wk_trima_reset, 1},
   {"wk_trin_new", (DL_FUNC)&wk_trin_new, 0},
   {"wk_trin_update", (DL_FUNC)&wk_trin_update, 8},
+  {"wk_trin_warmup_period", (DL_FUNC)&wk_trin_warmup_period, 1},
+  {"wk_trin_is_ready", (DL_FUNC)&wk_trin_is_ready, 1},
   {"wk_trin_reset", (DL_FUNC)&wk_trin_reset, 1},
   {"wk_triple_top_bottom_new", (DL_FUNC)&wk_triple_top_bottom_new, 0},
   {"wk_triple_top_bottom_update", (DL_FUNC)&wk_triple_top_bottom_update, 7},
   {"wk_triple_top_bottom_batch", (DL_FUNC)&wk_triple_top_bottom_batch, 7},
+  {"wk_triple_top_bottom_warmup_period", (DL_FUNC)&wk_triple_top_bottom_warmup_period, 1},
+  {"wk_triple_top_bottom_is_ready", (DL_FUNC)&wk_triple_top_bottom_is_ready, 1},
   {"wk_triple_top_bottom_reset", (DL_FUNC)&wk_triple_top_bottom_reset, 1},
   {"wk_tristar_new", (DL_FUNC)&wk_tristar_new, 0},
   {"wk_tristar_update", (DL_FUNC)&wk_tristar_update, 7},
   {"wk_tristar_batch", (DL_FUNC)&wk_tristar_batch, 7},
+  {"wk_tristar_warmup_period", (DL_FUNC)&wk_tristar_warmup_period, 1},
+  {"wk_tristar_is_ready", (DL_FUNC)&wk_tristar_is_ready, 1},
   {"wk_tristar_reset", (DL_FUNC)&wk_tristar_reset, 1},
   {"wk_trix_new", (DL_FUNC)&wk_trix_new, 1},
   {"wk_trix_update", (DL_FUNC)&wk_trix_update, 2},
   {"wk_trix_batch", (DL_FUNC)&wk_trix_batch, 2},
+  {"wk_trix_warmup_period", (DL_FUNC)&wk_trix_warmup_period, 1},
+  {"wk_trix_is_ready", (DL_FUNC)&wk_trix_is_ready, 1},
   {"wk_trix_reset", (DL_FUNC)&wk_trix_reset, 1},
   {"wk_true_range_new", (DL_FUNC)&wk_true_range_new, 0},
   {"wk_true_range_update", (DL_FUNC)&wk_true_range_update, 7},
   {"wk_true_range_batch", (DL_FUNC)&wk_true_range_batch, 7},
+  {"wk_true_range_warmup_period", (DL_FUNC)&wk_true_range_warmup_period, 1},
+  {"wk_true_range_is_ready", (DL_FUNC)&wk_true_range_is_ready, 1},
   {"wk_true_range_reset", (DL_FUNC)&wk_true_range_reset, 1},
   {"wk_tsf_new", (DL_FUNC)&wk_tsf_new, 1},
   {"wk_tsf_update", (DL_FUNC)&wk_tsf_update, 2},
   {"wk_tsf_batch", (DL_FUNC)&wk_tsf_batch, 2},
+  {"wk_tsf_warmup_period", (DL_FUNC)&wk_tsf_warmup_period, 1},
+  {"wk_tsf_is_ready", (DL_FUNC)&wk_tsf_is_ready, 1},
   {"wk_tsf_reset", (DL_FUNC)&wk_tsf_reset, 1},
   {"wk_tsf_oscillator_new", (DL_FUNC)&wk_tsf_oscillator_new, 1},
   {"wk_tsf_oscillator_update", (DL_FUNC)&wk_tsf_oscillator_update, 2},
   {"wk_tsf_oscillator_batch", (DL_FUNC)&wk_tsf_oscillator_batch, 2},
+  {"wk_tsf_oscillator_warmup_period", (DL_FUNC)&wk_tsf_oscillator_warmup_period, 1},
+  {"wk_tsf_oscillator_is_ready", (DL_FUNC)&wk_tsf_oscillator_is_ready, 1},
   {"wk_tsf_oscillator_reset", (DL_FUNC)&wk_tsf_oscillator_reset, 1},
   {"wk_tsi_new", (DL_FUNC)&wk_tsi_new, 2},
   {"wk_tsi_update", (DL_FUNC)&wk_tsi_update, 2},
   {"wk_tsi_batch", (DL_FUNC)&wk_tsi_batch, 2},
+  {"wk_tsi_warmup_period", (DL_FUNC)&wk_tsi_warmup_period, 1},
+  {"wk_tsi_is_ready", (DL_FUNC)&wk_tsi_is_ready, 1},
   {"wk_tsi_reset", (DL_FUNC)&wk_tsi_reset, 1},
   {"wk_tsv_new", (DL_FUNC)&wk_tsv_new, 1},
   {"wk_tsv_update", (DL_FUNC)&wk_tsv_update, 7},
   {"wk_tsv_batch", (DL_FUNC)&wk_tsv_batch, 7},
+  {"wk_tsv_warmup_period", (DL_FUNC)&wk_tsv_warmup_period, 1},
+  {"wk_tsv_is_ready", (DL_FUNC)&wk_tsv_is_ready, 1},
   {"wk_tsv_reset", (DL_FUNC)&wk_tsv_reset, 1},
   {"wk_ttm_squeeze_new", (DL_FUNC)&wk_ttm_squeeze_new, 3},
   {"wk_ttm_squeeze_update", (DL_FUNC)&wk_ttm_squeeze_update, 7},
+  {"wk_ttm_squeeze_warmup_period", (DL_FUNC)&wk_ttm_squeeze_warmup_period, 1},
+  {"wk_ttm_squeeze_is_ready", (DL_FUNC)&wk_ttm_squeeze_is_ready, 1},
   {"wk_ttm_squeeze_reset", (DL_FUNC)&wk_ttm_squeeze_reset, 1},
   {"wk_ttm_trend_new", (DL_FUNC)&wk_ttm_trend_new, 1},
   {"wk_ttm_trend_update", (DL_FUNC)&wk_ttm_trend_update, 7},
   {"wk_ttm_trend_batch", (DL_FUNC)&wk_ttm_trend_batch, 7},
+  {"wk_ttm_trend_warmup_period", (DL_FUNC)&wk_ttm_trend_warmup_period, 1},
+  {"wk_ttm_trend_is_ready", (DL_FUNC)&wk_ttm_trend_is_ready, 1},
   {"wk_ttm_trend_reset", (DL_FUNC)&wk_ttm_trend_reset, 1},
   {"wk_turn_of_month_new", (DL_FUNC)&wk_turn_of_month_new, 3},
   {"wk_turn_of_month_update", (DL_FUNC)&wk_turn_of_month_update, 7},
   {"wk_turn_of_month_batch", (DL_FUNC)&wk_turn_of_month_batch, 7},
+  {"wk_turn_of_month_warmup_period", (DL_FUNC)&wk_turn_of_month_warmup_period, 1},
+  {"wk_turn_of_month_is_ready", (DL_FUNC)&wk_turn_of_month_is_ready, 1},
   {"wk_turn_of_month_reset", (DL_FUNC)&wk_turn_of_month_reset, 1},
   {"wk_tweezer_new", (DL_FUNC)&wk_tweezer_new, 0},
   {"wk_tweezer_update", (DL_FUNC)&wk_tweezer_update, 7},
   {"wk_tweezer_batch", (DL_FUNC)&wk_tweezer_batch, 7},
+  {"wk_tweezer_warmup_period", (DL_FUNC)&wk_tweezer_warmup_period, 1},
+  {"wk_tweezer_is_ready", (DL_FUNC)&wk_tweezer_is_ready, 1},
   {"wk_tweezer_reset", (DL_FUNC)&wk_tweezer_reset, 1},
   {"wk_twiggs_money_flow_new", (DL_FUNC)&wk_twiggs_money_flow_new, 1},
   {"wk_twiggs_money_flow_update", (DL_FUNC)&wk_twiggs_money_flow_update, 7},
   {"wk_twiggs_money_flow_batch", (DL_FUNC)&wk_twiggs_money_flow_batch, 7},
+  {"wk_twiggs_money_flow_warmup_period", (DL_FUNC)&wk_twiggs_money_flow_warmup_period, 1},
+  {"wk_twiggs_money_flow_is_ready", (DL_FUNC)&wk_twiggs_money_flow_is_ready, 1},
   {"wk_twiggs_money_flow_reset", (DL_FUNC)&wk_twiggs_money_flow_reset, 1},
   {"wk_two_crows_new", (DL_FUNC)&wk_two_crows_new, 0},
   {"wk_two_crows_update", (DL_FUNC)&wk_two_crows_update, 7},
   {"wk_two_crows_batch", (DL_FUNC)&wk_two_crows_batch, 7},
+  {"wk_two_crows_warmup_period", (DL_FUNC)&wk_two_crows_warmup_period, 1},
+  {"wk_two_crows_is_ready", (DL_FUNC)&wk_two_crows_is_ready, 1},
   {"wk_two_crows_reset", (DL_FUNC)&wk_two_crows_reset, 1},
   {"wk_typical_price_new", (DL_FUNC)&wk_typical_price_new, 0},
   {"wk_typical_price_update", (DL_FUNC)&wk_typical_price_update, 7},
   {"wk_typical_price_batch", (DL_FUNC)&wk_typical_price_batch, 7},
+  {"wk_typical_price_warmup_period", (DL_FUNC)&wk_typical_price_warmup_period, 1},
+  {"wk_typical_price_is_ready", (DL_FUNC)&wk_typical_price_is_ready, 1},
   {"wk_typical_price_reset", (DL_FUNC)&wk_typical_price_reset, 1},
   {"wk_ulcer_index_new", (DL_FUNC)&wk_ulcer_index_new, 1},
   {"wk_ulcer_index_update", (DL_FUNC)&wk_ulcer_index_update, 2},
   {"wk_ulcer_index_batch", (DL_FUNC)&wk_ulcer_index_batch, 2},
+  {"wk_ulcer_index_warmup_period", (DL_FUNC)&wk_ulcer_index_warmup_period, 1},
+  {"wk_ulcer_index_is_ready", (DL_FUNC)&wk_ulcer_index_is_ready, 1},
   {"wk_ulcer_index_reset", (DL_FUNC)&wk_ulcer_index_reset, 1},
   {"wk_ultimate_oscillator_new", (DL_FUNC)&wk_ultimate_oscillator_new, 3},
   {"wk_ultimate_oscillator_update", (DL_FUNC)&wk_ultimate_oscillator_update, 7},
   {"wk_ultimate_oscillator_batch", (DL_FUNC)&wk_ultimate_oscillator_batch, 7},
+  {"wk_ultimate_oscillator_warmup_period", (DL_FUNC)&wk_ultimate_oscillator_warmup_period, 1},
+  {"wk_ultimate_oscillator_is_ready", (DL_FUNC)&wk_ultimate_oscillator_is_ready, 1},
   {"wk_ultimate_oscillator_reset", (DL_FUNC)&wk_ultimate_oscillator_reset, 1},
   {"wk_unique_three_river_new", (DL_FUNC)&wk_unique_three_river_new, 0},
   {"wk_unique_three_river_update", (DL_FUNC)&wk_unique_three_river_update, 7},
   {"wk_unique_three_river_batch", (DL_FUNC)&wk_unique_three_river_batch, 7},
+  {"wk_unique_three_river_warmup_period", (DL_FUNC)&wk_unique_three_river_warmup_period, 1},
+  {"wk_unique_three_river_is_ready", (DL_FUNC)&wk_unique_three_river_is_ready, 1},
   {"wk_unique_three_river_reset", (DL_FUNC)&wk_unique_three_river_reset, 1},
   {"wk_universal_oscillator_new", (DL_FUNC)&wk_universal_oscillator_new, 1},
   {"wk_universal_oscillator_update", (DL_FUNC)&wk_universal_oscillator_update, 2},
   {"wk_universal_oscillator_batch", (DL_FUNC)&wk_universal_oscillator_batch, 2},
+  {"wk_universal_oscillator_warmup_period", (DL_FUNC)&wk_universal_oscillator_warmup_period, 1},
+  {"wk_universal_oscillator_is_ready", (DL_FUNC)&wk_universal_oscillator_is_ready, 1},
   {"wk_universal_oscillator_reset", (DL_FUNC)&wk_universal_oscillator_reset, 1},
   {"wk_up_down_volume_ratio_new", (DL_FUNC)&wk_up_down_volume_ratio_new, 0},
   {"wk_up_down_volume_ratio_update", (DL_FUNC)&wk_up_down_volume_ratio_update, 8},
+  {"wk_up_down_volume_ratio_warmup_period", (DL_FUNC)&wk_up_down_volume_ratio_warmup_period, 1},
+  {"wk_up_down_volume_ratio_is_ready", (DL_FUNC)&wk_up_down_volume_ratio_is_ready, 1},
   {"wk_up_down_volume_ratio_reset", (DL_FUNC)&wk_up_down_volume_ratio_reset, 1},
   {"wk_upside_gap_three_methods_new", (DL_FUNC)&wk_upside_gap_three_methods_new, 0},
   {"wk_upside_gap_three_methods_update", (DL_FUNC)&wk_upside_gap_three_methods_update, 7},
   {"wk_upside_gap_three_methods_batch", (DL_FUNC)&wk_upside_gap_three_methods_batch, 7},
+  {"wk_upside_gap_three_methods_warmup_period", (DL_FUNC)&wk_upside_gap_three_methods_warmup_period, 1},
+  {"wk_upside_gap_three_methods_is_ready", (DL_FUNC)&wk_upside_gap_three_methods_is_ready, 1},
   {"wk_upside_gap_three_methods_reset", (DL_FUNC)&wk_upside_gap_three_methods_reset, 1},
   {"wk_upside_gap_two_crows_new", (DL_FUNC)&wk_upside_gap_two_crows_new, 0},
   {"wk_upside_gap_two_crows_update", (DL_FUNC)&wk_upside_gap_two_crows_update, 7},
   {"wk_upside_gap_two_crows_batch", (DL_FUNC)&wk_upside_gap_two_crows_batch, 7},
+  {"wk_upside_gap_two_crows_warmup_period", (DL_FUNC)&wk_upside_gap_two_crows_warmup_period, 1},
+  {"wk_upside_gap_two_crows_is_ready", (DL_FUNC)&wk_upside_gap_two_crows_is_ready, 1},
   {"wk_upside_gap_two_crows_reset", (DL_FUNC)&wk_upside_gap_two_crows_reset, 1},
   {"wk_upside_potential_ratio_new", (DL_FUNC)&wk_upside_potential_ratio_new, 2},
   {"wk_upside_potential_ratio_update", (DL_FUNC)&wk_upside_potential_ratio_update, 2},
   {"wk_upside_potential_ratio_batch", (DL_FUNC)&wk_upside_potential_ratio_batch, 2},
+  {"wk_upside_potential_ratio_warmup_period", (DL_FUNC)&wk_upside_potential_ratio_warmup_period, 1},
+  {"wk_upside_potential_ratio_is_ready", (DL_FUNC)&wk_upside_potential_ratio_is_ready, 1},
   {"wk_upside_potential_ratio_reset", (DL_FUNC)&wk_upside_potential_ratio_reset, 1},
   {"wk_value_area_new", (DL_FUNC)&wk_value_area_new, 3},
   {"wk_value_area_update", (DL_FUNC)&wk_value_area_update, 7},
+  {"wk_value_area_warmup_period", (DL_FUNC)&wk_value_area_warmup_period, 1},
+  {"wk_value_area_is_ready", (DL_FUNC)&wk_value_area_is_ready, 1},
   {"wk_value_area_reset", (DL_FUNC)&wk_value_area_reset, 1},
   {"wk_value_at_risk_new", (DL_FUNC)&wk_value_at_risk_new, 2},
   {"wk_value_at_risk_update", (DL_FUNC)&wk_value_at_risk_update, 2},
   {"wk_value_at_risk_batch", (DL_FUNC)&wk_value_at_risk_batch, 2},
+  {"wk_value_at_risk_warmup_period", (DL_FUNC)&wk_value_at_risk_warmup_period, 1},
+  {"wk_value_at_risk_is_ready", (DL_FUNC)&wk_value_at_risk_is_ready, 1},
   {"wk_value_at_risk_reset", (DL_FUNC)&wk_value_at_risk_reset, 1},
   {"wk_variance_new", (DL_FUNC)&wk_variance_new, 1},
   {"wk_variance_update", (DL_FUNC)&wk_variance_update, 2},
   {"wk_variance_batch", (DL_FUNC)&wk_variance_batch, 2},
+  {"wk_variance_warmup_period", (DL_FUNC)&wk_variance_warmup_period, 1},
+  {"wk_variance_is_ready", (DL_FUNC)&wk_variance_is_ready, 1},
   {"wk_variance_reset", (DL_FUNC)&wk_variance_reset, 1},
   {"wk_variance_ratio_new", (DL_FUNC)&wk_variance_ratio_new, 2},
   {"wk_variance_ratio_update", (DL_FUNC)&wk_variance_ratio_update, 3},
   {"wk_variance_ratio_batch", (DL_FUNC)&wk_variance_ratio_batch, 3},
+  {"wk_variance_ratio_warmup_period", (DL_FUNC)&wk_variance_ratio_warmup_period, 1},
+  {"wk_variance_ratio_is_ready", (DL_FUNC)&wk_variance_ratio_is_ready, 1},
   {"wk_variance_ratio_reset", (DL_FUNC)&wk_variance_ratio_reset, 1},
   {"wk_vertical_horizontal_filter_new", (DL_FUNC)&wk_vertical_horizontal_filter_new, 1},
   {"wk_vertical_horizontal_filter_update", (DL_FUNC)&wk_vertical_horizontal_filter_update, 2},
   {"wk_vertical_horizontal_filter_batch", (DL_FUNC)&wk_vertical_horizontal_filter_batch, 2},
+  {"wk_vertical_horizontal_filter_warmup_period", (DL_FUNC)&wk_vertical_horizontal_filter_warmup_period, 1},
+  {"wk_vertical_horizontal_filter_is_ready", (DL_FUNC)&wk_vertical_horizontal_filter_is_ready, 1},
   {"wk_vertical_horizontal_filter_reset", (DL_FUNC)&wk_vertical_horizontal_filter_reset, 1},
   {"wk_vidya_new", (DL_FUNC)&wk_vidya_new, 2},
   {"wk_vidya_update", (DL_FUNC)&wk_vidya_update, 2},
   {"wk_vidya_batch", (DL_FUNC)&wk_vidya_batch, 2},
+  {"wk_vidya_warmup_period", (DL_FUNC)&wk_vidya_warmup_period, 1},
+  {"wk_vidya_is_ready", (DL_FUNC)&wk_vidya_is_ready, 1},
   {"wk_vidya_reset", (DL_FUNC)&wk_vidya_reset, 1},
   {"wk_volatility_cone_new", (DL_FUNC)&wk_volatility_cone_new, 2},
   {"wk_volatility_cone_update", (DL_FUNC)&wk_volatility_cone_update, 7},
+  {"wk_volatility_cone_warmup_period", (DL_FUNC)&wk_volatility_cone_warmup_period, 1},
+  {"wk_volatility_cone_is_ready", (DL_FUNC)&wk_volatility_cone_is_ready, 1},
   {"wk_volatility_cone_reset", (DL_FUNC)&wk_volatility_cone_reset, 1},
   {"wk_volatility_of_volatility_new", (DL_FUNC)&wk_volatility_of_volatility_new, 2},
   {"wk_volatility_of_volatility_update", (DL_FUNC)&wk_volatility_of_volatility_update, 2},
   {"wk_volatility_of_volatility_batch", (DL_FUNC)&wk_volatility_of_volatility_batch, 2},
+  {"wk_volatility_of_volatility_warmup_period", (DL_FUNC)&wk_volatility_of_volatility_warmup_period, 1},
+  {"wk_volatility_of_volatility_is_ready", (DL_FUNC)&wk_volatility_of_volatility_is_ready, 1},
   {"wk_volatility_of_volatility_reset", (DL_FUNC)&wk_volatility_of_volatility_reset, 1},
   {"wk_volatility_ratio_new", (DL_FUNC)&wk_volatility_ratio_new, 1},
   {"wk_volatility_ratio_update", (DL_FUNC)&wk_volatility_ratio_update, 7},
   {"wk_volatility_ratio_batch", (DL_FUNC)&wk_volatility_ratio_batch, 7},
+  {"wk_volatility_ratio_warmup_period", (DL_FUNC)&wk_volatility_ratio_warmup_period, 1},
+  {"wk_volatility_ratio_is_ready", (DL_FUNC)&wk_volatility_ratio_is_ready, 1},
   {"wk_volatility_ratio_reset", (DL_FUNC)&wk_volatility_ratio_reset, 1},
   {"wk_volty_stop_new", (DL_FUNC)&wk_volty_stop_new, 2},
   {"wk_volty_stop_update", (DL_FUNC)&wk_volty_stop_update, 7},
   {"wk_volty_stop_batch", (DL_FUNC)&wk_volty_stop_batch, 7},
+  {"wk_volty_stop_warmup_period", (DL_FUNC)&wk_volty_stop_warmup_period, 1},
+  {"wk_volty_stop_is_ready", (DL_FUNC)&wk_volty_stop_is_ready, 1},
   {"wk_volty_stop_reset", (DL_FUNC)&wk_volty_stop_reset, 1},
   {"wk_volume_bars_new", (DL_FUNC)&wk_volume_bars_new, 1},
   {"wk_volume_bars_update", (DL_FUNC)&wk_volume_bars_update, 7},
   {"wk_volume_bars_reset", (DL_FUNC)&wk_volume_bars_reset, 1},
   {"wk_volume_by_time_profile_new", (DL_FUNC)&wk_volume_by_time_profile_new, 2},
   {"wk_volume_by_time_profile_update", (DL_FUNC)&wk_volume_by_time_profile_update, 8},
+  {"wk_volume_by_time_profile_warmup_period", (DL_FUNC)&wk_volume_by_time_profile_warmup_period, 1},
+  {"wk_volume_by_time_profile_is_ready", (DL_FUNC)&wk_volume_by_time_profile_is_ready, 1},
   {"wk_volume_by_time_profile_reset", (DL_FUNC)&wk_volume_by_time_profile_reset, 1},
   {"wk_volume_oscillator_new", (DL_FUNC)&wk_volume_oscillator_new, 2},
   {"wk_volume_oscillator_update", (DL_FUNC)&wk_volume_oscillator_update, 7},
   {"wk_volume_oscillator_batch", (DL_FUNC)&wk_volume_oscillator_batch, 7},
+  {"wk_volume_oscillator_warmup_period", (DL_FUNC)&wk_volume_oscillator_warmup_period, 1},
+  {"wk_volume_oscillator_is_ready", (DL_FUNC)&wk_volume_oscillator_is_ready, 1},
   {"wk_volume_oscillator_reset", (DL_FUNC)&wk_volume_oscillator_reset, 1},
   {"wk_volume_price_trend_new", (DL_FUNC)&wk_volume_price_trend_new, 0},
   {"wk_volume_price_trend_update", (DL_FUNC)&wk_volume_price_trend_update, 7},
   {"wk_volume_price_trend_batch", (DL_FUNC)&wk_volume_price_trend_batch, 7},
+  {"wk_volume_price_trend_warmup_period", (DL_FUNC)&wk_volume_price_trend_warmup_period, 1},
+  {"wk_volume_price_trend_is_ready", (DL_FUNC)&wk_volume_price_trend_is_ready, 1},
   {"wk_volume_price_trend_reset", (DL_FUNC)&wk_volume_price_trend_reset, 1},
   {"wk_volume_profile_new", (DL_FUNC)&wk_volume_profile_new, 2},
   {"wk_volume_profile_update", (DL_FUNC)&wk_volume_profile_update, 8},
+  {"wk_volume_profile_warmup_period", (DL_FUNC)&wk_volume_profile_warmup_period, 1},
+  {"wk_volume_profile_is_ready", (DL_FUNC)&wk_volume_profile_is_ready, 1},
   {"wk_volume_profile_reset", (DL_FUNC)&wk_volume_profile_reset, 1},
   {"wk_volume_rsi_new", (DL_FUNC)&wk_volume_rsi_new, 1},
   {"wk_volume_rsi_update", (DL_FUNC)&wk_volume_rsi_update, 7},
   {"wk_volume_rsi_batch", (DL_FUNC)&wk_volume_rsi_batch, 7},
+  {"wk_volume_rsi_warmup_period", (DL_FUNC)&wk_volume_rsi_warmup_period, 1},
+  {"wk_volume_rsi_is_ready", (DL_FUNC)&wk_volume_rsi_is_ready, 1},
   {"wk_volume_rsi_reset", (DL_FUNC)&wk_volume_rsi_reset, 1},
   {"wk_volume_weighted_macd_new", (DL_FUNC)&wk_volume_weighted_macd_new, 3},
   {"wk_volume_weighted_macd_update", (DL_FUNC)&wk_volume_weighted_macd_update, 7},
+  {"wk_volume_weighted_macd_warmup_period", (DL_FUNC)&wk_volume_weighted_macd_warmup_period, 1},
+  {"wk_volume_weighted_macd_is_ready", (DL_FUNC)&wk_volume_weighted_macd_is_ready, 1},
   {"wk_volume_weighted_macd_reset", (DL_FUNC)&wk_volume_weighted_macd_reset, 1},
   {"wk_volume_weighted_sr_new", (DL_FUNC)&wk_volume_weighted_sr_new, 1},
   {"wk_volume_weighted_sr_update", (DL_FUNC)&wk_volume_weighted_sr_update, 7},
+  {"wk_volume_weighted_sr_warmup_period", (DL_FUNC)&wk_volume_weighted_sr_warmup_period, 1},
+  {"wk_volume_weighted_sr_is_ready", (DL_FUNC)&wk_volume_weighted_sr_is_ready, 1},
   {"wk_volume_weighted_sr_reset", (DL_FUNC)&wk_volume_weighted_sr_reset, 1},
   {"wk_vortex_new", (DL_FUNC)&wk_vortex_new, 1},
   {"wk_vortex_update", (DL_FUNC)&wk_vortex_update, 7},
+  {"wk_vortex_warmup_period", (DL_FUNC)&wk_vortex_warmup_period, 1},
+  {"wk_vortex_is_ready", (DL_FUNC)&wk_vortex_is_ready, 1},
   {"wk_vortex_reset", (DL_FUNC)&wk_vortex_reset, 1},
   {"wk_vpin_new", (DL_FUNC)&wk_vpin_new, 2},
   {"wk_vpin_update", (DL_FUNC)&wk_vpin_update, 5},
+  {"wk_vpin_warmup_period", (DL_FUNC)&wk_vpin_warmup_period, 1},
+  {"wk_vpin_is_ready", (DL_FUNC)&wk_vpin_is_ready, 1},
   {"wk_vpin_reset", (DL_FUNC)&wk_vpin_reset, 1},
   {"wk_vwap_new", (DL_FUNC)&wk_vwap_new, 0},
   {"wk_vwap_update", (DL_FUNC)&wk_vwap_update, 7},
   {"wk_vwap_batch", (DL_FUNC)&wk_vwap_batch, 7},
+  {"wk_vwap_warmup_period", (DL_FUNC)&wk_vwap_warmup_period, 1},
+  {"wk_vwap_is_ready", (DL_FUNC)&wk_vwap_is_ready, 1},
   {"wk_vwap_reset", (DL_FUNC)&wk_vwap_reset, 1},
   {"wk_vwap_std_dev_bands_new", (DL_FUNC)&wk_vwap_std_dev_bands_new, 1},
   {"wk_vwap_std_dev_bands_update", (DL_FUNC)&wk_vwap_std_dev_bands_update, 7},
+  {"wk_vwap_std_dev_bands_warmup_period", (DL_FUNC)&wk_vwap_std_dev_bands_warmup_period, 1},
+  {"wk_vwap_std_dev_bands_is_ready", (DL_FUNC)&wk_vwap_std_dev_bands_is_ready, 1},
   {"wk_vwap_std_dev_bands_reset", (DL_FUNC)&wk_vwap_std_dev_bands_reset, 1},
   {"wk_vwma_new", (DL_FUNC)&wk_vwma_new, 1},
   {"wk_vwma_update", (DL_FUNC)&wk_vwma_update, 7},
   {"wk_vwma_batch", (DL_FUNC)&wk_vwma_batch, 7},
+  {"wk_vwma_warmup_period", (DL_FUNC)&wk_vwma_warmup_period, 1},
+  {"wk_vwma_is_ready", (DL_FUNC)&wk_vwma_is_ready, 1},
   {"wk_vwma_reset", (DL_FUNC)&wk_vwma_reset, 1},
   {"wk_vzo_new", (DL_FUNC)&wk_vzo_new, 1},
   {"wk_vzo_update", (DL_FUNC)&wk_vzo_update, 7},
   {"wk_vzo_batch", (DL_FUNC)&wk_vzo_batch, 7},
+  {"wk_vzo_warmup_period", (DL_FUNC)&wk_vzo_warmup_period, 1},
+  {"wk_vzo_is_ready", (DL_FUNC)&wk_vzo_is_ready, 1},
   {"wk_vzo_reset", (DL_FUNC)&wk_vzo_reset, 1},
   {"wk_wad_new", (DL_FUNC)&wk_wad_new, 0},
   {"wk_wad_update", (DL_FUNC)&wk_wad_update, 7},
   {"wk_wad_batch", (DL_FUNC)&wk_wad_batch, 7},
+  {"wk_wad_warmup_period", (DL_FUNC)&wk_wad_warmup_period, 1},
+  {"wk_wad_is_ready", (DL_FUNC)&wk_wad_is_ready, 1},
   {"wk_wad_reset", (DL_FUNC)&wk_wad_reset, 1},
   {"wk_wave_pm_new", (DL_FUNC)&wk_wave_pm_new, 2},
   {"wk_wave_pm_update", (DL_FUNC)&wk_wave_pm_update, 2},
   {"wk_wave_pm_batch", (DL_FUNC)&wk_wave_pm_batch, 2},
+  {"wk_wave_pm_warmup_period", (DL_FUNC)&wk_wave_pm_warmup_period, 1},
+  {"wk_wave_pm_is_ready", (DL_FUNC)&wk_wave_pm_is_ready, 1},
   {"wk_wave_pm_reset", (DL_FUNC)&wk_wave_pm_reset, 1},
   {"wk_wave_trend_new", (DL_FUNC)&wk_wave_trend_new, 3},
   {"wk_wave_trend_update", (DL_FUNC)&wk_wave_trend_update, 7},
+  {"wk_wave_trend_warmup_period", (DL_FUNC)&wk_wave_trend_warmup_period, 1},
+  {"wk_wave_trend_is_ready", (DL_FUNC)&wk_wave_trend_is_ready, 1},
   {"wk_wave_trend_reset", (DL_FUNC)&wk_wave_trend_reset, 1},
   {"wk_wedge_new", (DL_FUNC)&wk_wedge_new, 0},
   {"wk_wedge_update", (DL_FUNC)&wk_wedge_update, 7},
   {"wk_wedge_batch", (DL_FUNC)&wk_wedge_batch, 7},
+  {"wk_wedge_warmup_period", (DL_FUNC)&wk_wedge_warmup_period, 1},
+  {"wk_wedge_is_ready", (DL_FUNC)&wk_wedge_is_ready, 1},
   {"wk_wedge_reset", (DL_FUNC)&wk_wedge_reset, 1},
   {"wk_weighted_close_new", (DL_FUNC)&wk_weighted_close_new, 0},
   {"wk_weighted_close_update", (DL_FUNC)&wk_weighted_close_update, 7},
   {"wk_weighted_close_batch", (DL_FUNC)&wk_weighted_close_batch, 7},
+  {"wk_weighted_close_warmup_period", (DL_FUNC)&wk_weighted_close_warmup_period, 1},
+  {"wk_weighted_close_is_ready", (DL_FUNC)&wk_weighted_close_is_ready, 1},
   {"wk_weighted_close_reset", (DL_FUNC)&wk_weighted_close_reset, 1},
   {"wk_wick_ratio_new", (DL_FUNC)&wk_wick_ratio_new, 0},
   {"wk_wick_ratio_update", (DL_FUNC)&wk_wick_ratio_update, 7},
   {"wk_wick_ratio_batch", (DL_FUNC)&wk_wick_ratio_batch, 7},
+  {"wk_wick_ratio_warmup_period", (DL_FUNC)&wk_wick_ratio_warmup_period, 1},
+  {"wk_wick_ratio_is_ready", (DL_FUNC)&wk_wick_ratio_is_ready, 1},
   {"wk_wick_ratio_reset", (DL_FUNC)&wk_wick_ratio_reset, 1},
   {"wk_williams_fractals_new", (DL_FUNC)&wk_williams_fractals_new, 0},
   {"wk_williams_fractals_update", (DL_FUNC)&wk_williams_fractals_update, 7},
+  {"wk_williams_fractals_warmup_period", (DL_FUNC)&wk_williams_fractals_warmup_period, 1},
+  {"wk_williams_fractals_is_ready", (DL_FUNC)&wk_williams_fractals_is_ready, 1},
   {"wk_williams_fractals_reset", (DL_FUNC)&wk_williams_fractals_reset, 1},
   {"wk_williams_r_new", (DL_FUNC)&wk_williams_r_new, 1},
   {"wk_williams_r_update", (DL_FUNC)&wk_williams_r_update, 7},
   {"wk_williams_r_batch", (DL_FUNC)&wk_williams_r_batch, 7},
+  {"wk_williams_r_warmup_period", (DL_FUNC)&wk_williams_r_warmup_period, 1},
+  {"wk_williams_r_is_ready", (DL_FUNC)&wk_williams_r_is_ready, 1},
   {"wk_williams_r_reset", (DL_FUNC)&wk_williams_r_reset, 1},
   {"wk_win_rate_new", (DL_FUNC)&wk_win_rate_new, 1},
   {"wk_win_rate_update", (DL_FUNC)&wk_win_rate_update, 2},
   {"wk_win_rate_batch", (DL_FUNC)&wk_win_rate_batch, 2},
+  {"wk_win_rate_warmup_period", (DL_FUNC)&wk_win_rate_warmup_period, 1},
+  {"wk_win_rate_is_ready", (DL_FUNC)&wk_win_rate_is_ready, 1},
   {"wk_win_rate_reset", (DL_FUNC)&wk_win_rate_reset, 1},
   {"wk_wma_new", (DL_FUNC)&wk_wma_new, 1},
   {"wk_wma_update", (DL_FUNC)&wk_wma_update, 2},
   {"wk_wma_batch", (DL_FUNC)&wk_wma_batch, 2},
+  {"wk_wma_warmup_period", (DL_FUNC)&wk_wma_warmup_period, 1},
+  {"wk_wma_is_ready", (DL_FUNC)&wk_wma_is_ready, 1},
   {"wk_wma_reset", (DL_FUNC)&wk_wma_reset, 1},
   {"wk_woodie_pivots_new", (DL_FUNC)&wk_woodie_pivots_new, 0},
   {"wk_woodie_pivots_update", (DL_FUNC)&wk_woodie_pivots_update, 7},
+  {"wk_woodie_pivots_warmup_period", (DL_FUNC)&wk_woodie_pivots_warmup_period, 1},
+  {"wk_woodie_pivots_is_ready", (DL_FUNC)&wk_woodie_pivots_is_ready, 1},
   {"wk_woodie_pivots_reset", (DL_FUNC)&wk_woodie_pivots_reset, 1},
   {"wk_yang_zhang_volatility_new", (DL_FUNC)&wk_yang_zhang_volatility_new, 2},
   {"wk_yang_zhang_volatility_update", (DL_FUNC)&wk_yang_zhang_volatility_update, 7},
   {"wk_yang_zhang_volatility_batch", (DL_FUNC)&wk_yang_zhang_volatility_batch, 7},
+  {"wk_yang_zhang_volatility_warmup_period", (DL_FUNC)&wk_yang_zhang_volatility_warmup_period, 1},
+  {"wk_yang_zhang_volatility_is_ready", (DL_FUNC)&wk_yang_zhang_volatility_is_ready, 1},
   {"wk_yang_zhang_volatility_reset", (DL_FUNC)&wk_yang_zhang_volatility_reset, 1},
   {"wk_yoyo_exit_new", (DL_FUNC)&wk_yoyo_exit_new, 2},
   {"wk_yoyo_exit_update", (DL_FUNC)&wk_yoyo_exit_update, 7},
   {"wk_yoyo_exit_batch", (DL_FUNC)&wk_yoyo_exit_batch, 7},
+  {"wk_yoyo_exit_warmup_period", (DL_FUNC)&wk_yoyo_exit_warmup_period, 1},
+  {"wk_yoyo_exit_is_ready", (DL_FUNC)&wk_yoyo_exit_is_ready, 1},
   {"wk_yoyo_exit_reset", (DL_FUNC)&wk_yoyo_exit_reset, 1},
   {"wk_z_score_new", (DL_FUNC)&wk_z_score_new, 1},
   {"wk_z_score_update", (DL_FUNC)&wk_z_score_update, 2},
   {"wk_z_score_batch", (DL_FUNC)&wk_z_score_batch, 2},
+  {"wk_z_score_warmup_period", (DL_FUNC)&wk_z_score_warmup_period, 1},
+  {"wk_z_score_is_ready", (DL_FUNC)&wk_z_score_is_ready, 1},
   {"wk_z_score_reset", (DL_FUNC)&wk_z_score_reset, 1},
   {"wk_zero_lag_macd_new", (DL_FUNC)&wk_zero_lag_macd_new, 3},
   {"wk_zero_lag_macd_update", (DL_FUNC)&wk_zero_lag_macd_update, 2},
+  {"wk_zero_lag_macd_warmup_period", (DL_FUNC)&wk_zero_lag_macd_warmup_period, 1},
+  {"wk_zero_lag_macd_is_ready", (DL_FUNC)&wk_zero_lag_macd_is_ready, 1},
   {"wk_zero_lag_macd_reset", (DL_FUNC)&wk_zero_lag_macd_reset, 1},
   {"wk_zig_zag_new", (DL_FUNC)&wk_zig_zag_new, 1},
   {"wk_zig_zag_update", (DL_FUNC)&wk_zig_zag_update, 7},
+  {"wk_zig_zag_warmup_period", (DL_FUNC)&wk_zig_zag_warmup_period, 1},
+  {"wk_zig_zag_is_ready", (DL_FUNC)&wk_zig_zag_is_ready, 1},
   {"wk_zig_zag_reset", (DL_FUNC)&wk_zig_zag_reset, 1},
   {"wk_zlema_new", (DL_FUNC)&wk_zlema_new, 1},
   {"wk_zlema_update", (DL_FUNC)&wk_zlema_update, 2},
   {"wk_zlema_batch", (DL_FUNC)&wk_zlema_batch, 2},
+  {"wk_zlema_warmup_period", (DL_FUNC)&wk_zlema_warmup_period, 1},
+  {"wk_zlema_is_ready", (DL_FUNC)&wk_zlema_is_ready, 1},
   {"wk_zlema_reset", (DL_FUNC)&wk_zlema_reset, 1},
   {NULL, NULL, 0}
 };

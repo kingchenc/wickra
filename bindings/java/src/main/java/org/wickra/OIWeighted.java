@@ -36,6 +36,26 @@ public final class OIWeighted implements AutoCloseable {
         }
     }
 
+    /** Number of updates required before update() yields a value. */
+    public int warmupPeriod() {
+        try {
+            long n = (long) NativeMethods.WICKRA_OI_WEIGHTED_WARMUP_PERIOD.invokeExact(handle);
+            return (int) n;
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        }
+    }
+
+    /** Whether the indicator has consumed enough input to emit a value. */
+    public boolean isReady() {
+        try {
+            byte r = (byte) NativeMethods.WICKRA_OI_WEIGHTED_IS_READY.invokeExact(handle);
+            return r != 0;
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        }
+    }
+
     /** Reset to the just-constructed state. */
     public void reset() {
         try {

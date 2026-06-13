@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- C ABI hub: every indicator now exposes `wickra_<ind>_warmup_period` and
+  `wickra_<ind>_is_ready`, closing the gap with the native bindings (which
+  already had them). The C-ABI languages surface them idiomatically: C# `int
+  WarmupPeriod()` / `bool IsReady()`, Go `WarmupPeriod()` / `IsReady()`, Java
+  `int warmupPeriod()` / `boolean isReady()`, and R `warmup_period()` /
+  `is_ready()` generics. The alt-chart bar builders are excluded by design (a
+  candle can complete 0..n bars, so they have no warmup).
+
 ### Changed
 - Standardised programming-language naming and ordering across all docs, READMEs,
   the documentation site, marketing site, organization profile and GitHub
