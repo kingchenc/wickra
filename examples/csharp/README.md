@@ -1,6 +1,6 @@
-# Wickra examples — C# / .NET
+# Wickra examples — C#
 
-Runnable .NET examples for the [Wickra .NET binding](../../bindings/csharp).
+Runnable C# examples for the [Wickra C# binding](../../bindings/csharp).
 Each example is a small console project that references the `Wickra` project and
 resolves the native library automatically (from `target/release` during local
 development, or the NuGet `runtimes/` layout when packaged).

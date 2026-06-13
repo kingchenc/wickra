@@ -8,7 +8,7 @@
 **Streaming-first technical indicators for Go, over the Wickra C ABI hub via cgo.**
 
 Wickra is a multi-language technical-analysis library with a Rust core and
-bindings for Python, Node.js and WebAssembly, plus a C ABI for C/C++, C#, Go, Java, R and
+bindings for Python, Node.js and WASM, plus a C ABI for C, C++, C#, Go, Java, R and
 any other C-capable language. Every indicator is an O(1) streaming state machine,
 so live trading bots and historical backtests share the exact same
 implementation. This package is the Go binding; it consumes the C ABI hub through
@@ -108,9 +108,16 @@ main repository and documentation site:
 - **Docs** (quickstarts, cookbook, TA-Lib migration): <https://docs.wickra.org>
 - **Runnable examples:** [`examples/go/`](https://github.com/wickra-lib/wickra/tree/main/examples/go)
 
-Wickra ships native bindings for Python, Node.js, WebAssembly and Rust, plus a
+Wickra ships native bindings for Python, Node.js, WASM and Rust, plus a
 C ABI hub that any C-capable language (C, C++, C#, Go, Java, R) links against —
 all exposing the same indicators from the shared, `unsafe`-forbidden Rust core.
+
+## Security
+
+Found a security issue? **Please don't open a public issue.** Report it privately
+via the affected repository's *Security* tab (*"Report a vulnerability"*) or email
+**support@wickra.org** with a subject line starting `[wickra security]`. Full
+policy: <https://github.com/wickra-lib/wickra/blob/main/SECURITY.md>.
 
 ## Disclaimer
 
