@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Corrected the internal casing of the `RelativeStrengthAB` binding wrappers,
+  which used `...Ab` (`WasmRelativeStrengthAb` in the WASM crate,
+  `RelativeStrengthAbNode` in the Node crate) while every other surface uses the
+  acronym `AB`. The published JS/WASM class name was already `RelativeStrengthAB`
+  (set via `js_name`/`js_class`), so the runtime API is unchanged; the only
+  visible change is the auto-generated TypeScript type alias, renamed
+  `RelativeStrengthAbNode` → `RelativeStrengthABNode` in `index.d.ts`.
+
 ## [0.9.0] - 2026-06-13
 
 Maintenance release: Java build-dependency updates and CI/Dependabot

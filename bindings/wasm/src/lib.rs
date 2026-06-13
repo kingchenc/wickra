@@ -730,14 +730,14 @@ impl WasmCointegration {
 // ---------- RelativeStrengthAB (two params, object output) ----------
 
 #[wasm_bindgen(js_name = "RelativeStrengthAB")]
-pub struct WasmRelativeStrengthAb {
+pub struct WasmRelativeStrengthAB {
     inner: wc::RelativeStrengthAB,
 }
 
 #[wasm_bindgen(js_class = "RelativeStrengthAB")]
-impl WasmRelativeStrengthAb {
+impl WasmRelativeStrengthAB {
     #[wasm_bindgen(constructor)]
-    pub fn new(ma_period: usize, rsi_period: usize) -> Result<WasmRelativeStrengthAb, JsError> {
+    pub fn new(ma_period: usize, rsi_period: usize) -> Result<WasmRelativeStrengthAB, JsError> {
         Ok(Self {
             inner: wc::RelativeStrengthAB::new(ma_period, rsi_period).map_err(map_err)?,
         })

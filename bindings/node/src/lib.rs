@@ -1174,12 +1174,12 @@ pub struct RelativeStrengthValue {
 }
 
 #[napi(js_name = "RelativeStrengthAB")]
-pub struct RelativeStrengthAbNode {
+pub struct RelativeStrengthABNode {
     inner: wc::RelativeStrengthAB,
 }
 
 #[napi]
-impl RelativeStrengthAbNode {
+impl RelativeStrengthABNode {
     #[napi(constructor)]
     pub fn new(ma_period: u32, rsi_period: u32) -> napi::Result<Self> {
         Ok(Self {
