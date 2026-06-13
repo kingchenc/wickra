@@ -173,6 +173,22 @@ public sealed class AbandonedBaby : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_abandoned_baby_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_abandoned_baby_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_abandoned_baby_reset(_handle.DangerousGetHandle());
@@ -247,6 +263,22 @@ public sealed class Abcd : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_abcd_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_abcd_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_abcd_reset(_handle.DangerousGetHandle());
@@ -312,6 +344,22 @@ public sealed class AbsoluteBreadthIndex : IDisposable
         return result;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_absolute_breadth_index_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_absolute_breadth_index_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_absolute_breadth_index_reset(_handle.DangerousGetHandle());
@@ -348,6 +396,22 @@ public sealed class AccelerationBands : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new AccelerationBandsOutput(native.upper, native.middle, native.lower) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_acceleration_bands_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_acceleration_bands_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -427,6 +491,22 @@ public sealed class AcceleratorOscillator : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_accelerator_oscillator_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_accelerator_oscillator_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_accelerator_oscillator_reset(_handle.DangerousGetHandle());
@@ -501,6 +581,22 @@ public sealed class AdOscillator : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_ad_oscillator_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_ad_oscillator_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_ad_oscillator_reset(_handle.DangerousGetHandle());
@@ -562,6 +658,22 @@ public sealed class AdVolumeLine : IDisposable
             }
         }
 
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_ad_volume_line_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_ad_volume_line_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -641,6 +753,22 @@ public sealed class AdaptiveCci : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_adaptive_cci_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_adaptive_cci_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_adaptive_cci_reset(_handle.DangerousGetHandle());
@@ -688,6 +816,22 @@ public sealed class AdaptiveCycle : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_adaptive_cycle_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_adaptive_cycle_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -740,6 +884,22 @@ public sealed class AdaptiveLaguerreFilter : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_adaptive_laguerre_filter_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_adaptive_laguerre_filter_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_adaptive_laguerre_filter_reset(_handle.DangerousGetHandle());
@@ -788,6 +948,22 @@ public sealed class AdaptiveRsi : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_adaptive_rsi_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_adaptive_rsi_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -864,6 +1040,22 @@ public sealed class Adl : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_adl_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_adl_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_adl_reset(_handle.DangerousGetHandle());
@@ -938,6 +1130,22 @@ public sealed class AdvanceBlock : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_advance_block_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_advance_block_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_advance_block_reset(_handle.DangerousGetHandle());
@@ -999,6 +1207,22 @@ public sealed class AdvanceDecline : IDisposable
             }
         }
 
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_advance_decline_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_advance_decline_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -1068,6 +1292,22 @@ public sealed class AdvanceDeclineRatio : IDisposable
         return result;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_advance_decline_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_advance_decline_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_advance_decline_ratio_reset(_handle.DangerousGetHandle());
@@ -1104,6 +1344,22 @@ public sealed class Adx : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new AdxOutput(native.plus_di, native.minus_di, native.adx) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_adx_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_adx_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -1181,6 +1437,22 @@ public sealed class Adxr : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_adxr_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_adxr_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_adxr_reset(_handle.DangerousGetHandle());
@@ -1219,6 +1491,22 @@ public sealed class Alligator : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new AlligatorOutput(native.jaw, native.teeth, native.lips) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_alligator_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_alligator_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -1269,6 +1557,22 @@ public sealed class Alma : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_alma_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_alma_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -1326,6 +1630,22 @@ public sealed class Alpha : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_alpha_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_alpha_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_alpha_reset(_handle.DangerousGetHandle());
@@ -1354,6 +1674,22 @@ public sealed class AmihudIlliquidity : IDisposable
     public double Update(double price, double size, bool isBuy, long timestamp)
     {
         var result = NativeMethods.wickra_amihud_illiquidity_update(_handle.DangerousGetHandle(), price, size, isBuy, timestamp);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_amihud_illiquidity_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_amihud_illiquidity_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -1405,6 +1741,22 @@ public sealed class AnchoredRsi : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_anchored_rsi_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_anchored_rsi_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -1481,6 +1833,22 @@ public sealed class AnchoredVwap : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_anchored_vwap_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_anchored_vwap_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_anchored_vwap_reset(_handle.DangerousGetHandle());
@@ -1517,6 +1885,22 @@ public sealed class AndrewsPitchfork : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new AndrewsPitchforkOutput(native.median, native.upper, native.lower) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_andrews_pitchfork_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_andrews_pitchfork_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -1570,6 +1954,22 @@ public sealed class Apo : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_apo_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_apo_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_apo_reset(_handle.DangerousGetHandle());
@@ -1606,6 +2006,22 @@ public sealed class Aroon : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new AroonOutput(native.up, native.down) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_aroon_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_aroon_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -1683,6 +2099,22 @@ public sealed class AroonOscillator : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_aroon_oscillator_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_aroon_oscillator_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_aroon_oscillator_reset(_handle.DangerousGetHandle());
@@ -1758,6 +2190,22 @@ public sealed class Atr : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_atr_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_atr_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_atr_reset(_handle.DangerousGetHandle());
@@ -1796,6 +2244,22 @@ public sealed class AtrBands : IDisposable
         return ok ? new AtrBandsOutput(native.upper, native.middle, native.lower) : null;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_atr_bands_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_atr_bands_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_atr_bands_reset(_handle.DangerousGetHandle());
@@ -1832,6 +2296,22 @@ public sealed class AtrRatchet : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new AtrRatchetOutput(native.@value, native.direction) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_atr_ratchet_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_atr_ratchet_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -1909,6 +2389,22 @@ public sealed class AtrTrailingStop : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_atr_trailing_stop_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_atr_trailing_stop_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_atr_trailing_stop_reset(_handle.DangerousGetHandle());
@@ -1944,6 +2440,22 @@ public sealed class AutoFib : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new AutoFibOutput(native.level_0, native.level_236, native.level_382, native.level_500, native.level_618, native.level_786, native.level_1000) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_auto_fib_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_auto_fib_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -1997,6 +2509,22 @@ public sealed class Autocorrelation : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_autocorrelation_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_autocorrelation_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_autocorrelation_reset(_handle.DangerousGetHandle());
@@ -2046,6 +2574,22 @@ public sealed class AutocorrelationPeriodogram : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_autocorrelation_periodogram_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_autocorrelation_periodogram_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -2123,6 +2667,22 @@ public sealed class AverageDailyRange : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_average_daily_range_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_average_daily_range_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_average_daily_range_reset(_handle.DangerousGetHandle());
@@ -2171,6 +2731,22 @@ public sealed class AverageDrawdown : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_average_drawdown_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_average_drawdown_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -2247,6 +2823,22 @@ public sealed class AvgPrice : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_avg_price_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_avg_price_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_avg_price_reset(_handle.DangerousGetHandle());
@@ -2321,6 +2913,22 @@ public sealed class AwesomeOscillator : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_awesome_oscillator_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_awesome_oscillator_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -2400,6 +3008,22 @@ public sealed class AwesomeOscillatorHistogram : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_awesome_oscillator_histogram_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_awesome_oscillator_histogram_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_awesome_oscillator_histogram_reset(_handle.DangerousGetHandle());
@@ -2474,6 +3098,22 @@ public sealed class BalanceOfPower : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_balance_of_power_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_balance_of_power_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_balance_of_power_reset(_handle.DangerousGetHandle());
@@ -2522,6 +3162,22 @@ public sealed class BandpassFilter : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_bandpass_filter_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_bandpass_filter_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -2598,6 +3254,22 @@ public sealed class Bat : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_bat_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_bat_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_bat_reset(_handle.DangerousGetHandle());
@@ -2672,6 +3344,22 @@ public sealed class BeltHold : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_belt_hold_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_belt_hold_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_belt_hold_reset(_handle.DangerousGetHandle());
@@ -2727,6 +3415,22 @@ public sealed class Beta : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_beta_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_beta_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_beta_reset(_handle.DangerousGetHandle());
@@ -2780,6 +3484,22 @@ public sealed class BetaNeutralSpread : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_beta_neutral_spread_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_beta_neutral_spread_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -2857,6 +3577,22 @@ public sealed class BetterVolume : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_better_volume_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_better_volume_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_better_volume_reset(_handle.DangerousGetHandle());
@@ -2905,6 +3641,22 @@ public sealed class BipowerVariation : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_bipower_variation_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_bipower_variation_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -2981,6 +3733,22 @@ public sealed class BodySizePct : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_body_size_pct_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_body_size_pct_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_body_size_pct_reset(_handle.DangerousGetHandle());
@@ -3017,6 +3785,22 @@ public sealed class BollingerBands : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new BollingerOutput(native.upper, native.middle, native.lower, native.stddev) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_bollinger_bands_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_bollinger_bands_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -3069,6 +3853,22 @@ public sealed class BollingerBandwidth : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_bollinger_bandwidth_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_bollinger_bandwidth_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_bollinger_bandwidth_reset(_handle.DangerousGetHandle());
@@ -3105,6 +3905,22 @@ public sealed class BomarBands : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new BomarBandsOutput(native.upper, native.middle, native.lower) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_bomar_bands_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_bomar_bands_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -3169,6 +3985,22 @@ public sealed class BreadthThrust : IDisposable
             }
         }
 
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_breadth_thrust_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_breadth_thrust_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -3247,6 +4079,22 @@ public sealed class Breakaway : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_breakaway_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_breakaway_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_breakaway_reset(_handle.DangerousGetHandle());
@@ -3312,6 +4160,22 @@ public sealed class BullishPercentIndex : IDisposable
         return result;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_bullish_percent_index_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_bullish_percent_index_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_bullish_percent_index_reset(_handle.DangerousGetHandle());
@@ -3360,6 +4224,22 @@ public sealed class BurkeRatio : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_burke_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_burke_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -3436,6 +4316,22 @@ public sealed class Butterfly : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_butterfly_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_butterfly_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_butterfly_reset(_handle.DangerousGetHandle());
@@ -3463,6 +4359,22 @@ public sealed class CalendarSpread : IDisposable
     public double Update(double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp)
     {
         var result = NativeMethods.wickra_calendar_spread_update(_handle.DangerousGetHandle(), fundingRate, markPrice, indexPrice, futuresPrice, openInterest, longSize, shortSize, takerBuyVolume, takerSellVolume, longLiquidation, shortLiquidation, timestamp);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_calendar_spread_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_calendar_spread_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -3517,6 +4429,22 @@ public sealed class CalmarRatio : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_calmar_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_calmar_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_calmar_ratio_reset(_handle.DangerousGetHandle());
@@ -3552,6 +4480,22 @@ public sealed class Camarilla : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new CamarillaPivotsOutput(native.pp, native.r1, native.r2, native.r3, native.r4, native.s1, native.s2, native.s3, native.s4) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_camarilla_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_camarilla_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -3590,6 +4534,22 @@ public sealed class CandleVolume : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new CandleVolumeOutput(native.body, native.width) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_candle_volume_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_candle_volume_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -3667,6 +4627,22 @@ public sealed class Cci : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_cci_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_cci_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_cci_reset(_handle.DangerousGetHandle());
@@ -3717,6 +4693,22 @@ public sealed class CenterOfGravity : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_center_of_gravity_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_center_of_gravity_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_center_of_gravity_reset(_handle.DangerousGetHandle());
@@ -3752,6 +4744,22 @@ public sealed class CentralPivotRange : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new CentralPivotRangeOutput(native.pivot, native.tc, native.bc) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_central_pivot_range_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_central_pivot_range_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -3802,6 +4810,22 @@ public sealed class Cfo : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_cfo_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_cfo_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -3877,6 +4901,22 @@ public sealed class ChaikinMoneyFlow : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_chaikin_money_flow_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_chaikin_money_flow_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -3955,6 +4995,22 @@ public sealed class ChaikinOscillator : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_chaikin_oscillator_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_chaikin_oscillator_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_chaikin_oscillator_reset(_handle.DangerousGetHandle());
@@ -4031,6 +5087,22 @@ public sealed class ChaikinVolatility : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_chaikin_volatility_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_chaikin_volatility_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_chaikin_volatility_reset(_handle.DangerousGetHandle());
@@ -4070,6 +5142,22 @@ public sealed class ChandeKrollStop : IDisposable
         return ok ? new ChandeKrollStopOutput(native.stop_long, native.stop_short) : null;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_chande_kroll_stop_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_chande_kroll_stop_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_chande_kroll_stop_reset(_handle.DangerousGetHandle());
@@ -4106,6 +5194,22 @@ public sealed class ChandelierExit : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new ChandelierExitOutput(native.long_stop, native.short_stop) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_chandelier_exit_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_chandelier_exit_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -4183,6 +5287,22 @@ public sealed class ChoppinessIndex : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_choppiness_index_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_choppiness_index_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_choppiness_index_reset(_handle.DangerousGetHandle());
@@ -4218,6 +5338,22 @@ public sealed class ClassicPivots : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new ClassicPivotsOutput(native.pp, native.r1, native.r2, native.r3, native.s1, native.s2, native.s3) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_classic_pivots_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_classic_pivots_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -4294,6 +5430,22 @@ public sealed class CloseVsOpen : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_close_vs_open_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_close_vs_open_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_close_vs_open_reset(_handle.DangerousGetHandle());
@@ -4368,6 +5520,22 @@ public sealed class ClosingMarubozu : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_closing_marubozu_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_closing_marubozu_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_closing_marubozu_reset(_handle.DangerousGetHandle());
@@ -4416,6 +5584,22 @@ public sealed class Cmo : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_cmo_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_cmo_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -4468,6 +5652,22 @@ public sealed class CoefficientOfVariation : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_coefficient_of_variation_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_coefficient_of_variation_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_coefficient_of_variation_reset(_handle.DangerousGetHandle());
@@ -4505,6 +5705,22 @@ public sealed class Cointegration : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new CointegrationOutput(native.hedge_ratio, native.spread, native.adf_stat) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_cointegration_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_cointegration_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -4557,6 +5773,22 @@ public sealed class CommonSenseRatio : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_common_sense_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_common_sense_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_common_sense_ratio_reset(_handle.DangerousGetHandle());
@@ -4594,6 +5826,22 @@ public sealed class CompositeProfile : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new CompositeProfileOutput(native.poc, native.vah, native.val) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_composite_profile_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_composite_profile_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -4670,6 +5918,22 @@ public sealed class ConcealingBabySwallow : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_concealing_baby_swallow_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_concealing_baby_swallow_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_concealing_baby_swallow_reset(_handle.DangerousGetHandle());
@@ -4718,6 +5982,22 @@ public sealed class ConditionalValueAtRisk : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_conditional_value_at_risk_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_conditional_value_at_risk_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -4772,6 +6052,22 @@ public sealed class ConnorsRsi : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_connors_rsi_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_connors_rsi_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_connors_rsi_reset(_handle.DangerousGetHandle());
@@ -4824,6 +6120,22 @@ public sealed class Coppock : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_coppock_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_coppock_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_coppock_reset(_handle.DangerousGetHandle());
@@ -4872,6 +6184,22 @@ public sealed class CorrelationTrendIndicator : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_correlation_trend_indicator_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_correlation_trend_indicator_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -4948,6 +6276,22 @@ public sealed class Counterattack : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_counterattack_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_counterattack_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_counterattack_reset(_handle.DangerousGetHandle());
@@ -5022,6 +6366,22 @@ public sealed class Crab : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_crab_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_crab_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_crab_reset(_handle.DangerousGetHandle());
@@ -5049,6 +6409,22 @@ public sealed class CumulativeVolumeDelta : IDisposable
     public double Update(double price, double size, bool isBuy, long timestamp)
     {
         var result = NativeMethods.wickra_cumulative_volume_delta_update(_handle.DangerousGetHandle(), price, size, isBuy, timestamp);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_cumulative_volume_delta_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_cumulative_volume_delta_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -5114,6 +6490,22 @@ public sealed class CumulativeVolumeIndex : IDisposable
             }
         }
 
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_cumulative_volume_index_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_cumulative_volume_index_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -5192,6 +6584,22 @@ public sealed class CupAndHandle : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_cup_and_handle_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_cup_and_handle_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_cup_and_handle_reset(_handle.DangerousGetHandle());
@@ -5240,6 +6648,22 @@ public sealed class CyberneticCycle : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_cybernetic_cycle_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_cybernetic_cycle_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -5316,6 +6740,22 @@ public sealed class Cypher : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_cypher_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_cypher_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_cypher_reset(_handle.DangerousGetHandle());
@@ -5368,6 +6808,22 @@ public sealed class DayOfWeekProfile : IDisposable
         return values;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_day_of_week_profile_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_day_of_week_profile_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_day_of_week_profile_reset(_handle.DangerousGetHandle());
@@ -5416,6 +6872,22 @@ public sealed class Decycler : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_decycler_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_decycler_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -5469,6 +6941,22 @@ public sealed class DecyclerOscillator : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_decycler_oscillator_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_decycler_oscillator_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_decycler_oscillator_reset(_handle.DangerousGetHandle());
@@ -5517,6 +7005,22 @@ public sealed class Dema : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_dema_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_dema_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -5594,6 +7098,22 @@ public sealed class DemandIndex : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_demand_index_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_demand_index_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_demand_index_reset(_handle.DangerousGetHandle());
@@ -5629,6 +7149,22 @@ public sealed class DemarkPivots : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new DemarkPivotsOutput(native.pp, native.r1, native.s1) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_demark_pivots_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_demark_pivots_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -5678,6 +7214,22 @@ public sealed class DepthSlope : IDisposable
             }
         }
 
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_depth_slope_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_depth_slope_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -5735,6 +7287,22 @@ public sealed class DerivativeOscillator : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_derivative_oscillator_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_derivative_oscillator_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_derivative_oscillator_reset(_handle.DangerousGetHandle());
@@ -5785,6 +7353,22 @@ public sealed class DetrendedStdDev : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_detrended_std_dev_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_detrended_std_dev_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_detrended_std_dev_reset(_handle.DangerousGetHandle());
@@ -5833,6 +7417,22 @@ public sealed class DisparityIndex : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_disparity_index_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_disparity_index_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -5888,6 +7488,22 @@ public sealed class DistanceSsd : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_distance_ssd_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_distance_ssd_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -5964,6 +7580,22 @@ public sealed class Doji : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_doji_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_doji_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_doji_reset(_handle.DangerousGetHandle());
@@ -6036,6 +7668,22 @@ public sealed class DojiStar : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_doji_star_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_doji_star_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -6128,6 +7776,22 @@ public sealed class Donchian : IDisposable
         return ok ? new DonchianOutput(native.upper, native.middle, native.lower) : null;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_donchian_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_donchian_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_donchian_reset(_handle.DangerousGetHandle());
@@ -6166,6 +7830,22 @@ public sealed class DonchianStop : IDisposable
         return ok ? new DonchianStopOutput(native.stop_long, native.stop_short) : null;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_donchian_stop_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_donchian_stop_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_donchian_stop_reset(_handle.DangerousGetHandle());
@@ -6202,6 +7882,22 @@ public sealed class DoubleBollinger : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new DoubleBollingerOutput(native.upper_outer, native.upper_inner, native.middle, native.lower_inner, native.lower_outer) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_double_bollinger_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_double_bollinger_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -6278,6 +7974,22 @@ public sealed class DoubleTopBottom : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_double_top_bottom_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_double_top_bottom_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_double_top_bottom_reset(_handle.DangerousGetHandle());
@@ -6352,6 +8064,22 @@ public sealed class DownsideGapThreeMethods : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_downside_gap_three_methods_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_downside_gap_three_methods_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_downside_gap_three_methods_reset(_handle.DangerousGetHandle());
@@ -6400,6 +8128,22 @@ public sealed class Dpo : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_dpo_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_dpo_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -6476,6 +8220,22 @@ public sealed class DragonflyDoji : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_dragonfly_doji_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_dragonfly_doji_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_dragonfly_doji_reset(_handle.DangerousGetHandle());
@@ -6523,6 +8283,22 @@ public sealed class DrawdownDuration : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_drawdown_duration_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_drawdown_duration_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -6600,6 +8376,22 @@ public sealed class DumplingTop : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_dumpling_top_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_dumpling_top_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_dumpling_top_reset(_handle.DangerousGetHandle());
@@ -6675,6 +8467,22 @@ public sealed class Dx : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_dx_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_dx_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_dx_reset(_handle.DangerousGetHandle());
@@ -6723,6 +8531,22 @@ public sealed class DynamicMomentumIndex : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_dynamic_momentum_index_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_dynamic_momentum_index_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -6800,6 +8624,22 @@ public sealed class EaseOfMovement : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_ease_of_movement_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_ease_of_movement_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_ease_of_movement_reset(_handle.DangerousGetHandle());
@@ -6827,6 +8667,22 @@ public sealed class EffectiveSpread : IDisposable
     public double Update(double price, double size, bool isBuy, long timestamp, double mid)
     {
         var result = NativeMethods.wickra_effective_spread_update(_handle.DangerousGetHandle(), price, size, isBuy, timestamp, mid);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_effective_spread_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_effective_spread_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -6881,6 +8737,22 @@ public sealed class EhlersStochastic : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_ehlers_stochastic_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_ehlers_stochastic_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_ehlers_stochastic_reset(_handle.DangerousGetHandle());
@@ -6929,6 +8801,22 @@ public sealed class Ehma : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_ehma_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_ehma_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -6984,6 +8872,22 @@ public sealed class ElderImpulse : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_elder_impulse_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_elder_impulse_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_elder_impulse_reset(_handle.DangerousGetHandle());
@@ -7022,6 +8926,22 @@ public sealed class ElderRay : IDisposable
         return ok ? new ElderRayOutput(native.bull_power, native.bear_power) : null;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_elder_ray_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_elder_ray_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_elder_ray_reset(_handle.DangerousGetHandle());
@@ -7058,6 +8978,22 @@ public sealed class ElderSafeZone : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new ElderSafeZoneOutput(native.@value, native.direction) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_elder_safe_zone_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_elder_safe_zone_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -7110,6 +9046,22 @@ public sealed class Ema : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_ema_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_ema_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_ema_reset(_handle.DangerousGetHandle());
@@ -7158,6 +9110,22 @@ public sealed class EmpiricalModeDecomposition : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_empirical_mode_decomposition_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_empirical_mode_decomposition_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -7234,6 +9202,22 @@ public sealed class Engulfing : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_engulfing_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_engulfing_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_engulfing_reset(_handle.DangerousGetHandle());
@@ -7272,6 +9256,22 @@ public sealed class Equivolume : IDisposable
         return ok ? new EquivolumeOutput(native.height, native.width) : null;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_equivolume_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_equivolume_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_equivolume_reset(_handle.DangerousGetHandle());
@@ -7299,6 +9299,22 @@ public sealed class EstimatedLeverageRatio : IDisposable
     public double Update(double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp)
     {
         var result = NativeMethods.wickra_estimated_leverage_ratio_update(_handle.DangerousGetHandle(), fundingRate, markPrice, indexPrice, futuresPrice, openInterest, longSize, shortSize, takerBuyVolume, takerSellVolume, longLiquidation, shortLiquidation, timestamp);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_estimated_leverage_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_estimated_leverage_ratio_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -7352,6 +9368,22 @@ public sealed class EvenBetterSinewave : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_even_better_sinewave_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_even_better_sinewave_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -7426,6 +9458,22 @@ public sealed class EveningDojiStar : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_evening_doji_star_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_evening_doji_star_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -7503,6 +9551,22 @@ public sealed class Evwma : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_evwma_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_evwma_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_evwma_reset(_handle.DangerousGetHandle());
@@ -7550,6 +9614,22 @@ public sealed class EwmaVolatility : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_ewma_volatility_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_ewma_volatility_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -7600,6 +9680,22 @@ public sealed class Expectancy : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_expectancy_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_expectancy_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -7676,6 +9772,22 @@ public sealed class FallingThreeMethods : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_falling_three_methods_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_falling_three_methods_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_falling_three_methods_reset(_handle.DangerousGetHandle());
@@ -7725,6 +9837,22 @@ public sealed class Fama : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_fama_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_fama_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_fama_reset(_handle.DangerousGetHandle());
@@ -7760,6 +9888,22 @@ public sealed class FibArcs : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new FibArcsOutput(native.arc_382, native.arc_500, native.arc_618) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_fib_arcs_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_fib_arcs_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -7799,6 +9943,22 @@ public sealed class FibChannel : IDisposable
         return ok ? new FibChannelOutput(native.@base, native.level_618, native.level_1000, native.level_1618) : null;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_fib_channel_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_fib_channel_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_fib_channel_reset(_handle.DangerousGetHandle());
@@ -7834,6 +9994,22 @@ public sealed class FibConfluence : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new FibConfluenceOutput(native.price, native.strength) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_fib_confluence_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_fib_confluence_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -7873,6 +10049,22 @@ public sealed class FibExtension : IDisposable
         return ok ? new FibExtensionOutput(native.level_1272, native.level_1414, native.level_1618, native.level_2000, native.level_2618) : null;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_fib_extension_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_fib_extension_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_fib_extension_reset(_handle.DangerousGetHandle());
@@ -7908,6 +10100,22 @@ public sealed class FibFan : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new FibFanOutput(native.fan_382, native.fan_500, native.fan_618) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_fib_fan_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_fib_fan_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -7947,6 +10155,22 @@ public sealed class FibProjection : IDisposable
         return ok ? new FibProjectionOutput(native.level_618, native.level_1000, native.level_1618, native.level_2618) : null;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_fib_projection_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_fib_projection_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_fib_projection_reset(_handle.DangerousGetHandle());
@@ -7982,6 +10206,22 @@ public sealed class FibRetracement : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new FibRetracementOutput(native.level_0, native.level_236, native.level_382, native.level_500, native.level_618, native.level_786, native.level_1000) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_fib_retracement_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_fib_retracement_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -8021,6 +10261,22 @@ public sealed class FibTimeZones : IDisposable
         return ok ? new FibTimeZonesOutput(native.on_zone, native.bars_to_next) : null;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_fib_time_zones_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_fib_time_zones_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_fib_time_zones_reset(_handle.DangerousGetHandle());
@@ -8056,6 +10312,22 @@ public sealed class FibonacciPivots : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new FibonacciPivotsOutput(native.pp, native.r1, native.r2, native.r3, native.s1, native.s2, native.s3) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_fibonacci_pivots_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_fibonacci_pivots_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -8108,6 +10380,22 @@ public sealed class FisherRsi : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_fisher_rsi_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_fisher_rsi_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_fisher_rsi_reset(_handle.DangerousGetHandle());
@@ -8156,6 +10444,22 @@ public sealed class FisherTransform : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_fisher_transform_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_fisher_transform_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -8232,6 +10536,22 @@ public sealed class FlagPennant : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_flag_pennant_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_flag_pennant_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_flag_pennant_reset(_handle.DangerousGetHandle());
@@ -8281,6 +10601,22 @@ public sealed class Footprint : IDisposable
             result[i] = new FootprintLevel(buffer[i].price, buffer[i].bid_vol, buffer[i].ask_vol);
         }
 
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_footprint_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_footprint_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
         return result;
     }
 
@@ -8359,6 +10695,22 @@ public sealed class ForceIndex : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_force_index_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_force_index_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_force_index_reset(_handle.DangerousGetHandle());
@@ -8395,6 +10747,22 @@ public sealed class FractalChaosBands : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new FractalChaosBandsOutput(native.upper, native.lower) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_fractal_chaos_bands_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_fractal_chaos_bands_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -8445,6 +10813,22 @@ public sealed class Frama : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_frama_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_frama_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -8522,6 +10906,22 @@ public sealed class FryPanBottom : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_fry_pan_bottom_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_fry_pan_bottom_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_fry_pan_bottom_reset(_handle.DangerousGetHandle());
@@ -8549,6 +10949,22 @@ public sealed class FundingBasis : IDisposable
     public double Update(double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp)
     {
         var result = NativeMethods.wickra_funding_basis_update(_handle.DangerousGetHandle(), fundingRate, markPrice, indexPrice, futuresPrice, openInterest, longSize, shortSize, takerBuyVolume, takerSellVolume, longLiquidation, shortLiquidation, timestamp);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_funding_basis_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_funding_basis_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -8584,6 +11000,22 @@ public sealed class FundingImpliedApr : IDisposable
         return result;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_funding_implied_apr_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_funding_implied_apr_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_funding_implied_apr_reset(_handle.DangerousGetHandle());
@@ -8611,6 +11043,22 @@ public sealed class FundingRate : IDisposable
     public double Update(double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp)
     {
         var result = NativeMethods.wickra_funding_rate_update(_handle.DangerousGetHandle(), fundingRate, markPrice, indexPrice, futuresPrice, openInterest, longSize, shortSize, takerBuyVolume, takerSellVolume, longLiquidation, shortLiquidation, timestamp);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_funding_rate_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_funding_rate_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -8647,6 +11095,22 @@ public sealed class FundingRateMean : IDisposable
         return result;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_funding_rate_mean_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_funding_rate_mean_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_funding_rate_mean_reset(_handle.DangerousGetHandle());
@@ -8675,6 +11139,22 @@ public sealed class FundingRateZScore : IDisposable
     public double Update(double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp)
     {
         var result = NativeMethods.wickra_funding_rate_z_score_update(_handle.DangerousGetHandle(), fundingRate, markPrice, indexPrice, futuresPrice, openInterest, longSize, shortSize, takerBuyVolume, takerSellVolume, longLiquidation, shortLiquidation, timestamp);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_funding_rate_z_score_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_funding_rate_z_score_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -8729,6 +11209,22 @@ public sealed class GainLossRatio : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_gain_loss_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_gain_loss_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_gain_loss_ratio_reset(_handle.DangerousGetHandle());
@@ -8777,6 +11273,22 @@ public sealed class GainToPainRatio : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_gain_to_pain_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_gain_to_pain_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -8853,6 +11365,22 @@ public sealed class GapSideBySideWhite : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_gap_side_by_side_white_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_gap_side_by_side_white_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_gap_side_by_side_white_reset(_handle.DangerousGetHandle());
@@ -8900,6 +11428,22 @@ public sealed class Garch11 : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_garch11_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_garch11_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -8978,6 +11522,22 @@ public sealed class GarmanKlassVolatility : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_garman_klass_volatility_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_garman_klass_volatility_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_garman_klass_volatility_reset(_handle.DangerousGetHandle());
@@ -9052,6 +11612,22 @@ public sealed class Gartley : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_gartley_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_gartley_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_gartley_reset(_handle.DangerousGetHandle());
@@ -9090,6 +11666,22 @@ public sealed class GatorOscillator : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new GatorOscillatorOutput(native.upper, native.lower) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_gator_oscillator_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_gator_oscillator_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -9142,6 +11734,22 @@ public sealed class GeneralizedDema : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_generalized_dema_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_generalized_dema_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_generalized_dema_reset(_handle.DangerousGetHandle());
@@ -9192,6 +11800,22 @@ public sealed class GeometricMa : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_geometric_ma_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_geometric_ma_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_geometric_ma_reset(_handle.DangerousGetHandle());
@@ -9227,6 +11851,22 @@ public sealed class GoldenPocket : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new GoldenPocketOutput(native.low, native.mid, native.high) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_golden_pocket_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_golden_pocket_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -9283,6 +11923,22 @@ public sealed class GrangerCausality : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_granger_causality_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_granger_causality_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -9359,6 +12015,22 @@ public sealed class GravestoneDoji : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_gravestone_doji_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_gravestone_doji_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_gravestone_doji_reset(_handle.DangerousGetHandle());
@@ -9431,6 +12103,22 @@ public sealed class Hammer : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_hammer_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_hammer_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -9507,6 +12195,22 @@ public sealed class HangingMan : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_hanging_man_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_hanging_man_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_hanging_man_reset(_handle.DangerousGetHandle());
@@ -9579,6 +12283,22 @@ public sealed class Harami : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_harami_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_harami_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -9655,6 +12375,22 @@ public sealed class HaramiCross : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_harami_cross_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_harami_cross_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_harami_cross_reset(_handle.DangerousGetHandle());
@@ -9708,6 +12444,22 @@ public sealed class HasbrouckInformationShare : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_hasbrouck_information_share_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_hasbrouck_information_share_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -9784,6 +12536,22 @@ public sealed class HeadAndShoulders : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_head_and_shoulders_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_head_and_shoulders_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_head_and_shoulders_reset(_handle.DangerousGetHandle());
@@ -9819,6 +12587,22 @@ public sealed class HeikinAshi : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new HeikinAshiOutput(native.open, native.high, native.low, native.close) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_heikin_ashi_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_heikin_ashi_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -9896,6 +12680,22 @@ public sealed class HeikinAshiOscillator : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_heikin_ashi_oscillator_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_heikin_ashi_oscillator_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_heikin_ashi_oscillator_reset(_handle.DangerousGetHandle());
@@ -9971,6 +12771,22 @@ public sealed class HiLoActivator : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_hi_lo_activator_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_hi_lo_activator_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_hi_lo_activator_reset(_handle.DangerousGetHandle());
@@ -10033,6 +12849,22 @@ public sealed class HighLowIndex : IDisposable
             }
         }
 
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_high_low_index_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_high_low_index_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -10111,6 +12943,22 @@ public sealed class HighLowRange : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_high_low_range_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_high_low_range_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_high_low_range_reset(_handle.DangerousGetHandle());
@@ -10148,6 +12996,22 @@ public sealed class HighLowVolumeNodes : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new HighLowVolumeNodesOutput(native.hvn, native.lvn) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_high_low_volume_nodes_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_high_low_volume_nodes_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -10224,6 +13088,22 @@ public sealed class HighWave : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_high_wave_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_high_wave_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_high_wave_reset(_handle.DangerousGetHandle());
@@ -10272,6 +13152,22 @@ public sealed class HighpassFilter : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_highpass_filter_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_highpass_filter_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -10348,6 +13244,22 @@ public sealed class Hikkake : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_hikkake_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_hikkake_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_hikkake_reset(_handle.DangerousGetHandle());
@@ -10422,6 +13334,22 @@ public sealed class HikkakeModified : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_hikkake_modified_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_hikkake_modified_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_hikkake_modified_reset(_handle.DangerousGetHandle());
@@ -10469,6 +13397,22 @@ public sealed class HilbertDominantCycle : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_hilbert_dominant_cycle_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_hilbert_dominant_cycle_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -10522,6 +13466,22 @@ public sealed class HistoricalVolatility : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_historical_volatility_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_historical_volatility_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_historical_volatility_reset(_handle.DangerousGetHandle());
@@ -10572,6 +13532,22 @@ public sealed class Hma : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_hma_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_hma_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_hma_reset(_handle.DangerousGetHandle());
@@ -10619,6 +13595,22 @@ public sealed class HoltWinters : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_holt_winters_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_holt_winters_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -10695,6 +13687,22 @@ public sealed class HomingPigeon : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_homing_pigeon_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_homing_pigeon_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_homing_pigeon_reset(_handle.DangerousGetHandle());
@@ -10744,6 +13752,22 @@ public sealed class HtDcPhase : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_ht_dc_phase_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_ht_dc_phase_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_ht_dc_phase_reset(_handle.DangerousGetHandle());
@@ -10779,6 +13803,22 @@ public sealed class HtPhasor : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new HtPhasorOutput(native.inphase, native.quadrature) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_ht_phasor_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_ht_phasor_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -10830,6 +13870,22 @@ public sealed class HtTrendMode : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_ht_trend_mode_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_ht_trend_mode_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_ht_trend_mode_reset(_handle.DangerousGetHandle());
@@ -10866,6 +13922,22 @@ public sealed class HurstChannel : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new HurstChannelOutput(native.upper, native.middle, native.lower) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_hurst_channel_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_hurst_channel_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -10919,6 +13991,22 @@ public sealed class HurstExponent : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_hurst_exponent_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_hurst_exponent_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_hurst_exponent_reset(_handle.DangerousGetHandle());
@@ -10958,6 +14046,22 @@ public sealed class Ichimoku : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new IchimokuOutput(native.tenkan, native.kijun, native.senkou_a, native.senkou_b, native.chikou) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_ichimoku_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_ichimoku_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -11032,6 +14136,22 @@ public sealed class IdenticalThreeCrows : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_identical_three_crows_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_identical_three_crows_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -11160,6 +14280,22 @@ public sealed class InNeck : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_in_neck_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_in_neck_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_in_neck_reset(_handle.DangerousGetHandle());
@@ -11236,6 +14372,22 @@ public sealed class Inertia : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_inertia_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_inertia_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_inertia_reset(_handle.DangerousGetHandle());
@@ -11291,6 +14443,22 @@ public sealed class InformationRatio : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_information_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_information_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_information_ratio_reset(_handle.DangerousGetHandle());
@@ -11327,6 +14495,22 @@ public sealed class InitialBalance : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new InitialBalanceOutput(native.high, native.low) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_initial_balance_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_initial_balance_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -11377,6 +14561,22 @@ public sealed class InstantaneousTrendline : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_instantaneous_trendline_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_instantaneous_trendline_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -11451,6 +14651,22 @@ public sealed class IntradayIntensity : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_intraday_intensity_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_intraday_intensity_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -11528,6 +14744,22 @@ public sealed class IntradayMomentumIndex : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_intraday_momentum_index_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_intraday_momentum_index_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_intraday_momentum_index_reset(_handle.DangerousGetHandle());
@@ -11581,6 +14813,22 @@ public sealed class IntradayVolatilityProfile : IDisposable
         return values;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_intraday_volatility_profile_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_intraday_volatility_profile_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_intraday_volatility_profile_reset(_handle.DangerousGetHandle());
@@ -11628,6 +14876,22 @@ public sealed class InverseFisherTransform : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_inverse_fisher_transform_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_inverse_fisher_transform_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -11704,6 +14968,22 @@ public sealed class InvertedHammer : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_inverted_hammer_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_inverted_hammer_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_inverted_hammer_reset(_handle.DangerousGetHandle());
@@ -11752,6 +15032,22 @@ public sealed class JarqueBera : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_jarque_bera_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_jarque_bera_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -11804,6 +15100,22 @@ public sealed class Jma : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_jma_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_jma_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_jma_reset(_handle.DangerousGetHandle());
@@ -11854,6 +15166,22 @@ public sealed class JumpIndicator : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_jump_indicator_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_jump_indicator_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_jump_indicator_reset(_handle.DangerousGetHandle());
@@ -11902,6 +15230,22 @@ public sealed class KRatio : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_k_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_k_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -11993,6 +15337,22 @@ public sealed class KalmanHedgeRatio : IDisposable
         return ok ? new KalmanHedgeRatioOutput(native.hedge_ratio, native.intercept, native.spread) : null;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_kalman_hedge_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_kalman_hedge_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_kalman_hedge_ratio_reset(_handle.DangerousGetHandle());
@@ -12045,6 +15405,22 @@ public sealed class Kama : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_kama_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_kama_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_kama_reset(_handle.DangerousGetHandle());
@@ -12081,6 +15457,22 @@ public sealed class KaseDevStop : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new KaseDevStopOutput(native.@value, native.direction) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_kase_dev_stop_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_kase_dev_stop_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -12120,6 +15512,22 @@ public sealed class KasePermissionStochastic : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new KasePermissionStochasticOutput(native.fast, native.slow) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_kase_permission_stochastic_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_kase_permission_stochastic_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -12172,6 +15580,22 @@ public sealed class KellyCriterion : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_kelly_criterion_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_kelly_criterion_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_kelly_criterion_reset(_handle.DangerousGetHandle());
@@ -12209,6 +15633,22 @@ public sealed class Keltner : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new KeltnerOutput(native.upper, native.middle, native.lower) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_keltner_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_keltner_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -12264,6 +15704,22 @@ public sealed class KendallTau : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_kendall_tau_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_kendall_tau_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -12340,6 +15796,22 @@ public sealed class Kicking : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_kicking_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_kicking_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_kicking_reset(_handle.DangerousGetHandle());
@@ -12414,6 +15886,22 @@ public sealed class KickingByLength : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_kicking_by_length_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_kicking_by_length_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_kicking_by_length_reset(_handle.DangerousGetHandle());
@@ -12458,6 +15946,22 @@ public sealed class Kst : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new KstOutput(native.kst, native.signal) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_kst_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_kst_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -12508,6 +16012,22 @@ public sealed class Kurtosis : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_kurtosis_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_kurtosis_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -12586,6 +16106,22 @@ public sealed class Kvo : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_kvo_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_kvo_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_kvo_reset(_handle.DangerousGetHandle());
@@ -12614,6 +16150,22 @@ public sealed class KylesLambda : IDisposable
     public double Update(double price, double size, bool isBuy, long timestamp, double mid)
     {
         var result = NativeMethods.wickra_kyles_lambda_update(_handle.DangerousGetHandle(), price, size, isBuy, timestamp, mid);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_kyles_lambda_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_kyles_lambda_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -12692,6 +16244,22 @@ public sealed class LadderBottom : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_ladder_bottom_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_ladder_bottom_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_ladder_bottom_reset(_handle.DangerousGetHandle());
@@ -12741,6 +16309,22 @@ public sealed class LaguerreRsi : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_laguerre_rsi_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_laguerre_rsi_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_laguerre_rsi_reset(_handle.DangerousGetHandle());
@@ -12778,6 +16362,22 @@ public sealed class LeadLagCrossCorrelation : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new LeadLagCrossCorrelationOutput(native.lag, native.correlation) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_lead_lag_cross_correlation_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_lead_lag_cross_correlation_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -12830,6 +16430,22 @@ public sealed class LinRegAngle : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_lin_reg_angle_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_lin_reg_angle_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_lin_reg_angle_reset(_handle.DangerousGetHandle());
@@ -12866,6 +16482,22 @@ public sealed class LinRegChannel : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new LinRegChannelOutput(native.upper, native.middle, native.lower) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_lin_reg_channel_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_lin_reg_channel_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -12918,6 +16550,22 @@ public sealed class LinRegIntercept : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_lin_reg_intercept_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_lin_reg_intercept_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_lin_reg_intercept_reset(_handle.DangerousGetHandle());
@@ -12966,6 +16614,22 @@ public sealed class LinRegSlope : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_lin_reg_slope_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_lin_reg_slope_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -13018,6 +16682,22 @@ public sealed class LinearRegression : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_linear_regression_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_linear_regression_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_linear_regression_reset(_handle.DangerousGetHandle());
@@ -13053,6 +16733,22 @@ public sealed class LiquidationFeatures : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new LiquidationFeaturesOutput(native.long_, native.short_, native.net, native.total, native.imbalance) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_liquidation_features_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_liquidation_features_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -13103,6 +16799,22 @@ public sealed class LogReturn : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_log_return_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_log_return_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -13179,6 +16891,22 @@ public sealed class LongLeggedDoji : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_long_legged_doji_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_long_legged_doji_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_long_legged_doji_reset(_handle.DangerousGetHandle());
@@ -13253,6 +16981,22 @@ public sealed class LongLine : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_long_line_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_long_line_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_long_line_reset(_handle.DangerousGetHandle());
@@ -13280,6 +17024,22 @@ public sealed class LongShortRatio : IDisposable
     public double Update(double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp)
     {
         var result = NativeMethods.wickra_long_short_ratio_update(_handle.DangerousGetHandle(), fundingRate, markPrice, indexPrice, futuresPrice, openInterest, longSize, shortSize, takerBuyVolume, takerSellVolume, longLiquidation, shortLiquidation, timestamp);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_long_short_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_long_short_ratio_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -13334,6 +17094,22 @@ public sealed class M2Measure : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_m2_measure_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_m2_measure_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_m2_measure_reset(_handle.DangerousGetHandle());
@@ -13370,6 +17146,22 @@ public sealed class MaEnvelope : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new MaEnvelopeOutput(native.upper, native.middle, native.lower) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_ma_envelope_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_ma_envelope_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -13412,6 +17204,22 @@ public sealed class MacdExt : IDisposable
         return ok ? new MacdOutput(native.macd, native.signal, native.histogram) : null;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_macd_ext_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_macd_ext_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_macd_ext_reset(_handle.DangerousGetHandle());
@@ -13448,6 +17256,22 @@ public sealed class MacdFix : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new MacdOutput(native.macd, native.signal, native.histogram) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_macd_fix_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_macd_fix_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -13502,6 +17326,22 @@ public sealed class MacdHistogram : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_macd_histogram_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_macd_histogram_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_macd_histogram_reset(_handle.DangerousGetHandle());
@@ -13542,6 +17382,22 @@ public sealed class MacdIndicator : IDisposable
         return ok ? new MacdOutput(native.macd, native.signal, native.histogram) : null;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_macd_indicator_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_macd_indicator_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_macd_indicator_reset(_handle.DangerousGetHandle());
@@ -13577,6 +17433,22 @@ public sealed class Mama : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new MamaOutput(native.mama, native.fama) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_mama_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_mama_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -13653,6 +17525,22 @@ public sealed class MarketFacilitationIndex : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_market_facilitation_index_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_market_facilitation_index_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_market_facilitation_index_reset(_handle.DangerousGetHandle());
@@ -13701,6 +17589,22 @@ public sealed class MartinRatio : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_martin_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_martin_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -13775,6 +17679,22 @@ public sealed class Marubozu : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_marubozu_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_marubozu_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -13853,6 +17773,22 @@ public sealed class MassIndex : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_mass_index_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_mass_index_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_mass_index_reset(_handle.DangerousGetHandle());
@@ -13925,6 +17861,22 @@ public sealed class MatHold : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_mat_hold_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_mat_hold_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -14001,6 +17953,22 @@ public sealed class MatchingLow : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_matching_low_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_matching_low_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_matching_low_reset(_handle.DangerousGetHandle());
@@ -14049,6 +18017,22 @@ public sealed class MaxDrawdown : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_max_drawdown_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_max_drawdown_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -14112,6 +18096,22 @@ public sealed class McClellanOscillator : IDisposable
             }
         }
 
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_mc_clellan_oscillator_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_mc_clellan_oscillator_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -14181,6 +18181,22 @@ public sealed class McClellanSummationIndex : IDisposable
         return result;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_mc_clellan_summation_index_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_mc_clellan_summation_index_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_mc_clellan_summation_index_reset(_handle.DangerousGetHandle());
@@ -14229,6 +18245,22 @@ public sealed class McGinleyDynamic : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_mc_ginley_dynamic_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_mc_ginley_dynamic_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -14281,6 +18313,22 @@ public sealed class MedianAbsoluteDeviation : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_median_absolute_deviation_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_median_absolute_deviation_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_median_absolute_deviation_reset(_handle.DangerousGetHandle());
@@ -14317,6 +18365,22 @@ public sealed class MedianChannel : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new MedianChannelOutput(native.upper, native.middle, native.lower) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_median_channel_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_median_channel_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -14367,6 +18431,22 @@ public sealed class MedianMa : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_median_ma_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_median_ma_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -14441,6 +18521,22 @@ public sealed class MedianPrice : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_median_price_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_median_price_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -14518,6 +18614,22 @@ public sealed class Mfi : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_mfi_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_mfi_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_mfi_reset(_handle.DangerousGetHandle());
@@ -14565,6 +18677,22 @@ public sealed class Microprice : IDisposable
             }
         }
 
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_microprice_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_microprice_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -14617,6 +18745,22 @@ public sealed class MidPoint : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_mid_point_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_mid_point_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -14694,6 +18838,22 @@ public sealed class MidPrice : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_mid_price_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_mid_price_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_mid_price_reset(_handle.DangerousGetHandle());
@@ -14767,6 +18927,22 @@ public sealed class MinusDi : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_minus_di_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_minus_di_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -14844,6 +19020,22 @@ public sealed class MinusDm : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_minus_dm_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_minus_dm_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_minus_dm_reset(_handle.DangerousGetHandle());
@@ -14880,6 +19072,22 @@ public sealed class ModifiedMaStop : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new ModifiedMaStopOutput(native.@value, native.direction) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_modified_ma_stop_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_modified_ma_stop_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -14930,6 +19138,22 @@ public sealed class Mom : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_mom_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_mom_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -15006,6 +19230,22 @@ public sealed class MorningDojiStar : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_morning_doji_star_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_morning_doji_star_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_morning_doji_star_reset(_handle.DangerousGetHandle());
@@ -15080,6 +19320,22 @@ public sealed class MorningEveningStar : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_morning_evening_star_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_morning_evening_star_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_morning_evening_star_reset(_handle.DangerousGetHandle());
@@ -15116,6 +19372,22 @@ public sealed class MurreyMathLines : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new MurreyMathLinesOutput(native.mm8_8, native.mm7_8, native.mm6_8, native.mm5_8, native.mm4_8, native.mm3_8, native.mm2_8, native.mm1_8, native.mm0_8) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_murrey_math_lines_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_murrey_math_lines_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -15194,6 +19466,22 @@ public sealed class NakedPoc : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_naked_poc_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_naked_poc_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_naked_poc_reset(_handle.DangerousGetHandle());
@@ -15269,6 +19557,22 @@ public sealed class Natr : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_natr_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_natr_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_natr_reset(_handle.DangerousGetHandle());
@@ -15330,6 +19634,22 @@ public sealed class NewHighsNewLows : IDisposable
             }
         }
 
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_new_highs_new_lows_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_new_highs_new_lows_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -15409,6 +19729,22 @@ public sealed class NewPriceLines : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_new_price_lines_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_new_price_lines_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_new_price_lines_reset(_handle.DangerousGetHandle());
@@ -15444,6 +19780,22 @@ public sealed class Nrtr : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new NrtrOutput(native.@value, native.direction) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_nrtr_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_nrtr_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -15520,6 +19872,22 @@ public sealed class Nvi : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_nvi_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_nvi_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_nvi_reset(_handle.DangerousGetHandle());
@@ -15594,6 +19962,22 @@ public sealed class Obv : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_obv_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_obv_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_obv_reset(_handle.DangerousGetHandle());
@@ -15622,6 +20006,22 @@ public sealed class OIPriceDivergence : IDisposable
     public double Update(double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp)
     {
         var result = NativeMethods.wickra_oi_price_divergence_update(_handle.DangerousGetHandle(), fundingRate, markPrice, indexPrice, futuresPrice, openInterest, longSize, shortSize, takerBuyVolume, takerSellVolume, longLiquidation, shortLiquidation, timestamp);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_oi_price_divergence_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_oi_price_divergence_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -15657,6 +20057,22 @@ public sealed class OiToVolumeRatio : IDisposable
         return result;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_oi_to_volume_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_oi_to_volume_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_oi_to_volume_ratio_reset(_handle.DangerousGetHandle());
@@ -15684,6 +20100,22 @@ public sealed class OIWeighted : IDisposable
     public double Update(double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp)
     {
         var result = NativeMethods.wickra_oi_weighted_update(_handle.DangerousGetHandle(), fundingRate, markPrice, indexPrice, futuresPrice, openInterest, longSize, shortSize, takerBuyVolume, takerSellVolume, longLiquidation, shortLiquidation, timestamp);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_oi_weighted_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_oi_weighted_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -15736,6 +20168,22 @@ public sealed class OmegaRatio : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_omega_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_omega_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -15812,6 +20260,22 @@ public sealed class OnNeck : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_on_neck_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_on_neck_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_on_neck_reset(_handle.DangerousGetHandle());
@@ -15839,6 +20303,22 @@ public sealed class OpenInterestDelta : IDisposable
     public double Update(double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp)
     {
         var result = NativeMethods.wickra_open_interest_delta_update(_handle.DangerousGetHandle(), fundingRate, markPrice, indexPrice, futuresPrice, openInterest, longSize, shortSize, takerBuyVolume, takerSellVolume, longLiquidation, shortLiquidation, timestamp);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_open_interest_delta_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_open_interest_delta_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -15871,6 +20351,22 @@ public sealed class OpenInterestMomentum : IDisposable
     public double Update(double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp)
     {
         var result = NativeMethods.wickra_open_interest_momentum_update(_handle.DangerousGetHandle(), fundingRate, markPrice, indexPrice, futuresPrice, openInterest, longSize, shortSize, takerBuyVolume, takerSellVolume, longLiquidation, shortLiquidation, timestamp);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_open_interest_momentum_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_open_interest_momentum_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -15949,6 +20445,22 @@ public sealed class OpeningMarubozu : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_opening_marubozu_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_opening_marubozu_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_opening_marubozu_reset(_handle.DangerousGetHandle());
@@ -15985,6 +20497,22 @@ public sealed class OpeningRange : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new OpeningRangeOutput(native.high, native.low, native.breakout_distance) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_opening_range_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_opening_range_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -16038,6 +20566,22 @@ public sealed class OrderBookImbalanceFull : IDisposable
         return result;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_order_book_imbalance_full_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_order_book_imbalance_full_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_order_book_imbalance_full_reset(_handle.DangerousGetHandle());
@@ -16085,6 +20629,22 @@ public sealed class OrderBookImbalanceTop1 : IDisposable
             }
         }
 
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_order_book_imbalance_top1_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_order_book_imbalance_top1_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -16141,6 +20701,22 @@ public sealed class OrderBookImbalanceTopN : IDisposable
         return result;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_order_book_imbalance_top_n_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_order_book_imbalance_top_n_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_order_book_imbalance_top_n_reset(_handle.DangerousGetHandle());
@@ -16189,6 +20765,22 @@ public sealed class OrderFlowImbalance : IDisposable
             }
         }
 
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_order_flow_imbalance_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_order_flow_imbalance_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -16246,6 +20838,22 @@ public sealed class OuHalfLife : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_ou_half_life_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_ou_half_life_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -16322,6 +20930,22 @@ public sealed class OvernightGap : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_overnight_gap_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_overnight_gap_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_overnight_gap_reset(_handle.DangerousGetHandle());
@@ -16357,6 +20981,22 @@ public sealed class OvernightIntradayReturn : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new OvernightIntradayReturnOutput(native.overnight, native.intraday) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_overnight_intraday_return_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_overnight_intraday_return_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -16407,6 +21047,22 @@ public sealed class PainIndex : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_pain_index_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_pain_index_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -16465,6 +21121,22 @@ public sealed class PairSpreadZScore : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_pair_spread_z_score_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_pair_spread_z_score_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_pair_spread_z_score_reset(_handle.DangerousGetHandle());
@@ -16518,6 +21190,22 @@ public sealed class PairwiseBeta : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_pairwise_beta_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_pairwise_beta_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -16596,6 +21284,22 @@ public sealed class ParkinsonVolatility : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_parkinson_volatility_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_parkinson_volatility_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_parkinson_volatility_reset(_handle.DangerousGetHandle());
@@ -16649,6 +21353,22 @@ public sealed class PearsonCorrelation : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_pearson_correlation_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_pearson_correlation_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -16716,6 +21436,22 @@ public sealed class PercentAboveMa : IDisposable
         return result;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_percent_above_ma_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_percent_above_ma_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_percent_above_ma_reset(_handle.DangerousGetHandle());
@@ -16764,6 +21500,22 @@ public sealed class PercentB : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_percent_b_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_percent_b_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -16815,6 +21567,22 @@ public sealed class PercentageTrailingStop : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_percentage_trailing_stop_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_percentage_trailing_stop_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_percentage_trailing_stop_reset(_handle.DangerousGetHandle());
@@ -16842,6 +21610,22 @@ public sealed class PerpetualPremiumIndex : IDisposable
     public double Update(double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp)
     {
         var result = NativeMethods.wickra_perpetual_premium_index_update(_handle.DangerousGetHandle(), fundingRate, markPrice, indexPrice, futuresPrice, openInterest, longSize, shortSize, takerBuyVolume, takerSellVolume, longLiquidation, shortLiquidation, timestamp);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_perpetual_premium_index_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_perpetual_premium_index_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -16921,6 +21705,22 @@ public sealed class Pgo : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_pgo_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_pgo_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_pgo_reset(_handle.DangerousGetHandle());
@@ -16995,6 +21795,22 @@ public sealed class PiercingDarkCloud : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_piercing_dark_cloud_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_piercing_dark_cloud_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_piercing_dark_cloud_reset(_handle.DangerousGetHandle());
@@ -17023,6 +21839,22 @@ public sealed class Pin : IDisposable
     public double Update(double price, double size, bool isBuy, long timestamp)
     {
         var result = NativeMethods.wickra_pin_update(_handle.DangerousGetHandle(), price, size, isBuy, timestamp);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_pin_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_pin_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -17103,6 +21935,22 @@ public sealed class PivotReversal : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_pivot_reversal_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_pivot_reversal_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_pivot_reversal_reset(_handle.DangerousGetHandle());
@@ -17176,6 +22024,22 @@ public sealed class PlusDi : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_plus_di_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_plus_di_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -17253,6 +22117,22 @@ public sealed class PlusDm : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_plus_dm_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_plus_dm_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_plus_dm_reset(_handle.DangerousGetHandle());
@@ -17302,6 +22182,22 @@ public sealed class Pmo : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_pmo_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_pmo_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -17408,6 +22304,22 @@ public sealed class PolarizedFractalEfficiency : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_polarized_fractal_efficiency_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_polarized_fractal_efficiency_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_polarized_fractal_efficiency_reset(_handle.DangerousGetHandle());
@@ -17457,6 +22369,22 @@ public sealed class Ppo : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_ppo_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_ppo_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -17509,6 +22437,22 @@ public sealed class PpoHistogram : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_ppo_histogram_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_ppo_histogram_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -17587,6 +22531,22 @@ public sealed class ProfileShape : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_profile_shape_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_profile_shape_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_profile_shape_reset(_handle.DangerousGetHandle());
@@ -17637,6 +22597,22 @@ public sealed class ProfitFactor : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_profit_factor_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_profit_factor_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_profit_factor_reset(_handle.DangerousGetHandle());
@@ -17673,6 +22649,22 @@ public sealed class ProjectionBands : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new ProjectionBandsOutput(native.upper, native.middle, native.lower) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_projection_bands_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_projection_bands_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -17750,6 +22742,22 @@ public sealed class ProjectionOscillator : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_projection_oscillator_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_projection_oscillator_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_projection_oscillator_reset(_handle.DangerousGetHandle());
@@ -17822,6 +22830,22 @@ public sealed class Psar : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_psar_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_psar_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -17898,6 +22922,22 @@ public sealed class Pvi : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_pvi_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_pvi_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_pvi_reset(_handle.DangerousGetHandle());
@@ -17935,6 +22975,22 @@ public sealed class Qqe : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new QqeOutput(native.rsi_ma, native.trailing_line) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_qqe_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_qqe_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -18012,6 +23068,22 @@ public sealed class Qstick : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_qstick_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_qstick_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_qstick_reset(_handle.DangerousGetHandle());
@@ -18048,6 +23120,22 @@ public sealed class QuartileBands : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new QuartileBandsOutput(native.upper, native.middle, native.lower) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_quartile_bands_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_quartile_bands_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -18101,6 +23189,22 @@ public sealed class QuotedSpread : IDisposable
         return result;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_quoted_spread_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_quoted_spread_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_quoted_spread_reset(_handle.DangerousGetHandle());
@@ -18149,6 +23253,22 @@ public sealed class RSquared : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_r_squared_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_r_squared_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -18235,6 +23355,22 @@ public sealed class RealizedSpread : IDisposable
         return result;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_realized_spread_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_realized_spread_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_realized_spread_reset(_handle.DangerousGetHandle());
@@ -18285,6 +23421,22 @@ public sealed class RealizedVolatility : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_realized_volatility_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_realized_volatility_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_realized_volatility_reset(_handle.DangerousGetHandle());
@@ -18332,6 +23484,22 @@ public sealed class RecoveryFactor : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_recovery_factor_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_recovery_factor_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -18408,6 +23576,22 @@ public sealed class RectangleRange : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_rectangle_range_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_rectangle_range_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rectangle_range_reset(_handle.DangerousGetHandle());
@@ -18456,6 +23640,22 @@ public sealed class Reflex : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_reflex_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_reflex_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -18509,6 +23709,22 @@ public sealed class RegimeLabel : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_regime_label_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_regime_label_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_regime_label_reset(_handle.DangerousGetHandle());
@@ -18546,6 +23762,22 @@ public sealed class RelativeStrengthAB : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new RelativeStrengthOutput(native.ratio, native.ratio_ma, native.ratio_rsi) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_relative_strength_ab_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_relative_strength_ab_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -18649,6 +23881,22 @@ public sealed class RenkoTrailingStop : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_renko_trailing_stop_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_renko_trailing_stop_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_renko_trailing_stop_reset(_handle.DangerousGetHandle());
@@ -18721,6 +23969,22 @@ public sealed class RickshawMan : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_rickshaw_man_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_rickshaw_man_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -18797,6 +24061,22 @@ public sealed class RisingThreeMethods : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_rising_three_methods_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_rising_three_methods_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rising_three_methods_reset(_handle.DangerousGetHandle());
@@ -18846,6 +24126,22 @@ public sealed class Rmi : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_rmi_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_rmi_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -18898,6 +24194,22 @@ public sealed class Roc : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_roc_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_roc_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_roc_reset(_handle.DangerousGetHandle());
@@ -18946,6 +24258,22 @@ public sealed class Rocp : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_rocp_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_rocp_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -18998,6 +24326,22 @@ public sealed class Rocr : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_rocr_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_rocr_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rocr_reset(_handle.DangerousGetHandle());
@@ -19046,6 +24390,22 @@ public sealed class Rocr100 : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_rocr100_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_rocr100_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -19124,6 +24484,22 @@ public sealed class RogersSatchellVolatility : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_rogers_satchell_volatility_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_rogers_satchell_volatility_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rogers_satchell_volatility_reset(_handle.DangerousGetHandle());
@@ -19152,6 +24528,22 @@ public sealed class RollMeasure : IDisposable
     public double Update(double price, double size, bool isBuy, long timestamp)
     {
         var result = NativeMethods.wickra_roll_measure_update(_handle.DangerousGetHandle(), price, size, isBuy, timestamp);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_roll_measure_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_roll_measure_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -19211,6 +24603,22 @@ public sealed class RollingCorrelation : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_rolling_correlation_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_rolling_correlation_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rolling_correlation_reset(_handle.DangerousGetHandle());
@@ -19266,6 +24674,22 @@ public sealed class RollingCovariance : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_rolling_covariance_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_rolling_covariance_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rolling_covariance_reset(_handle.DangerousGetHandle());
@@ -19314,6 +24738,22 @@ public sealed class RollingIqr : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_rolling_iqr_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_rolling_iqr_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -19366,6 +24806,22 @@ public sealed class RollingMinMaxScaler : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_rolling_min_max_scaler_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_rolling_min_max_scaler_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rolling_min_max_scaler_reset(_handle.DangerousGetHandle());
@@ -19416,6 +24872,22 @@ public sealed class RollingPercentileRank : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_rolling_percentile_rank_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_rolling_percentile_rank_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rolling_percentile_rank_reset(_handle.DangerousGetHandle());
@@ -19464,6 +24936,22 @@ public sealed class RollingQuantile : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_rolling_quantile_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_rolling_quantile_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -19541,6 +25029,22 @@ public sealed class RollingVwap : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_rolling_vwap_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_rolling_vwap_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rolling_vwap_reset(_handle.DangerousGetHandle());
@@ -19590,6 +25094,22 @@ public sealed class RoofingFilter : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_roofing_filter_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_roofing_filter_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -19642,6 +25162,22 @@ public sealed class Rsi : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_rsi_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_rsi_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rsi_reset(_handle.DangerousGetHandle());
@@ -19690,6 +25226,22 @@ public sealed class Rsx : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_rsx_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_rsx_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -19820,6 +25372,22 @@ public sealed class Rvi : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_rvi_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_rvi_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rvi_reset(_handle.DangerousGetHandle());
@@ -19870,6 +25438,22 @@ public sealed class RviVolatility : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_rvi_volatility_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_rvi_volatility_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rvi_volatility_reset(_handle.DangerousGetHandle());
@@ -19906,6 +25490,22 @@ public sealed class Rwi : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new RwiOutput(native.high, native.low) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_rwi_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_rwi_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -19957,6 +25557,22 @@ public sealed class SampleEntropy : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_sample_entropy_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_sample_entropy_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -20033,6 +25649,22 @@ public sealed class SarExt : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_sar_ext_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_sar_ext_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_sar_ext_reset(_handle.DangerousGetHandle());
@@ -20105,6 +25737,22 @@ public sealed class SeasonalZScore : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_seasonal_z_score_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_seasonal_z_score_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -20181,6 +25829,22 @@ public sealed class SeparatingLines : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_separating_lines_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_separating_lines_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_separating_lines_reset(_handle.DangerousGetHandle());
@@ -20218,6 +25882,22 @@ public sealed class SessionHighLow : IDisposable
         return ok ? new SessionHighLowOutput(native.high, native.low) : null;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_session_high_low_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_session_high_low_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_session_high_low_reset(_handle.DangerousGetHandle());
@@ -20253,6 +25933,22 @@ public sealed class SessionRange : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new SessionRangeOutput(native.asia, native.eu, native.us) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_session_range_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_session_range_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -20329,6 +26025,22 @@ public sealed class SessionVwap : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_session_vwap_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_session_vwap_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_session_vwap_reset(_handle.DangerousGetHandle());
@@ -20378,6 +26090,22 @@ public sealed class ShannonEntropy : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_shannon_entropy_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_shannon_entropy_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -20454,6 +26182,22 @@ public sealed class Shark : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_shark_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_shark_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_shark_reset(_handle.DangerousGetHandle());
@@ -20502,6 +26246,22 @@ public sealed class SharpeRatio : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_sharpe_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_sharpe_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -20578,6 +26338,22 @@ public sealed class ShootingStar : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_shooting_star_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_shooting_star_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_shooting_star_reset(_handle.DangerousGetHandle());
@@ -20652,6 +26428,22 @@ public sealed class ShortLine : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_short_line_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_short_line_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_short_line_reset(_handle.DangerousGetHandle());
@@ -20679,6 +26471,22 @@ public sealed class SignedVolume : IDisposable
     public double Update(double price, double size, bool isBuy, long timestamp)
     {
         var result = NativeMethods.wickra_signed_volume_update(_handle.DangerousGetHandle(), price, size, isBuy, timestamp);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_signed_volume_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_signed_volume_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -20732,6 +26540,22 @@ public sealed class SineWave : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_sine_wave_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_sine_wave_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_sine_wave_reset(_handle.DangerousGetHandle());
@@ -20780,6 +26604,22 @@ public sealed class SineWeightedMa : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_sine_weighted_ma_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_sine_weighted_ma_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -20858,6 +26698,22 @@ public sealed class SinglePrints : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_single_prints_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_single_prints_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_single_prints_reset(_handle.DangerousGetHandle());
@@ -20908,6 +26764,22 @@ public sealed class Skewness : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_skewness_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_skewness_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_skewness_reset(_handle.DangerousGetHandle());
@@ -20956,6 +26828,22 @@ public sealed class Sma : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_sma_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_sma_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -21035,6 +26923,22 @@ public sealed class Smi : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_smi_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_smi_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_smi_reset(_handle.DangerousGetHandle());
@@ -21085,6 +26989,22 @@ public sealed class Smma : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_smma_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_smma_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_smma_reset(_handle.DangerousGetHandle());
@@ -21121,6 +27041,22 @@ public sealed class SmoothedHeikinAshi : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new SmoothedHeikinAshiOutput(native.open, native.high, native.low, native.close) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_smoothed_heikin_ashi_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_smoothed_heikin_ashi_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -21171,6 +27107,22 @@ public sealed class SortinoRatio : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_sortino_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_sortino_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -21226,6 +27178,22 @@ public sealed class SpearmanCorrelation : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_spearman_correlation_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_spearman_correlation_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -21302,6 +27270,22 @@ public sealed class SpinningTop : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_spinning_top_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_spinning_top_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_spinning_top_reset(_handle.DangerousGetHandle());
@@ -21357,6 +27341,22 @@ public sealed class SpreadAr1Coefficient : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_spread_ar1_coefficient_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_spread_ar1_coefficient_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_spread_ar1_coefficient_reset(_handle.DangerousGetHandle());
@@ -21393,6 +27393,22 @@ public sealed class SpreadBollingerBands : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new SpreadBollingerBandsOutput(native.middle, native.upper, native.lower, native.percent_b) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_spread_bollinger_bands_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_spread_bollinger_bands_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -21448,6 +27464,22 @@ public sealed class SpreadHurst : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_spread_hurst_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_spread_hurst_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -21524,6 +27556,22 @@ public sealed class StalledPattern : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_stalled_pattern_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_stalled_pattern_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_stalled_pattern_reset(_handle.DangerousGetHandle());
@@ -21574,6 +27622,22 @@ public sealed class StandardError : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_standard_error_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_standard_error_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_standard_error_reset(_handle.DangerousGetHandle());
@@ -21610,6 +27674,22 @@ public sealed class StandardErrorBands : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new StandardErrorBandsOutput(native.upper, native.middle, native.lower) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_standard_error_bands_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_standard_error_bands_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -21649,6 +27729,22 @@ public sealed class StarcBands : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new StarcBandsOutput(native.upper, native.middle, native.lower) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_starc_bands_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_starc_bands_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -21703,6 +27799,22 @@ public sealed class Stc : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_stc_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_stc_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_stc_reset(_handle.DangerousGetHandle());
@@ -21751,6 +27863,22 @@ public sealed class StdDev : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_std_dev_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_std_dev_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -21802,6 +27930,22 @@ public sealed class StepTrailingStop : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_step_trailing_stop_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_step_trailing_stop_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_step_trailing_stop_reset(_handle.DangerousGetHandle());
@@ -21850,6 +27994,22 @@ public sealed class SterlingRatio : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_sterling_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_sterling_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -21926,6 +28086,22 @@ public sealed class StickSandwich : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_stick_sandwich_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_stick_sandwich_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_stick_sandwich_reset(_handle.DangerousGetHandle());
@@ -21977,6 +28153,22 @@ public sealed class StochRsi : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_stoch_rsi_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_stoch_rsi_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_stoch_rsi_reset(_handle.DangerousGetHandle());
@@ -22014,6 +28206,22 @@ public sealed class Stochastic : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new StochasticOutput(native.k, native.d) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_stochastic_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_stochastic_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -22091,6 +28299,22 @@ public sealed class StochasticCci : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_stochastic_cci_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_stochastic_cci_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_stochastic_cci_reset(_handle.DangerousGetHandle());
@@ -22141,6 +28365,22 @@ public sealed class SuperSmoother : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_super_smoother_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_super_smoother_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_super_smoother_reset(_handle.DangerousGetHandle());
@@ -22177,6 +28417,22 @@ public sealed class SuperTrend : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new SuperTrendOutput(native.@value, native.direction) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_super_trend_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_super_trend_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -22229,6 +28485,22 @@ public sealed class T3 : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_t3_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_t3_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_t3_reset(_handle.DangerousGetHandle());
@@ -22279,6 +28551,22 @@ public sealed class TailRatio : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_tail_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_tail_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_tail_ratio_reset(_handle.DangerousGetHandle());
@@ -22306,6 +28594,22 @@ public sealed class TakerBuySellRatio : IDisposable
     public double Update(double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp)
     {
         var result = NativeMethods.wickra_taker_buy_sell_ratio_update(_handle.DangerousGetHandle(), fundingRate, markPrice, indexPrice, futuresPrice, openInterest, longSize, shortSize, takerBuyVolume, takerSellVolume, longLiquidation, shortLiquidation, timestamp);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_taker_buy_sell_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_taker_buy_sell_ratio_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -22384,6 +28688,22 @@ public sealed class Takuri : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_takuri_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_takuri_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_takuri_reset(_handle.DangerousGetHandle());
@@ -22456,6 +28776,22 @@ public sealed class TasukiGap : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_tasuki_gap_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_tasuki_gap_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -22532,6 +28868,22 @@ public sealed class TdCamouflage : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_td_camouflage_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_td_camouflage_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_camouflage_reset(_handle.DangerousGetHandle());
@@ -22606,6 +28958,22 @@ public sealed class TdClop : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_td_clop_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_td_clop_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_clop_reset(_handle.DangerousGetHandle());
@@ -22678,6 +29046,22 @@ public sealed class TdClopwin : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_td_clopwin_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_td_clopwin_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -22758,6 +29142,22 @@ public sealed class TdCombo : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_td_combo_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_td_combo_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_combo_reset(_handle.DangerousGetHandle());
@@ -22836,6 +29236,22 @@ public sealed class TdCountdown : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_td_countdown_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_td_countdown_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_countdown_reset(_handle.DangerousGetHandle());
@@ -22909,6 +29325,22 @@ public sealed class TdDWave : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_td_d_wave_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_td_d_wave_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -22986,6 +29418,22 @@ public sealed class TdDeMarker : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_td_de_marker_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_td_de_marker_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_de_marker_reset(_handle.DangerousGetHandle());
@@ -23060,6 +29508,22 @@ public sealed class TdDifferential : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_td_differential_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_td_differential_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_differential_reset(_handle.DangerousGetHandle());
@@ -23099,6 +29563,22 @@ public sealed class TdLines : IDisposable
         return ok ? new TdLinesOutput(native.resistance, native.support) : null;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_td_lines_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_td_lines_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_lines_reset(_handle.DangerousGetHandle());
@@ -23136,6 +29616,22 @@ public sealed class TdMovingAverage : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new TdMovingAverageOutput(native.st1, native.st2) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_td_moving_average_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_td_moving_average_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -23210,6 +29706,22 @@ public sealed class TdOpen : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_td_open_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_td_open_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -23287,6 +29799,22 @@ public sealed class TdPressure : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_td_pressure_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_td_pressure_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_pressure_reset(_handle.DangerousGetHandle());
@@ -23361,6 +29889,22 @@ public sealed class TdPropulsion : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_td_propulsion_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_td_propulsion_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_propulsion_reset(_handle.DangerousGetHandle());
@@ -23396,6 +29940,22 @@ public sealed class TdRangeProjection : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new TdRangeProjectionOutput(native.high, native.low) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_td_range_projection_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_td_range_projection_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -23473,6 +30033,22 @@ public sealed class TdRei : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_td_rei_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_td_rei_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_rei_reset(_handle.DangerousGetHandle());
@@ -23510,6 +30086,22 @@ public sealed class TdRiskLevel : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new TdRiskLevelOutput(native.buy_risk, native.sell_risk) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_td_risk_level_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_td_risk_level_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -23551,6 +30143,22 @@ public sealed class TdSequential : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new TdSequentialOutput(native.setup, native.countdown, native.direction) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_td_sequential_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_td_sequential_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -23629,6 +30237,22 @@ public sealed class TdSetup : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_td_setup_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_td_setup_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_setup_reset(_handle.DangerousGetHandle());
@@ -23703,6 +30327,22 @@ public sealed class TdTrap : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_td_trap_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_td_trap_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_trap_reset(_handle.DangerousGetHandle());
@@ -23753,6 +30393,22 @@ public sealed class Tema : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_tema_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_tema_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_tema_reset(_handle.DangerousGetHandle());
@@ -23780,6 +30436,22 @@ public sealed class TermStructureBasis : IDisposable
     public double Update(double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp)
     {
         var result = NativeMethods.wickra_term_structure_basis_update(_handle.DangerousGetHandle(), fundingRate, markPrice, indexPrice, futuresPrice, openInterest, longSize, shortSize, takerBuyVolume, takerSellVolume, longLiquidation, shortLiquidation, timestamp);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_term_structure_basis_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_term_structure_basis_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -23858,6 +30530,22 @@ public sealed class ThreeDrives : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_three_drives_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_three_drives_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_three_drives_reset(_handle.DangerousGetHandle());
@@ -23930,6 +30618,22 @@ public sealed class ThreeInside : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_three_inside_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_three_inside_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -24005,6 +30709,22 @@ public sealed class ThreeLineBreak : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_three_line_break_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_three_line_break_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -24134,6 +30854,22 @@ public sealed class ThreeLineStrike : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_three_line_strike_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_three_line_strike_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_three_line_strike_reset(_handle.DangerousGetHandle());
@@ -24206,6 +30942,22 @@ public sealed class ThreeOutside : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_three_outside_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_three_outside_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -24282,6 +31034,22 @@ public sealed class ThreeSoldiersOrCrows : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_three_soldiers_or_crows_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_three_soldiers_or_crows_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_three_soldiers_or_crows_reset(_handle.DangerousGetHandle());
@@ -24356,6 +31124,22 @@ public sealed class ThreeStarsInSouth : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_three_stars_in_south_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_three_stars_in_south_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_three_stars_in_south_reset(_handle.DangerousGetHandle());
@@ -24428,6 +31212,22 @@ public sealed class Thrusting : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_thrusting_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_thrusting_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -24548,6 +31348,22 @@ public sealed class TickIndex : IDisposable
         return result;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_tick_index_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_tick_index_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_tick_index_reset(_handle.DangerousGetHandle());
@@ -24597,6 +31413,22 @@ public sealed class Tii : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_tii_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_tii_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -24674,6 +31506,22 @@ public sealed class TimeBasedStop : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_time_based_stop_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_time_based_stop_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_time_based_stop_reset(_handle.DangerousGetHandle());
@@ -24725,6 +31573,22 @@ public sealed class TimeOfDayReturnProfile : IDisposable
         }
 
         return values;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_time_of_day_return_profile_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_time_of_day_return_profile_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -24801,6 +31665,22 @@ public sealed class TowerTopBottom : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_tower_top_bottom_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_tower_top_bottom_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_tower_top_bottom_reset(_handle.DangerousGetHandle());
@@ -24856,6 +31736,22 @@ public sealed class TpoProfile : IDisposable
         return new TpoProfileOutputScalars(scalars.price_low, scalars.price_high, values);
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_tpo_profile_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_tpo_profile_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_tpo_profile_reset(_handle.DangerousGetHandle());
@@ -24888,6 +31784,22 @@ public sealed class TradeImbalance : IDisposable
         return result;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_trade_imbalance_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_trade_imbalance_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_trade_imbalance_reset(_handle.DangerousGetHandle());
@@ -24916,6 +31828,22 @@ public sealed class TradeSignAutocorrelation : IDisposable
     public double Update(double price, double size, bool isBuy, long timestamp)
     {
         var result = NativeMethods.wickra_trade_sign_autocorrelation_update(_handle.DangerousGetHandle(), price, size, isBuy, timestamp);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_trade_sign_autocorrelation_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_trade_sign_autocorrelation_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -24994,6 +31922,22 @@ public sealed class TradeVolumeIndex : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_trade_volume_index_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_trade_volume_index_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_trade_volume_index_reset(_handle.DangerousGetHandle());
@@ -25042,6 +31986,22 @@ public sealed class TrendLabel : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_trend_label_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_trend_label_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -25094,6 +32054,22 @@ public sealed class TrendStrengthIndex : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_trend_strength_index_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_trend_strength_index_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_trend_strength_index_reset(_handle.DangerousGetHandle());
@@ -25142,6 +32118,22 @@ public sealed class Trendflex : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_trendflex_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_trendflex_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -25197,6 +32189,22 @@ public sealed class TreynorRatio : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_treynor_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_treynor_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -25273,6 +32281,22 @@ public sealed class Triangle : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_triangle_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_triangle_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_triangle_reset(_handle.DangerousGetHandle());
@@ -25321,6 +32345,22 @@ public sealed class Trima : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_trima_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_trima_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -25384,6 +32424,22 @@ public sealed class Trin : IDisposable
             }
         }
 
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_trin_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_trin_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -25462,6 +32518,22 @@ public sealed class TripleTopBottom : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_triple_top_bottom_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_triple_top_bottom_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_triple_top_bottom_reset(_handle.DangerousGetHandle());
@@ -25536,6 +32608,22 @@ public sealed class Tristar : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_tristar_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_tristar_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_tristar_reset(_handle.DangerousGetHandle());
@@ -25584,6 +32672,22 @@ public sealed class Trix : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_trix_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_trix_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -25660,6 +32764,22 @@ public sealed class TrueRange : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_true_range_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_true_range_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_true_range_reset(_handle.DangerousGetHandle());
@@ -25708,6 +32828,22 @@ public sealed class Tsf : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_tsf_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_tsf_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -25760,6 +32896,22 @@ public sealed class TsfOscillator : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_tsf_oscillator_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_tsf_oscillator_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_tsf_oscillator_reset(_handle.DangerousGetHandle());
@@ -25809,6 +32961,22 @@ public sealed class Tsi : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_tsi_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_tsi_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -25886,6 +33054,22 @@ public sealed class Tsv : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_tsv_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_tsv_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_tsv_reset(_handle.DangerousGetHandle());
@@ -25922,6 +33106,22 @@ public sealed class TtmSqueeze : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new TtmSqueezeOutput(native.squeeze, native.momentum) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_ttm_squeeze_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_ttm_squeeze_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -25999,6 +33199,22 @@ public sealed class TtmTrend : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_ttm_trend_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_ttm_trend_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_ttm_trend_reset(_handle.DangerousGetHandle());
@@ -26073,6 +33289,22 @@ public sealed class TurnOfMonth : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_turn_of_month_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_turn_of_month_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_turn_of_month_reset(_handle.DangerousGetHandle());
@@ -26145,6 +33377,22 @@ public sealed class Tweezer : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_tweezer_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_tweezer_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -26222,6 +33470,22 @@ public sealed class TwiggsMoneyFlow : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_twiggs_money_flow_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_twiggs_money_flow_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_twiggs_money_flow_reset(_handle.DangerousGetHandle());
@@ -26294,6 +33558,22 @@ public sealed class TwoCrows : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_two_crows_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_two_crows_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -26370,6 +33650,22 @@ public sealed class TypicalPrice : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_typical_price_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_typical_price_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_typical_price_reset(_handle.DangerousGetHandle());
@@ -26418,6 +33714,22 @@ public sealed class UlcerIndex : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_ulcer_index_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_ulcer_index_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -26497,6 +33809,22 @@ public sealed class UltimateOscillator : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_ultimate_oscillator_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_ultimate_oscillator_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_ultimate_oscillator_reset(_handle.DangerousGetHandle());
@@ -26571,6 +33899,22 @@ public sealed class UniqueThreeRiver : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_unique_three_river_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_unique_three_river_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_unique_three_river_reset(_handle.DangerousGetHandle());
@@ -26619,6 +33963,22 @@ public sealed class UniversalOscillator : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_universal_oscillator_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_universal_oscillator_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -26682,6 +34042,22 @@ public sealed class UpDownVolumeRatio : IDisposable
             }
         }
 
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_up_down_volume_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_up_down_volume_ratio_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -26760,6 +34136,22 @@ public sealed class UpsideGapThreeMethods : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_upside_gap_three_methods_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_upside_gap_three_methods_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_upside_gap_three_methods_reset(_handle.DangerousGetHandle());
@@ -26834,6 +34226,22 @@ public sealed class UpsideGapTwoCrows : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_upside_gap_two_crows_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_upside_gap_two_crows_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_upside_gap_two_crows_reset(_handle.DangerousGetHandle());
@@ -26884,6 +34292,22 @@ public sealed class UpsidePotentialRatio : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_upside_potential_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_upside_potential_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_upside_potential_ratio_reset(_handle.DangerousGetHandle());
@@ -26921,6 +34345,22 @@ public sealed class ValueArea : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new ValueAreaOutput(native.poc, native.vah, native.val) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_value_area_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_value_area_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -26973,6 +34413,22 @@ public sealed class ValueAtRisk : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_value_at_risk_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_value_at_risk_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_value_at_risk_reset(_handle.DangerousGetHandle());
@@ -27021,6 +34477,22 @@ public sealed class Variance : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_variance_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_variance_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -27079,6 +34551,22 @@ public sealed class VarianceRatio : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_variance_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_variance_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_variance_ratio_reset(_handle.DangerousGetHandle());
@@ -27127,6 +34615,22 @@ public sealed class VerticalHorizontalFilter : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_vertical_horizontal_filter_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_vertical_horizontal_filter_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -27180,6 +34684,22 @@ public sealed class Vidya : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_vidya_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_vidya_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_vidya_reset(_handle.DangerousGetHandle());
@@ -27217,6 +34737,22 @@ public sealed class VolatilityCone : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new VolatilityConeOutput(native.current, native.min, native.median, native.max, native.percentile) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_volatility_cone_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_volatility_cone_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -27268,6 +34804,22 @@ public sealed class VolatilityOfVolatility : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_volatility_of_volatility_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_volatility_of_volatility_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -27345,6 +34897,22 @@ public sealed class VolatilityRatio : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_volatility_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_volatility_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_volatility_ratio_reset(_handle.DangerousGetHandle());
@@ -27418,6 +34986,22 @@ public sealed class VoltyStop : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_volty_stop_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_volty_stop_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -27525,6 +35109,22 @@ public sealed class VolumeByTimeProfile : IDisposable
         return values;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_volume_by_time_profile_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_volume_by_time_profile_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_volume_by_time_profile_reset(_handle.DangerousGetHandle());
@@ -27601,6 +35201,22 @@ public sealed class VolumeOscillator : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_volume_oscillator_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_volume_oscillator_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_volume_oscillator_reset(_handle.DangerousGetHandle());
@@ -27675,6 +35291,22 @@ public sealed class VolumePriceTrend : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_volume_price_trend_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_volume_price_trend_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_volume_price_trend_reset(_handle.DangerousGetHandle());
@@ -27728,6 +35360,22 @@ public sealed class VolumeProfile : IDisposable
         }
 
         return new VolumeProfileOutputScalars(scalars.price_low, scalars.price_high, values);
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_volume_profile_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_volume_profile_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -27805,6 +35453,22 @@ public sealed class VolumeRsi : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_volume_rsi_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_volume_rsi_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_volume_rsi_reset(_handle.DangerousGetHandle());
@@ -27845,6 +35509,22 @@ public sealed class VolumeWeightedMacd : IDisposable
         return ok ? new VolumeWeightedMacdOutput(native.macd, native.signal, native.histogram) : null;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_volume_weighted_macd_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_volume_weighted_macd_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_volume_weighted_macd_reset(_handle.DangerousGetHandle());
@@ -27881,6 +35561,22 @@ public sealed class VolumeWeightedSr : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new VolumeWeightedSrOutput(native.support, native.resistance) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_volume_weighted_sr_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_volume_weighted_sr_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -27921,6 +35617,22 @@ public sealed class Vortex : IDisposable
         return ok ? new VortexOutput(native.plus, native.minus) : null;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_vortex_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_vortex_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_vortex_reset(_handle.DangerousGetHandle());
@@ -27949,6 +35661,22 @@ public sealed class Vpin : IDisposable
     public double Update(double price, double size, bool isBuy, long timestamp)
     {
         var result = NativeMethods.wickra_vpin_update(_handle.DangerousGetHandle(), price, size, isBuy, timestamp);
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_vpin_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_vpin_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
     }
@@ -28027,6 +35755,22 @@ public sealed class Vwap : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_vwap_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_vwap_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_vwap_reset(_handle.DangerousGetHandle());
@@ -28062,6 +35806,22 @@ public sealed class VwapStdDevBands : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new VwapStdDevBandsOutput(native.upper, native.middle, native.lower, native.stddev) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_vwap_std_dev_bands_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_vwap_std_dev_bands_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -28139,6 +35899,22 @@ public sealed class Vwma : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_vwma_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_vwma_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_vwma_reset(_handle.DangerousGetHandle());
@@ -28212,6 +35988,22 @@ public sealed class Vzo : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_vzo_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_vzo_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -28288,6 +36080,22 @@ public sealed class Wad : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_wad_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_wad_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_wad_reset(_handle.DangerousGetHandle());
@@ -28339,6 +36147,22 @@ public sealed class WavePm : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_wave_pm_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_wave_pm_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_wave_pm_reset(_handle.DangerousGetHandle());
@@ -28377,6 +36201,22 @@ public sealed class WaveTrend : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new WaveTrendOutput(native.wt1, native.wt2) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_wave_trend_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_wave_trend_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -28453,6 +36293,22 @@ public sealed class Wedge : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_wedge_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_wedge_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_wedge_reset(_handle.DangerousGetHandle());
@@ -28525,6 +36381,22 @@ public sealed class WeightedClose : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_weighted_close_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_weighted_close_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -28601,6 +36473,22 @@ public sealed class WickRatio : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_wick_ratio_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_wick_ratio_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_wick_ratio_reset(_handle.DangerousGetHandle());
@@ -28636,6 +36524,22 @@ public sealed class WilliamsFractals : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new WilliamsFractalsOutput(native.up, native.down) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_williams_fractals_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_williams_fractals_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -28713,6 +36617,22 @@ public sealed class WilliamsR : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_williams_r_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_williams_r_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_williams_r_reset(_handle.DangerousGetHandle());
@@ -28761,6 +36681,22 @@ public sealed class WinRate : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_win_rate_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_win_rate_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -28813,6 +36749,22 @@ public sealed class Wma : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_wma_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_wma_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_wma_reset(_handle.DangerousGetHandle());
@@ -28848,6 +36800,22 @@ public sealed class WoodiePivots : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new WoodiePivotsOutput(native.pp, native.r1, native.r2, native.s1, native.s2) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_woodie_pivots_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_woodie_pivots_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -28926,6 +36894,22 @@ public sealed class YangZhangVolatility : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_yang_zhang_volatility_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_yang_zhang_volatility_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_yang_zhang_volatility_reset(_handle.DangerousGetHandle());
@@ -29001,6 +36985,22 @@ public sealed class YoyoExit : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_yoyo_exit_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_yoyo_exit_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_yoyo_exit_reset(_handle.DangerousGetHandle());
@@ -29051,6 +37051,22 @@ public sealed class ZScore : IDisposable
         return output;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_z_score_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_z_score_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_z_score_reset(_handle.DangerousGetHandle());
@@ -29091,6 +37107,22 @@ public sealed class ZeroLagMacd : IDisposable
         return ok ? new ZeroLagMacdOutput(native.macd, native.signal, native.histogram) : null;
     }
 
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_zero_lag_macd_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_zero_lag_macd_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_zero_lag_macd_reset(_handle.DangerousGetHandle());
@@ -29126,6 +37158,22 @@ public sealed class ZigZag : IDisposable
 
         GC.KeepAlive(_handle);
         return ok ? new ZigZagOutput(native.swing, native.direction) : null;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_zig_zag_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_zig_zag_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()
@@ -29176,6 +37224,22 @@ public sealed class Zlema : IDisposable
 
         GC.KeepAlive(_handle);
         return output;
+    }
+
+    /// <summary>Number of updates required before <see cref="Update"/> yields a value.</summary>
+    public int WarmupPeriod()
+    {
+        var result = (int)NativeMethods.wickra_zlema_warmup_period(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
+    }
+
+    /// <summary>Whether the indicator has consumed enough input to emit a value.</summary>
+    public bool IsReady()
+    {
+        var result = NativeMethods.wickra_zlema_is_ready(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return result;
     }
 
     public void Reset()

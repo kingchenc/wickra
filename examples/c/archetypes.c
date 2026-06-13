@@ -151,6 +151,23 @@ int main(void) {
 
     /* 9. A NULL handle update is a no-op returning NaN, never a crash. */
     CHECK(is_nan(wickra_sma_update(NULL, 1.0)), "update(NULL) should return NaN");
+    CHECK(wickra_sma_warmup_period(NULL) == 0, "warmup_period(NULL) should be 0");
+    CHECK(!wickra_sma_is_ready(NULL), "is_ready(NULL) should be false");
+
+    /* 10. warmup_period / is_ready report the warmup transition. */
+    {
+        struct Sma *sma = wickra_sma_new(3);
+        CHECK(wickra_sma_warmup_period(sma) == 3, "SMA(3) warmup_period should be 3");
+        CHECK(!wickra_sma_is_ready(sma), "SMA is not ready before any update");
+        wickra_sma_update(sma, 1.0);
+        wickra_sma_update(sma, 2.0);
+        CHECK(!wickra_sma_is_ready(sma), "SMA is not ready mid-warmup");
+        wickra_sma_update(sma, 3.0);
+        CHECK(wickra_sma_is_ready(sma), "SMA is ready after the warmup period");
+        wickra_sma_reset(sma);
+        CHECK(!wickra_sma_is_ready(sma), "SMA is not ready after reset");
+        wickra_sma_free(sma);
+    }
 
     if (failures == 0) {
         printf("all archetypes passed\n");

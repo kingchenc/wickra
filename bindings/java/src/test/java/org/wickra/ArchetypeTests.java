@@ -3,6 +3,7 @@ package org.wickra;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,6 +32,21 @@ class ArchetypeTests {
             }
             assertTrue(Double.isFinite(last));
             assertTrue(last >= 1.0 && last <= 10.0);
+        }
+    }
+
+    @Test
+    void queryWarmupPeriodAndIsReady() {
+        try (Sma sma = new Sma(3)) {
+            assertEquals(3, sma.warmupPeriod());
+            assertFalse(sma.isReady());
+            sma.update(1.0);
+            sma.update(2.0);
+            assertFalse(sma.isReady());
+            sma.update(3.0);
+            assertTrue(sma.isReady());
+            sma.reset();
+            assertFalse(sma.isReady());
         }
     }
 

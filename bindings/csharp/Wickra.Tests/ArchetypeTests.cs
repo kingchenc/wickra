@@ -35,6 +35,21 @@ public class ArchetypeTests
     }
 
     [Fact]
+    public void Query_WarmupPeriodAndIsReady()
+    {
+        using var sma = new Sma(3);
+        Assert.Equal(3, sma.WarmupPeriod());
+        Assert.False(sma.IsReady());
+        sma.Update(1.0);
+        sma.Update(2.0);
+        Assert.False(sma.IsReady());
+        sma.Update(3.0);
+        Assert.True(sma.IsReady());
+        sma.Reset();
+        Assert.False(sma.IsReady());
+    }
+
+    [Fact]
     public void Candle_Atr_IsFinitePositive()
     {
         using var atr = new Atr(3);

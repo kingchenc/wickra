@@ -16,6 +16,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_adaptive_cycle_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_adaptive_cycle_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_adaptive_cycle_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_adaptive_cycle_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -29,6 +36,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_adaptive_laguerre_filter_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_adaptive_laguerre_filter_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_adaptive_laguerre_filter_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_adaptive_laguerre_filter_reset(nint handle);
@@ -46,6 +60,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_adaptive_rsi_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_adaptive_rsi_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_adaptive_rsi_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_adaptive_rsi_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -59,6 +80,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_alma_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_alma_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_alma_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_alma_reset(nint handle);
@@ -76,6 +104,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_anchored_rsi_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_anchored_rsi_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_anchored_rsi_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_anchored_rsi_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -89,6 +124,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_apo_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_apo_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_apo_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_apo_reset(nint handle);
@@ -106,6 +148,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_autocorrelation_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_autocorrelation_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_autocorrelation_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_autocorrelation_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -119,6 +168,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_autocorrelation_periodogram_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_autocorrelation_periodogram_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_autocorrelation_periodogram_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_autocorrelation_periodogram_reset(nint handle);
@@ -136,6 +192,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_average_drawdown_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_average_drawdown_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_average_drawdown_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_average_drawdown_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -149,6 +212,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_bandpass_filter_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_bandpass_filter_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_bandpass_filter_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_bandpass_filter_reset(nint handle);
@@ -166,6 +236,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_bipower_variation_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_bipower_variation_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_bipower_variation_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_bipower_variation_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -179,6 +256,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_bollinger_bandwidth_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_bollinger_bandwidth_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_bollinger_bandwidth_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_bollinger_bandwidth_reset(nint handle);
@@ -196,6 +280,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_burke_ratio_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_burke_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_burke_ratio_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_burke_ratio_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -209,6 +300,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_calmar_ratio_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_calmar_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_calmar_ratio_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_calmar_ratio_reset(nint handle);
@@ -226,6 +324,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_center_of_gravity_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_center_of_gravity_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_center_of_gravity_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_center_of_gravity_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -239,6 +344,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_cfo_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_cfo_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_cfo_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_cfo_reset(nint handle);
@@ -256,6 +368,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_cmo_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_cmo_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_cmo_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_cmo_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -269,6 +388,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_coefficient_of_variation_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_coefficient_of_variation_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_coefficient_of_variation_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_coefficient_of_variation_reset(nint handle);
@@ -286,6 +412,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_common_sense_ratio_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_common_sense_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_common_sense_ratio_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_common_sense_ratio_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -299,6 +432,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_conditional_value_at_risk_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_conditional_value_at_risk_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_conditional_value_at_risk_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_conditional_value_at_risk_reset(nint handle);
@@ -316,6 +456,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_connors_rsi_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_connors_rsi_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_connors_rsi_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_connors_rsi_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -329,6 +476,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_coppock_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_coppock_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_coppock_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_coppock_reset(nint handle);
@@ -346,6 +500,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_correlation_trend_indicator_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_correlation_trend_indicator_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_correlation_trend_indicator_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_correlation_trend_indicator_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -359,6 +520,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_cybernetic_cycle_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_cybernetic_cycle_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_cybernetic_cycle_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_cybernetic_cycle_reset(nint handle);
@@ -376,6 +544,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_decycler_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_decycler_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_decycler_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_decycler_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -389,6 +564,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_decycler_oscillator_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_decycler_oscillator_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_decycler_oscillator_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_decycler_oscillator_reset(nint handle);
@@ -406,6 +588,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_dema_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_dema_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_dema_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_dema_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -419,6 +608,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_derivative_oscillator_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_derivative_oscillator_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_derivative_oscillator_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_derivative_oscillator_reset(nint handle);
@@ -436,6 +632,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_detrended_std_dev_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_detrended_std_dev_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_detrended_std_dev_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_detrended_std_dev_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -449,6 +652,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_disparity_index_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_disparity_index_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_disparity_index_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_disparity_index_reset(nint handle);
@@ -466,6 +676,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_dpo_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_dpo_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_dpo_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_dpo_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -479,6 +696,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_drawdown_duration_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_drawdown_duration_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_drawdown_duration_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_drawdown_duration_reset(nint handle);
@@ -496,6 +720,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_dynamic_momentum_index_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_dynamic_momentum_index_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_dynamic_momentum_index_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_dynamic_momentum_index_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -509,6 +740,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_ehlers_stochastic_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_ehlers_stochastic_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_ehlers_stochastic_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_ehlers_stochastic_reset(nint handle);
@@ -526,6 +764,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_ehma_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_ehma_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_ehma_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_ehma_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -539,6 +784,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_elder_impulse_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_elder_impulse_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_elder_impulse_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_elder_impulse_reset(nint handle);
@@ -556,6 +808,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_ema_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_ema_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_ema_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_ema_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -569,6 +828,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_empirical_mode_decomposition_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_empirical_mode_decomposition_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_empirical_mode_decomposition_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_empirical_mode_decomposition_reset(nint handle);
@@ -586,6 +852,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_even_better_sinewave_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_even_better_sinewave_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_even_better_sinewave_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_even_better_sinewave_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -599,6 +872,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_ewma_volatility_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_ewma_volatility_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_ewma_volatility_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_ewma_volatility_reset(nint handle);
@@ -616,6 +896,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_expectancy_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_expectancy_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_expectancy_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_expectancy_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -629,6 +916,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_fama_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_fama_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_fama_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_fama_reset(nint handle);
@@ -646,6 +940,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_fisher_rsi_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_fisher_rsi_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_fisher_rsi_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_fisher_rsi_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -659,6 +960,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_fisher_transform_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_fisher_transform_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_fisher_transform_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_fisher_transform_reset(nint handle);
@@ -676,6 +984,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_frama_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_frama_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_frama_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_frama_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -689,6 +1004,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_gain_loss_ratio_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_gain_loss_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_gain_loss_ratio_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_gain_loss_ratio_reset(nint handle);
@@ -706,6 +1028,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_gain_to_pain_ratio_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_gain_to_pain_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_gain_to_pain_ratio_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_gain_to_pain_ratio_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -719,6 +1048,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_garch11_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_garch11_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_garch11_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_garch11_reset(nint handle);
@@ -736,6 +1072,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_generalized_dema_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_generalized_dema_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_generalized_dema_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_generalized_dema_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -749,6 +1092,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_geometric_ma_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_geometric_ma_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_geometric_ma_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_geometric_ma_reset(nint handle);
@@ -766,6 +1116,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_highpass_filter_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_highpass_filter_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_highpass_filter_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_highpass_filter_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -779,6 +1136,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_hilbert_dominant_cycle_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_hilbert_dominant_cycle_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_hilbert_dominant_cycle_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_hilbert_dominant_cycle_reset(nint handle);
@@ -796,6 +1160,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_historical_volatility_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_historical_volatility_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_historical_volatility_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_historical_volatility_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -809,6 +1180,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_hma_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_hma_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_hma_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_hma_reset(nint handle);
@@ -826,6 +1204,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_holt_winters_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_holt_winters_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_holt_winters_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_holt_winters_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -839,6 +1224,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_ht_dc_phase_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_ht_dc_phase_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_ht_dc_phase_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_ht_dc_phase_reset(nint handle);
@@ -856,6 +1248,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_ht_trend_mode_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_ht_trend_mode_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_ht_trend_mode_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_ht_trend_mode_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -869,6 +1268,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_hurst_exponent_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_hurst_exponent_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_hurst_exponent_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_hurst_exponent_reset(nint handle);
@@ -886,6 +1292,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_instantaneous_trendline_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_instantaneous_trendline_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_instantaneous_trendline_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_instantaneous_trendline_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -899,6 +1312,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_inverse_fisher_transform_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_inverse_fisher_transform_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_inverse_fisher_transform_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_inverse_fisher_transform_reset(nint handle);
@@ -916,6 +1336,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_jarque_bera_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_jarque_bera_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_jarque_bera_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_jarque_bera_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -929,6 +1356,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_jma_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_jma_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_jma_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_jma_reset(nint handle);
@@ -946,6 +1380,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_jump_indicator_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_jump_indicator_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_jump_indicator_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_jump_indicator_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -959,6 +1400,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_k_ratio_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_k_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_k_ratio_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_k_ratio_reset(nint handle);
@@ -976,6 +1424,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_kama_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_kama_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_kama_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_kama_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -989,6 +1444,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_kelly_criterion_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_kelly_criterion_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_kelly_criterion_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_kelly_criterion_reset(nint handle);
@@ -1006,6 +1468,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_kurtosis_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_kurtosis_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_kurtosis_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_kurtosis_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1019,6 +1488,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_laguerre_rsi_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_laguerre_rsi_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_laguerre_rsi_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_laguerre_rsi_reset(nint handle);
@@ -1036,6 +1512,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_linear_regression_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_linear_regression_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_linear_regression_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_linear_regression_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1049,6 +1532,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_lin_reg_angle_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_lin_reg_angle_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_lin_reg_angle_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_lin_reg_angle_reset(nint handle);
@@ -1066,6 +1556,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_lin_reg_intercept_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_lin_reg_intercept_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_lin_reg_intercept_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_lin_reg_intercept_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1079,6 +1576,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_lin_reg_slope_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_lin_reg_slope_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_lin_reg_slope_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_lin_reg_slope_reset(nint handle);
@@ -1096,6 +1600,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_log_return_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_log_return_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_log_return_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_log_return_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1109,6 +1620,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_m2_measure_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_m2_measure_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_m2_measure_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_m2_measure_reset(nint handle);
@@ -1126,6 +1644,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_macd_histogram_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_macd_histogram_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_macd_histogram_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_macd_histogram_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1139,6 +1664,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_martin_ratio_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_martin_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_martin_ratio_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_martin_ratio_reset(nint handle);
@@ -1156,6 +1688,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_max_drawdown_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_max_drawdown_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_max_drawdown_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_max_drawdown_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1169,6 +1708,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_mc_ginley_dynamic_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_mc_ginley_dynamic_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_mc_ginley_dynamic_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_mc_ginley_dynamic_reset(nint handle);
@@ -1186,6 +1732,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_median_absolute_deviation_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_median_absolute_deviation_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_median_absolute_deviation_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_median_absolute_deviation_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1199,6 +1752,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_median_ma_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_median_ma_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_median_ma_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_median_ma_reset(nint handle);
@@ -1216,6 +1776,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_mid_point_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_mid_point_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_mid_point_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_mid_point_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1229,6 +1796,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_mom_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_mom_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_mom_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_mom_reset(nint handle);
@@ -1246,6 +1820,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_omega_ratio_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_omega_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_omega_ratio_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_omega_ratio_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1259,6 +1840,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_pain_index_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_pain_index_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_pain_index_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_pain_index_reset(nint handle);
@@ -1276,6 +1864,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_percent_b_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_percent_b_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_percent_b_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_percent_b_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1289,6 +1884,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_percentage_trailing_stop_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_percentage_trailing_stop_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_percentage_trailing_stop_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_percentage_trailing_stop_reset(nint handle);
@@ -1306,6 +1908,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_pmo_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_pmo_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_pmo_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_pmo_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1319,6 +1928,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_polarized_fractal_efficiency_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_polarized_fractal_efficiency_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_polarized_fractal_efficiency_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_polarized_fractal_efficiency_reset(nint handle);
@@ -1336,6 +1952,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_ppo_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_ppo_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_ppo_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_ppo_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1349,6 +1972,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_ppo_histogram_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_ppo_histogram_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_ppo_histogram_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_ppo_histogram_reset(nint handle);
@@ -1366,6 +1996,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_profit_factor_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_profit_factor_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_profit_factor_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_profit_factor_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1379,6 +2016,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_r_squared_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_r_squared_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_r_squared_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_r_squared_reset(nint handle);
@@ -1396,6 +2040,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_realized_volatility_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_realized_volatility_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_realized_volatility_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_realized_volatility_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1409,6 +2060,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_recovery_factor_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_recovery_factor_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_recovery_factor_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_recovery_factor_reset(nint handle);
@@ -1426,6 +2084,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_reflex_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_reflex_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_reflex_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_reflex_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1439,6 +2104,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_regime_label_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_regime_label_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_regime_label_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_regime_label_reset(nint handle);
@@ -1456,6 +2128,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_renko_trailing_stop_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_renko_trailing_stop_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_renko_trailing_stop_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_renko_trailing_stop_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1469,6 +2148,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_rmi_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_rmi_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_rmi_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_rmi_reset(nint handle);
@@ -1486,6 +2172,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_roc_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_roc_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_roc_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_roc_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1499,6 +2192,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_rocp_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_rocp_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_rocp_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_rocp_reset(nint handle);
@@ -1516,6 +2216,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_rocr_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_rocr_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_rocr_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_rocr_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1529,6 +2236,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_rocr100_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_rocr100_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_rocr100_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_rocr100_reset(nint handle);
@@ -1546,6 +2260,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_rolling_iqr_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_rolling_iqr_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_rolling_iqr_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_rolling_iqr_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1559,6 +2280,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_rolling_min_max_scaler_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_rolling_min_max_scaler_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_rolling_min_max_scaler_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_rolling_min_max_scaler_reset(nint handle);
@@ -1576,6 +2304,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_rolling_percentile_rank_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_rolling_percentile_rank_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_rolling_percentile_rank_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_rolling_percentile_rank_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1589,6 +2324,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_rolling_quantile_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_rolling_quantile_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_rolling_quantile_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_rolling_quantile_reset(nint handle);
@@ -1606,6 +2348,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_roofing_filter_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_roofing_filter_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_roofing_filter_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_roofing_filter_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1619,6 +2368,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_rsi_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_rsi_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_rsi_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_rsi_reset(nint handle);
@@ -1636,6 +2392,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_rsx_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_rsx_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_rsx_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_rsx_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1649,6 +2412,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_rvi_volatility_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_rvi_volatility_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_rvi_volatility_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_rvi_volatility_reset(nint handle);
@@ -1666,6 +2436,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_sample_entropy_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_sample_entropy_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_sample_entropy_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_sample_entropy_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1679,6 +2456,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_shannon_entropy_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_shannon_entropy_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_shannon_entropy_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_shannon_entropy_reset(nint handle);
@@ -1696,6 +2480,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_sharpe_ratio_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_sharpe_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_sharpe_ratio_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_sharpe_ratio_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1709,6 +2500,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_sine_wave_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_sine_wave_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_sine_wave_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_sine_wave_reset(nint handle);
@@ -1726,6 +2524,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_sine_weighted_ma_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_sine_weighted_ma_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_sine_weighted_ma_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_sine_weighted_ma_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1739,6 +2544,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_skewness_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_skewness_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_skewness_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_skewness_reset(nint handle);
@@ -1756,6 +2568,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_sma_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_sma_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_sma_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_sma_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1769,6 +2588,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_smma_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_smma_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_smma_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_smma_reset(nint handle);
@@ -1786,6 +2612,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_sortino_ratio_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_sortino_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_sortino_ratio_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_sortino_ratio_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1799,6 +2632,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_standard_error_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_standard_error_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_standard_error_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_standard_error_reset(nint handle);
@@ -1816,6 +2656,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_stc_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_stc_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_stc_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_stc_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1829,6 +2676,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_std_dev_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_std_dev_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_std_dev_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_std_dev_reset(nint handle);
@@ -1846,6 +2700,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_step_trailing_stop_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_step_trailing_stop_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_step_trailing_stop_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_step_trailing_stop_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1859,6 +2720,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_sterling_ratio_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_sterling_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_sterling_ratio_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_sterling_ratio_reset(nint handle);
@@ -1876,6 +2744,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_stoch_rsi_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_stoch_rsi_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_stoch_rsi_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_stoch_rsi_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1889,6 +2764,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_super_smoother_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_super_smoother_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_super_smoother_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_super_smoother_reset(nint handle);
@@ -1906,6 +2788,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_t3_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_t3_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_t3_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_t3_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1919,6 +2808,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_tail_ratio_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_tail_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_tail_ratio_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_tail_ratio_reset(nint handle);
@@ -1936,6 +2832,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_tema_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_tema_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_tema_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_tema_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1949,6 +2852,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_tii_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_tii_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_tii_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_tii_reset(nint handle);
@@ -1966,6 +2876,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_trend_label_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_trend_label_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_trend_label_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_trend_label_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -1979,6 +2896,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_trend_strength_index_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_trend_strength_index_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_trend_strength_index_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_trend_strength_index_reset(nint handle);
@@ -1996,6 +2920,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_trendflex_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_trendflex_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_trendflex_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_trendflex_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2009,6 +2940,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_trima_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_trima_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_trima_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_trima_reset(nint handle);
@@ -2026,6 +2964,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_trix_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_trix_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_trix_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_trix_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2039,6 +2984,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_tsf_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_tsf_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_tsf_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_tsf_reset(nint handle);
@@ -2056,6 +3008,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_tsf_oscillator_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_tsf_oscillator_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_tsf_oscillator_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_tsf_oscillator_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2069,6 +3028,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_tsi_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_tsi_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_tsi_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_tsi_reset(nint handle);
@@ -2086,6 +3052,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_ulcer_index_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_ulcer_index_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_ulcer_index_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_ulcer_index_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2099,6 +3072,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_universal_oscillator_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_universal_oscillator_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_universal_oscillator_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_universal_oscillator_reset(nint handle);
@@ -2116,6 +3096,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_upside_potential_ratio_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_upside_potential_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_upside_potential_ratio_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_upside_potential_ratio_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2129,6 +3116,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_value_at_risk_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_value_at_risk_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_value_at_risk_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_value_at_risk_reset(nint handle);
@@ -2146,6 +3140,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_variance_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_variance_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_variance_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_variance_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2159,6 +3160,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_vertical_horizontal_filter_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_vertical_horizontal_filter_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_vertical_horizontal_filter_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_vertical_horizontal_filter_reset(nint handle);
@@ -2176,6 +3184,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_vidya_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_vidya_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_vidya_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_vidya_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2189,6 +3204,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_volatility_of_volatility_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_volatility_of_volatility_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_volatility_of_volatility_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_volatility_of_volatility_reset(nint handle);
@@ -2206,6 +3228,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_wave_pm_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_wave_pm_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_wave_pm_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_wave_pm_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2219,6 +3248,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_win_rate_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_win_rate_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_win_rate_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_win_rate_reset(nint handle);
@@ -2236,6 +3272,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_wma_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_wma_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_wma_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_wma_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2249,6 +3292,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_z_score_batch(nint handle, double* input, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_z_score_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_z_score_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_z_score_reset(nint handle);
@@ -2266,6 +3316,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_zlema_batch(nint handle, double* input, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_zlema_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_zlema_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_zlema_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2279,6 +3336,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_alpha_batch(nint handle, double* x, double* y, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_alpha_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_alpha_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_alpha_reset(nint handle);
@@ -2296,6 +3360,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_beta_batch(nint handle, double* x, double* y, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_beta_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_beta_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_beta_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2309,6 +3380,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_beta_neutral_spread_batch(nint handle, double* x, double* y, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_beta_neutral_spread_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_beta_neutral_spread_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_beta_neutral_spread_reset(nint handle);
@@ -2326,6 +3404,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_distance_ssd_batch(nint handle, double* x, double* y, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_distance_ssd_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_distance_ssd_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_distance_ssd_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2339,6 +3424,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_granger_causality_batch(nint handle, double* x, double* y, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_granger_causality_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_granger_causality_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_granger_causality_reset(nint handle);
@@ -2356,6 +3448,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_hasbrouck_information_share_batch(nint handle, double* x, double* y, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_hasbrouck_information_share_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_hasbrouck_information_share_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_hasbrouck_information_share_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2369,6 +3468,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_information_ratio_batch(nint handle, double* x, double* y, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_information_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_information_ratio_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_information_ratio_reset(nint handle);
@@ -2386,6 +3492,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_kendall_tau_batch(nint handle, double* x, double* y, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_kendall_tau_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_kendall_tau_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_kendall_tau_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2399,6 +3512,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_ou_half_life_batch(nint handle, double* x, double* y, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_ou_half_life_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_ou_half_life_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_ou_half_life_reset(nint handle);
@@ -2416,6 +3536,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_pair_spread_z_score_batch(nint handle, double* x, double* y, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_pair_spread_z_score_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_pair_spread_z_score_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_pair_spread_z_score_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2429,6 +3556,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_pairwise_beta_batch(nint handle, double* x, double* y, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_pairwise_beta_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_pairwise_beta_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_pairwise_beta_reset(nint handle);
@@ -2446,6 +3580,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_pearson_correlation_batch(nint handle, double* x, double* y, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_pearson_correlation_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_pearson_correlation_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_pearson_correlation_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2459,6 +3600,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_rolling_correlation_batch(nint handle, double* x, double* y, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_rolling_correlation_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_rolling_correlation_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_rolling_correlation_reset(nint handle);
@@ -2476,6 +3624,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_rolling_covariance_batch(nint handle, double* x, double* y, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_rolling_covariance_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_rolling_covariance_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_rolling_covariance_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2489,6 +3644,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_spearman_correlation_batch(nint handle, double* x, double* y, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_spearman_correlation_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_spearman_correlation_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_spearman_correlation_reset(nint handle);
@@ -2506,6 +3668,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_spread_ar1_coefficient_batch(nint handle, double* x, double* y, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_spread_ar1_coefficient_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_spread_ar1_coefficient_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_spread_ar1_coefficient_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2519,6 +3688,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_spread_hurst_batch(nint handle, double* x, double* y, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_spread_hurst_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_spread_hurst_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_spread_hurst_reset(nint handle);
@@ -2536,6 +3712,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_treynor_ratio_batch(nint handle, double* x, double* y, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_treynor_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_treynor_ratio_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_treynor_ratio_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2549,6 +3732,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_variance_ratio_batch(nint handle, double* x, double* y, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_variance_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_variance_ratio_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_variance_ratio_reset(nint handle);
@@ -2566,6 +3756,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_abandoned_baby_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_abandoned_baby_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_abandoned_baby_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_abandoned_baby_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2579,6 +3776,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_abcd_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_abcd_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_abcd_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_abcd_reset(nint handle);
@@ -2596,6 +3800,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_accelerator_oscillator_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_accelerator_oscillator_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_accelerator_oscillator_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_accelerator_oscillator_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2609,6 +3820,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_ad_oscillator_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_ad_oscillator_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_ad_oscillator_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_ad_oscillator_reset(nint handle);
@@ -2626,6 +3844,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_adaptive_cci_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_adaptive_cci_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_adaptive_cci_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_adaptive_cci_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2639,6 +3864,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_adl_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_adl_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_adl_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_adl_reset(nint handle);
@@ -2656,6 +3888,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_advance_block_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_advance_block_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_advance_block_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_advance_block_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2669,6 +3908,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_adxr_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_adxr_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_adxr_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_adxr_reset(nint handle);
@@ -2686,6 +3932,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_anchored_vwap_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_anchored_vwap_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_anchored_vwap_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_anchored_vwap_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2699,6 +3952,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_aroon_oscillator_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_aroon_oscillator_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_aroon_oscillator_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_aroon_oscillator_reset(nint handle);
@@ -2716,6 +3976,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_atr_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_atr_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_atr_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_atr_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2729,6 +3996,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_atr_trailing_stop_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_atr_trailing_stop_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_atr_trailing_stop_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_atr_trailing_stop_reset(nint handle);
@@ -2746,6 +4020,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_average_daily_range_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_average_daily_range_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_average_daily_range_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_average_daily_range_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2759,6 +4040,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_avg_price_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_avg_price_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_avg_price_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_avg_price_reset(nint handle);
@@ -2776,6 +4064,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_awesome_oscillator_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_awesome_oscillator_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_awesome_oscillator_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_awesome_oscillator_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2789,6 +4084,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_awesome_oscillator_histogram_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_awesome_oscillator_histogram_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_awesome_oscillator_histogram_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_awesome_oscillator_histogram_reset(nint handle);
@@ -2806,6 +4108,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_balance_of_power_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_balance_of_power_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_balance_of_power_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_balance_of_power_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2819,6 +4128,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_bat_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_bat_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_bat_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_bat_reset(nint handle);
@@ -2836,6 +4152,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_belt_hold_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_belt_hold_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_belt_hold_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_belt_hold_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2849,6 +4172,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_better_volume_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_better_volume_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_better_volume_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_better_volume_reset(nint handle);
@@ -2866,6 +4196,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_body_size_pct_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_body_size_pct_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_body_size_pct_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_body_size_pct_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2879,6 +4216,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_breakaway_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_breakaway_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_breakaway_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_breakaway_reset(nint handle);
@@ -2896,6 +4240,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_butterfly_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_butterfly_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_butterfly_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_butterfly_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2909,6 +4260,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_cci_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_cci_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_cci_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_cci_reset(nint handle);
@@ -2926,6 +4284,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_chaikin_oscillator_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_chaikin_oscillator_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_chaikin_oscillator_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_chaikin_oscillator_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2939,6 +4304,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_chaikin_volatility_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_chaikin_volatility_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_chaikin_volatility_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_chaikin_volatility_reset(nint handle);
@@ -2956,6 +4328,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_choppiness_index_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_choppiness_index_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_choppiness_index_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_choppiness_index_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2969,6 +4348,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_close_vs_open_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_close_vs_open_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_close_vs_open_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_close_vs_open_reset(nint handle);
@@ -2986,6 +4372,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_closing_marubozu_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_closing_marubozu_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_closing_marubozu_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_closing_marubozu_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -2999,6 +4392,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_chaikin_money_flow_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_chaikin_money_flow_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_chaikin_money_flow_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_chaikin_money_flow_reset(nint handle);
@@ -3016,6 +4416,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_concealing_baby_swallow_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_concealing_baby_swallow_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_concealing_baby_swallow_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_concealing_baby_swallow_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3029,6 +4436,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_counterattack_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_counterattack_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_counterattack_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_counterattack_reset(nint handle);
@@ -3046,6 +4460,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_crab_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_crab_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_crab_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_crab_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3059,6 +4480,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_cup_and_handle_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_cup_and_handle_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_cup_and_handle_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_cup_and_handle_reset(nint handle);
@@ -3076,6 +4504,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_cypher_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_cypher_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_cypher_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_cypher_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3089,6 +4524,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_demand_index_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_demand_index_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_demand_index_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_demand_index_reset(nint handle);
@@ -3106,6 +4548,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_doji_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_doji_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_doji_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_doji_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3119,6 +4568,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_doji_star_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_doji_star_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_doji_star_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_doji_star_reset(nint handle);
@@ -3136,6 +4592,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_double_top_bottom_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_double_top_bottom_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_double_top_bottom_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_double_top_bottom_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3149,6 +4612,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_downside_gap_three_methods_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_downside_gap_three_methods_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_downside_gap_three_methods_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_downside_gap_three_methods_reset(nint handle);
@@ -3166,6 +4636,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_dragonfly_doji_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_dragonfly_doji_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_dragonfly_doji_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_dragonfly_doji_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3179,6 +4656,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_dumpling_top_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_dumpling_top_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_dumpling_top_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_dumpling_top_reset(nint handle);
@@ -3196,6 +4680,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_dx_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_dx_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_dx_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_dx_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3209,6 +4700,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_ease_of_movement_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_ease_of_movement_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_ease_of_movement_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_ease_of_movement_reset(nint handle);
@@ -3226,6 +4724,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_engulfing_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_engulfing_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_engulfing_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_engulfing_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3239,6 +4744,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_evening_doji_star_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_evening_doji_star_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_evening_doji_star_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_evening_doji_star_reset(nint handle);
@@ -3256,6 +4768,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_evwma_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_evwma_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_evwma_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_evwma_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3269,6 +4788,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_falling_three_methods_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_falling_three_methods_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_falling_three_methods_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_falling_three_methods_reset(nint handle);
@@ -3286,6 +4812,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_flag_pennant_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_flag_pennant_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_flag_pennant_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_flag_pennant_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3299,6 +4832,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_force_index_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_force_index_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_force_index_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_force_index_reset(nint handle);
@@ -3316,6 +4856,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_fry_pan_bottom_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_fry_pan_bottom_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_fry_pan_bottom_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_fry_pan_bottom_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3329,6 +4876,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_gap_side_by_side_white_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_gap_side_by_side_white_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_gap_side_by_side_white_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_gap_side_by_side_white_reset(nint handle);
@@ -3346,6 +4900,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_garman_klass_volatility_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_garman_klass_volatility_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_garman_klass_volatility_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_garman_klass_volatility_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3359,6 +4920,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_gartley_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_gartley_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_gartley_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_gartley_reset(nint handle);
@@ -3376,6 +4944,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_gravestone_doji_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_gravestone_doji_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_gravestone_doji_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_gravestone_doji_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3389,6 +4964,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_hammer_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_hammer_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_hammer_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_hammer_reset(nint handle);
@@ -3406,6 +4988,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_hanging_man_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_hanging_man_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_hanging_man_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_hanging_man_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3419,6 +5008,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_harami_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_harami_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_harami_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_harami_reset(nint handle);
@@ -3436,6 +5032,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_harami_cross_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_harami_cross_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_harami_cross_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_harami_cross_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3449,6 +5052,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_head_and_shoulders_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_head_and_shoulders_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_head_and_shoulders_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_head_and_shoulders_reset(nint handle);
@@ -3466,6 +5076,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_heikin_ashi_oscillator_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_heikin_ashi_oscillator_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_heikin_ashi_oscillator_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_heikin_ashi_oscillator_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3479,6 +5096,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_high_low_range_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_high_low_range_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_high_low_range_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_high_low_range_reset(nint handle);
@@ -3496,6 +5120,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_high_wave_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_high_wave_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_high_wave_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_high_wave_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3509,6 +5140,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_hikkake_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_hikkake_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_hikkake_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_hikkake_reset(nint handle);
@@ -3526,6 +5164,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_hikkake_modified_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_hikkake_modified_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_hikkake_modified_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_hikkake_modified_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3539,6 +5184,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_hi_lo_activator_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_hi_lo_activator_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_hi_lo_activator_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_hi_lo_activator_reset(nint handle);
@@ -3556,6 +5208,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_homing_pigeon_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_homing_pigeon_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_homing_pigeon_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_homing_pigeon_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3569,6 +5228,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_identical_three_crows_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_identical_three_crows_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_identical_three_crows_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_identical_three_crows_reset(nint handle);
@@ -3586,6 +5252,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_in_neck_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_in_neck_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_in_neck_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_in_neck_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3599,6 +5272,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_inertia_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_inertia_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_inertia_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_inertia_reset(nint handle);
@@ -3616,6 +5296,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_intraday_intensity_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_intraday_intensity_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_intraday_intensity_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_intraday_intensity_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3629,6 +5316,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_intraday_momentum_index_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_intraday_momentum_index_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_intraday_momentum_index_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_intraday_momentum_index_reset(nint handle);
@@ -3646,6 +5340,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_inverted_hammer_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_inverted_hammer_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_inverted_hammer_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_inverted_hammer_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3659,6 +5360,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_kicking_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_kicking_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_kicking_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_kicking_reset(nint handle);
@@ -3676,6 +5384,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_kicking_by_length_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_kicking_by_length_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_kicking_by_length_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_kicking_by_length_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3689,6 +5404,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_kvo_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_kvo_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_kvo_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_kvo_reset(nint handle);
@@ -3706,6 +5428,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_ladder_bottom_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_ladder_bottom_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_ladder_bottom_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_ladder_bottom_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3719,6 +5448,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_long_legged_doji_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_long_legged_doji_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_long_legged_doji_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_long_legged_doji_reset(nint handle);
@@ -3736,6 +5472,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_long_line_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_long_line_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_long_line_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_long_line_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3749,6 +5492,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_market_facilitation_index_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_market_facilitation_index_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_market_facilitation_index_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_market_facilitation_index_reset(nint handle);
@@ -3766,6 +5516,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_marubozu_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_marubozu_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_marubozu_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_marubozu_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3779,6 +5536,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_mass_index_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_mass_index_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_mass_index_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_mass_index_reset(nint handle);
@@ -3796,6 +5560,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_mat_hold_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_mat_hold_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_mat_hold_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_mat_hold_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3809,6 +5580,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_matching_low_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_matching_low_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_matching_low_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_matching_low_reset(nint handle);
@@ -3826,6 +5604,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_median_price_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_median_price_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_median_price_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_median_price_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3839,6 +5624,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_mfi_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_mfi_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_mfi_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_mfi_reset(nint handle);
@@ -3856,6 +5648,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_mid_price_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_mid_price_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_mid_price_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_mid_price_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3869,6 +5668,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_minus_di_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_minus_di_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_minus_di_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_minus_di_reset(nint handle);
@@ -3886,6 +5692,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_minus_dm_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_minus_dm_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_minus_dm_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_minus_dm_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3899,6 +5712,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_morning_doji_star_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_morning_doji_star_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_morning_doji_star_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_morning_doji_star_reset(nint handle);
@@ -3916,6 +5736,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_morning_evening_star_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_morning_evening_star_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_morning_evening_star_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_morning_evening_star_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3929,6 +5756,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_naked_poc_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_naked_poc_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_naked_poc_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_naked_poc_reset(nint handle);
@@ -3946,6 +5780,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_natr_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_natr_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_natr_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_natr_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3959,6 +5800,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_new_price_lines_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_new_price_lines_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_new_price_lines_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_new_price_lines_reset(nint handle);
@@ -3976,6 +5824,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_nvi_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_nvi_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_nvi_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_nvi_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -3989,6 +5844,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_obv_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_obv_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_obv_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_obv_reset(nint handle);
@@ -4006,6 +5868,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_on_neck_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_on_neck_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_on_neck_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_on_neck_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4019,6 +5888,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_opening_marubozu_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_opening_marubozu_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_opening_marubozu_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_opening_marubozu_reset(nint handle);
@@ -4036,6 +5912,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_overnight_gap_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_overnight_gap_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_overnight_gap_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_overnight_gap_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4049,6 +5932,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_parkinson_volatility_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_parkinson_volatility_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_parkinson_volatility_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_parkinson_volatility_reset(nint handle);
@@ -4066,6 +5956,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_pgo_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_pgo_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_pgo_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_pgo_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4079,6 +5976,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_piercing_dark_cloud_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_piercing_dark_cloud_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_piercing_dark_cloud_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_piercing_dark_cloud_reset(nint handle);
@@ -4096,6 +6000,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_pivot_reversal_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_pivot_reversal_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_pivot_reversal_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_pivot_reversal_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4109,6 +6020,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_plus_di_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_plus_di_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_plus_di_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_plus_di_reset(nint handle);
@@ -4126,6 +6044,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_plus_dm_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_plus_dm_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_plus_dm_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_plus_dm_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4139,6 +6064,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_profile_shape_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_profile_shape_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_profile_shape_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_profile_shape_reset(nint handle);
@@ -4156,6 +6088,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_projection_oscillator_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_projection_oscillator_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_projection_oscillator_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_projection_oscillator_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4169,6 +6108,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_psar_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_psar_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_psar_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_psar_reset(nint handle);
@@ -4186,6 +6132,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_pvi_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_pvi_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_pvi_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_pvi_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4199,6 +6152,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_qstick_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_qstick_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_qstick_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_qstick_reset(nint handle);
@@ -4216,6 +6176,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_rectangle_range_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_rectangle_range_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_rectangle_range_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_rectangle_range_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4229,6 +6196,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_rickshaw_man_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_rickshaw_man_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_rickshaw_man_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_rickshaw_man_reset(nint handle);
@@ -4246,6 +6220,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_rising_three_methods_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_rising_three_methods_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_rising_three_methods_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_rising_three_methods_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4259,6 +6240,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_rogers_satchell_volatility_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_rogers_satchell_volatility_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_rogers_satchell_volatility_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_rogers_satchell_volatility_reset(nint handle);
@@ -4276,6 +6264,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_rvi_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_rvi_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_rvi_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_rvi_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4289,6 +6284,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_sar_ext_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_sar_ext_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_sar_ext_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_sar_ext_reset(nint handle);
@@ -4306,6 +6308,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_seasonal_z_score_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_seasonal_z_score_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_seasonal_z_score_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_seasonal_z_score_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4319,6 +6328,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_separating_lines_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_separating_lines_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_separating_lines_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_separating_lines_reset(nint handle);
@@ -4336,6 +6352,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_session_vwap_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_session_vwap_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_session_vwap_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_session_vwap_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4349,6 +6372,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_shark_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_shark_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_shark_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_shark_reset(nint handle);
@@ -4366,6 +6396,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_shooting_star_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_shooting_star_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_shooting_star_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_shooting_star_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4379,6 +6416,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_short_line_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_short_line_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_short_line_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_short_line_reset(nint handle);
@@ -4396,6 +6440,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_single_prints_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_single_prints_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_single_prints_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_single_prints_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4409,6 +6460,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_smi_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_smi_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_smi_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_smi_reset(nint handle);
@@ -4426,6 +6484,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_spinning_top_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_spinning_top_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_spinning_top_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_spinning_top_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4439,6 +6504,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_stalled_pattern_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_stalled_pattern_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_stalled_pattern_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_stalled_pattern_reset(nint handle);
@@ -4456,6 +6528,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_stick_sandwich_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_stick_sandwich_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_stick_sandwich_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_stick_sandwich_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4469,6 +6548,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_stochastic_cci_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_stochastic_cci_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_stochastic_cci_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_stochastic_cci_reset(nint handle);
@@ -4486,6 +6572,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_takuri_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_takuri_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_takuri_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_takuri_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4499,6 +6592,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_tasuki_gap_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_tasuki_gap_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_tasuki_gap_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_tasuki_gap_reset(nint handle);
@@ -4516,6 +6616,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_td_camouflage_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_td_camouflage_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_td_camouflage_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_td_camouflage_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4529,6 +6636,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_td_clop_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_td_clop_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_td_clop_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_td_clop_reset(nint handle);
@@ -4546,6 +6660,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_td_clopwin_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_td_clopwin_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_td_clopwin_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_td_clopwin_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4559,6 +6680,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_td_combo_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_td_combo_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_td_combo_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_td_combo_reset(nint handle);
@@ -4576,6 +6704,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_td_countdown_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_td_countdown_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_td_countdown_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_td_countdown_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4589,6 +6724,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_td_de_marker_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_td_de_marker_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_td_de_marker_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_td_de_marker_reset(nint handle);
@@ -4606,6 +6748,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_td_differential_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_td_differential_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_td_differential_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_td_differential_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4619,6 +6768,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_td_d_wave_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_td_d_wave_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_td_d_wave_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_td_d_wave_reset(nint handle);
@@ -4636,6 +6792,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_td_open_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_td_open_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_td_open_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_td_open_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4649,6 +6812,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_td_pressure_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_td_pressure_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_td_pressure_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_td_pressure_reset(nint handle);
@@ -4666,6 +6836,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_td_propulsion_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_td_propulsion_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_td_propulsion_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_td_propulsion_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4679,6 +6856,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_td_rei_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_td_rei_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_td_rei_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_td_rei_reset(nint handle);
@@ -4696,6 +6880,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_td_setup_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_td_setup_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_td_setup_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_td_setup_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4709,6 +6900,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_td_trap_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_td_trap_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_td_trap_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_td_trap_reset(nint handle);
@@ -4726,6 +6924,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_three_drives_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_three_drives_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_three_drives_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_three_drives_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4739,6 +6944,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_three_inside_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_three_inside_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_three_inside_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_three_inside_reset(nint handle);
@@ -4756,6 +6968,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_three_line_break_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_three_line_break_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_three_line_break_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_three_line_break_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4769,6 +6988,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_three_line_strike_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_three_line_strike_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_three_line_strike_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_three_line_strike_reset(nint handle);
@@ -4786,6 +7012,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_three_outside_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_three_outside_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_three_outside_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_three_outside_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4799,6 +7032,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_three_soldiers_or_crows_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_three_soldiers_or_crows_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_three_soldiers_or_crows_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_three_soldiers_or_crows_reset(nint handle);
@@ -4816,6 +7056,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_three_stars_in_south_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_three_stars_in_south_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_three_stars_in_south_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_three_stars_in_south_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4829,6 +7076,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_thrusting_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_thrusting_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_thrusting_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_thrusting_reset(nint handle);
@@ -4846,6 +7100,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_time_based_stop_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_time_based_stop_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_time_based_stop_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_time_based_stop_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4859,6 +7120,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_tower_top_bottom_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_tower_top_bottom_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_tower_top_bottom_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_tower_top_bottom_reset(nint handle);
@@ -4876,6 +7144,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_trade_volume_index_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_trade_volume_index_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_trade_volume_index_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_trade_volume_index_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4889,6 +7164,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_triangle_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_triangle_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_triangle_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_triangle_reset(nint handle);
@@ -4906,6 +7188,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_triple_top_bottom_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_triple_top_bottom_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_triple_top_bottom_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_triple_top_bottom_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4919,6 +7208,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_tristar_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_tristar_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_tristar_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_tristar_reset(nint handle);
@@ -4936,6 +7232,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_true_range_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_true_range_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_true_range_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_true_range_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4949,6 +7252,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_tsv_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_tsv_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_tsv_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_tsv_reset(nint handle);
@@ -4966,6 +7276,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_ttm_trend_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_ttm_trend_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_ttm_trend_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_ttm_trend_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -4979,6 +7296,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_turn_of_month_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_turn_of_month_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_turn_of_month_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_turn_of_month_reset(nint handle);
@@ -4996,6 +7320,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_tweezer_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_tweezer_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_tweezer_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_tweezer_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5009,6 +7340,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_twiggs_money_flow_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_twiggs_money_flow_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_twiggs_money_flow_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_twiggs_money_flow_reset(nint handle);
@@ -5026,6 +7364,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_two_crows_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_two_crows_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_two_crows_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_two_crows_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5039,6 +7384,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_typical_price_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_typical_price_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_typical_price_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_typical_price_reset(nint handle);
@@ -5056,6 +7408,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_ultimate_oscillator_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_ultimate_oscillator_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_ultimate_oscillator_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_ultimate_oscillator_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5069,6 +7428,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_unique_three_river_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_unique_three_river_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_unique_three_river_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_unique_three_river_reset(nint handle);
@@ -5086,6 +7452,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_upside_gap_three_methods_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_upside_gap_three_methods_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_upside_gap_three_methods_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_upside_gap_three_methods_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5099,6 +7472,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_upside_gap_two_crows_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_upside_gap_two_crows_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_upside_gap_two_crows_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_upside_gap_two_crows_reset(nint handle);
@@ -5116,6 +7496,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_volatility_ratio_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_volatility_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_volatility_ratio_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_volatility_ratio_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5129,6 +7516,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_volty_stop_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_volty_stop_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_volty_stop_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_volty_stop_reset(nint handle);
@@ -5146,6 +7540,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_volume_oscillator_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_volume_oscillator_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_volume_oscillator_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_volume_oscillator_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5159,6 +7560,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_volume_rsi_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_volume_rsi_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_volume_rsi_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_volume_rsi_reset(nint handle);
@@ -5176,6 +7584,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_volume_price_trend_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_volume_price_trend_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_volume_price_trend_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_volume_price_trend_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5189,6 +7604,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_vwap_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_vwap_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_vwap_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_vwap_reset(nint handle);
@@ -5206,6 +7628,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_rolling_vwap_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_rolling_vwap_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_rolling_vwap_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_rolling_vwap_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5219,6 +7648,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_vwma_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_vwma_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_vwma_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_vwma_reset(nint handle);
@@ -5236,6 +7672,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_vzo_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_vzo_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_vzo_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_vzo_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5249,6 +7692,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_wad_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_wad_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_wad_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_wad_reset(nint handle);
@@ -5266,6 +7716,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_wedge_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_wedge_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_wedge_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_wedge_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5279,6 +7736,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_weighted_close_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_weighted_close_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_weighted_close_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_weighted_close_reset(nint handle);
@@ -5296,6 +7760,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_wick_ratio_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_wick_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_wick_ratio_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_wick_ratio_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5309,6 +7780,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial void wickra_williams_r_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_williams_r_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_williams_r_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_williams_r_reset(nint handle);
@@ -5326,6 +7804,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_yang_zhang_volatility_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_yang_zhang_volatility_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_yang_zhang_volatility_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_yang_zhang_volatility_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5341,6 +7826,13 @@ internal static partial class NativeMethods
     internal static unsafe partial void wickra_yoyo_exit_batch(nint handle, double* open, double* high, double* low, double* close, double* volume, long* timestamp, double* @out, nuint n);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_yoyo_exit_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_yoyo_exit_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_yoyo_exit_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5351,6 +7843,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_amihud_illiquidity_update(nint handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_amihud_illiquidity_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_amihud_illiquidity_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_amihud_illiquidity_reset(nint handle);
@@ -5365,6 +7864,13 @@ internal static partial class NativeMethods
     internal static partial double wickra_cumulative_volume_delta_update(nint handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_cumulative_volume_delta_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_cumulative_volume_delta_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_cumulative_volume_delta_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5375,6 +7881,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_pin_update(nint handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_pin_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_pin_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_pin_reset(nint handle);
@@ -5389,6 +7902,13 @@ internal static partial class NativeMethods
     internal static partial double wickra_roll_measure_update(nint handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_roll_measure_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_roll_measure_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_roll_measure_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5399,6 +7919,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_signed_volume_update(nint handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_signed_volume_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_signed_volume_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_signed_volume_reset(nint handle);
@@ -5413,6 +7940,13 @@ internal static partial class NativeMethods
     internal static partial double wickra_trade_imbalance_update(nint handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_trade_imbalance_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_trade_imbalance_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_trade_imbalance_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5423,6 +7957,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_trade_sign_autocorrelation_update(nint handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_trade_sign_autocorrelation_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_trade_sign_autocorrelation_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_trade_sign_autocorrelation_reset(nint handle);
@@ -5437,6 +7978,13 @@ internal static partial class NativeMethods
     internal static partial double wickra_vpin_update(nint handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_vpin_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_vpin_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_vpin_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5447,6 +7995,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_effective_spread_update(nint handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp, double mid);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_effective_spread_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_effective_spread_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_effective_spread_reset(nint handle);
@@ -5461,6 +8016,13 @@ internal static partial class NativeMethods
     internal static partial double wickra_kyles_lambda_update(nint handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp, double mid);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_kyles_lambda_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_kyles_lambda_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_kyles_lambda_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5471,6 +8033,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_realized_spread_update(nint handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp, double mid);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_realized_spread_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_realized_spread_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_realized_spread_reset(nint handle);
@@ -5485,6 +8054,13 @@ internal static partial class NativeMethods
     internal static partial double wickra_calendar_spread_update(nint handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_calendar_spread_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_calendar_spread_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_calendar_spread_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5495,6 +8071,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_estimated_leverage_ratio_update(nint handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_estimated_leverage_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_estimated_leverage_ratio_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_estimated_leverage_ratio_reset(nint handle);
@@ -5509,6 +8092,13 @@ internal static partial class NativeMethods
     internal static partial double wickra_funding_basis_update(nint handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_funding_basis_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_funding_basis_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_funding_basis_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5519,6 +8109,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_funding_implied_apr_update(nint handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_funding_implied_apr_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_funding_implied_apr_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_funding_implied_apr_reset(nint handle);
@@ -5533,6 +8130,13 @@ internal static partial class NativeMethods
     internal static partial double wickra_funding_rate_update(nint handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_funding_rate_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_funding_rate_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_funding_rate_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5543,6 +8147,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_funding_rate_mean_update(nint handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_funding_rate_mean_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_funding_rate_mean_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_funding_rate_mean_reset(nint handle);
@@ -5557,6 +8168,13 @@ internal static partial class NativeMethods
     internal static partial double wickra_funding_rate_z_score_update(nint handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_funding_rate_z_score_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_funding_rate_z_score_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_funding_rate_z_score_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5567,6 +8185,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_long_short_ratio_update(nint handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_long_short_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_long_short_ratio_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_long_short_ratio_reset(nint handle);
@@ -5581,6 +8206,13 @@ internal static partial class NativeMethods
     internal static partial double wickra_open_interest_delta_update(nint handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_open_interest_delta_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_open_interest_delta_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_open_interest_delta_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5591,6 +8223,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_oi_price_divergence_update(nint handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_oi_price_divergence_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_oi_price_divergence_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_oi_price_divergence_reset(nint handle);
@@ -5605,6 +8244,13 @@ internal static partial class NativeMethods
     internal static partial double wickra_oi_to_volume_ratio_update(nint handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_oi_to_volume_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_oi_to_volume_ratio_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_oi_to_volume_ratio_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5615,6 +8261,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_oi_weighted_update(nint handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_oi_weighted_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_oi_weighted_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_oi_weighted_reset(nint handle);
@@ -5629,6 +8282,13 @@ internal static partial class NativeMethods
     internal static partial double wickra_open_interest_momentum_update(nint handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_open_interest_momentum_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_open_interest_momentum_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_open_interest_momentum_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5639,6 +8299,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_perpetual_premium_index_update(nint handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_perpetual_premium_index_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_perpetual_premium_index_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_perpetual_premium_index_reset(nint handle);
@@ -5653,6 +8320,13 @@ internal static partial class NativeMethods
     internal static partial double wickra_taker_buy_sell_ratio_update(nint handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_taker_buy_sell_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_taker_buy_sell_ratio_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_taker_buy_sell_ratio_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5663,6 +8337,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial double wickra_term_structure_basis_update(nint handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_term_structure_basis_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_term_structure_basis_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_term_structure_basis_reset(nint handle);
@@ -5677,6 +8358,13 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_depth_slope_update(nint handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_depth_slope_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_depth_slope_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_depth_slope_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5687,6 +8375,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_microprice_update(nint handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_microprice_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_microprice_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_microprice_reset(nint handle);
@@ -5701,6 +8396,13 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_order_book_imbalance_full_update(nint handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_order_book_imbalance_full_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_order_book_imbalance_full_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_order_book_imbalance_full_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5711,6 +8413,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_order_book_imbalance_top1_update(nint handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_order_book_imbalance_top1_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_order_book_imbalance_top1_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_order_book_imbalance_top1_reset(nint handle);
@@ -5725,6 +8434,13 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_order_book_imbalance_top_n_update(nint handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_order_book_imbalance_top_n_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_order_book_imbalance_top_n_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_order_book_imbalance_top_n_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5735,6 +8451,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_order_flow_imbalance_update(nint handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_order_flow_imbalance_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_order_flow_imbalance_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_order_flow_imbalance_reset(nint handle);
@@ -5749,6 +8472,13 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_quoted_spread_update(nint handle, double* bidPrice, double* bidSize, nuint nBids, double* askPrice, double* askSize, nuint nAsks);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_quoted_spread_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_quoted_spread_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_quoted_spread_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5759,6 +8489,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_absolute_breadth_index_update(nint handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_absolute_breadth_index_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_absolute_breadth_index_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_absolute_breadth_index_reset(nint handle);
@@ -5773,6 +8510,13 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_ad_volume_line_update(nint handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_ad_volume_line_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_ad_volume_line_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_ad_volume_line_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5783,6 +8527,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_advance_decline_update(nint handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_advance_decline_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_advance_decline_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_advance_decline_reset(nint handle);
@@ -5797,6 +8548,13 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_advance_decline_ratio_update(nint handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_advance_decline_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_advance_decline_ratio_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_advance_decline_ratio_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5807,6 +8565,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_breadth_thrust_update(nint handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_breadth_thrust_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_breadth_thrust_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_breadth_thrust_reset(nint handle);
@@ -5821,6 +8586,13 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_bullish_percent_index_update(nint handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_bullish_percent_index_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_bullish_percent_index_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_bullish_percent_index_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5831,6 +8603,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_cumulative_volume_index_update(nint handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_cumulative_volume_index_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_cumulative_volume_index_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_cumulative_volume_index_reset(nint handle);
@@ -5845,6 +8624,13 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_high_low_index_update(nint handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_high_low_index_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_high_low_index_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_high_low_index_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5855,6 +8641,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_mc_clellan_oscillator_update(nint handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_mc_clellan_oscillator_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_mc_clellan_oscillator_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_mc_clellan_oscillator_reset(nint handle);
@@ -5869,6 +8662,13 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_mc_clellan_summation_index_update(nint handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_mc_clellan_summation_index_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_mc_clellan_summation_index_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_mc_clellan_summation_index_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5879,6 +8679,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_new_highs_new_lows_update(nint handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_new_highs_new_lows_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_new_highs_new_lows_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_new_highs_new_lows_reset(nint handle);
@@ -5893,6 +8700,13 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_percent_above_ma_update(nint handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_percent_above_ma_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_percent_above_ma_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_percent_above_ma_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5903,6 +8717,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_tick_index_update(nint handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_tick_index_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_tick_index_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_tick_index_reset(nint handle);
@@ -5917,6 +8738,13 @@ internal static partial class NativeMethods
     internal static unsafe partial double wickra_trin_update(nint handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_trin_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_trin_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_trin_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5927,6 +8755,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial double wickra_up_down_volume_ratio_update(nint handle, double* change, double* volume, bool* newHigh, bool* newLow, bool* aboveMa, bool* onBuySignal, nuint n, long timestamp);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_up_down_volume_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_up_down_volume_ratio_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_up_down_volume_ratio_reset(nint handle);
@@ -5942,6 +8777,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_acceleration_bands_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraAccelerationBandsOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_acceleration_bands_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_acceleration_bands_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_acceleration_bands_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5953,6 +8795,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_adx_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraAdxOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_adx_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_adx_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_adx_reset(nint handle);
@@ -5968,6 +8817,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_alligator_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraAlligatorOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_alligator_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_alligator_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_alligator_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -5979,6 +8835,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_andrews_pitchfork_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraAndrewsPitchforkOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_andrews_pitchfork_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_andrews_pitchfork_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_andrews_pitchfork_reset(nint handle);
@@ -5994,6 +8857,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_aroon_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraAroonOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_aroon_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_aroon_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_aroon_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6005,6 +8875,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_atr_bands_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraAtrBandsOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_atr_bands_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_atr_bands_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_atr_bands_reset(nint handle);
@@ -6020,6 +8897,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_atr_ratchet_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraAtrRatchetOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_atr_ratchet_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_atr_ratchet_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_atr_ratchet_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6031,6 +8915,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_auto_fib_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraAutoFibOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_auto_fib_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_auto_fib_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_auto_fib_reset(nint handle);
@@ -6046,6 +8937,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_bollinger_bands_update(nint handle, double @value, WickraBollingerOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_bollinger_bands_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_bollinger_bands_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_bollinger_bands_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6057,6 +8955,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_bomar_bands_update(nint handle, double @value, WickraBomarBandsOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_bomar_bands_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_bomar_bands_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_bomar_bands_reset(nint handle);
@@ -6072,6 +8977,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_camarilla_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraCamarillaPivotsOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_camarilla_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_camarilla_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_camarilla_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6083,6 +8995,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_candle_volume_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraCandleVolumeOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_candle_volume_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_candle_volume_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_candle_volume_reset(nint handle);
@@ -6098,6 +9017,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_central_pivot_range_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraCentralPivotRangeOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_central_pivot_range_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_central_pivot_range_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_central_pivot_range_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6109,6 +9035,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_chande_kroll_stop_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraChandeKrollStopOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_chande_kroll_stop_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_chande_kroll_stop_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_chande_kroll_stop_reset(nint handle);
@@ -6124,6 +9057,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_chandelier_exit_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraChandelierExitOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_chandelier_exit_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_chandelier_exit_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_chandelier_exit_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6135,6 +9075,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_classic_pivots_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraClassicPivotsOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_classic_pivots_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_classic_pivots_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_classic_pivots_reset(nint handle);
@@ -6150,6 +9097,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_cointegration_update(nint handle, double x, double y, WickraCointegrationOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_cointegration_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_cointegration_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_cointegration_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6161,6 +9115,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_composite_profile_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraCompositeProfileOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_composite_profile_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_composite_profile_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_composite_profile_reset(nint handle);
@@ -6176,6 +9137,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_demark_pivots_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraDemarkPivotsOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_demark_pivots_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_demark_pivots_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_demark_pivots_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6187,6 +9155,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_donchian_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraDonchianOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_donchian_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_donchian_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_donchian_reset(nint handle);
@@ -6202,6 +9177,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_donchian_stop_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraDonchianStopOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_donchian_stop_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_donchian_stop_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_donchian_stop_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6213,6 +9195,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_double_bollinger_update(nint handle, double @value, WickraDoubleBollingerOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_double_bollinger_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_double_bollinger_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_double_bollinger_reset(nint handle);
@@ -6228,6 +9217,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_elder_ray_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraElderRayOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_elder_ray_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_elder_ray_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_elder_ray_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6239,6 +9235,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_elder_safe_zone_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraElderSafeZoneOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_elder_safe_zone_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_elder_safe_zone_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_elder_safe_zone_reset(nint handle);
@@ -6254,6 +9257,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_equivolume_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraEquivolumeOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_equivolume_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_equivolume_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_equivolume_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6265,6 +9275,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_fib_arcs_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraFibArcsOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_fib_arcs_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_fib_arcs_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_fib_arcs_reset(nint handle);
@@ -6280,6 +9297,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_fib_channel_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraFibChannelOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_fib_channel_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_fib_channel_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_fib_channel_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6291,6 +9315,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_fib_confluence_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraFibConfluenceOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_fib_confluence_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_fib_confluence_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_fib_confluence_reset(nint handle);
@@ -6306,6 +9337,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_fib_extension_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraFibExtensionOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_fib_extension_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_fib_extension_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_fib_extension_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6317,6 +9355,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_fib_fan_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraFibFanOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_fib_fan_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_fib_fan_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_fib_fan_reset(nint handle);
@@ -6332,6 +9377,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_fib_projection_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraFibProjectionOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_fib_projection_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_fib_projection_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_fib_projection_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6343,6 +9395,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_fib_retracement_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraFibRetracementOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_fib_retracement_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_fib_retracement_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_fib_retracement_reset(nint handle);
@@ -6358,6 +9417,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_fib_time_zones_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraFibTimeZonesOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_fib_time_zones_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_fib_time_zones_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_fib_time_zones_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6369,6 +9435,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_fibonacci_pivots_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraFibonacciPivotsOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_fibonacci_pivots_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_fibonacci_pivots_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_fibonacci_pivots_reset(nint handle);
@@ -6384,6 +9457,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_fractal_chaos_bands_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraFractalChaosBandsOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_fractal_chaos_bands_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_fractal_chaos_bands_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_fractal_chaos_bands_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6395,6 +9475,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_gator_oscillator_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraGatorOscillatorOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_gator_oscillator_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_gator_oscillator_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_gator_oscillator_reset(nint handle);
@@ -6410,6 +9497,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_golden_pocket_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraGoldenPocketOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_golden_pocket_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_golden_pocket_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_golden_pocket_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6421,6 +9515,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_heikin_ashi_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraHeikinAshiOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_heikin_ashi_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_heikin_ashi_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_heikin_ashi_reset(nint handle);
@@ -6436,6 +9537,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_high_low_volume_nodes_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraHighLowVolumeNodesOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_high_low_volume_nodes_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_high_low_volume_nodes_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_high_low_volume_nodes_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6447,6 +9555,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_ht_phasor_update(nint handle, double @value, WickraHtPhasorOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_ht_phasor_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_ht_phasor_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_ht_phasor_reset(nint handle);
@@ -6462,6 +9577,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_hurst_channel_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraHurstChannelOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_hurst_channel_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_hurst_channel_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_hurst_channel_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6473,6 +9595,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_ichimoku_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraIchimokuOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_ichimoku_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_ichimoku_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_ichimoku_reset(nint handle);
@@ -6488,6 +9617,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_initial_balance_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraInitialBalanceOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_initial_balance_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_initial_balance_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_initial_balance_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6499,6 +9635,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_kalman_hedge_ratio_update(nint handle, double x, double y, WickraKalmanHedgeRatioOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_kalman_hedge_ratio_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_kalman_hedge_ratio_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_kalman_hedge_ratio_reset(nint handle);
@@ -6514,6 +9657,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_kase_dev_stop_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraKaseDevStopOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_kase_dev_stop_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_kase_dev_stop_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_kase_dev_stop_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6525,6 +9675,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_kase_permission_stochastic_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraKasePermissionStochasticOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_kase_permission_stochastic_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_kase_permission_stochastic_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_kase_permission_stochastic_reset(nint handle);
@@ -6540,6 +9697,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_keltner_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraKeltnerOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_keltner_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_keltner_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_keltner_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6551,6 +9715,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_kst_update(nint handle, double @value, WickraKstOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_kst_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_kst_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_kst_reset(nint handle);
@@ -6566,6 +9737,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_lead_lag_cross_correlation_update(nint handle, double x, double y, WickraLeadLagCrossCorrelationOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_lead_lag_cross_correlation_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_lead_lag_cross_correlation_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_lead_lag_cross_correlation_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6577,6 +9755,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_lin_reg_channel_update(nint handle, double @value, WickraLinRegChannelOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_lin_reg_channel_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_lin_reg_channel_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_lin_reg_channel_reset(nint handle);
@@ -6592,6 +9777,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_liquidation_features_update(nint handle, double fundingRate, double markPrice, double indexPrice, double futuresPrice, double openInterest, double longSize, double shortSize, double takerBuyVolume, double takerSellVolume, double longLiquidation, double shortLiquidation, long timestamp, WickraLiquidationFeaturesOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_liquidation_features_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_liquidation_features_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_liquidation_features_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6603,6 +9795,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_ma_envelope_update(nint handle, double @value, WickraMaEnvelopeOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_ma_envelope_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_ma_envelope_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_ma_envelope_reset(nint handle);
@@ -6618,6 +9817,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_macd_indicator_update(nint handle, double @value, WickraMacdOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_macd_indicator_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_macd_indicator_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_macd_indicator_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6629,6 +9835,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_macd_fix_update(nint handle, double @value, WickraMacdOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_macd_fix_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_macd_fix_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_macd_fix_reset(nint handle);
@@ -6644,6 +9857,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_mama_update(nint handle, double @value, WickraMamaOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_mama_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_mama_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_mama_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6655,6 +9875,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_median_channel_update(nint handle, double @value, WickraMedianChannelOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_median_channel_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_median_channel_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_median_channel_reset(nint handle);
@@ -6670,6 +9897,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_modified_ma_stop_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraModifiedMaStopOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_modified_ma_stop_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_modified_ma_stop_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_modified_ma_stop_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6681,6 +9915,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_murrey_math_lines_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraMurreyMathLinesOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_murrey_math_lines_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_murrey_math_lines_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_murrey_math_lines_reset(nint handle);
@@ -6696,6 +9937,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_nrtr_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraNrtrOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_nrtr_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_nrtr_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_nrtr_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6707,6 +9955,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_opening_range_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraOpeningRangeOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_opening_range_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_opening_range_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_opening_range_reset(nint handle);
@@ -6722,6 +9977,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_overnight_intraday_return_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraOvernightIntradayReturnOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_overnight_intraday_return_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_overnight_intraday_return_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_overnight_intraday_return_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6733,6 +9995,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_projection_bands_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraProjectionBandsOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_projection_bands_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_projection_bands_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_projection_bands_reset(nint handle);
@@ -6748,6 +10017,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_qqe_update(nint handle, double @value, WickraQqeOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_qqe_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_qqe_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_qqe_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6759,6 +10035,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_quartile_bands_update(nint handle, double @value, WickraQuartileBandsOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_quartile_bands_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_quartile_bands_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_quartile_bands_reset(nint handle);
@@ -6774,6 +10057,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_relative_strength_ab_update(nint handle, double x, double y, WickraRelativeStrengthOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_relative_strength_ab_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_relative_strength_ab_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_relative_strength_ab_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6785,6 +10075,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_rwi_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraRwiOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_rwi_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_rwi_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_rwi_reset(nint handle);
@@ -6800,6 +10097,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_session_high_low_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraSessionHighLowOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_session_high_low_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_session_high_low_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_session_high_low_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6811,6 +10115,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_session_range_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraSessionRangeOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_session_range_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_session_range_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_session_range_reset(nint handle);
@@ -6826,6 +10137,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_smoothed_heikin_ashi_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraSmoothedHeikinAshiOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_smoothed_heikin_ashi_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_smoothed_heikin_ashi_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_smoothed_heikin_ashi_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6837,6 +10155,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_spread_bollinger_bands_update(nint handle, double x, double y, WickraSpreadBollingerBandsOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_spread_bollinger_bands_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_spread_bollinger_bands_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_spread_bollinger_bands_reset(nint handle);
@@ -6852,6 +10177,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_standard_error_bands_update(nint handle, double @value, WickraStandardErrorBandsOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_standard_error_bands_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_standard_error_bands_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_standard_error_bands_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6863,6 +10195,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_starc_bands_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraStarcBandsOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_starc_bands_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_starc_bands_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_starc_bands_reset(nint handle);
@@ -6878,6 +10217,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_stochastic_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraStochasticOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_stochastic_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_stochastic_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_stochastic_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6889,6 +10235,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_super_trend_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraSuperTrendOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_super_trend_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_super_trend_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_super_trend_reset(nint handle);
@@ -6904,6 +10257,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_td_lines_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraTdLinesOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_td_lines_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_td_lines_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_td_lines_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6915,6 +10275,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_td_moving_average_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraTdMovingAverageOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_td_moving_average_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_td_moving_average_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_td_moving_average_reset(nint handle);
@@ -6930,6 +10297,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_td_range_projection_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraTdRangeProjectionOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_td_range_projection_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_td_range_projection_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_td_range_projection_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6941,6 +10315,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_td_risk_level_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraTdRiskLevelOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_td_risk_level_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_td_risk_level_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_td_risk_level_reset(nint handle);
@@ -6956,6 +10337,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_td_sequential_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraTdSequentialOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_td_sequential_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_td_sequential_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_td_sequential_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6967,6 +10355,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_ttm_squeeze_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraTtmSqueezeOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_ttm_squeeze_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_ttm_squeeze_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_ttm_squeeze_reset(nint handle);
@@ -6982,6 +10377,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_value_area_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraValueAreaOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_value_area_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_value_area_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_value_area_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -6993,6 +10395,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_volatility_cone_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraVolatilityConeOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_volatility_cone_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_volatility_cone_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_volatility_cone_reset(nint handle);
@@ -7008,6 +10417,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_volume_weighted_macd_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraVolumeWeightedMacdOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_volume_weighted_macd_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_volume_weighted_macd_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_volume_weighted_macd_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -7019,6 +10435,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_volume_weighted_sr_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraVolumeWeightedSrOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_volume_weighted_sr_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_volume_weighted_sr_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_volume_weighted_sr_reset(nint handle);
@@ -7034,6 +10457,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_vortex_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraVortexOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_vortex_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_vortex_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_vortex_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -7045,6 +10475,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_vwap_std_dev_bands_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraVwapStdDevBandsOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_vwap_std_dev_bands_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_vwap_std_dev_bands_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_vwap_std_dev_bands_reset(nint handle);
@@ -7060,6 +10497,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_wave_trend_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraWaveTrendOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_wave_trend_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_wave_trend_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_wave_trend_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -7071,6 +10515,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_williams_fractals_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraWilliamsFractalsOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_williams_fractals_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_williams_fractals_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_williams_fractals_reset(nint handle);
@@ -7086,6 +10537,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_woodie_pivots_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraWoodiePivotsOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_woodie_pivots_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_woodie_pivots_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_woodie_pivots_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -7097,6 +10555,13 @@ internal static partial class NativeMethods
     [LibraryImport(WickraNative.LibraryName)]
     [return: MarshalAs(UnmanagedType.U1)]
     internal static unsafe partial bool wickra_zero_lag_macd_update(nint handle, double @value, WickraZeroLagMacdOutput* @out);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_zero_lag_macd_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_zero_lag_macd_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_zero_lag_macd_reset(nint handle);
@@ -7112,6 +10577,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_zig_zag_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraZigZagOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_zig_zag_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_zig_zag_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_zig_zag_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -7122,6 +10594,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial nint wickra_day_of_week_profile_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, double* values, nuint cap);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_day_of_week_profile_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_day_of_week_profile_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_day_of_week_profile_reset(nint handle);
@@ -7136,6 +10615,13 @@ internal static partial class NativeMethods
     internal static unsafe partial nint wickra_intraday_volatility_profile_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, double* values, nuint cap);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_intraday_volatility_profile_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_intraday_volatility_profile_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_intraday_volatility_profile_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -7146,6 +10632,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial nint wickra_time_of_day_return_profile_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, double* values, nuint cap);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_time_of_day_return_profile_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_time_of_day_return_profile_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_time_of_day_return_profile_reset(nint handle);
@@ -7160,6 +10653,13 @@ internal static partial class NativeMethods
     internal static unsafe partial nint wickra_tpo_profile_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraTpoProfileOutputScalars* scalars, double* values, nuint cap);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_tpo_profile_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_tpo_profile_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_tpo_profile_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -7172,6 +10672,13 @@ internal static partial class NativeMethods
     internal static unsafe partial nint wickra_volume_by_time_profile_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, double* values, nuint cap);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_volume_by_time_profile_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_volume_by_time_profile_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_volume_by_time_profile_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -7182,6 +10689,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial nint wickra_volume_profile_update(nint handle, double open, double high, double low, double close, double volume, long timestamp, WickraVolumeProfileOutputScalars* scalars, double* values, nuint cap);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_volume_profile_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_volume_profile_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_volume_profile_reset(nint handle);
@@ -7317,6 +10831,13 @@ internal static partial class NativeMethods
     internal static unsafe partial bool wickra_macd_ext_update(nint handle, double @value, WickraMacdOutput* @out);
 
     [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_macd_ext_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_macd_ext_is_ready(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_macd_ext_reset(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
@@ -7327,6 +10848,13 @@ internal static partial class NativeMethods
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static unsafe partial nint wickra_footprint_update(nint handle, double price, double size, [MarshalAs(UnmanagedType.U1)] bool isBuy, long timestamp, WickraFootprintLevel* @out, nuint cap);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    internal static partial nuint wickra_footprint_warmup_period(nint handle);
+
+    [LibraryImport(WickraNative.LibraryName)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static partial bool wickra_footprint_is_ready(nint handle);
 
     [LibraryImport(WickraNative.LibraryName)]
     internal static partial void wickra_footprint_reset(nint handle);

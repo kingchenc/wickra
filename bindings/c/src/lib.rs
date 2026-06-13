@@ -7,6 +7,11 @@
 //!   while warming up / if `h` is `NULL` / if the inputs are invalid.
 //! - `wickra_<ind>_batch(h, ..., out, n)` — write one output per input into the
 //!   caller-owned `out` buffer (length `n`), `NaN` at warmup positions.
+//! - `wickra_<ind>_warmup_period(h)` — updates needed before a non-`NaN` output
+//!   (`0` on a `NULL` handle).
+//! - `wickra_<ind>_is_ready(h)` — whether enough input has been consumed to emit
+//!   a value (`false` on a `NULL` handle). Both are absent for the alt-chart bar
+//!   builders, which have no warmup.
 //! - `wickra_<ind>_reset(h)` — clear all state.
 //! - `wickra_<ind>_free(h)` — destroy the handle. Every `_new` must be paired
 //!   with exactly one `_free`; there is no RAII across the C boundary.
@@ -150,6 +155,32 @@ pub unsafe extern "C" fn wickra_adaptive_cycle_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adaptive_cycle_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adaptive_cycle_warmup_period(handle: *mut AdaptiveCycle) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adaptive_cycle_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adaptive_cycle_is_ready(handle: *mut AdaptiveCycle) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -222,6 +253,36 @@ pub unsafe extern "C" fn wickra_adaptive_laguerre_filter_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adaptive_laguerre_filter_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adaptive_laguerre_filter_warmup_period(
+    handle: *mut AdaptiveLaguerreFilter,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adaptive_laguerre_filter_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adaptive_laguerre_filter_is_ready(
+    handle: *mut AdaptiveLaguerreFilter,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -288,6 +349,32 @@ pub unsafe extern "C" fn wickra_adaptive_rsi_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adaptive_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adaptive_rsi_warmup_period(handle: *mut AdaptiveRsi) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adaptive_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adaptive_rsi_is_ready(handle: *mut AdaptiveRsi) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -358,6 +445,32 @@ pub unsafe extern "C" fn wickra_alma_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_alma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_alma_warmup_period(handle: *mut Alma) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_alma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_alma_is_ready(handle: *mut Alma) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -419,6 +532,32 @@ pub unsafe extern "C" fn wickra_anchored_rsi_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_anchored_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_anchored_rsi_warmup_period(handle: *mut AnchoredRsi) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_anchored_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_anchored_rsi_is_ready(handle: *mut AnchoredRsi) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -486,6 +625,32 @@ pub unsafe extern "C" fn wickra_apo_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_apo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_apo_warmup_period(handle: *mut Apo) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_apo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_apo_is_ready(handle: *mut Apo) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -559,6 +724,34 @@ pub unsafe extern "C" fn wickra_autocorrelation_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_autocorrelation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_autocorrelation_warmup_period(
+    handle: *mut Autocorrelation,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_autocorrelation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_autocorrelation_is_ready(handle: *mut Autocorrelation) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -629,6 +822,36 @@ pub unsafe extern "C" fn wickra_autocorrelation_periodogram_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_autocorrelation_periodogram_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_autocorrelation_periodogram_warmup_period(
+    handle: *mut AutocorrelationPeriodogram,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_autocorrelation_periodogram_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_autocorrelation_periodogram_is_ready(
+    handle: *mut AutocorrelationPeriodogram,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -706,6 +929,34 @@ pub unsafe extern "C" fn wickra_average_drawdown_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_average_drawdown_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_average_drawdown_warmup_period(
+    handle: *mut AverageDrawdown,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_average_drawdown_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_average_drawdown_is_ready(handle: *mut AverageDrawdown) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -776,6 +1027,34 @@ pub unsafe extern "C" fn wickra_bandpass_filter_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bandpass_filter_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bandpass_filter_warmup_period(
+    handle: *mut BandpassFilter,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bandpass_filter_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bandpass_filter_is_ready(handle: *mut BandpassFilter) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -843,6 +1122,34 @@ pub unsafe extern "C" fn wickra_bipower_variation_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bipower_variation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bipower_variation_warmup_period(
+    handle: *mut BipowerVariation,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bipower_variation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bipower_variation_is_ready(handle: *mut BipowerVariation) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -919,6 +1226,36 @@ pub unsafe extern "C" fn wickra_bollinger_bandwidth_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bollinger_bandwidth_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bollinger_bandwidth_warmup_period(
+    handle: *mut BollingerBandwidth,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bollinger_bandwidth_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bollinger_bandwidth_is_ready(
+    handle: *mut BollingerBandwidth,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -986,6 +1323,32 @@ pub unsafe extern "C" fn wickra_burke_ratio_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_burke_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_burke_ratio_warmup_period(handle: *mut BurkeRatio) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_burke_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_burke_ratio_is_ready(handle: *mut BurkeRatio) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -1050,6 +1413,32 @@ pub unsafe extern "C" fn wickra_calmar_ratio_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_calmar_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_calmar_ratio_warmup_period(handle: *mut CalmarRatio) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_calmar_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_calmar_ratio_is_ready(handle: *mut CalmarRatio) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -1123,6 +1512,34 @@ pub unsafe extern "C" fn wickra_center_of_gravity_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_center_of_gravity_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_center_of_gravity_warmup_period(
+    handle: *mut CenterOfGravity,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_center_of_gravity_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_center_of_gravity_is_ready(handle: *mut CenterOfGravity) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -1190,6 +1607,32 @@ pub unsafe extern "C" fn wickra_cfo_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cfo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cfo_warmup_period(handle: *mut Cfo) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cfo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cfo_is_ready(handle: *mut Cfo) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -1254,6 +1697,32 @@ pub unsafe extern "C" fn wickra_cmo_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cmo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cmo_warmup_period(handle: *mut Cmo) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cmo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cmo_is_ready(handle: *mut Cmo) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -1329,6 +1798,36 @@ pub unsafe extern "C" fn wickra_coefficient_of_variation_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_coefficient_of_variation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_coefficient_of_variation_warmup_period(
+    handle: *mut CoefficientOfVariation,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_coefficient_of_variation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_coefficient_of_variation_is_ready(
+    handle: *mut CoefficientOfVariation,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -1398,6 +1897,34 @@ pub unsafe extern "C" fn wickra_common_sense_ratio_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_common_sense_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_common_sense_ratio_warmup_period(
+    handle: *mut CommonSenseRatio,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_common_sense_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_common_sense_ratio_is_ready(handle: *mut CommonSenseRatio) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -1471,6 +1998,36 @@ pub unsafe extern "C" fn wickra_conditional_value_at_risk_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_conditional_value_at_risk_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_conditional_value_at_risk_warmup_period(
+    handle: *mut ConditionalValueAtRisk,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_conditional_value_at_risk_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_conditional_value_at_risk_is_ready(
+    handle: *mut ConditionalValueAtRisk,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -1549,6 +2106,32 @@ pub unsafe extern "C" fn wickra_connors_rsi_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_connors_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_connors_rsi_warmup_period(handle: *mut ConnorsRsi) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_connors_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_connors_rsi_is_ready(handle: *mut ConnorsRsi) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -1617,6 +2200,32 @@ pub unsafe extern "C" fn wickra_coppock_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_coppock_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_coppock_warmup_period(handle: *mut Coppock) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_coppock_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_coppock_is_ready(handle: *mut Coppock) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -1689,6 +2298,36 @@ pub unsafe extern "C" fn wickra_correlation_trend_indicator_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_correlation_trend_indicator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_correlation_trend_indicator_warmup_period(
+    handle: *mut CorrelationTrendIndicator,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_correlation_trend_indicator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_correlation_trend_indicator_is_ready(
+    handle: *mut CorrelationTrendIndicator,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -1766,6 +2405,34 @@ pub unsafe extern "C" fn wickra_cybernetic_cycle_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cybernetic_cycle_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cybernetic_cycle_warmup_period(
+    handle: *mut CyberneticCycle,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cybernetic_cycle_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cybernetic_cycle_is_ready(handle: *mut CyberneticCycle) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -1830,6 +2497,32 @@ pub unsafe extern "C" fn wickra_decycler_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_decycler_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_decycler_warmup_period(handle: *mut Decycler) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_decycler_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_decycler_is_ready(handle: *mut Decycler) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -1906,6 +2599,36 @@ pub unsafe extern "C" fn wickra_decycler_oscillator_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_decycler_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_decycler_oscillator_warmup_period(
+    handle: *mut DecyclerOscillator,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_decycler_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_decycler_oscillator_is_ready(
+    handle: *mut DecyclerOscillator,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -1970,6 +2693,32 @@ pub unsafe extern "C" fn wickra_dema_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_dema_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dema_warmup_period(handle: *mut Dema) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_dema_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dema_is_ready(handle: *mut Dema) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -2048,6 +2797,36 @@ pub unsafe extern "C" fn wickra_derivative_oscillator_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_derivative_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_derivative_oscillator_warmup_period(
+    handle: *mut DerivativeOscillator,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_derivative_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_derivative_oscillator_is_ready(
+    handle: *mut DerivativeOscillator,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -2115,6 +2894,34 @@ pub unsafe extern "C" fn wickra_detrended_std_dev_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_detrended_std_dev_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_detrended_std_dev_warmup_period(
+    handle: *mut DetrendedStdDev,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_detrended_std_dev_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_detrended_std_dev_is_ready(handle: *mut DetrendedStdDev) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -2188,6 +2995,34 @@ pub unsafe extern "C" fn wickra_disparity_index_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_disparity_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_disparity_index_warmup_period(
+    handle: *mut DisparityIndex,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_disparity_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_disparity_index_is_ready(handle: *mut DisparityIndex) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -2255,6 +3090,32 @@ pub unsafe extern "C" fn wickra_dpo_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_dpo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dpo_warmup_period(handle: *mut Dpo) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_dpo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dpo_is_ready(handle: *mut Dpo) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -2319,6 +3180,34 @@ pub unsafe extern "C" fn wickra_drawdown_duration_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).map_or(f64::NAN, f64::from);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_drawdown_duration_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_drawdown_duration_warmup_period(
+    handle: *mut DrawdownDuration,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_drawdown_duration_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_drawdown_duration_is_ready(handle: *mut DrawdownDuration) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -2392,6 +3281,36 @@ pub unsafe extern "C" fn wickra_dynamic_momentum_index_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_dynamic_momentum_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dynamic_momentum_index_warmup_period(
+    handle: *mut DynamicMomentumIndex,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_dynamic_momentum_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dynamic_momentum_index_is_ready(
+    handle: *mut DynamicMomentumIndex,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -2462,6 +3381,34 @@ pub unsafe extern "C" fn wickra_ehlers_stochastic_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ehlers_stochastic_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ehlers_stochastic_warmup_period(
+    handle: *mut EhlersStochastic,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ehlers_stochastic_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ehlers_stochastic_is_ready(handle: *mut EhlersStochastic) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -2526,6 +3473,32 @@ pub unsafe extern "C" fn wickra_ehma_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ehma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ehma_warmup_period(handle: *mut Ehma) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ehma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ehma_is_ready(handle: *mut Ehma) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -2601,6 +3574,32 @@ pub unsafe extern "C" fn wickra_elder_impulse_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_elder_impulse_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_elder_impulse_warmup_period(handle: *mut ElderImpulse) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_elder_impulse_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_elder_impulse_is_ready(handle: *mut ElderImpulse) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -2665,6 +3664,32 @@ pub unsafe extern "C" fn wickra_ema_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ema_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ema_warmup_period(handle: *mut Ema) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ema_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ema_is_ready(handle: *mut Ema) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -2738,6 +3763,36 @@ pub unsafe extern "C" fn wickra_empirical_mode_decomposition_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_empirical_mode_decomposition_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_empirical_mode_decomposition_warmup_period(
+    handle: *mut EmpiricalModeDecomposition,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_empirical_mode_decomposition_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_empirical_mode_decomposition_is_ready(
+    handle: *mut EmpiricalModeDecomposition,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -2818,6 +3873,36 @@ pub unsafe extern "C" fn wickra_even_better_sinewave_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_even_better_sinewave_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_even_better_sinewave_warmup_period(
+    handle: *mut EvenBetterSinewave,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_even_better_sinewave_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_even_better_sinewave_is_ready(
+    handle: *mut EvenBetterSinewave,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -2888,6 +3973,34 @@ pub unsafe extern "C" fn wickra_ewma_volatility_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ewma_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ewma_volatility_warmup_period(
+    handle: *mut EwmaVolatility,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ewma_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ewma_volatility_is_ready(handle: *mut EwmaVolatility) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -2952,6 +4065,32 @@ pub unsafe extern "C" fn wickra_expectancy_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_expectancy_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_expectancy_warmup_period(handle: *mut Expectancy) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_expectancy_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_expectancy_is_ready(handle: *mut Expectancy) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -3022,6 +4161,32 @@ pub unsafe extern "C" fn wickra_fama_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fama_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fama_warmup_period(handle: *mut Fama) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fama_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fama_is_ready(handle: *mut Fama) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -3086,6 +4251,32 @@ pub unsafe extern "C" fn wickra_fisher_rsi_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fisher_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fisher_rsi_warmup_period(handle: *mut FisherRsi) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fisher_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fisher_rsi_is_ready(handle: *mut FisherRsi) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -3159,6 +4350,34 @@ pub unsafe extern "C" fn wickra_fisher_transform_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fisher_transform_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fisher_transform_warmup_period(
+    handle: *mut FisherTransform,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fisher_transform_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fisher_transform_is_ready(handle: *mut FisherTransform) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -3223,6 +4442,32 @@ pub unsafe extern "C" fn wickra_frama_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_frama_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_frama_warmup_period(handle: *mut Frama) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_frama_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_frama_is_ready(handle: *mut Frama) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -3296,6 +4541,32 @@ pub unsafe extern "C" fn wickra_gain_loss_ratio_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_gain_loss_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gain_loss_ratio_warmup_period(handle: *mut GainLossRatio) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_gain_loss_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gain_loss_ratio_is_ready(handle: *mut GainLossRatio) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -3366,6 +4637,34 @@ pub unsafe extern "C" fn wickra_gain_to_pain_ratio_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_gain_to_pain_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gain_to_pain_ratio_warmup_period(
+    handle: *mut GainToPainRatio,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_gain_to_pain_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gain_to_pain_ratio_is_ready(handle: *mut GainToPainRatio) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -3430,6 +4729,32 @@ pub unsafe extern "C" fn wickra_garch11_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_garch11_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_garch11_warmup_period(handle: *mut Garch11) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_garch11_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_garch11_is_ready(handle: *mut Garch11) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -3503,6 +4828,34 @@ pub unsafe extern "C" fn wickra_generalized_dema_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_generalized_dema_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_generalized_dema_warmup_period(
+    handle: *mut GeneralizedDema,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_generalized_dema_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_generalized_dema_is_ready(handle: *mut GeneralizedDema) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -3567,6 +4920,32 @@ pub unsafe extern "C" fn wickra_geometric_ma_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_geometric_ma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_geometric_ma_warmup_period(handle: *mut GeometricMa) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_geometric_ma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_geometric_ma_is_ready(handle: *mut GeometricMa) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -3640,6 +5019,34 @@ pub unsafe extern "C" fn wickra_highpass_filter_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_highpass_filter_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_highpass_filter_warmup_period(
+    handle: *mut HighpassFilter,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_highpass_filter_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_highpass_filter_is_ready(handle: *mut HighpassFilter) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -3704,6 +5111,36 @@ pub unsafe extern "C" fn wickra_hilbert_dominant_cycle_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hilbert_dominant_cycle_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hilbert_dominant_cycle_warmup_period(
+    handle: *mut HilbertDominantCycle,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hilbert_dominant_cycle_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hilbert_dominant_cycle_is_ready(
+    handle: *mut HilbertDominantCycle,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -3780,6 +5217,36 @@ pub unsafe extern "C" fn wickra_historical_volatility_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_historical_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_historical_volatility_warmup_period(
+    handle: *mut HistoricalVolatility,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_historical_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_historical_volatility_is_ready(
+    handle: *mut HistoricalVolatility,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -3844,6 +5311,32 @@ pub unsafe extern "C" fn wickra_hma_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hma_warmup_period(handle: *mut Hma) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hma_is_ready(handle: *mut Hma) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -3914,6 +5407,32 @@ pub unsafe extern "C" fn wickra_holt_winters_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_holt_winters_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_holt_winters_warmup_period(handle: *mut HoltWinters) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_holt_winters_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_holt_winters_is_ready(handle: *mut HoltWinters) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -3978,6 +5497,32 @@ pub unsafe extern "C" fn wickra_ht_dc_phase_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ht_dc_phase_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ht_dc_phase_warmup_period(handle: *mut HtDcPhase) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ht_dc_phase_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ht_dc_phase_is_ready(handle: *mut HtDcPhase) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -4039,6 +5584,32 @@ pub unsafe extern "C" fn wickra_ht_trend_mode_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ht_trend_mode_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ht_trend_mode_warmup_period(handle: *mut HtTrendMode) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ht_trend_mode_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ht_trend_mode_is_ready(handle: *mut HtTrendMode) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -4112,6 +5683,32 @@ pub unsafe extern "C" fn wickra_hurst_exponent_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hurst_exponent_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hurst_exponent_warmup_period(handle: *mut HurstExponent) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hurst_exponent_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hurst_exponent_is_ready(handle: *mut HurstExponent) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -4179,6 +5776,36 @@ pub unsafe extern "C" fn wickra_instantaneous_trendline_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_instantaneous_trendline_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_instantaneous_trendline_warmup_period(
+    handle: *mut InstantaneousTrendline,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_instantaneous_trendline_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_instantaneous_trendline_is_ready(
+    handle: *mut InstantaneousTrendline,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -4252,6 +5879,36 @@ pub unsafe extern "C" fn wickra_inverse_fisher_transform_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_inverse_fisher_transform_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_inverse_fisher_transform_warmup_period(
+    handle: *mut InverseFisherTransform,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_inverse_fisher_transform_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_inverse_fisher_transform_is_ready(
+    handle: *mut InverseFisherTransform,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -4321,6 +5978,32 @@ pub unsafe extern "C" fn wickra_jarque_bera_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_jarque_bera_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_jarque_bera_warmup_period(handle: *mut JarqueBera) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_jarque_bera_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_jarque_bera_is_ready(handle: *mut JarqueBera) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -4385,6 +6068,32 @@ pub unsafe extern "C" fn wickra_jma_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_jma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_jma_warmup_period(handle: *mut Jma) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_jma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_jma_is_ready(handle: *mut Jma) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -4458,6 +6167,32 @@ pub unsafe extern "C" fn wickra_jump_indicator_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_jump_indicator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_jump_indicator_warmup_period(handle: *mut JumpIndicator) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_jump_indicator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_jump_indicator_is_ready(handle: *mut JumpIndicator) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -4525,6 +6260,32 @@ pub unsafe extern "C" fn wickra_k_ratio_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_k_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_k_ratio_warmup_period(handle: *mut KRatio) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_k_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_k_ratio_is_ready(handle: *mut KRatio) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -4589,6 +6350,32 @@ pub unsafe extern "C" fn wickra_kama_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kama_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kama_warmup_period(handle: *mut Kama) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kama_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kama_is_ready(handle: *mut Kama) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -4662,6 +6449,34 @@ pub unsafe extern "C" fn wickra_kelly_criterion_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kelly_criterion_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kelly_criterion_warmup_period(
+    handle: *mut KellyCriterion,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kelly_criterion_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kelly_criterion_is_ready(handle: *mut KellyCriterion) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -4729,6 +6544,32 @@ pub unsafe extern "C" fn wickra_kurtosis_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kurtosis_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kurtosis_warmup_period(handle: *mut Kurtosis) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kurtosis_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kurtosis_is_ready(handle: *mut Kurtosis) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -4793,6 +6634,32 @@ pub unsafe extern "C" fn wickra_laguerre_rsi_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_laguerre_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_laguerre_rsi_warmup_period(handle: *mut LaguerreRsi) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_laguerre_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_laguerre_rsi_is_ready(handle: *mut LaguerreRsi) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -4866,6 +6733,34 @@ pub unsafe extern "C" fn wickra_linear_regression_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_linear_regression_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_linear_regression_warmup_period(
+    handle: *mut LinearRegression,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_linear_regression_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_linear_regression_is_ready(handle: *mut LinearRegression) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -4930,6 +6825,32 @@ pub unsafe extern "C" fn wickra_lin_reg_angle_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_lin_reg_angle_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lin_reg_angle_warmup_period(handle: *mut LinRegAngle) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_lin_reg_angle_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lin_reg_angle_is_ready(handle: *mut LinRegAngle) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -5003,6 +6924,34 @@ pub unsafe extern "C" fn wickra_lin_reg_intercept_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_lin_reg_intercept_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lin_reg_intercept_warmup_period(
+    handle: *mut LinRegIntercept,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_lin_reg_intercept_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lin_reg_intercept_is_ready(handle: *mut LinRegIntercept) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -5070,6 +7019,32 @@ pub unsafe extern "C" fn wickra_lin_reg_slope_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_lin_reg_slope_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lin_reg_slope_warmup_period(handle: *mut LinRegSlope) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_lin_reg_slope_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lin_reg_slope_is_ready(handle: *mut LinRegSlope) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -5134,6 +7109,32 @@ pub unsafe extern "C" fn wickra_log_return_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_log_return_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_log_return_warmup_period(handle: *mut LogReturn) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_log_return_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_log_return_is_ready(handle: *mut LogReturn) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -5205,6 +7206,32 @@ pub unsafe extern "C" fn wickra_m2_measure_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_m2_measure_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_m2_measure_warmup_period(handle: *mut M2Measure) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_m2_measure_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_m2_measure_is_ready(handle: *mut M2Measure) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -5282,6 +7309,32 @@ pub unsafe extern "C" fn wickra_macd_histogram_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_macd_histogram_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_histogram_warmup_period(handle: *mut MacdHistogram) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_macd_histogram_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_histogram_is_ready(handle: *mut MacdHistogram) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -5346,6 +7399,32 @@ pub unsafe extern "C" fn wickra_martin_ratio_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_martin_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_martin_ratio_warmup_period(handle: *mut MartinRatio) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_martin_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_martin_ratio_is_ready(handle: *mut MartinRatio) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -5416,6 +7495,32 @@ pub unsafe extern "C" fn wickra_max_drawdown_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_max_drawdown_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_max_drawdown_warmup_period(handle: *mut MaxDrawdown) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_max_drawdown_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_max_drawdown_is_ready(handle: *mut MaxDrawdown) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -5483,6 +7588,34 @@ pub unsafe extern "C" fn wickra_mc_ginley_dynamic_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mc_ginley_dynamic_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mc_ginley_dynamic_warmup_period(
+    handle: *mut McGinleyDynamic,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mc_ginley_dynamic_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mc_ginley_dynamic_is_ready(handle: *mut McGinleyDynamic) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -5558,6 +7691,36 @@ pub unsafe extern "C" fn wickra_median_absolute_deviation_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_median_absolute_deviation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_median_absolute_deviation_warmup_period(
+    handle: *mut MedianAbsoluteDeviation,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_median_absolute_deviation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_median_absolute_deviation_is_ready(
+    handle: *mut MedianAbsoluteDeviation,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -5629,6 +7792,32 @@ pub unsafe extern "C" fn wickra_median_ma_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_median_ma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_median_ma_warmup_period(handle: *mut MedianMa) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_median_ma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_median_ma_is_ready(handle: *mut MedianMa) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -5693,6 +7882,32 @@ pub unsafe extern "C" fn wickra_mid_point_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mid_point_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mid_point_warmup_period(handle: *mut MidPoint) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mid_point_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mid_point_is_ready(handle: *mut MidPoint) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -5763,6 +7978,32 @@ pub unsafe extern "C" fn wickra_mom_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mom_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mom_warmup_period(handle: *mut Mom) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mom_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mom_is_ready(handle: *mut Mom) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -5827,6 +8068,32 @@ pub unsafe extern "C" fn wickra_omega_ratio_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_omega_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_omega_ratio_warmup_period(handle: *mut OmegaRatio) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_omega_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_omega_ratio_is_ready(handle: *mut OmegaRatio) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -5897,6 +8164,32 @@ pub unsafe extern "C" fn wickra_pain_index_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pain_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pain_index_warmup_period(handle: *mut PainIndex) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pain_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pain_index_is_ready(handle: *mut PainIndex) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -5961,6 +8254,32 @@ pub unsafe extern "C" fn wickra_percent_b_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_percent_b_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_percent_b_warmup_period(handle: *mut PercentB) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_percent_b_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_percent_b_is_ready(handle: *mut PercentB) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -6034,6 +8353,36 @@ pub unsafe extern "C" fn wickra_percentage_trailing_stop_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_percentage_trailing_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_percentage_trailing_stop_warmup_period(
+    handle: *mut PercentageTrailingStop,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_percentage_trailing_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_percentage_trailing_stop_is_ready(
+    handle: *mut PercentageTrailingStop,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -6100,6 +8449,32 @@ pub unsafe extern "C" fn wickra_pmo_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pmo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pmo_warmup_period(handle: *mut Pmo) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pmo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pmo_is_ready(handle: *mut Pmo) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -6176,6 +8551,36 @@ pub unsafe extern "C" fn wickra_polarized_fractal_efficiency_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_polarized_fractal_efficiency_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_polarized_fractal_efficiency_warmup_period(
+    handle: *mut PolarizedFractalEfficiency,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_polarized_fractal_efficiency_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_polarized_fractal_efficiency_is_ready(
+    handle: *mut PolarizedFractalEfficiency,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -6244,6 +8649,32 @@ pub unsafe extern "C" fn wickra_ppo_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ppo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ppo_warmup_period(handle: *mut Ppo) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ppo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ppo_is_ready(handle: *mut Ppo) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -6318,6 +8749,32 @@ pub unsafe extern "C" fn wickra_ppo_histogram_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ppo_histogram_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ppo_histogram_warmup_period(handle: *mut PpoHistogram) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ppo_histogram_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ppo_histogram_is_ready(handle: *mut PpoHistogram) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -6385,6 +8842,32 @@ pub unsafe extern "C" fn wickra_profit_factor_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_profit_factor_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_profit_factor_warmup_period(handle: *mut ProfitFactor) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_profit_factor_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_profit_factor_is_ready(handle: *mut ProfitFactor) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -6449,6 +8932,32 @@ pub unsafe extern "C" fn wickra_r_squared_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_r_squared_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_r_squared_warmup_period(handle: *mut RSquared) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_r_squared_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_r_squared_is_ready(handle: *mut RSquared) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -6522,6 +9031,36 @@ pub unsafe extern "C" fn wickra_realized_volatility_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_realized_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_realized_volatility_warmup_period(
+    handle: *mut RealizedVolatility,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_realized_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_realized_volatility_is_ready(
+    handle: *mut RealizedVolatility,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -6586,6 +9125,34 @@ pub unsafe extern "C" fn wickra_recovery_factor_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_recovery_factor_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_recovery_factor_warmup_period(
+    handle: *mut RecoveryFactor,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_recovery_factor_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_recovery_factor_is_ready(handle: *mut RecoveryFactor) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -6656,6 +9223,32 @@ pub unsafe extern "C" fn wickra_reflex_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_reflex_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_reflex_warmup_period(handle: *mut Reflex) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_reflex_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_reflex_is_ready(handle: *mut Reflex) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -6720,6 +9313,32 @@ pub unsafe extern "C" fn wickra_regime_label_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_regime_label_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_regime_label_warmup_period(handle: *mut RegimeLabel) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_regime_label_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_regime_label_is_ready(handle: *mut RegimeLabel) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -6793,6 +9412,36 @@ pub unsafe extern "C" fn wickra_renko_trailing_stop_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_renko_trailing_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_renko_trailing_stop_warmup_period(
+    handle: *mut RenkoTrailingStop,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_renko_trailing_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_renko_trailing_stop_is_ready(
+    handle: *mut RenkoTrailingStop,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -6857,6 +9506,32 @@ pub unsafe extern "C" fn wickra_rmi_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rmi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rmi_warmup_period(handle: *mut Rmi) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rmi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rmi_is_ready(handle: *mut Rmi) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -6927,6 +9602,32 @@ pub unsafe extern "C" fn wickra_roc_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_roc_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_roc_warmup_period(handle: *mut Roc) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_roc_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_roc_is_ready(handle: *mut Roc) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -6991,6 +9692,32 @@ pub unsafe extern "C" fn wickra_rocp_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rocp_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rocp_warmup_period(handle: *mut Rocp) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rocp_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rocp_is_ready(handle: *mut Rocp) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -7061,6 +9788,32 @@ pub unsafe extern "C" fn wickra_rocr_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rocr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rocr_warmup_period(handle: *mut Rocr) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rocr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rocr_is_ready(handle: *mut Rocr) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -7128,6 +9881,32 @@ pub unsafe extern "C" fn wickra_rocr100_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rocr100_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rocr100_warmup_period(handle: *mut Rocr100) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rocr100_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rocr100_is_ready(handle: *mut Rocr100) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -7192,6 +9971,32 @@ pub unsafe extern "C" fn wickra_rolling_iqr_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_iqr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_iqr_warmup_period(handle: *mut RollingIqr) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_iqr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_iqr_is_ready(handle: *mut RollingIqr) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -7265,6 +10070,36 @@ pub unsafe extern "C" fn wickra_rolling_min_max_scaler_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_min_max_scaler_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_min_max_scaler_warmup_period(
+    handle: *mut RollingMinMaxScaler,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_min_max_scaler_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_min_max_scaler_is_ready(
+    handle: *mut RollingMinMaxScaler,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -7332,6 +10167,36 @@ pub unsafe extern "C" fn wickra_rolling_percentile_rank_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_percentile_rank_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_percentile_rank_warmup_period(
+    handle: *mut RollingPercentileRank,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_percentile_rank_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_percentile_rank_is_ready(
+    handle: *mut RollingPercentileRank,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -7408,6 +10273,34 @@ pub unsafe extern "C" fn wickra_rolling_quantile_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_quantile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_quantile_warmup_period(
+    handle: *mut RollingQuantile,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_quantile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_quantile_is_ready(handle: *mut RollingQuantile) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -7481,6 +10374,32 @@ pub unsafe extern "C" fn wickra_roofing_filter_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_roofing_filter_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_roofing_filter_warmup_period(handle: *mut RoofingFilter) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_roofing_filter_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_roofing_filter_is_ready(handle: *mut RoofingFilter) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -7545,6 +10464,32 @@ pub unsafe extern "C" fn wickra_rsi_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rsi_warmup_period(handle: *mut Rsi) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rsi_is_ready(handle: *mut Rsi) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -7615,6 +10560,32 @@ pub unsafe extern "C" fn wickra_rsx_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rsx_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rsx_warmup_period(handle: *mut Rsx) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rsx_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rsx_is_ready(handle: *mut Rsx) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -7682,6 +10653,32 @@ pub unsafe extern "C" fn wickra_rvi_volatility_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rvi_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rvi_volatility_warmup_period(handle: *mut RviVolatility) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rvi_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rvi_volatility_is_ready(handle: *mut RviVolatility) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -7759,6 +10756,32 @@ pub unsafe extern "C" fn wickra_sample_entropy_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sample_entropy_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sample_entropy_warmup_period(handle: *mut SampleEntropy) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sample_entropy_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sample_entropy_is_ready(handle: *mut SampleEntropy) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -7829,6 +10852,34 @@ pub unsafe extern "C" fn wickra_shannon_entropy_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_shannon_entropy_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_shannon_entropy_warmup_period(
+    handle: *mut ShannonEntropy,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_shannon_entropy_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_shannon_entropy_is_ready(handle: *mut ShannonEntropy) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -7896,6 +10947,32 @@ pub unsafe extern "C" fn wickra_sharpe_ratio_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sharpe_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sharpe_ratio_warmup_period(handle: *mut SharpeRatio) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sharpe_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sharpe_ratio_is_ready(handle: *mut SharpeRatio) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -7957,6 +11034,32 @@ pub unsafe extern "C" fn wickra_sine_wave_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sine_wave_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sine_wave_warmup_period(handle: *mut SineWave) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sine_wave_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sine_wave_is_ready(handle: *mut SineWave) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -8030,6 +11133,34 @@ pub unsafe extern "C" fn wickra_sine_weighted_ma_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sine_weighted_ma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sine_weighted_ma_warmup_period(
+    handle: *mut SineWeightedMa,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sine_weighted_ma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sine_weighted_ma_is_ready(handle: *mut SineWeightedMa) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -8094,6 +11225,32 @@ pub unsafe extern "C" fn wickra_skewness_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_skewness_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_skewness_warmup_period(handle: *mut Skewness) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_skewness_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_skewness_is_ready(handle: *mut Skewness) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -8164,6 +11321,32 @@ pub unsafe extern "C" fn wickra_sma_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sma_warmup_period(handle: *mut Sma) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sma_is_ready(handle: *mut Sma) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -8228,6 +11411,32 @@ pub unsafe extern "C" fn wickra_smma_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_smma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_smma_warmup_period(handle: *mut Smma) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_smma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_smma_is_ready(handle: *mut Smma) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -8298,6 +11507,32 @@ pub unsafe extern "C" fn wickra_sortino_ratio_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sortino_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sortino_ratio_warmup_period(handle: *mut SortinoRatio) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sortino_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sortino_ratio_is_ready(handle: *mut SortinoRatio) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -8365,6 +11600,32 @@ pub unsafe extern "C" fn wickra_standard_error_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_standard_error_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_standard_error_warmup_period(handle: *mut StandardError) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_standard_error_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_standard_error_is_ready(handle: *mut StandardError) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -8440,6 +11701,32 @@ pub unsafe extern "C" fn wickra_stc_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_stc_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stc_warmup_period(handle: *mut Stc) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_stc_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stc_is_ready(handle: *mut Stc) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -8504,6 +11791,32 @@ pub unsafe extern "C" fn wickra_std_dev_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_std_dev_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_std_dev_warmup_period(handle: *mut StdDev) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_std_dev_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_std_dev_is_ready(handle: *mut StdDev) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -8577,6 +11890,34 @@ pub unsafe extern "C" fn wickra_step_trailing_stop_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_step_trailing_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_step_trailing_stop_warmup_period(
+    handle: *mut StepTrailingStop,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_step_trailing_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_step_trailing_stop_is_ready(handle: *mut StepTrailingStop) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -8647,6 +11988,32 @@ pub unsafe extern "C" fn wickra_sterling_ratio_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sterling_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sterling_ratio_warmup_period(handle: *mut SterlingRatio) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sterling_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sterling_ratio_is_ready(handle: *mut SterlingRatio) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -8711,6 +12078,32 @@ pub unsafe extern "C" fn wickra_stoch_rsi_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_stoch_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stoch_rsi_warmup_period(handle: *mut StochRsi) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_stoch_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stoch_rsi_is_ready(handle: *mut StochRsi) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -8784,6 +12177,32 @@ pub unsafe extern "C" fn wickra_super_smoother_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_super_smoother_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_super_smoother_warmup_period(handle: *mut SuperSmoother) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_super_smoother_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_super_smoother_is_ready(handle: *mut SuperSmoother) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -8848,6 +12267,32 @@ pub unsafe extern "C" fn wickra_t3_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_t3_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_t3_warmup_period(handle: *mut T3) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_t3_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_t3_is_ready(handle: *mut T3) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -8918,6 +12363,32 @@ pub unsafe extern "C" fn wickra_tail_ratio_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tail_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tail_ratio_warmup_period(handle: *mut TailRatio) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tail_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tail_ratio_is_ready(handle: *mut TailRatio) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -8982,6 +12453,32 @@ pub unsafe extern "C" fn wickra_tema_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tema_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tema_warmup_period(handle: *mut Tema) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tema_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tema_is_ready(handle: *mut Tema) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -9052,6 +12549,32 @@ pub unsafe extern "C" fn wickra_tii_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tii_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tii_warmup_period(handle: *mut Tii) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tii_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tii_is_ready(handle: *mut Tii) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -9116,6 +12639,32 @@ pub unsafe extern "C" fn wickra_trend_label_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trend_label_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trend_label_warmup_period(handle: *mut TrendLabel) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trend_label_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trend_label_is_ready(handle: *mut TrendLabel) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -9189,6 +12738,36 @@ pub unsafe extern "C" fn wickra_trend_strength_index_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trend_strength_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trend_strength_index_warmup_period(
+    handle: *mut TrendStrengthIndex,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trend_strength_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trend_strength_index_is_ready(
+    handle: *mut TrendStrengthIndex,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -9253,6 +12832,32 @@ pub unsafe extern "C" fn wickra_trendflex_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trendflex_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trendflex_warmup_period(handle: *mut Trendflex) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trendflex_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trendflex_is_ready(handle: *mut Trendflex) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -9323,6 +12928,32 @@ pub unsafe extern "C" fn wickra_trima_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trima_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trima_warmup_period(handle: *mut Trima) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trima_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trima_is_ready(handle: *mut Trima) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -9390,6 +13021,32 @@ pub unsafe extern "C" fn wickra_trix_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trix_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trix_warmup_period(handle: *mut Trix) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trix_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trix_is_ready(handle: *mut Trix) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -9454,6 +13111,32 @@ pub unsafe extern "C" fn wickra_tsf_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tsf_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tsf_warmup_period(handle: *mut Tsf) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tsf_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tsf_is_ready(handle: *mut Tsf) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -9527,6 +13210,32 @@ pub unsafe extern "C" fn wickra_tsf_oscillator_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tsf_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tsf_oscillator_warmup_period(handle: *mut TsfOscillator) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tsf_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tsf_oscillator_is_ready(handle: *mut TsfOscillator) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -9591,6 +13300,32 @@ pub unsafe extern "C" fn wickra_tsi_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tsi_warmup_period(handle: *mut Tsi) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tsi_is_ready(handle: *mut Tsi) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -9661,6 +13396,32 @@ pub unsafe extern "C" fn wickra_ulcer_index_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ulcer_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ulcer_index_warmup_period(handle: *mut UlcerIndex) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ulcer_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ulcer_index_is_ready(handle: *mut UlcerIndex) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -9728,6 +13489,36 @@ pub unsafe extern "C" fn wickra_universal_oscillator_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_universal_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_universal_oscillator_warmup_period(
+    handle: *mut UniversalOscillator,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_universal_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_universal_oscillator_is_ready(
+    handle: *mut UniversalOscillator,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -9804,6 +13595,36 @@ pub unsafe extern "C" fn wickra_upside_potential_ratio_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_upside_potential_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_upside_potential_ratio_warmup_period(
+    handle: *mut UpsidePotentialRatio,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_upside_potential_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_upside_potential_ratio_is_ready(
+    handle: *mut UpsidePotentialRatio,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -9871,6 +13692,32 @@ pub unsafe extern "C" fn wickra_value_at_risk_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_value_at_risk_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_value_at_risk_warmup_period(handle: *mut ValueAtRisk) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_value_at_risk_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_value_at_risk_is_ready(handle: *mut ValueAtRisk) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -9935,6 +13782,32 @@ pub unsafe extern "C" fn wickra_variance_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_variance_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_variance_warmup_period(handle: *mut Variance) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_variance_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_variance_is_ready(handle: *mut Variance) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -10010,6 +13883,36 @@ pub unsafe extern "C" fn wickra_vertical_horizontal_filter_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vertical_horizontal_filter_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vertical_horizontal_filter_warmup_period(
+    handle: *mut VerticalHorizontalFilter,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vertical_horizontal_filter_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vertical_horizontal_filter_is_ready(
+    handle: *mut VerticalHorizontalFilter,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -10078,6 +13981,32 @@ pub unsafe extern "C" fn wickra_vidya_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vidya_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vidya_warmup_period(handle: *mut Vidya) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vidya_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vidya_is_ready(handle: *mut Vidya) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -10154,6 +14083,36 @@ pub unsafe extern "C" fn wickra_volatility_of_volatility_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volatility_of_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volatility_of_volatility_warmup_period(
+    handle: *mut VolatilityOfVolatility,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volatility_of_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volatility_of_volatility_is_ready(
+    handle: *mut VolatilityOfVolatility,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -10220,6 +14179,32 @@ pub unsafe extern "C" fn wickra_wave_pm_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_wave_pm_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wave_pm_warmup_period(handle: *mut WavePm) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_wave_pm_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wave_pm_is_ready(handle: *mut WavePm) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -10290,6 +14275,32 @@ pub unsafe extern "C" fn wickra_win_rate_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_win_rate_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_win_rate_warmup_period(handle: *mut WinRate) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_win_rate_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_win_rate_is_ready(handle: *mut WinRate) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -10354,6 +14365,32 @@ pub unsafe extern "C" fn wickra_wma_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_wma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wma_warmup_period(handle: *mut Wma) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_wma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wma_is_ready(handle: *mut Wma) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -10424,6 +14461,32 @@ pub unsafe extern "C" fn wickra_z_score_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_z_score_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_z_score_warmup_period(handle: *mut ZScore) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_z_score_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_z_score_is_ready(handle: *mut ZScore) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -10488,6 +14551,32 @@ pub unsafe extern "C" fn wickra_zlema_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for (slot, &value) in outputs.iter_mut().zip(inputs) {
         *slot = ind.update(value).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_zlema_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_zlema_warmup_period(handle: *mut Zlema) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_zlema_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_zlema_is_ready(handle: *mut Zlema) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -10562,6 +14651,32 @@ pub unsafe extern "C" fn wickra_alpha_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_alpha_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_alpha_warmup_period(handle: *mut Alpha) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_alpha_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_alpha_is_ready(handle: *mut Alpha) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -10628,6 +14743,32 @@ pub unsafe extern "C" fn wickra_beta_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for ((slot, &xv), &yv) in outputs.iter_mut().zip(xs).zip(ys) {
         *slot = ind.update((xv, yv)).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_beta_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_beta_warmup_period(handle: *mut Beta) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_beta_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_beta_is_ready(handle: *mut Beta) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -10704,6 +14845,36 @@ pub unsafe extern "C" fn wickra_beta_neutral_spread_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_beta_neutral_spread_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_beta_neutral_spread_warmup_period(
+    handle: *mut BetaNeutralSpread,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_beta_neutral_spread_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_beta_neutral_spread_is_ready(
+    handle: *mut BetaNeutralSpread,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -10774,6 +14945,32 @@ pub unsafe extern "C" fn wickra_distance_ssd_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for ((slot, &xv), &yv) in outputs.iter_mut().zip(xs).zip(ys) {
         *slot = ind.update((xv, yv)).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_distance_ssd_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_distance_ssd_warmup_period(handle: *mut DistanceSsd) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_distance_ssd_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_distance_ssd_is_ready(handle: *mut DistanceSsd) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -10850,6 +15047,34 @@ pub unsafe extern "C" fn wickra_granger_causality_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_granger_causality_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_granger_causality_warmup_period(
+    handle: *mut GrangerCausality,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_granger_causality_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_granger_causality_is_ready(handle: *mut GrangerCausality) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -10922,6 +15147,36 @@ pub unsafe extern "C" fn wickra_hasbrouck_information_share_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for ((slot, &xv), &yv) in outputs.iter_mut().zip(xs).zip(ys) {
         *slot = ind.update((xv, yv)).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hasbrouck_information_share_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hasbrouck_information_share_warmup_period(
+    handle: *mut HasbrouckInformationShare,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hasbrouck_information_share_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hasbrouck_information_share_is_ready(
+    handle: *mut HasbrouckInformationShare,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -11002,6 +15257,34 @@ pub unsafe extern "C" fn wickra_information_ratio_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_information_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_information_ratio_warmup_period(
+    handle: *mut InformationRatio,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_information_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_information_ratio_is_ready(handle: *mut InformationRatio) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -11068,6 +15351,32 @@ pub unsafe extern "C" fn wickra_kendall_tau_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for ((slot, &xv), &yv) in outputs.iter_mut().zip(xs).zip(ys) {
         *slot = ind.update((xv, yv)).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kendall_tau_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kendall_tau_warmup_period(handle: *mut KendallTau) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kendall_tau_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kendall_tau_is_ready(handle: *mut KendallTau) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -11141,6 +15450,32 @@ pub unsafe extern "C" fn wickra_ou_half_life_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for ((slot, &xv), &yv) in outputs.iter_mut().zip(xs).zip(ys) {
         *slot = ind.update((xv, yv)).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ou_half_life_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ou_half_life_warmup_period(handle: *mut OuHalfLife) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ou_half_life_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ou_half_life_is_ready(handle: *mut OuHalfLife) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -11220,6 +15555,36 @@ pub unsafe extern "C" fn wickra_pair_spread_z_score_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pair_spread_z_score_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pair_spread_z_score_warmup_period(
+    handle: *mut PairSpreadZScore,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pair_spread_z_score_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pair_spread_z_score_is_ready(
+    handle: *mut PairSpreadZScore,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -11290,6 +15655,32 @@ pub unsafe extern "C" fn wickra_pairwise_beta_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for ((slot, &xv), &yv) in outputs.iter_mut().zip(xs).zip(ys) {
         *slot = ind.update((xv, yv)).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pairwise_beta_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pairwise_beta_warmup_period(handle: *mut PairwiseBeta) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pairwise_beta_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pairwise_beta_is_ready(handle: *mut PairwiseBeta) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -11366,6 +15757,36 @@ pub unsafe extern "C" fn wickra_pearson_correlation_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pearson_correlation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pearson_correlation_warmup_period(
+    handle: *mut PearsonCorrelation,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pearson_correlation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pearson_correlation_is_ready(
+    handle: *mut PearsonCorrelation,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -11436,6 +15857,36 @@ pub unsafe extern "C" fn wickra_rolling_correlation_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for ((slot, &xv), &yv) in outputs.iter_mut().zip(xs).zip(ys) {
         *slot = ind.update((xv, yv)).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_correlation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_correlation_warmup_period(
+    handle: *mut RollingCorrelation,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_correlation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_correlation_is_ready(
+    handle: *mut RollingCorrelation,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -11512,6 +15963,36 @@ pub unsafe extern "C" fn wickra_rolling_covariance_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_covariance_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_covariance_warmup_period(
+    handle: *mut RollingCovariance,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_covariance_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_covariance_is_ready(
+    handle: *mut RollingCovariance,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -11582,6 +16063,36 @@ pub unsafe extern "C" fn wickra_spearman_correlation_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for ((slot, &xv), &yv) in outputs.iter_mut().zip(xs).zip(ys) {
         *slot = ind.update((xv, yv)).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_spearman_correlation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_spearman_correlation_warmup_period(
+    handle: *mut SpearmanCorrelation,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_spearman_correlation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_spearman_correlation_is_ready(
+    handle: *mut SpearmanCorrelation,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -11658,6 +16169,36 @@ pub unsafe extern "C" fn wickra_spread_ar1_coefficient_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_spread_ar1_coefficient_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_spread_ar1_coefficient_warmup_period(
+    handle: *mut SpreadAr1Coefficient,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_spread_ar1_coefficient_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_spread_ar1_coefficient_is_ready(
+    handle: *mut SpreadAr1Coefficient,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -11728,6 +16269,32 @@ pub unsafe extern "C" fn wickra_spread_hurst_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for ((slot, &xv), &yv) in outputs.iter_mut().zip(xs).zip(ys) {
         *slot = ind.update((xv, yv)).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_spread_hurst_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_spread_hurst_warmup_period(handle: *mut SpreadHurst) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_spread_hurst_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_spread_hurst_is_ready(handle: *mut SpreadHurst) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -11804,6 +16371,32 @@ pub unsafe extern "C" fn wickra_treynor_ratio_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_treynor_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_treynor_ratio_warmup_period(handle: *mut TreynorRatio) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_treynor_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_treynor_ratio_is_ready(handle: *mut TreynorRatio) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -11874,6 +16467,32 @@ pub unsafe extern "C" fn wickra_variance_ratio_batch(
     let outputs = slice::from_raw_parts_mut(out, n);
     for ((slot, &xv), &yv) in outputs.iter_mut().zip(xs).zip(ys) {
         *slot = ind.update((xv, yv)).unwrap_or(f64::NAN);
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_variance_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_variance_ratio_warmup_period(handle: *mut VarianceRatio) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_variance_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_variance_ratio_is_ready(handle: *mut VarianceRatio) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -11985,6 +16604,32 @@ pub unsafe extern "C" fn wickra_abandoned_baby_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_abandoned_baby_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_abandoned_baby_warmup_period(handle: *mut AbandonedBaby) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_abandoned_baby_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_abandoned_baby_is_ready(handle: *mut AbandonedBaby) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -12088,6 +16733,32 @@ pub unsafe extern "C" fn wickra_abcd_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_abcd_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_abcd_warmup_period(handle: *mut Abcd) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_abcd_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_abcd_is_ready(handle: *mut Abcd) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -12204,6 +16875,36 @@ pub unsafe extern "C" fn wickra_accelerator_oscillator_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_accelerator_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_accelerator_oscillator_warmup_period(
+    handle: *mut AcceleratorOscillator,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_accelerator_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_accelerator_oscillator_is_ready(
+    handle: *mut AcceleratorOscillator,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -12307,6 +17008,32 @@ pub unsafe extern "C" fn wickra_ad_oscillator_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ad_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ad_oscillator_warmup_period(handle: *mut AdOscillator) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ad_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ad_oscillator_is_ready(handle: *mut AdOscillator) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -12419,6 +17146,32 @@ pub unsafe extern "C" fn wickra_adaptive_cci_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adaptive_cci_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adaptive_cci_warmup_period(handle: *mut AdaptiveCci) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adaptive_cci_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adaptive_cci_is_ready(handle: *mut AdaptiveCci) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -12525,6 +17278,32 @@ pub unsafe extern "C" fn wickra_adl_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adl_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adl_warmup_period(handle: *mut Adl) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adl_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adl_is_ready(handle: *mut Adl) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -12628,6 +17407,32 @@ pub unsafe extern "C" fn wickra_advance_block_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_advance_block_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_advance_block_warmup_period(handle: *mut AdvanceBlock) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_advance_block_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_advance_block_is_ready(handle: *mut AdvanceBlock) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -12740,6 +17545,32 @@ pub unsafe extern "C" fn wickra_adxr_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adxr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adxr_warmup_period(handle: *mut Adxr) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adxr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adxr_is_ready(handle: *mut Adxr) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -12843,6 +17674,32 @@ pub unsafe extern "C" fn wickra_anchored_vwap_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_anchored_vwap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_anchored_vwap_warmup_period(handle: *mut AnchoredVwap) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_anchored_vwap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_anchored_vwap_is_ready(handle: *mut AnchoredVwap) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -12955,6 +17812,34 @@ pub unsafe extern "C" fn wickra_aroon_oscillator_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_aroon_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_aroon_oscillator_warmup_period(
+    handle: *mut AroonOscillator,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_aroon_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_aroon_oscillator_is_ready(handle: *mut AroonOscillator) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -13061,6 +17946,32 @@ pub unsafe extern "C" fn wickra_atr_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_atr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_atr_warmup_period(handle: *mut Atr) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_atr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_atr_is_ready(handle: *mut Atr) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -13176,6 +18087,34 @@ pub unsafe extern "C" fn wickra_atr_trailing_stop_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_atr_trailing_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_atr_trailing_stop_warmup_period(
+    handle: *mut AtrTrailingStop,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_atr_trailing_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_atr_trailing_stop_is_ready(handle: *mut AtrTrailingStop) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -13288,6 +18227,36 @@ pub unsafe extern "C" fn wickra_average_daily_range_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_average_daily_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_average_daily_range_warmup_period(
+    handle: *mut AverageDailyRange,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_average_daily_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_average_daily_range_is_ready(
+    handle: *mut AverageDailyRange,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -13391,6 +18360,32 @@ pub unsafe extern "C" fn wickra_avg_price_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_avg_price_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_avg_price_warmup_period(handle: *mut AvgPrice) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_avg_price_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_avg_price_is_ready(handle: *mut AvgPrice) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -13503,6 +18498,36 @@ pub unsafe extern "C" fn wickra_awesome_oscillator_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_awesome_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_awesome_oscillator_warmup_period(
+    handle: *mut AwesomeOscillator,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_awesome_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_awesome_oscillator_is_ready(
+    handle: *mut AwesomeOscillator,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -13619,6 +18644,36 @@ pub unsafe extern "C" fn wickra_awesome_oscillator_histogram_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_awesome_oscillator_histogram_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_awesome_oscillator_histogram_warmup_period(
+    handle: *mut AwesomeOscillatorHistogram,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_awesome_oscillator_histogram_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_awesome_oscillator_histogram_is_ready(
+    handle: *mut AwesomeOscillatorHistogram,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -13729,6 +18784,34 @@ pub unsafe extern "C" fn wickra_balance_of_power_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_balance_of_power_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_balance_of_power_warmup_period(
+    handle: *mut BalanceOfPower,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_balance_of_power_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_balance_of_power_is_ready(handle: *mut BalanceOfPower) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -13835,6 +18918,32 @@ pub unsafe extern "C" fn wickra_bat_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bat_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bat_warmup_period(handle: *mut Bat) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bat_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bat_is_ready(handle: *mut Bat) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -13938,6 +19047,32 @@ pub unsafe extern "C" fn wickra_belt_hold_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_belt_hold_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_belt_hold_warmup_period(handle: *mut BeltHold) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_belt_hold_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_belt_hold_is_ready(handle: *mut BeltHold) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -14050,6 +19185,32 @@ pub unsafe extern "C" fn wickra_better_volume_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_better_volume_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_better_volume_warmup_period(handle: *mut BetterVolume) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_better_volume_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_better_volume_is_ready(handle: *mut BetterVolume) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -14153,6 +19314,32 @@ pub unsafe extern "C" fn wickra_body_size_pct_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_body_size_pct_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_body_size_pct_warmup_period(handle: *mut BodySizePct) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_body_size_pct_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_body_size_pct_is_ready(handle: *mut BodySizePct) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -14262,6 +19449,32 @@ pub unsafe extern "C" fn wickra_breakaway_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_breakaway_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_breakaway_warmup_period(handle: *mut Breakaway) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_breakaway_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_breakaway_is_ready(handle: *mut Breakaway) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -14365,6 +19578,32 @@ pub unsafe extern "C" fn wickra_butterfly_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_butterfly_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_butterfly_warmup_period(handle: *mut Butterfly) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_butterfly_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_butterfly_is_ready(handle: *mut Butterfly) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -14474,6 +19713,32 @@ pub unsafe extern "C" fn wickra_cci_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cci_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cci_warmup_period(handle: *mut Cci) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cci_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cci_is_ready(handle: *mut Cci) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -14589,6 +19854,36 @@ pub unsafe extern "C" fn wickra_chaikin_oscillator_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_chaikin_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chaikin_oscillator_warmup_period(
+    handle: *mut ChaikinOscillator,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_chaikin_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chaikin_oscillator_is_ready(
+    handle: *mut ChaikinOscillator,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -14701,6 +19996,36 @@ pub unsafe extern "C" fn wickra_chaikin_volatility_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_chaikin_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chaikin_volatility_warmup_period(
+    handle: *mut ChaikinVolatility,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_chaikin_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chaikin_volatility_is_ready(
+    handle: *mut ChaikinVolatility,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -14810,6 +20135,34 @@ pub unsafe extern "C" fn wickra_choppiness_index_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_choppiness_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_choppiness_index_warmup_period(
+    handle: *mut ChoppinessIndex,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_choppiness_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_choppiness_index_is_ready(handle: *mut ChoppinessIndex) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -14916,6 +20269,32 @@ pub unsafe extern "C" fn wickra_close_vs_open_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_close_vs_open_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_close_vs_open_warmup_period(handle: *mut CloseVsOpen) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_close_vs_open_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_close_vs_open_is_ready(handle: *mut CloseVsOpen) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -15019,6 +20398,34 @@ pub unsafe extern "C" fn wickra_closing_marubozu_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_closing_marubozu_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_closing_marubozu_warmup_period(
+    handle: *mut ClosingMarubozu,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_closing_marubozu_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_closing_marubozu_is_ready(handle: *mut ClosingMarubozu) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -15131,6 +20538,34 @@ pub unsafe extern "C" fn wickra_chaikin_money_flow_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_chaikin_money_flow_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chaikin_money_flow_warmup_period(
+    handle: *mut ChaikinMoneyFlow,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_chaikin_money_flow_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chaikin_money_flow_is_ready(handle: *mut ChaikinMoneyFlow) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -15234,6 +20669,36 @@ pub unsafe extern "C" fn wickra_concealing_baby_swallow_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_concealing_baby_swallow_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_concealing_baby_swallow_warmup_period(
+    handle: *mut ConcealingBabySwallow,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_concealing_baby_swallow_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_concealing_baby_swallow_is_ready(
+    handle: *mut ConcealingBabySwallow,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -15343,6 +20808,32 @@ pub unsafe extern "C" fn wickra_counterattack_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_counterattack_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_counterattack_warmup_period(handle: *mut Counterattack) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_counterattack_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_counterattack_is_ready(handle: *mut Counterattack) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -15446,6 +20937,32 @@ pub unsafe extern "C" fn wickra_crab_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_crab_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_crab_warmup_period(handle: *mut Crab) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_crab_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_crab_is_ready(handle: *mut Crab) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -15555,6 +21072,32 @@ pub unsafe extern "C" fn wickra_cup_and_handle_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cup_and_handle_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cup_and_handle_warmup_period(handle: *mut CupAndHandle) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cup_and_handle_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cup_and_handle_is_ready(handle: *mut CupAndHandle) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -15658,6 +21201,32 @@ pub unsafe extern "C" fn wickra_cypher_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cypher_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cypher_warmup_period(handle: *mut Cypher) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cypher_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cypher_is_ready(handle: *mut Cypher) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -15770,6 +21339,32 @@ pub unsafe extern "C" fn wickra_demand_index_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_demand_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_demand_index_warmup_period(handle: *mut DemandIndex) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_demand_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_demand_index_is_ready(handle: *mut DemandIndex) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -15873,6 +21468,32 @@ pub unsafe extern "C" fn wickra_doji_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_doji_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_doji_warmup_period(handle: *mut Doji) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_doji_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_doji_is_ready(handle: *mut Doji) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -15982,6 +21603,32 @@ pub unsafe extern "C" fn wickra_doji_star_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_doji_star_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_doji_star_warmup_period(handle: *mut DojiStar) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_doji_star_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_doji_star_is_ready(handle: *mut DojiStar) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -16088,6 +21735,34 @@ pub unsafe extern "C" fn wickra_double_top_bottom_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_double_top_bottom_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_double_top_bottom_warmup_period(
+    handle: *mut DoubleTopBottom,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_double_top_bottom_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_double_top_bottom_is_ready(handle: *mut DoubleTopBottom) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -16191,6 +21866,36 @@ pub unsafe extern "C" fn wickra_downside_gap_three_methods_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_downside_gap_three_methods_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_downside_gap_three_methods_warmup_period(
+    handle: *mut DownsideGapThreeMethods,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_downside_gap_three_methods_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_downside_gap_three_methods_is_ready(
+    handle: *mut DownsideGapThreeMethods,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -16304,6 +22009,32 @@ pub unsafe extern "C" fn wickra_dragonfly_doji_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_dragonfly_doji_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dragonfly_doji_warmup_period(handle: *mut DragonflyDoji) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_dragonfly_doji_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dragonfly_doji_is_ready(handle: *mut DragonflyDoji) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -16410,6 +22141,32 @@ pub unsafe extern "C" fn wickra_dumpling_top_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_dumpling_top_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dumpling_top_warmup_period(handle: *mut DumplingTop) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_dumpling_top_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dumpling_top_is_ready(handle: *mut DumplingTop) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -16522,6 +22279,32 @@ pub unsafe extern "C" fn wickra_dx_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_dx_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dx_warmup_period(handle: *mut Dx) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_dx_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dx_is_ready(handle: *mut Dx) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -16631,6 +22414,34 @@ pub unsafe extern "C" fn wickra_ease_of_movement_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ease_of_movement_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ease_of_movement_warmup_period(
+    handle: *mut EaseOfMovement,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ease_of_movement_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ease_of_movement_is_ready(handle: *mut EaseOfMovement) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -16737,6 +22548,32 @@ pub unsafe extern "C" fn wickra_engulfing_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_engulfing_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_engulfing_warmup_period(handle: *mut Engulfing) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_engulfing_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_engulfing_is_ready(handle: *mut Engulfing) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -16840,6 +22677,34 @@ pub unsafe extern "C" fn wickra_evening_doji_star_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_evening_doji_star_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_evening_doji_star_warmup_period(
+    handle: *mut EveningDojiStar,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_evening_doji_star_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_evening_doji_star_is_ready(handle: *mut EveningDojiStar) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -16952,6 +22817,32 @@ pub unsafe extern "C" fn wickra_evwma_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_evwma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_evwma_warmup_period(handle: *mut Evwma) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_evwma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_evwma_is_ready(handle: *mut Evwma) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -17058,6 +22949,36 @@ pub unsafe extern "C" fn wickra_falling_three_methods_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_falling_three_methods_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_falling_three_methods_warmup_period(
+    handle: *mut FallingThreeMethods,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_falling_three_methods_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_falling_three_methods_is_ready(
+    handle: *mut FallingThreeMethods,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -17161,6 +23082,32 @@ pub unsafe extern "C" fn wickra_flag_pennant_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_flag_pennant_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_flag_pennant_warmup_period(handle: *mut FlagPennant) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_flag_pennant_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_flag_pennant_is_ready(handle: *mut FlagPennant) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -17273,6 +23220,32 @@ pub unsafe extern "C" fn wickra_force_index_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_force_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_force_index_warmup_period(handle: *mut ForceIndex) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_force_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_force_index_is_ready(handle: *mut ForceIndex) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -17382,6 +23355,32 @@ pub unsafe extern "C" fn wickra_fry_pan_bottom_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fry_pan_bottom_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fry_pan_bottom_warmup_period(handle: *mut FryPanBottom) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fry_pan_bottom_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fry_pan_bottom_is_ready(handle: *mut FryPanBottom) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -17485,6 +23484,36 @@ pub unsafe extern "C" fn wickra_gap_side_by_side_white_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_gap_side_by_side_white_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gap_side_by_side_white_warmup_period(
+    handle: *mut GapSideBySideWhite,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_gap_side_by_side_white_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gap_side_by_side_white_is_ready(
+    handle: *mut GapSideBySideWhite,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -17600,6 +23629,36 @@ pub unsafe extern "C" fn wickra_garman_klass_volatility_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_garman_klass_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_garman_klass_volatility_warmup_period(
+    handle: *mut GarmanKlassVolatility,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_garman_klass_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_garman_klass_volatility_is_ready(
+    handle: *mut GarmanKlassVolatility,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -17703,6 +23762,32 @@ pub unsafe extern "C" fn wickra_gartley_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_gartley_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gartley_warmup_period(handle: *mut Gartley) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_gartley_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gartley_is_ready(handle: *mut Gartley) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -17812,6 +23897,34 @@ pub unsafe extern "C" fn wickra_gravestone_doji_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_gravestone_doji_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gravestone_doji_warmup_period(
+    handle: *mut GravestoneDoji,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_gravestone_doji_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gravestone_doji_is_ready(handle: *mut GravestoneDoji) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -17915,6 +24028,32 @@ pub unsafe extern "C" fn wickra_hammer_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hammer_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hammer_warmup_period(handle: *mut Hammer) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hammer_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hammer_is_ready(handle: *mut Hammer) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -18024,6 +24163,32 @@ pub unsafe extern "C" fn wickra_hanging_man_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hanging_man_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hanging_man_warmup_period(handle: *mut HangingMan) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hanging_man_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hanging_man_is_ready(handle: *mut HangingMan) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -18127,6 +24292,32 @@ pub unsafe extern "C" fn wickra_harami_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_harami_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_harami_warmup_period(handle: *mut Harami) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_harami_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_harami_is_ready(handle: *mut Harami) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -18236,6 +24427,32 @@ pub unsafe extern "C" fn wickra_harami_cross_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_harami_cross_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_harami_cross_warmup_period(handle: *mut HaramiCross) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_harami_cross_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_harami_cross_is_ready(handle: *mut HaramiCross) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -18339,6 +24556,34 @@ pub unsafe extern "C" fn wickra_head_and_shoulders_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_head_and_shoulders_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_head_and_shoulders_warmup_period(
+    handle: *mut HeadAndShoulders,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_head_and_shoulders_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_head_and_shoulders_is_ready(handle: *mut HeadAndShoulders) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -18451,6 +24696,36 @@ pub unsafe extern "C" fn wickra_heikin_ashi_oscillator_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_heikin_ashi_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_heikin_ashi_oscillator_warmup_period(
+    handle: *mut HeikinAshiOscillator,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_heikin_ashi_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_heikin_ashi_oscillator_is_ready(
+    handle: *mut HeikinAshiOscillator,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -18554,6 +24829,32 @@ pub unsafe extern "C" fn wickra_high_low_range_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_high_low_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_high_low_range_warmup_period(handle: *mut HighLowRange) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_high_low_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_high_low_range_is_ready(handle: *mut HighLowRange) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -18663,6 +24964,32 @@ pub unsafe extern "C" fn wickra_high_wave_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_high_wave_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_high_wave_warmup_period(handle: *mut HighWave) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_high_wave_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_high_wave_is_ready(handle: *mut HighWave) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -18769,6 +25096,32 @@ pub unsafe extern "C" fn wickra_hikkake_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hikkake_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hikkake_warmup_period(handle: *mut Hikkake) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hikkake_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hikkake_is_ready(handle: *mut Hikkake) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -18872,6 +25225,34 @@ pub unsafe extern "C" fn wickra_hikkake_modified_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hikkake_modified_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hikkake_modified_warmup_period(
+    handle: *mut HikkakeModified,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hikkake_modified_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hikkake_modified_is_ready(handle: *mut HikkakeModified) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -18984,6 +25365,32 @@ pub unsafe extern "C" fn wickra_hi_lo_activator_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hi_lo_activator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hi_lo_activator_warmup_period(handle: *mut HiLoActivator) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hi_lo_activator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hi_lo_activator_is_ready(handle: *mut HiLoActivator) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -19087,6 +25494,32 @@ pub unsafe extern "C" fn wickra_homing_pigeon_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_homing_pigeon_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_homing_pigeon_warmup_period(handle: *mut HomingPigeon) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_homing_pigeon_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_homing_pigeon_is_ready(handle: *mut HomingPigeon) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -19196,6 +25629,36 @@ pub unsafe extern "C" fn wickra_identical_three_crows_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_identical_three_crows_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_identical_three_crows_warmup_period(
+    handle: *mut IdenticalThreeCrows,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_identical_three_crows_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_identical_three_crows_is_ready(
+    handle: *mut IdenticalThreeCrows,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -19299,6 +25762,32 @@ pub unsafe extern "C" fn wickra_in_neck_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_in_neck_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_in_neck_warmup_period(handle: *mut InNeck) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_in_neck_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_in_neck_is_ready(handle: *mut InNeck) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -19411,6 +25900,32 @@ pub unsafe extern "C" fn wickra_inertia_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_inertia_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_inertia_warmup_period(handle: *mut Inertia) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_inertia_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_inertia_is_ready(handle: *mut Inertia) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -19514,6 +26029,36 @@ pub unsafe extern "C" fn wickra_intraday_intensity_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_intraday_intensity_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_intraday_intensity_warmup_period(
+    handle: *mut IntradayIntensity,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_intraday_intensity_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_intraday_intensity_is_ready(
+    handle: *mut IntradayIntensity,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -19626,6 +26171,36 @@ pub unsafe extern "C" fn wickra_intraday_momentum_index_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_intraday_momentum_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_intraday_momentum_index_warmup_period(
+    handle: *mut IntradayMomentumIndex,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_intraday_momentum_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_intraday_momentum_index_is_ready(
+    handle: *mut IntradayMomentumIndex,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -19729,6 +26304,34 @@ pub unsafe extern "C" fn wickra_inverted_hammer_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_inverted_hammer_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_inverted_hammer_warmup_period(
+    handle: *mut InvertedHammer,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_inverted_hammer_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_inverted_hammer_is_ready(handle: *mut InvertedHammer) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -19838,6 +26441,32 @@ pub unsafe extern "C" fn wickra_kicking_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kicking_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kicking_warmup_period(handle: *mut Kicking) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kicking_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kicking_is_ready(handle: *mut Kicking) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -19941,6 +26570,34 @@ pub unsafe extern "C" fn wickra_kicking_by_length_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kicking_by_length_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kicking_by_length_warmup_period(
+    handle: *mut KickingByLength,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kicking_by_length_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kicking_by_length_is_ready(handle: *mut KickingByLength) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -20053,6 +26710,32 @@ pub unsafe extern "C" fn wickra_kvo_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kvo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kvo_warmup_period(handle: *mut Kvo) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kvo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kvo_is_ready(handle: *mut Kvo) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -20156,6 +26839,32 @@ pub unsafe extern "C" fn wickra_ladder_bottom_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ladder_bottom_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ladder_bottom_warmup_period(handle: *mut LadderBottom) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ladder_bottom_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ladder_bottom_is_ready(handle: *mut LadderBottom) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -20265,6 +26974,34 @@ pub unsafe extern "C" fn wickra_long_legged_doji_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_long_legged_doji_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_long_legged_doji_warmup_period(
+    handle: *mut LongLeggedDoji,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_long_legged_doji_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_long_legged_doji_is_ready(handle: *mut LongLeggedDoji) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -20371,6 +27108,32 @@ pub unsafe extern "C" fn wickra_long_line_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_long_line_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_long_line_warmup_period(handle: *mut LongLine) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_long_line_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_long_line_is_ready(handle: *mut LongLine) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -20474,6 +27237,36 @@ pub unsafe extern "C" fn wickra_market_facilitation_index_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_market_facilitation_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_market_facilitation_index_warmup_period(
+    handle: *mut MarketFacilitationIndex,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_market_facilitation_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_market_facilitation_index_is_ready(
+    handle: *mut MarketFacilitationIndex,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -20587,6 +27380,32 @@ pub unsafe extern "C" fn wickra_marubozu_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_marubozu_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_marubozu_warmup_period(handle: *mut Marubozu) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_marubozu_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_marubozu_is_ready(handle: *mut Marubozu) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -20696,6 +27515,32 @@ pub unsafe extern "C" fn wickra_mass_index_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mass_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mass_index_warmup_period(handle: *mut MassIndex) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mass_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mass_index_is_ready(handle: *mut MassIndex) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -20799,6 +27644,32 @@ pub unsafe extern "C" fn wickra_mat_hold_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mat_hold_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mat_hold_warmup_period(handle: *mut MatHold) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mat_hold_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mat_hold_is_ready(handle: *mut MatHold) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -20908,6 +27779,32 @@ pub unsafe extern "C" fn wickra_matching_low_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_matching_low_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_matching_low_warmup_period(handle: *mut MatchingLow) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_matching_low_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_matching_low_is_ready(handle: *mut MatchingLow) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -21011,6 +27908,32 @@ pub unsafe extern "C" fn wickra_median_price_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_median_price_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_median_price_warmup_period(handle: *mut MedianPrice) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_median_price_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_median_price_is_ready(handle: *mut MedianPrice) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -21123,6 +28046,32 @@ pub unsafe extern "C" fn wickra_mfi_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mfi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mfi_warmup_period(handle: *mut Mfi) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mfi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mfi_is_ready(handle: *mut Mfi) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -21229,6 +28178,32 @@ pub unsafe extern "C" fn wickra_mid_price_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mid_price_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mid_price_warmup_period(handle: *mut MidPrice) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mid_price_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mid_price_is_ready(handle: *mut MidPrice) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -21341,6 +28316,32 @@ pub unsafe extern "C" fn wickra_minus_di_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_minus_di_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_minus_di_warmup_period(handle: *mut MinusDi) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_minus_di_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_minus_di_is_ready(handle: *mut MinusDi) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -21450,6 +28451,32 @@ pub unsafe extern "C" fn wickra_minus_dm_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_minus_dm_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_minus_dm_warmup_period(handle: *mut MinusDm) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_minus_dm_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_minus_dm_is_ready(handle: *mut MinusDm) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -21556,6 +28583,34 @@ pub unsafe extern "C" fn wickra_morning_doji_star_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_morning_doji_star_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_morning_doji_star_warmup_period(
+    handle: *mut MorningDojiStar,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_morning_doji_star_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_morning_doji_star_is_ready(handle: *mut MorningDojiStar) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -21659,6 +28714,36 @@ pub unsafe extern "C" fn wickra_morning_evening_star_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_morning_evening_star_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_morning_evening_star_warmup_period(
+    handle: *mut MorningEveningStar,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_morning_evening_star_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_morning_evening_star_is_ready(
+    handle: *mut MorningEveningStar,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -21771,6 +28856,32 @@ pub unsafe extern "C" fn wickra_naked_poc_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_naked_poc_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_naked_poc_warmup_period(handle: *mut NakedPoc) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_naked_poc_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_naked_poc_is_ready(handle: *mut NakedPoc) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -21877,6 +28988,32 @@ pub unsafe extern "C" fn wickra_natr_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_natr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_natr_warmup_period(handle: *mut Natr) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_natr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_natr_is_ready(handle: *mut Natr) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -21989,6 +29126,32 @@ pub unsafe extern "C" fn wickra_new_price_lines_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_new_price_lines_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_new_price_lines_warmup_period(handle: *mut NewPriceLines) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_new_price_lines_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_new_price_lines_is_ready(handle: *mut NewPriceLines) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -22092,6 +29255,32 @@ pub unsafe extern "C" fn wickra_nvi_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_nvi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_nvi_warmup_period(handle: *mut Nvi) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_nvi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_nvi_is_ready(handle: *mut Nvi) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -22201,6 +29390,32 @@ pub unsafe extern "C" fn wickra_obv_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_obv_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_obv_warmup_period(handle: *mut Obv) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_obv_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_obv_is_ready(handle: *mut Obv) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -22304,6 +29519,32 @@ pub unsafe extern "C" fn wickra_on_neck_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_on_neck_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_on_neck_warmup_period(handle: *mut OnNeck) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_on_neck_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_on_neck_is_ready(handle: *mut OnNeck) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -22413,6 +29654,34 @@ pub unsafe extern "C" fn wickra_opening_marubozu_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_opening_marubozu_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_opening_marubozu_warmup_period(
+    handle: *mut OpeningMarubozu,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_opening_marubozu_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_opening_marubozu_is_ready(handle: *mut OpeningMarubozu) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -22516,6 +29785,32 @@ pub unsafe extern "C" fn wickra_overnight_gap_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_overnight_gap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_overnight_gap_warmup_period(handle: *mut OvernightGap) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_overnight_gap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_overnight_gap_is_ready(handle: *mut OvernightGap) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -22631,6 +29926,36 @@ pub unsafe extern "C" fn wickra_parkinson_volatility_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_parkinson_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_parkinson_volatility_warmup_period(
+    handle: *mut ParkinsonVolatility,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_parkinson_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_parkinson_volatility_is_ready(
+    handle: *mut ParkinsonVolatility,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -22740,6 +30065,32 @@ pub unsafe extern "C" fn wickra_pgo_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pgo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pgo_warmup_period(handle: *mut Pgo) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pgo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pgo_is_ready(handle: *mut Pgo) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -22843,6 +30194,36 @@ pub unsafe extern "C" fn wickra_piercing_dark_cloud_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_piercing_dark_cloud_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_piercing_dark_cloud_warmup_period(
+    handle: *mut PiercingDarkCloud,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_piercing_dark_cloud_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_piercing_dark_cloud_is_ready(
+    handle: *mut PiercingDarkCloud,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -22955,6 +30336,32 @@ pub unsafe extern "C" fn wickra_pivot_reversal_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pivot_reversal_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pivot_reversal_warmup_period(handle: *mut PivotReversal) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pivot_reversal_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pivot_reversal_is_ready(handle: *mut PivotReversal) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -23061,6 +30468,32 @@ pub unsafe extern "C" fn wickra_plus_di_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_plus_di_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_plus_di_warmup_period(handle: *mut PlusDi) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_plus_di_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_plus_di_is_ready(handle: *mut PlusDi) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -23173,6 +30606,32 @@ pub unsafe extern "C" fn wickra_plus_dm_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_plus_dm_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_plus_dm_warmup_period(handle: *mut PlusDm) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_plus_dm_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_plus_dm_is_ready(handle: *mut PlusDm) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -23279,6 +30738,32 @@ pub unsafe extern "C" fn wickra_profile_shape_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_profile_shape_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_profile_shape_warmup_period(handle: *mut ProfileShape) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_profile_shape_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_profile_shape_is_ready(handle: *mut ProfileShape) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -23391,6 +30876,36 @@ pub unsafe extern "C" fn wickra_projection_oscillator_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_projection_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_projection_oscillator_warmup_period(
+    handle: *mut ProjectionOscillator,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_projection_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_projection_oscillator_is_ready(
+    handle: *mut ProjectionOscillator,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -23500,6 +31015,32 @@ pub unsafe extern "C" fn wickra_psar_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_psar_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_psar_warmup_period(handle: *mut Psar) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_psar_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_psar_is_ready(handle: *mut Psar) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -23603,6 +31144,32 @@ pub unsafe extern "C" fn wickra_pvi_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pvi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pvi_warmup_period(handle: *mut Pvi) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pvi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pvi_is_ready(handle: *mut Pvi) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -23715,6 +31282,32 @@ pub unsafe extern "C" fn wickra_qstick_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_qstick_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_qstick_warmup_period(handle: *mut Qstick) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_qstick_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_qstick_is_ready(handle: *mut Qstick) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -23818,6 +31411,34 @@ pub unsafe extern "C" fn wickra_rectangle_range_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rectangle_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rectangle_range_warmup_period(
+    handle: *mut RectangleRange,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rectangle_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rectangle_range_is_ready(handle: *mut RectangleRange) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -23927,6 +31548,32 @@ pub unsafe extern "C" fn wickra_rickshaw_man_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rickshaw_man_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rickshaw_man_warmup_period(handle: *mut RickshawMan) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rickshaw_man_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rickshaw_man_is_ready(handle: *mut RickshawMan) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -24030,6 +31677,36 @@ pub unsafe extern "C" fn wickra_rising_three_methods_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rising_three_methods_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rising_three_methods_warmup_period(
+    handle: *mut RisingThreeMethods,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rising_three_methods_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rising_three_methods_is_ready(
+    handle: *mut RisingThreeMethods,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -24145,6 +31822,36 @@ pub unsafe extern "C" fn wickra_rogers_satchell_volatility_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rogers_satchell_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rogers_satchell_volatility_warmup_period(
+    handle: *mut RogersSatchellVolatility,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rogers_satchell_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rogers_satchell_volatility_is_ready(
+    handle: *mut RogersSatchellVolatility,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -24255,6 +31962,32 @@ pub unsafe extern "C" fn wickra_rvi_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rvi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rvi_warmup_period(handle: *mut Rvi) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rvi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rvi_is_ready(handle: *mut Rvi) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -24385,6 +32118,32 @@ pub unsafe extern "C" fn wickra_sar_ext_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sar_ext_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sar_ext_warmup_period(handle: *mut SarExt) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sar_ext_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sar_ext_is_ready(handle: *mut SarExt) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -24488,6 +32247,34 @@ pub unsafe extern "C" fn wickra_seasonal_z_score_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_seasonal_z_score_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_seasonal_z_score_warmup_period(
+    handle: *mut SeasonalZScore,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_seasonal_z_score_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_seasonal_z_score_is_ready(handle: *mut SeasonalZScore) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -24597,6 +32384,34 @@ pub unsafe extern "C" fn wickra_separating_lines_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_separating_lines_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_separating_lines_warmup_period(
+    handle: *mut SeparatingLines,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_separating_lines_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_separating_lines_is_ready(handle: *mut SeparatingLines) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -24700,6 +32515,32 @@ pub unsafe extern "C" fn wickra_session_vwap_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_session_vwap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_session_vwap_warmup_period(handle: *mut SessionVwap) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_session_vwap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_session_vwap_is_ready(handle: *mut SessionVwap) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -24809,6 +32650,32 @@ pub unsafe extern "C" fn wickra_shark_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_shark_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_shark_warmup_period(handle: *mut Shark) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_shark_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_shark_is_ready(handle: *mut Shark) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -24915,6 +32782,32 @@ pub unsafe extern "C" fn wickra_shooting_star_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_shooting_star_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_shooting_star_warmup_period(handle: *mut ShootingStar) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_shooting_star_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_shooting_star_is_ready(handle: *mut ShootingStar) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -25018,6 +32911,32 @@ pub unsafe extern "C" fn wickra_short_line_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_short_line_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_short_line_warmup_period(handle: *mut ShortLine) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_short_line_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_short_line_is_ready(handle: *mut ShortLine) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -25130,6 +33049,32 @@ pub unsafe extern "C" fn wickra_single_prints_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_single_prints_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_single_prints_warmup_period(handle: *mut SinglePrints) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_single_prints_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_single_prints_is_ready(handle: *mut SinglePrints) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -25239,6 +33184,32 @@ pub unsafe extern "C" fn wickra_smi_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_smi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_smi_warmup_period(handle: *mut Smi) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_smi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_smi_is_ready(handle: *mut Smi) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -25342,6 +33313,32 @@ pub unsafe extern "C" fn wickra_spinning_top_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_spinning_top_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_spinning_top_warmup_period(handle: *mut SpinningTop) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_spinning_top_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_spinning_top_is_ready(handle: *mut SpinningTop) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -25451,6 +33448,34 @@ pub unsafe extern "C" fn wickra_stalled_pattern_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_stalled_pattern_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stalled_pattern_warmup_period(
+    handle: *mut StalledPattern,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_stalled_pattern_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stalled_pattern_is_ready(handle: *mut StalledPattern) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -25554,6 +33579,32 @@ pub unsafe extern "C" fn wickra_stick_sandwich_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_stick_sandwich_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stick_sandwich_warmup_period(handle: *mut StickSandwich) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_stick_sandwich_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stick_sandwich_is_ready(handle: *mut StickSandwich) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -25666,6 +33717,32 @@ pub unsafe extern "C" fn wickra_stochastic_cci_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_stochastic_cci_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stochastic_cci_warmup_period(handle: *mut StochasticCci) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_stochastic_cci_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stochastic_cci_is_ready(handle: *mut StochasticCci) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -25769,6 +33846,32 @@ pub unsafe extern "C" fn wickra_takuri_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_takuri_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_takuri_warmup_period(handle: *mut Takuri) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_takuri_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_takuri_is_ready(handle: *mut Takuri) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -25878,6 +33981,32 @@ pub unsafe extern "C" fn wickra_tasuki_gap_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tasuki_gap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tasuki_gap_warmup_period(handle: *mut TasukiGap) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tasuki_gap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tasuki_gap_is_ready(handle: *mut TasukiGap) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -25981,6 +34110,32 @@ pub unsafe extern "C" fn wickra_td_camouflage_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_camouflage_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_camouflage_warmup_period(handle: *mut TdCamouflage) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_camouflage_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_camouflage_is_ready(handle: *mut TdCamouflage) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -26090,6 +34245,32 @@ pub unsafe extern "C" fn wickra_td_clop_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_clop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_clop_warmup_period(handle: *mut TdClop) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_clop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_clop_is_ready(handle: *mut TdClop) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -26193,6 +34374,32 @@ pub unsafe extern "C" fn wickra_td_clopwin_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_clopwin_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_clopwin_warmup_period(handle: *mut TdClopwin) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_clopwin_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_clopwin_is_ready(handle: *mut TdClopwin) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -26315,6 +34522,32 @@ pub unsafe extern "C" fn wickra_td_combo_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_combo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_combo_warmup_period(handle: *mut TdCombo) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_combo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_combo_is_ready(handle: *mut TdCombo) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -26434,6 +34667,32 @@ pub unsafe extern "C" fn wickra_td_countdown_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_countdown_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_countdown_warmup_period(handle: *mut TdCountdown) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_countdown_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_countdown_is_ready(handle: *mut TdCountdown) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -26543,6 +34802,32 @@ pub unsafe extern "C" fn wickra_td_de_marker_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_de_marker_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_de_marker_warmup_period(handle: *mut TdDeMarker) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_de_marker_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_de_marker_is_ready(handle: *mut TdDeMarker) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -26646,6 +34931,34 @@ pub unsafe extern "C" fn wickra_td_differential_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_differential_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_differential_warmup_period(
+    handle: *mut TdDifferential,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_differential_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_differential_is_ready(handle: *mut TdDifferential) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -26758,6 +35071,32 @@ pub unsafe extern "C" fn wickra_td_d_wave_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_d_wave_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_d_wave_warmup_period(handle: *mut TdDWave) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_d_wave_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_d_wave_is_ready(handle: *mut TdDWave) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -26861,6 +35200,32 @@ pub unsafe extern "C" fn wickra_td_open_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_open_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_open_warmup_period(handle: *mut TdOpen) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_open_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_open_is_ready(handle: *mut TdOpen) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -26973,6 +35338,32 @@ pub unsafe extern "C" fn wickra_td_pressure_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_pressure_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_pressure_warmup_period(handle: *mut TdPressure) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_pressure_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_pressure_is_ready(handle: *mut TdPressure) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -27076,6 +35467,32 @@ pub unsafe extern "C" fn wickra_td_propulsion_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_propulsion_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_propulsion_warmup_period(handle: *mut TdPropulsion) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_propulsion_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_propulsion_is_ready(handle: *mut TdPropulsion) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -27188,6 +35605,32 @@ pub unsafe extern "C" fn wickra_td_rei_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_rei_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_rei_warmup_period(handle: *mut TdRei) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_rei_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_rei_is_ready(handle: *mut TdRei) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -27297,6 +35740,32 @@ pub unsafe extern "C" fn wickra_td_setup_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_setup_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_setup_warmup_period(handle: *mut TdSetup) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_setup_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_setup_is_ready(handle: *mut TdSetup) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -27400,6 +35869,32 @@ pub unsafe extern "C" fn wickra_td_trap_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_trap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_trap_warmup_period(handle: *mut TdTrap) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_trap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_trap_is_ready(handle: *mut TdTrap) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -27509,6 +36004,32 @@ pub unsafe extern "C" fn wickra_three_drives_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_drives_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_drives_warmup_period(handle: *mut ThreeDrives) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_drives_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_drives_is_ready(handle: *mut ThreeDrives) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -27612,6 +36133,32 @@ pub unsafe extern "C" fn wickra_three_inside_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_inside_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_inside_warmup_period(handle: *mut ThreeInside) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_inside_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_inside_is_ready(handle: *mut ThreeInside) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -27724,6 +36271,34 @@ pub unsafe extern "C" fn wickra_three_line_break_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_line_break_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_line_break_warmup_period(
+    handle: *mut ThreeLineBreak,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_line_break_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_line_break_is_ready(handle: *mut ThreeLineBreak) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -27827,6 +36402,34 @@ pub unsafe extern "C" fn wickra_three_line_strike_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_line_strike_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_line_strike_warmup_period(
+    handle: *mut ThreeLineStrike,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_line_strike_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_line_strike_is_ready(handle: *mut ThreeLineStrike) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -27936,6 +36539,32 @@ pub unsafe extern "C" fn wickra_three_outside_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_outside_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_outside_warmup_period(handle: *mut ThreeOutside) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_outside_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_outside_is_ready(handle: *mut ThreeOutside) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -28039,6 +36668,36 @@ pub unsafe extern "C" fn wickra_three_soldiers_or_crows_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_soldiers_or_crows_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_soldiers_or_crows_warmup_period(
+    handle: *mut ThreeSoldiersOrCrows,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_soldiers_or_crows_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_soldiers_or_crows_is_ready(
+    handle: *mut ThreeSoldiersOrCrows,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -28148,6 +36807,36 @@ pub unsafe extern "C" fn wickra_three_stars_in_south_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_stars_in_south_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_stars_in_south_warmup_period(
+    handle: *mut ThreeStarsInSouth,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_stars_in_south_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_stars_in_south_is_ready(
+    handle: *mut ThreeStarsInSouth,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -28251,6 +36940,32 @@ pub unsafe extern "C" fn wickra_thrusting_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_thrusting_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_thrusting_warmup_period(handle: *mut Thrusting) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_thrusting_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_thrusting_is_ready(handle: *mut Thrusting) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -28363,6 +37078,32 @@ pub unsafe extern "C" fn wickra_time_based_stop_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_time_based_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_time_based_stop_warmup_period(handle: *mut TimeBasedStop) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_time_based_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_time_based_stop_is_ready(handle: *mut TimeBasedStop) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -28466,6 +37207,34 @@ pub unsafe extern "C" fn wickra_tower_top_bottom_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tower_top_bottom_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tower_top_bottom_warmup_period(
+    handle: *mut TowerTopBottom,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tower_top_bottom_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tower_top_bottom_is_ready(handle: *mut TowerTopBottom) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -28578,6 +37347,34 @@ pub unsafe extern "C" fn wickra_trade_volume_index_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trade_volume_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trade_volume_index_warmup_period(
+    handle: *mut TradeVolumeIndex,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trade_volume_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trade_volume_index_is_ready(handle: *mut TradeVolumeIndex) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -28681,6 +37478,32 @@ pub unsafe extern "C" fn wickra_triangle_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_triangle_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_triangle_warmup_period(handle: *mut Triangle) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_triangle_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_triangle_is_ready(handle: *mut Triangle) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -28790,6 +37613,34 @@ pub unsafe extern "C" fn wickra_triple_top_bottom_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_triple_top_bottom_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_triple_top_bottom_warmup_period(
+    handle: *mut TripleTopBottom,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_triple_top_bottom_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_triple_top_bottom_is_ready(handle: *mut TripleTopBottom) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -28896,6 +37747,32 @@ pub unsafe extern "C" fn wickra_tristar_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tristar_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tristar_warmup_period(handle: *mut Tristar) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tristar_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tristar_is_ready(handle: *mut Tristar) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -28999,6 +37876,32 @@ pub unsafe extern "C" fn wickra_true_range_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_true_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_true_range_warmup_period(handle: *mut TrueRange) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_true_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_true_range_is_ready(handle: *mut TrueRange) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -29111,6 +38014,32 @@ pub unsafe extern "C" fn wickra_tsv_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tsv_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tsv_warmup_period(handle: *mut Tsv) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tsv_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tsv_is_ready(handle: *mut Tsv) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -29217,6 +38146,32 @@ pub unsafe extern "C" fn wickra_ttm_trend_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ttm_trend_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ttm_trend_warmup_period(handle: *mut TtmTrend) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ttm_trend_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ttm_trend_is_ready(handle: *mut TtmTrend) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -29333,6 +38288,32 @@ pub unsafe extern "C" fn wickra_turn_of_month_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_turn_of_month_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_turn_of_month_warmup_period(handle: *mut TurnOfMonth) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_turn_of_month_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_turn_of_month_is_ready(handle: *mut TurnOfMonth) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -29436,6 +38417,32 @@ pub unsafe extern "C" fn wickra_tweezer_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tweezer_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tweezer_warmup_period(handle: *mut Tweezer) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tweezer_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tweezer_is_ready(handle: *mut Tweezer) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -29548,6 +38555,34 @@ pub unsafe extern "C" fn wickra_twiggs_money_flow_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_twiggs_money_flow_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_twiggs_money_flow_warmup_period(
+    handle: *mut TwiggsMoneyFlow,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_twiggs_money_flow_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_twiggs_money_flow_is_ready(handle: *mut TwiggsMoneyFlow) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -29654,6 +38689,32 @@ pub unsafe extern "C" fn wickra_two_crows_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_two_crows_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_two_crows_warmup_period(handle: *mut TwoCrows) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_two_crows_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_two_crows_is_ready(handle: *mut TwoCrows) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -29757,6 +38818,32 @@ pub unsafe extern "C" fn wickra_typical_price_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_typical_price_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_typical_price_warmup_period(handle: *mut TypicalPrice) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_typical_price_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_typical_price_is_ready(handle: *mut TypicalPrice) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -29873,6 +38960,36 @@ pub unsafe extern "C" fn wickra_ultimate_oscillator_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ultimate_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ultimate_oscillator_warmup_period(
+    handle: *mut UltimateOscillator,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ultimate_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ultimate_oscillator_is_ready(
+    handle: *mut UltimateOscillator,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -29976,6 +39093,34 @@ pub unsafe extern "C" fn wickra_unique_three_river_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_unique_three_river_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_unique_three_river_warmup_period(
+    handle: *mut UniqueThreeRiver,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_unique_three_river_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_unique_three_river_is_ready(handle: *mut UniqueThreeRiver) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -30085,6 +39230,36 @@ pub unsafe extern "C" fn wickra_upside_gap_three_methods_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_upside_gap_three_methods_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_upside_gap_three_methods_warmup_period(
+    handle: *mut UpsideGapThreeMethods,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_upside_gap_three_methods_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_upside_gap_three_methods_is_ready(
+    handle: *mut UpsideGapThreeMethods,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -30188,6 +39363,36 @@ pub unsafe extern "C" fn wickra_upside_gap_two_crows_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_upside_gap_two_crows_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_upside_gap_two_crows_warmup_period(
+    handle: *mut UpsideGapTwoCrows,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_upside_gap_two_crows_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_upside_gap_two_crows_is_ready(
+    handle: *mut UpsideGapTwoCrows,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -30300,6 +39505,34 @@ pub unsafe extern "C" fn wickra_volatility_ratio_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volatility_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volatility_ratio_warmup_period(
+    handle: *mut VolatilityRatio,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volatility_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volatility_ratio_is_ready(handle: *mut VolatilityRatio) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -30406,6 +39639,32 @@ pub unsafe extern "C" fn wickra_volty_stop_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volty_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volty_stop_warmup_period(handle: *mut VoltyStop) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volty_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volty_stop_is_ready(handle: *mut VoltyStop) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -30518,6 +39777,34 @@ pub unsafe extern "C" fn wickra_volume_oscillator_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_oscillator_warmup_period(
+    handle: *mut VolumeOscillator,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_oscillator_is_ready(handle: *mut VolumeOscillator) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -30627,6 +39914,32 @@ pub unsafe extern "C" fn wickra_volume_rsi_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_rsi_warmup_period(handle: *mut VolumeRsi) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_rsi_is_ready(handle: *mut VolumeRsi) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -30733,6 +40046,34 @@ pub unsafe extern "C" fn wickra_volume_price_trend_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_price_trend_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_price_trend_warmup_period(
+    handle: *mut VolumePriceTrend,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_price_trend_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_price_trend_is_ready(handle: *mut VolumePriceTrend) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -30836,6 +40177,32 @@ pub unsafe extern "C" fn wickra_vwap_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vwap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vwap_warmup_period(handle: *mut Vwap) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vwap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vwap_is_ready(handle: *mut Vwap) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -30948,6 +40315,32 @@ pub unsafe extern "C" fn wickra_rolling_vwap_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_vwap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_vwap_warmup_period(handle: *mut RollingVwap) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_vwap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_vwap_is_ready(handle: *mut RollingVwap) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -31054,6 +40447,32 @@ pub unsafe extern "C" fn wickra_vwma_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vwma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vwma_warmup_period(handle: *mut Vwma) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vwma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vwma_is_ready(handle: *mut Vwma) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -31166,6 +40585,32 @@ pub unsafe extern "C" fn wickra_vzo_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vzo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vzo_warmup_period(handle: *mut Vzo) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vzo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vzo_is_ready(handle: *mut Vzo) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -31269,6 +40714,32 @@ pub unsafe extern "C" fn wickra_wad_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_wad_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wad_warmup_period(handle: *mut Wad) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_wad_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wad_is_ready(handle: *mut Wad) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -31378,6 +40849,32 @@ pub unsafe extern "C" fn wickra_wedge_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_wedge_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wedge_warmup_period(handle: *mut Wedge) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_wedge_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wedge_is_ready(handle: *mut Wedge) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -31481,6 +40978,32 @@ pub unsafe extern "C" fn wickra_weighted_close_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_weighted_close_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_weighted_close_warmup_period(handle: *mut WeightedClose) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_weighted_close_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_weighted_close_is_ready(handle: *mut WeightedClose) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -31590,6 +41113,32 @@ pub unsafe extern "C" fn wickra_wick_ratio_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_wick_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wick_ratio_warmup_period(handle: *mut WickRatio) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_wick_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wick_ratio_is_ready(handle: *mut WickRatio) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -31696,6 +41245,32 @@ pub unsafe extern "C" fn wickra_williams_r_batch(
             Ok(candle) => ind.update(candle).unwrap_or(f64::NAN),
             Err(_) => f64::NAN,
         };
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_williams_r_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_williams_r_warmup_period(handle: *mut WilliamsR) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_williams_r_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_williams_r_is_ready(handle: *mut WilliamsR) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -31811,6 +41386,36 @@ pub unsafe extern "C" fn wickra_yang_zhang_volatility_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_yang_zhang_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_yang_zhang_volatility_warmup_period(
+    handle: *mut YangZhangVolatility,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_yang_zhang_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_yang_zhang_volatility_is_ready(
+    handle: *mut YangZhangVolatility,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -31920,6 +41525,32 @@ pub unsafe extern "C" fn wickra_yoyo_exit_batch(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_yoyo_exit_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_yoyo_exit_warmup_period(handle: *mut YoyoExit) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_yoyo_exit_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_yoyo_exit_is_ready(handle: *mut YoyoExit) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -31978,6 +41609,36 @@ pub unsafe extern "C" fn wickra_amihud_illiquidity_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_amihud_illiquidity_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_amihud_illiquidity_warmup_period(
+    handle: *mut AmihudIlliquidity,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_amihud_illiquidity_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_amihud_illiquidity_is_ready(
+    handle: *mut AmihudIlliquidity,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -32028,6 +41689,36 @@ pub unsafe extern "C" fn wickra_cumulative_volume_delta_update(
     match Trade::new(price, size, side, timestamp) {
         Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cumulative_volume_delta_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cumulative_volume_delta_warmup_period(
+    handle: *mut CumulativeVolumeDelta,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cumulative_volume_delta_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cumulative_volume_delta_is_ready(
+    handle: *mut CumulativeVolumeDelta,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -32087,6 +41778,32 @@ pub unsafe extern "C" fn wickra_pin_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pin_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pin_warmup_period(handle: *mut Pin) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pin_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pin_is_ready(handle: *mut Pin) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -32143,6 +41860,32 @@ pub unsafe extern "C" fn wickra_roll_measure_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_roll_measure_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_roll_measure_warmup_period(handle: *mut RollMeasure) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_roll_measure_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_roll_measure_is_ready(handle: *mut RollMeasure) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -32193,6 +41936,32 @@ pub unsafe extern "C" fn wickra_signed_volume_update(
     match Trade::new(price, size, side, timestamp) {
         Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_signed_volume_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_signed_volume_warmup_period(handle: *mut SignedVolume) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_signed_volume_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_signed_volume_is_ready(handle: *mut SignedVolume) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -32252,6 +42021,34 @@ pub unsafe extern "C" fn wickra_trade_imbalance_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trade_imbalance_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trade_imbalance_warmup_period(
+    handle: *mut TradeImbalance,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trade_imbalance_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trade_imbalance_is_ready(handle: *mut TradeImbalance) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -32307,6 +42104,36 @@ pub unsafe extern "C" fn wickra_trade_sign_autocorrelation_update(
     match Trade::new(price, size, side, timestamp) {
         Ok(trade) => ind.update(trade).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trade_sign_autocorrelation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trade_sign_autocorrelation_warmup_period(
+    handle: *mut TradeSignAutocorrelation,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trade_sign_autocorrelation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trade_sign_autocorrelation_is_ready(
+    handle: *mut TradeSignAutocorrelation,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -32370,6 +42197,32 @@ pub unsafe extern "C" fn wickra_vpin_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vpin_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vpin_warmup_period(handle: *mut Vpin) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vpin_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vpin_is_ready(handle: *mut Vpin) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -32426,6 +42279,34 @@ pub unsafe extern "C" fn wickra_effective_spread_update(
     match TradeQuote::new(trade, mid) {
         Ok(quote) => ind.update(quote).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_effective_spread_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_effective_spread_warmup_period(
+    handle: *mut EffectiveSpread,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_effective_spread_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_effective_spread_is_ready(handle: *mut EffectiveSpread) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -32489,6 +42370,32 @@ pub unsafe extern "C" fn wickra_kyles_lambda_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kyles_lambda_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kyles_lambda_warmup_period(handle: *mut KylesLambda) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kyles_lambda_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kyles_lambda_is_ready(handle: *mut KylesLambda) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -32546,6 +42453,34 @@ pub unsafe extern "C" fn wickra_realized_spread_update(
     match TradeQuote::new(trade, mid) {
         Ok(quote) => ind.update(quote).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_realized_spread_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_realized_spread_warmup_period(
+    handle: *mut RealizedSpread,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_realized_spread_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_realized_spread_is_ready(handle: *mut RealizedSpread) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -32624,6 +42559,34 @@ pub unsafe extern "C" fn wickra_calendar_spread_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_calendar_spread_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_calendar_spread_warmup_period(
+    handle: *mut CalendarSpread,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_calendar_spread_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_calendar_spread_is_ready(handle: *mut CalendarSpread) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -32694,6 +42657,36 @@ pub unsafe extern "C" fn wickra_estimated_leverage_ratio_update(
     ) {
         Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_estimated_leverage_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_estimated_leverage_ratio_warmup_period(
+    handle: *mut EstimatedLeverageRatio,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_estimated_leverage_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_estimated_leverage_ratio_is_ready(
+    handle: *mut EstimatedLeverageRatio,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -32769,6 +42762,32 @@ pub unsafe extern "C" fn wickra_funding_basis_update(
     ) {
         Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_funding_basis_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_basis_warmup_period(handle: *mut FundingBasis) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_funding_basis_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_basis_is_ready(handle: *mut FundingBasis) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -32850,6 +42869,36 @@ pub unsafe extern "C" fn wickra_funding_implied_apr_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_funding_implied_apr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_implied_apr_warmup_period(
+    handle: *mut FundingImpliedApr,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_funding_implied_apr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_implied_apr_is_ready(
+    handle: *mut FundingImpliedApr,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -32920,6 +42969,32 @@ pub unsafe extern "C" fn wickra_funding_rate_update(
     ) {
         Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_funding_rate_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_warmup_period(handle: *mut FundingRate) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_funding_rate_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_is_ready(handle: *mut FundingRate) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -32999,6 +43074,34 @@ pub unsafe extern "C" fn wickra_funding_rate_mean_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_funding_rate_mean_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_mean_warmup_period(
+    handle: *mut FundingRateMean,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_funding_rate_mean_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_mean_is_ready(handle: *mut FundingRateMean) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -33075,6 +43178,36 @@ pub unsafe extern "C" fn wickra_funding_rate_z_score_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_funding_rate_z_score_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_z_score_warmup_period(
+    handle: *mut FundingRateZScore,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_funding_rate_z_score_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_z_score_is_ready(
+    handle: *mut FundingRateZScore,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -33148,6 +43281,34 @@ pub unsafe extern "C" fn wickra_long_short_ratio_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_long_short_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_long_short_ratio_warmup_period(
+    handle: *mut LongShortRatio,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_long_short_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_long_short_ratio_is_ready(handle: *mut LongShortRatio) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -33218,6 +43379,36 @@ pub unsafe extern "C" fn wickra_open_interest_delta_update(
     ) {
         Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_open_interest_delta_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_open_interest_delta_warmup_period(
+    handle: *mut OpenInterestDelta,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_open_interest_delta_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_open_interest_delta_is_ready(
+    handle: *mut OpenInterestDelta,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -33297,6 +43488,36 @@ pub unsafe extern "C" fn wickra_oi_price_divergence_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_oi_price_divergence_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_price_divergence_warmup_period(
+    handle: *mut OIPriceDivergence,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_oi_price_divergence_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_price_divergence_is_ready(
+    handle: *mut OIPriceDivergence,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -33370,6 +43591,34 @@ pub unsafe extern "C" fn wickra_oi_to_volume_ratio_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_oi_to_volume_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_to_volume_ratio_warmup_period(
+    handle: *mut OiToVolumeRatio,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_oi_to_volume_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_to_volume_ratio_is_ready(handle: *mut OiToVolumeRatio) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -33440,6 +43689,32 @@ pub unsafe extern "C" fn wickra_oi_weighted_update(
     ) {
         Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_oi_weighted_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_weighted_warmup_period(handle: *mut OIWeighted) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_oi_weighted_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_weighted_is_ready(handle: *mut OIWeighted) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -33519,6 +43794,36 @@ pub unsafe extern "C" fn wickra_open_interest_momentum_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_open_interest_momentum_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_open_interest_momentum_warmup_period(
+    handle: *mut OpenInterestMomentum,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_open_interest_momentum_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_open_interest_momentum_is_ready(
+    handle: *mut OpenInterestMomentum,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -33589,6 +43894,36 @@ pub unsafe extern "C" fn wickra_perpetual_premium_index_update(
     ) {
         Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_perpetual_premium_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_perpetual_premium_index_warmup_period(
+    handle: *mut PerpetualPremiumIndex,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_perpetual_premium_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_perpetual_premium_index_is_ready(
+    handle: *mut PerpetualPremiumIndex,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -33665,6 +44000,36 @@ pub unsafe extern "C" fn wickra_taker_buy_sell_ratio_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_taker_buy_sell_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_taker_buy_sell_ratio_warmup_period(
+    handle: *mut TakerBuySellRatio,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_taker_buy_sell_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_taker_buy_sell_ratio_is_ready(
+    handle: *mut TakerBuySellRatio,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -33735,6 +44100,36 @@ pub unsafe extern "C" fn wickra_term_structure_basis_update(
     ) {
         Ok(tick) => ind.update(tick).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_term_structure_basis_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_term_structure_basis_warmup_period(
+    handle: *mut TermStructureBasis,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_term_structure_basis_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_term_structure_basis_is_ready(
+    handle: *mut TermStructureBasis,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -33816,6 +44211,32 @@ pub unsafe extern "C" fn wickra_depth_slope_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_depth_slope_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_depth_slope_warmup_period(handle: *mut DepthSlope) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_depth_slope_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_depth_slope_is_ready(handle: *mut DepthSlope) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -33892,6 +44313,32 @@ pub unsafe extern "C" fn wickra_microprice_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_microprice_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_microprice_warmup_period(handle: *mut Microprice) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_microprice_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_microprice_is_ready(handle: *mut Microprice) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -33965,6 +44412,36 @@ pub unsafe extern "C" fn wickra_order_book_imbalance_full_update(
     match OrderBook::new(bids, asks) {
         Ok(book) => ind.update(book).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_order_book_imbalance_full_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_full_warmup_period(
+    handle: *mut OrderBookImbalanceFull,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_order_book_imbalance_full_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_full_is_ready(
+    handle: *mut OrderBookImbalanceFull,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -34045,6 +44522,36 @@ pub unsafe extern "C" fn wickra_order_book_imbalance_top1_update(
     match OrderBook::new(bids, asks) {
         Ok(book) => ind.update(book).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_order_book_imbalance_top1_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_top1_warmup_period(
+    handle: *mut OrderBookImbalanceTop1,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_order_book_imbalance_top1_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_top1_is_ready(
+    handle: *mut OrderBookImbalanceTop1,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -34133,6 +44640,36 @@ pub unsafe extern "C" fn wickra_order_book_imbalance_top_n_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_order_book_imbalance_top_n_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_top_n_warmup_period(
+    handle: *mut OrderBookImbalanceTopN,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_order_book_imbalance_top_n_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_top_n_is_ready(
+    handle: *mut OrderBookImbalanceTopN,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -34216,6 +44753,36 @@ pub unsafe extern "C" fn wickra_order_flow_imbalance_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_order_flow_imbalance_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_flow_imbalance_warmup_period(
+    handle: *mut OrderFlowImbalance,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_order_flow_imbalance_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_flow_imbalance_is_ready(
+    handle: *mut OrderFlowImbalance,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -34289,6 +44856,32 @@ pub unsafe extern "C" fn wickra_quoted_spread_update(
     match OrderBook::new(bids, asks) {
         Ok(book) => ind.update(book).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_quoted_spread_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_quoted_spread_warmup_period(handle: *mut QuotedSpread) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_quoted_spread_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_quoted_spread_is_ready(handle: *mut QuotedSpread) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -34374,6 +44967,36 @@ pub unsafe extern "C" fn wickra_absolute_breadth_index_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_absolute_breadth_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_absolute_breadth_index_warmup_period(
+    handle: *mut AbsoluteBreadthIndex,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_absolute_breadth_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_absolute_breadth_index_is_ready(
+    handle: *mut AbsoluteBreadthIndex,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -34451,6 +45074,32 @@ pub unsafe extern "C" fn wickra_ad_volume_line_update(
     match CrossSection::new(members, timestamp) {
         Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ad_volume_line_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ad_volume_line_warmup_period(handle: *mut AdVolumeLine) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ad_volume_line_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ad_volume_line_is_ready(handle: *mut AdVolumeLine) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -34534,6 +45183,34 @@ pub unsafe extern "C" fn wickra_advance_decline_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_advance_decline_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_advance_decline_warmup_period(
+    handle: *mut AdvanceDecline,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_advance_decline_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_advance_decline_is_ready(handle: *mut AdvanceDecline) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -34611,6 +45288,36 @@ pub unsafe extern "C" fn wickra_advance_decline_ratio_update(
     match CrossSection::new(members, timestamp) {
         Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_advance_decline_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_advance_decline_ratio_warmup_period(
+    handle: *mut AdvanceDeclineRatio,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_advance_decline_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_advance_decline_ratio_is_ready(
+    handle: *mut AdvanceDeclineRatio,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -34697,6 +45404,32 @@ pub unsafe extern "C" fn wickra_breadth_thrust_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_breadth_thrust_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_breadth_thrust_warmup_period(handle: *mut BreadthThrust) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_breadth_thrust_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_breadth_thrust_is_ready(handle: *mut BreadthThrust) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -34777,6 +45510,36 @@ pub unsafe extern "C" fn wickra_bullish_percent_index_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bullish_percent_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bullish_percent_index_warmup_period(
+    handle: *mut BullishPercentIndex,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bullish_percent_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bullish_percent_index_is_ready(
+    handle: *mut BullishPercentIndex,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -34854,6 +45617,36 @@ pub unsafe extern "C" fn wickra_cumulative_volume_index_update(
     match CrossSection::new(members, timestamp) {
         Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cumulative_volume_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cumulative_volume_index_warmup_period(
+    handle: *mut CumulativeVolumeIndex,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cumulative_volume_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cumulative_volume_index_is_ready(
+    handle: *mut CumulativeVolumeIndex,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -34940,6 +45733,32 @@ pub unsafe extern "C" fn wickra_high_low_index_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_high_low_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_high_low_index_warmup_period(handle: *mut HighLowIndex) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_high_low_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_high_low_index_is_ready(handle: *mut HighLowIndex) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -35020,6 +45839,36 @@ pub unsafe extern "C" fn wickra_mc_clellan_oscillator_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mc_clellan_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mc_clellan_oscillator_warmup_period(
+    handle: *mut McClellanOscillator,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mc_clellan_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mc_clellan_oscillator_is_ready(
+    handle: *mut McClellanOscillator,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -35097,6 +45946,36 @@ pub unsafe extern "C" fn wickra_mc_clellan_summation_index_update(
     match CrossSection::new(members, timestamp) {
         Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mc_clellan_summation_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mc_clellan_summation_index_warmup_period(
+    handle: *mut McClellanSummationIndex,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mc_clellan_summation_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mc_clellan_summation_index_is_ready(
+    handle: *mut McClellanSummationIndex,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -35184,6 +46063,34 @@ pub unsafe extern "C" fn wickra_new_highs_new_lows_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_new_highs_new_lows_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_new_highs_new_lows_warmup_period(
+    handle: *mut NewHighsNewLows,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_new_highs_new_lows_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_new_highs_new_lows_is_ready(handle: *mut NewHighsNewLows) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -35261,6 +46168,34 @@ pub unsafe extern "C" fn wickra_percent_above_ma_update(
     match CrossSection::new(members, timestamp) {
         Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_percent_above_ma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_percent_above_ma_warmup_period(
+    handle: *mut PercentAboveMa,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_percent_above_ma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_percent_above_ma_is_ready(handle: *mut PercentAboveMa) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -35344,6 +46279,32 @@ pub unsafe extern "C" fn wickra_tick_index_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tick_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tick_index_warmup_period(handle: *mut TickIndex) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tick_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tick_index_is_ready(handle: *mut TickIndex) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -35424,6 +46385,32 @@ pub unsafe extern "C" fn wickra_trin_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trin_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trin_warmup_period(handle: *mut Trin) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trin_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trin_is_ready(handle: *mut Trin) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -35501,6 +46488,36 @@ pub unsafe extern "C" fn wickra_up_down_volume_ratio_update(
     match CrossSection::new(members, timestamp) {
         Ok(snapshot) => ind.update(snapshot).unwrap_or(f64::NAN),
         Err(_) => f64::NAN,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_up_down_volume_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_up_down_volume_ratio_warmup_period(
+    handle: *mut UpDownVolumeRatio,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_up_down_volume_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_up_down_volume_ratio_is_ready(
+    handle: *mut UpDownVolumeRatio,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -36398,6 +47415,36 @@ pub unsafe extern "C" fn wickra_acceleration_bands_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_acceleration_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_acceleration_bands_warmup_period(
+    handle: *mut AccelerationBands,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_acceleration_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_acceleration_bands_is_ready(
+    handle: *mut AccelerationBands,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -36465,6 +47512,32 @@ pub unsafe extern "C" fn wickra_adx_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adx_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adx_warmup_period(handle: *mut Adx) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adx_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adx_is_ready(handle: *mut Adx) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -36544,6 +47617,32 @@ pub unsafe extern "C" fn wickra_alligator_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_alligator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_alligator_warmup_period(handle: *mut Alligator) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_alligator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_alligator_is_ready(handle: *mut Alligator) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -36611,6 +47710,34 @@ pub unsafe extern "C" fn wickra_andrews_pitchfork_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_andrews_pitchfork_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_andrews_pitchfork_warmup_period(
+    handle: *mut AndrewsPitchfork,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_andrews_pitchfork_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_andrews_pitchfork_is_ready(handle: *mut AndrewsPitchfork) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -36685,6 +47812,32 @@ pub unsafe extern "C" fn wickra_aroon_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_aroon_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_aroon_warmup_period(handle: *mut Aroon) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_aroon_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_aroon_is_ready(handle: *mut Aroon) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -36752,6 +47905,32 @@ pub unsafe extern "C" fn wickra_atr_bands_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_atr_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_atr_bands_warmup_period(handle: *mut AtrBands) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_atr_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_atr_bands_is_ready(handle: *mut AtrBands) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -36830,6 +48009,32 @@ pub unsafe extern "C" fn wickra_atr_ratchet_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_atr_ratchet_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_atr_ratchet_warmup_period(handle: *mut AtrRatchet) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_atr_ratchet_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_atr_ratchet_is_ready(handle: *mut AtrRatchet) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -36902,6 +48107,32 @@ pub unsafe extern "C" fn wickra_auto_fib_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_auto_fib_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_auto_fib_warmup_period(handle: *mut AutoFib) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_auto_fib_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_auto_fib_is_ready(handle: *mut AutoFib) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -36969,6 +48200,34 @@ pub unsafe extern "C" fn wickra_bollinger_bands_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bollinger_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bollinger_bands_warmup_period(
+    handle: *mut BollingerBands,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bollinger_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bollinger_bands_is_ready(handle: *mut BollingerBands) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -37028,6 +48287,32 @@ pub unsafe extern "C" fn wickra_bomar_bands_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bomar_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bomar_bands_warmup_period(handle: *mut BomarBands) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bomar_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bomar_bands_is_ready(handle: *mut BomarBands) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -37106,6 +48391,32 @@ pub unsafe extern "C" fn wickra_camarilla_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_camarilla_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_camarilla_warmup_period(handle: *mut Camarilla) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_camarilla_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_camarilla_is_ready(handle: *mut Camarilla) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -37176,6 +48487,32 @@ pub unsafe extern "C" fn wickra_candle_volume_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_candle_volume_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_candle_volume_warmup_period(handle: *mut CandleVolume) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_candle_volume_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_candle_volume_is_ready(handle: *mut CandleVolume) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -37240,6 +48577,36 @@ pub unsafe extern "C" fn wickra_central_pivot_range_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_central_pivot_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_central_pivot_range_warmup_period(
+    handle: *mut CentralPivotRange,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_central_pivot_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_central_pivot_range_is_ready(
+    handle: *mut CentralPivotRange,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -37318,6 +48685,34 @@ pub unsafe extern "C" fn wickra_chande_kroll_stop_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_chande_kroll_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chande_kroll_stop_warmup_period(
+    handle: *mut ChandeKrollStop,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_chande_kroll_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chande_kroll_stop_is_ready(handle: *mut ChandeKrollStop) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -37387,6 +48782,34 @@ pub unsafe extern "C" fn wickra_chandelier_exit_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_chandelier_exit_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chandelier_exit_warmup_period(
+    handle: *mut ChandelierExit,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_chandelier_exit_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chandelier_exit_is_ready(handle: *mut ChandelierExit) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -37463,6 +48886,32 @@ pub unsafe extern "C" fn wickra_classic_pivots_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_classic_pivots_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_classic_pivots_warmup_period(handle: *mut ClassicPivots) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_classic_pivots_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_classic_pivots_is_ready(handle: *mut ClassicPivots) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -37523,6 +48972,32 @@ pub unsafe extern "C" fn wickra_cointegration_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cointegration_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cointegration_warmup_period(handle: *mut Cointegration) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cointegration_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cointegration_is_ready(handle: *mut Cointegration) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -37602,6 +49077,34 @@ pub unsafe extern "C" fn wickra_composite_profile_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_composite_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_composite_profile_warmup_period(
+    handle: *mut CompositeProfile,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_composite_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_composite_profile_is_ready(handle: *mut CompositeProfile) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -37666,6 +49169,32 @@ pub unsafe extern "C" fn wickra_demark_pivots_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_demark_pivots_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_demark_pivots_warmup_period(handle: *mut DemarkPivots) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_demark_pivots_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_demark_pivots_is_ready(handle: *mut DemarkPivots) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -37741,6 +49270,32 @@ pub unsafe extern "C" fn wickra_donchian_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_donchian_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_donchian_warmup_period(handle: *mut Donchian) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_donchian_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_donchian_is_ready(handle: *mut Donchian) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -37811,6 +49366,32 @@ pub unsafe extern "C" fn wickra_donchian_stop_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_donchian_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_donchian_stop_warmup_period(handle: *mut DonchianStop) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_donchian_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_donchian_stop_is_ready(handle: *mut DonchianStop) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -37876,6 +49457,34 @@ pub unsafe extern "C" fn wickra_double_bollinger_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_double_bollinger_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_double_bollinger_warmup_period(
+    handle: *mut DoubleBollinger,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_double_bollinger_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_double_bollinger_is_ready(handle: *mut DoubleBollinger) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -37950,6 +49559,32 @@ pub unsafe extern "C" fn wickra_elder_ray_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_elder_ray_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_elder_ray_warmup_period(handle: *mut ElderRay) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_elder_ray_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_elder_ray_is_ready(handle: *mut ElderRay) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -38016,6 +49651,32 @@ pub unsafe extern "C" fn wickra_elder_safe_zone_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_elder_safe_zone_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_elder_safe_zone_warmup_period(handle: *mut ElderSafeZone) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_elder_safe_zone_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_elder_safe_zone_is_ready(handle: *mut ElderSafeZone) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -38090,6 +49751,32 @@ pub unsafe extern "C" fn wickra_equivolume_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_equivolume_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_equivolume_warmup_period(handle: *mut Equivolume) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_equivolume_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_equivolume_is_ready(handle: *mut Equivolume) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -38154,6 +49841,32 @@ pub unsafe extern "C" fn wickra_fib_arcs_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_arcs_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_arcs_warmup_period(handle: *mut FibArcs) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_arcs_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_arcs_is_ready(handle: *mut FibArcs) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -38227,6 +49940,32 @@ pub unsafe extern "C" fn wickra_fib_channel_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_channel_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_channel_warmup_period(handle: *mut FibChannel) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_channel_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_channel_is_ready(handle: *mut FibChannel) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -38290,6 +50029,32 @@ pub unsafe extern "C" fn wickra_fib_confluence_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_confluence_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_confluence_warmup_period(handle: *mut FibConfluence) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_confluence_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_confluence_is_ready(handle: *mut FibConfluence) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -38364,6 +50129,32 @@ pub unsafe extern "C" fn wickra_fib_extension_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_extension_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_extension_warmup_period(handle: *mut FibExtension) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_extension_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_extension_is_ready(handle: *mut FibExtension) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -38428,6 +50219,32 @@ pub unsafe extern "C" fn wickra_fib_fan_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_fan_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_fan_warmup_period(handle: *mut FibFan) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_fan_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_fan_is_ready(handle: *mut FibFan) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -38497,6 +50314,32 @@ pub unsafe extern "C" fn wickra_fib_projection_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_projection_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_projection_warmup_period(handle: *mut FibProjection) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_projection_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_projection_is_ready(handle: *mut FibProjection) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -38573,6 +50416,34 @@ pub unsafe extern "C" fn wickra_fib_retracement_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_retracement_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_retracement_warmup_period(
+    handle: *mut FibRetracement,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_retracement_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_retracement_is_ready(handle: *mut FibRetracement) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -38636,6 +50507,32 @@ pub unsafe extern "C" fn wickra_fib_time_zones_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_time_zones_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_time_zones_warmup_period(handle: *mut FibTimeZones) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_time_zones_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_time_zones_is_ready(handle: *mut FibTimeZones) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -38712,6 +50609,34 @@ pub unsafe extern "C" fn wickra_fibonacci_pivots_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fibonacci_pivots_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fibonacci_pivots_warmup_period(
+    handle: *mut FibonacciPivots,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fibonacci_pivots_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fibonacci_pivots_is_ready(handle: *mut FibonacciPivots) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -38778,6 +50703,36 @@ pub unsafe extern "C" fn wickra_fractal_chaos_bands_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fractal_chaos_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fractal_chaos_bands_warmup_period(
+    handle: *mut FractalChaosBands,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fractal_chaos_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fractal_chaos_bands_is_ready(
+    handle: *mut FractalChaosBands,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -38856,6 +50811,34 @@ pub unsafe extern "C" fn wickra_gator_oscillator_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_gator_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gator_oscillator_warmup_period(
+    handle: *mut GatorOscillator,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_gator_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gator_oscillator_is_ready(handle: *mut GatorOscillator) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -38920,6 +50903,32 @@ pub unsafe extern "C" fn wickra_golden_pocket_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_golden_pocket_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_golden_pocket_warmup_period(handle: *mut GoldenPocket) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_golden_pocket_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_golden_pocket_is_ready(handle: *mut GoldenPocket) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -38989,6 +50998,32 @@ pub unsafe extern "C" fn wickra_heikin_ashi_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_heikin_ashi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_heikin_ashi_warmup_period(handle: *mut HeikinAshi) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_heikin_ashi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_heikin_ashi_is_ready(handle: *mut HeikinAshi) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -39066,6 +51101,36 @@ pub unsafe extern "C" fn wickra_high_low_volume_nodes_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_high_low_volume_nodes_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_high_low_volume_nodes_warmup_period(
+    handle: *mut HighLowVolumeNodes,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_high_low_volume_nodes_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_high_low_volume_nodes_is_ready(
+    handle: *mut HighLowVolumeNodes,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -39121,6 +51186,32 @@ pub unsafe extern "C" fn wickra_ht_phasor_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ht_phasor_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ht_phasor_warmup_period(handle: *mut HtPhasor) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ht_phasor_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ht_phasor_is_ready(handle: *mut HtPhasor) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -39192,6 +51283,32 @@ pub unsafe extern "C" fn wickra_hurst_channel_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hurst_channel_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hurst_channel_warmup_period(handle: *mut HurstChannel) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hurst_channel_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hurst_channel_is_ready(handle: *mut HurstChannel) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -39274,6 +51391,32 @@ pub unsafe extern "C" fn wickra_ichimoku_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ichimoku_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ichimoku_warmup_period(handle: *mut Ichimoku) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ichimoku_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ichimoku_is_ready(handle: *mut Ichimoku) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -39344,6 +51487,34 @@ pub unsafe extern "C" fn wickra_initial_balance_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_initial_balance_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_initial_balance_warmup_period(
+    handle: *mut InitialBalance,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_initial_balance_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_initial_balance_is_ready(handle: *mut InitialBalance) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -39407,6 +51578,34 @@ pub unsafe extern "C" fn wickra_kalman_hedge_ratio_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kalman_hedge_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kalman_hedge_ratio_warmup_period(
+    handle: *mut KalmanHedgeRatio,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kalman_hedge_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kalman_hedge_ratio_is_ready(handle: *mut KalmanHedgeRatio) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -39481,6 +51680,32 @@ pub unsafe extern "C" fn wickra_kase_dev_stop_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kase_dev_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kase_dev_stop_warmup_period(handle: *mut KaseDevStop) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kase_dev_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kase_dev_stop_is_ready(handle: *mut KaseDevStop) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -39550,6 +51775,36 @@ pub unsafe extern "C" fn wickra_kase_permission_stochastic_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kase_permission_stochastic_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kase_permission_stochastic_warmup_period(
+    handle: *mut KasePermissionStochastic,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kase_permission_stochastic_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kase_permission_stochastic_is_ready(
+    handle: *mut KasePermissionStochastic,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -39633,6 +51888,32 @@ pub unsafe extern "C" fn wickra_keltner_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_keltner_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_keltner_warmup_period(handle: *mut Keltner) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_keltner_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_keltner_is_ready(handle: *mut Keltner) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -39705,6 +51986,32 @@ pub unsafe extern "C" fn wickra_kst_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kst_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kst_warmup_period(handle: *mut Kst) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kst_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kst_is_ready(handle: *mut Kst) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -39767,6 +52074,36 @@ pub unsafe extern "C" fn wickra_lead_lag_cross_correlation_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_lead_lag_cross_correlation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lead_lag_cross_correlation_warmup_period(
+    handle: *mut LeadLagCrossCorrelation,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_lead_lag_cross_correlation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lead_lag_cross_correlation_is_ready(
+    handle: *mut LeadLagCrossCorrelation,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -39834,6 +52171,32 @@ pub unsafe extern "C" fn wickra_lin_reg_channel_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_lin_reg_channel_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lin_reg_channel_warmup_period(handle: *mut LinRegChannel) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_lin_reg_channel_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lin_reg_channel_is_ready(handle: *mut LinRegChannel) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -39927,6 +52290,36 @@ pub unsafe extern "C" fn wickra_liquidation_features_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_liquidation_features_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_liquidation_features_warmup_period(
+    handle: *mut LiquidationFeatures,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_liquidation_features_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_liquidation_features_is_ready(
+    handle: *mut LiquidationFeatures,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -39986,6 +52379,32 @@ pub unsafe extern "C" fn wickra_ma_envelope_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ma_envelope_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ma_envelope_warmup_period(handle: *mut MaEnvelope) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ma_envelope_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ma_envelope_is_ready(handle: *mut MaEnvelope) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -40057,6 +52476,32 @@ pub unsafe extern "C" fn wickra_macd_indicator_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_macd_indicator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_indicator_warmup_period(handle: *mut MacdIndicator) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_macd_indicator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_indicator_is_ready(handle: *mut MacdIndicator) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -40116,6 +52561,32 @@ pub unsafe extern "C" fn wickra_macd_fix_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_macd_fix_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_fix_warmup_period(handle: *mut MacdFix) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_macd_fix_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_fix_is_ready(handle: *mut MacdFix) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -40182,6 +52653,32 @@ pub unsafe extern "C" fn wickra_mama_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mama_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mama_warmup_period(handle: *mut Mama) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mama_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mama_is_ready(handle: *mut Mama) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -40241,6 +52738,32 @@ pub unsafe extern "C" fn wickra_median_channel_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_median_channel_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_median_channel_warmup_period(handle: *mut MedianChannel) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_median_channel_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_median_channel_is_ready(handle: *mut MedianChannel) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -40311,6 +52834,34 @@ pub unsafe extern "C" fn wickra_modified_ma_stop_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_modified_ma_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_modified_ma_stop_warmup_period(
+    handle: *mut ModifiedMaStop,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_modified_ma_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_modified_ma_stop_is_ready(handle: *mut ModifiedMaStop) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -40392,6 +52943,34 @@ pub unsafe extern "C" fn wickra_murrey_math_lines_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_murrey_math_lines_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_murrey_math_lines_warmup_period(
+    handle: *mut MurreyMathLines,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_murrey_math_lines_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_murrey_math_lines_is_ready(handle: *mut MurreyMathLines) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -40458,6 +53037,32 @@ pub unsafe extern "C" fn wickra_nrtr_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_nrtr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_nrtr_warmup_period(handle: *mut Nrtr) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_nrtr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_nrtr_is_ready(handle: *mut Nrtr) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -40533,6 +53138,32 @@ pub unsafe extern "C" fn wickra_opening_range_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_opening_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_opening_range_warmup_period(handle: *mut OpeningRange) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_opening_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_opening_range_is_ready(handle: *mut OpeningRange) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -40598,6 +53229,36 @@ pub unsafe extern "C" fn wickra_overnight_intraday_return_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_overnight_intraday_return_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_overnight_intraday_return_warmup_period(
+    handle: *mut OvernightIntradayReturn,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_overnight_intraday_return_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_overnight_intraday_return_is_ready(
+    handle: *mut OvernightIntradayReturn,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -40677,6 +53338,34 @@ pub unsafe extern "C" fn wickra_projection_bands_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_projection_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_projection_bands_warmup_period(
+    handle: *mut ProjectionBands,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_projection_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_projection_bands_is_ready(handle: *mut ProjectionBands) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -40735,6 +53424,32 @@ pub unsafe extern "C" fn wickra_qqe_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_qqe_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_qqe_warmup_period(handle: *mut Qqe) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_qqe_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_qqe_is_ready(handle: *mut Qqe) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -40802,6 +53517,32 @@ pub unsafe extern "C" fn wickra_quartile_bands_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_quartile_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_quartile_bands_warmup_period(handle: *mut QuartileBands) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_quartile_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_quartile_bands_is_ready(handle: *mut QuartileBands) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -40865,6 +53606,36 @@ pub unsafe extern "C" fn wickra_relative_strength_ab_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_relative_strength_ab_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_relative_strength_ab_warmup_period(
+    handle: *mut RelativeStrengthAB,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_relative_strength_ab_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_relative_strength_ab_is_ready(
+    handle: *mut RelativeStrengthAB,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -40939,6 +53710,32 @@ pub unsafe extern "C" fn wickra_rwi_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rwi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rwi_warmup_period(handle: *mut Rwi) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rwi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rwi_is_ready(handle: *mut Rwi) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -41002,6 +53799,34 @@ pub unsafe extern "C" fn wickra_session_high_low_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_session_high_low_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_session_high_low_warmup_period(
+    handle: *mut SessionHighLow,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_session_high_low_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_session_high_low_is_ready(handle: *mut SessionHighLow) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -41070,6 +53895,32 @@ pub unsafe extern "C" fn wickra_session_range_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_session_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_session_range_warmup_period(handle: *mut SessionRange) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_session_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_session_range_is_ready(handle: *mut SessionRange) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -41146,6 +53997,36 @@ pub unsafe extern "C" fn wickra_smoothed_heikin_ashi_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_smoothed_heikin_ashi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_smoothed_heikin_ashi_warmup_period(
+    handle: *mut SmoothedHeikinAshi,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_smoothed_heikin_ashi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_smoothed_heikin_ashi_is_ready(
+    handle: *mut SmoothedHeikinAshi,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -41214,6 +54095,36 @@ pub unsafe extern "C" fn wickra_spread_bollinger_bands_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_spread_bollinger_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_spread_bollinger_bands_warmup_period(
+    handle: *mut SpreadBollingerBands,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_spread_bollinger_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_spread_bollinger_bands_is_ready(
+    handle: *mut SpreadBollingerBands,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -41276,6 +54187,36 @@ pub unsafe extern "C" fn wickra_standard_error_bands_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_standard_error_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_standard_error_bands_warmup_period(
+    handle: *mut StandardErrorBands,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_standard_error_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_standard_error_bands_is_ready(
+    handle: *mut StandardErrorBands,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -41355,6 +54296,32 @@ pub unsafe extern "C" fn wickra_starc_bands_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_starc_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_starc_bands_warmup_period(handle: *mut StarcBands) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_starc_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_starc_bands_is_ready(handle: *mut StarcBands) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -41421,6 +54388,32 @@ pub unsafe extern "C" fn wickra_stochastic_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_stochastic_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stochastic_warmup_period(handle: *mut Stochastic) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_stochastic_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stochastic_is_ready(handle: *mut Stochastic) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -41495,6 +54488,32 @@ pub unsafe extern "C" fn wickra_super_trend_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_super_trend_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_super_trend_warmup_period(handle: *mut SuperTrend) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_super_trend_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_super_trend_is_ready(handle: *mut SuperTrend) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -41561,6 +54580,32 @@ pub unsafe extern "C" fn wickra_td_lines_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_lines_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_lines_warmup_period(handle: *mut TdLines) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_lines_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_lines_is_ready(handle: *mut TdLines) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -41638,6 +54683,34 @@ pub unsafe extern "C" fn wickra_td_moving_average_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_moving_average_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_moving_average_warmup_period(
+    handle: *mut TdMovingAverage,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_moving_average_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_moving_average_is_ready(handle: *mut TdMovingAverage) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -41701,6 +54774,36 @@ pub unsafe extern "C" fn wickra_td_range_projection_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_range_projection_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_range_projection_warmup_period(
+    handle: *mut TdRangeProjection,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_range_projection_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_range_projection_is_ready(
+    handle: *mut TdRangeProjection,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -41771,6 +54874,32 @@ pub unsafe extern "C" fn wickra_td_risk_level_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_risk_level_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_risk_level_warmup_period(handle: *mut TdRiskLevel) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_risk_level_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_risk_level_is_ready(handle: *mut TdRiskLevel) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -41856,6 +54985,32 @@ pub unsafe extern "C" fn wickra_td_sequential_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_sequential_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_sequential_warmup_period(handle: *mut TdSequential) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_sequential_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_sequential_is_ready(handle: *mut TdSequential) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -41926,6 +55081,32 @@ pub unsafe extern "C" fn wickra_ttm_squeeze_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ttm_squeeze_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ttm_squeeze_warmup_period(handle: *mut TtmSqueeze) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ttm_squeeze_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ttm_squeeze_is_ready(handle: *mut TtmSqueeze) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -42001,6 +55182,32 @@ pub unsafe extern "C" fn wickra_value_area_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_value_area_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_value_area_warmup_period(handle: *mut ValueArea) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_value_area_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_value_area_is_ready(handle: *mut ValueArea) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -42081,6 +55288,34 @@ pub unsafe extern "C" fn wickra_volatility_cone_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volatility_cone_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volatility_cone_warmup_period(
+    handle: *mut VolatilityCone,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volatility_cone_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volatility_cone_is_ready(handle: *mut VolatilityCone) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -42156,6 +55391,36 @@ pub unsafe extern "C" fn wickra_volume_weighted_macd_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_weighted_macd_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_weighted_macd_warmup_period(
+    handle: *mut VolumeWeightedMacd,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_weighted_macd_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_weighted_macd_is_ready(
+    handle: *mut VolumeWeightedMacd,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -42222,6 +55487,34 @@ pub unsafe extern "C" fn wickra_volume_weighted_sr_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_weighted_sr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_weighted_sr_warmup_period(
+    handle: *mut VolumeWeightedSr,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_weighted_sr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_weighted_sr_is_ready(handle: *mut VolumeWeightedSr) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -42296,6 +55589,32 @@ pub unsafe extern "C" fn wickra_vortex_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vortex_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vortex_warmup_period(handle: *mut Vortex) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vortex_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vortex_is_ready(handle: *mut Vortex) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -42364,6 +55683,34 @@ pub unsafe extern "C" fn wickra_vwap_std_dev_bands_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vwap_std_dev_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vwap_std_dev_bands_warmup_period(
+    handle: *mut VwapStdDevBands,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vwap_std_dev_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vwap_std_dev_bands_is_ready(handle: *mut VwapStdDevBands) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -42442,6 +55789,32 @@ pub unsafe extern "C" fn wickra_wave_trend_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_wave_trend_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wave_trend_warmup_period(handle: *mut WaveTrend) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_wave_trend_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wave_trend_is_ready(handle: *mut WaveTrend) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -42505,6 +55878,34 @@ pub unsafe extern "C" fn wickra_williams_fractals_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_williams_fractals_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_williams_fractals_warmup_period(
+    handle: *mut WilliamsFractals,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_williams_fractals_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_williams_fractals_is_ready(handle: *mut WilliamsFractals) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -42579,6 +55980,32 @@ pub unsafe extern "C" fn wickra_woodie_pivots_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_woodie_pivots_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_woodie_pivots_warmup_period(handle: *mut WoodiePivots) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_woodie_pivots_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_woodie_pivots_is_ready(handle: *mut WoodiePivots) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -42642,6 +56069,32 @@ pub unsafe extern "C" fn wickra_zero_lag_macd_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_zero_lag_macd_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_zero_lag_macd_warmup_period(handle: *mut ZeroLagMacd) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_zero_lag_macd_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_zero_lag_macd_is_ready(handle: *mut ZeroLagMacd) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -42712,6 +56165,32 @@ pub unsafe extern "C" fn wickra_zig_zag_update(
             };
             true
         }
+        None => false,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_zig_zag_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_zig_zag_warmup_period(handle: *mut ZigZag) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_zig_zag_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_zig_zag_is_ready(handle: *mut ZigZag) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
         None => false,
     }
 }
@@ -42804,6 +56283,36 @@ pub unsafe extern "C" fn wickra_day_of_week_profile_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_day_of_week_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_day_of_week_profile_warmup_period(
+    handle: *mut DayOfWeekProfile,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_day_of_week_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_day_of_week_profile_is_ready(
+    handle: *mut DayOfWeekProfile,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -42877,6 +56386,36 @@ pub unsafe extern "C" fn wickra_intraday_volatility_profile_update(
             isize::try_from(out_val.bins.len()).unwrap_or(isize::MAX)
         }
         None => -1,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_intraday_volatility_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_intraday_volatility_profile_warmup_period(
+    handle: *mut IntradayVolatilityProfile,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_intraday_volatility_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_intraday_volatility_profile_is_ready(
+    handle: *mut IntradayVolatilityProfile,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -42957,6 +56496,36 @@ pub unsafe extern "C" fn wickra_time_of_day_return_profile_update(
             isize::try_from(out_val.bins.len()).unwrap_or(isize::MAX)
         }
         None => -1,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_time_of_day_return_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_time_of_day_return_profile_warmup_period(
+    handle: *mut TimeOfDayReturnProfile,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_time_of_day_return_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_time_of_day_return_profile_is_ready(
+    handle: *mut TimeOfDayReturnProfile,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -43044,6 +56613,32 @@ pub unsafe extern "C" fn wickra_tpo_profile_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tpo_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tpo_profile_warmup_period(handle: *mut TpoProfile) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tpo_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tpo_profile_is_ready(handle: *mut TpoProfile) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -43117,6 +56712,36 @@ pub unsafe extern "C" fn wickra_volume_by_time_profile_update(
             isize::try_from(out_val.bins.len()).unwrap_or(isize::MAX)
         }
         None => -1,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_by_time_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_by_time_profile_warmup_period(
+    handle: *mut VolumeByTimeProfile,
+) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_by_time_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_by_time_profile_is_ready(
+    handle: *mut VolumeByTimeProfile,
+) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -43197,6 +56822,32 @@ pub unsafe extern "C" fn wickra_volume_profile_update(
             isize::try_from(out_val.bins.len()).unwrap_or(isize::MAX)
         }
         None => -1,
+    }
+}
+
+/// Number of updates the indicator needs before it produces a non-`NaN` output.
+/// Returns `0` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_profile_warmup_period(handle: *mut VolumeProfile) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns
+/// `false` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_profile_is_ready(handle: *mut VolumeProfile) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
     }
 }
 
@@ -44144,6 +57795,32 @@ pub unsafe extern "C" fn wickra_macd_ext_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a value. Returns `0`
+/// if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_macd_ext_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_ext_warmup_period(handle: *mut MacdExt) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns `false`
+/// if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_macd_ext_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_ext_is_ready(handle: *mut MacdExt) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -44227,6 +57904,32 @@ pub unsafe extern "C" fn wickra_footprint_update(
     }
 }
 
+/// Number of updates the indicator needs before it produces a value. Returns `0`
+/// if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_footprint_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_footprint_warmup_period(handle: *mut Footprint) -> usize {
+    match handle.as_ref() {
+        Some(ind) => ind.warmup_period(),
+        None => 0,
+    }
+}
+
+/// Whether the indicator has consumed enough input to emit a value. Returns `false`
+/// if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_footprint_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_footprint_is_ready(handle: *mut Footprint) -> bool {
+    match handle.as_ref() {
+        Some(ind) => ind.is_ready(),
+        None => false,
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -44263,11 +57966,16 @@ mod tests {
         let handle = wickra_sma_new(3);
         assert!(!handle.is_null());
         unsafe {
+            assert_eq!(wickra_sma_warmup_period(handle), 3);
+            assert!(!wickra_sma_is_ready(handle));
             assert!(wickra_sma_update(handle, 1.0).is_nan());
             assert!(wickra_sma_update(handle, 2.0).is_nan());
+            assert!(!wickra_sma_is_ready(handle));
             assert!((wickra_sma_update(handle, 3.0) - 2.0).abs() < 1e-9);
+            assert!(wickra_sma_is_ready(handle));
 
             wickra_sma_reset(handle);
+            assert!(!wickra_sma_is_ready(handle));
             let input = [1.0_f64, 2.0, 3.0, 4.0, 5.0];
             let mut out = [0.0_f64; 5];
             wickra_sma_batch(handle, input.as_ptr(), out.as_mut_ptr(), 5);
@@ -44283,6 +57991,8 @@ mod tests {
     fn null_handle_is_a_defined_noop() {
         unsafe {
             assert!(wickra_sma_update(ptr::null_mut(), 1.0).is_nan());
+            assert_eq!(wickra_sma_warmup_period(ptr::null_mut()), 0);
+            assert!(!wickra_sma_is_ready(ptr::null_mut()));
             wickra_sma_reset(ptr::null_mut());
             wickra_sma_free(ptr::null_mut());
         }

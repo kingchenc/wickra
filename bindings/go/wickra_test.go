@@ -24,6 +24,34 @@ func TestScalarKnownValue(t *testing.T) {
 	}
 }
 
+func TestWarmupPeriodAndIsReady(t *testing.T) {
+	s, err := NewSma(3)
+	if err != nil {
+		t.Fatalf("NewSma: %v", err)
+	}
+	defer s.Close()
+
+	if got := s.WarmupPeriod(); got != 3 {
+		t.Fatalf("sma(3) WarmupPeriod = %d, want 3", got)
+	}
+	if s.IsReady() {
+		t.Fatal("sma is ready before any update")
+	}
+	s.Update(1)
+	s.Update(2)
+	if s.IsReady() {
+		t.Fatal("sma is ready mid-warmup")
+	}
+	s.Update(3)
+	if !s.IsReady() {
+		t.Fatal("sma is not ready after the warmup period")
+	}
+	s.Reset()
+	if s.IsReady() {
+		t.Fatal("sma is ready after reset")
+	}
+}
+
 func TestScalarBatchMatchesStreaming(t *testing.T) {
 	input := []float64{1, 2, 3, 4, 5, 6, 7, 8}
 

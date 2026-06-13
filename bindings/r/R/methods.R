@@ -76,3 +76,45 @@ reset.wickra_indicator <- function(object) {
   .Call(paste0("wk_", object$prefix, "_reset"), object$ptr, PACKAGE = "wickra")
   invisible(object)
 }
+
+#' Number of updates an indicator needs before it produces a value
+#'
+#' Not available for the alt-chart bar builders ([RenkoBars()], [KagiBars()],
+#' [PointAndFigureBars()], …), which have no warmup.
+#'
+#' @param object A `wickra_indicator`.
+#' @return A single integer: the warmup period.
+#' @examples
+#' warmup_period(Sma(14)) # 14
+#' @export
+warmup_period <- function(object) {
+  UseMethod("warmup_period")
+}
+
+#' @rdname warmup_period
+#' @export
+warmup_period.wickra_indicator <- function(object) {
+  .Call(paste0("wk_", object$prefix, "_warmup_period"), object$ptr, PACKAGE = "wickra")
+}
+
+#' Whether an indicator has consumed enough input to emit a value
+#'
+#' Not available for the alt-chart bar builders, which have no warmup.
+#'
+#' @param object A `wickra_indicator`.
+#' @return A single logical.
+#' @examples
+#' sma <- Sma(3)
+#' is_ready(sma) # FALSE
+#' for (x in c(1, 2, 3)) update(sma, x)
+#' is_ready(sma) # TRUE
+#' @export
+is_ready <- function(object) {
+  UseMethod("is_ready")
+}
+
+#' @rdname is_ready
+#' @export
+is_ready.wickra_indicator <- function(object) {
+  .Call(paste0("wk_", object$prefix, "_is_ready"), object$ptr, PACKAGE = "wickra")
+}

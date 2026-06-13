@@ -775,6 +775,22 @@ func NewAbandonedBaby() (*AbandonedBaby, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AbandonedBaby) WarmupPeriod() int {
+	r := int(C.wickra_abandoned_baby_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AbandonedBaby) IsReady() bool {
+	r := bool(C.wickra_abandoned_baby_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *AbandonedBaby) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -848,6 +864,22 @@ func NewAbcd() (*Abcd, error) {
 	obj := &Abcd{handle: ptr}
 	runtime.SetFinalizer(obj, (*Abcd).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Abcd) WarmupPeriod() int {
+	r := int(C.wickra_abcd_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Abcd) IsReady() bool {
+	r := bool(C.wickra_abcd_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -925,6 +957,22 @@ func NewAbsoluteBreadthIndex() (*AbsoluteBreadthIndex, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AbsoluteBreadthIndex) WarmupPeriod() int {
+	r := int(C.wickra_absolute_breadth_index_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AbsoluteBreadthIndex) IsReady() bool {
+	r := bool(C.wickra_absolute_breadth_index_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one cross-sectional snapshot and returns the indicator
 // value (NaN until warmed up). Slices in a group must share a length.
 func (ind *AbsoluteBreadthIndex) Update(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, timestamp int64) float64 {
@@ -987,6 +1035,22 @@ func NewAccelerationBands(period int, factor float64) (*AccelerationBands, error
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AccelerationBands) WarmupPeriod() int {
+	r := int(C.wickra_acceleration_bands_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AccelerationBands) IsReady() bool {
+	r := bool(C.wickra_acceleration_bands_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *AccelerationBands) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (AccelerationBandsOutput, bool) {
@@ -1030,6 +1094,22 @@ func NewAcceleratorOscillator(aoFast int, aoSlow int, signalPeriod int) (*Accele
 	obj := &AcceleratorOscillator{handle: ptr}
 	runtime.SetFinalizer(obj, (*AcceleratorOscillator).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AcceleratorOscillator) WarmupPeriod() int {
+	r := int(C.wickra_accelerator_oscillator_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AcceleratorOscillator) IsReady() bool {
+	r := bool(C.wickra_accelerator_oscillator_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -1107,6 +1187,22 @@ func NewAdOscillator() (*AdOscillator, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AdOscillator) WarmupPeriod() int {
+	r := int(C.wickra_ad_oscillator_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AdOscillator) IsReady() bool {
+	r := bool(C.wickra_ad_oscillator_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *AdOscillator) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -1182,6 +1278,22 @@ func NewAdVolumeLine() (*AdVolumeLine, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AdVolumeLine) WarmupPeriod() int {
+	r := int(C.wickra_ad_volume_line_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AdVolumeLine) IsReady() bool {
+	r := bool(C.wickra_ad_volume_line_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one cross-sectional snapshot and returns the indicator
 // value (NaN until warmed up). Slices in a group must share a length.
 func (ind *AdVolumeLine) Update(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, timestamp int64) float64 {
@@ -1242,6 +1354,22 @@ func NewAdaptiveCci(period int) (*AdaptiveCci, error) {
 	obj := &AdaptiveCci{handle: ptr}
 	runtime.SetFinalizer(obj, (*AdaptiveCci).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AdaptiveCci) WarmupPeriod() int {
+	r := int(C.wickra_adaptive_cci_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AdaptiveCci) IsReady() bool {
+	r := bool(C.wickra_adaptive_cci_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -1319,6 +1447,22 @@ func NewAdaptiveCycle() (*AdaptiveCycle, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AdaptiveCycle) WarmupPeriod() int {
+	r := int(C.wickra_adaptive_cycle_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AdaptiveCycle) IsReady() bool {
+	r := bool(C.wickra_adaptive_cycle_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *AdaptiveCycle) Update(value float64) float64 {
@@ -1372,6 +1516,22 @@ func NewAdaptiveLaguerreFilter(period int) (*AdaptiveLaguerreFilter, error) {
 	obj := &AdaptiveLaguerreFilter{handle: ptr}
 	runtime.SetFinalizer(obj, (*AdaptiveLaguerreFilter).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AdaptiveLaguerreFilter) WarmupPeriod() int {
+	r := int(C.wickra_adaptive_laguerre_filter_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AdaptiveLaguerreFilter) IsReady() bool {
+	r := bool(C.wickra_adaptive_laguerre_filter_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -1429,6 +1589,22 @@ func NewAdaptiveRsi(period int) (*AdaptiveRsi, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AdaptiveRsi) WarmupPeriod() int {
+	r := int(C.wickra_adaptive_rsi_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AdaptiveRsi) IsReady() bool {
+	r := bool(C.wickra_adaptive_rsi_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *AdaptiveRsi) Update(value float64) float64 {
@@ -1482,6 +1658,22 @@ func NewAdl() (*Adl, error) {
 	obj := &Adl{handle: ptr}
 	runtime.SetFinalizer(obj, (*Adl).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Adl) WarmupPeriod() int {
+	r := int(C.wickra_adl_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Adl) IsReady() bool {
+	r := bool(C.wickra_adl_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -1559,6 +1751,22 @@ func NewAdvanceBlock() (*AdvanceBlock, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AdvanceBlock) WarmupPeriod() int {
+	r := int(C.wickra_advance_block_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AdvanceBlock) IsReady() bool {
+	r := bool(C.wickra_advance_block_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *AdvanceBlock) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -1634,6 +1842,22 @@ func NewAdvanceDecline() (*AdvanceDecline, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AdvanceDecline) WarmupPeriod() int {
+	r := int(C.wickra_advance_decline_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AdvanceDecline) IsReady() bool {
+	r := bool(C.wickra_advance_decline_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one cross-sectional snapshot and returns the indicator
 // value (NaN until warmed up). Slices in a group must share a length.
 func (ind *AdvanceDecline) Update(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, timestamp int64) float64 {
@@ -1694,6 +1918,22 @@ func NewAdvanceDeclineRatio() (*AdvanceDeclineRatio, error) {
 	obj := &AdvanceDeclineRatio{handle: ptr}
 	runtime.SetFinalizer(obj, (*AdvanceDeclineRatio).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AdvanceDeclineRatio) WarmupPeriod() int {
+	r := int(C.wickra_advance_decline_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AdvanceDeclineRatio) IsReady() bool {
+	r := bool(C.wickra_advance_decline_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one cross-sectional snapshot and returns the indicator
@@ -1758,6 +1998,22 @@ func NewAdx(period int) (*Adx, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Adx) WarmupPeriod() int {
+	r := int(C.wickra_adx_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Adx) IsReady() bool {
+	r := bool(C.wickra_adx_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *Adx) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (AdxOutput, bool) {
@@ -1801,6 +2057,22 @@ func NewAdxr(period int) (*Adxr, error) {
 	obj := &Adxr{handle: ptr}
 	runtime.SetFinalizer(obj, (*Adxr).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Adxr) WarmupPeriod() int {
+	r := int(C.wickra_adxr_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Adxr) IsReady() bool {
+	r := bool(C.wickra_adxr_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -1878,6 +2150,22 @@ func NewAlligator(jawPeriod int, teethPeriod int, lipsPeriod int) (*Alligator, e
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Alligator) WarmupPeriod() int {
+	r := int(C.wickra_alligator_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Alligator) IsReady() bool {
+	r := bool(C.wickra_alligator_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *Alligator) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (AlligatorOutput, bool) {
@@ -1921,6 +2209,22 @@ func NewAlma(period int, offset float64, sigma float64) (*Alma, error) {
 	obj := &Alma{handle: ptr}
 	runtime.SetFinalizer(obj, (*Alma).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Alma) WarmupPeriod() int {
+	r := int(C.wickra_alma_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Alma) IsReady() bool {
+	r := bool(C.wickra_alma_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -1976,6 +2280,22 @@ func NewAlpha(period int, riskFree float64) (*Alpha, error) {
 	obj := &Alpha{handle: ptr}
 	runtime.SetFinalizer(obj, (*Alpha).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Alpha) WarmupPeriod() int {
+	r := int(C.wickra_alpha_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Alpha) IsReady() bool {
+	r := bool(C.wickra_alpha_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -2037,6 +2357,22 @@ func NewAmihudIlliquidity(period int) (*AmihudIlliquidity, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AmihudIlliquidity) WarmupPeriod() int {
+	r := int(C.wickra_amihud_illiquidity_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AmihudIlliquidity) IsReady() bool {
+	r := bool(C.wickra_amihud_illiquidity_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *AmihudIlliquidity) Update(price float64, size float64, isBuy bool, timestamp int64) float64 {
@@ -2076,6 +2412,22 @@ func NewAnchoredRsi() (*AnchoredRsi, error) {
 	obj := &AnchoredRsi{handle: ptr}
 	runtime.SetFinalizer(obj, (*AnchoredRsi).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AnchoredRsi) WarmupPeriod() int {
+	r := int(C.wickra_anchored_rsi_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AnchoredRsi) IsReady() bool {
+	r := bool(C.wickra_anchored_rsi_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -2131,6 +2483,22 @@ func NewAnchoredVwap() (*AnchoredVwap, error) {
 	obj := &AnchoredVwap{handle: ptr}
 	runtime.SetFinalizer(obj, (*AnchoredVwap).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AnchoredVwap) WarmupPeriod() int {
+	r := int(C.wickra_anchored_vwap_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AnchoredVwap) IsReady() bool {
+	r := bool(C.wickra_anchored_vwap_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -2208,6 +2576,22 @@ func NewAndrewsPitchfork(strength int) (*AndrewsPitchfork, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AndrewsPitchfork) WarmupPeriod() int {
+	r := int(C.wickra_andrews_pitchfork_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AndrewsPitchfork) IsReady() bool {
+	r := bool(C.wickra_andrews_pitchfork_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *AndrewsPitchfork) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (AndrewsPitchforkOutput, bool) {
@@ -2251,6 +2635,22 @@ func NewApo(fast int, slow int) (*Apo, error) {
 	obj := &Apo{handle: ptr}
 	runtime.SetFinalizer(obj, (*Apo).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Apo) WarmupPeriod() int {
+	r := int(C.wickra_apo_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Apo) IsReady() bool {
+	r := bool(C.wickra_apo_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -2308,6 +2708,22 @@ func NewAroon(period int) (*Aroon, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Aroon) WarmupPeriod() int {
+	r := int(C.wickra_aroon_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Aroon) IsReady() bool {
+	r := bool(C.wickra_aroon_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *Aroon) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (AroonOutput, bool) {
@@ -2351,6 +2767,22 @@ func NewAroonOscillator(period int) (*AroonOscillator, error) {
 	obj := &AroonOscillator{handle: ptr}
 	runtime.SetFinalizer(obj, (*AroonOscillator).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AroonOscillator) WarmupPeriod() int {
+	r := int(C.wickra_aroon_oscillator_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AroonOscillator) IsReady() bool {
+	r := bool(C.wickra_aroon_oscillator_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -2428,6 +2860,22 @@ func NewAtr(period int) (*Atr, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Atr) WarmupPeriod() int {
+	r := int(C.wickra_atr_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Atr) IsReady() bool {
+	r := bool(C.wickra_atr_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Atr) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -2503,6 +2951,22 @@ func NewAtrBands(period int, multiplier float64) (*AtrBands, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AtrBands) WarmupPeriod() int {
+	r := int(C.wickra_atr_bands_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AtrBands) IsReady() bool {
+	r := bool(C.wickra_atr_bands_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *AtrBands) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (AtrBandsOutput, bool) {
@@ -2548,6 +3012,22 @@ func NewAtrRatchet(atrPeriod int, startMult float64, increment float64) (*AtrRat
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AtrRatchet) WarmupPeriod() int {
+	r := int(C.wickra_atr_ratchet_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AtrRatchet) IsReady() bool {
+	r := bool(C.wickra_atr_ratchet_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *AtrRatchet) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (AtrRatchetOutput, bool) {
@@ -2591,6 +3071,22 @@ func NewAtrTrailingStop(atrPeriod int, multiplier float64) (*AtrTrailingStop, er
 	obj := &AtrTrailingStop{handle: ptr}
 	runtime.SetFinalizer(obj, (*AtrTrailingStop).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AtrTrailingStop) WarmupPeriod() int {
+	r := int(C.wickra_atr_trailing_stop_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AtrTrailingStop) IsReady() bool {
+	r := bool(C.wickra_atr_trailing_stop_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -2668,6 +3164,22 @@ func NewAutoFib() (*AutoFib, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AutoFib) WarmupPeriod() int {
+	r := int(C.wickra_auto_fib_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AutoFib) IsReady() bool {
+	r := bool(C.wickra_auto_fib_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *AutoFib) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (AutoFibOutput, bool) {
@@ -2711,6 +3223,22 @@ func NewAutocorrelation(period int, lag int) (*Autocorrelation, error) {
 	obj := &Autocorrelation{handle: ptr}
 	runtime.SetFinalizer(obj, (*Autocorrelation).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Autocorrelation) WarmupPeriod() int {
+	r := int(C.wickra_autocorrelation_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Autocorrelation) IsReady() bool {
+	r := bool(C.wickra_autocorrelation_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -2768,6 +3296,22 @@ func NewAutocorrelationPeriodogram(minPeriod int, maxPeriod int) (*Autocorrelati
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AutocorrelationPeriodogram) WarmupPeriod() int {
+	r := int(C.wickra_autocorrelation_periodogram_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AutocorrelationPeriodogram) IsReady() bool {
+	r := bool(C.wickra_autocorrelation_periodogram_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *AutocorrelationPeriodogram) Update(value float64) float64 {
@@ -2821,6 +3365,22 @@ func NewAverageDailyRange(period int, utcOffsetMinutes int32) (*AverageDailyRang
 	obj := &AverageDailyRange{handle: ptr}
 	runtime.SetFinalizer(obj, (*AverageDailyRange).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AverageDailyRange) WarmupPeriod() int {
+	r := int(C.wickra_average_daily_range_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AverageDailyRange) IsReady() bool {
+	r := bool(C.wickra_average_daily_range_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -2898,6 +3458,22 @@ func NewAverageDrawdown(period int) (*AverageDrawdown, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AverageDrawdown) WarmupPeriod() int {
+	r := int(C.wickra_average_drawdown_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AverageDrawdown) IsReady() bool {
+	r := bool(C.wickra_average_drawdown_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *AverageDrawdown) Update(value float64) float64 {
@@ -2951,6 +3527,22 @@ func NewAvgPrice() (*AvgPrice, error) {
 	obj := &AvgPrice{handle: ptr}
 	runtime.SetFinalizer(obj, (*AvgPrice).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AvgPrice) WarmupPeriod() int {
+	r := int(C.wickra_avg_price_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AvgPrice) IsReady() bool {
+	r := bool(C.wickra_avg_price_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -3028,6 +3620,22 @@ func NewAwesomeOscillator(fast int, slow int) (*AwesomeOscillator, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AwesomeOscillator) WarmupPeriod() int {
+	r := int(C.wickra_awesome_oscillator_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AwesomeOscillator) IsReady() bool {
+	r := bool(C.wickra_awesome_oscillator_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *AwesomeOscillator) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -3101,6 +3709,22 @@ func NewAwesomeOscillatorHistogram(fast int, slow int, smaPeriod int) (*AwesomeO
 	obj := &AwesomeOscillatorHistogram{handle: ptr}
 	runtime.SetFinalizer(obj, (*AwesomeOscillatorHistogram).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *AwesomeOscillatorHistogram) WarmupPeriod() int {
+	r := int(C.wickra_awesome_oscillator_histogram_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *AwesomeOscillatorHistogram) IsReady() bool {
+	r := bool(C.wickra_awesome_oscillator_histogram_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -3178,6 +3802,22 @@ func NewBalanceOfPower() (*BalanceOfPower, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *BalanceOfPower) WarmupPeriod() int {
+	r := int(C.wickra_balance_of_power_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *BalanceOfPower) IsReady() bool {
+	r := bool(C.wickra_balance_of_power_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *BalanceOfPower) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -3253,6 +3893,22 @@ func NewBandpassFilter(period int, bandwidth float64) (*BandpassFilter, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *BandpassFilter) WarmupPeriod() int {
+	r := int(C.wickra_bandpass_filter_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *BandpassFilter) IsReady() bool {
+	r := bool(C.wickra_bandpass_filter_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *BandpassFilter) Update(value float64) float64 {
@@ -3306,6 +3962,22 @@ func NewBat() (*Bat, error) {
 	obj := &Bat{handle: ptr}
 	runtime.SetFinalizer(obj, (*Bat).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Bat) WarmupPeriod() int {
+	r := int(C.wickra_bat_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Bat) IsReady() bool {
+	r := bool(C.wickra_bat_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -3383,6 +4055,22 @@ func NewBeltHold() (*BeltHold, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *BeltHold) WarmupPeriod() int {
+	r := int(C.wickra_belt_hold_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *BeltHold) IsReady() bool {
+	r := bool(C.wickra_belt_hold_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *BeltHold) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -3458,6 +4146,22 @@ func NewBeta(period int) (*Beta, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Beta) WarmupPeriod() int {
+	r := int(C.wickra_beta_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Beta) IsReady() bool {
+	r := bool(C.wickra_beta_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Beta) Update(x float64, y float64) float64 {
@@ -3517,6 +4221,22 @@ func NewBetaNeutralSpread(period int) (*BetaNeutralSpread, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *BetaNeutralSpread) WarmupPeriod() int {
+	r := int(C.wickra_beta_neutral_spread_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *BetaNeutralSpread) IsReady() bool {
+	r := bool(C.wickra_beta_neutral_spread_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *BetaNeutralSpread) Update(x float64, y float64) float64 {
@@ -3574,6 +4294,22 @@ func NewBetterVolume(period int) (*BetterVolume, error) {
 	obj := &BetterVolume{handle: ptr}
 	runtime.SetFinalizer(obj, (*BetterVolume).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *BetterVolume) WarmupPeriod() int {
+	r := int(C.wickra_better_volume_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *BetterVolume) IsReady() bool {
+	r := bool(C.wickra_better_volume_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -3651,6 +4387,22 @@ func NewBipowerVariation(period int) (*BipowerVariation, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *BipowerVariation) WarmupPeriod() int {
+	r := int(C.wickra_bipower_variation_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *BipowerVariation) IsReady() bool {
+	r := bool(C.wickra_bipower_variation_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *BipowerVariation) Update(value float64) float64 {
@@ -3704,6 +4456,22 @@ func NewBodySizePct() (*BodySizePct, error) {
 	obj := &BodySizePct{handle: ptr}
 	runtime.SetFinalizer(obj, (*BodySizePct).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *BodySizePct) WarmupPeriod() int {
+	r := int(C.wickra_body_size_pct_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *BodySizePct) IsReady() bool {
+	r := bool(C.wickra_body_size_pct_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -3781,6 +4549,22 @@ func NewBollingerBands(period int, multiplier float64) (*BollingerBands, error) 
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *BollingerBands) WarmupPeriod() int {
+	r := int(C.wickra_bollinger_bands_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *BollingerBands) IsReady() bool {
+	r := bool(C.wickra_bollinger_bands_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *BollingerBands) Update(value float64) (BollingerOutput, bool) {
@@ -3824,6 +4608,22 @@ func NewBollingerBandwidth(period int, multiplier float64) (*BollingerBandwidth,
 	obj := &BollingerBandwidth{handle: ptr}
 	runtime.SetFinalizer(obj, (*BollingerBandwidth).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *BollingerBandwidth) WarmupPeriod() int {
+	r := int(C.wickra_bollinger_bandwidth_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *BollingerBandwidth) IsReady() bool {
+	r := bool(C.wickra_bollinger_bandwidth_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -3881,6 +4681,22 @@ func NewBomarBands(period int, coverage float64) (*BomarBands, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *BomarBands) WarmupPeriod() int {
+	r := int(C.wickra_bomar_bands_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *BomarBands) IsReady() bool {
+	r := bool(C.wickra_bomar_bands_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *BomarBands) Update(value float64) (BomarBandsOutput, bool) {
@@ -3924,6 +4740,22 @@ func NewBreadthThrust(period int) (*BreadthThrust, error) {
 	obj := &BreadthThrust{handle: ptr}
 	runtime.SetFinalizer(obj, (*BreadthThrust).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *BreadthThrust) WarmupPeriod() int {
+	r := int(C.wickra_breadth_thrust_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *BreadthThrust) IsReady() bool {
+	r := bool(C.wickra_breadth_thrust_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one cross-sectional snapshot and returns the indicator
@@ -3986,6 +4818,22 @@ func NewBreakaway() (*Breakaway, error) {
 	obj := &Breakaway{handle: ptr}
 	runtime.SetFinalizer(obj, (*Breakaway).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Breakaway) WarmupPeriod() int {
+	r := int(C.wickra_breakaway_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Breakaway) IsReady() bool {
+	r := bool(C.wickra_breakaway_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -4063,6 +4911,22 @@ func NewBullishPercentIndex() (*BullishPercentIndex, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *BullishPercentIndex) WarmupPeriod() int {
+	r := int(C.wickra_bullish_percent_index_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *BullishPercentIndex) IsReady() bool {
+	r := bool(C.wickra_bullish_percent_index_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one cross-sectional snapshot and returns the indicator
 // value (NaN until warmed up). Slices in a group must share a length.
 func (ind *BullishPercentIndex) Update(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, timestamp int64) float64 {
@@ -4125,6 +4989,22 @@ func NewBurkeRatio(period int) (*BurkeRatio, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *BurkeRatio) WarmupPeriod() int {
+	r := int(C.wickra_burke_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *BurkeRatio) IsReady() bool {
+	r := bool(C.wickra_burke_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *BurkeRatio) Update(value float64) float64 {
@@ -4178,6 +5058,22 @@ func NewButterfly() (*Butterfly, error) {
 	obj := &Butterfly{handle: ptr}
 	runtime.SetFinalizer(obj, (*Butterfly).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Butterfly) WarmupPeriod() int {
+	r := int(C.wickra_butterfly_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Butterfly) IsReady() bool {
+	r := bool(C.wickra_butterfly_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -4255,6 +5151,22 @@ func NewCalendarSpread() (*CalendarSpread, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *CalendarSpread) WarmupPeriod() int {
+	r := int(C.wickra_calendar_spread_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *CalendarSpread) IsReady() bool {
+	r := bool(C.wickra_calendar_spread_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *CalendarSpread) Update(fundingRate float64, markPrice float64, indexPrice float64, futuresPrice float64, openInterest float64, longSize float64, shortSize float64, takerBuyVolume float64, takerSellVolume float64, longLiquidation float64, shortLiquidation float64, timestamp int64) float64 {
@@ -4294,6 +5206,22 @@ func NewCalmarRatio(period int) (*CalmarRatio, error) {
 	obj := &CalmarRatio{handle: ptr}
 	runtime.SetFinalizer(obj, (*CalmarRatio).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *CalmarRatio) WarmupPeriod() int {
+	r := int(C.wickra_calmar_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *CalmarRatio) IsReady() bool {
+	r := bool(C.wickra_calmar_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -4351,6 +5279,22 @@ func NewCamarilla() (*Camarilla, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Camarilla) WarmupPeriod() int {
+	r := int(C.wickra_camarilla_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Camarilla) IsReady() bool {
+	r := bool(C.wickra_camarilla_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *Camarilla) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (CamarillaPivotsOutput, bool) {
@@ -4396,6 +5340,22 @@ func NewCandleVolume(period int) (*CandleVolume, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *CandleVolume) WarmupPeriod() int {
+	r := int(C.wickra_candle_volume_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *CandleVolume) IsReady() bool {
+	r := bool(C.wickra_candle_volume_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *CandleVolume) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (CandleVolumeOutput, bool) {
@@ -4439,6 +5399,22 @@ func NewCci(period int) (*Cci, error) {
 	obj := &Cci{handle: ptr}
 	runtime.SetFinalizer(obj, (*Cci).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Cci) WarmupPeriod() int {
+	r := int(C.wickra_cci_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Cci) IsReady() bool {
+	r := bool(C.wickra_cci_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -4516,6 +5492,22 @@ func NewCenterOfGravity(period int) (*CenterOfGravity, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *CenterOfGravity) WarmupPeriod() int {
+	r := int(C.wickra_center_of_gravity_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *CenterOfGravity) IsReady() bool {
+	r := bool(C.wickra_center_of_gravity_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *CenterOfGravity) Update(value float64) float64 {
@@ -4571,6 +5563,22 @@ func NewCentralPivotRange() (*CentralPivotRange, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *CentralPivotRange) WarmupPeriod() int {
+	r := int(C.wickra_central_pivot_range_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *CentralPivotRange) IsReady() bool {
+	r := bool(C.wickra_central_pivot_range_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *CentralPivotRange) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (CentralPivotRangeOutput, bool) {
@@ -4614,6 +5622,22 @@ func NewCfo(period int) (*Cfo, error) {
 	obj := &Cfo{handle: ptr}
 	runtime.SetFinalizer(obj, (*Cfo).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Cfo) WarmupPeriod() int {
+	r := int(C.wickra_cfo_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Cfo) IsReady() bool {
+	r := bool(C.wickra_cfo_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -4669,6 +5693,22 @@ func NewChaikinMoneyFlow(period int) (*ChaikinMoneyFlow, error) {
 	obj := &ChaikinMoneyFlow{handle: ptr}
 	runtime.SetFinalizer(obj, (*ChaikinMoneyFlow).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ChaikinMoneyFlow) WarmupPeriod() int {
+	r := int(C.wickra_chaikin_money_flow_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ChaikinMoneyFlow) IsReady() bool {
+	r := bool(C.wickra_chaikin_money_flow_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -4746,6 +5786,22 @@ func NewChaikinOscillator(fast int, slow int) (*ChaikinOscillator, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ChaikinOscillator) WarmupPeriod() int {
+	r := int(C.wickra_chaikin_oscillator_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ChaikinOscillator) IsReady() bool {
+	r := bool(C.wickra_chaikin_oscillator_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *ChaikinOscillator) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -4819,6 +5875,22 @@ func NewChaikinVolatility(emaPeriod int, rocPeriod int) (*ChaikinVolatility, err
 	obj := &ChaikinVolatility{handle: ptr}
 	runtime.SetFinalizer(obj, (*ChaikinVolatility).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ChaikinVolatility) WarmupPeriod() int {
+	r := int(C.wickra_chaikin_volatility_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ChaikinVolatility) IsReady() bool {
+	r := bool(C.wickra_chaikin_volatility_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -4896,6 +5968,22 @@ func NewChandeKrollStop(atrPeriod int, atrMultiplier float64, stopPeriod int) (*
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ChandeKrollStop) WarmupPeriod() int {
+	r := int(C.wickra_chande_kroll_stop_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ChandeKrollStop) IsReady() bool {
+	r := bool(C.wickra_chande_kroll_stop_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *ChandeKrollStop) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (ChandeKrollStopOutput, bool) {
@@ -4941,6 +6029,22 @@ func NewChandelierExit(period int, multiplier float64) (*ChandelierExit, error) 
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ChandelierExit) WarmupPeriod() int {
+	r := int(C.wickra_chandelier_exit_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ChandelierExit) IsReady() bool {
+	r := bool(C.wickra_chandelier_exit_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *ChandelierExit) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (ChandelierExitOutput, bool) {
@@ -4984,6 +6088,22 @@ func NewChoppinessIndex(period int) (*ChoppinessIndex, error) {
 	obj := &ChoppinessIndex{handle: ptr}
 	runtime.SetFinalizer(obj, (*ChoppinessIndex).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ChoppinessIndex) WarmupPeriod() int {
+	r := int(C.wickra_choppiness_index_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ChoppinessIndex) IsReady() bool {
+	r := bool(C.wickra_choppiness_index_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -5061,6 +6181,22 @@ func NewClassicPivots() (*ClassicPivots, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ClassicPivots) WarmupPeriod() int {
+	r := int(C.wickra_classic_pivots_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ClassicPivots) IsReady() bool {
+	r := bool(C.wickra_classic_pivots_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *ClassicPivots) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (ClassicPivotsOutput, bool) {
@@ -5104,6 +6240,22 @@ func NewCloseVsOpen() (*CloseVsOpen, error) {
 	obj := &CloseVsOpen{handle: ptr}
 	runtime.SetFinalizer(obj, (*CloseVsOpen).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *CloseVsOpen) WarmupPeriod() int {
+	r := int(C.wickra_close_vs_open_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *CloseVsOpen) IsReady() bool {
+	r := bool(C.wickra_close_vs_open_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -5181,6 +6333,22 @@ func NewClosingMarubozu() (*ClosingMarubozu, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ClosingMarubozu) WarmupPeriod() int {
+	r := int(C.wickra_closing_marubozu_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ClosingMarubozu) IsReady() bool {
+	r := bool(C.wickra_closing_marubozu_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *ClosingMarubozu) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -5256,6 +6424,22 @@ func NewCmo(period int) (*Cmo, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Cmo) WarmupPeriod() int {
+	r := int(C.wickra_cmo_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Cmo) IsReady() bool {
+	r := bool(C.wickra_cmo_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Cmo) Update(value float64) float64 {
@@ -5309,6 +6493,22 @@ func NewCoefficientOfVariation(period int) (*CoefficientOfVariation, error) {
 	obj := &CoefficientOfVariation{handle: ptr}
 	runtime.SetFinalizer(obj, (*CoefficientOfVariation).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *CoefficientOfVariation) WarmupPeriod() int {
+	r := int(C.wickra_coefficient_of_variation_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *CoefficientOfVariation) IsReady() bool {
+	r := bool(C.wickra_coefficient_of_variation_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -5366,6 +6566,22 @@ func NewCointegration(period int, adfLags int) (*Cointegration, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Cointegration) WarmupPeriod() int {
+	r := int(C.wickra_cointegration_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Cointegration) IsReady() bool {
+	r := bool(C.wickra_cointegration_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *Cointegration) Update(x float64, y float64) (CointegrationOutput, bool) {
@@ -5409,6 +6625,22 @@ func NewCommonSenseRatio(period int) (*CommonSenseRatio, error) {
 	obj := &CommonSenseRatio{handle: ptr}
 	runtime.SetFinalizer(obj, (*CommonSenseRatio).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *CommonSenseRatio) WarmupPeriod() int {
+	r := int(C.wickra_common_sense_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *CommonSenseRatio) IsReady() bool {
+	r := bool(C.wickra_common_sense_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -5466,6 +6698,22 @@ func NewCompositeProfile(period int, bins int, valueAreaPct float64) (*Composite
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *CompositeProfile) WarmupPeriod() int {
+	r := int(C.wickra_composite_profile_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *CompositeProfile) IsReady() bool {
+	r := bool(C.wickra_composite_profile_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *CompositeProfile) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (CompositeProfileOutput, bool) {
@@ -5509,6 +6757,22 @@ func NewConcealingBabySwallow() (*ConcealingBabySwallow, error) {
 	obj := &ConcealingBabySwallow{handle: ptr}
 	runtime.SetFinalizer(obj, (*ConcealingBabySwallow).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ConcealingBabySwallow) WarmupPeriod() int {
+	r := int(C.wickra_concealing_baby_swallow_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ConcealingBabySwallow) IsReady() bool {
+	r := bool(C.wickra_concealing_baby_swallow_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -5586,6 +6850,22 @@ func NewConditionalValueAtRisk(period int, confidence float64) (*ConditionalValu
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ConditionalValueAtRisk) WarmupPeriod() int {
+	r := int(C.wickra_conditional_value_at_risk_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ConditionalValueAtRisk) IsReady() bool {
+	r := bool(C.wickra_conditional_value_at_risk_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *ConditionalValueAtRisk) Update(value float64) float64 {
@@ -5639,6 +6919,22 @@ func NewConnorsRsi(periodRsi int, periodStreak int, periodRank int) (*ConnorsRsi
 	obj := &ConnorsRsi{handle: ptr}
 	runtime.SetFinalizer(obj, (*ConnorsRsi).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ConnorsRsi) WarmupPeriod() int {
+	r := int(C.wickra_connors_rsi_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ConnorsRsi) IsReady() bool {
+	r := bool(C.wickra_connors_rsi_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -5696,6 +6992,22 @@ func NewCoppock(rocLongPeriod int, rocShortPeriod int, wmaPeriod int) (*Coppock,
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Coppock) WarmupPeriod() int {
+	r := int(C.wickra_coppock_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Coppock) IsReady() bool {
+	r := bool(C.wickra_coppock_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Coppock) Update(value float64) float64 {
@@ -5751,6 +7063,22 @@ func NewCorrelationTrendIndicator(period int) (*CorrelationTrendIndicator, error
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *CorrelationTrendIndicator) WarmupPeriod() int {
+	r := int(C.wickra_correlation_trend_indicator_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *CorrelationTrendIndicator) IsReady() bool {
+	r := bool(C.wickra_correlation_trend_indicator_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *CorrelationTrendIndicator) Update(value float64) float64 {
@@ -5804,6 +7132,22 @@ func NewCounterattack() (*Counterattack, error) {
 	obj := &Counterattack{handle: ptr}
 	runtime.SetFinalizer(obj, (*Counterattack).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Counterattack) WarmupPeriod() int {
+	r := int(C.wickra_counterattack_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Counterattack) IsReady() bool {
+	r := bool(C.wickra_counterattack_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -5881,6 +7225,22 @@ func NewCrab() (*Crab, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Crab) WarmupPeriod() int {
+	r := int(C.wickra_crab_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Crab) IsReady() bool {
+	r := bool(C.wickra_crab_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Crab) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -5956,6 +7316,22 @@ func NewCumulativeVolumeDelta() (*CumulativeVolumeDelta, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *CumulativeVolumeDelta) WarmupPeriod() int {
+	r := int(C.wickra_cumulative_volume_delta_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *CumulativeVolumeDelta) IsReady() bool {
+	r := bool(C.wickra_cumulative_volume_delta_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *CumulativeVolumeDelta) Update(price float64, size float64, isBuy bool, timestamp int64) float64 {
@@ -5995,6 +7371,22 @@ func NewCumulativeVolumeIndex() (*CumulativeVolumeIndex, error) {
 	obj := &CumulativeVolumeIndex{handle: ptr}
 	runtime.SetFinalizer(obj, (*CumulativeVolumeIndex).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *CumulativeVolumeIndex) WarmupPeriod() int {
+	r := int(C.wickra_cumulative_volume_index_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *CumulativeVolumeIndex) IsReady() bool {
+	r := bool(C.wickra_cumulative_volume_index_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one cross-sectional snapshot and returns the indicator
@@ -6057,6 +7449,22 @@ func NewCupAndHandle() (*CupAndHandle, error) {
 	obj := &CupAndHandle{handle: ptr}
 	runtime.SetFinalizer(obj, (*CupAndHandle).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *CupAndHandle) WarmupPeriod() int {
+	r := int(C.wickra_cup_and_handle_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *CupAndHandle) IsReady() bool {
+	r := bool(C.wickra_cup_and_handle_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -6134,6 +7542,22 @@ func NewCyberneticCycle(period int) (*CyberneticCycle, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *CyberneticCycle) WarmupPeriod() int {
+	r := int(C.wickra_cybernetic_cycle_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *CyberneticCycle) IsReady() bool {
+	r := bool(C.wickra_cybernetic_cycle_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *CyberneticCycle) Update(value float64) float64 {
@@ -6187,6 +7611,22 @@ func NewCypher() (*Cypher, error) {
 	obj := &Cypher{handle: ptr}
 	runtime.SetFinalizer(obj, (*Cypher).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Cypher) WarmupPeriod() int {
+	r := int(C.wickra_cypher_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Cypher) IsReady() bool {
+	r := bool(C.wickra_cypher_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -6266,6 +7706,22 @@ func NewDayOfWeekProfile(utcOffsetMinutes int32) (*DayOfWeekProfile, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *DayOfWeekProfile) WarmupPeriod() int {
+	r := int(C.wickra_day_of_week_profile_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *DayOfWeekProfile) IsReady() bool {
+	r := bool(C.wickra_day_of_week_profile_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the profile values
 // (ok is false during warmup).
 func (ind *DayOfWeekProfile) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) ([]float64, bool) {
@@ -6309,6 +7765,22 @@ func NewDecycler(period int) (*Decycler, error) {
 	obj := &Decycler{handle: ptr}
 	runtime.SetFinalizer(obj, (*Decycler).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Decycler) WarmupPeriod() int {
+	r := int(C.wickra_decycler_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Decycler) IsReady() bool {
+	r := bool(C.wickra_decycler_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -6366,6 +7838,22 @@ func NewDecyclerOscillator(fast int, slow int) (*DecyclerOscillator, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *DecyclerOscillator) WarmupPeriod() int {
+	r := int(C.wickra_decycler_oscillator_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *DecyclerOscillator) IsReady() bool {
+	r := bool(C.wickra_decycler_oscillator_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *DecyclerOscillator) Update(value float64) float64 {
@@ -6421,6 +7909,22 @@ func NewDema(period int) (*Dema, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Dema) WarmupPeriod() int {
+	r := int(C.wickra_dema_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Dema) IsReady() bool {
+	r := bool(C.wickra_dema_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Dema) Update(value float64) float64 {
@@ -6474,6 +7978,22 @@ func NewDemandIndex(period int) (*DemandIndex, error) {
 	obj := &DemandIndex{handle: ptr}
 	runtime.SetFinalizer(obj, (*DemandIndex).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *DemandIndex) WarmupPeriod() int {
+	r := int(C.wickra_demand_index_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *DemandIndex) IsReady() bool {
+	r := bool(C.wickra_demand_index_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -6551,6 +8071,22 @@ func NewDemarkPivots() (*DemarkPivots, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *DemarkPivots) WarmupPeriod() int {
+	r := int(C.wickra_demark_pivots_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *DemarkPivots) IsReady() bool {
+	r := bool(C.wickra_demark_pivots_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *DemarkPivots) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (DemarkPivotsOutput, bool) {
@@ -6594,6 +8130,22 @@ func NewDepthSlope() (*DepthSlope, error) {
 	obj := &DepthSlope{handle: ptr}
 	runtime.SetFinalizer(obj, (*DepthSlope).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *DepthSlope) WarmupPeriod() int {
+	r := int(C.wickra_depth_slope_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *DepthSlope) IsReady() bool {
+	r := bool(C.wickra_depth_slope_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one cross-sectional snapshot and returns the indicator
@@ -6645,6 +8197,22 @@ func NewDerivativeOscillator(rsiPeriod int, smooth1 int, smooth2 int, signalPeri
 	obj := &DerivativeOscillator{handle: ptr}
 	runtime.SetFinalizer(obj, (*DerivativeOscillator).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *DerivativeOscillator) WarmupPeriod() int {
+	r := int(C.wickra_derivative_oscillator_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *DerivativeOscillator) IsReady() bool {
+	r := bool(C.wickra_derivative_oscillator_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -6702,6 +8270,22 @@ func NewDetrendedStdDev(period int) (*DetrendedStdDev, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *DetrendedStdDev) WarmupPeriod() int {
+	r := int(C.wickra_detrended_std_dev_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *DetrendedStdDev) IsReady() bool {
+	r := bool(C.wickra_detrended_std_dev_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *DetrendedStdDev) Update(value float64) float64 {
@@ -6757,6 +8341,22 @@ func NewDisparityIndex(period int) (*DisparityIndex, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *DisparityIndex) WarmupPeriod() int {
+	r := int(C.wickra_disparity_index_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *DisparityIndex) IsReady() bool {
+	r := bool(C.wickra_disparity_index_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *DisparityIndex) Update(value float64) float64 {
@@ -6810,6 +8410,22 @@ func NewDistanceSsd(period int) (*DistanceSsd, error) {
 	obj := &DistanceSsd{handle: ptr}
 	runtime.SetFinalizer(obj, (*DistanceSsd).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *DistanceSsd) WarmupPeriod() int {
+	r := int(C.wickra_distance_ssd_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *DistanceSsd) IsReady() bool {
+	r := bool(C.wickra_distance_ssd_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -6869,6 +8485,22 @@ func NewDoji() (*Doji, error) {
 	obj := &Doji{handle: ptr}
 	runtime.SetFinalizer(obj, (*Doji).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Doji) WarmupPeriod() int {
+	r := int(C.wickra_doji_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Doji) IsReady() bool {
+	r := bool(C.wickra_doji_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -6944,6 +8576,22 @@ func NewDojiStar() (*DojiStar, error) {
 	obj := &DojiStar{handle: ptr}
 	runtime.SetFinalizer(obj, (*DojiStar).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *DojiStar) WarmupPeriod() int {
+	r := int(C.wickra_doji_star_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *DojiStar) IsReady() bool {
+	r := bool(C.wickra_doji_star_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -7071,6 +8719,22 @@ func NewDonchian(period int) (*Donchian, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Donchian) WarmupPeriod() int {
+	r := int(C.wickra_donchian_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Donchian) IsReady() bool {
+	r := bool(C.wickra_donchian_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *Donchian) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (DonchianOutput, bool) {
@@ -7114,6 +8778,22 @@ func NewDonchianStop(period int) (*DonchianStop, error) {
 	obj := &DonchianStop{handle: ptr}
 	runtime.SetFinalizer(obj, (*DonchianStop).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *DonchianStop) WarmupPeriod() int {
+	r := int(C.wickra_donchian_stop_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *DonchianStop) IsReady() bool {
+	r := bool(C.wickra_donchian_stop_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation. The bool reports whether a value is
@@ -7161,6 +8841,22 @@ func NewDoubleBollinger(period int, kInner float64, kOuter float64) (*DoubleBoll
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *DoubleBollinger) WarmupPeriod() int {
+	r := int(C.wickra_double_bollinger_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *DoubleBollinger) IsReady() bool {
+	r := bool(C.wickra_double_bollinger_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *DoubleBollinger) Update(value float64) (DoubleBollingerOutput, bool) {
@@ -7204,6 +8900,22 @@ func NewDoubleTopBottom() (*DoubleTopBottom, error) {
 	obj := &DoubleTopBottom{handle: ptr}
 	runtime.SetFinalizer(obj, (*DoubleTopBottom).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *DoubleTopBottom) WarmupPeriod() int {
+	r := int(C.wickra_double_top_bottom_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *DoubleTopBottom) IsReady() bool {
+	r := bool(C.wickra_double_top_bottom_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -7281,6 +8993,22 @@ func NewDownsideGapThreeMethods() (*DownsideGapThreeMethods, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *DownsideGapThreeMethods) WarmupPeriod() int {
+	r := int(C.wickra_downside_gap_three_methods_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *DownsideGapThreeMethods) IsReady() bool {
+	r := bool(C.wickra_downside_gap_three_methods_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *DownsideGapThreeMethods) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -7356,6 +9084,22 @@ func NewDpo(period int) (*Dpo, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Dpo) WarmupPeriod() int {
+	r := int(C.wickra_dpo_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Dpo) IsReady() bool {
+	r := bool(C.wickra_dpo_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Dpo) Update(value float64) float64 {
@@ -7409,6 +9153,22 @@ func NewDragonflyDoji() (*DragonflyDoji, error) {
 	obj := &DragonflyDoji{handle: ptr}
 	runtime.SetFinalizer(obj, (*DragonflyDoji).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *DragonflyDoji) WarmupPeriod() int {
+	r := int(C.wickra_dragonfly_doji_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *DragonflyDoji) IsReady() bool {
+	r := bool(C.wickra_dragonfly_doji_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -7486,6 +9246,22 @@ func NewDrawdownDuration() (*DrawdownDuration, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *DrawdownDuration) WarmupPeriod() int {
+	r := int(C.wickra_drawdown_duration_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *DrawdownDuration) IsReady() bool {
+	r := bool(C.wickra_drawdown_duration_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *DrawdownDuration) Update(value float64) float64 {
@@ -7539,6 +9315,22 @@ func NewDumplingTop(period int) (*DumplingTop, error) {
 	obj := &DumplingTop{handle: ptr}
 	runtime.SetFinalizer(obj, (*DumplingTop).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *DumplingTop) WarmupPeriod() int {
+	r := int(C.wickra_dumpling_top_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *DumplingTop) IsReady() bool {
+	r := bool(C.wickra_dumpling_top_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -7616,6 +9408,22 @@ func NewDx(period int) (*Dx, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Dx) WarmupPeriod() int {
+	r := int(C.wickra_dx_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Dx) IsReady() bool {
+	r := bool(C.wickra_dx_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Dx) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -7691,6 +9499,22 @@ func NewDynamicMomentumIndex(period int) (*DynamicMomentumIndex, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *DynamicMomentumIndex) WarmupPeriod() int {
+	r := int(C.wickra_dynamic_momentum_index_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *DynamicMomentumIndex) IsReady() bool {
+	r := bool(C.wickra_dynamic_momentum_index_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *DynamicMomentumIndex) Update(value float64) float64 {
@@ -7744,6 +9568,22 @@ func NewEaseOfMovement(period int) (*EaseOfMovement, error) {
 	obj := &EaseOfMovement{handle: ptr}
 	runtime.SetFinalizer(obj, (*EaseOfMovement).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *EaseOfMovement) WarmupPeriod() int {
+	r := int(C.wickra_ease_of_movement_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *EaseOfMovement) IsReady() bool {
+	r := bool(C.wickra_ease_of_movement_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -7821,6 +9661,22 @@ func NewEffectiveSpread() (*EffectiveSpread, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *EffectiveSpread) WarmupPeriod() int {
+	r := int(C.wickra_effective_spread_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *EffectiveSpread) IsReady() bool {
+	r := bool(C.wickra_effective_spread_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *EffectiveSpread) Update(price float64, size float64, isBuy bool, timestamp int64, mid float64) float64 {
@@ -7860,6 +9716,22 @@ func NewEhlersStochastic(period int) (*EhlersStochastic, error) {
 	obj := &EhlersStochastic{handle: ptr}
 	runtime.SetFinalizer(obj, (*EhlersStochastic).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *EhlersStochastic) WarmupPeriod() int {
+	r := int(C.wickra_ehlers_stochastic_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *EhlersStochastic) IsReady() bool {
+	r := bool(C.wickra_ehlers_stochastic_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -7917,6 +9789,22 @@ func NewEhma(period int) (*Ehma, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Ehma) WarmupPeriod() int {
+	r := int(C.wickra_ehma_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Ehma) IsReady() bool {
+	r := bool(C.wickra_ehma_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Ehma) Update(value float64) float64 {
@@ -7970,6 +9858,22 @@ func NewElderImpulse(emaPeriod int, macdFast int, macdSlow int, macdSignal int) 
 	obj := &ElderImpulse{handle: ptr}
 	runtime.SetFinalizer(obj, (*ElderImpulse).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ElderImpulse) WarmupPeriod() int {
+	r := int(C.wickra_elder_impulse_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ElderImpulse) IsReady() bool {
+	r := bool(C.wickra_elder_impulse_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -8027,6 +9931,22 @@ func NewElderRay(period int) (*ElderRay, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ElderRay) WarmupPeriod() int {
+	r := int(C.wickra_elder_ray_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ElderRay) IsReady() bool {
+	r := bool(C.wickra_elder_ray_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *ElderRay) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (ElderRayOutput, bool) {
@@ -8072,6 +9992,22 @@ func NewElderSafeZone(period int, coeff float64) (*ElderSafeZone, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ElderSafeZone) WarmupPeriod() int {
+	r := int(C.wickra_elder_safe_zone_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ElderSafeZone) IsReady() bool {
+	r := bool(C.wickra_elder_safe_zone_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *ElderSafeZone) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (ElderSafeZoneOutput, bool) {
@@ -8115,6 +10051,22 @@ func NewEma(period int) (*Ema, error) {
 	obj := &Ema{handle: ptr}
 	runtime.SetFinalizer(obj, (*Ema).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Ema) WarmupPeriod() int {
+	r := int(C.wickra_ema_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Ema) IsReady() bool {
+	r := bool(C.wickra_ema_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -8172,6 +10124,22 @@ func NewEmpiricalModeDecomposition(period int, fraction float64) (*EmpiricalMode
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *EmpiricalModeDecomposition) WarmupPeriod() int {
+	r := int(C.wickra_empirical_mode_decomposition_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *EmpiricalModeDecomposition) IsReady() bool {
+	r := bool(C.wickra_empirical_mode_decomposition_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *EmpiricalModeDecomposition) Update(value float64) float64 {
@@ -8225,6 +10193,22 @@ func NewEngulfing() (*Engulfing, error) {
 	obj := &Engulfing{handle: ptr}
 	runtime.SetFinalizer(obj, (*Engulfing).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Engulfing) WarmupPeriod() int {
+	r := int(C.wickra_engulfing_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Engulfing) IsReady() bool {
+	r := bool(C.wickra_engulfing_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -8302,6 +10286,22 @@ func NewEquivolume(period int) (*Equivolume, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Equivolume) WarmupPeriod() int {
+	r := int(C.wickra_equivolume_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Equivolume) IsReady() bool {
+	r := bool(C.wickra_equivolume_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *Equivolume) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (EquivolumeOutput, bool) {
@@ -8347,6 +10347,22 @@ func NewEstimatedLeverageRatio() (*EstimatedLeverageRatio, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *EstimatedLeverageRatio) WarmupPeriod() int {
+	r := int(C.wickra_estimated_leverage_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *EstimatedLeverageRatio) IsReady() bool {
+	r := bool(C.wickra_estimated_leverage_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *EstimatedLeverageRatio) Update(fundingRate float64, markPrice float64, indexPrice float64, futuresPrice float64, openInterest float64, longSize float64, shortSize float64, takerBuyVolume float64, takerSellVolume float64, longLiquidation float64, shortLiquidation float64, timestamp int64) float64 {
@@ -8386,6 +10402,22 @@ func NewEvenBetterSinewave(hpPeriod int, ssfLength int) (*EvenBetterSinewave, er
 	obj := &EvenBetterSinewave{handle: ptr}
 	runtime.SetFinalizer(obj, (*EvenBetterSinewave).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *EvenBetterSinewave) WarmupPeriod() int {
+	r := int(C.wickra_even_better_sinewave_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *EvenBetterSinewave) IsReady() bool {
+	r := bool(C.wickra_even_better_sinewave_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -8441,6 +10473,22 @@ func NewEveningDojiStar() (*EveningDojiStar, error) {
 	obj := &EveningDojiStar{handle: ptr}
 	runtime.SetFinalizer(obj, (*EveningDojiStar).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *EveningDojiStar) WarmupPeriod() int {
+	r := int(C.wickra_evening_doji_star_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *EveningDojiStar) IsReady() bool {
+	r := bool(C.wickra_evening_doji_star_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -8518,6 +10566,22 @@ func NewEvwma(period int) (*Evwma, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Evwma) WarmupPeriod() int {
+	r := int(C.wickra_evwma_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Evwma) IsReady() bool {
+	r := bool(C.wickra_evwma_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Evwma) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -8593,6 +10657,22 @@ func NewEwmaVolatility(lambda float64) (*EwmaVolatility, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *EwmaVolatility) WarmupPeriod() int {
+	r := int(C.wickra_ewma_volatility_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *EwmaVolatility) IsReady() bool {
+	r := bool(C.wickra_ewma_volatility_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *EwmaVolatility) Update(value float64) float64 {
@@ -8648,6 +10728,22 @@ func NewExpectancy(period int) (*Expectancy, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Expectancy) WarmupPeriod() int {
+	r := int(C.wickra_expectancy_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Expectancy) IsReady() bool {
+	r := bool(C.wickra_expectancy_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Expectancy) Update(value float64) float64 {
@@ -8701,6 +10797,22 @@ func NewFallingThreeMethods() (*FallingThreeMethods, error) {
 	obj := &FallingThreeMethods{handle: ptr}
 	runtime.SetFinalizer(obj, (*FallingThreeMethods).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *FallingThreeMethods) WarmupPeriod() int {
+	r := int(C.wickra_falling_three_methods_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *FallingThreeMethods) IsReady() bool {
+	r := bool(C.wickra_falling_three_methods_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -8778,6 +10890,22 @@ func NewFama(fastLimit float64, slowLimit float64) (*Fama, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Fama) WarmupPeriod() int {
+	r := int(C.wickra_fama_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Fama) IsReady() bool {
+	r := bool(C.wickra_fama_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Fama) Update(value float64) float64 {
@@ -8833,6 +10961,22 @@ func NewFibArcs() (*FibArcs, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *FibArcs) WarmupPeriod() int {
+	r := int(C.wickra_fib_arcs_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *FibArcs) IsReady() bool {
+	r := bool(C.wickra_fib_arcs_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *FibArcs) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (FibArcsOutput, bool) {
@@ -8876,6 +11020,22 @@ func NewFibChannel() (*FibChannel, error) {
 	obj := &FibChannel{handle: ptr}
 	runtime.SetFinalizer(obj, (*FibChannel).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *FibChannel) WarmupPeriod() int {
+	r := int(C.wickra_fib_channel_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *FibChannel) IsReady() bool {
+	r := bool(C.wickra_fib_channel_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation. The bool reports whether a value is
@@ -8923,6 +11083,22 @@ func NewFibConfluence() (*FibConfluence, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *FibConfluence) WarmupPeriod() int {
+	r := int(C.wickra_fib_confluence_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *FibConfluence) IsReady() bool {
+	r := bool(C.wickra_fib_confluence_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *FibConfluence) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (FibConfluenceOutput, bool) {
@@ -8966,6 +11142,22 @@ func NewFibExtension() (*FibExtension, error) {
 	obj := &FibExtension{handle: ptr}
 	runtime.SetFinalizer(obj, (*FibExtension).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *FibExtension) WarmupPeriod() int {
+	r := int(C.wickra_fib_extension_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *FibExtension) IsReady() bool {
+	r := bool(C.wickra_fib_extension_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation. The bool reports whether a value is
@@ -9013,6 +11205,22 @@ func NewFibFan() (*FibFan, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *FibFan) WarmupPeriod() int {
+	r := int(C.wickra_fib_fan_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *FibFan) IsReady() bool {
+	r := bool(C.wickra_fib_fan_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *FibFan) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (FibFanOutput, bool) {
@@ -9056,6 +11264,22 @@ func NewFibProjection() (*FibProjection, error) {
 	obj := &FibProjection{handle: ptr}
 	runtime.SetFinalizer(obj, (*FibProjection).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *FibProjection) WarmupPeriod() int {
+	r := int(C.wickra_fib_projection_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *FibProjection) IsReady() bool {
+	r := bool(C.wickra_fib_projection_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation. The bool reports whether a value is
@@ -9103,6 +11327,22 @@ func NewFibRetracement() (*FibRetracement, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *FibRetracement) WarmupPeriod() int {
+	r := int(C.wickra_fib_retracement_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *FibRetracement) IsReady() bool {
+	r := bool(C.wickra_fib_retracement_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *FibRetracement) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (FibRetracementOutput, bool) {
@@ -9146,6 +11386,22 @@ func NewFibTimeZones() (*FibTimeZones, error) {
 	obj := &FibTimeZones{handle: ptr}
 	runtime.SetFinalizer(obj, (*FibTimeZones).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *FibTimeZones) WarmupPeriod() int {
+	r := int(C.wickra_fib_time_zones_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *FibTimeZones) IsReady() bool {
+	r := bool(C.wickra_fib_time_zones_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation. The bool reports whether a value is
@@ -9193,6 +11449,22 @@ func NewFibonacciPivots() (*FibonacciPivots, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *FibonacciPivots) WarmupPeriod() int {
+	r := int(C.wickra_fibonacci_pivots_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *FibonacciPivots) IsReady() bool {
+	r := bool(C.wickra_fibonacci_pivots_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *FibonacciPivots) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (FibonacciPivotsOutput, bool) {
@@ -9236,6 +11508,22 @@ func NewFisherRsi(period int) (*FisherRsi, error) {
 	obj := &FisherRsi{handle: ptr}
 	runtime.SetFinalizer(obj, (*FisherRsi).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *FisherRsi) WarmupPeriod() int {
+	r := int(C.wickra_fisher_rsi_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *FisherRsi) IsReady() bool {
+	r := bool(C.wickra_fisher_rsi_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -9293,6 +11581,22 @@ func NewFisherTransform(period int) (*FisherTransform, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *FisherTransform) WarmupPeriod() int {
+	r := int(C.wickra_fisher_transform_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *FisherTransform) IsReady() bool {
+	r := bool(C.wickra_fisher_transform_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *FisherTransform) Update(value float64) float64 {
@@ -9346,6 +11650,22 @@ func NewFlagPennant() (*FlagPennant, error) {
 	obj := &FlagPennant{handle: ptr}
 	runtime.SetFinalizer(obj, (*FlagPennant).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *FlagPennant) WarmupPeriod() int {
+	r := int(C.wickra_flag_pennant_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *FlagPennant) IsReady() bool {
+	r := bool(C.wickra_flag_pennant_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -9423,6 +11743,22 @@ func NewFootprint(tickSize float64) (*Footprint, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Footprint) WarmupPeriod() int {
+	r := int(C.wickra_footprint_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Footprint) IsReady() bool {
+	r := bool(C.wickra_footprint_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one candle and returns any bars completed by it
 // (a single candle may complete several).
 func (ind *Footprint) Update(price float64, size float64, isBuy bool, timestamp int64) []FootprintLevel {
@@ -9471,6 +11807,22 @@ func NewForceIndex(period int) (*ForceIndex, error) {
 	obj := &ForceIndex{handle: ptr}
 	runtime.SetFinalizer(obj, (*ForceIndex).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ForceIndex) WarmupPeriod() int {
+	r := int(C.wickra_force_index_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ForceIndex) IsReady() bool {
+	r := bool(C.wickra_force_index_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -9548,6 +11900,22 @@ func NewFractalChaosBands(k int) (*FractalChaosBands, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *FractalChaosBands) WarmupPeriod() int {
+	r := int(C.wickra_fractal_chaos_bands_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *FractalChaosBands) IsReady() bool {
+	r := bool(C.wickra_fractal_chaos_bands_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *FractalChaosBands) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (FractalChaosBandsOutput, bool) {
@@ -9591,6 +11959,22 @@ func NewFrama(period int) (*Frama, error) {
 	obj := &Frama{handle: ptr}
 	runtime.SetFinalizer(obj, (*Frama).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Frama) WarmupPeriod() int {
+	r := int(C.wickra_frama_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Frama) IsReady() bool {
+	r := bool(C.wickra_frama_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -9646,6 +12030,22 @@ func NewFryPanBottom(period int) (*FryPanBottom, error) {
 	obj := &FryPanBottom{handle: ptr}
 	runtime.SetFinalizer(obj, (*FryPanBottom).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *FryPanBottom) WarmupPeriod() int {
+	r := int(C.wickra_fry_pan_bottom_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *FryPanBottom) IsReady() bool {
+	r := bool(C.wickra_fry_pan_bottom_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -9723,6 +12123,22 @@ func NewFundingBasis() (*FundingBasis, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *FundingBasis) WarmupPeriod() int {
+	r := int(C.wickra_funding_basis_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *FundingBasis) IsReady() bool {
+	r := bool(C.wickra_funding_basis_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *FundingBasis) Update(fundingRate float64, markPrice float64, indexPrice float64, futuresPrice float64, openInterest float64, longSize float64, shortSize float64, takerBuyVolume float64, takerSellVolume float64, longLiquidation float64, shortLiquidation float64, timestamp int64) float64 {
@@ -9762,6 +12178,22 @@ func NewFundingImpliedApr(intervalsPerYear float64) (*FundingImpliedApr, error) 
 	obj := &FundingImpliedApr{handle: ptr}
 	runtime.SetFinalizer(obj, (*FundingImpliedApr).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *FundingImpliedApr) WarmupPeriod() int {
+	r := int(C.wickra_funding_implied_apr_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *FundingImpliedApr) IsReady() bool {
+	r := bool(C.wickra_funding_implied_apr_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -9805,6 +12237,22 @@ func NewFundingRate() (*FundingRate, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *FundingRate) WarmupPeriod() int {
+	r := int(C.wickra_funding_rate_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *FundingRate) IsReady() bool {
+	r := bool(C.wickra_funding_rate_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *FundingRate) Update(fundingRate float64, markPrice float64, indexPrice float64, futuresPrice float64, openInterest float64, longSize float64, shortSize float64, takerBuyVolume float64, takerSellVolume float64, longLiquidation float64, shortLiquidation float64, timestamp int64) float64 {
@@ -9844,6 +12292,22 @@ func NewFundingRateMean(window int) (*FundingRateMean, error) {
 	obj := &FundingRateMean{handle: ptr}
 	runtime.SetFinalizer(obj, (*FundingRateMean).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *FundingRateMean) WarmupPeriod() int {
+	r := int(C.wickra_funding_rate_mean_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *FundingRateMean) IsReady() bool {
+	r := bool(C.wickra_funding_rate_mean_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -9887,6 +12351,22 @@ func NewFundingRateZScore(window int) (*FundingRateZScore, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *FundingRateZScore) WarmupPeriod() int {
+	r := int(C.wickra_funding_rate_z_score_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *FundingRateZScore) IsReady() bool {
+	r := bool(C.wickra_funding_rate_z_score_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *FundingRateZScore) Update(fundingRate float64, markPrice float64, indexPrice float64, futuresPrice float64, openInterest float64, longSize float64, shortSize float64, takerBuyVolume float64, takerSellVolume float64, longLiquidation float64, shortLiquidation float64, timestamp int64) float64 {
@@ -9926,6 +12406,22 @@ func NewGainLossRatio(period int) (*GainLossRatio, error) {
 	obj := &GainLossRatio{handle: ptr}
 	runtime.SetFinalizer(obj, (*GainLossRatio).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *GainLossRatio) WarmupPeriod() int {
+	r := int(C.wickra_gain_loss_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *GainLossRatio) IsReady() bool {
+	r := bool(C.wickra_gain_loss_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -9983,6 +12479,22 @@ func NewGainToPainRatio(period int) (*GainToPainRatio, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *GainToPainRatio) WarmupPeriod() int {
+	r := int(C.wickra_gain_to_pain_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *GainToPainRatio) IsReady() bool {
+	r := bool(C.wickra_gain_to_pain_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *GainToPainRatio) Update(value float64) float64 {
@@ -10036,6 +12548,22 @@ func NewGapSideBySideWhite() (*GapSideBySideWhite, error) {
 	obj := &GapSideBySideWhite{handle: ptr}
 	runtime.SetFinalizer(obj, (*GapSideBySideWhite).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *GapSideBySideWhite) WarmupPeriod() int {
+	r := int(C.wickra_gap_side_by_side_white_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *GapSideBySideWhite) IsReady() bool {
+	r := bool(C.wickra_gap_side_by_side_white_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -10113,6 +12641,22 @@ func NewGarch11(omega float64, alpha float64, beta float64) (*Garch11, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Garch11) WarmupPeriod() int {
+	r := int(C.wickra_garch11_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Garch11) IsReady() bool {
+	r := bool(C.wickra_garch11_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Garch11) Update(value float64) float64 {
@@ -10166,6 +12710,22 @@ func NewGarmanKlassVolatility(period int, tradingPeriods int) (*GarmanKlassVolat
 	obj := &GarmanKlassVolatility{handle: ptr}
 	runtime.SetFinalizer(obj, (*GarmanKlassVolatility).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *GarmanKlassVolatility) WarmupPeriod() int {
+	r := int(C.wickra_garman_klass_volatility_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *GarmanKlassVolatility) IsReady() bool {
+	r := bool(C.wickra_garman_klass_volatility_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -10243,6 +12803,22 @@ func NewGartley() (*Gartley, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Gartley) WarmupPeriod() int {
+	r := int(C.wickra_gartley_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Gartley) IsReady() bool {
+	r := bool(C.wickra_gartley_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Gartley) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -10318,6 +12894,22 @@ func NewGatorOscillator(jawPeriod int, teethPeriod int, lipsPeriod int) (*GatorO
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *GatorOscillator) WarmupPeriod() int {
+	r := int(C.wickra_gator_oscillator_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *GatorOscillator) IsReady() bool {
+	r := bool(C.wickra_gator_oscillator_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *GatorOscillator) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (GatorOscillatorOutput, bool) {
@@ -10361,6 +12953,22 @@ func NewGeneralizedDema(period int, v float64) (*GeneralizedDema, error) {
 	obj := &GeneralizedDema{handle: ptr}
 	runtime.SetFinalizer(obj, (*GeneralizedDema).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *GeneralizedDema) WarmupPeriod() int {
+	r := int(C.wickra_generalized_dema_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *GeneralizedDema) IsReady() bool {
+	r := bool(C.wickra_generalized_dema_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -10418,6 +13026,22 @@ func NewGeometricMa(period int) (*GeometricMa, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *GeometricMa) WarmupPeriod() int {
+	r := int(C.wickra_geometric_ma_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *GeometricMa) IsReady() bool {
+	r := bool(C.wickra_geometric_ma_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *GeometricMa) Update(value float64) float64 {
@@ -10473,6 +13097,22 @@ func NewGoldenPocket() (*GoldenPocket, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *GoldenPocket) WarmupPeriod() int {
+	r := int(C.wickra_golden_pocket_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *GoldenPocket) IsReady() bool {
+	r := bool(C.wickra_golden_pocket_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *GoldenPocket) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (GoldenPocketOutput, bool) {
@@ -10516,6 +13156,22 @@ func NewGrangerCausality(period int, lag int) (*GrangerCausality, error) {
 	obj := &GrangerCausality{handle: ptr}
 	runtime.SetFinalizer(obj, (*GrangerCausality).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *GrangerCausality) WarmupPeriod() int {
+	r := int(C.wickra_granger_causality_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *GrangerCausality) IsReady() bool {
+	r := bool(C.wickra_granger_causality_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -10575,6 +13231,22 @@ func NewGravestoneDoji() (*GravestoneDoji, error) {
 	obj := &GravestoneDoji{handle: ptr}
 	runtime.SetFinalizer(obj, (*GravestoneDoji).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *GravestoneDoji) WarmupPeriod() int {
+	r := int(C.wickra_gravestone_doji_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *GravestoneDoji) IsReady() bool {
+	r := bool(C.wickra_gravestone_doji_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -10652,6 +13324,22 @@ func NewHammer() (*Hammer, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Hammer) WarmupPeriod() int {
+	r := int(C.wickra_hammer_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Hammer) IsReady() bool {
+	r := bool(C.wickra_hammer_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Hammer) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -10725,6 +13413,22 @@ func NewHangingMan() (*HangingMan, error) {
 	obj := &HangingMan{handle: ptr}
 	runtime.SetFinalizer(obj, (*HangingMan).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HangingMan) WarmupPeriod() int {
+	r := int(C.wickra_hanging_man_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HangingMan) IsReady() bool {
+	r := bool(C.wickra_hanging_man_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -10802,6 +13506,22 @@ func NewHarami() (*Harami, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Harami) WarmupPeriod() int {
+	r := int(C.wickra_harami_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Harami) IsReady() bool {
+	r := bool(C.wickra_harami_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Harami) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -10875,6 +13595,22 @@ func NewHaramiCross() (*HaramiCross, error) {
 	obj := &HaramiCross{handle: ptr}
 	runtime.SetFinalizer(obj, (*HaramiCross).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HaramiCross) WarmupPeriod() int {
+	r := int(C.wickra_harami_cross_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HaramiCross) IsReady() bool {
+	r := bool(C.wickra_harami_cross_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -10952,6 +13688,22 @@ func NewHasbrouckInformationShare(period int) (*HasbrouckInformationShare, error
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HasbrouckInformationShare) WarmupPeriod() int {
+	r := int(C.wickra_hasbrouck_information_share_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HasbrouckInformationShare) IsReady() bool {
+	r := bool(C.wickra_hasbrouck_information_share_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *HasbrouckInformationShare) Update(x float64, y float64) float64 {
@@ -11009,6 +13761,22 @@ func NewHeadAndShoulders() (*HeadAndShoulders, error) {
 	obj := &HeadAndShoulders{handle: ptr}
 	runtime.SetFinalizer(obj, (*HeadAndShoulders).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HeadAndShoulders) WarmupPeriod() int {
+	r := int(C.wickra_head_and_shoulders_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HeadAndShoulders) IsReady() bool {
+	r := bool(C.wickra_head_and_shoulders_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -11086,6 +13854,22 @@ func NewHeikinAshi() (*HeikinAshi, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HeikinAshi) WarmupPeriod() int {
+	r := int(C.wickra_heikin_ashi_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HeikinAshi) IsReady() bool {
+	r := bool(C.wickra_heikin_ashi_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *HeikinAshi) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (HeikinAshiOutput, bool) {
@@ -11129,6 +13913,22 @@ func NewHeikinAshiOscillator(period int) (*HeikinAshiOscillator, error) {
 	obj := &HeikinAshiOscillator{handle: ptr}
 	runtime.SetFinalizer(obj, (*HeikinAshiOscillator).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HeikinAshiOscillator) WarmupPeriod() int {
+	r := int(C.wickra_heikin_ashi_oscillator_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HeikinAshiOscillator) IsReady() bool {
+	r := bool(C.wickra_heikin_ashi_oscillator_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -11206,6 +14006,22 @@ func NewHiLoActivator(period int) (*HiLoActivator, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HiLoActivator) WarmupPeriod() int {
+	r := int(C.wickra_hi_lo_activator_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HiLoActivator) IsReady() bool {
+	r := bool(C.wickra_hi_lo_activator_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *HiLoActivator) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -11281,6 +14097,22 @@ func NewHighLowIndex(period int) (*HighLowIndex, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HighLowIndex) WarmupPeriod() int {
+	r := int(C.wickra_high_low_index_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HighLowIndex) IsReady() bool {
+	r := bool(C.wickra_high_low_index_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one cross-sectional snapshot and returns the indicator
 // value (NaN until warmed up). Slices in a group must share a length.
 func (ind *HighLowIndex) Update(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, timestamp int64) float64 {
@@ -11341,6 +14173,22 @@ func NewHighLowRange() (*HighLowRange, error) {
 	obj := &HighLowRange{handle: ptr}
 	runtime.SetFinalizer(obj, (*HighLowRange).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HighLowRange) WarmupPeriod() int {
+	r := int(C.wickra_high_low_range_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HighLowRange) IsReady() bool {
+	r := bool(C.wickra_high_low_range_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -11418,6 +14266,22 @@ func NewHighLowVolumeNodes(period int, bins int) (*HighLowVolumeNodes, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HighLowVolumeNodes) WarmupPeriod() int {
+	r := int(C.wickra_high_low_volume_nodes_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HighLowVolumeNodes) IsReady() bool {
+	r := bool(C.wickra_high_low_volume_nodes_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *HighLowVolumeNodes) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (HighLowVolumeNodesOutput, bool) {
@@ -11461,6 +14325,22 @@ func NewHighWave() (*HighWave, error) {
 	obj := &HighWave{handle: ptr}
 	runtime.SetFinalizer(obj, (*HighWave).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HighWave) WarmupPeriod() int {
+	r := int(C.wickra_high_wave_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HighWave) IsReady() bool {
+	r := bool(C.wickra_high_wave_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -11538,6 +14418,22 @@ func NewHighpassFilter(period int) (*HighpassFilter, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HighpassFilter) WarmupPeriod() int {
+	r := int(C.wickra_highpass_filter_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HighpassFilter) IsReady() bool {
+	r := bool(C.wickra_highpass_filter_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *HighpassFilter) Update(value float64) float64 {
@@ -11591,6 +14487,22 @@ func NewHikkake() (*Hikkake, error) {
 	obj := &Hikkake{handle: ptr}
 	runtime.SetFinalizer(obj, (*Hikkake).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Hikkake) WarmupPeriod() int {
+	r := int(C.wickra_hikkake_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Hikkake) IsReady() bool {
+	r := bool(C.wickra_hikkake_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -11668,6 +14580,22 @@ func NewHikkakeModified() (*HikkakeModified, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HikkakeModified) WarmupPeriod() int {
+	r := int(C.wickra_hikkake_modified_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HikkakeModified) IsReady() bool {
+	r := bool(C.wickra_hikkake_modified_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *HikkakeModified) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -11743,6 +14671,22 @@ func NewHilbertDominantCycle() (*HilbertDominantCycle, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HilbertDominantCycle) WarmupPeriod() int {
+	r := int(C.wickra_hilbert_dominant_cycle_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HilbertDominantCycle) IsReady() bool {
+	r := bool(C.wickra_hilbert_dominant_cycle_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *HilbertDominantCycle) Update(value float64) float64 {
@@ -11796,6 +14740,22 @@ func NewHistoricalVolatility(period int, tradingPeriods int) (*HistoricalVolatil
 	obj := &HistoricalVolatility{handle: ptr}
 	runtime.SetFinalizer(obj, (*HistoricalVolatility).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HistoricalVolatility) WarmupPeriod() int {
+	r := int(C.wickra_historical_volatility_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HistoricalVolatility) IsReady() bool {
+	r := bool(C.wickra_historical_volatility_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -11853,6 +14813,22 @@ func NewHma(period int) (*Hma, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Hma) WarmupPeriod() int {
+	r := int(C.wickra_hma_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Hma) IsReady() bool {
+	r := bool(C.wickra_hma_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Hma) Update(value float64) float64 {
@@ -11908,6 +14884,22 @@ func NewHoltWinters(alpha float64, beta float64) (*HoltWinters, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HoltWinters) WarmupPeriod() int {
+	r := int(C.wickra_holt_winters_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HoltWinters) IsReady() bool {
+	r := bool(C.wickra_holt_winters_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *HoltWinters) Update(value float64) float64 {
@@ -11961,6 +14953,22 @@ func NewHomingPigeon() (*HomingPigeon, error) {
 	obj := &HomingPigeon{handle: ptr}
 	runtime.SetFinalizer(obj, (*HomingPigeon).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HomingPigeon) WarmupPeriod() int {
+	r := int(C.wickra_homing_pigeon_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HomingPigeon) IsReady() bool {
+	r := bool(C.wickra_homing_pigeon_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -12038,6 +15046,22 @@ func NewHtDcPhase() (*HtDcPhase, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HtDcPhase) WarmupPeriod() int {
+	r := int(C.wickra_ht_dc_phase_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HtDcPhase) IsReady() bool {
+	r := bool(C.wickra_ht_dc_phase_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *HtDcPhase) Update(value float64) float64 {
@@ -12093,6 +15117,22 @@ func NewHtPhasor() (*HtPhasor, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HtPhasor) WarmupPeriod() int {
+	r := int(C.wickra_ht_phasor_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HtPhasor) IsReady() bool {
+	r := bool(C.wickra_ht_phasor_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *HtPhasor) Update(value float64) (HtPhasorOutput, bool) {
@@ -12136,6 +15176,22 @@ func NewHtTrendMode() (*HtTrendMode, error) {
 	obj := &HtTrendMode{handle: ptr}
 	runtime.SetFinalizer(obj, (*HtTrendMode).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HtTrendMode) WarmupPeriod() int {
+	r := int(C.wickra_ht_trend_mode_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HtTrendMode) IsReady() bool {
+	r := bool(C.wickra_ht_trend_mode_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -12193,6 +15249,22 @@ func NewHurstChannel(period int, multiplier float64) (*HurstChannel, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HurstChannel) WarmupPeriod() int {
+	r := int(C.wickra_hurst_channel_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HurstChannel) IsReady() bool {
+	r := bool(C.wickra_hurst_channel_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *HurstChannel) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (HurstChannelOutput, bool) {
@@ -12236,6 +15308,22 @@ func NewHurstExponent(period int, chunks int) (*HurstExponent, error) {
 	obj := &HurstExponent{handle: ptr}
 	runtime.SetFinalizer(obj, (*HurstExponent).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *HurstExponent) WarmupPeriod() int {
+	r := int(C.wickra_hurst_exponent_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *HurstExponent) IsReady() bool {
+	r := bool(C.wickra_hurst_exponent_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -12293,6 +15381,22 @@ func NewIchimoku(tenkanPeriod int, kijunPeriod int, senkouBPeriod int, displacem
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Ichimoku) WarmupPeriod() int {
+	r := int(C.wickra_ichimoku_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Ichimoku) IsReady() bool {
+	r := bool(C.wickra_ichimoku_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *Ichimoku) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (IchimokuOutput, bool) {
@@ -12336,6 +15440,22 @@ func NewIdenticalThreeCrows() (*IdenticalThreeCrows, error) {
 	obj := &IdenticalThreeCrows{handle: ptr}
 	runtime.SetFinalizer(obj, (*IdenticalThreeCrows).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *IdenticalThreeCrows) WarmupPeriod() int {
+	r := int(C.wickra_identical_three_crows_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *IdenticalThreeCrows) IsReady() bool {
+	r := bool(C.wickra_identical_three_crows_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -12463,6 +15583,22 @@ func NewInNeck() (*InNeck, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *InNeck) WarmupPeriod() int {
+	r := int(C.wickra_in_neck_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *InNeck) IsReady() bool {
+	r := bool(C.wickra_in_neck_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *InNeck) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -12536,6 +15672,22 @@ func NewInertia(rviPeriod int, linregPeriod int) (*Inertia, error) {
 	obj := &Inertia{handle: ptr}
 	runtime.SetFinalizer(obj, (*Inertia).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Inertia) WarmupPeriod() int {
+	r := int(C.wickra_inertia_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Inertia) IsReady() bool {
+	r := bool(C.wickra_inertia_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -12613,6 +15765,22 @@ func NewInformationRatio(period int) (*InformationRatio, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *InformationRatio) WarmupPeriod() int {
+	r := int(C.wickra_information_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *InformationRatio) IsReady() bool {
+	r := bool(C.wickra_information_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *InformationRatio) Update(x float64, y float64) float64 {
@@ -12672,6 +15840,22 @@ func NewInitialBalance(period int) (*InitialBalance, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *InitialBalance) WarmupPeriod() int {
+	r := int(C.wickra_initial_balance_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *InitialBalance) IsReady() bool {
+	r := bool(C.wickra_initial_balance_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *InitialBalance) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (InitialBalanceOutput, bool) {
@@ -12715,6 +15899,22 @@ func NewInstantaneousTrendline(period int) (*InstantaneousTrendline, error) {
 	obj := &InstantaneousTrendline{handle: ptr}
 	runtime.SetFinalizer(obj, (*InstantaneousTrendline).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *InstantaneousTrendline) WarmupPeriod() int {
+	r := int(C.wickra_instantaneous_trendline_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *InstantaneousTrendline) IsReady() bool {
+	r := bool(C.wickra_instantaneous_trendline_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -12770,6 +15970,22 @@ func NewIntradayIntensity() (*IntradayIntensity, error) {
 	obj := &IntradayIntensity{handle: ptr}
 	runtime.SetFinalizer(obj, (*IntradayIntensity).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *IntradayIntensity) WarmupPeriod() int {
+	r := int(C.wickra_intraday_intensity_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *IntradayIntensity) IsReady() bool {
+	r := bool(C.wickra_intraday_intensity_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -12845,6 +16061,22 @@ func NewIntradayMomentumIndex(period int) (*IntradayMomentumIndex, error) {
 	obj := &IntradayMomentumIndex{handle: ptr}
 	runtime.SetFinalizer(obj, (*IntradayMomentumIndex).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *IntradayMomentumIndex) WarmupPeriod() int {
+	r := int(C.wickra_intraday_momentum_index_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *IntradayMomentumIndex) IsReady() bool {
+	r := bool(C.wickra_intraday_momentum_index_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -12924,6 +16156,22 @@ func NewIntradayVolatilityProfile(buckets int, utcOffsetMinutes int32) (*Intrada
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *IntradayVolatilityProfile) WarmupPeriod() int {
+	r := int(C.wickra_intraday_volatility_profile_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *IntradayVolatilityProfile) IsReady() bool {
+	r := bool(C.wickra_intraday_volatility_profile_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the profile values
 // (ok is false during warmup).
 func (ind *IntradayVolatilityProfile) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) ([]float64, bool) {
@@ -12967,6 +16215,22 @@ func NewInverseFisherTransform(scale float64) (*InverseFisherTransform, error) {
 	obj := &InverseFisherTransform{handle: ptr}
 	runtime.SetFinalizer(obj, (*InverseFisherTransform).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *InverseFisherTransform) WarmupPeriod() int {
+	r := int(C.wickra_inverse_fisher_transform_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *InverseFisherTransform) IsReady() bool {
+	r := bool(C.wickra_inverse_fisher_transform_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -13022,6 +16286,22 @@ func NewInvertedHammer() (*InvertedHammer, error) {
 	obj := &InvertedHammer{handle: ptr}
 	runtime.SetFinalizer(obj, (*InvertedHammer).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *InvertedHammer) WarmupPeriod() int {
+	r := int(C.wickra_inverted_hammer_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *InvertedHammer) IsReady() bool {
+	r := bool(C.wickra_inverted_hammer_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -13099,6 +16379,22 @@ func NewJarqueBera(period int) (*JarqueBera, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *JarqueBera) WarmupPeriod() int {
+	r := int(C.wickra_jarque_bera_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *JarqueBera) IsReady() bool {
+	r := bool(C.wickra_jarque_bera_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *JarqueBera) Update(value float64) float64 {
@@ -13152,6 +16448,22 @@ func NewJma(period int, phase float64, power uint32) (*Jma, error) {
 	obj := &Jma{handle: ptr}
 	runtime.SetFinalizer(obj, (*Jma).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Jma) WarmupPeriod() int {
+	r := int(C.wickra_jma_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Jma) IsReady() bool {
+	r := bool(C.wickra_jma_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -13209,6 +16521,22 @@ func NewJumpIndicator(period int, threshold float64) (*JumpIndicator, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *JumpIndicator) WarmupPeriod() int {
+	r := int(C.wickra_jump_indicator_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *JumpIndicator) IsReady() bool {
+	r := bool(C.wickra_jump_indicator_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *JumpIndicator) Update(value float64) float64 {
@@ -13262,6 +16590,22 @@ func NewKRatio(period int) (*KRatio, error) {
 	obj := &KRatio{handle: ptr}
 	runtime.SetFinalizer(obj, (*KRatio).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *KRatio) WarmupPeriod() int {
+	r := int(C.wickra_k_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *KRatio) IsReady() bool {
+	r := bool(C.wickra_k_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -13369,6 +16713,22 @@ func NewKalmanHedgeRatio(delta float64, observationVar float64) (*KalmanHedgeRat
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *KalmanHedgeRatio) WarmupPeriod() int {
+	r := int(C.wickra_kalman_hedge_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *KalmanHedgeRatio) IsReady() bool {
+	r := bool(C.wickra_kalman_hedge_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *KalmanHedgeRatio) Update(x float64, y float64) (KalmanHedgeRatioOutput, bool) {
@@ -13412,6 +16772,22 @@ func NewKama(erPeriod int, fast int, slow int) (*Kama, error) {
 	obj := &Kama{handle: ptr}
 	runtime.SetFinalizer(obj, (*Kama).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Kama) WarmupPeriod() int {
+	r := int(C.wickra_kama_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Kama) IsReady() bool {
+	r := bool(C.wickra_kama_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -13469,6 +16845,22 @@ func NewKaseDevStop(period int, dev float64) (*KaseDevStop, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *KaseDevStop) WarmupPeriod() int {
+	r := int(C.wickra_kase_dev_stop_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *KaseDevStop) IsReady() bool {
+	r := bool(C.wickra_kase_dev_stop_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *KaseDevStop) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (KaseDevStopOutput, bool) {
@@ -13514,6 +16906,22 @@ func NewKasePermissionStochastic(length int, smooth int) (*KasePermissionStochas
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *KasePermissionStochastic) WarmupPeriod() int {
+	r := int(C.wickra_kase_permission_stochastic_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *KasePermissionStochastic) IsReady() bool {
+	r := bool(C.wickra_kase_permission_stochastic_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *KasePermissionStochastic) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (KasePermissionStochasticOutput, bool) {
@@ -13557,6 +16965,22 @@ func NewKellyCriterion(period int) (*KellyCriterion, error) {
 	obj := &KellyCriterion{handle: ptr}
 	runtime.SetFinalizer(obj, (*KellyCriterion).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *KellyCriterion) WarmupPeriod() int {
+	r := int(C.wickra_kelly_criterion_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *KellyCriterion) IsReady() bool {
+	r := bool(C.wickra_kelly_criterion_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -13614,6 +17038,22 @@ func NewKeltner(emaPeriod int, atrPeriod int, multiplier float64) (*Keltner, err
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Keltner) WarmupPeriod() int {
+	r := int(C.wickra_keltner_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Keltner) IsReady() bool {
+	r := bool(C.wickra_keltner_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *Keltner) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (KeltnerOutput, bool) {
@@ -13657,6 +17097,22 @@ func NewKendallTau(period int) (*KendallTau, error) {
 	obj := &KendallTau{handle: ptr}
 	runtime.SetFinalizer(obj, (*KendallTau).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *KendallTau) WarmupPeriod() int {
+	r := int(C.wickra_kendall_tau_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *KendallTau) IsReady() bool {
+	r := bool(C.wickra_kendall_tau_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -13716,6 +17172,22 @@ func NewKicking() (*Kicking, error) {
 	obj := &Kicking{handle: ptr}
 	runtime.SetFinalizer(obj, (*Kicking).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Kicking) WarmupPeriod() int {
+	r := int(C.wickra_kicking_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Kicking) IsReady() bool {
+	r := bool(C.wickra_kicking_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -13793,6 +17265,22 @@ func NewKickingByLength() (*KickingByLength, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *KickingByLength) WarmupPeriod() int {
+	r := int(C.wickra_kicking_by_length_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *KickingByLength) IsReady() bool {
+	r := bool(C.wickra_kicking_by_length_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *KickingByLength) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -13868,6 +17356,22 @@ func NewKst(roc1 int, roc2 int, roc3 int, roc4 int, sma1 int, sma2 int, sma3 int
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Kst) WarmupPeriod() int {
+	r := int(C.wickra_kst_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Kst) IsReady() bool {
+	r := bool(C.wickra_kst_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *Kst) Update(value float64) (KstOutput, bool) {
@@ -13911,6 +17415,22 @@ func NewKurtosis(period int) (*Kurtosis, error) {
 	obj := &Kurtosis{handle: ptr}
 	runtime.SetFinalizer(obj, (*Kurtosis).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Kurtosis) WarmupPeriod() int {
+	r := int(C.wickra_kurtosis_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Kurtosis) IsReady() bool {
+	r := bool(C.wickra_kurtosis_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -13966,6 +17486,22 @@ func NewKvo(fast int, slow int) (*Kvo, error) {
 	obj := &Kvo{handle: ptr}
 	runtime.SetFinalizer(obj, (*Kvo).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Kvo) WarmupPeriod() int {
+	r := int(C.wickra_kvo_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Kvo) IsReady() bool {
+	r := bool(C.wickra_kvo_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -14043,6 +17579,22 @@ func NewKylesLambda(window int) (*KylesLambda, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *KylesLambda) WarmupPeriod() int {
+	r := int(C.wickra_kyles_lambda_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *KylesLambda) IsReady() bool {
+	r := bool(C.wickra_kyles_lambda_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *KylesLambda) Update(price float64, size float64, isBuy bool, timestamp int64, mid float64) float64 {
@@ -14082,6 +17634,22 @@ func NewLadderBottom() (*LadderBottom, error) {
 	obj := &LadderBottom{handle: ptr}
 	runtime.SetFinalizer(obj, (*LadderBottom).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *LadderBottom) WarmupPeriod() int {
+	r := int(C.wickra_ladder_bottom_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *LadderBottom) IsReady() bool {
+	r := bool(C.wickra_ladder_bottom_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -14159,6 +17727,22 @@ func NewLaguerreRsi(gamma float64) (*LaguerreRsi, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *LaguerreRsi) WarmupPeriod() int {
+	r := int(C.wickra_laguerre_rsi_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *LaguerreRsi) IsReady() bool {
+	r := bool(C.wickra_laguerre_rsi_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *LaguerreRsi) Update(value float64) float64 {
@@ -14214,6 +17798,22 @@ func NewLeadLagCrossCorrelation(window int, maxLag int) (*LeadLagCrossCorrelatio
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *LeadLagCrossCorrelation) WarmupPeriod() int {
+	r := int(C.wickra_lead_lag_cross_correlation_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *LeadLagCrossCorrelation) IsReady() bool {
+	r := bool(C.wickra_lead_lag_cross_correlation_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *LeadLagCrossCorrelation) Update(x float64, y float64) (LeadLagCrossCorrelationOutput, bool) {
@@ -14257,6 +17857,22 @@ func NewLinRegAngle(period int) (*LinRegAngle, error) {
 	obj := &LinRegAngle{handle: ptr}
 	runtime.SetFinalizer(obj, (*LinRegAngle).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *LinRegAngle) WarmupPeriod() int {
+	r := int(C.wickra_lin_reg_angle_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *LinRegAngle) IsReady() bool {
+	r := bool(C.wickra_lin_reg_angle_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -14314,6 +17930,22 @@ func NewLinRegChannel(period int, multiplier float64) (*LinRegChannel, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *LinRegChannel) WarmupPeriod() int {
+	r := int(C.wickra_lin_reg_channel_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *LinRegChannel) IsReady() bool {
+	r := bool(C.wickra_lin_reg_channel_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *LinRegChannel) Update(value float64) (LinRegChannelOutput, bool) {
@@ -14357,6 +17989,22 @@ func NewLinRegIntercept(period int) (*LinRegIntercept, error) {
 	obj := &LinRegIntercept{handle: ptr}
 	runtime.SetFinalizer(obj, (*LinRegIntercept).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *LinRegIntercept) WarmupPeriod() int {
+	r := int(C.wickra_lin_reg_intercept_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *LinRegIntercept) IsReady() bool {
+	r := bool(C.wickra_lin_reg_intercept_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -14414,6 +18062,22 @@ func NewLinRegSlope(period int) (*LinRegSlope, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *LinRegSlope) WarmupPeriod() int {
+	r := int(C.wickra_lin_reg_slope_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *LinRegSlope) IsReady() bool {
+	r := bool(C.wickra_lin_reg_slope_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *LinRegSlope) Update(value float64) float64 {
@@ -14467,6 +18131,22 @@ func NewLinearRegression(period int) (*LinearRegression, error) {
 	obj := &LinearRegression{handle: ptr}
 	runtime.SetFinalizer(obj, (*LinearRegression).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *LinearRegression) WarmupPeriod() int {
+	r := int(C.wickra_linear_regression_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *LinearRegression) IsReady() bool {
+	r := bool(C.wickra_linear_regression_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -14524,6 +18204,22 @@ func NewLiquidationFeatures() (*LiquidationFeatures, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *LiquidationFeatures) WarmupPeriod() int {
+	r := int(C.wickra_liquidation_features_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *LiquidationFeatures) IsReady() bool {
+	r := bool(C.wickra_liquidation_features_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *LiquidationFeatures) Update(fundingRate float64, markPrice float64, indexPrice float64, futuresPrice float64, openInterest float64, longSize float64, shortSize float64, takerBuyVolume float64, takerSellVolume float64, longLiquidation float64, shortLiquidation float64, timestamp int64) (LiquidationFeaturesOutput, bool) {
@@ -14567,6 +18263,22 @@ func NewLogReturn(period int) (*LogReturn, error) {
 	obj := &LogReturn{handle: ptr}
 	runtime.SetFinalizer(obj, (*LogReturn).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *LogReturn) WarmupPeriod() int {
+	r := int(C.wickra_log_return_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *LogReturn) IsReady() bool {
+	r := bool(C.wickra_log_return_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -14622,6 +18334,22 @@ func NewLongLeggedDoji() (*LongLeggedDoji, error) {
 	obj := &LongLeggedDoji{handle: ptr}
 	runtime.SetFinalizer(obj, (*LongLeggedDoji).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *LongLeggedDoji) WarmupPeriod() int {
+	r := int(C.wickra_long_legged_doji_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *LongLeggedDoji) IsReady() bool {
+	r := bool(C.wickra_long_legged_doji_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -14699,6 +18427,22 @@ func NewLongLine() (*LongLine, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *LongLine) WarmupPeriod() int {
+	r := int(C.wickra_long_line_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *LongLine) IsReady() bool {
+	r := bool(C.wickra_long_line_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *LongLine) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -14774,6 +18518,22 @@ func NewLongShortRatio() (*LongShortRatio, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *LongShortRatio) WarmupPeriod() int {
+	r := int(C.wickra_long_short_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *LongShortRatio) IsReady() bool {
+	r := bool(C.wickra_long_short_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *LongShortRatio) Update(fundingRate float64, markPrice float64, indexPrice float64, futuresPrice float64, openInterest float64, longSize float64, shortSize float64, takerBuyVolume float64, takerSellVolume float64, longLiquidation float64, shortLiquidation float64, timestamp int64) float64 {
@@ -14813,6 +18573,22 @@ func NewM2Measure(period int, riskFree float64, benchmarkStddev float64) (*M2Mea
 	obj := &M2Measure{handle: ptr}
 	runtime.SetFinalizer(obj, (*M2Measure).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *M2Measure) WarmupPeriod() int {
+	r := int(C.wickra_m2_measure_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *M2Measure) IsReady() bool {
+	r := bool(C.wickra_m2_measure_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -14870,6 +18646,22 @@ func NewMaEnvelope(period int, percent float64) (*MaEnvelope, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MaEnvelope) WarmupPeriod() int {
+	r := int(C.wickra_ma_envelope_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MaEnvelope) IsReady() bool {
+	r := bool(C.wickra_ma_envelope_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *MaEnvelope) Update(value float64) (MaEnvelopeOutput, bool) {
@@ -14913,6 +18705,22 @@ func NewMacdExt(fast int, fastType uint8, slow int, slowType uint8, signal int, 
 	obj := &MacdExt{handle: ptr}
 	runtime.SetFinalizer(obj, (*MacdExt).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MacdExt) WarmupPeriod() int {
+	r := int(C.wickra_macd_ext_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MacdExt) IsReady() bool {
+	r := bool(C.wickra_macd_ext_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation. The bool reports whether a value is
@@ -14960,6 +18768,22 @@ func NewMacdFix(signal int) (*MacdFix, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MacdFix) WarmupPeriod() int {
+	r := int(C.wickra_macd_fix_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MacdFix) IsReady() bool {
+	r := bool(C.wickra_macd_fix_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *MacdFix) Update(value float64) (MacdOutput, bool) {
@@ -15003,6 +18827,22 @@ func NewMacdHistogram(fast int, slow int, signal int) (*MacdHistogram, error) {
 	obj := &MacdHistogram{handle: ptr}
 	runtime.SetFinalizer(obj, (*MacdHistogram).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MacdHistogram) WarmupPeriod() int {
+	r := int(C.wickra_macd_histogram_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MacdHistogram) IsReady() bool {
+	r := bool(C.wickra_macd_histogram_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -15060,6 +18900,22 @@ func NewMacdIndicator(fast int, slow int, signal int) (*MacdIndicator, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MacdIndicator) WarmupPeriod() int {
+	r := int(C.wickra_macd_indicator_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MacdIndicator) IsReady() bool {
+	r := bool(C.wickra_macd_indicator_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *MacdIndicator) Update(value float64) (MacdOutput, bool) {
@@ -15105,6 +18961,22 @@ func NewMama(fastLimit float64, slowLimit float64) (*Mama, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Mama) WarmupPeriod() int {
+	r := int(C.wickra_mama_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Mama) IsReady() bool {
+	r := bool(C.wickra_mama_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *Mama) Update(value float64) (MamaOutput, bool) {
@@ -15148,6 +19020,22 @@ func NewMarketFacilitationIndex() (*MarketFacilitationIndex, error) {
 	obj := &MarketFacilitationIndex{handle: ptr}
 	runtime.SetFinalizer(obj, (*MarketFacilitationIndex).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MarketFacilitationIndex) WarmupPeriod() int {
+	r := int(C.wickra_market_facilitation_index_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MarketFacilitationIndex) IsReady() bool {
+	r := bool(C.wickra_market_facilitation_index_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -15225,6 +19113,22 @@ func NewMartinRatio(period int) (*MartinRatio, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MartinRatio) WarmupPeriod() int {
+	r := int(C.wickra_martin_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MartinRatio) IsReady() bool {
+	r := bool(C.wickra_martin_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *MartinRatio) Update(value float64) float64 {
@@ -15278,6 +19182,22 @@ func NewMarubozu() (*Marubozu, error) {
 	obj := &Marubozu{handle: ptr}
 	runtime.SetFinalizer(obj, (*Marubozu).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Marubozu) WarmupPeriod() int {
+	r := int(C.wickra_marubozu_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Marubozu) IsReady() bool {
+	r := bool(C.wickra_marubozu_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -15355,6 +19275,22 @@ func NewMassIndex(emaPeriod int, sumPeriod int) (*MassIndex, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MassIndex) WarmupPeriod() int {
+	r := int(C.wickra_mass_index_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MassIndex) IsReady() bool {
+	r := bool(C.wickra_mass_index_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *MassIndex) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -15428,6 +19364,22 @@ func NewMatHold() (*MatHold, error) {
 	obj := &MatHold{handle: ptr}
 	runtime.SetFinalizer(obj, (*MatHold).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MatHold) WarmupPeriod() int {
+	r := int(C.wickra_mat_hold_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MatHold) IsReady() bool {
+	r := bool(C.wickra_mat_hold_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -15505,6 +19457,22 @@ func NewMatchingLow() (*MatchingLow, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MatchingLow) WarmupPeriod() int {
+	r := int(C.wickra_matching_low_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MatchingLow) IsReady() bool {
+	r := bool(C.wickra_matching_low_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *MatchingLow) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -15580,6 +19548,22 @@ func NewMaxDrawdown(period int) (*MaxDrawdown, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MaxDrawdown) WarmupPeriod() int {
+	r := int(C.wickra_max_drawdown_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MaxDrawdown) IsReady() bool {
+	r := bool(C.wickra_max_drawdown_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *MaxDrawdown) Update(value float64) float64 {
@@ -15633,6 +19617,22 @@ func NewMcClellanOscillator() (*McClellanOscillator, error) {
 	obj := &McClellanOscillator{handle: ptr}
 	runtime.SetFinalizer(obj, (*McClellanOscillator).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *McClellanOscillator) WarmupPeriod() int {
+	r := int(C.wickra_mc_clellan_oscillator_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *McClellanOscillator) IsReady() bool {
+	r := bool(C.wickra_mc_clellan_oscillator_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one cross-sectional snapshot and returns the indicator
@@ -15697,6 +19697,22 @@ func NewMcClellanSummationIndex() (*McClellanSummationIndex, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *McClellanSummationIndex) WarmupPeriod() int {
+	r := int(C.wickra_mc_clellan_summation_index_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *McClellanSummationIndex) IsReady() bool {
+	r := bool(C.wickra_mc_clellan_summation_index_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one cross-sectional snapshot and returns the indicator
 // value (NaN until warmed up). Slices in a group must share a length.
 func (ind *McClellanSummationIndex) Update(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, timestamp int64) float64 {
@@ -15759,6 +19775,22 @@ func NewMcGinleyDynamic(period int) (*McGinleyDynamic, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *McGinleyDynamic) WarmupPeriod() int {
+	r := int(C.wickra_mc_ginley_dynamic_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *McGinleyDynamic) IsReady() bool {
+	r := bool(C.wickra_mc_ginley_dynamic_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *McGinleyDynamic) Update(value float64) float64 {
@@ -15812,6 +19844,22 @@ func NewMedianAbsoluteDeviation(period int) (*MedianAbsoluteDeviation, error) {
 	obj := &MedianAbsoluteDeviation{handle: ptr}
 	runtime.SetFinalizer(obj, (*MedianAbsoluteDeviation).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MedianAbsoluteDeviation) WarmupPeriod() int {
+	r := int(C.wickra_median_absolute_deviation_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MedianAbsoluteDeviation) IsReady() bool {
+	r := bool(C.wickra_median_absolute_deviation_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -15869,6 +19917,22 @@ func NewMedianChannel(period int, multiplier float64) (*MedianChannel, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MedianChannel) WarmupPeriod() int {
+	r := int(C.wickra_median_channel_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MedianChannel) IsReady() bool {
+	r := bool(C.wickra_median_channel_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *MedianChannel) Update(value float64) (MedianChannelOutput, bool) {
@@ -15912,6 +19976,22 @@ func NewMedianMa(period int) (*MedianMa, error) {
 	obj := &MedianMa{handle: ptr}
 	runtime.SetFinalizer(obj, (*MedianMa).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MedianMa) WarmupPeriod() int {
+	r := int(C.wickra_median_ma_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MedianMa) IsReady() bool {
+	r := bool(C.wickra_median_ma_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -15967,6 +20047,22 @@ func NewMedianPrice() (*MedianPrice, error) {
 	obj := &MedianPrice{handle: ptr}
 	runtime.SetFinalizer(obj, (*MedianPrice).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MedianPrice) WarmupPeriod() int {
+	r := int(C.wickra_median_price_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MedianPrice) IsReady() bool {
+	r := bool(C.wickra_median_price_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -16044,6 +20140,22 @@ func NewMfi(period int) (*Mfi, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Mfi) WarmupPeriod() int {
+	r := int(C.wickra_mfi_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Mfi) IsReady() bool {
+	r := bool(C.wickra_mfi_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Mfi) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -16119,6 +20231,22 @@ func NewMicroprice() (*Microprice, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Microprice) WarmupPeriod() int {
+	r := int(C.wickra_microprice_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Microprice) IsReady() bool {
+	r := bool(C.wickra_microprice_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one cross-sectional snapshot and returns the indicator
 // value (NaN until warmed up). Slices in a group must share a length.
 func (ind *Microprice) Update(bidPrice []float64, bidSize []float64, askPrice []float64, askSize []float64) float64 {
@@ -16168,6 +20296,22 @@ func NewMidPoint(period int) (*MidPoint, error) {
 	obj := &MidPoint{handle: ptr}
 	runtime.SetFinalizer(obj, (*MidPoint).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MidPoint) WarmupPeriod() int {
+	r := int(C.wickra_mid_point_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MidPoint) IsReady() bool {
+	r := bool(C.wickra_mid_point_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -16223,6 +20367,22 @@ func NewMidPrice(period int) (*MidPrice, error) {
 	obj := &MidPrice{handle: ptr}
 	runtime.SetFinalizer(obj, (*MidPrice).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MidPrice) WarmupPeriod() int {
+	r := int(C.wickra_mid_price_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MidPrice) IsReady() bool {
+	r := bool(C.wickra_mid_price_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -16300,6 +20460,22 @@ func NewMinusDi(period int) (*MinusDi, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MinusDi) WarmupPeriod() int {
+	r := int(C.wickra_minus_di_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MinusDi) IsReady() bool {
+	r := bool(C.wickra_minus_di_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *MinusDi) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -16373,6 +20549,22 @@ func NewMinusDm(period int) (*MinusDm, error) {
 	obj := &MinusDm{handle: ptr}
 	runtime.SetFinalizer(obj, (*MinusDm).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MinusDm) WarmupPeriod() int {
+	r := int(C.wickra_minus_dm_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MinusDm) IsReady() bool {
+	r := bool(C.wickra_minus_dm_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -16450,6 +20642,22 @@ func NewModifiedMaStop(period int) (*ModifiedMaStop, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ModifiedMaStop) WarmupPeriod() int {
+	r := int(C.wickra_modified_ma_stop_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ModifiedMaStop) IsReady() bool {
+	r := bool(C.wickra_modified_ma_stop_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *ModifiedMaStop) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (ModifiedMaStopOutput, bool) {
@@ -16493,6 +20701,22 @@ func NewMom(period int) (*Mom, error) {
 	obj := &Mom{handle: ptr}
 	runtime.SetFinalizer(obj, (*Mom).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Mom) WarmupPeriod() int {
+	r := int(C.wickra_mom_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Mom) IsReady() bool {
+	r := bool(C.wickra_mom_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -16548,6 +20772,22 @@ func NewMorningDojiStar() (*MorningDojiStar, error) {
 	obj := &MorningDojiStar{handle: ptr}
 	runtime.SetFinalizer(obj, (*MorningDojiStar).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MorningDojiStar) WarmupPeriod() int {
+	r := int(C.wickra_morning_doji_star_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MorningDojiStar) IsReady() bool {
+	r := bool(C.wickra_morning_doji_star_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -16625,6 +20865,22 @@ func NewMorningEveningStar() (*MorningEveningStar, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MorningEveningStar) WarmupPeriod() int {
+	r := int(C.wickra_morning_evening_star_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MorningEveningStar) IsReady() bool {
+	r := bool(C.wickra_morning_evening_star_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *MorningEveningStar) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -16700,6 +20956,22 @@ func NewMurreyMathLines(period int) (*MurreyMathLines, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *MurreyMathLines) WarmupPeriod() int {
+	r := int(C.wickra_murrey_math_lines_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *MurreyMathLines) IsReady() bool {
+	r := bool(C.wickra_murrey_math_lines_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *MurreyMathLines) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (MurreyMathLinesOutput, bool) {
@@ -16743,6 +21015,22 @@ func NewNakedPoc(sessionLen int, bins int) (*NakedPoc, error) {
 	obj := &NakedPoc{handle: ptr}
 	runtime.SetFinalizer(obj, (*NakedPoc).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *NakedPoc) WarmupPeriod() int {
+	r := int(C.wickra_naked_poc_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *NakedPoc) IsReady() bool {
+	r := bool(C.wickra_naked_poc_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -16820,6 +21108,22 @@ func NewNatr(period int) (*Natr, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Natr) WarmupPeriod() int {
+	r := int(C.wickra_natr_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Natr) IsReady() bool {
+	r := bool(C.wickra_natr_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Natr) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -16895,6 +21199,22 @@ func NewNewHighsNewLows() (*NewHighsNewLows, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *NewHighsNewLows) WarmupPeriod() int {
+	r := int(C.wickra_new_highs_new_lows_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *NewHighsNewLows) IsReady() bool {
+	r := bool(C.wickra_new_highs_new_lows_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one cross-sectional snapshot and returns the indicator
 // value (NaN until warmed up). Slices in a group must share a length.
 func (ind *NewHighsNewLows) Update(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, timestamp int64) float64 {
@@ -16955,6 +21275,22 @@ func NewNewPriceLines(count int) (*NewPriceLines, error) {
 	obj := &NewPriceLines{handle: ptr}
 	runtime.SetFinalizer(obj, (*NewPriceLines).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *NewPriceLines) WarmupPeriod() int {
+	r := int(C.wickra_new_price_lines_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *NewPriceLines) IsReady() bool {
+	r := bool(C.wickra_new_price_lines_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -17032,6 +21368,22 @@ func NewNrtr(pct float64) (*Nrtr, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Nrtr) WarmupPeriod() int {
+	r := int(C.wickra_nrtr_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Nrtr) IsReady() bool {
+	r := bool(C.wickra_nrtr_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *Nrtr) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (NrtrOutput, bool) {
@@ -17075,6 +21427,22 @@ func NewNvi() (*Nvi, error) {
 	obj := &Nvi{handle: ptr}
 	runtime.SetFinalizer(obj, (*Nvi).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Nvi) WarmupPeriod() int {
+	r := int(C.wickra_nvi_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Nvi) IsReady() bool {
+	r := bool(C.wickra_nvi_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -17152,6 +21520,22 @@ func NewObv() (*Obv, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Obv) WarmupPeriod() int {
+	r := int(C.wickra_obv_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Obv) IsReady() bool {
+	r := bool(C.wickra_obv_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Obv) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -17227,6 +21611,22 @@ func NewOIPriceDivergence(window int) (*OIPriceDivergence, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *OIPriceDivergence) WarmupPeriod() int {
+	r := int(C.wickra_oi_price_divergence_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *OIPriceDivergence) IsReady() bool {
+	r := bool(C.wickra_oi_price_divergence_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *OIPriceDivergence) Update(fundingRate float64, markPrice float64, indexPrice float64, futuresPrice float64, openInterest float64, longSize float64, shortSize float64, takerBuyVolume float64, takerSellVolume float64, longLiquidation float64, shortLiquidation float64, timestamp int64) float64 {
@@ -17266,6 +21666,22 @@ func NewOiToVolumeRatio() (*OiToVolumeRatio, error) {
 	obj := &OiToVolumeRatio{handle: ptr}
 	runtime.SetFinalizer(obj, (*OiToVolumeRatio).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *OiToVolumeRatio) WarmupPeriod() int {
+	r := int(C.wickra_oi_to_volume_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *OiToVolumeRatio) IsReady() bool {
+	r := bool(C.wickra_oi_to_volume_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -17309,6 +21725,22 @@ func NewOIWeighted() (*OIWeighted, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *OIWeighted) WarmupPeriod() int {
+	r := int(C.wickra_oi_weighted_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *OIWeighted) IsReady() bool {
+	r := bool(C.wickra_oi_weighted_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *OIWeighted) Update(fundingRate float64, markPrice float64, indexPrice float64, futuresPrice float64, openInterest float64, longSize float64, shortSize float64, takerBuyVolume float64, takerSellVolume float64, longLiquidation float64, shortLiquidation float64, timestamp int64) float64 {
@@ -17348,6 +21780,22 @@ func NewOmegaRatio(period int, threshold float64) (*OmegaRatio, error) {
 	obj := &OmegaRatio{handle: ptr}
 	runtime.SetFinalizer(obj, (*OmegaRatio).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *OmegaRatio) WarmupPeriod() int {
+	r := int(C.wickra_omega_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *OmegaRatio) IsReady() bool {
+	r := bool(C.wickra_omega_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -17403,6 +21851,22 @@ func NewOnNeck() (*OnNeck, error) {
 	obj := &OnNeck{handle: ptr}
 	runtime.SetFinalizer(obj, (*OnNeck).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *OnNeck) WarmupPeriod() int {
+	r := int(C.wickra_on_neck_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *OnNeck) IsReady() bool {
+	r := bool(C.wickra_on_neck_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -17480,6 +21944,22 @@ func NewOpenInterestDelta() (*OpenInterestDelta, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *OpenInterestDelta) WarmupPeriod() int {
+	r := int(C.wickra_open_interest_delta_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *OpenInterestDelta) IsReady() bool {
+	r := bool(C.wickra_open_interest_delta_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *OpenInterestDelta) Update(fundingRate float64, markPrice float64, indexPrice float64, futuresPrice float64, openInterest float64, longSize float64, shortSize float64, takerBuyVolume float64, takerSellVolume float64, longLiquidation float64, shortLiquidation float64, timestamp int64) float64 {
@@ -17521,6 +22001,22 @@ func NewOpenInterestMomentum(period int) (*OpenInterestMomentum, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *OpenInterestMomentum) WarmupPeriod() int {
+	r := int(C.wickra_open_interest_momentum_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *OpenInterestMomentum) IsReady() bool {
+	r := bool(C.wickra_open_interest_momentum_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *OpenInterestMomentum) Update(fundingRate float64, markPrice float64, indexPrice float64, futuresPrice float64, openInterest float64, longSize float64, shortSize float64, takerBuyVolume float64, takerSellVolume float64, longLiquidation float64, shortLiquidation float64, timestamp int64) float64 {
@@ -17560,6 +22056,22 @@ func NewOpeningMarubozu() (*OpeningMarubozu, error) {
 	obj := &OpeningMarubozu{handle: ptr}
 	runtime.SetFinalizer(obj, (*OpeningMarubozu).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *OpeningMarubozu) WarmupPeriod() int {
+	r := int(C.wickra_opening_marubozu_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *OpeningMarubozu) IsReady() bool {
+	r := bool(C.wickra_opening_marubozu_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -17637,6 +22149,22 @@ func NewOpeningRange(period int) (*OpeningRange, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *OpeningRange) WarmupPeriod() int {
+	r := int(C.wickra_opening_range_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *OpeningRange) IsReady() bool {
+	r := bool(C.wickra_opening_range_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *OpeningRange) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (OpeningRangeOutput, bool) {
@@ -17680,6 +22208,22 @@ func NewOrderBookImbalanceFull() (*OrderBookImbalanceFull, error) {
 	obj := &OrderBookImbalanceFull{handle: ptr}
 	runtime.SetFinalizer(obj, (*OrderBookImbalanceFull).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *OrderBookImbalanceFull) WarmupPeriod() int {
+	r := int(C.wickra_order_book_imbalance_full_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *OrderBookImbalanceFull) IsReady() bool {
+	r := bool(C.wickra_order_book_imbalance_full_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one cross-sectional snapshot and returns the indicator
@@ -17733,6 +22277,22 @@ func NewOrderBookImbalanceTop1() (*OrderBookImbalanceTop1, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *OrderBookImbalanceTop1) WarmupPeriod() int {
+	r := int(C.wickra_order_book_imbalance_top1_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *OrderBookImbalanceTop1) IsReady() bool {
+	r := bool(C.wickra_order_book_imbalance_top1_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one cross-sectional snapshot and returns the indicator
 // value (NaN until warmed up). Slices in a group must share a length.
 func (ind *OrderBookImbalanceTop1) Update(bidPrice []float64, bidSize []float64, askPrice []float64, askSize []float64) float64 {
@@ -17782,6 +22342,22 @@ func NewOrderBookImbalanceTopN(levels int) (*OrderBookImbalanceTopN, error) {
 	obj := &OrderBookImbalanceTopN{handle: ptr}
 	runtime.SetFinalizer(obj, (*OrderBookImbalanceTopN).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *OrderBookImbalanceTopN) WarmupPeriod() int {
+	r := int(C.wickra_order_book_imbalance_top_n_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *OrderBookImbalanceTopN) IsReady() bool {
+	r := bool(C.wickra_order_book_imbalance_top_n_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one cross-sectional snapshot and returns the indicator
@@ -17835,6 +22411,22 @@ func NewOrderFlowImbalance(period int) (*OrderFlowImbalance, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *OrderFlowImbalance) WarmupPeriod() int {
+	r := int(C.wickra_order_flow_imbalance_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *OrderFlowImbalance) IsReady() bool {
+	r := bool(C.wickra_order_flow_imbalance_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one cross-sectional snapshot and returns the indicator
 // value (NaN until warmed up). Slices in a group must share a length.
 func (ind *OrderFlowImbalance) Update(bidPrice []float64, bidSize []float64, askPrice []float64, askSize []float64) float64 {
@@ -17884,6 +22476,22 @@ func NewOuHalfLife(period int) (*OuHalfLife, error) {
 	obj := &OuHalfLife{handle: ptr}
 	runtime.SetFinalizer(obj, (*OuHalfLife).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *OuHalfLife) WarmupPeriod() int {
+	r := int(C.wickra_ou_half_life_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *OuHalfLife) IsReady() bool {
+	r := bool(C.wickra_ou_half_life_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -17943,6 +22551,22 @@ func NewOvernightGap(utcOffsetMinutes int32) (*OvernightGap, error) {
 	obj := &OvernightGap{handle: ptr}
 	runtime.SetFinalizer(obj, (*OvernightGap).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *OvernightGap) WarmupPeriod() int {
+	r := int(C.wickra_overnight_gap_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *OvernightGap) IsReady() bool {
+	r := bool(C.wickra_overnight_gap_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -18020,6 +22644,22 @@ func NewOvernightIntradayReturn(utcOffsetMinutes int32) (*OvernightIntradayRetur
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *OvernightIntradayReturn) WarmupPeriod() int {
+	r := int(C.wickra_overnight_intraday_return_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *OvernightIntradayReturn) IsReady() bool {
+	r := bool(C.wickra_overnight_intraday_return_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *OvernightIntradayReturn) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (OvernightIntradayReturnOutput, bool) {
@@ -18063,6 +22703,22 @@ func NewPainIndex(period int) (*PainIndex, error) {
 	obj := &PainIndex{handle: ptr}
 	runtime.SetFinalizer(obj, (*PainIndex).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *PainIndex) WarmupPeriod() int {
+	r := int(C.wickra_pain_index_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *PainIndex) IsReady() bool {
+	r := bool(C.wickra_pain_index_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -18118,6 +22774,22 @@ func NewPairSpreadZScore(betaPeriod int, zPeriod int) (*PairSpreadZScore, error)
 	obj := &PairSpreadZScore{handle: ptr}
 	runtime.SetFinalizer(obj, (*PairSpreadZScore).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *PairSpreadZScore) WarmupPeriod() int {
+	r := int(C.wickra_pair_spread_z_score_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *PairSpreadZScore) IsReady() bool {
+	r := bool(C.wickra_pair_spread_z_score_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -18179,6 +22851,22 @@ func NewPairwiseBeta(period int) (*PairwiseBeta, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *PairwiseBeta) WarmupPeriod() int {
+	r := int(C.wickra_pairwise_beta_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *PairwiseBeta) IsReady() bool {
+	r := bool(C.wickra_pairwise_beta_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *PairwiseBeta) Update(x float64, y float64) float64 {
@@ -18236,6 +22924,22 @@ func NewParkinsonVolatility(period int, tradingPeriods int) (*ParkinsonVolatilit
 	obj := &ParkinsonVolatility{handle: ptr}
 	runtime.SetFinalizer(obj, (*ParkinsonVolatility).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ParkinsonVolatility) WarmupPeriod() int {
+	r := int(C.wickra_parkinson_volatility_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ParkinsonVolatility) IsReady() bool {
+	r := bool(C.wickra_parkinson_volatility_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -18313,6 +23017,22 @@ func NewPearsonCorrelation(period int) (*PearsonCorrelation, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *PearsonCorrelation) WarmupPeriod() int {
+	r := int(C.wickra_pearson_correlation_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *PearsonCorrelation) IsReady() bool {
+	r := bool(C.wickra_pearson_correlation_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *PearsonCorrelation) Update(x float64, y float64) float64 {
@@ -18370,6 +23090,22 @@ func NewPercentAboveMa() (*PercentAboveMa, error) {
 	obj := &PercentAboveMa{handle: ptr}
 	runtime.SetFinalizer(obj, (*PercentAboveMa).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *PercentAboveMa) WarmupPeriod() int {
+	r := int(C.wickra_percent_above_ma_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *PercentAboveMa) IsReady() bool {
+	r := bool(C.wickra_percent_above_ma_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one cross-sectional snapshot and returns the indicator
@@ -18434,6 +23170,22 @@ func NewPercentB(period int, multiplier float64) (*PercentB, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *PercentB) WarmupPeriod() int {
+	r := int(C.wickra_percent_b_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *PercentB) IsReady() bool {
+	r := bool(C.wickra_percent_b_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *PercentB) Update(value float64) float64 {
@@ -18487,6 +23239,22 @@ func NewPercentageTrailingStop(percent float64) (*PercentageTrailingStop, error)
 	obj := &PercentageTrailingStop{handle: ptr}
 	runtime.SetFinalizer(obj, (*PercentageTrailingStop).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *PercentageTrailingStop) WarmupPeriod() int {
+	r := int(C.wickra_percentage_trailing_stop_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *PercentageTrailingStop) IsReady() bool {
+	r := bool(C.wickra_percentage_trailing_stop_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -18544,6 +23312,22 @@ func NewPerpetualPremiumIndex() (*PerpetualPremiumIndex, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *PerpetualPremiumIndex) WarmupPeriod() int {
+	r := int(C.wickra_perpetual_premium_index_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *PerpetualPremiumIndex) IsReady() bool {
+	r := bool(C.wickra_perpetual_premium_index_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *PerpetualPremiumIndex) Update(fundingRate float64, markPrice float64, indexPrice float64, futuresPrice float64, openInterest float64, longSize float64, shortSize float64, takerBuyVolume float64, takerSellVolume float64, longLiquidation float64, shortLiquidation float64, timestamp int64) float64 {
@@ -18583,6 +23367,22 @@ func NewPgo(period int) (*Pgo, error) {
 	obj := &Pgo{handle: ptr}
 	runtime.SetFinalizer(obj, (*Pgo).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Pgo) WarmupPeriod() int {
+	r := int(C.wickra_pgo_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Pgo) IsReady() bool {
+	r := bool(C.wickra_pgo_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -18660,6 +23460,22 @@ func NewPiercingDarkCloud() (*PiercingDarkCloud, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *PiercingDarkCloud) WarmupPeriod() int {
+	r := int(C.wickra_piercing_dark_cloud_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *PiercingDarkCloud) IsReady() bool {
+	r := bool(C.wickra_piercing_dark_cloud_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *PiercingDarkCloud) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -18735,6 +23551,22 @@ func NewPin(window int) (*Pin, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Pin) WarmupPeriod() int {
+	r := int(C.wickra_pin_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Pin) IsReady() bool {
+	r := bool(C.wickra_pin_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Pin) Update(price float64, size float64, isBuy bool, timestamp int64) float64 {
@@ -18774,6 +23606,22 @@ func NewPivotReversal(left int, right int) (*PivotReversal, error) {
 	obj := &PivotReversal{handle: ptr}
 	runtime.SetFinalizer(obj, (*PivotReversal).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *PivotReversal) WarmupPeriod() int {
+	r := int(C.wickra_pivot_reversal_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *PivotReversal) IsReady() bool {
+	r := bool(C.wickra_pivot_reversal_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -18851,6 +23699,22 @@ func NewPlusDi(period int) (*PlusDi, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *PlusDi) WarmupPeriod() int {
+	r := int(C.wickra_plus_di_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *PlusDi) IsReady() bool {
+	r := bool(C.wickra_plus_di_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *PlusDi) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -18926,6 +23790,22 @@ func NewPlusDm(period int) (*PlusDm, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *PlusDm) WarmupPeriod() int {
+	r := int(C.wickra_plus_dm_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *PlusDm) IsReady() bool {
+	r := bool(C.wickra_plus_dm_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *PlusDm) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -18999,6 +23879,22 @@ func NewPmo(smoothing1 int, smoothing2 int) (*Pmo, error) {
 	obj := &Pmo{handle: ptr}
 	runtime.SetFinalizer(obj, (*Pmo).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Pmo) WarmupPeriod() int {
+	r := int(C.wickra_pmo_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Pmo) IsReady() bool {
+	r := bool(C.wickra_pmo_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -19106,6 +24002,22 @@ func NewPolarizedFractalEfficiency(period int, smoothing int) (*PolarizedFractal
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *PolarizedFractalEfficiency) WarmupPeriod() int {
+	r := int(C.wickra_polarized_fractal_efficiency_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *PolarizedFractalEfficiency) IsReady() bool {
+	r := bool(C.wickra_polarized_fractal_efficiency_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *PolarizedFractalEfficiency) Update(value float64) float64 {
@@ -19159,6 +24071,22 @@ func NewPpo(fast int, slow int) (*Ppo, error) {
 	obj := &Ppo{handle: ptr}
 	runtime.SetFinalizer(obj, (*Ppo).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Ppo) WarmupPeriod() int {
+	r := int(C.wickra_ppo_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Ppo) IsReady() bool {
+	r := bool(C.wickra_ppo_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -19216,6 +24144,22 @@ func NewPpoHistogram(fast int, slow int, signal int) (*PpoHistogram, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *PpoHistogram) WarmupPeriod() int {
+	r := int(C.wickra_ppo_histogram_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *PpoHistogram) IsReady() bool {
+	r := bool(C.wickra_ppo_histogram_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *PpoHistogram) Update(value float64) float64 {
@@ -19269,6 +24213,22 @@ func NewProfileShape(period int, bins int) (*ProfileShape, error) {
 	obj := &ProfileShape{handle: ptr}
 	runtime.SetFinalizer(obj, (*ProfileShape).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ProfileShape) WarmupPeriod() int {
+	r := int(C.wickra_profile_shape_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ProfileShape) IsReady() bool {
+	r := bool(C.wickra_profile_shape_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -19346,6 +24306,22 @@ func NewProfitFactor(period int) (*ProfitFactor, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ProfitFactor) WarmupPeriod() int {
+	r := int(C.wickra_profit_factor_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ProfitFactor) IsReady() bool {
+	r := bool(C.wickra_profit_factor_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *ProfitFactor) Update(value float64) float64 {
@@ -19401,6 +24377,22 @@ func NewProjectionBands(period int) (*ProjectionBands, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ProjectionBands) WarmupPeriod() int {
+	r := int(C.wickra_projection_bands_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ProjectionBands) IsReady() bool {
+	r := bool(C.wickra_projection_bands_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *ProjectionBands) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (ProjectionBandsOutput, bool) {
@@ -19444,6 +24436,22 @@ func NewProjectionOscillator(period int) (*ProjectionOscillator, error) {
 	obj := &ProjectionOscillator{handle: ptr}
 	runtime.SetFinalizer(obj, (*ProjectionOscillator).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ProjectionOscillator) WarmupPeriod() int {
+	r := int(C.wickra_projection_oscillator_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ProjectionOscillator) IsReady() bool {
+	r := bool(C.wickra_projection_oscillator_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -19521,6 +24529,22 @@ func NewPsar(afStart float64, afStep float64, afMax float64) (*Psar, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Psar) WarmupPeriod() int {
+	r := int(C.wickra_psar_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Psar) IsReady() bool {
+	r := bool(C.wickra_psar_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Psar) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -19594,6 +24618,22 @@ func NewPvi() (*Pvi, error) {
 	obj := &Pvi{handle: ptr}
 	runtime.SetFinalizer(obj, (*Pvi).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Pvi) WarmupPeriod() int {
+	r := int(C.wickra_pvi_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Pvi) IsReady() bool {
+	r := bool(C.wickra_pvi_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -19671,6 +24711,22 @@ func NewQqe(rsiPeriod int, smoothing int, factor float64) (*Qqe, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Qqe) WarmupPeriod() int {
+	r := int(C.wickra_qqe_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Qqe) IsReady() bool {
+	r := bool(C.wickra_qqe_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *Qqe) Update(value float64) (QqeOutput, bool) {
@@ -19714,6 +24770,22 @@ func NewQstick(period int) (*Qstick, error) {
 	obj := &Qstick{handle: ptr}
 	runtime.SetFinalizer(obj, (*Qstick).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Qstick) WarmupPeriod() int {
+	r := int(C.wickra_qstick_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Qstick) IsReady() bool {
+	r := bool(C.wickra_qstick_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -19791,6 +24863,22 @@ func NewQuartileBands(period int) (*QuartileBands, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *QuartileBands) WarmupPeriod() int {
+	r := int(C.wickra_quartile_bands_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *QuartileBands) IsReady() bool {
+	r := bool(C.wickra_quartile_bands_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *QuartileBands) Update(value float64) (QuartileBandsOutput, bool) {
@@ -19834,6 +24922,22 @@ func NewQuotedSpread() (*QuotedSpread, error) {
 	obj := &QuotedSpread{handle: ptr}
 	runtime.SetFinalizer(obj, (*QuotedSpread).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *QuotedSpread) WarmupPeriod() int {
+	r := int(C.wickra_quoted_spread_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *QuotedSpread) IsReady() bool {
+	r := bool(C.wickra_quoted_spread_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one cross-sectional snapshot and returns the indicator
@@ -19885,6 +24989,22 @@ func NewRSquared(period int) (*RSquared, error) {
 	obj := &RSquared{handle: ptr}
 	runtime.SetFinalizer(obj, (*RSquared).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RSquared) WarmupPeriod() int {
+	r := int(C.wickra_r_squared_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RSquared) IsReady() bool {
+	r := bool(C.wickra_r_squared_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -19992,6 +25112,22 @@ func NewRealizedSpread(horizon int) (*RealizedSpread, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RealizedSpread) WarmupPeriod() int {
+	r := int(C.wickra_realized_spread_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RealizedSpread) IsReady() bool {
+	r := bool(C.wickra_realized_spread_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *RealizedSpread) Update(price float64, size float64, isBuy bool, timestamp int64, mid float64) float64 {
@@ -20031,6 +25167,22 @@ func NewRealizedVolatility(period int) (*RealizedVolatility, error) {
 	obj := &RealizedVolatility{handle: ptr}
 	runtime.SetFinalizer(obj, (*RealizedVolatility).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RealizedVolatility) WarmupPeriod() int {
+	r := int(C.wickra_realized_volatility_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RealizedVolatility) IsReady() bool {
+	r := bool(C.wickra_realized_volatility_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -20088,6 +25240,22 @@ func NewRecoveryFactor() (*RecoveryFactor, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RecoveryFactor) WarmupPeriod() int {
+	r := int(C.wickra_recovery_factor_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RecoveryFactor) IsReady() bool {
+	r := bool(C.wickra_recovery_factor_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *RecoveryFactor) Update(value float64) float64 {
@@ -20141,6 +25309,22 @@ func NewRectangleRange() (*RectangleRange, error) {
 	obj := &RectangleRange{handle: ptr}
 	runtime.SetFinalizer(obj, (*RectangleRange).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RectangleRange) WarmupPeriod() int {
+	r := int(C.wickra_rectangle_range_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RectangleRange) IsReady() bool {
+	r := bool(C.wickra_rectangle_range_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -20218,6 +25402,22 @@ func NewReflex(period int) (*Reflex, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Reflex) WarmupPeriod() int {
+	r := int(C.wickra_reflex_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Reflex) IsReady() bool {
+	r := bool(C.wickra_reflex_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Reflex) Update(value float64) float64 {
@@ -20273,6 +25473,22 @@ func NewRegimeLabel(volPeriod int, lookback int) (*RegimeLabel, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RegimeLabel) WarmupPeriod() int {
+	r := int(C.wickra_regime_label_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RegimeLabel) IsReady() bool {
+	r := bool(C.wickra_regime_label_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *RegimeLabel) Update(value float64) float64 {
@@ -20326,6 +25542,22 @@ func NewRelativeStrengthAB(maPeriod int, rsiPeriod int) (*RelativeStrengthAB, er
 	obj := &RelativeStrengthAB{handle: ptr}
 	runtime.SetFinalizer(obj, (*RelativeStrengthAB).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RelativeStrengthAB) WarmupPeriod() int {
+	r := int(C.wickra_relative_strength_ab_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RelativeStrengthAB) IsReady() bool {
+	r := bool(C.wickra_relative_strength_ab_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation. The bool reports whether a value is
@@ -20423,6 +25655,22 @@ func NewRenkoTrailingStop(blockSize float64) (*RenkoTrailingStop, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RenkoTrailingStop) WarmupPeriod() int {
+	r := int(C.wickra_renko_trailing_stop_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RenkoTrailingStop) IsReady() bool {
+	r := bool(C.wickra_renko_trailing_stop_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *RenkoTrailingStop) Update(value float64) float64 {
@@ -20476,6 +25724,22 @@ func NewRickshawMan() (*RickshawMan, error) {
 	obj := &RickshawMan{handle: ptr}
 	runtime.SetFinalizer(obj, (*RickshawMan).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RickshawMan) WarmupPeriod() int {
+	r := int(C.wickra_rickshaw_man_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RickshawMan) IsReady() bool {
+	r := bool(C.wickra_rickshaw_man_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -20553,6 +25817,22 @@ func NewRisingThreeMethods() (*RisingThreeMethods, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RisingThreeMethods) WarmupPeriod() int {
+	r := int(C.wickra_rising_three_methods_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RisingThreeMethods) IsReady() bool {
+	r := bool(C.wickra_rising_three_methods_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *RisingThreeMethods) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -20628,6 +25908,22 @@ func NewRmi(period int, momentum int) (*Rmi, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Rmi) WarmupPeriod() int {
+	r := int(C.wickra_rmi_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Rmi) IsReady() bool {
+	r := bool(C.wickra_rmi_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Rmi) Update(value float64) float64 {
@@ -20681,6 +25977,22 @@ func NewRoc(period int) (*Roc, error) {
 	obj := &Roc{handle: ptr}
 	runtime.SetFinalizer(obj, (*Roc).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Roc) WarmupPeriod() int {
+	r := int(C.wickra_roc_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Roc) IsReady() bool {
+	r := bool(C.wickra_roc_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -20738,6 +26050,22 @@ func NewRocp(period int) (*Rocp, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Rocp) WarmupPeriod() int {
+	r := int(C.wickra_rocp_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Rocp) IsReady() bool {
+	r := bool(C.wickra_rocp_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Rocp) Update(value float64) float64 {
@@ -20791,6 +26119,22 @@ func NewRocr(period int) (*Rocr, error) {
 	obj := &Rocr{handle: ptr}
 	runtime.SetFinalizer(obj, (*Rocr).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Rocr) WarmupPeriod() int {
+	r := int(C.wickra_rocr_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Rocr) IsReady() bool {
+	r := bool(C.wickra_rocr_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -20848,6 +26192,22 @@ func NewRocr100(period int) (*Rocr100, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Rocr100) WarmupPeriod() int {
+	r := int(C.wickra_rocr100_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Rocr100) IsReady() bool {
+	r := bool(C.wickra_rocr100_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Rocr100) Update(value float64) float64 {
@@ -20901,6 +26261,22 @@ func NewRogersSatchellVolatility(period int, tradingPeriods int) (*RogersSatchel
 	obj := &RogersSatchellVolatility{handle: ptr}
 	runtime.SetFinalizer(obj, (*RogersSatchellVolatility).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RogersSatchellVolatility) WarmupPeriod() int {
+	r := int(C.wickra_rogers_satchell_volatility_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RogersSatchellVolatility) IsReady() bool {
+	r := bool(C.wickra_rogers_satchell_volatility_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -20978,6 +26354,22 @@ func NewRollMeasure(period int) (*RollMeasure, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RollMeasure) WarmupPeriod() int {
+	r := int(C.wickra_roll_measure_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RollMeasure) IsReady() bool {
+	r := bool(C.wickra_roll_measure_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *RollMeasure) Update(price float64, size float64, isBuy bool, timestamp int64) float64 {
@@ -21017,6 +26409,22 @@ func NewRollingCorrelation(period int) (*RollingCorrelation, error) {
 	obj := &RollingCorrelation{handle: ptr}
 	runtime.SetFinalizer(obj, (*RollingCorrelation).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RollingCorrelation) WarmupPeriod() int {
+	r := int(C.wickra_rolling_correlation_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RollingCorrelation) IsReady() bool {
+	r := bool(C.wickra_rolling_correlation_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -21078,6 +26486,22 @@ func NewRollingCovariance(period int) (*RollingCovariance, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RollingCovariance) WarmupPeriod() int {
+	r := int(C.wickra_rolling_covariance_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RollingCovariance) IsReady() bool {
+	r := bool(C.wickra_rolling_covariance_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *RollingCovariance) Update(x float64, y float64) float64 {
@@ -21137,6 +26561,22 @@ func NewRollingIqr(period int) (*RollingIqr, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RollingIqr) WarmupPeriod() int {
+	r := int(C.wickra_rolling_iqr_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RollingIqr) IsReady() bool {
+	r := bool(C.wickra_rolling_iqr_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *RollingIqr) Update(value float64) float64 {
@@ -21190,6 +26630,22 @@ func NewRollingMinMaxScaler(period int) (*RollingMinMaxScaler, error) {
 	obj := &RollingMinMaxScaler{handle: ptr}
 	runtime.SetFinalizer(obj, (*RollingMinMaxScaler).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RollingMinMaxScaler) WarmupPeriod() int {
+	r := int(C.wickra_rolling_min_max_scaler_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RollingMinMaxScaler) IsReady() bool {
+	r := bool(C.wickra_rolling_min_max_scaler_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -21247,6 +26703,22 @@ func NewRollingPercentileRank(period int) (*RollingPercentileRank, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RollingPercentileRank) WarmupPeriod() int {
+	r := int(C.wickra_rolling_percentile_rank_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RollingPercentileRank) IsReady() bool {
+	r := bool(C.wickra_rolling_percentile_rank_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *RollingPercentileRank) Update(value float64) float64 {
@@ -21302,6 +26774,22 @@ func NewRollingQuantile(period int, quantile float64) (*RollingQuantile, error) 
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RollingQuantile) WarmupPeriod() int {
+	r := int(C.wickra_rolling_quantile_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RollingQuantile) IsReady() bool {
+	r := bool(C.wickra_rolling_quantile_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *RollingQuantile) Update(value float64) float64 {
@@ -21355,6 +26843,22 @@ func NewRollingVwap(period int) (*RollingVwap, error) {
 	obj := &RollingVwap{handle: ptr}
 	runtime.SetFinalizer(obj, (*RollingVwap).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RollingVwap) WarmupPeriod() int {
+	r := int(C.wickra_rolling_vwap_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RollingVwap) IsReady() bool {
+	r := bool(C.wickra_rolling_vwap_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -21432,6 +26936,22 @@ func NewRoofingFilter(lpPeriod int, hpPeriod int) (*RoofingFilter, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RoofingFilter) WarmupPeriod() int {
+	r := int(C.wickra_roofing_filter_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RoofingFilter) IsReady() bool {
+	r := bool(C.wickra_roofing_filter_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *RoofingFilter) Update(value float64) float64 {
@@ -21487,6 +27007,22 @@ func NewRsi(period int) (*Rsi, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Rsi) WarmupPeriod() int {
+	r := int(C.wickra_rsi_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Rsi) IsReady() bool {
+	r := bool(C.wickra_rsi_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Rsi) Update(value float64) float64 {
@@ -21540,6 +27076,22 @@ func NewRsx(length int) (*Rsx, error) {
 	obj := &Rsx{handle: ptr}
 	runtime.SetFinalizer(obj, (*Rsx).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Rsx) WarmupPeriod() int {
+	r := int(C.wickra_rsx_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Rsx) IsReady() bool {
+	r := bool(C.wickra_rsx_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -21647,6 +27199,22 @@ func NewRvi(period int) (*Rvi, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Rvi) WarmupPeriod() int {
+	r := int(C.wickra_rvi_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Rvi) IsReady() bool {
+	r := bool(C.wickra_rvi_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Rvi) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -21722,6 +27290,22 @@ func NewRviVolatility(period int) (*RviVolatility, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *RviVolatility) WarmupPeriod() int {
+	r := int(C.wickra_rvi_volatility_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *RviVolatility) IsReady() bool {
+	r := bool(C.wickra_rvi_volatility_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *RviVolatility) Update(value float64) float64 {
@@ -21777,6 +27361,22 @@ func NewRwi(period int) (*Rwi, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Rwi) WarmupPeriod() int {
+	r := int(C.wickra_rwi_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Rwi) IsReady() bool {
+	r := bool(C.wickra_rwi_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *Rwi) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (RwiOutput, bool) {
@@ -21820,6 +27420,22 @@ func NewSampleEntropy(period int, m int, rFactor float64) (*SampleEntropy, error
 	obj := &SampleEntropy{handle: ptr}
 	runtime.SetFinalizer(obj, (*SampleEntropy).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SampleEntropy) WarmupPeriod() int {
+	r := int(C.wickra_sample_entropy_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SampleEntropy) IsReady() bool {
+	r := bool(C.wickra_sample_entropy_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -21875,6 +27491,22 @@ func NewSarExt(startValue float64, offsetOnReverse float64, accelInitLong float6
 	obj := &SarExt{handle: ptr}
 	runtime.SetFinalizer(obj, (*SarExt).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SarExt) WarmupPeriod() int {
+	r := int(C.wickra_sar_ext_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SarExt) IsReady() bool {
+	r := bool(C.wickra_sar_ext_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -21952,6 +27584,22 @@ func NewSeasonalZScore(utcOffsetMinutes int32) (*SeasonalZScore, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SeasonalZScore) WarmupPeriod() int {
+	r := int(C.wickra_seasonal_z_score_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SeasonalZScore) IsReady() bool {
+	r := bool(C.wickra_seasonal_z_score_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *SeasonalZScore) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -22025,6 +27673,22 @@ func NewSeparatingLines() (*SeparatingLines, error) {
 	obj := &SeparatingLines{handle: ptr}
 	runtime.SetFinalizer(obj, (*SeparatingLines).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SeparatingLines) WarmupPeriod() int {
+	r := int(C.wickra_separating_lines_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SeparatingLines) IsReady() bool {
+	r := bool(C.wickra_separating_lines_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -22102,6 +27766,22 @@ func NewSessionHighLow(utcOffsetMinutes int32) (*SessionHighLow, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SessionHighLow) WarmupPeriod() int {
+	r := int(C.wickra_session_high_low_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SessionHighLow) IsReady() bool {
+	r := bool(C.wickra_session_high_low_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *SessionHighLow) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (SessionHighLowOutput, bool) {
@@ -22147,6 +27827,22 @@ func NewSessionRange(utcOffsetMinutes int32) (*SessionRange, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SessionRange) WarmupPeriod() int {
+	r := int(C.wickra_session_range_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SessionRange) IsReady() bool {
+	r := bool(C.wickra_session_range_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *SessionRange) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (SessionRangeOutput, bool) {
@@ -22190,6 +27886,22 @@ func NewSessionVwap(utcOffsetMinutes int32) (*SessionVwap, error) {
 	obj := &SessionVwap{handle: ptr}
 	runtime.SetFinalizer(obj, (*SessionVwap).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SessionVwap) WarmupPeriod() int {
+	r := int(C.wickra_session_vwap_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SessionVwap) IsReady() bool {
+	r := bool(C.wickra_session_vwap_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -22267,6 +27979,22 @@ func NewShannonEntropy(period int, bins int) (*ShannonEntropy, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ShannonEntropy) WarmupPeriod() int {
+	r := int(C.wickra_shannon_entropy_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ShannonEntropy) IsReady() bool {
+	r := bool(C.wickra_shannon_entropy_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *ShannonEntropy) Update(value float64) float64 {
@@ -22320,6 +28048,22 @@ func NewShark() (*Shark, error) {
 	obj := &Shark{handle: ptr}
 	runtime.SetFinalizer(obj, (*Shark).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Shark) WarmupPeriod() int {
+	r := int(C.wickra_shark_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Shark) IsReady() bool {
+	r := bool(C.wickra_shark_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -22397,6 +28141,22 @@ func NewSharpeRatio(period int, riskFree float64) (*SharpeRatio, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SharpeRatio) WarmupPeriod() int {
+	r := int(C.wickra_sharpe_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SharpeRatio) IsReady() bool {
+	r := bool(C.wickra_sharpe_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *SharpeRatio) Update(value float64) float64 {
@@ -22450,6 +28210,22 @@ func NewShootingStar() (*ShootingStar, error) {
 	obj := &ShootingStar{handle: ptr}
 	runtime.SetFinalizer(obj, (*ShootingStar).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ShootingStar) WarmupPeriod() int {
+	r := int(C.wickra_shooting_star_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ShootingStar) IsReady() bool {
+	r := bool(C.wickra_shooting_star_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -22527,6 +28303,22 @@ func NewShortLine() (*ShortLine, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ShortLine) WarmupPeriod() int {
+	r := int(C.wickra_short_line_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ShortLine) IsReady() bool {
+	r := bool(C.wickra_short_line_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *ShortLine) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -22602,6 +28394,22 @@ func NewSignedVolume() (*SignedVolume, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SignedVolume) WarmupPeriod() int {
+	r := int(C.wickra_signed_volume_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SignedVolume) IsReady() bool {
+	r := bool(C.wickra_signed_volume_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *SignedVolume) Update(price float64, size float64, isBuy bool, timestamp int64) float64 {
@@ -22641,6 +28449,22 @@ func NewSineWave() (*SineWave, error) {
 	obj := &SineWave{handle: ptr}
 	runtime.SetFinalizer(obj, (*SineWave).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SineWave) WarmupPeriod() int {
+	r := int(C.wickra_sine_wave_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SineWave) IsReady() bool {
+	r := bool(C.wickra_sine_wave_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -22698,6 +28522,22 @@ func NewSineWeightedMa(period int) (*SineWeightedMa, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SineWeightedMa) WarmupPeriod() int {
+	r := int(C.wickra_sine_weighted_ma_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SineWeightedMa) IsReady() bool {
+	r := bool(C.wickra_sine_weighted_ma_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *SineWeightedMa) Update(value float64) float64 {
@@ -22751,6 +28591,22 @@ func NewSinglePrints(period int, bins int) (*SinglePrints, error) {
 	obj := &SinglePrints{handle: ptr}
 	runtime.SetFinalizer(obj, (*SinglePrints).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SinglePrints) WarmupPeriod() int {
+	r := int(C.wickra_single_prints_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SinglePrints) IsReady() bool {
+	r := bool(C.wickra_single_prints_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -22828,6 +28684,22 @@ func NewSkewness(period int) (*Skewness, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Skewness) WarmupPeriod() int {
+	r := int(C.wickra_skewness_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Skewness) IsReady() bool {
+	r := bool(C.wickra_skewness_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Skewness) Update(value float64) float64 {
@@ -22883,6 +28755,22 @@ func NewSma(period int) (*Sma, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Sma) WarmupPeriod() int {
+	r := int(C.wickra_sma_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Sma) IsReady() bool {
+	r := bool(C.wickra_sma_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Sma) Update(value float64) float64 {
@@ -22936,6 +28824,22 @@ func NewSmi(period int, dPeriod int, d2Period int) (*Smi, error) {
 	obj := &Smi{handle: ptr}
 	runtime.SetFinalizer(obj, (*Smi).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Smi) WarmupPeriod() int {
+	r := int(C.wickra_smi_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Smi) IsReady() bool {
+	r := bool(C.wickra_smi_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -23013,6 +28917,22 @@ func NewSmma(period int) (*Smma, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Smma) WarmupPeriod() int {
+	r := int(C.wickra_smma_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Smma) IsReady() bool {
+	r := bool(C.wickra_smma_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Smma) Update(value float64) float64 {
@@ -23068,6 +28988,22 @@ func NewSmoothedHeikinAshi(period int) (*SmoothedHeikinAshi, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SmoothedHeikinAshi) WarmupPeriod() int {
+	r := int(C.wickra_smoothed_heikin_ashi_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SmoothedHeikinAshi) IsReady() bool {
+	r := bool(C.wickra_smoothed_heikin_ashi_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *SmoothedHeikinAshi) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (SmoothedHeikinAshiOutput, bool) {
@@ -23111,6 +29047,22 @@ func NewSortinoRatio(period int, mar float64) (*SortinoRatio, error) {
 	obj := &SortinoRatio{handle: ptr}
 	runtime.SetFinalizer(obj, (*SortinoRatio).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SortinoRatio) WarmupPeriod() int {
+	r := int(C.wickra_sortino_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SortinoRatio) IsReady() bool {
+	r := bool(C.wickra_sortino_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -23166,6 +29118,22 @@ func NewSpearmanCorrelation(period int) (*SpearmanCorrelation, error) {
 	obj := &SpearmanCorrelation{handle: ptr}
 	runtime.SetFinalizer(obj, (*SpearmanCorrelation).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SpearmanCorrelation) WarmupPeriod() int {
+	r := int(C.wickra_spearman_correlation_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SpearmanCorrelation) IsReady() bool {
+	r := bool(C.wickra_spearman_correlation_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -23225,6 +29193,22 @@ func NewSpinningTop() (*SpinningTop, error) {
 	obj := &SpinningTop{handle: ptr}
 	runtime.SetFinalizer(obj, (*SpinningTop).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SpinningTop) WarmupPeriod() int {
+	r := int(C.wickra_spinning_top_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SpinningTop) IsReady() bool {
+	r := bool(C.wickra_spinning_top_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -23302,6 +29286,22 @@ func NewSpreadAr1Coefficient(period int) (*SpreadAr1Coefficient, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SpreadAr1Coefficient) WarmupPeriod() int {
+	r := int(C.wickra_spread_ar1_coefficient_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SpreadAr1Coefficient) IsReady() bool {
+	r := bool(C.wickra_spread_ar1_coefficient_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *SpreadAr1Coefficient) Update(x float64, y float64) float64 {
@@ -23361,6 +29361,22 @@ func NewSpreadBollingerBands(period int, numStd float64) (*SpreadBollingerBands,
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SpreadBollingerBands) WarmupPeriod() int {
+	r := int(C.wickra_spread_bollinger_bands_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SpreadBollingerBands) IsReady() bool {
+	r := bool(C.wickra_spread_bollinger_bands_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *SpreadBollingerBands) Update(x float64, y float64) (SpreadBollingerBandsOutput, bool) {
@@ -23404,6 +29420,22 @@ func NewSpreadHurst(period int) (*SpreadHurst, error) {
 	obj := &SpreadHurst{handle: ptr}
 	runtime.SetFinalizer(obj, (*SpreadHurst).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SpreadHurst) WarmupPeriod() int {
+	r := int(C.wickra_spread_hurst_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SpreadHurst) IsReady() bool {
+	r := bool(C.wickra_spread_hurst_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -23463,6 +29495,22 @@ func NewStalledPattern() (*StalledPattern, error) {
 	obj := &StalledPattern{handle: ptr}
 	runtime.SetFinalizer(obj, (*StalledPattern).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *StalledPattern) WarmupPeriod() int {
+	r := int(C.wickra_stalled_pattern_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *StalledPattern) IsReady() bool {
+	r := bool(C.wickra_stalled_pattern_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -23540,6 +29588,22 @@ func NewStandardError(period int) (*StandardError, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *StandardError) WarmupPeriod() int {
+	r := int(C.wickra_standard_error_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *StandardError) IsReady() bool {
+	r := bool(C.wickra_standard_error_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *StandardError) Update(value float64) float64 {
@@ -23595,6 +29659,22 @@ func NewStandardErrorBands(period int, multiplier float64) (*StandardErrorBands,
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *StandardErrorBands) WarmupPeriod() int {
+	r := int(C.wickra_standard_error_bands_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *StandardErrorBands) IsReady() bool {
+	r := bool(C.wickra_standard_error_bands_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *StandardErrorBands) Update(value float64) (StandardErrorBandsOutput, bool) {
@@ -23640,6 +29720,22 @@ func NewStarcBands(smaPeriod int, atrPeriod int, multiplier float64) (*StarcBand
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *StarcBands) WarmupPeriod() int {
+	r := int(C.wickra_starc_bands_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *StarcBands) IsReady() bool {
+	r := bool(C.wickra_starc_bands_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *StarcBands) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (StarcBandsOutput, bool) {
@@ -23683,6 +29779,22 @@ func NewStc(fast int, slow int, schaffPeriod int, factor float64) (*Stc, error) 
 	obj := &Stc{handle: ptr}
 	runtime.SetFinalizer(obj, (*Stc).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Stc) WarmupPeriod() int {
+	r := int(C.wickra_stc_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Stc) IsReady() bool {
+	r := bool(C.wickra_stc_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -23740,6 +29852,22 @@ func NewStdDev(period int) (*StdDev, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *StdDev) WarmupPeriod() int {
+	r := int(C.wickra_std_dev_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *StdDev) IsReady() bool {
+	r := bool(C.wickra_std_dev_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *StdDev) Update(value float64) float64 {
@@ -23793,6 +29921,22 @@ func NewStepTrailingStop(stepSize float64) (*StepTrailingStop, error) {
 	obj := &StepTrailingStop{handle: ptr}
 	runtime.SetFinalizer(obj, (*StepTrailingStop).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *StepTrailingStop) WarmupPeriod() int {
+	r := int(C.wickra_step_trailing_stop_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *StepTrailingStop) IsReady() bool {
+	r := bool(C.wickra_step_trailing_stop_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -23850,6 +29994,22 @@ func NewSterlingRatio(period int) (*SterlingRatio, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SterlingRatio) WarmupPeriod() int {
+	r := int(C.wickra_sterling_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SterlingRatio) IsReady() bool {
+	r := bool(C.wickra_sterling_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *SterlingRatio) Update(value float64) float64 {
@@ -23903,6 +30063,22 @@ func NewStickSandwich() (*StickSandwich, error) {
 	obj := &StickSandwich{handle: ptr}
 	runtime.SetFinalizer(obj, (*StickSandwich).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *StickSandwich) WarmupPeriod() int {
+	r := int(C.wickra_stick_sandwich_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *StickSandwich) IsReady() bool {
+	r := bool(C.wickra_stick_sandwich_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -23980,6 +30156,22 @@ func NewStochRsi(rsiPeriod int, stochPeriod int) (*StochRsi, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *StochRsi) WarmupPeriod() int {
+	r := int(C.wickra_stoch_rsi_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *StochRsi) IsReady() bool {
+	r := bool(C.wickra_stoch_rsi_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *StochRsi) Update(value float64) float64 {
@@ -24035,6 +30227,22 @@ func NewStochastic(kPeriod int, dPeriod int) (*Stochastic, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Stochastic) WarmupPeriod() int {
+	r := int(C.wickra_stochastic_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Stochastic) IsReady() bool {
+	r := bool(C.wickra_stochastic_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *Stochastic) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (StochasticOutput, bool) {
@@ -24078,6 +30286,22 @@ func NewStochasticCci(period int) (*StochasticCci, error) {
 	obj := &StochasticCci{handle: ptr}
 	runtime.SetFinalizer(obj, (*StochasticCci).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *StochasticCci) WarmupPeriod() int {
+	r := int(C.wickra_stochastic_cci_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *StochasticCci) IsReady() bool {
+	r := bool(C.wickra_stochastic_cci_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -24155,6 +30379,22 @@ func NewSuperSmoother(period int) (*SuperSmoother, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SuperSmoother) WarmupPeriod() int {
+	r := int(C.wickra_super_smoother_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SuperSmoother) IsReady() bool {
+	r := bool(C.wickra_super_smoother_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *SuperSmoother) Update(value float64) float64 {
@@ -24210,6 +30450,22 @@ func NewSuperTrend(atrPeriod int, multiplier float64) (*SuperTrend, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *SuperTrend) WarmupPeriod() int {
+	r := int(C.wickra_super_trend_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *SuperTrend) IsReady() bool {
+	r := bool(C.wickra_super_trend_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *SuperTrend) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (SuperTrendOutput, bool) {
@@ -24253,6 +30509,22 @@ func NewT3(period int, v float64) (*T3, error) {
 	obj := &T3{handle: ptr}
 	runtime.SetFinalizer(obj, (*T3).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *T3) WarmupPeriod() int {
+	r := int(C.wickra_t3_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *T3) IsReady() bool {
+	r := bool(C.wickra_t3_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -24310,6 +30582,22 @@ func NewTailRatio(period int) (*TailRatio, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TailRatio) WarmupPeriod() int {
+	r := int(C.wickra_tail_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TailRatio) IsReady() bool {
+	r := bool(C.wickra_tail_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *TailRatio) Update(value float64) float64 {
@@ -24365,6 +30653,22 @@ func NewTakerBuySellRatio() (*TakerBuySellRatio, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TakerBuySellRatio) WarmupPeriod() int {
+	r := int(C.wickra_taker_buy_sell_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TakerBuySellRatio) IsReady() bool {
+	r := bool(C.wickra_taker_buy_sell_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *TakerBuySellRatio) Update(fundingRate float64, markPrice float64, indexPrice float64, futuresPrice float64, openInterest float64, longSize float64, shortSize float64, takerBuyVolume float64, takerSellVolume float64, longLiquidation float64, shortLiquidation float64, timestamp int64) float64 {
@@ -24404,6 +30708,22 @@ func NewTakuri() (*Takuri, error) {
 	obj := &Takuri{handle: ptr}
 	runtime.SetFinalizer(obj, (*Takuri).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Takuri) WarmupPeriod() int {
+	r := int(C.wickra_takuri_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Takuri) IsReady() bool {
+	r := bool(C.wickra_takuri_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -24481,6 +30801,22 @@ func NewTasukiGap() (*TasukiGap, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TasukiGap) WarmupPeriod() int {
+	r := int(C.wickra_tasuki_gap_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TasukiGap) IsReady() bool {
+	r := bool(C.wickra_tasuki_gap_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *TasukiGap) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -24554,6 +30890,22 @@ func NewTdCamouflage() (*TdCamouflage, error) {
 	obj := &TdCamouflage{handle: ptr}
 	runtime.SetFinalizer(obj, (*TdCamouflage).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TdCamouflage) WarmupPeriod() int {
+	r := int(C.wickra_td_camouflage_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TdCamouflage) IsReady() bool {
+	r := bool(C.wickra_td_camouflage_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -24631,6 +30983,22 @@ func NewTdClop() (*TdClop, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TdClop) WarmupPeriod() int {
+	r := int(C.wickra_td_clop_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TdClop) IsReady() bool {
+	r := bool(C.wickra_td_clop_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *TdClop) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -24704,6 +31072,22 @@ func NewTdClopwin() (*TdClopwin, error) {
 	obj := &TdClopwin{handle: ptr}
 	runtime.SetFinalizer(obj, (*TdClopwin).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TdClopwin) WarmupPeriod() int {
+	r := int(C.wickra_td_clopwin_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TdClopwin) IsReady() bool {
+	r := bool(C.wickra_td_clopwin_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -24781,6 +31165,22 @@ func NewTdCombo(setupLookback int, setupTarget int, countdownLookback int, count
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TdCombo) WarmupPeriod() int {
+	r := int(C.wickra_td_combo_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TdCombo) IsReady() bool {
+	r := bool(C.wickra_td_combo_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *TdCombo) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -24854,6 +31254,22 @@ func NewTdCountdown(setupLookback int, setupTarget int, countdownLookback int, c
 	obj := &TdCountdown{handle: ptr}
 	runtime.SetFinalizer(obj, (*TdCountdown).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TdCountdown) WarmupPeriod() int {
+	r := int(C.wickra_td_countdown_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TdCountdown) IsReady() bool {
+	r := bool(C.wickra_td_countdown_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -24931,6 +31347,22 @@ func NewTdDWave(strength int) (*TdDWave, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TdDWave) WarmupPeriod() int {
+	r := int(C.wickra_td_d_wave_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TdDWave) IsReady() bool {
+	r := bool(C.wickra_td_d_wave_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *TdDWave) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -25004,6 +31436,22 @@ func NewTdDeMarker(period int) (*TdDeMarker, error) {
 	obj := &TdDeMarker{handle: ptr}
 	runtime.SetFinalizer(obj, (*TdDeMarker).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TdDeMarker) WarmupPeriod() int {
+	r := int(C.wickra_td_de_marker_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TdDeMarker) IsReady() bool {
+	r := bool(C.wickra_td_de_marker_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -25081,6 +31529,22 @@ func NewTdDifferential() (*TdDifferential, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TdDifferential) WarmupPeriod() int {
+	r := int(C.wickra_td_differential_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TdDifferential) IsReady() bool {
+	r := bool(C.wickra_td_differential_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *TdDifferential) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -25156,6 +31620,22 @@ func NewTdLines(lookback int, target int) (*TdLines, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TdLines) WarmupPeriod() int {
+	r := int(C.wickra_td_lines_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TdLines) IsReady() bool {
+	r := bool(C.wickra_td_lines_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *TdLines) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (TdLinesOutput, bool) {
@@ -25201,6 +31681,22 @@ func NewTdMovingAverage(periodSt1 int, periodSt2 int) (*TdMovingAverage, error) 
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TdMovingAverage) WarmupPeriod() int {
+	r := int(C.wickra_td_moving_average_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TdMovingAverage) IsReady() bool {
+	r := bool(C.wickra_td_moving_average_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *TdMovingAverage) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (TdMovingAverageOutput, bool) {
@@ -25244,6 +31740,22 @@ func NewTdOpen() (*TdOpen, error) {
 	obj := &TdOpen{handle: ptr}
 	runtime.SetFinalizer(obj, (*TdOpen).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TdOpen) WarmupPeriod() int {
+	r := int(C.wickra_td_open_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TdOpen) IsReady() bool {
+	r := bool(C.wickra_td_open_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -25321,6 +31833,22 @@ func NewTdPressure(period int) (*TdPressure, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TdPressure) WarmupPeriod() int {
+	r := int(C.wickra_td_pressure_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TdPressure) IsReady() bool {
+	r := bool(C.wickra_td_pressure_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *TdPressure) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -25394,6 +31922,22 @@ func NewTdPropulsion() (*TdPropulsion, error) {
 	obj := &TdPropulsion{handle: ptr}
 	runtime.SetFinalizer(obj, (*TdPropulsion).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TdPropulsion) WarmupPeriod() int {
+	r := int(C.wickra_td_propulsion_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TdPropulsion) IsReady() bool {
+	r := bool(C.wickra_td_propulsion_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -25471,6 +32015,22 @@ func NewTdRangeProjection() (*TdRangeProjection, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TdRangeProjection) WarmupPeriod() int {
+	r := int(C.wickra_td_range_projection_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TdRangeProjection) IsReady() bool {
+	r := bool(C.wickra_td_range_projection_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *TdRangeProjection) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (TdRangeProjectionOutput, bool) {
@@ -25514,6 +32074,22 @@ func NewTdRei(period int) (*TdRei, error) {
 	obj := &TdRei{handle: ptr}
 	runtime.SetFinalizer(obj, (*TdRei).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TdRei) WarmupPeriod() int {
+	r := int(C.wickra_td_rei_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TdRei) IsReady() bool {
+	r := bool(C.wickra_td_rei_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -25591,6 +32167,22 @@ func NewTdRiskLevel(lookback int, target int) (*TdRiskLevel, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TdRiskLevel) WarmupPeriod() int {
+	r := int(C.wickra_td_risk_level_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TdRiskLevel) IsReady() bool {
+	r := bool(C.wickra_td_risk_level_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *TdRiskLevel) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (TdRiskLevelOutput, bool) {
@@ -25636,6 +32228,22 @@ func NewTdSequential(setupLookback int, setupTarget int, countdownLookback int, 
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TdSequential) WarmupPeriod() int {
+	r := int(C.wickra_td_sequential_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TdSequential) IsReady() bool {
+	r := bool(C.wickra_td_sequential_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *TdSequential) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (TdSequentialOutput, bool) {
@@ -25679,6 +32287,22 @@ func NewTdSetup(lookback int, target int) (*TdSetup, error) {
 	obj := &TdSetup{handle: ptr}
 	runtime.SetFinalizer(obj, (*TdSetup).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TdSetup) WarmupPeriod() int {
+	r := int(C.wickra_td_setup_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TdSetup) IsReady() bool {
+	r := bool(C.wickra_td_setup_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -25756,6 +32380,22 @@ func NewTdTrap() (*TdTrap, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TdTrap) WarmupPeriod() int {
+	r := int(C.wickra_td_trap_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TdTrap) IsReady() bool {
+	r := bool(C.wickra_td_trap_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *TdTrap) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -25831,6 +32471,22 @@ func NewTema(period int) (*Tema, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Tema) WarmupPeriod() int {
+	r := int(C.wickra_tema_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Tema) IsReady() bool {
+	r := bool(C.wickra_tema_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Tema) Update(value float64) float64 {
@@ -25886,6 +32542,22 @@ func NewTermStructureBasis() (*TermStructureBasis, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TermStructureBasis) WarmupPeriod() int {
+	r := int(C.wickra_term_structure_basis_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TermStructureBasis) IsReady() bool {
+	r := bool(C.wickra_term_structure_basis_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *TermStructureBasis) Update(fundingRate float64, markPrice float64, indexPrice float64, futuresPrice float64, openInterest float64, longSize float64, shortSize float64, takerBuyVolume float64, takerSellVolume float64, longLiquidation float64, shortLiquidation float64, timestamp int64) float64 {
@@ -25925,6 +32597,22 @@ func NewThreeDrives() (*ThreeDrives, error) {
 	obj := &ThreeDrives{handle: ptr}
 	runtime.SetFinalizer(obj, (*ThreeDrives).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ThreeDrives) WarmupPeriod() int {
+	r := int(C.wickra_three_drives_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ThreeDrives) IsReady() bool {
+	r := bool(C.wickra_three_drives_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -26002,6 +32690,22 @@ func NewThreeInside() (*ThreeInside, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ThreeInside) WarmupPeriod() int {
+	r := int(C.wickra_three_inside_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ThreeInside) IsReady() bool {
+	r := bool(C.wickra_three_inside_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *ThreeInside) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -26075,6 +32779,22 @@ func NewThreeLineBreak(lines int) (*ThreeLineBreak, error) {
 	obj := &ThreeLineBreak{handle: ptr}
 	runtime.SetFinalizer(obj, (*ThreeLineBreak).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ThreeLineBreak) WarmupPeriod() int {
+	r := int(C.wickra_three_line_break_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ThreeLineBreak) IsReady() bool {
+	r := bool(C.wickra_three_line_break_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -26202,6 +32922,22 @@ func NewThreeLineStrike() (*ThreeLineStrike, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ThreeLineStrike) WarmupPeriod() int {
+	r := int(C.wickra_three_line_strike_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ThreeLineStrike) IsReady() bool {
+	r := bool(C.wickra_three_line_strike_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *ThreeLineStrike) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -26275,6 +33011,22 @@ func NewThreeOutside() (*ThreeOutside, error) {
 	obj := &ThreeOutside{handle: ptr}
 	runtime.SetFinalizer(obj, (*ThreeOutside).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ThreeOutside) WarmupPeriod() int {
+	r := int(C.wickra_three_outside_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ThreeOutside) IsReady() bool {
+	r := bool(C.wickra_three_outside_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -26352,6 +33104,22 @@ func NewThreeSoldiersOrCrows() (*ThreeSoldiersOrCrows, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ThreeSoldiersOrCrows) WarmupPeriod() int {
+	r := int(C.wickra_three_soldiers_or_crows_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ThreeSoldiersOrCrows) IsReady() bool {
+	r := bool(C.wickra_three_soldiers_or_crows_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *ThreeSoldiersOrCrows) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -26427,6 +33195,22 @@ func NewThreeStarsInSouth() (*ThreeStarsInSouth, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ThreeStarsInSouth) WarmupPeriod() int {
+	r := int(C.wickra_three_stars_in_south_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ThreeStarsInSouth) IsReady() bool {
+	r := bool(C.wickra_three_stars_in_south_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *ThreeStarsInSouth) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -26500,6 +33284,22 @@ func NewThrusting() (*Thrusting, error) {
 	obj := &Thrusting{handle: ptr}
 	runtime.SetFinalizer(obj, (*Thrusting).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Thrusting) WarmupPeriod() int {
+	r := int(C.wickra_thrusting_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Thrusting) IsReady() bool {
+	r := bool(C.wickra_thrusting_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -26627,6 +33427,22 @@ func NewTickIndex() (*TickIndex, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TickIndex) WarmupPeriod() int {
+	r := int(C.wickra_tick_index_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TickIndex) IsReady() bool {
+	r := bool(C.wickra_tick_index_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one cross-sectional snapshot and returns the indicator
 // value (NaN until warmed up). Slices in a group must share a length.
 func (ind *TickIndex) Update(change []float64, volume []float64, newHigh []bool, newLow []bool, aboveMa []bool, onBuySignal []bool, timestamp int64) float64 {
@@ -26689,6 +33505,22 @@ func NewTii(smaPeriod int, devPeriod int) (*Tii, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Tii) WarmupPeriod() int {
+	r := int(C.wickra_tii_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Tii) IsReady() bool {
+	r := bool(C.wickra_tii_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Tii) Update(value float64) float64 {
@@ -26742,6 +33574,22 @@ func NewTimeBasedStop(maxBars int) (*TimeBasedStop, error) {
 	obj := &TimeBasedStop{handle: ptr}
 	runtime.SetFinalizer(obj, (*TimeBasedStop).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TimeBasedStop) WarmupPeriod() int {
+	r := int(C.wickra_time_based_stop_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TimeBasedStop) IsReady() bool {
+	r := bool(C.wickra_time_based_stop_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -26821,6 +33669,22 @@ func NewTimeOfDayReturnProfile(buckets int, utcOffsetMinutes int32) (*TimeOfDayR
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TimeOfDayReturnProfile) WarmupPeriod() int {
+	r := int(C.wickra_time_of_day_return_profile_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TimeOfDayReturnProfile) IsReady() bool {
+	r := bool(C.wickra_time_of_day_return_profile_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the profile values
 // (ok is false during warmup).
 func (ind *TimeOfDayReturnProfile) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) ([]float64, bool) {
@@ -26864,6 +33728,22 @@ func NewTowerTopBottom() (*TowerTopBottom, error) {
 	obj := &TowerTopBottom{handle: ptr}
 	runtime.SetFinalizer(obj, (*TowerTopBottom).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TowerTopBottom) WarmupPeriod() int {
+	r := int(C.wickra_tower_top_bottom_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TowerTopBottom) IsReady() bool {
+	r := bool(C.wickra_tower_top_bottom_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -26943,6 +33823,22 @@ func NewTpoProfile(period int, binCount int) (*TpoProfile, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TpoProfile) WarmupPeriod() int {
+	r := int(C.wickra_tpo_profile_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TpoProfile) IsReady() bool {
+	r := bool(C.wickra_tpo_profile_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the profile snapshot
 // (ok is false during warmup).
 func (ind *TpoProfile) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (TpoProfileOutputScalars, bool) {
@@ -26989,6 +33885,22 @@ func NewTradeImbalance(window int) (*TradeImbalance, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TradeImbalance) WarmupPeriod() int {
+	r := int(C.wickra_trade_imbalance_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TradeImbalance) IsReady() bool {
+	r := bool(C.wickra_trade_imbalance_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *TradeImbalance) Update(price float64, size float64, isBuy bool, timestamp int64) float64 {
@@ -27030,6 +33942,22 @@ func NewTradeSignAutocorrelation(period int) (*TradeSignAutocorrelation, error) 
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TradeSignAutocorrelation) WarmupPeriod() int {
+	r := int(C.wickra_trade_sign_autocorrelation_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TradeSignAutocorrelation) IsReady() bool {
+	r := bool(C.wickra_trade_sign_autocorrelation_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *TradeSignAutocorrelation) Update(price float64, size float64, isBuy bool, timestamp int64) float64 {
@@ -27069,6 +33997,22 @@ func NewTradeVolumeIndex(minTick float64) (*TradeVolumeIndex, error) {
 	obj := &TradeVolumeIndex{handle: ptr}
 	runtime.SetFinalizer(obj, (*TradeVolumeIndex).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TradeVolumeIndex) WarmupPeriod() int {
+	r := int(C.wickra_trade_volume_index_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TradeVolumeIndex) IsReady() bool {
+	r := bool(C.wickra_trade_volume_index_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -27146,6 +34090,22 @@ func NewTrendLabel(period int) (*TrendLabel, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TrendLabel) WarmupPeriod() int {
+	r := int(C.wickra_trend_label_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TrendLabel) IsReady() bool {
+	r := bool(C.wickra_trend_label_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *TrendLabel) Update(value float64) float64 {
@@ -27199,6 +34159,22 @@ func NewTrendStrengthIndex(period int) (*TrendStrengthIndex, error) {
 	obj := &TrendStrengthIndex{handle: ptr}
 	runtime.SetFinalizer(obj, (*TrendStrengthIndex).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TrendStrengthIndex) WarmupPeriod() int {
+	r := int(C.wickra_trend_strength_index_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TrendStrengthIndex) IsReady() bool {
+	r := bool(C.wickra_trend_strength_index_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -27256,6 +34232,22 @@ func NewTrendflex(period int) (*Trendflex, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Trendflex) WarmupPeriod() int {
+	r := int(C.wickra_trendflex_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Trendflex) IsReady() bool {
+	r := bool(C.wickra_trendflex_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Trendflex) Update(value float64) float64 {
@@ -27309,6 +34301,22 @@ func NewTreynorRatio(period int, riskFree float64) (*TreynorRatio, error) {
 	obj := &TreynorRatio{handle: ptr}
 	runtime.SetFinalizer(obj, (*TreynorRatio).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TreynorRatio) WarmupPeriod() int {
+	r := int(C.wickra_treynor_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TreynorRatio) IsReady() bool {
+	r := bool(C.wickra_treynor_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -27368,6 +34376,22 @@ func NewTriangle() (*Triangle, error) {
 	obj := &Triangle{handle: ptr}
 	runtime.SetFinalizer(obj, (*Triangle).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Triangle) WarmupPeriod() int {
+	r := int(C.wickra_triangle_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Triangle) IsReady() bool {
+	r := bool(C.wickra_triangle_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -27445,6 +34469,22 @@ func NewTrima(period int) (*Trima, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Trima) WarmupPeriod() int {
+	r := int(C.wickra_trima_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Trima) IsReady() bool {
+	r := bool(C.wickra_trima_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Trima) Update(value float64) float64 {
@@ -27498,6 +34538,22 @@ func NewTrin() (*Trin, error) {
 	obj := &Trin{handle: ptr}
 	runtime.SetFinalizer(obj, (*Trin).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Trin) WarmupPeriod() int {
+	r := int(C.wickra_trin_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Trin) IsReady() bool {
+	r := bool(C.wickra_trin_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one cross-sectional snapshot and returns the indicator
@@ -27560,6 +34616,22 @@ func NewTripleTopBottom() (*TripleTopBottom, error) {
 	obj := &TripleTopBottom{handle: ptr}
 	runtime.SetFinalizer(obj, (*TripleTopBottom).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TripleTopBottom) WarmupPeriod() int {
+	r := int(C.wickra_triple_top_bottom_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TripleTopBottom) IsReady() bool {
+	r := bool(C.wickra_triple_top_bottom_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -27637,6 +34709,22 @@ func NewTristar() (*Tristar, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Tristar) WarmupPeriod() int {
+	r := int(C.wickra_tristar_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Tristar) IsReady() bool {
+	r := bool(C.wickra_tristar_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Tristar) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -27712,6 +34800,22 @@ func NewTrix(period int) (*Trix, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Trix) WarmupPeriod() int {
+	r := int(C.wickra_trix_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Trix) IsReady() bool {
+	r := bool(C.wickra_trix_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Trix) Update(value float64) float64 {
@@ -27765,6 +34869,22 @@ func NewTrueRange() (*TrueRange, error) {
 	obj := &TrueRange{handle: ptr}
 	runtime.SetFinalizer(obj, (*TrueRange).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TrueRange) WarmupPeriod() int {
+	r := int(C.wickra_true_range_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TrueRange) IsReady() bool {
+	r := bool(C.wickra_true_range_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -27842,6 +34962,22 @@ func NewTsf(period int) (*Tsf, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Tsf) WarmupPeriod() int {
+	r := int(C.wickra_tsf_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Tsf) IsReady() bool {
+	r := bool(C.wickra_tsf_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Tsf) Update(value float64) float64 {
@@ -27895,6 +35031,22 @@ func NewTsfOscillator(period int) (*TsfOscillator, error) {
 	obj := &TsfOscillator{handle: ptr}
 	runtime.SetFinalizer(obj, (*TsfOscillator).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TsfOscillator) WarmupPeriod() int {
+	r := int(C.wickra_tsf_oscillator_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TsfOscillator) IsReady() bool {
+	r := bool(C.wickra_tsf_oscillator_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -27952,6 +35104,22 @@ func NewTsi(long int, short int) (*Tsi, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Tsi) WarmupPeriod() int {
+	r := int(C.wickra_tsi_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Tsi) IsReady() bool {
+	r := bool(C.wickra_tsi_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Tsi) Update(value float64) float64 {
@@ -28005,6 +35173,22 @@ func NewTsv(period int) (*Tsv, error) {
 	obj := &Tsv{handle: ptr}
 	runtime.SetFinalizer(obj, (*Tsv).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Tsv) WarmupPeriod() int {
+	r := int(C.wickra_tsv_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Tsv) IsReady() bool {
+	r := bool(C.wickra_tsv_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -28082,6 +35266,22 @@ func NewTtmSqueeze(period int, bbMult float64, kcMult float64) (*TtmSqueeze, err
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TtmSqueeze) WarmupPeriod() int {
+	r := int(C.wickra_ttm_squeeze_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TtmSqueeze) IsReady() bool {
+	r := bool(C.wickra_ttm_squeeze_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *TtmSqueeze) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (TtmSqueezeOutput, bool) {
@@ -28125,6 +35325,22 @@ func NewTtmTrend(period int) (*TtmTrend, error) {
 	obj := &TtmTrend{handle: ptr}
 	runtime.SetFinalizer(obj, (*TtmTrend).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TtmTrend) WarmupPeriod() int {
+	r := int(C.wickra_ttm_trend_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TtmTrend) IsReady() bool {
+	r := bool(C.wickra_ttm_trend_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -28202,6 +35418,22 @@ func NewTurnOfMonth(nFirst uint32, nLast uint32, utcOffsetMinutes int32) (*TurnO
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TurnOfMonth) WarmupPeriod() int {
+	r := int(C.wickra_turn_of_month_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TurnOfMonth) IsReady() bool {
+	r := bool(C.wickra_turn_of_month_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *TurnOfMonth) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -28275,6 +35507,22 @@ func NewTweezer() (*Tweezer, error) {
 	obj := &Tweezer{handle: ptr}
 	runtime.SetFinalizer(obj, (*Tweezer).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Tweezer) WarmupPeriod() int {
+	r := int(C.wickra_tweezer_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Tweezer) IsReady() bool {
+	r := bool(C.wickra_tweezer_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -28352,6 +35600,22 @@ func NewTwiggsMoneyFlow(period int) (*TwiggsMoneyFlow, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TwiggsMoneyFlow) WarmupPeriod() int {
+	r := int(C.wickra_twiggs_money_flow_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TwiggsMoneyFlow) IsReady() bool {
+	r := bool(C.wickra_twiggs_money_flow_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *TwiggsMoneyFlow) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -28425,6 +35689,22 @@ func NewTwoCrows() (*TwoCrows, error) {
 	obj := &TwoCrows{handle: ptr}
 	runtime.SetFinalizer(obj, (*TwoCrows).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TwoCrows) WarmupPeriod() int {
+	r := int(C.wickra_two_crows_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TwoCrows) IsReady() bool {
+	r := bool(C.wickra_two_crows_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -28502,6 +35782,22 @@ func NewTypicalPrice() (*TypicalPrice, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *TypicalPrice) WarmupPeriod() int {
+	r := int(C.wickra_typical_price_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *TypicalPrice) IsReady() bool {
+	r := bool(C.wickra_typical_price_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *TypicalPrice) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -28577,6 +35873,22 @@ func NewUlcerIndex(period int) (*UlcerIndex, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *UlcerIndex) WarmupPeriod() int {
+	r := int(C.wickra_ulcer_index_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *UlcerIndex) IsReady() bool {
+	r := bool(C.wickra_ulcer_index_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *UlcerIndex) Update(value float64) float64 {
@@ -28630,6 +35942,22 @@ func NewUltimateOscillator(short int, mid int, long int) (*UltimateOscillator, e
 	obj := &UltimateOscillator{handle: ptr}
 	runtime.SetFinalizer(obj, (*UltimateOscillator).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *UltimateOscillator) WarmupPeriod() int {
+	r := int(C.wickra_ultimate_oscillator_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *UltimateOscillator) IsReady() bool {
+	r := bool(C.wickra_ultimate_oscillator_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -28707,6 +36035,22 @@ func NewUniqueThreeRiver() (*UniqueThreeRiver, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *UniqueThreeRiver) WarmupPeriod() int {
+	r := int(C.wickra_unique_three_river_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *UniqueThreeRiver) IsReady() bool {
+	r := bool(C.wickra_unique_three_river_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *UniqueThreeRiver) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -28782,6 +36126,22 @@ func NewUniversalOscillator(period int) (*UniversalOscillator, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *UniversalOscillator) WarmupPeriod() int {
+	r := int(C.wickra_universal_oscillator_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *UniversalOscillator) IsReady() bool {
+	r := bool(C.wickra_universal_oscillator_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *UniversalOscillator) Update(value float64) float64 {
@@ -28835,6 +36195,22 @@ func NewUpDownVolumeRatio() (*UpDownVolumeRatio, error) {
 	obj := &UpDownVolumeRatio{handle: ptr}
 	runtime.SetFinalizer(obj, (*UpDownVolumeRatio).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *UpDownVolumeRatio) WarmupPeriod() int {
+	r := int(C.wickra_up_down_volume_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *UpDownVolumeRatio) IsReady() bool {
+	r := bool(C.wickra_up_down_volume_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one cross-sectional snapshot and returns the indicator
@@ -28897,6 +36273,22 @@ func NewUpsideGapThreeMethods() (*UpsideGapThreeMethods, error) {
 	obj := &UpsideGapThreeMethods{handle: ptr}
 	runtime.SetFinalizer(obj, (*UpsideGapThreeMethods).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *UpsideGapThreeMethods) WarmupPeriod() int {
+	r := int(C.wickra_upside_gap_three_methods_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *UpsideGapThreeMethods) IsReady() bool {
+	r := bool(C.wickra_upside_gap_three_methods_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -28974,6 +36366,22 @@ func NewUpsideGapTwoCrows() (*UpsideGapTwoCrows, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *UpsideGapTwoCrows) WarmupPeriod() int {
+	r := int(C.wickra_upside_gap_two_crows_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *UpsideGapTwoCrows) IsReady() bool {
+	r := bool(C.wickra_upside_gap_two_crows_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *UpsideGapTwoCrows) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -29049,6 +36457,22 @@ func NewUpsidePotentialRatio(period int, mar float64) (*UpsidePotentialRatio, er
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *UpsidePotentialRatio) WarmupPeriod() int {
+	r := int(C.wickra_upside_potential_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *UpsidePotentialRatio) IsReady() bool {
+	r := bool(C.wickra_upside_potential_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *UpsidePotentialRatio) Update(value float64) float64 {
@@ -29104,6 +36528,22 @@ func NewValueArea(period int, binCount int, valueAreaPct float64) (*ValueArea, e
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ValueArea) WarmupPeriod() int {
+	r := int(C.wickra_value_area_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ValueArea) IsReady() bool {
+	r := bool(C.wickra_value_area_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *ValueArea) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (ValueAreaOutput, bool) {
@@ -29147,6 +36587,22 @@ func NewValueAtRisk(period int, confidence float64) (*ValueAtRisk, error) {
 	obj := &ValueAtRisk{handle: ptr}
 	runtime.SetFinalizer(obj, (*ValueAtRisk).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ValueAtRisk) WarmupPeriod() int {
+	r := int(C.wickra_value_at_risk_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ValueAtRisk) IsReady() bool {
+	r := bool(C.wickra_value_at_risk_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -29204,6 +36660,22 @@ func NewVariance(period int) (*Variance, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Variance) WarmupPeriod() int {
+	r := int(C.wickra_variance_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Variance) IsReady() bool {
+	r := bool(C.wickra_variance_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Variance) Update(value float64) float64 {
@@ -29257,6 +36729,22 @@ func NewVarianceRatio(period int, q int) (*VarianceRatio, error) {
 	obj := &VarianceRatio{handle: ptr}
 	runtime.SetFinalizer(obj, (*VarianceRatio).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *VarianceRatio) WarmupPeriod() int {
+	r := int(C.wickra_variance_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *VarianceRatio) IsReady() bool {
+	r := bool(C.wickra_variance_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -29318,6 +36806,22 @@ func NewVerticalHorizontalFilter(period int) (*VerticalHorizontalFilter, error) 
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *VerticalHorizontalFilter) WarmupPeriod() int {
+	r := int(C.wickra_vertical_horizontal_filter_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *VerticalHorizontalFilter) IsReady() bool {
+	r := bool(C.wickra_vertical_horizontal_filter_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *VerticalHorizontalFilter) Update(value float64) float64 {
@@ -29371,6 +36875,22 @@ func NewVidya(period int, cmoPeriod int) (*Vidya, error) {
 	obj := &Vidya{handle: ptr}
 	runtime.SetFinalizer(obj, (*Vidya).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Vidya) WarmupPeriod() int {
+	r := int(C.wickra_vidya_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Vidya) IsReady() bool {
+	r := bool(C.wickra_vidya_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -29428,6 +36948,22 @@ func NewVolatilityCone(window int, lookback int) (*VolatilityCone, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *VolatilityCone) WarmupPeriod() int {
+	r := int(C.wickra_volatility_cone_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *VolatilityCone) IsReady() bool {
+	r := bool(C.wickra_volatility_cone_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *VolatilityCone) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (VolatilityConeOutput, bool) {
@@ -29471,6 +37007,22 @@ func NewVolatilityOfVolatility(volWindow int, vovWindow int) (*VolatilityOfVolat
 	obj := &VolatilityOfVolatility{handle: ptr}
 	runtime.SetFinalizer(obj, (*VolatilityOfVolatility).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *VolatilityOfVolatility) WarmupPeriod() int {
+	r := int(C.wickra_volatility_of_volatility_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *VolatilityOfVolatility) IsReady() bool {
+	r := bool(C.wickra_volatility_of_volatility_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -29526,6 +37078,22 @@ func NewVolatilityRatio(period int) (*VolatilityRatio, error) {
 	obj := &VolatilityRatio{handle: ptr}
 	runtime.SetFinalizer(obj, (*VolatilityRatio).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *VolatilityRatio) WarmupPeriod() int {
+	r := int(C.wickra_volatility_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *VolatilityRatio) IsReady() bool {
+	r := bool(C.wickra_volatility_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -29601,6 +37169,22 @@ func NewVoltyStop(atrPeriod int, multiplier float64) (*VoltyStop, error) {
 	obj := &VoltyStop{handle: ptr}
 	runtime.SetFinalizer(obj, (*VoltyStop).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *VoltyStop) WarmupPeriod() int {
+	r := int(C.wickra_volty_stop_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *VoltyStop) IsReady() bool {
+	r := bool(C.wickra_volty_stop_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -29730,6 +37314,22 @@ func NewVolumeByTimeProfile(buckets int, utcOffsetMinutes int32) (*VolumeByTimeP
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *VolumeByTimeProfile) WarmupPeriod() int {
+	r := int(C.wickra_volume_by_time_profile_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *VolumeByTimeProfile) IsReady() bool {
+	r := bool(C.wickra_volume_by_time_profile_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the profile values
 // (ok is false during warmup).
 func (ind *VolumeByTimeProfile) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) ([]float64, bool) {
@@ -29773,6 +37373,22 @@ func NewVolumeOscillator(fast int, slow int) (*VolumeOscillator, error) {
 	obj := &VolumeOscillator{handle: ptr}
 	runtime.SetFinalizer(obj, (*VolumeOscillator).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *VolumeOscillator) WarmupPeriod() int {
+	r := int(C.wickra_volume_oscillator_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *VolumeOscillator) IsReady() bool {
+	r := bool(C.wickra_volume_oscillator_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -29848,6 +37464,22 @@ func NewVolumePriceTrend() (*VolumePriceTrend, error) {
 	obj := &VolumePriceTrend{handle: ptr}
 	runtime.SetFinalizer(obj, (*VolumePriceTrend).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *VolumePriceTrend) WarmupPeriod() int {
+	r := int(C.wickra_volume_price_trend_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *VolumePriceTrend) IsReady() bool {
+	r := bool(C.wickra_volume_price_trend_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -29927,6 +37559,22 @@ func NewVolumeProfile(period int, binCount int) (*VolumeProfile, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *VolumeProfile) WarmupPeriod() int {
+	r := int(C.wickra_volume_profile_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *VolumeProfile) IsReady() bool {
+	r := bool(C.wickra_volume_profile_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the profile snapshot
 // (ok is false during warmup).
 func (ind *VolumeProfile) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (VolumeProfileOutputScalars, bool) {
@@ -29971,6 +37619,22 @@ func NewVolumeRsi(period int) (*VolumeRsi, error) {
 	obj := &VolumeRsi{handle: ptr}
 	runtime.SetFinalizer(obj, (*VolumeRsi).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *VolumeRsi) WarmupPeriod() int {
+	r := int(C.wickra_volume_rsi_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *VolumeRsi) IsReady() bool {
+	r := bool(C.wickra_volume_rsi_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -30048,6 +37712,22 @@ func NewVolumeWeightedMacd(fast int, slow int, signal int) (*VolumeWeightedMacd,
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *VolumeWeightedMacd) WarmupPeriod() int {
+	r := int(C.wickra_volume_weighted_macd_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *VolumeWeightedMacd) IsReady() bool {
+	r := bool(C.wickra_volume_weighted_macd_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *VolumeWeightedMacd) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (VolumeWeightedMacdOutput, bool) {
@@ -30091,6 +37771,22 @@ func NewVolumeWeightedSr(period int) (*VolumeWeightedSr, error) {
 	obj := &VolumeWeightedSr{handle: ptr}
 	runtime.SetFinalizer(obj, (*VolumeWeightedSr).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *VolumeWeightedSr) WarmupPeriod() int {
+	r := int(C.wickra_volume_weighted_sr_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *VolumeWeightedSr) IsReady() bool {
+	r := bool(C.wickra_volume_weighted_sr_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation. The bool reports whether a value is
@@ -30138,6 +37834,22 @@ func NewVortex(period int) (*Vortex, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Vortex) WarmupPeriod() int {
+	r := int(C.wickra_vortex_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Vortex) IsReady() bool {
+	r := bool(C.wickra_vortex_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *Vortex) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (VortexOutput, bool) {
@@ -30183,6 +37895,22 @@ func NewVpin(bucketVolume float64, numBuckets int) (*Vpin, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Vpin) WarmupPeriod() int {
+	r := int(C.wickra_vpin_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Vpin) IsReady() bool {
+	r := bool(C.wickra_vpin_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Vpin) Update(price float64, size float64, isBuy bool, timestamp int64) float64 {
@@ -30222,6 +37950,22 @@ func NewVwap() (*Vwap, error) {
 	obj := &Vwap{handle: ptr}
 	runtime.SetFinalizer(obj, (*Vwap).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Vwap) WarmupPeriod() int {
+	r := int(C.wickra_vwap_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Vwap) IsReady() bool {
+	r := bool(C.wickra_vwap_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -30299,6 +38043,22 @@ func NewVwapStdDevBands(multiplier float64) (*VwapStdDevBands, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *VwapStdDevBands) WarmupPeriod() int {
+	r := int(C.wickra_vwap_std_dev_bands_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *VwapStdDevBands) IsReady() bool {
+	r := bool(C.wickra_vwap_std_dev_bands_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *VwapStdDevBands) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (VwapStdDevBandsOutput, bool) {
@@ -30342,6 +38102,22 @@ func NewVwma(period int) (*Vwma, error) {
 	obj := &Vwma{handle: ptr}
 	runtime.SetFinalizer(obj, (*Vwma).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Vwma) WarmupPeriod() int {
+	r := int(C.wickra_vwma_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Vwma) IsReady() bool {
+	r := bool(C.wickra_vwma_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -30419,6 +38195,22 @@ func NewVzo(period int) (*Vzo, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Vzo) WarmupPeriod() int {
+	r := int(C.wickra_vzo_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Vzo) IsReady() bool {
+	r := bool(C.wickra_vzo_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *Vzo) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -30492,6 +38284,22 @@ func NewWad() (*Wad, error) {
 	obj := &Wad{handle: ptr}
 	runtime.SetFinalizer(obj, (*Wad).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Wad) WarmupPeriod() int {
+	r := int(C.wickra_wad_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Wad) IsReady() bool {
+	r := bool(C.wickra_wad_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -30569,6 +38377,22 @@ func NewWavePm(length int, smoothing int) (*WavePm, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *WavePm) WarmupPeriod() int {
+	r := int(C.wickra_wave_pm_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *WavePm) IsReady() bool {
+	r := bool(C.wickra_wave_pm_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *WavePm) Update(value float64) float64 {
@@ -30624,6 +38448,22 @@ func NewWaveTrend(channelPeriod int, averagePeriod int, signalPeriod int) (*Wave
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *WaveTrend) WarmupPeriod() int {
+	r := int(C.wickra_wave_trend_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *WaveTrend) IsReady() bool {
+	r := bool(C.wickra_wave_trend_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *WaveTrend) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (WaveTrendOutput, bool) {
@@ -30667,6 +38507,22 @@ func NewWedge() (*Wedge, error) {
 	obj := &Wedge{handle: ptr}
 	runtime.SetFinalizer(obj, (*Wedge).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Wedge) WarmupPeriod() int {
+	r := int(C.wickra_wedge_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Wedge) IsReady() bool {
+	r := bool(C.wickra_wedge_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -30744,6 +38600,22 @@ func NewWeightedClose() (*WeightedClose, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *WeightedClose) WarmupPeriod() int {
+	r := int(C.wickra_weighted_close_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *WeightedClose) IsReady() bool {
+	r := bool(C.wickra_weighted_close_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *WeightedClose) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -30817,6 +38689,22 @@ func NewWickRatio() (*WickRatio, error) {
 	obj := &WickRatio{handle: ptr}
 	runtime.SetFinalizer(obj, (*WickRatio).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *WickRatio) WarmupPeriod() int {
+	r := int(C.wickra_wick_ratio_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *WickRatio) IsReady() bool {
+	r := bool(C.wickra_wick_ratio_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -30894,6 +38782,22 @@ func NewWilliamsFractals() (*WilliamsFractals, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *WilliamsFractals) WarmupPeriod() int {
+	r := int(C.wickra_williams_fractals_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *WilliamsFractals) IsReady() bool {
+	r := bool(C.wickra_williams_fractals_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *WilliamsFractals) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (WilliamsFractalsOutput, bool) {
@@ -30937,6 +38841,22 @@ func NewWilliamsR(period int) (*WilliamsR, error) {
 	obj := &WilliamsR{handle: ptr}
 	runtime.SetFinalizer(obj, (*WilliamsR).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *WilliamsR) WarmupPeriod() int {
+	r := int(C.wickra_williams_r_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *WilliamsR) IsReady() bool {
+	r := bool(C.wickra_williams_r_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -31014,6 +38934,22 @@ func NewWinRate(period int) (*WinRate, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *WinRate) WarmupPeriod() int {
+	r := int(C.wickra_win_rate_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *WinRate) IsReady() bool {
+	r := bool(C.wickra_win_rate_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *WinRate) Update(value float64) float64 {
@@ -31067,6 +39003,22 @@ func NewWma(period int) (*Wma, error) {
 	obj := &Wma{handle: ptr}
 	runtime.SetFinalizer(obj, (*Wma).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Wma) WarmupPeriod() int {
+	r := int(C.wickra_wma_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Wma) IsReady() bool {
+	r := bool(C.wickra_wma_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -31124,6 +39076,22 @@ func NewWoodiePivots() (*WoodiePivots, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *WoodiePivots) WarmupPeriod() int {
+	r := int(C.wickra_woodie_pivots_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *WoodiePivots) IsReady() bool {
+	r := bool(C.wickra_woodie_pivots_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *WoodiePivots) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (WoodiePivotsOutput, bool) {
@@ -31167,6 +39135,22 @@ func NewYangZhangVolatility(period int, tradingPeriods int) (*YangZhangVolatilit
 	obj := &YangZhangVolatility{handle: ptr}
 	runtime.SetFinalizer(obj, (*YangZhangVolatility).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *YangZhangVolatility) WarmupPeriod() int {
+	r := int(C.wickra_yang_zhang_volatility_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *YangZhangVolatility) IsReady() bool {
+	r := bool(C.wickra_yang_zhang_volatility_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
@@ -31244,6 +39228,22 @@ func NewYoyoExit(atrPeriod int, multiplier float64) (*YoyoExit, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *YoyoExit) WarmupPeriod() int {
+	r := int(C.wickra_yoyo_exit_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *YoyoExit) IsReady() bool {
+	r := bool(C.wickra_yoyo_exit_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *YoyoExit) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) float64 {
@@ -31319,6 +39319,22 @@ func NewZScore(period int) (*ZScore, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ZScore) WarmupPeriod() int {
+	r := int(C.wickra_z_score_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ZScore) IsReady() bool {
+	r := bool(C.wickra_z_score_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation and returns the indicator value
 // (NaN until warmed up).
 func (ind *ZScore) Update(value float64) float64 {
@@ -31374,6 +39390,22 @@ func NewZeroLagMacd(fast int, slow int, signal int) (*ZeroLagMacd, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ZeroLagMacd) WarmupPeriod() int {
+	r := int(C.wickra_zero_lag_macd_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ZeroLagMacd) IsReady() bool {
+	r := bool(C.wickra_zero_lag_macd_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *ZeroLagMacd) Update(value float64) (ZeroLagMacdOutput, bool) {
@@ -31419,6 +39451,22 @@ func NewZigZag(threshold float64) (*ZigZag, error) {
 	return obj, nil
 }
 
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *ZigZag) WarmupPeriod() int {
+	r := int(C.wickra_zig_zag_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *ZigZag) IsReady() bool {
+	r := bool(C.wickra_zig_zag_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
 // Update feeds one observation. The bool reports whether a value is
 // available yet (false during warmup).
 func (ind *ZigZag) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (ZigZagOutput, bool) {
@@ -31462,6 +39510,22 @@ func NewZlema(period int) (*Zlema, error) {
 	obj := &Zlema{handle: ptr}
 	runtime.SetFinalizer(obj, (*Zlema).Close)
 	return obj, nil
+}
+
+// WarmupPeriod returns the number of updates required before Update
+// yields a non-NaN value.
+func (ind *Zlema) WarmupPeriod() int {
+	r := int(C.wickra_zlema_warmup_period(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
+}
+
+// IsReady reports whether the indicator has consumed enough input to
+// emit a value.
+func (ind *Zlema) IsReady() bool {
+	r := bool(C.wickra_zlema_is_ready(ind.handle))
+	runtime.KeepAlive(ind)
+	return r
 }
 
 // Update feeds one observation and returns the indicator value
