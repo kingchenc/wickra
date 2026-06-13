@@ -943,7 +943,7 @@ jobs:
           # the provenance bundle is attached (P24, immutability-ready).
           draft: true
           body: |
-            Wickra ${{ github.ref_name }} — streaming-first technical indicators across 4 language registries plus a C ABI.
+            Wickra ${{ github.ref_name }} — streaming-first technical indicators for 10 languages: native Rust, Python, Node.js, WASM plus a C ABI hub for C, C++, C#, Go, Java, R.
 
             ### Install
 
@@ -970,17 +970,19 @@ jobs:
 
             ### Attached assets
 
-            Pre-built artefacts for every supported platform — the same files that
-            were uploaded to crates.io, PyPI, and npm by this workflow run.
+            Pre-built artefacts for every supported platform — the same files this
+            workflow run published to crates.io, PyPI, and npm. C# ships to NuGet,
+            Java to Maven Central, Go to the wickra-go module, and R to r-universe
+            via their own release jobs.
 
             - `*.whl` / `wickra-*.tar.gz` — Python wheels + sdist (5 platforms, ABI3 ≥ 3.9)
-            - `wickra.*.node` — native Node bindings (linux-x64-gnu, darwin-x64,
+            - `wickra.*.node` — native Node.js bindings (linux-x64-gnu, darwin-x64,
               darwin-arm64, win32-x64-msvc)
             - `wickra-*.tgz` — npm-pack tarballs (main package + per-platform subpackages + WASM)
             - `*.crate` — cargo source crates (wickra-core, wickra-data, wickra)
             - `wickra-c-<target>.tar.gz` — C ABI: `include/wickra.h` + `wickra.hpp`
               and the cdylib/staticlib per target (linux/macos/windows × x64/arm64),
-              the hub for C / C++ / C# / Go / Java / R
+              the hub for C, C++, C#, Go, Java and R
 
             ### Auto-generated changelog
 
