@@ -637,7 +637,7 @@ jobs:
         with:
           timeout_minutes: 6
           max_attempts: 2
-          command: cd bindings/node && node --test __tests__/
+          command: cd bindings/node && node --test
           shell: bash
 
   c-abi:
