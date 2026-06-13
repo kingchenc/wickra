@@ -258,7 +258,7 @@ jobs:
         continue-on-error: true
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: Wait before Node retry
         if: steps.setup_node.outcome == 'failure'
@@ -271,7 +271,7 @@ jobs:
         if: steps.setup_node.outcome == 'failure'
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: "20"
+          node-version: "22"
 
       - uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable branch, 2026-03-27
         with:
@@ -319,7 +319,7 @@ jobs:
         continue-on-error: true
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: "20"
+          node-version: "22"
           registry-url: "https://registry.npmjs.org"
 
       - name: Wait before Node retry
@@ -333,7 +333,7 @@ jobs:
         if: steps.setup_node.outcome == 'failure'
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: "20"
+          node-version: "22"
           registry-url: "https://registry.npmjs.org"
 
       - name: Install Node deps
@@ -488,7 +488,7 @@ jobs:
         continue-on-error: true
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: "20"
+          node-version: "22"
           registry-url: "https://registry.npmjs.org"
 
       - name: Wait before Node retry
@@ -502,7 +502,7 @@ jobs:
         if: steps.setup_node.outcome == 'failure'
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: "20"
+          node-version: "22"
           registry-url: "https://registry.npmjs.org"
 
       - uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable branch, 2026-03-27
@@ -757,11 +757,11 @@ jobs:
 
       # setup-java writes a settings.xml with the 'central' server credentials
       # (mapped from the env vars below) and imports the GPG signing key.
-      - name: Set up JDK 22 + Maven Central credentials + GPG
+      - name: Set up JDK 25 + Maven Central credentials + GPG
         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           distribution: temurin
-          java-version: "22"
+          java-version: "25"
           server-id: central
           server-username: CENTRAL_USERNAME
           server-password: CENTRAL_PASSWORD
@@ -876,6 +876,7 @@ jobs:
     # bundle to this same release without re-resolving it.
     outputs:
       tag: ${{ steps.tag.outputs.tag }}
+      version: ${{ steps.tag.outputs.version }}
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
@@ -904,6 +905,7 @@ jobs:
             exit 1
           fi
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
           echo "::notice::attaching assets to release $tag"
 
       - name: Download all build artifacts
@@ -941,7 +943,7 @@ jobs:
           # the provenance bundle is attached (P24, immutability-ready).
           draft: true
           body: |
-            Wickra ${{ github.ref_name }} — streaming-first technical indicators across 4 language registries plus a C ABI.
+            Wickra ${{ github.ref_name }} — streaming-first technical indicators for 10 languages: native Rust, Python, Node.js, WASM plus a C ABI hub for C, C++, C#, Go, Java, R.
 
             ### Install
 
@@ -950,21 +952,37 @@ jobs:
             pip install wickra
             npm install wickra
             npm install wickra-wasm
+            dotnet add package Wickra
+            go get github.com/wickra-lib/wickra-go
+            ```
+
+            Java (Gradle, Maven Central):
+
+            ```gradle
+            implementation("org.wickra:wickra:${{ steps.tag.outputs.version }}")
+            ```
+
+            R (r-universe):
+
+            ```r
+            install.packages("wickra", repos = "https://wickra-lib.r-universe.dev")
             ```
 
             ### Attached assets
 
-            Pre-built artefacts for every supported platform — the same files that
-            were uploaded to crates.io, PyPI, and npm by this workflow run.
+            Pre-built artefacts for every supported platform — the same files this
+            workflow run published to crates.io, PyPI, and npm. C# ships to NuGet,
+            Java to Maven Central, Go to the wickra-go module, and R to r-universe
+            via their own release jobs.
 
             - `*.whl` / `wickra-*.tar.gz` — Python wheels + sdist (5 platforms, ABI3 ≥ 3.9)
-            - `wickra.*.node` — native Node bindings (linux-x64-gnu, darwin-x64,
+            - `wickra.*.node` — native Node.js bindings (linux-x64-gnu, darwin-x64,
               darwin-arm64, win32-x64-msvc)
             - `wickra-*.tgz` — npm-pack tarballs (main package + per-platform subpackages + WASM)
             - `*.crate` — cargo source crates (wickra-core, wickra-data, wickra)
             - `wickra-c-<target>.tar.gz` — C ABI: `include/wickra.h` + `wickra.hpp`
               and the cdylib/staticlib per target (linux/macos/windows × x64/arm64),
-              the hub for C / C++ / Go / C# / Java / R
+              the hub for C, C++, C#, Go, Java and R
 
             ### Auto-generated changelog
 

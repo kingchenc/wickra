@@ -116,7 +116,7 @@ jobs:
         continue-on-error: true
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: Wait before Node retry
         if: steps.setup_node.outcome == 'failure'
@@ -129,7 +129,7 @@ jobs:
         if: steps.setup_node.outcome == 'failure'
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: Set up Python
         id: setup_python
@@ -231,7 +231,7 @@ jobs:
         continue-on-error: true
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: Wait before Node retry
         if: steps.setup_node.outcome == 'failure'
@@ -244,7 +244,7 @@ jobs:
         if: steps.setup_node.outcome == 'failure'
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: Cache cargo
         uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
@@ -574,7 +574,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        node-version: ["18", "20"]
+        node-version: ["22", "24"]
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
@@ -637,7 +637,7 @@ jobs:
         with:
           timeout_minutes: 6
           max_attempts: 2
-          command: cd bindings/node && node --test __tests__/
+          command: cd bindings/node && node --test
           shell: bash
 
   c-abi:
@@ -975,18 +975,19 @@ jobs:
 
       # The binding links the C ABI hub at runtime through the Java FFM API; build
       # it first so WickraNative's development fallback finds
-      # target/release/wickra.{so,dylib,dll}. JDK 22+ is required for the final FFM
-      # API, so it is installed explicitly (runners ship 17/21).
+      # target/release/wickra.{so,dylib,dll}. The FFM API is final since JDK 22; we
+      # build on the 25 LTS (22 is EOL; the pom pins bytecode to release 22 so the
+      # runtime floor stays Java 22). Installed explicitly (runners ship 17/21).
       - name: Build the C ABI library
         run: cargo build -p wickra-c --release
 
-      - name: Set up JDK 22
+      - name: Set up JDK 25
         id: setup-java
         continue-on-error: true
         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           distribution: temurin
-          java-version: "22"
+          java-version: "25"
           cache: maven
 
       - name: Retry JDK setup (CDN flake)
@@ -996,12 +997,12 @@ jobs:
           echo "::warning::setup-java failed (likely CDN flake), waiting 30s before retry..."
           sleep 30
 
-      - name: Set up JDK 22 (retry)
+      - name: Set up JDK 25 (retry)
         if: steps.setup-java.outcome == 'failure'
         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           distribution: temurin
-          java-version: "22"
+          java-version: "25"
           cache: maven
 
       - name: Java info
