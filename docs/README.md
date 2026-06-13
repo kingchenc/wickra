@@ -14,11 +14,13 @@ That includes:
   [Java](https://docs.wickra.org/Quickstart-Java), and
   [R](https://docs.wickra.org/Quickstart-R).
 - A per-indicator deep dive for every one of the **514 indicators** across
-  the sixteen families (Moving Averages, Momentum Oscillators, Trend &
+  the twenty-four families (Moving Averages, Momentum Oscillators, Trend &
   Directional, Price Oscillators, Volatility & Bands, Bands & Channels,
   Trailing Stops, Volume, Price Statistics, Ehlers / Cycle DSP, Pivots &
   S/R, DeMark, Ichimoku & Charts, Candlestick Patterns, Market Profile,
-  Risk / Performance) — see the
+  Risk / Performance, Microstructure, Derivatives, Alt-Chart Bars, Market
+  Breadth, Seasonality & Session, Chart Patterns, Harmonic Patterns,
+  Fibonacci) — see the
   [indicators overview](https://docs.wickra.org/Indicators-Overview).
 - **Reference pages**: [warmup periods](https://docs.wickra.org/Warmup-Periods),
   [streaming vs batch](https://docs.wickra.org/Streaming-vs-Batch),

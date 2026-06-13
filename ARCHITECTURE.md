@@ -31,7 +31,7 @@ or replace lives behind a separate crate boundary.
    ┌────────────┼────────────┬────────────────┐
    │            │            │                │
 ┌──▼───────┐ ┌──▼───────┐ ┌──▼───────────┐ ┌──▼──────────────────┐
-│  Python  │ │   Node   │ │     WASM     │ │  C ABI (cbindgen)   │
+│  Python  │ │ Node.js  │ │     WASM     │ │  C ABI (cbindgen)   │
 │  (PyO3)  │ │ (napi-rs)│ │(wasm-bindgen)│ │   cdylib + header   │
 └──────────┘ └──────────┘ └──────────────┘ └─────────┬───────────┘
                                                      │  linked by
@@ -41,11 +41,11 @@ or replace lives behind a separate crate boundary.
                                           └─────────────────────┘
 ```
 
-Python, Node and WASM are *native* Rust bindings (PyO3 / napi-rs /
+Python, Node.js and WASM are *native* Rust bindings (PyO3 / napi-rs /
 wasm-bindgen). The C ABI is the *hub* every other C-capable language links
 against: it builds to a `cdylib`/`staticlib` plus a generated `wickra.h`, and
 downstream languages link that one artifact rather than each re-wrapping the
-core. C and C++ link it directly; the **C# / .NET** binding (`bindings/csharp`,
+core. C and C++ link it directly; the **C#** binding (`bindings/csharp`,
 on NuGet), the **Go** binding (`bindings/go`, cgo), the **R** binding
 (`bindings/r`, `.Call`) and the **Java** binding (`bindings/java`, the Java FFM
 API / Panama, on Maven Central) are all generated from `wickra.h`.
@@ -57,7 +57,7 @@ API / Panama, on Maven Central) are all generated from `wickra.h`.
 | `wickra-data` | `crates/wickra-data` | CSV reader, tick aggregator, resampler, live exchange feeds (feature-gated) | `tokio`, `tokio-tungstenite` (live), `serde_json` |
 | `wickra-python` | `bindings/python` | `_wickra` PyO3 module + Python package | `pyo3`, `numpy`, depends on `wickra-core` |
 | `wickra-node` | `bindings/node` | NAPI-RS native binding | `napi`, depends on `wickra-core` |
-| `wickra-wasm` | `bindings/wasm` | WebAssembly binding | `wasm-bindgen`, depends on `wickra-core` |
+| `wickra-wasm` | `bindings/wasm` | WASM binding | `wasm-bindgen`, depends on `wickra-core` |
 | `wickra-c` | `bindings/c` | C ABI hub — `cdylib`/`staticlib` + generated `wickra.h` (cbindgen) | depends on `wickra-core` |
 | `wickra-examples` | `examples/rust` | runnable binary examples | depends on `wickra`, `wickra-data` |
 

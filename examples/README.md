@@ -48,7 +48,7 @@ three `strategy_*`) build against the bundled datasets and run under `ctest`.
 run in CI; run them by hand. `parallel_assets` links OpenMP when the toolchain
 provides it and falls back to a single-threaded run otherwise.
 
-## C# / .NET — `examples/csharp/`
+## C# — `examples/csharp/`
 
 Build the C ABI library first (`cargo build -p wickra-c --release`), then run any
 example with the .NET 8 SDK; the binding resolves the native library automatically.
@@ -173,7 +173,7 @@ cd ../../examples/node && npm install        # links wickra + installs `ws`
 | `strategy_macd_adx.js` | Hourly BTCUSDT trend-follower: MACD crossover entries gated by ADX(14) > 20. | `node strategy_macd_adx.js` |
 | `strategy_bollinger_squeeze.js` | Daily BTCUSDT Bollinger-squeeze breakout with ATR(14) trailing stop. | `node strategy_bollinger_squeeze.js` |
 
-## WebAssembly — `examples/wasm/`
+## WASM — `examples/wasm/`
 
 Build the WASM module first (one-time):
 
