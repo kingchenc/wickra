@@ -9,18 +9,6 @@ all-features = true
 # Fail on any security advisory or unmaintained/unsound crate in the tree.
 version = 2
 yanked = "deny"
-# Temporary, upstream-blocked exception. Both advisories are fixed in pyo3
-# 0.29.0, but rust-numpy 0.28 (latest release) hard-pins `pyo3 ^0.28.0`, so the
-# resolver cannot select 0.29 until rust-numpy ships a 0.29-compatible release
-# (PyO3/rust-numpy "Updated to PyO3 version 0.29.0" is open, not yet published).
-# Neither vulnerable code path is reachable from our binding: it never calls
-# `BoundListIterator::nth`/`nth_back` or the `PyTuple` equivalents (0176), nor
-# `PyCFunction::new_closure` (0177) — verified by grep over bindings/python/src.
-# Remove both once rust-numpy 0.29 lands and the pyo3 0.29 bump goes in.
-ignore = [
-    "RUSTSEC-2026-0176",
-    "RUSTSEC-2026-0177",
-]
 
 [bans]
 # Catch accidental duplicate versions and wildcard ("*") version requirements.

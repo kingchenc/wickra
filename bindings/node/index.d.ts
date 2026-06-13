@@ -1645,7 +1645,7 @@ export declare class Cointegration {
   isReady(): boolean
   warmupPeriod(): number
 }
-export type RelativeStrengthAbNode = RelativeStrengthAB
+export type RelativeStrengthABNode = RelativeStrengthAB
 export declare class RelativeStrengthAB {
   constructor(maPeriod: number, rsiPeriod: number)
   update(a: number, b: number): RelativeStrengthValue | null

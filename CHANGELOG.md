@@ -16,6 +16,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `is_ready()` generics. The alt-chart bar builders are excluded by design (a
   candle can complete 0..n bars, so they have no warmup).
 
+### Changed
+- Standardised programming-language naming and ordering across all docs, READMEs,
+  the documentation site, marketing site, organization profile and GitHub
+  repository descriptions. Canonical list:
+  `Rust, Python, Node.js, WASM, C, C++, C#, Go, Java, R`. Uses C# (not .NET) as
+  the language label, lists C and C++ separately, prefers `Node.js` and `WASM` in
+  prose, and frames the C ABI as a hub (`C ABI hub → …`) rather than a
+  language-list entry. Documentation only — no code or public API changes.
+- Python binding: upgraded `pyo3` and `rust-numpy` from 0.28 to 0.29. No public
+  API changes; the full test suite passes unchanged.
+
+### Fixed
+- Corrected the internal casing of the `RelativeStrengthAB` binding wrappers,
+  which used `...Ab` (`WasmRelativeStrengthAb` in the WASM crate,
+  `RelativeStrengthAbNode` in the Node crate) while every other surface uses the
+  acronym `AB`. The published JS/WASM class name was already `RelativeStrengthAB`
+  (set via `js_name`/`js_class`), so the runtime API is unchanged; the only
+  visible change is the auto-generated TypeScript type alias, renamed
+  `RelativeStrengthAbNode` → `RelativeStrengthABNode` in `index.d.ts`.
+
+### Security
+- Resolved the pyo3 advisories RUSTSEC-2026-0176 (out-of-bounds read in
+  `PyList`/`PyTuple` `nth`/`nth_back`) and RUSTSEC-2026-0177 (missing `Sync`
+  bound on `PyCFunction::new_closure`) by upgrading to pyo3 0.29, which fixes
+  both. The upgrade was previously blocked upstream by rust-numpy 0.28 pinning
+  pyo3 `^0.28`; rust-numpy 0.29 lifts that pin. The not-affected exceptions are
+  removed from `deny.toml` and `osv-scanner.toml`.
+
 ## [0.9.0] - 2026-06-13
 
 Maintenance release: Java build-dependency updates and CI/Dependabot

@@ -22,7 +22,7 @@ licensed as above, without any additional terms or conditions.
 | `bindings/node` | napi-rs bindings (`wickra` on npm). |
 | `bindings/wasm` | wasm-bindgen bindings (`wickra-wasm` on npm). |
 | `bindings/c` | C ABI — `cdylib` + `staticlib` + generated `include/wickra.h`. The hub for C / C++ and any C-capable language. |
-| `bindings/csharp` | .NET binding over the C ABI (`Wickra` on NuGet) — `[LibraryImport]` P/Invoke generated from `wickra.h`. |
+| `bindings/csharp` | C# binding over the C ABI (`Wickra` on NuGet) — `[LibraryImport]` P/Invoke generated from `wickra.h`. |
 | `bindings/go` | Go binding over the C ABI via cgo (module tag `bindings/go/vX.Y.Z`) — wrappers generated from `wickra.h`. |
 | `bindings/r` | R binding over the C ABI via `.Call` (R package) — C glue + R wrappers generated from `wickra.h`. |
 | `bindings/java` | Java binding over the C ABI via the FFM API (Panama, Maven Central) — wrappers generated from `wickra.h`. |
@@ -107,7 +107,7 @@ installed. Dependabot also keeps the `.github/requirements` pins current.
 - **Streaming parity.** An indicator's `batch` output must equal the sequence
   of `update` calls.
 - **Bindings.** A change to a public indicator API must be mirrored across the
-  Python, Node, and WASM bindings, including their type stubs / `.d.ts`. The C ABI
+  Python, Node.js, and WASM bindings, including their type stubs / `.d.ts`. The C ABI
   (`bindings/c`) is generated from the core, so regenerate it from the core and
   commit `src/lib.rs` + `include/wickra.h`. The C# binding (`bindings/csharp`) is
   generated from `wickra.h`, so regenerate and commit its `Generated/*.g.cs` too.

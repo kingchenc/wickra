@@ -56,8 +56,16 @@ fn main() {
 
     let candles: Vec<Candle> = (0..N)
         .map(|i| {
-            let (o, h, l, c, v) = bar(i);
-            Candle::new(o, h, l, c, v, i as i64).expect("valid candle")
+            let (open, high, low, close, volume) = bar(i);
+            Candle::new(
+                open,
+                high,
+                low,
+                close,
+                volume,
+                i64::try_from(i).expect("golden row index fits i64"),
+            )
+            .expect("valid candle")
         })
         .collect();
     let closes: Vec<f64> = candles.iter().map(|c| c.close).collect();

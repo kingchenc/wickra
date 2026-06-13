@@ -4,28 +4,6 @@
 # `ignore` list in deny.toml at the OSV layer. See the "Vulnerability
 # exploitability (VEX)" section of SECURITY.md.
 
-# pyo3 — both advisories are fixed in pyo3 0.29.0, but rust-numpy 0.28 (latest
-# release) hard-pins pyo3 ^0.28.0, so the bump is upstream-blocked. Neither
-# vulnerable code path is reachable from the binding: it never calls
-# BoundListIterator nth/nth_back, the PyTuple equivalents, or
-# PyCFunction::new_closure (verified by grep over bindings/python/src). Also
-# tracked in deny.toml; remove once rust-numpy 0.29 ships and pyo3 is bumped.
-[[IgnoredVulns]]
-id = "RUSTSEC-2026-0176"
-reason = "pyo3 OOB read in PyList/PyTuple nth/nth_back; vulnerable API unused; fix blocked upstream by rust-numpy. Tracked in deny.toml."
-
-[[IgnoredVulns]]
-id = "GHSA-36hh-v3qg-5jq4"
-reason = "Alias of RUSTSEC-2026-0176."
-
-[[IgnoredVulns]]
-id = "RUSTSEC-2026-0177"
-reason = "pyo3 missing Sync on PyCFunction::new_closure; vulnerable API unused; fix blocked upstream by rust-numpy. Tracked in deny.toml."
-
-[[IgnoredVulns]]
-id = "GHSA-chgr-c6px-7xpp"
-reason = "Alias of RUSTSEC-2026-0177."
-
 # jackson-core 3.x async-parser DoS — tools.jackson.core:jackson-core 3.x is not
 # a dependency of this project. No manifest, Maven plugin, or the GitHub
 # dependency-graph SBOM references jackson 3.x; the only jackson present is

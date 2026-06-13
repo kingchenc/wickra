@@ -9,7 +9,7 @@
 & Memory API — prebuilt native library, no JNI, no system dependencies.**
 
 Wickra is a multi-language technical-analysis library with a Rust core and
-bindings for Python, Node.js and WebAssembly, plus a C ABI for C/C++, C#, Go, Java, R
+bindings for Python, Node.js and WASM, plus a C ABI for C, C++, C#, Go, Java, R
 and any other C-capable language. Every indicator is an O(1) streaming state
 machine, so live trading bots and historical backtests share the exact same
 implementation. This package is the Java binding; it consumes the C ABI hub
@@ -98,9 +98,16 @@ the main repository and documentation site:
 - **Docs** (quickstarts, cookbook, TA-Lib migration): <https://docs.wickra.org>
 - **Runnable examples:** [`examples/java/`](https://github.com/wickra-lib/wickra/tree/main/examples/java)
 
-Wickra ships native bindings for Python, Node.js, WebAssembly and Rust, plus a
-C ABI hub that any C-capable language (C, C++, Go, C#, Java, R) links against —
+Wickra ships native bindings for Python, Node.js, WASM and Rust, plus a
+C ABI hub that any C-capable language (C, C++, C#, Go, Java, R) links against —
 all exposing the same indicators from the shared, `unsafe`-forbidden Rust core.
+
+## Security
+
+Found a security issue? **Please don't open a public issue.** Report it privately
+via the affected repository's *Security* tab (*"Report a vulnerability"*) or email
+**support@wickra.org** with a subject line starting `[wickra security]`. Full
+policy: <https://github.com/wickra-lib/wickra/blob/main/SECURITY.md>.
 
 ## Disclaimer
 
