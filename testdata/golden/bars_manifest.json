@@ -1,0 +1,91 @@
+[
+ {
+  "canonical": "RenkoBars",
+  "native": "RenkoBars",
+  "params": [
+   2.0
+  ],
+  "feed": "close"
+ },
+ {
+  "canonical": "KagiBars",
+  "native": "KagiBars",
+  "params": [
+   2.0
+  ],
+  "feed": "close"
+ },
+ {
+  "canonical": "PointAndFigureBars",
+  "native": "PointAndFigureBars",
+  "params": [
+   2.0,
+   3
+  ],
+  "feed": "close"
+ },
+ {
+  "canonical": "RangeBars",
+  "native": "RangeBars",
+  "params": [
+   2.0
+  ],
+  "feed": "close"
+ },
+ {
+  "canonical": "ThreeLineBreakBars",
+  "native": "ThreeLineBreakBars",
+  "params": [
+   3
+  ],
+  "feed": "close"
+ },
+ {
+  "canonical": "ImbalanceBars",
+  "native": "ImbalanceBars",
+  "params": [
+   5.0
+  ],
+  "feed": "candle4"
+ },
+ {
+  "canonical": "RunBars",
+  "native": "RunBars",
+  "params": [
+   3
+  ],
+  "feed": "candle4"
+ },
+ {
+  "canonical": "DollarBars",
+  "native": "DollarBars",
+  "params": [
+   50000.0
+  ],
+  "feed": "candle5"
+ },
+ {
+  "canonical": "TickBars",
+  "native": "TickBars",
+  "params": [
+   2
+  ],
+  "feed": "candle5"
+ },
+ {
+  "canonical": "VolumeBars",
+  "native": "VolumeBars",
+  "params": [
+   500.0
+  ],
+  "feed": "candle5"
+ },
+ {
+  "canonical": "Footprint",
+  "native": "Footprint",
+  "params": [
+   1.0
+  ],
+  "feed": "trade"
+ }
+]

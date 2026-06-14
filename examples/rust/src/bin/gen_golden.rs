@@ -180,6 +180,9 @@ fn main() {
     emit_skips(dir, &candles, &closes);
     emit_missed(dir, &candles, &closes);
     emit_exotic(dir, &candles);
+    emit_special(dir, &candles);
+    emit_profiles(dir, &candles);
+    emit_bars(dir, &candles);
     println!("golden fixtures written to {}", dir.display());
 }
 
@@ -4220,5 +4223,343 @@ fn emit_exotic(dir: &Path, candles: &[Candle]) {
         let mut ind = wickra::QuotedSpread::new();
         let rows: Vec<String> = books.iter().map(|b| cell(ind.update(b.clone()))).collect();
         write_csv(dir, "g_QuotedSpread", "QuotedSpread", &rows);
+    }
+}
+
+// AUTO-GENERATED special multi-output tranche (Option / integer fields).
+fn emit_special(dir: &Path, candles: &[Candle]) {
+    {
+        let mut ind = wickra::Ichimoku::new(9, 26, 52, 26).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!(
+                    "{},{},{},{},{}",
+                    cell(o.tenkan),
+                    cell(o.kijun),
+                    cell(o.senkou_a),
+                    cell(o.senkou_b),
+                    cell(o.chikou)
+                ),
+                None => "nan,nan,nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(
+            dir,
+            "g_Ichimoku",
+            "tenkan,kijun,senkou_a,senkou_b,chikou",
+            &rows,
+        );
+    }
+    {
+        let mut ind = wickra::WilliamsFractals::new();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", cell(o.up), cell(o.down)),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_WilliamsFractals", "up,down", &rows);
+    }
+    {
+        let mut ind = wickra::LeadLagCrossCorrelation::new(20, 10).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update((c.close, c.open)) {
+                Some(o) => format!("{},{}", o.lag, o.correlation),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_LeadLagCrossCorrelation", "lag,correlation", &rows);
+    }
+}
+
+// AUTO-GENERATED profile tranche (variable-length histogram output, fixed width
+// per configuration). The CSV header is a single placeholder token; each data
+// row holds the flattened output (`bins` for time/volume profiles, prefixed by
+// `price_low,price_high` for the price-binned TPO/volume profiles).
+fn emit_profiles(dir: &Path, candles: &[Candle]) {
+    fn bins_row(bins: &[f64]) -> String {
+        bins.iter()
+            .map(|b| format!("{b}"))
+            .collect::<Vec<_>>()
+            .join(",")
+    }
+    fn price_bins_row(price_low: f64, price_high: f64, bins: &[f64]) -> String {
+        format!("{price_low},{price_high},{}", bins_row(bins))
+    }
+    fn nan_row(width: usize) -> String {
+        vec!["nan"; width].join(",")
+    }
+    {
+        let mut ind = wickra::TimeOfDayReturnProfile::new(24, 0).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| {
+                ind.update(c)
+                    .map_or_else(|| nan_row(24), |o| bins_row(&o.bins))
+            })
+            .collect();
+        write_csv(dir, "g_TimeOfDayReturnProfile", "profile", &rows);
+    }
+    {
+        let mut ind = wickra::IntradayVolatilityProfile::new(24, 0).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| {
+                ind.update(c)
+                    .map_or_else(|| nan_row(24), |o| bins_row(&o.bins))
+            })
+            .collect();
+        write_csv(dir, "g_IntradayVolatilityProfile", "profile", &rows);
+    }
+    {
+        let mut ind = wickra::VolumeByTimeProfile::new(24, 0).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| {
+                ind.update(c)
+                    .map_or_else(|| nan_row(24), |o| bins_row(&o.bins))
+            })
+            .collect();
+        write_csv(dir, "g_VolumeByTimeProfile", "profile", &rows);
+    }
+    {
+        let mut ind = wickra::DayOfWeekProfile::new(0);
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| {
+                ind.update(c)
+                    .map_or_else(|| nan_row(7), |o| bins_row(&o.bins))
+            })
+            .collect();
+        write_csv(dir, "g_DayOfWeekProfile", "profile", &rows);
+    }
+    {
+        let mut ind = wickra::TpoProfile::new(30, 50).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| {
+                ind.update(c).map_or_else(
+                    || nan_row(52),
+                    |o| price_bins_row(o.price_low, o.price_high, &o.counts),
+                )
+            })
+            .collect();
+        write_csv(dir, "g_TpoProfile", "profile", &rows);
+    }
+    {
+        let mut ind = wickra::VolumeProfile::new(20, 50).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| {
+                ind.update(c).map_or_else(
+                    || nan_row(52),
+                    |o| price_bins_row(o.price_low, o.price_high, &o.bins),
+                )
+            })
+            .collect();
+        write_csv(dir, "g_VolumeProfile", "profile", &rows);
+    }
+}
+
+// AUTO-GENERATED alt-chart-bars + footprint tranche (variable bar count per
+// candle). Each row holds every bar completed on that candle, flattened; an
+// empty row means no bar closed. Close-driven builders see a flat
+// `Candle(close, close, close, close, 1.0, 0)`, mirroring the binding feed.
+#[allow(clippy::too_many_lines)]
+fn emit_bars(dir: &Path, candles: &[Candle]) {
+    use wickra::BarBuilder;
+    let flat = |c: &Candle| Candle::new(c.close, c.close, c.close, c.close, 1.0, 0).unwrap();
+    let novol = |c: &Candle| Candle::new(c.open, c.high, c.low, c.close, 1.0, 0).unwrap();
+    let withvol = |c: &Candle| Candle::new(c.open, c.high, c.low, c.close, c.volume, 0).unwrap();
+    {
+        let mut b = wickra::RenkoBars::new(2.0).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|c| {
+                b.update(flat(c))
+                    .iter()
+                    .map(|x| format!("{},{},{}", x.open, x.close, i64::from(x.direction)))
+                    .collect::<Vec<_>>()
+                    .join(",")
+            })
+            .collect();
+        write_csv(dir, "g_RenkoBars", "bars", &rows);
+    }
+    {
+        let mut b = wickra::KagiBars::new(2.0).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|c| {
+                b.update(flat(c))
+                    .iter()
+                    .map(|x| format!("{},{},{}", x.start, x.end, i64::from(x.direction)))
+                    .collect::<Vec<_>>()
+                    .join(",")
+            })
+            .collect();
+        write_csv(dir, "g_KagiBars", "bars", &rows);
+    }
+    {
+        let mut b = wickra::PointAndFigureBars::new(2.0, 3).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|c| {
+                b.update(flat(c))
+                    .iter()
+                    .map(|x| format!("{},{},{}", i64::from(x.direction), x.high, x.low))
+                    .collect::<Vec<_>>()
+                    .join(",")
+            })
+            .collect();
+        write_csv(dir, "g_PointAndFigureBars", "bars", &rows);
+    }
+    {
+        let mut b = wickra::RangeBars::new(2.0).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|c| {
+                b.update(flat(c))
+                    .iter()
+                    .map(|x| format!("{},{},{}", x.open, x.close, i64::from(x.direction)))
+                    .collect::<Vec<_>>()
+                    .join(",")
+            })
+            .collect();
+        write_csv(dir, "g_RangeBars", "bars", &rows);
+    }
+    {
+        let mut b = wickra::ThreeLineBreakBars::new(3).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|c| {
+                b.update(flat(c))
+                    .iter()
+                    .map(|x| format!("{},{},{}", x.open, x.close, i64::from(x.direction)))
+                    .collect::<Vec<_>>()
+                    .join(",")
+            })
+            .collect();
+        write_csv(dir, "g_ThreeLineBreakBars", "bars", &rows);
+    }
+    {
+        let mut b = wickra::ImbalanceBars::new(5.0).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|c| {
+                b.update(novol(c))
+                    .iter()
+                    .map(|x| {
+                        format!(
+                            "{},{},{},{},{},{}",
+                            x.open,
+                            x.high,
+                            x.low,
+                            x.close,
+                            x.imbalance,
+                            i64::from(x.direction)
+                        )
+                    })
+                    .collect::<Vec<_>>()
+                    .join(",")
+            })
+            .collect();
+        write_csv(dir, "g_ImbalanceBars", "bars", &rows);
+    }
+    {
+        let mut b = wickra::RunBars::new(3).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|c| {
+                b.update(novol(c))
+                    .iter()
+                    .map(|x| {
+                        format!(
+                            "{},{},{},{},{},{}",
+                            x.open,
+                            x.high,
+                            x.low,
+                            x.close,
+                            x.length,
+                            i64::from(x.direction)
+                        )
+                    })
+                    .collect::<Vec<_>>()
+                    .join(",")
+            })
+            .collect();
+        write_csv(dir, "g_RunBars", "bars", &rows);
+    }
+    {
+        let mut b = wickra::DollarBars::new(50000.0).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|c| {
+                b.update(withvol(c))
+                    .iter()
+                    .map(|x| {
+                        format!(
+                            "{},{},{},{},{},{}",
+                            x.open, x.high, x.low, x.close, x.volume, x.dollar
+                        )
+                    })
+                    .collect::<Vec<_>>()
+                    .join(",")
+            })
+            .collect();
+        write_csv(dir, "g_DollarBars", "bars", &rows);
+    }
+    {
+        let mut b = wickra::TickBars::new(2).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|c| {
+                b.update(withvol(c))
+                    .iter()
+                    .map(|x| format!("{},{},{},{},{}", x.open, x.high, x.low, x.close, x.volume))
+                    .collect::<Vec<_>>()
+                    .join(",")
+            })
+            .collect();
+        write_csv(dir, "g_TickBars", "bars", &rows);
+    }
+    {
+        let mut b = wickra::VolumeBars::new(500.0).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|c| {
+                b.update(withvol(c))
+                    .iter()
+                    .map(|x| format!("{},{},{},{},{}", x.open, x.high, x.low, x.close, x.volume))
+                    .collect::<Vec<_>>()
+                    .join(",")
+            })
+            .collect();
+        write_csv(dir, "g_VolumeBars", "bars", &rows);
+    }
+    {
+        use wickra::{Indicator, Side, Trade};
+        let mut fp = wickra::Footprint::new(1.0).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|c| {
+                let side = if c.close >= c.open {
+                    Side::Buy
+                } else {
+                    Side::Sell
+                };
+                let trade = Trade::new(c.close, c.volume, side, c.timestamp).unwrap();
+                fp.update(trade).map_or_else(String::new, |o| {
+                    o.levels
+                        .iter()
+                        .map(|x| format!("{},{},{}", x.price, x.bid_vol, x.ask_vol))
+                        .collect::<Vec<_>>()
+                        .join(",")
+                })
+            })
+            .collect();
+        write_csv(dir, "g_Footprint", "footprint", &rows);
     }
 }
