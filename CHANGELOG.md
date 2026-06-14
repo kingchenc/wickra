@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-06-14
+
 ### Added
 - C ABI hub: every indicator now exposes `wickra_<ind>_warmup_period` and
   `wickra_<ind>_is_ready`, closing the gap with the native bindings (which
@@ -15,8 +17,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `int warmupPeriod()` / `boolean isReady()`, and R `warmup_period()` /
   `is_ready()` generics. The alt-chart bar builders are excluded by design (a
   candle can complete 0..n bars, so they have no warmup).
+- Runnable rustdoc examples for 23 indicators that previously lacked one.
+- A Requirements reference documenting the minimum supported version per
+  language — a new page in the documentation site plus README, marketing-site
+  and organization-profile sections.
 
 ### Changed
+- Raised the minimum Node.js version to 20 — Node 18 reached end-of-life. The
+  prebuilt N-API addon is now tested on the active LTS lines (22 and 24).
+- The Java binding now builds on the JDK 25 LTS in CI (JDK 22 reached
+  end-of-life); the published bytecode still targets Java 22, so the runtime
+  requirement is unchanged.
 - Standardised programming-language naming and ordering across all docs, READMEs,
   the documentation site, marketing site, organization profile and GitHub
   repository descriptions. Canonical list:
@@ -1652,7 +1663,8 @@ public API changes.
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.1...HEAD
+[0.9.1]: https://github.com/wickra-lib/wickra/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/wickra-lib/wickra/compare/v0.8.9...v0.9.0
 [0.8.9]: https://github.com/wickra-lib/wickra/compare/v0.8.8...v0.8.9
 [0.8.8]: https://github.com/wickra-lib/wickra/compare/v0.8.7...v0.8.8
