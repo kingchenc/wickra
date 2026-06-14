@@ -1,0 +1,61 @@
+[
+ {
+  "canonical": "TimeOfDayReturnProfile",
+  "native": "TimeOfDayReturnProfile",
+  "params": [
+   24,
+   0
+  ],
+  "kind": "bins",
+  "width": 24
+ },
+ {
+  "canonical": "IntradayVolatilityProfile",
+  "native": "IntradayVolatilityProfile",
+  "params": [
+   24,
+   0
+  ],
+  "kind": "bins",
+  "width": 24
+ },
+ {
+  "canonical": "VolumeByTimeProfile",
+  "native": "VolumeByTimeProfile",
+  "params": [
+   24,
+   0
+  ],
+  "kind": "bins",
+  "width": 24
+ },
+ {
+  "canonical": "DayOfWeekProfile",
+  "native": "DayOfWeekProfile",
+  "params": [
+   0
+  ],
+  "kind": "bins",
+  "width": 7
+ },
+ {
+  "canonical": "TpoProfile",
+  "native": "TpoProfile",
+  "params": [
+   30,
+   50
+  ],
+  "kind": "pricebins",
+  "width": 52
+ },
+ {
+  "canonical": "VolumeProfile",
+  "native": "VolumeProfile",
+  "params": [
+   20,
+   50
+  ],
+  "kind": "pricebins",
+  "width": 52
+ }
+]

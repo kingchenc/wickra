@@ -356,6 +356,18 @@
   "n": 3
  },
  {
+  "canonical": "Ichimoku",
+  "native": "Ichimoku",
+  "params": [
+   9,
+   26,
+   52,
+   26
+  ],
+  "input": "Candle",
+  "n": 5
+ },
+ {
   "canonical": "InitialBalance",
   "native": "InitialBalance",
   "params": [
@@ -420,6 +432,16 @@
    70
   ],
   "input": "f64",
+  "n": 2
+ },
+ {
+  "canonical": "LeadLagCrossCorrelation",
+  "native": "LeadLagCrossCorrelation",
+  "params": [
+   20,
+   10
+  ],
+  "input": "(f64, f64)",
   "n": 2
  },
  {
@@ -794,6 +816,13 @@
    7,
    14
   ],
+  "input": "Candle",
+  "n": 2
+ },
+ {
+  "canonical": "WilliamsFractals",
+  "native": "WilliamsFractals",
+  "params": [],
   "input": "Candle",
   "n": 2
  },
