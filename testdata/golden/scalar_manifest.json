@@ -42,6 +42,14 @@
   "input": "f64"
  },
  {
+  "canonical": "AdaptiveLaguerreFilter",
+  "native": "AdaptiveLaguerre",
+  "params": [
+   20
+  ],
+  "input": "f64"
+ },
+ {
   "canonical": "AdaptiveRsi",
   "native": "ADAPTIVERSI",
   "params": [
@@ -151,6 +159,15 @@
    48
   ],
   "input": "f64"
+ },
+ {
+  "canonical": "AverageDailyRange",
+  "native": "AverageDailyRange",
+  "params": [
+   14,
+   0
+  ],
+  "input": "Candle"
  },
  {
   "canonical": "AverageDrawdown",
@@ -310,6 +327,14 @@
    14
   ],
   "input": "f64"
+ },
+ {
+  "canonical": "ChaikinMoneyFlow",
+  "native": "ChaikinMoneyFlow",
+  "params": [
+   20
+  ],
+  "input": "Candle"
  },
  {
   "canonical": "ChaikinOscillator",
@@ -555,6 +580,12 @@
   "input": "Candle"
  },
  {
+  "canonical": "DrawdownDuration",
+  "native": "DrawdownDuration",
+  "params": [],
+  "input": "f64"
+ },
+ {
   "canonical": "DumplingTop",
   "native": "DumplingTop",
   "params": [
@@ -635,6 +666,15 @@
   "native": "Engulfing",
   "params": [],
   "input": "Candle"
+ },
+ {
+  "canonical": "EvenBetterSinewave",
+  "native": "EVENBETTERSINE",
+  "params": [
+   40,
+   10
+  ],
+  "input": "f64"
  },
  {
   "canonical": "EveningDojiStar",
@@ -760,6 +800,15 @@
   "input": "f64"
  },
  {
+  "canonical": "GarmanKlassVolatility",
+  "native": "GarmanKlassVolatility",
+  "params": [
+   20,
+   252
+  ],
+  "input": "Candle"
+ },
+ {
   "canonical": "Gartley",
   "native": "Gartley",
   "params": [],
@@ -844,6 +893,14 @@
   "input": "Candle"
  },
  {
+  "canonical": "HiLoActivator",
+  "native": "HiLoActivator",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
   "canonical": "HighLowRange",
   "native": "HighLowRange",
   "params": [],
@@ -912,6 +969,18 @@
   "native": "HomingPigeon",
   "params": [],
   "input": "Candle"
+ },
+ {
+  "canonical": "HtDcPhase",
+  "native": "HT_DCPHASE",
+  "params": [],
+  "input": "f64"
+ },
+ {
+  "canonical": "HtTrendMode",
+  "native": "HT_TRENDMODE",
+  "params": [],
+  "input": "f64"
  },
  {
   "canonical": "HurstExponent",
@@ -1092,6 +1161,38 @@
   "input": "f64"
  },
  {
+  "canonical": "LinRegAngle",
+  "native": "LinRegAngle",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "LinRegIntercept",
+  "native": "LINEARREG_INTERCEPT",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "LinRegSlope",
+  "native": "LinRegSlope",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "LinearRegression",
+  "native": "LinearRegression",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
   "canonical": "LogReturn",
   "native": "LogReturn",
   "params": [
@@ -1175,6 +1276,14 @@
  {
   "canonical": "MaxDrawdown",
   "native": "MaxDrawdown",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "McGinleyDynamic",
+  "native": "McGinleyDynamic",
   "params": [
    14
   ],
@@ -1329,6 +1438,14 @@
   "input": "(f64, f64)"
  },
  {
+  "canonical": "OvernightGap",
+  "native": "OvernightGap",
+  "params": [
+   0
+  ],
+  "input": "Candle"
+ },
+ {
   "canonical": "PainIndex",
   "native": "PainIndex",
   "params": [
@@ -1337,12 +1454,30 @@
   "input": "f64"
  },
  {
+  "canonical": "PairSpreadZScore",
+  "native": "PairSpreadZScore",
+  "params": [
+   20,
+   20
+  ],
+  "input": "(f64, f64)"
+ },
+ {
   "canonical": "PairwiseBeta",
   "native": "PairwiseBeta",
   "params": [
    14
   ],
   "input": "(f64, f64)"
+ },
+ {
+  "canonical": "ParkinsonVolatility",
+  "native": "ParkinsonVolatility",
+  "params": [
+   20,
+   252
+  ],
+  "input": "Candle"
  },
  {
   "canonical": "PearsonCorrelation",
@@ -1414,6 +1549,15 @@
   "params": [
    3,
    7
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "PolarizedFractalEfficiency",
+  "native": "POLARIZED_FRACTAL_EFFICIENCY",
+  "params": [
+   10,
+   5
   ],
   "input": "f64"
  },
@@ -1592,6 +1736,15 @@
   "input": "f64"
  },
  {
+  "canonical": "RogersSatchellVolatility",
+  "native": "RogersSatchellVolatility",
+  "params": [
+   20,
+   252
+  ],
+  "input": "Candle"
+ },
+ {
   "canonical": "RollingCorrelation",
   "native": "RollingCorrelation",
   "params": [
@@ -1639,6 +1792,14 @@
    0.5
   ],
   "input": "f64"
+ },
+ {
+  "canonical": "RollingVwap",
+  "native": "RollingVWAP",
+  "params": [
+   14
+  ],
+  "input": "Candle"
  },
  {
   "canonical": "RoofingFilter",
@@ -2010,6 +2171,22 @@
   "input": "Candle"
  },
  {
+  "canonical": "TdDWave",
+  "native": "TDDWave",
+  "params": [
+   2
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TdDeMarker",
+  "native": "TDDeMarker",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
   "canonical": "TdDifferential",
   "native": "TDDifferential",
   "params": [],
@@ -2156,6 +2333,14 @@
   "input": "f64"
  },
  {
+  "canonical": "TrendStrengthIndex",
+  "native": "TREND_STRENGTH_INDEX",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
   "canonical": "Trendflex",
   "native": "TRENDFLEX",
   "params": [
@@ -2250,6 +2435,16 @@
   "native": "TTM_TREND",
   "params": [
    14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TurnOfMonth",
+  "native": "TurnOfMonth",
+  "params": [
+   3,
+   3,
+   0
   ],
   "input": "Candle"
  },
@@ -2411,6 +2606,12 @@
   "input": "Candle"
  },
  {
+  "canonical": "VolumePriceTrend",
+  "native": "VolumePriceTrend",
+  "params": [],
+  "input": "Candle"
+ },
+ {
   "canonical": "VolumeRsi",
   "native": "VolumeRsi",
   "params": [
@@ -2496,6 +2697,15 @@
    14
   ],
   "input": "f64"
+ },
+ {
+  "canonical": "YangZhangVolatility",
+  "native": "YangZhangVolatility",
+  "params": [
+   20,
+   252
+  ],
+  "input": "Candle"
  },
  {
   "canonical": "YoyoExit",

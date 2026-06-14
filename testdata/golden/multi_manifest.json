@@ -76,6 +76,16 @@
   "n": 7
  },
  {
+  "canonical": "BollingerBands",
+  "native": "BollingerBands",
+  "params": [
+   20,
+   2.0
+  ],
+  "input": "f64",
+  "n": 4
+ },
+ {
   "canonical": "BomarBands",
   "native": "BomarBands",
   "params": [
@@ -84,6 +94,13 @@
   ],
   "input": "f64",
   "n": 3
+ },
+ {
+  "canonical": "Camarilla",
+  "native": "Camarilla",
+  "params": [],
+  "input": "Candle",
+  "n": 9
  },
  {
   "canonical": "CandleVolume",
@@ -191,6 +208,16 @@
   "native": "ElderRay",
   "params": [
    14
+  ],
+  "input": "Candle",
+  "n": 2
+ },
+ {
+  "canonical": "ElderSafeZone",
+  "native": "ElderSafeZone",
+  "params": [
+   10,
+   2.0
   ],
   "input": "Candle",
   "n": 2
@@ -348,6 +375,16 @@
   "n": 3
  },
  {
+  "canonical": "KaseDevStop",
+  "native": "KaseDevStop",
+  "params": [
+   14,
+   2.0
+  ],
+  "input": "Candle",
+  "n": 2
+ },
+ {
   "canonical": "KasePermissionStochastic",
   "native": "KasePermissionStochastic",
   "params": [
@@ -386,11 +423,55 @@
   "n": 2
  },
  {
+  "canonical": "LinRegChannel",
+  "native": "LinRegChannel",
+  "params": [
+   14,
+   2.0
+  ],
+  "input": "f64",
+  "n": 3
+ },
+ {
   "canonical": "MaEnvelope",
   "native": "MaEnvelope",
   "params": [
    14,
    2.0
+  ],
+  "input": "f64",
+  "n": 3
+ },
+ {
+  "canonical": "MacdExt",
+  "native": "MACDEXT",
+  "params": [
+   12,
+   0,
+   26,
+   0,
+   9,
+   0
+  ],
+  "input": "f64",
+  "n": 3
+ },
+ {
+  "canonical": "MacdFix",
+  "native": "MACDFIX",
+  "params": [
+   9
+  ],
+  "input": "f64",
+  "n": 3
+ },
+ {
+  "canonical": "MacdIndicator",
+  "native": "MACD",
+  "params": [
+   12,
+   26,
+   9
   ],
   "input": "f64",
   "n": 3
@@ -487,6 +568,16 @@
    14
   ],
   "input": "f64",
+  "n": 3
+ },
+ {
+  "canonical": "RelativeStrengthAB",
+  "native": "RelativeStrengthAB",
+  "params": [
+   14,
+   14
+  ],
+  "input": "(f64, f64)",
   "n": 3
  },
  {
@@ -685,6 +776,15 @@
   ],
   "input": "Candle",
   "n": 2
+ },
+ {
+  "canonical": "VwapStdDevBands",
+  "native": "VwapStdDevBands",
+  "params": [
+   2.0
+  ],
+  "input": "Candle",
+  "n": 4
  },
  {
   "canonical": "WaveTrend",
