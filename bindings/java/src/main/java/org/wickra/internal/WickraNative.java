@@ -58,6 +58,20 @@ public final class WickraNative {
         return CLEANER.register(owner, new FreeAction(handle, free));
     }
 
+    /**
+     * Allocate a C {@code bool*} buffer (one byte per element) from flag values
+     * supplied as doubles, treating any non-zero value as {@code true}. The C
+     * ABI takes the cross-section state flags as {@code const bool*}, so they
+     * must be one byte each rather than eight-byte doubles.
+     */
+    public static MemorySegment boolSegment(Arena arena, double[] flags) {
+        byte[] bytes = new byte[flags.length];
+        for (int i = 0; i < flags.length; i++) {
+            bytes[i] = (byte) (flags[i] != 0.0 ? 1 : 0);
+        }
+        return arena.allocateFrom(java.lang.foreign.ValueLayout.JAVA_BYTE, bytes);
+    }
+
     /** Re-throw a {@link MethodHandle#invokeExact} {@link Throwable} as an unchecked exception. */
     public static RuntimeException rethrow(Throwable t) {
         if (t instanceof RuntimeException re) {

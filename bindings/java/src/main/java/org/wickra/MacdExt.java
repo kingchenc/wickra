@@ -25,7 +25,7 @@ public final class MacdExt implements AutoCloseable {
         }
         MemorySegment h;
         try {
-            h = (MemorySegment) NativeMethods.WICKRA_MACD_EXT_NEW.invokeExact((long) fast, fastType, (long) slow, slowType, (long) signal, signalType);
+            h = (MemorySegment) NativeMethods.WICKRA_MACD_EXT_NEW.invokeExact((long) fast, (byte) fastType, (long) slow, (byte) slowType, (long) signal, (byte) signalType);
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
         }
