@@ -176,6 +176,7 @@ fn main() {
     }
 
     emit_scalar(dir, &candles, &closes);
+    emit_multi(dir, &candles, &closes);
     println!("golden fixtures written to {}", dir.display());
 }
 
@@ -2202,5 +2203,1022 @@ fn emit_scalar(dir: &Path, candles: &[Candle], closes: &[f64]) {
         write_csv(dir, "g_ZScore", "ZScore", &rows);
     } else {
         eprintln!("gen_golden skip ZScore");
+    }
+}
+
+// AUTO-GENERATED multi-output golden tranche.
+#[allow(clippy::too_many_lines)]
+fn emit_multi(dir: &Path, candles: &[Candle], closes: &[f64]) {
+    if let Ok(mut ind) = wickra::Adx::new(14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.plus_di, o.minus_di, o.adx),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_Adx", "plus_di,minus_di,adx", &rows);
+    } else {
+        eprintln!("gen_golden skip Adx");
+    }
+    if let Ok(mut ind) = wickra::AccelerationBands::new(14, 2.0) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.upper, o.middle, o.lower),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_AccelerationBands", "upper,middle,lower", &rows);
+    } else {
+        eprintln!("gen_golden skip AccelerationBands");
+    }
+    if let Ok(mut ind) = wickra::Alligator::new(3, 7, 14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.jaw, o.teeth, o.lips),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_Alligator", "jaw,teeth,lips", &rows);
+    } else {
+        eprintln!("gen_golden skip Alligator");
+    }
+    if let Ok(mut ind) = wickra::AndrewsPitchfork::new(14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.median, o.upper, o.lower),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_AndrewsPitchfork", "median,upper,lower", &rows);
+    } else {
+        eprintln!("gen_golden skip AndrewsPitchfork");
+    }
+    if let Ok(mut ind) = wickra::Aroon::new(14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.up, o.down),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_Aroon", "up,down", &rows);
+    } else {
+        eprintln!("gen_golden skip Aroon");
+    }
+    if let Ok(mut ind) = wickra::AtrBands::new(14, 2.0) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.upper, o.middle, o.lower),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_AtrBands", "upper,middle,lower", &rows);
+    } else {
+        eprintln!("gen_golden skip AtrBands");
+    }
+    if let Ok(mut ind) = wickra::AtrRatchet::new(14, 2.0, 0.5) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.value, o.direction),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_AtrRatchet", "value,direction", &rows);
+    } else {
+        eprintln!("gen_golden skip AtrRatchet");
+    }
+    {
+        let mut ind = wickra::AutoFib::new();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!(
+                    "{},{},{},{},{},{},{}",
+                    o.level_0,
+                    o.level_236,
+                    o.level_382,
+                    o.level_500,
+                    o.level_618,
+                    o.level_786,
+                    o.level_1000
+                ),
+                None => "nan,nan,nan,nan,nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(
+            dir,
+            "g_AutoFib",
+            "level_0,level_236,level_382,level_500,level_618,level_786,level_1000",
+            &rows,
+        );
+    }
+    if let Ok(mut ind) = wickra::BomarBands::new(14, 2.0) {
+        let rows: Vec<String> = closes
+            .iter()
+            .map(|&x| match ind.update(x) {
+                Some(o) => format!("{},{},{}", o.upper, o.middle, o.lower),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_BomarBands", "upper,middle,lower", &rows);
+    } else {
+        eprintln!("gen_golden skip BomarBands");
+    }
+    if let Ok(mut ind) = wickra::CandleVolume::new(14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.body, o.width),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_CandleVolume", "body,width", &rows);
+    } else {
+        eprintln!("gen_golden skip CandleVolume");
+    }
+    {
+        let mut ind = wickra::CentralPivotRange::new();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.pivot, o.tc, o.bc),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_CentralPivotRange", "pivot,tc,bc", &rows);
+    }
+    if let Ok(mut ind) = wickra::ChandeKrollStop::new(3, 2.0, 7) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.stop_long, o.stop_short),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_ChandeKrollStop", "stop_long,stop_short", &rows);
+    } else {
+        eprintln!("gen_golden skip ChandeKrollStop");
+    }
+    if let Ok(mut ind) = wickra::ChandelierExit::new(14, 2.0) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.long_stop, o.short_stop),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_ChandelierExit", "long_stop,short_stop", &rows);
+    } else {
+        eprintln!("gen_golden skip ChandelierExit");
+    }
+    {
+        let mut ind = wickra::ClassicPivots::new();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!(
+                    "{},{},{},{},{},{},{}",
+                    o.pp, o.r1, o.r2, o.r3, o.s1, o.s2, o.s3
+                ),
+                None => "nan,nan,nan,nan,nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_ClassicPivots", "pp,r1,r2,r3,s1,s2,s3", &rows);
+    }
+    if let Ok(mut ind) = wickra::Cointegration::new(3, 7) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update((c.close, c.open)) {
+                Some(o) => format!("{},{},{}", o.hedge_ratio, o.spread, o.adf_stat),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_Cointegration", "hedge_ratio,spread,adf_stat", &rows);
+    } else {
+        eprintln!("gen_golden skip Cointegration");
+    }
+    if let Ok(mut ind) = wickra::CompositeProfile::new(3, 7, 2.0) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.poc, o.vah, o.val),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_CompositeProfile", "poc,vah,val", &rows);
+    } else {
+        eprintln!("gen_golden skip CompositeProfile");
+    }
+    {
+        let mut ind = wickra::DemarkPivots::new();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.pp, o.r1, o.s1),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_DemarkPivots", "pp,r1,s1", &rows);
+    }
+    if let Ok(mut ind) = wickra::Donchian::new(14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.upper, o.middle, o.lower),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_Donchian", "upper,middle,lower", &rows);
+    } else {
+        eprintln!("gen_golden skip Donchian");
+    }
+    if let Ok(mut ind) = wickra::DonchianStop::new(14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.stop_long, o.stop_short),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_DonchianStop", "stop_long,stop_short", &rows);
+    } else {
+        eprintln!("gen_golden skip DonchianStop");
+    }
+    if let Ok(mut ind) = wickra::DoubleBollinger::new(14, 2.0, 0.5) {
+        let rows: Vec<String> = closes
+            .iter()
+            .map(|&x| match ind.update(x) {
+                Some(o) => format!(
+                    "{},{},{},{},{}",
+                    o.upper_outer, o.upper_inner, o.middle, o.lower_inner, o.lower_outer
+                ),
+                None => "nan,nan,nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(
+            dir,
+            "g_DoubleBollinger",
+            "upper_outer,upper_inner,middle,lower_inner,lower_outer",
+            &rows,
+        );
+    } else {
+        eprintln!("gen_golden skip DoubleBollinger");
+    }
+    if let Ok(mut ind) = wickra::ElderRay::new(14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.bull_power, o.bear_power),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_ElderRay", "bull_power,bear_power", &rows);
+    } else {
+        eprintln!("gen_golden skip ElderRay");
+    }
+    if let Ok(mut ind) = wickra::Equivolume::new(14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.height, o.width),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_Equivolume", "height,width", &rows);
+    } else {
+        eprintln!("gen_golden skip Equivolume");
+    }
+    {
+        let mut ind = wickra::FibArcs::new();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.arc_382, o.arc_500, o.arc_618),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_FibArcs", "arc_382,arc_500,arc_618", &rows);
+    }
+    {
+        let mut ind = wickra::FibChannel::new();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!(
+                    "{},{},{},{}",
+                    o.base, o.level_618, o.level_1000, o.level_1618
+                ),
+                None => "nan,nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(
+            dir,
+            "g_FibChannel",
+            "base,level_618,level_1000,level_1618",
+            &rows,
+        );
+    }
+    {
+        let mut ind = wickra::FibConfluence::new();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.price, o.strength),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_FibConfluence", "price,strength", &rows);
+    }
+    {
+        let mut ind = wickra::FibExtension::new();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!(
+                    "{},{},{},{},{}",
+                    o.level_1272, o.level_1414, o.level_1618, o.level_2000, o.level_2618
+                ),
+                None => "nan,nan,nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(
+            dir,
+            "g_FibExtension",
+            "level_1272,level_1414,level_1618,level_2000,level_2618",
+            &rows,
+        );
+    }
+    {
+        let mut ind = wickra::FibFan::new();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.fan_382, o.fan_500, o.fan_618),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_FibFan", "fan_382,fan_500,fan_618", &rows);
+    }
+    {
+        let mut ind = wickra::FibProjection::new();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!(
+                    "{},{},{},{}",
+                    o.level_618, o.level_1000, o.level_1618, o.level_2618
+                ),
+                None => "nan,nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(
+            dir,
+            "g_FibProjection",
+            "level_618,level_1000,level_1618,level_2618",
+            &rows,
+        );
+    }
+    {
+        let mut ind = wickra::FibRetracement::new();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!(
+                    "{},{},{},{},{},{},{}",
+                    o.level_0,
+                    o.level_236,
+                    o.level_382,
+                    o.level_500,
+                    o.level_618,
+                    o.level_786,
+                    o.level_1000
+                ),
+                None => "nan,nan,nan,nan,nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(
+            dir,
+            "g_FibRetracement",
+            "level_0,level_236,level_382,level_500,level_618,level_786,level_1000",
+            &rows,
+        );
+    }
+    {
+        let mut ind = wickra::FibTimeZones::new();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.on_zone, o.bars_to_next),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_FibTimeZones", "on_zone,bars_to_next", &rows);
+    }
+    {
+        let mut ind = wickra::FibonacciPivots::new();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!(
+                    "{},{},{},{},{},{},{}",
+                    o.pp, o.r1, o.r2, o.r3, o.s1, o.s2, o.s3
+                ),
+                None => "nan,nan,nan,nan,nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_FibonacciPivots", "pp,r1,r2,r3,s1,s2,s3", &rows);
+    }
+    if let Ok(mut ind) = wickra::FractalChaosBands::new(14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.upper, o.lower),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_FractalChaosBands", "upper,lower", &rows);
+    } else {
+        eprintln!("gen_golden skip FractalChaosBands");
+    }
+    if let Ok(mut ind) = wickra::GatorOscillator::new(3, 7, 14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.upper, o.lower),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_GatorOscillator", "upper,lower", &rows);
+    } else {
+        eprintln!("gen_golden skip GatorOscillator");
+    }
+    {
+        let mut ind = wickra::GoldenPocket::new();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.low, o.mid, o.high),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_GoldenPocket", "low,mid,high", &rows);
+    }
+    {
+        let mut ind = wickra::HtPhasor::new();
+        let rows: Vec<String> = closes
+            .iter()
+            .map(|&x| match ind.update(x) {
+                Some(o) => format!("{},{}", o.inphase, o.quadrature),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_HtPhasor", "inphase,quadrature", &rows);
+    }
+    {
+        let mut ind = wickra::HeikinAshi::new();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{},{}", o.open, o.high, o.low, o.close),
+                None => "nan,nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_HeikinAshi", "open,high,low,close", &rows);
+    }
+    if let Ok(mut ind) = wickra::HighLowVolumeNodes::new(3, 7) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.hvn, o.lvn),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_HighLowVolumeNodes", "hvn,lvn", &rows);
+    } else {
+        eprintln!("gen_golden skip HighLowVolumeNodes");
+    }
+    if let Ok(mut ind) = wickra::HurstChannel::new(14, 2.0) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.upper, o.middle, o.lower),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_HurstChannel", "upper,middle,lower", &rows);
+    } else {
+        eprintln!("gen_golden skip HurstChannel");
+    }
+    if let Ok(mut ind) = wickra::InitialBalance::new(14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.high, o.low),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_InitialBalance", "high,low", &rows);
+    } else {
+        eprintln!("gen_golden skip InitialBalance");
+    }
+    if let Ok(mut ind) = wickra::Kst::new(3, 7, 14, 28, 35, 42, 56, 63, 70) {
+        let rows: Vec<String> = closes
+            .iter()
+            .map(|&x| match ind.update(x) {
+                Some(o) => format!("{},{}", o.kst, o.signal),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_Kst", "kst,signal", &rows);
+    } else {
+        eprintln!("gen_golden skip Kst");
+    }
+    if let Ok(mut ind) = wickra::KalmanHedgeRatio::new(2.0, 0.5) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update((c.close, c.open)) {
+                Some(o) => format!("{},{},{}", o.hedge_ratio, o.intercept, o.spread),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(
+            dir,
+            "g_KalmanHedgeRatio",
+            "hedge_ratio,intercept,spread",
+            &rows,
+        );
+    } else {
+        eprintln!("gen_golden skip KalmanHedgeRatio");
+    }
+    if let Ok(mut ind) = wickra::KasePermissionStochastic::new(3, 7) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.fast, o.slow),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_KasePermissionStochastic", "fast,slow", &rows);
+    } else {
+        eprintln!("gen_golden skip KasePermissionStochastic");
+    }
+    if let Ok(mut ind) = wickra::Keltner::new(3, 7, 2.0) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.upper, o.middle, o.lower),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_Keltner", "upper,middle,lower", &rows);
+    } else {
+        eprintln!("gen_golden skip Keltner");
+    }
+    if let Ok(mut ind) = wickra::Mama::new(2.0, 0.5) {
+        let rows: Vec<String> = closes
+            .iter()
+            .map(|&x| match ind.update(x) {
+                Some(o) => format!("{},{}", o.mama, o.fama),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_Mama", "mama,fama", &rows);
+    } else {
+        eprintln!("gen_golden skip Mama");
+    }
+    if let Ok(mut ind) = wickra::MaEnvelope::new(14, 2.0) {
+        let rows: Vec<String> = closes
+            .iter()
+            .map(|&x| match ind.update(x) {
+                Some(o) => format!("{},{},{}", o.upper, o.middle, o.lower),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_MaEnvelope", "upper,middle,lower", &rows);
+    } else {
+        eprintln!("gen_golden skip MaEnvelope");
+    }
+    if let Ok(mut ind) = wickra::MedianChannel::new(14, 2.0) {
+        let rows: Vec<String> = closes
+            .iter()
+            .map(|&x| match ind.update(x) {
+                Some(o) => format!("{},{},{}", o.upper, o.middle, o.lower),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_MedianChannel", "upper,middle,lower", &rows);
+    } else {
+        eprintln!("gen_golden skip MedianChannel");
+    }
+    if let Ok(mut ind) = wickra::ModifiedMaStop::new(14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.value, o.direction),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_ModifiedMaStop", "value,direction", &rows);
+    } else {
+        eprintln!("gen_golden skip ModifiedMaStop");
+    }
+    if let Ok(mut ind) = wickra::MurreyMathLines::new(14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!(
+                    "{},{},{},{},{},{},{},{},{}",
+                    o.mm8_8, o.mm7_8, o.mm6_8, o.mm5_8, o.mm4_8, o.mm3_8, o.mm2_8, o.mm1_8, o.mm0_8
+                ),
+                None => "nan,nan,nan,nan,nan,nan,nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(
+            dir,
+            "g_MurreyMathLines",
+            "mm8_8,mm7_8,mm6_8,mm5_8,mm4_8,mm3_8,mm2_8,mm1_8,mm0_8",
+            &rows,
+        );
+    } else {
+        eprintln!("gen_golden skip MurreyMathLines");
+    }
+    if let Ok(mut ind) = wickra::Nrtr::new(2.0) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.value, o.direction),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_Nrtr", "value,direction", &rows);
+    } else {
+        eprintln!("gen_golden skip Nrtr");
+    }
+    if let Ok(mut ind) = wickra::OpeningRange::new(14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.high, o.low, o.breakout_distance),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_OpeningRange", "high,low,breakout_distance", &rows);
+    } else {
+        eprintln!("gen_golden skip OpeningRange");
+    }
+    {
+        let mut ind = wickra::OvernightIntradayReturn::new(14);
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.overnight, o.intraday),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(
+            dir,
+            "g_OvernightIntradayReturn",
+            "overnight,intraday",
+            &rows,
+        );
+    }
+    if let Ok(mut ind) = wickra::ProjectionBands::new(14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.upper, o.middle, o.lower),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_ProjectionBands", "upper,middle,lower", &rows);
+    } else {
+        eprintln!("gen_golden skip ProjectionBands");
+    }
+    if let Ok(mut ind) = wickra::Qqe::new(3, 7, 2.0) {
+        let rows: Vec<String> = closes
+            .iter()
+            .map(|&x| match ind.update(x) {
+                Some(o) => format!("{},{}", o.rsi_ma, o.trailing_line),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_Qqe", "rsi_ma,trailing_line", &rows);
+    } else {
+        eprintln!("gen_golden skip Qqe");
+    }
+    if let Ok(mut ind) = wickra::QuartileBands::new(14) {
+        let rows: Vec<String> = closes
+            .iter()
+            .map(|&x| match ind.update(x) {
+                Some(o) => format!("{},{},{}", o.upper, o.middle, o.lower),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_QuartileBands", "upper,middle,lower", &rows);
+    } else {
+        eprintln!("gen_golden skip QuartileBands");
+    }
+    if let Ok(mut ind) = wickra::Rwi::new(14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.high, o.low),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_Rwi", "high,low", &rows);
+    } else {
+        eprintln!("gen_golden skip Rwi");
+    }
+    {
+        let mut ind = wickra::SessionHighLow::new(14);
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.high, o.low),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_SessionHighLow", "high,low", &rows);
+    }
+    {
+        let mut ind = wickra::SessionRange::new(14);
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.asia, o.eu, o.us),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_SessionRange", "asia,eu,us", &rows);
+    }
+    if let Ok(mut ind) = wickra::SmoothedHeikinAshi::new(14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{},{}", o.open, o.high, o.low, o.close),
+                None => "nan,nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_SmoothedHeikinAshi", "open,high,low,close", &rows);
+    } else {
+        eprintln!("gen_golden skip SmoothedHeikinAshi");
+    }
+    if let Ok(mut ind) = wickra::SpreadBollingerBands::new(14, 2.0) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update((c.close, c.open)) {
+                Some(o) => format!("{},{},{},{}", o.middle, o.upper, o.lower, o.percent_b),
+                None => "nan,nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(
+            dir,
+            "g_SpreadBollingerBands",
+            "middle,upper,lower,percent_b",
+            &rows,
+        );
+    } else {
+        eprintln!("gen_golden skip SpreadBollingerBands");
+    }
+    if let Ok(mut ind) = wickra::StandardErrorBands::new(14, 2.0) {
+        let rows: Vec<String> = closes
+            .iter()
+            .map(|&x| match ind.update(x) {
+                Some(o) => format!("{},{},{}", o.upper, o.middle, o.lower),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_StandardErrorBands", "upper,middle,lower", &rows);
+    } else {
+        eprintln!("gen_golden skip StandardErrorBands");
+    }
+    if let Ok(mut ind) = wickra::StarcBands::new(3, 7, 2.0) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.upper, o.middle, o.lower),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_StarcBands", "upper,middle,lower", &rows);
+    } else {
+        eprintln!("gen_golden skip StarcBands");
+    }
+    if let Ok(mut ind) = wickra::Stochastic::new(3, 7) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.k, o.d),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_Stochastic", "k,d", &rows);
+    } else {
+        eprintln!("gen_golden skip Stochastic");
+    }
+    if let Ok(mut ind) = wickra::SuperTrend::new(14, 2.0) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.value, o.direction),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_SuperTrend", "value,direction", &rows);
+    } else {
+        eprintln!("gen_golden skip SuperTrend");
+    }
+    if let Ok(mut ind) = wickra::TdLines::new(3, 7) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.resistance, o.support),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_TdLines", "resistance,support", &rows);
+    } else {
+        eprintln!("gen_golden skip TdLines");
+    }
+    if let Ok(mut ind) = wickra::TdMovingAverage::new(3, 7) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.st1, o.st2),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_TdMovingAverage", "st1,st2", &rows);
+    } else {
+        eprintln!("gen_golden skip TdMovingAverage");
+    }
+    {
+        let mut ind = wickra::TdRangeProjection::new();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.high, o.low),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_TdRangeProjection", "high,low", &rows);
+    }
+    if let Ok(mut ind) = wickra::TdRiskLevel::new(3, 7) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.buy_risk, o.sell_risk),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_TdRiskLevel", "buy_risk,sell_risk", &rows);
+    } else {
+        eprintln!("gen_golden skip TdRiskLevel");
+    }
+    if let Ok(mut ind) = wickra::TdSequential::new(3, 7, 14, 28) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.setup, o.countdown, o.direction),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_TdSequential", "setup,countdown,direction", &rows);
+    } else {
+        eprintln!("gen_golden skip TdSequential");
+    }
+    if let Ok(mut ind) = wickra::TtmSqueeze::new(14, 2.0, 0.5) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.squeeze, o.momentum),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_TtmSqueeze", "squeeze,momentum", &rows);
+    } else {
+        eprintln!("gen_golden skip TtmSqueeze");
+    }
+    if let Ok(mut ind) = wickra::ValueArea::new(3, 7, 2.0) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.poc, o.vah, o.val),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_ValueArea", "poc,vah,val", &rows);
+    } else {
+        eprintln!("gen_golden skip ValueArea");
+    }
+    if let Ok(mut ind) = wickra::VolatilityCone::new(3, 7) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!(
+                    "{},{},{},{},{}",
+                    o.current, o.min, o.median, o.max, o.percentile
+                ),
+                None => "nan,nan,nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(
+            dir,
+            "g_VolatilityCone",
+            "current,min,median,max,percentile",
+            &rows,
+        );
+    } else {
+        eprintln!("gen_golden skip VolatilityCone");
+    }
+    if let Ok(mut ind) = wickra::VolumeWeightedMacd::new(3, 7, 14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.macd, o.signal, o.histogram),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_VolumeWeightedMacd", "macd,signal,histogram", &rows);
+    } else {
+        eprintln!("gen_golden skip VolumeWeightedMacd");
+    }
+    if let Ok(mut ind) = wickra::VolumeWeightedSr::new(14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.support, o.resistance),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_VolumeWeightedSr", "support,resistance", &rows);
+    } else {
+        eprintln!("gen_golden skip VolumeWeightedSr");
+    }
+    if let Ok(mut ind) = wickra::Vortex::new(14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.plus, o.minus),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_Vortex", "plus,minus", &rows);
+    } else {
+        eprintln!("gen_golden skip Vortex");
+    }
+    if let Ok(mut ind) = wickra::WaveTrend::new(3, 7, 14) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.wt1, o.wt2),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_WaveTrend", "wt1,wt2", &rows);
+    } else {
+        eprintln!("gen_golden skip WaveTrend");
+    }
+    {
+        let mut ind = wickra::WoodiePivots::new();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{},{},{}", o.pp, o.r1, o.r2, o.s1, o.s2),
+                None => "nan,nan,nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_WoodiePivots", "pp,r1,r2,s1,s2", &rows);
+    }
+    if let Ok(mut ind) = wickra::ZeroLagMacd::new(3, 7, 14) {
+        let rows: Vec<String> = closes
+            .iter()
+            .map(|&x| match ind.update(x) {
+                Some(o) => format!("{},{},{}", o.macd, o.signal, o.histogram),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_ZeroLagMacd", "macd,signal,histogram", &rows);
+    } else {
+        eprintln!("gen_golden skip ZeroLagMacd");
+    }
+    if let Ok(mut ind) = wickra::ZigZag::new(2.0) {
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.swing, o.direction),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_ZigZag", "swing,direction", &rows);
+    } else {
+        eprintln!("gen_golden skip ZigZag");
     }
 }

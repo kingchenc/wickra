@@ -1,0 +1,645 @@
+[
+{
+"canonical": "Adx",
+"native": "ADX",
+"params": [
+14
+],
+"input": "Candle",
+"n": 3
+},
+{
+"canonical": "AccelerationBands",
+"native": "AccelerationBands",
+"params": [
+14,
+2.0
+],
+"input": "Candle",
+"n": 3
+},
+{
+"canonical": "Alligator",
+"native": "Alligator",
+"params": [
+3,
+7,
+14
+],
+"input": "Candle",
+"n": 3
+},
+{
+"canonical": "AndrewsPitchfork",
+"native": "AndrewsPitchfork",
+"params": [
+14
+],
+"input": "Candle",
+"n": 3
+},
+{
+"canonical": "Aroon",
+"native": "Aroon",
+"params": [
+14
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "AtrBands",
+"native": "AtrBands",
+"params": [
+14,
+2.0
+],
+"input": "Candle",
+"n": 3
+},
+{
+"canonical": "AtrRatchet",
+"native": "AtrRatchet",
+"params": [
+14,
+2.0,
+0.5
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "AutoFib",
+"native": "AutoFib",
+"params": [],
+"input": "Candle",
+"n": 7
+},
+{
+"canonical": "CandleVolume",
+"native": "CandleVolume",
+"params": [
+14
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "CentralPivotRange",
+"native": "CentralPivotRange",
+"params": [],
+"input": "Candle",
+"n": 3
+},
+{
+"canonical": "ChandeKrollStop",
+"native": "ChandeKrollStop",
+"params": [
+3,
+2.0,
+7
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "ChandelierExit",
+"native": "ChandelierExit",
+"params": [
+14,
+2.0
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "ClassicPivots",
+"native": "ClassicPivots",
+"params": [],
+"input": "Candle",
+"n": 7
+},
+{
+"canonical": "DemarkPivots",
+"native": "DemarkPivots",
+"params": [],
+"input": "Candle",
+"n": 3
+},
+{
+"canonical": "Donchian",
+"native": "Donchian",
+"params": [
+14
+],
+"input": "Candle",
+"n": 3
+},
+{
+"canonical": "DonchianStop",
+"native": "DonchianStop",
+"params": [
+14
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "ElderRay",
+"native": "ElderRay",
+"params": [
+14
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "Equivolume",
+"native": "Equivolume",
+"params": [
+14
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "FibArcs",
+"native": "FibArcs",
+"params": [],
+"input": "Candle",
+"n": 3
+},
+{
+"canonical": "FibChannel",
+"native": "FibChannel",
+"params": [],
+"input": "Candle",
+"n": 4
+},
+{
+"canonical": "FibConfluence",
+"native": "FibConfluence",
+"params": [],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "FibExtension",
+"native": "FibExtension",
+"params": [],
+"input": "Candle",
+"n": 5
+},
+{
+"canonical": "FibFan",
+"native": "FibFan",
+"params": [],
+"input": "Candle",
+"n": 3
+},
+{
+"canonical": "FibProjection",
+"native": "FibProjection",
+"params": [],
+"input": "Candle",
+"n": 4
+},
+{
+"canonical": "FibRetracement",
+"native": "FibRetracement",
+"params": [],
+"input": "Candle",
+"n": 7
+},
+{
+"canonical": "FibTimeZones",
+"native": "FibTimeZones",
+"params": [],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "FibonacciPivots",
+"native": "FibonacciPivots",
+"params": [],
+"input": "Candle",
+"n": 7
+},
+{
+"canonical": "FractalChaosBands",
+"native": "FractalChaosBands",
+"params": [
+14
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "GatorOscillator",
+"native": "GatorOscillator",
+"params": [
+3,
+7,
+14
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "GoldenPocket",
+"native": "GoldenPocket",
+"params": [],
+"input": "Candle",
+"n": 3
+},
+{
+"canonical": "HtPhasor",
+"native": "HT_PHASOR",
+"params": [],
+"input": "f64",
+"n": 2
+},
+{
+"canonical": "HeikinAshi",
+"native": "HeikinAshi",
+"params": [],
+"input": "Candle",
+"n": 4
+},
+{
+"canonical": "HighLowVolumeNodes",
+"native": "HighLowVolumeNodes",
+"params": [
+3,
+7
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "HurstChannel",
+"native": "HurstChannel",
+"params": [
+14,
+2.0
+],
+"input": "Candle",
+"n": 3
+},
+{
+"canonical": "InitialBalance",
+"native": "InitialBalance",
+"params": [
+14
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "Kst",
+"native": "KST",
+"params": [
+3,
+7,
+14,
+28,
+35,
+42,
+56,
+63,
+70
+],
+"input": "f64",
+"n": 2
+},
+{
+"canonical": "KasePermissionStochastic",
+"native": "KasePermissionStochastic",
+"params": [
+3,
+7
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "Keltner",
+"native": "Keltner",
+"params": [
+3,
+7,
+2.0
+],
+"input": "Candle",
+"n": 3
+},
+{
+"canonical": "MaEnvelope",
+"native": "MaEnvelope",
+"params": [
+14,
+2.0
+],
+"input": "f64",
+"n": 3
+},
+{
+"canonical": "MedianChannel",
+"native": "MedianChannel",
+"params": [
+14,
+2.0
+],
+"input": "f64",
+"n": 3
+},
+{
+"canonical": "ModifiedMaStop",
+"native": "ModifiedMaStop",
+"params": [
+14
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "MurreyMathLines",
+"native": "MurreyMathLines",
+"params": [
+14
+],
+"input": "Candle",
+"n": 9
+},
+{
+"canonical": "Nrtr",
+"native": "Nrtr",
+"params": [
+2.0
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "OpeningRange",
+"native": "OpeningRange",
+"params": [
+14
+],
+"input": "Candle",
+"n": 3
+},
+{
+"canonical": "OvernightIntradayReturn",
+"native": "OvernightIntradayReturn",
+"params": [
+14
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "ProjectionBands",
+"native": "ProjectionBands",
+"params": [
+14
+],
+"input": "Candle",
+"n": 3
+},
+{
+"canonical": "Qqe",
+"native": "QQE",
+"params": [
+3,
+7,
+2.0
+],
+"input": "f64",
+"n": 2
+},
+{
+"canonical": "QuartileBands",
+"native": "QuartileBands",
+"params": [
+14
+],
+"input": "f64",
+"n": 3
+},
+{
+"canonical": "Rwi",
+"native": "RWI",
+"params": [
+14
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "SessionHighLow",
+"native": "SessionHighLow",
+"params": [
+14
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "SessionRange",
+"native": "SessionRange",
+"params": [
+14
+],
+"input": "Candle",
+"n": 3
+},
+{
+"canonical": "SmoothedHeikinAshi",
+"native": "SmoothedHeikinAshi",
+"params": [
+14
+],
+"input": "Candle",
+"n": 4
+},
+{
+"canonical": "SpreadBollingerBands",
+"native": "SpreadBollingerBands",
+"params": [
+14,
+2.0
+],
+"input": "(f64, f64)",
+"n": 4
+},
+{
+"canonical": "StandardErrorBands",
+"native": "StandardErrorBands",
+"params": [
+14,
+2.0
+],
+"input": "f64",
+"n": 3
+},
+{
+"canonical": "StarcBands",
+"native": "StarcBands",
+"params": [
+3,
+7,
+2.0
+],
+"input": "Candle",
+"n": 3
+},
+{
+"canonical": "Stochastic",
+"native": "Stochastic",
+"params": [
+3,
+7
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "SuperTrend",
+"native": "SuperTrend",
+"params": [
+14,
+2.0
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "TdLines",
+"native": "TDLines",
+"params": [
+3,
+7
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "TdMovingAverage",
+"native": "TDMovingAverage",
+"params": [
+3,
+7
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "TdRangeProjection",
+"native": "TDRangeProjection",
+"params": [],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "TdRiskLevel",
+"native": "TDRiskLevel",
+"params": [
+3,
+7
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "TdSequential",
+"native": "TDSequential",
+"params": [
+3,
+7,
+14,
+28
+],
+"input": "Candle",
+"n": 3
+},
+{
+"canonical": "TtmSqueeze",
+"native": "TtmSqueeze",
+"params": [
+14,
+2.0,
+0.5
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "VolatilityCone",
+"native": "VolatilityCone",
+"params": [
+3,
+7
+],
+"input": "Candle",
+"n": 5
+},
+{
+"canonical": "VolumeWeightedMacd",
+"native": "VolumeWeightedMacd",
+"params": [
+3,
+7,
+14
+],
+"input": "Candle",
+"n": 3
+},
+{
+"canonical": "VolumeWeightedSr",
+"native": "VolumeWeightedSr",
+"params": [
+14
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "Vortex",
+"native": "Vortex",
+"params": [
+14
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "WaveTrend",
+"native": "WaveTrend",
+"params": [
+3,
+7,
+14
+],
+"input": "Candle",
+"n": 2
+},
+{
+"canonical": "WoodiePivots",
+"native": "WoodiePivots",
+"params": [],
+"input": "Candle",
+"n": 5
+},
+{
+"canonical": "ZeroLagMacd",
+"native": "ZeroLagMACD",
+"params": [
+3,
+7,
+14
+],
+"input": "f64",
+"n": 3
+}
+]
