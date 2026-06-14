@@ -18,6 +18,7 @@
 [![OpenSSF Best Practices](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/best-practices.svg)](https://www.bestpractices.dev/projects/13094)
 [![Build provenance](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/provenance.svg)](https://github.com/wickra-lib/wickra/attestations)
 [![Docs](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/docs.svg)](https://docs.wickra.org)
+[![Verified across 10 languages](https://raw.githubusercontent.com/wickra-lib/.github/main/profile/badges/verified.svg)](https://docs.wickra.org/FAQ#do-all-the-language-bindings-compute-the-same-values)
 
 **Streaming-first technical indicators. Install with `pip install wickra` — no system dependencies.**
 
@@ -142,6 +143,30 @@ elsewhere for `None`-warmup, NaN-safety and bit-exact `batch == streaming`.
 
 Full tables (Rust + Python, streaming + batch) and how to reproduce them live in
 **[BENCHMARKS.md](BENCHMARKS.md)**.
+
+### Pick your language with eyes open — per-binding throughput
+
+Every binding calls the **same** Rust core, so this is **not** a speed claim — it
+is the raw cost of crossing each language's FFI boundary (`SMA(20)`, 200 000 bars,
+Ryzen 9 9950X, million updates/sec). **Batch is near-core everywhere; streaming is
+where the boundary shows** — so if you stream tick-by-tick, the table tells you
+which binding keeps up and which to avoid for hot loops.
+
+| Language        | streaming (Mupd/s) | batch (Mupd/s) |
+|-----------------|-------------------:|---------------:|
+| Rust (no FFI)   |                391 |            500 |
+| C / C++         |                383 |            330 |
+| C#              |                337 |            244 |
+| Python          |                 33 |            488 |
+| Java            |                 28 |            175 |
+| Go              |                 24 |            400 |
+| WASM            |                 19 |            167 |
+| Node.js         |                 17 |             10 |
+| R               |                0.1 |            193 |
+
+All ten share one verified implementation (see the verification badge above), so
+the *numbers* differ but the *values* are bit-for-bit identical. Methodology and
+the per-indicator breakdown are in [BENCHMARKS.md](BENCHMARKS.md#3-per-binding-throughput--the-cost-of-the-boundary).
 
 ## Indicators
 
