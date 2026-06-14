@@ -42,8 +42,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `Indicators.g.cs` requires, clearing four `CS8669` warnings.
 
 ### Changed
-- Renamed the `live_trading` examples to `live_binance` across the Python, Node.js
-  and WASM examples — they poll Binance market data, they do not place trades.
+- Renamed the `live_trading` examples to `live_binance` across the Python, Node.js,
+  WASM and C examples — they poll Binance market data, they do not place trades.
 - **Breaking — de-duplicated four indicators that computed identically to another
   one.** Each is now its own distinct, correctly-defined indicator (the catalogue
   stays at the same count):
