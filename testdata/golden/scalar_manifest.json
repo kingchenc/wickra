@@ -1,2322 +1,2525 @@
 [
-{
-"canonical": "AdaptiveCci",
-"native": "ADAPTIVECCI",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "AdaptiveRsi",
-"native": "ADAPTIVERSI",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Adl",
-"native": "ADL",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "AdOscillator",
-"native": "ADOSC",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "Adxr",
-"native": "ADXR",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "Apo",
-"native": "APO",
-"params": [
-3,
-7
-],
-"input": "f64"
-},
-{
-"canonical": "Atr",
-"native": "ATR",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "AvgPrice",
-"native": "AVGPRICE",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "AbandonedBaby",
-"native": "AbandonedBaby",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "Abcd",
-"native": "Abcd",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "AcceleratorOscillator",
-"native": "AcceleratorOscillator",
-"params": [
-3,
-7,
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "AdaptiveCycle",
-"native": "AdaptiveCycle",
-"params": [],
-"input": "f64"
-},
-{
-"canonical": "AdvanceBlock",
-"native": "AdvanceBlock",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "Alpha",
-"native": "Alpha",
-"params": [
-14,
-2.0
-],
-"input": "(f64, f64)"
-},
-{
-"canonical": "AnchoredRsi",
-"native": "AnchoredRSI",
-"params": [],
-"input": "f64"
-},
-{
-"canonical": "AnchoredVwap",
-"native": "AnchoredVWAP",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "AroonOscillator",
-"native": "AroonOscillator",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "AtrTrailingStop",
-"native": "AtrTrailingStop",
-"params": [
-14,
-2.0
-],
-"input": "Candle"
-},
-{
-"canonical": "AverageDrawdown",
-"native": "AverageDrawdown",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "AwesomeOscillator",
-"native": "AwesomeOscillator",
-"params": [
-3,
-7
-],
-"input": "Candle"
-},
-{
-"canonical": "AwesomeOscillatorHistogram",
-"native": "AwesomeOscillatorHistogram",
-"params": [
-3,
-7,
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "BalanceOfPower",
-"native": "BalanceOfPower",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "Bat",
-"native": "Bat",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "BeltHold",
-"native": "BeltHold",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "Beta",
-"native": "Beta",
-"params": [
-14
-],
-"input": "(f64, f64)"
-},
-{
-"canonical": "BetaNeutralSpread",
-"native": "BetaNeutralSpread",
-"params": [
-14
-],
-"input": "(f64, f64)"
-},
-{
-"canonical": "BetterVolume",
-"native": "BetterVolume",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "BipowerVariation",
-"native": "BipowerVariation",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "BodySizePct",
-"native": "BodySizePct",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "BollingerBandwidth",
-"native": "BollingerBandwidth",
-"params": [
-14,
-2.0
-],
-"input": "f64"
-},
-{
-"canonical": "Breakaway",
-"native": "Breakaway",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "BurkeRatio",
-"native": "BurkeRatio",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Butterfly",
-"native": "Butterfly",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "Cci",
-"native": "CCI",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "Cfo",
-"native": "CFO",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Cmo",
-"native": "CMO",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "CorrelationTrendIndicator",
-"native": "CTI",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "CalmarRatio",
-"native": "CalmarRatio",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "CenterOfGravity",
-"native": "CenterOfGravity",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "ChaikinOscillator",
-"native": "ChaikinOscillator",
-"params": [
-3,
-7
-],
-"input": "Candle"
-},
-{
-"canonical": "ChaikinVolatility",
-"native": "ChaikinVolatility",
-"params": [
-3,
-7
-],
-"input": "Candle"
-},
-{
-"canonical": "ChoppinessIndex",
-"native": "ChoppinessIndex",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "CloseVsOpen",
-"native": "CloseVsOpen",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "ClosingMarubozu",
-"native": "ClosingMarubozu",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "CoefficientOfVariation",
-"native": "CoefficientOfVariation",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "CommonSenseRatio",
-"native": "CommonSenseRatio",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "ConcealingBabySwallow",
-"native": "ConcealingBabySwallow",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "ConnorsRsi",
-"native": "ConnorsRSI",
-"params": [
-3,
-7,
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Coppock",
-"native": "Coppock",
-"params": [
-3,
-7,
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Counterattack",
-"native": "Counterattack",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "Crab",
-"native": "Crab",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "CupAndHandle",
-"native": "CupAndHandle",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "CyberneticCycle",
-"native": "CyberneticCycle",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Cypher",
-"native": "Cypher",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "Dema",
-"native": "DEMA",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Dpo",
-"native": "DPO",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Dx",
-"native": "DX",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "Decycler",
-"native": "Decycler",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "DecyclerOscillator",
-"native": "DecyclerOscillator",
-"params": [
-3,
-7
-],
-"input": "f64"
-},
-{
-"canonical": "DemandIndex",
-"native": "DemandIndex",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "DerivativeOscillator",
-"native": "DerivativeOscillator",
-"params": [
-3,
-7,
-14,
-28
-],
-"input": "f64"
-},
-{
-"canonical": "DetrendedStdDev",
-"native": "DetrendedStdDev",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "DisparityIndex",
-"native": "DisparityIndex",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "DistanceSsd",
-"native": "DistanceSsd",
-"params": [
-14
-],
-"input": "(f64, f64)"
-},
-{
-"canonical": "Doji",
-"native": "Doji",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "DojiStar",
-"native": "DojiStar",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "DoubleTopBottom",
-"native": "DoubleTopBottom",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "DownsideGapThreeMethods",
-"native": "DownsideGapThreeMethods",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "DragonflyDoji",
-"native": "DragonflyDoji",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "DumplingTop",
-"native": "DumplingTop",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "DynamicMomentumIndex",
-"native": "DynamicMomentumIndex",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Ehma",
-"native": "EHMA",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Ema",
-"native": "EMA",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Evwma",
-"native": "EVWMA",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "EaseOfMovement",
-"native": "EaseOfMovement",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "EhlersStochastic",
-"native": "EhlersStochastic",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "ElderImpulse",
-"native": "ElderImpulse",
-"params": [
-3,
-7,
-14,
-28
-],
-"input": "f64"
-},
-{
-"canonical": "Engulfing",
-"native": "Engulfing",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "EveningDojiStar",
-"native": "EveningDojiStar",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "Expectancy",
-"native": "Expectancy",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Frama",
-"native": "FRAMA",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "FallingThreeMethods",
-"native": "FallingThreeMethods",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "FisherRsi",
-"native": "FisherRSI",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "FisherTransform",
-"native": "FisherTransform",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "FlagPennant",
-"native": "FlagPennant",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "ForceIndex",
-"native": "ForceIndex",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "FryPanBottom",
-"native": "FryPanBottom",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "GeometricMa",
-"native": "GMA",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "GainLossRatio",
-"native": "GainLossRatio",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "GainToPainRatio",
-"native": "GainToPainRatio",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "GapSideBySideWhite",
-"native": "GapSideBySideWhite",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "Gartley",
-"native": "Gartley",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "GravestoneDoji",
-"native": "GravestoneDoji",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "HighpassFilter",
-"native": "HIGHPASS",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Hma",
-"native": "HMA",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Hammer",
-"native": "Hammer",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "HangingMan",
-"native": "HangingMan",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "Harami",
-"native": "Harami",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "HaramiCross",
-"native": "HaramiCross",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "HasbrouckInformationShare",
-"native": "HasbrouckInformationShare",
-"params": [
-14
-],
-"input": "(f64, f64)"
-},
-{
-"canonical": "HeadAndShoulders",
-"native": "HeadAndShoulders",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "HeikinAshiOscillator",
-"native": "HeikinAshiOscillator",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "HighLowRange",
-"native": "HighLowRange",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "HighWave",
-"native": "HighWave",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "Hikkake",
-"native": "Hikkake",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "HikkakeModified",
-"native": "HikkakeModified",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "HilbertDominantCycle",
-"native": "HilbertDominantCycle",
-"params": [],
-"input": "f64"
-},
-{
-"canonical": "HistoricalVolatility",
-"native": "HistoricalVolatility",
-"params": [
-3,
-7
-],
-"input": "f64"
-},
-{
-"canonical": "HomingPigeon",
-"native": "HomingPigeon",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "IntradayMomentumIndex",
-"native": "IMI",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "IdenticalThreeCrows",
-"native": "IdenticalThreeCrows",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "InNeck",
-"native": "InNeck",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "Inertia",
-"native": "Inertia",
-"params": [
-3,
-7
-],
-"input": "Candle"
-},
-{
-"canonical": "InformationRatio",
-"native": "InformationRatio",
-"params": [
-14
-],
-"input": "(f64, f64)"
-},
-{
-"canonical": "InstantaneousTrendline",
-"native": "InstantaneousTrendline",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "IntradayIntensity",
-"native": "IntradayIntensity",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "InverseFisherTransform",
-"native": "InverseFisherTransform",
-"params": [
-2.0
-],
-"input": "f64"
-},
-{
-"canonical": "InvertedHammer",
-"native": "InvertedHammer",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "JarqueBera",
-"native": "JARQUEBERA",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "JumpIndicator",
-"native": "JumpIndicator",
-"params": [
-14,
-2.0
-],
-"input": "f64"
-},
-{
-"canonical": "Kama",
-"native": "KAMA",
-"params": [
-3,
-7,
-14
-],
-"input": "f64"
-},
-{
-"canonical": "KRatio",
-"native": "KRatio",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Kvo",
-"native": "KVO",
-"params": [
-3,
-7
-],
-"input": "Candle"
-},
-{
-"canonical": "KellyCriterion",
-"native": "KellyCriterion",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "KendallTau",
-"native": "KendallTau",
-"params": [
-14
-],
-"input": "(f64, f64)"
-},
-{
-"canonical": "Kicking",
-"native": "Kicking",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "KickingByLength",
-"native": "KickingByLength",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "Kurtosis",
-"native": "Kurtosis",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "LadderBottom",
-"native": "LadderBottom",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "LogReturn",
-"native": "LogReturn",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "LongLeggedDoji",
-"native": "LongLeggedDoji",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "LongLine",
-"native": "LongLine",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "M2Measure",
-"native": "M2Measure",
-"params": [
-14,
-2.0,
-0.5
-],
-"input": "f64"
-},
-{
-"canonical": "Mfi",
-"native": "MFI",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "MidPoint",
-"native": "MIDPOINT",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "MidPrice",
-"native": "MIDPRICE",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "MinusDi",
-"native": "MINUS_DI",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "MinusDm",
-"native": "MINUS_DM",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "Mom",
-"native": "MOM",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "MacdHistogram",
-"native": "MacdHistogram",
-"params": [
-3,
-7,
-14
-],
-"input": "f64"
-},
-{
-"canonical": "MarketFacilitationIndex",
-"native": "MarketFacilitationIndex",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "MartinRatio",
-"native": "MartinRatio",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Marubozu",
-"native": "Marubozu",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "MassIndex",
-"native": "MassIndex",
-"params": [
-3,
-7
-],
-"input": "Candle"
-},
-{
-"canonical": "MatHold",
-"native": "MatHold",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "MatchingLow",
-"native": "MatchingLow",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "MaxDrawdown",
-"native": "MaxDrawdown",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "MedianAbsoluteDeviation",
-"native": "MedianAbsoluteDeviation",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "MedianMa",
-"native": "MedianMA",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "MedianPrice",
-"native": "MedianPrice",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "MorningDojiStar",
-"native": "MorningDojiStar",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "MorningEveningStar",
-"native": "MorningEveningStar",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "Natr",
-"native": "NATR",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "Nvi",
-"native": "NVI",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "NakedPoc",
-"native": "NakedPoc",
-"params": [
-3,
-7
-],
-"input": "Candle"
-},
-{
-"canonical": "NewPriceLines",
-"native": "NewPriceLines",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "Obv",
-"native": "OBV",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "OmegaRatio",
-"native": "OmegaRatio",
-"params": [
-14,
-2.0
-],
-"input": "f64"
-},
-{
-"canonical": "OnNeck",
-"native": "OnNeck",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "OpeningMarubozu",
-"native": "OpeningMarubozu",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "OuHalfLife",
-"native": "OuHalfLife",
-"params": [
-14
-],
-"input": "(f64, f64)"
-},
-{
-"canonical": "Pgo",
-"native": "PGO",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "PlusDi",
-"native": "PLUS_DI",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "PlusDm",
-"native": "PLUS_DM",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "Pmo",
-"native": "PMO",
-"params": [
-3,
-7
-],
-"input": "f64"
-},
-{
-"canonical": "Ppo",
-"native": "PPO",
-"params": [
-3,
-7
-],
-"input": "f64"
-},
-{
-"canonical": "Pvi",
-"native": "PVI",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "PainIndex",
-"native": "PainIndex",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "PairwiseBeta",
-"native": "PairwiseBeta",
-"params": [
-14
-],
-"input": "(f64, f64)"
-},
-{
-"canonical": "PearsonCorrelation",
-"native": "PearsonCorrelation",
-"params": [
-14
-],
-"input": "(f64, f64)"
-},
-{
-"canonical": "PercentB",
-"native": "PercentB",
-"params": [
-14,
-2.0
-],
-"input": "f64"
-},
-{
-"canonical": "PercentageTrailingStop",
-"native": "PercentageTrailingStop",
-"params": [
-2.0
-],
-"input": "f64"
-},
-{
-"canonical": "PiercingDarkCloud",
-"native": "PiercingDarkCloud",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "PivotReversal",
-"native": "PivotReversal",
-"params": [
-3,
-7
-],
-"input": "Candle"
-},
-{
-"canonical": "PpoHistogram",
-"native": "PpoHistogram",
-"params": [
-3,
-7,
-14
-],
-"input": "f64"
-},
-{
-"canonical": "ProfileShape",
-"native": "ProfileShape",
-"params": [
-3,
-7
-],
-"input": "Candle"
-},
-{
-"canonical": "ProfitFactor",
-"native": "ProfitFactor",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "ProjectionOscillator",
-"native": "ProjectionOscillator",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "Qstick",
-"native": "Qstick",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "Reflex",
-"native": "REFLEX",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Rmi",
-"native": "RMI",
-"params": [
-3,
-7
-],
-"input": "f64"
-},
-{
-"canonical": "Roc",
-"native": "ROC",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Rocp",
-"native": "ROCP",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Rocr",
-"native": "ROCR",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Rocr100",
-"native": "ROCR100",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "RollingMinMaxScaler",
-"native": "ROLLINGMINMAX",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Rsi",
-"native": "RSI",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Rsx",
-"native": "RSX",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "RSquared",
-"native": "RSquared",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Rvi",
-"native": "RVI",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "RviVolatility",
-"native": "RVIVolatility",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "RealizedVolatility",
-"native": "RealizedVolatility",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "RecoveryFactor",
-"native": "RecoveryFactor",
-"params": [],
-"input": "f64"
-},
-{
-"canonical": "RectangleRange",
-"native": "RectangleRange",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "RegimeLabel",
-"native": "RegimeLabel",
-"params": [
-3,
-7
-],
-"input": "f64"
-},
-{
-"canonical": "RenkoTrailingStop",
-"native": "RenkoTrailingStop",
-"params": [
-2.0
-],
-"input": "f64"
-},
-{
-"canonical": "RickshawMan",
-"native": "RickshawMan",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "RisingThreeMethods",
-"native": "RisingThreeMethods",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "RollingCorrelation",
-"native": "RollingCorrelation",
-"params": [
-14
-],
-"input": "(f64, f64)"
-},
-{
-"canonical": "RollingCovariance",
-"native": "RollingCovariance",
-"params": [
-14
-],
-"input": "(f64, f64)"
-},
-{
-"canonical": "RollingIqr",
-"native": "RollingIqr",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "RollingPercentileRank",
-"native": "RollingPercentileRank",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "RoofingFilter",
-"native": "RoofingFilter",
-"params": [
-3,
-7
-],
-"input": "f64"
-},
-{
-"canonical": "SarExt",
-"native": "SAREXT",
-"params": [
-2.0,
-0.5,
-0.5,
-0.5,
-0.5,
-0.5,
-0.5,
-0.5
-],
-"input": "Candle"
-},
-{
-"canonical": "ShannonEntropy",
-"native": "SHANNONENT",
-"params": [
-3,
-7
-],
-"input": "f64"
-},
-{
-"canonical": "Sma",
-"native": "SMA",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Smi",
-"native": "SMI",
-"params": [
-3,
-7,
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "Smma",
-"native": "SMMA",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "SineWeightedMa",
-"native": "SWMA",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "SeasonalZScore",
-"native": "SeasonalZScore",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "SeparatingLines",
-"native": "SeparatingLines",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "SessionVwap",
-"native": "SessionVwap",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "Shark",
-"native": "Shark",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "SharpeRatio",
-"native": "SharpeRatio",
-"params": [
-14,
-2.0
-],
-"input": "f64"
-},
-{
-"canonical": "ShootingStar",
-"native": "ShootingStar",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "ShortLine",
-"native": "ShortLine",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "SineWave",
-"native": "SineWave",
-"params": [],
-"input": "f64"
-},
-{
-"canonical": "SinglePrints",
-"native": "SinglePrints",
-"params": [
-3,
-7
-],
-"input": "Candle"
-},
-{
-"canonical": "Skewness",
-"native": "Skewness",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "SortinoRatio",
-"native": "SortinoRatio",
-"params": [
-14,
-2.0
-],
-"input": "f64"
-},
-{
-"canonical": "SpearmanCorrelation",
-"native": "SpearmanCorrelation",
-"params": [
-14
-],
-"input": "(f64, f64)"
-},
-{
-"canonical": "SpinningTop",
-"native": "SpinningTop",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "SpreadAr1Coefficient",
-"native": "SpreadAr1Coefficient",
-"params": [
-14
-],
-"input": "(f64, f64)"
-},
-{
-"canonical": "SpreadHurst",
-"native": "SpreadHurst",
-"params": [
-14
-],
-"input": "(f64, f64)"
-},
-{
-"canonical": "StalledPattern",
-"native": "StalledPattern",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "StandardError",
-"native": "StandardError",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "StdDev",
-"native": "StdDev",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "StepTrailingStop",
-"native": "StepTrailingStop",
-"params": [
-2.0
-],
-"input": "f64"
-},
-{
-"canonical": "SterlingRatio",
-"native": "SterlingRatio",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "StickSandwich",
-"native": "StickSandwich",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "StochRsi",
-"native": "StochRSI",
-"params": [
-3,
-7
-],
-"input": "f64"
-},
-{
-"canonical": "StochasticCci",
-"native": "StochasticCCI",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "SuperSmoother",
-"native": "SuperSmoother",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "TdCamouflage",
-"native": "TDCamouflage",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "TdClop",
-"native": "TDClop",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "TdClopwin",
-"native": "TDClopwin",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "TdCombo",
-"native": "TDCombo",
-"params": [
-3,
-7,
-14,
-28
-],
-"input": "Candle"
-},
-{
-"canonical": "TdCountdown",
-"native": "TDCountdown",
-"params": [
-3,
-7,
-14,
-28
-],
-"input": "Candle"
-},
-{
-"canonical": "TdDifferential",
-"native": "TDDifferential",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "TdOpen",
-"native": "TDOpen",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "TdPressure",
-"native": "TDPressure",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "TdPropulsion",
-"native": "TDPropulsion",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "TdRei",
-"native": "TDREI",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "TdSetup",
-"native": "TDSetup",
-"params": [
-3,
-7
-],
-"input": "Candle"
-},
-{
-"canonical": "TdTrap",
-"native": "TDTrap",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "Tema",
-"native": "TEMA",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Tii",
-"native": "TII",
-"params": [
-3,
-7
-],
-"input": "f64"
-},
-{
-"canonical": "Trendflex",
-"native": "TRENDFLEX",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Trima",
-"native": "TRIMA",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Trix",
-"native": "TRIX",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Tsf",
-"native": "TSF",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Tsi",
-"native": "TSI",
-"params": [
-3,
-7
-],
-"input": "f64"
-},
-{
-"canonical": "Tsv",
-"native": "TSV",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "TtmTrend",
-"native": "TTM_TREND",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "TailRatio",
-"native": "TailRatio",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Takuri",
-"native": "Takuri",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "TasukiGap",
-"native": "TasukiGap",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "ThreeDrives",
-"native": "ThreeDrives",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "ThreeInside",
-"native": "ThreeInside",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "ThreeLineBreak",
-"native": "ThreeLineBreak",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "ThreeLineStrike",
-"native": "ThreeLineStrike",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "ThreeOutside",
-"native": "ThreeOutside",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "ThreeSoldiersOrCrows",
-"native": "ThreeSoldiersOrCrows",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "ThreeStarsInSouth",
-"native": "ThreeStarsInSouth",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "Thrusting",
-"native": "Thrusting",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "TimeBasedStop",
-"native": "TimeBasedStop",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "TowerTopBottom",
-"native": "TowerTopBottom",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "TradeVolumeIndex",
-"native": "TradeVolumeIndex",
-"params": [
-2.0
-],
-"input": "Candle"
-},
-{
-"canonical": "TrendLabel",
-"native": "TrendLabel",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "TreynorRatio",
-"native": "TreynorRatio",
-"params": [
-14,
-2.0
-],
-"input": "(f64, f64)"
-},
-{
-"canonical": "Triangle",
-"native": "Triangle",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "TripleTopBottom",
-"native": "TripleTopBottom",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "Tristar",
-"native": "Tristar",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "TrueRange",
-"native": "TrueRange",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "TsfOscillator",
-"native": "TsfOscillator",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Tweezer",
-"native": "Tweezer",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "TwiggsMoneyFlow",
-"native": "TwiggsMoneyFlow",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "TwoCrows",
-"native": "TwoCrows",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "TypicalPrice",
-"native": "TypicalPrice",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "UniversalOscillator",
-"native": "UNIVERSALOSC",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "UlcerIndex",
-"native": "UlcerIndex",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "UltimateOscillator",
-"native": "UltimateOscillator",
-"params": [
-3,
-7,
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "UniqueThreeRiver",
-"native": "UniqueThreeRiver",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "UpsideGapThreeMethods",
-"native": "UpsideGapThreeMethods",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "UpsideGapTwoCrows",
-"native": "UpsideGapTwoCrows",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "UpsidePotentialRatio",
-"native": "UpsidePotentialRatio",
-"params": [
-14,
-2.0
-],
-"input": "f64"
-},
-{
-"canonical": "Vidya",
-"native": "VIDYA",
-"params": [
-3,
-7
-],
-"input": "f64"
-},
-{
-"canonical": "Vwap",
-"native": "VWAP",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "Vwma",
-"native": "VWMA",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "Vzo",
-"native": "VZO",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "Variance",
-"native": "Variance",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "VerticalHorizontalFilter",
-"native": "VerticalHorizontalFilter",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "VolatilityOfVolatility",
-"native": "VolatilityOfVolatility",
-"params": [
-3,
-7
-],
-"input": "f64"
-},
-{
-"canonical": "VolatilityRatio",
-"native": "VolatilityRatio",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "VoltyStop",
-"native": "VoltyStop",
-"params": [
-14,
-2.0
-],
-"input": "Candle"
-},
-{
-"canonical": "VolumeOscillator",
-"native": "VolumeOscillator",
-"params": [
-3,
-7
-],
-"input": "Candle"
-},
-{
-"canonical": "VolumeRsi",
-"native": "VolumeRsi",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "WavePm",
-"native": "WAVE_PM",
-"params": [
-3,
-7
-],
-"input": "f64"
-},
-{
-"canonical": "Wma",
-"native": "WMA",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "Wad",
-"native": "Wad",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "Wedge",
-"native": "Wedge",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "WeightedClose",
-"native": "WeightedClose",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "WickRatio",
-"native": "WickRatio",
-"params": [],
-"input": "Candle"
-},
-{
-"canonical": "WilliamsR",
-"native": "WilliamsR",
-"params": [
-14
-],
-"input": "Candle"
-},
-{
-"canonical": "WinRate",
-"native": "WinRate",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "YoyoExit",
-"native": "YoyoExit",
-"params": [
-14,
-2.0
-],
-"input": "Candle"
-},
-{
-"canonical": "Zlema",
-"native": "ZLEMA",
-"params": [
-14
-],
-"input": "f64"
-},
-{
-"canonical": "ZScore",
-"native": "ZScore",
-"params": [
-14
-],
-"input": "f64"
-}
+ {
+  "canonical": "AbandonedBaby",
+  "native": "AbandonedBaby",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Abcd",
+  "native": "Abcd",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "AcceleratorOscillator",
+  "native": "AcceleratorOscillator",
+  "params": [
+   3,
+   7,
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "AdOscillator",
+  "native": "ADOSC",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "AdaptiveCci",
+  "native": "ADAPTIVECCI",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "AdaptiveCycle",
+  "native": "AdaptiveCycle",
+  "params": [],
+  "input": "f64"
+ },
+ {
+  "canonical": "AdaptiveRsi",
+  "native": "ADAPTIVERSI",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Adl",
+  "native": "ADL",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "AdvanceBlock",
+  "native": "AdvanceBlock",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Adxr",
+  "native": "ADXR",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Alma",
+  "native": "ALMA",
+  "params": [
+   9,
+   0.85,
+   6.0
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Alpha",
+  "native": "Alpha",
+  "params": [
+   14,
+   2.0
+  ],
+  "input": "(f64, f64)"
+ },
+ {
+  "canonical": "AnchoredRsi",
+  "native": "AnchoredRSI",
+  "params": [],
+  "input": "f64"
+ },
+ {
+  "canonical": "AnchoredVwap",
+  "native": "AnchoredVWAP",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Apo",
+  "native": "APO",
+  "params": [
+   3,
+   7
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "AroonOscillator",
+  "native": "AroonOscillator",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Atr",
+  "native": "ATR",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "AtrTrailingStop",
+  "native": "AtrTrailingStop",
+  "params": [
+   14,
+   2.0
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Autocorrelation",
+  "native": "Autocorrelation",
+  "params": [
+   10,
+   1
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "AutocorrelationPeriodogram",
+  "native": "AUTOCORRPGRAM",
+  "params": [
+   10,
+   48
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "AverageDrawdown",
+  "native": "AverageDrawdown",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "AvgPrice",
+  "native": "AVGPRICE",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "AwesomeOscillator",
+  "native": "AwesomeOscillator",
+  "params": [
+   3,
+   7
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "AwesomeOscillatorHistogram",
+  "native": "AwesomeOscillatorHistogram",
+  "params": [
+   3,
+   7,
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "BalanceOfPower",
+  "native": "BalanceOfPower",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "BandpassFilter",
+  "native": "BANDPASS",
+  "params": [
+   20,
+   0.3
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Bat",
+  "native": "Bat",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "BeltHold",
+  "native": "BeltHold",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Beta",
+  "native": "Beta",
+  "params": [
+   14
+  ],
+  "input": "(f64, f64)"
+ },
+ {
+  "canonical": "BetaNeutralSpread",
+  "native": "BetaNeutralSpread",
+  "params": [
+   14
+  ],
+  "input": "(f64, f64)"
+ },
+ {
+  "canonical": "BetterVolume",
+  "native": "BetterVolume",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "BipowerVariation",
+  "native": "BipowerVariation",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "BodySizePct",
+  "native": "BodySizePct",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "BollingerBandwidth",
+  "native": "BollingerBandwidth",
+  "params": [
+   14,
+   2.0
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Breakaway",
+  "native": "Breakaway",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "BurkeRatio",
+  "native": "BurkeRatio",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Butterfly",
+  "native": "Butterfly",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "CalmarRatio",
+  "native": "CalmarRatio",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Cci",
+  "native": "CCI",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "CenterOfGravity",
+  "native": "CenterOfGravity",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Cfo",
+  "native": "CFO",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "ChaikinOscillator",
+  "native": "ChaikinOscillator",
+  "params": [
+   3,
+   7
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "ChaikinVolatility",
+  "native": "ChaikinVolatility",
+  "params": [
+   3,
+   7
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "ChoppinessIndex",
+  "native": "ChoppinessIndex",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "CloseVsOpen",
+  "native": "CloseVsOpen",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "ClosingMarubozu",
+  "native": "ClosingMarubozu",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Cmo",
+  "native": "CMO",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "CoefficientOfVariation",
+  "native": "CoefficientOfVariation",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "CommonSenseRatio",
+  "native": "CommonSenseRatio",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "ConcealingBabySwallow",
+  "native": "ConcealingBabySwallow",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "ConditionalValueAtRisk",
+  "native": "ConditionalValueAtRisk",
+  "params": [
+   20,
+   0.95
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "ConnorsRsi",
+  "native": "ConnorsRSI",
+  "params": [
+   3,
+   7,
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Coppock",
+  "native": "Coppock",
+  "params": [
+   3,
+   7,
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "CorrelationTrendIndicator",
+  "native": "CTI",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Counterattack",
+  "native": "Counterattack",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Crab",
+  "native": "Crab",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "CupAndHandle",
+  "native": "CupAndHandle",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "CyberneticCycle",
+  "native": "CyberneticCycle",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Cypher",
+  "native": "Cypher",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Decycler",
+  "native": "Decycler",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "DecyclerOscillator",
+  "native": "DecyclerOscillator",
+  "params": [
+   3,
+   7
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Dema",
+  "native": "DEMA",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "DemandIndex",
+  "native": "DemandIndex",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "DerivativeOscillator",
+  "native": "DerivativeOscillator",
+  "params": [
+   3,
+   7,
+   14,
+   28
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "DetrendedStdDev",
+  "native": "DetrendedStdDev",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "DisparityIndex",
+  "native": "DisparityIndex",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "DistanceSsd",
+  "native": "DistanceSsd",
+  "params": [
+   14
+  ],
+  "input": "(f64, f64)"
+ },
+ {
+  "canonical": "Doji",
+  "native": "Doji",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "DojiStar",
+  "native": "DojiStar",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "DoubleTopBottom",
+  "native": "DoubleTopBottom",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "DownsideGapThreeMethods",
+  "native": "DownsideGapThreeMethods",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Dpo",
+  "native": "DPO",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "DragonflyDoji",
+  "native": "DragonflyDoji",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "DumplingTop",
+  "native": "DumplingTop",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Dx",
+  "native": "DX",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "DynamicMomentumIndex",
+  "native": "DynamicMomentumIndex",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "EaseOfMovement",
+  "native": "EaseOfMovement",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "EhlersStochastic",
+  "native": "EhlersStochastic",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Ehma",
+  "native": "EHMA",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "ElderImpulse",
+  "native": "ElderImpulse",
+  "params": [
+   3,
+   7,
+   14,
+   28
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Ema",
+  "native": "EMA",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "EmpiricalModeDecomposition",
+  "native": "EmpiricalModeDecomposition",
+  "params": [
+   20,
+   0.1
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Engulfing",
+  "native": "Engulfing",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "EveningDojiStar",
+  "native": "EveningDojiStar",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Evwma",
+  "native": "EVWMA",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "EwmaVolatility",
+  "native": "EwmaVolatility",
+  "params": [
+   0.94
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Expectancy",
+  "native": "Expectancy",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "FallingThreeMethods",
+  "native": "FallingThreeMethods",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Fama",
+  "native": "FAMA",
+  "params": [
+   0.5,
+   0.05
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "FisherRsi",
+  "native": "FisherRSI",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "FisherTransform",
+  "native": "FisherTransform",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "FlagPennant",
+  "native": "FlagPennant",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "ForceIndex",
+  "native": "ForceIndex",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Frama",
+  "native": "FRAMA",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "FryPanBottom",
+  "native": "FryPanBottom",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "GainLossRatio",
+  "native": "GainLossRatio",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "GainToPainRatio",
+  "native": "GainToPainRatio",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "GapSideBySideWhite",
+  "native": "GapSideBySideWhite",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Garch11",
+  "native": "Garch11",
+  "params": [
+   2e-06,
+   0.1,
+   0.88
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Gartley",
+  "native": "Gartley",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "GeneralizedDema",
+  "native": "GD",
+  "params": [
+   5,
+   0.7
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "GeometricMa",
+  "native": "GMA",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "GrangerCausality",
+  "native": "GrangerCausality",
+  "params": [
+   60,
+   1
+  ],
+  "input": "(f64, f64)"
+ },
+ {
+  "canonical": "GravestoneDoji",
+  "native": "GravestoneDoji",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Hammer",
+  "native": "Hammer",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "HangingMan",
+  "native": "HangingMan",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Harami",
+  "native": "Harami",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "HaramiCross",
+  "native": "HaramiCross",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "HasbrouckInformationShare",
+  "native": "HasbrouckInformationShare",
+  "params": [
+   14
+  ],
+  "input": "(f64, f64)"
+ },
+ {
+  "canonical": "HeadAndShoulders",
+  "native": "HeadAndShoulders",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "HeikinAshiOscillator",
+  "native": "HeikinAshiOscillator",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "HighLowRange",
+  "native": "HighLowRange",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "HighWave",
+  "native": "HighWave",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "HighpassFilter",
+  "native": "HIGHPASS",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Hikkake",
+  "native": "Hikkake",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "HikkakeModified",
+  "native": "HikkakeModified",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "HilbertDominantCycle",
+  "native": "HilbertDominantCycle",
+  "params": [],
+  "input": "f64"
+ },
+ {
+  "canonical": "HistoricalVolatility",
+  "native": "HistoricalVolatility",
+  "params": [
+   3,
+   7
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Hma",
+  "native": "HMA",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "HoltWinters",
+  "native": "HoltWinters",
+  "params": [
+   0.5,
+   0.1
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "HomingPigeon",
+  "native": "HomingPigeon",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "HurstExponent",
+  "native": "HurstExponent",
+  "params": [
+   100,
+   4
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "IdenticalThreeCrows",
+  "native": "IdenticalThreeCrows",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "InNeck",
+  "native": "InNeck",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Inertia",
+  "native": "Inertia",
+  "params": [
+   3,
+   7
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "InformationRatio",
+  "native": "InformationRatio",
+  "params": [
+   14
+  ],
+  "input": "(f64, f64)"
+ },
+ {
+  "canonical": "InstantaneousTrendline",
+  "native": "InstantaneousTrendline",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "IntradayIntensity",
+  "native": "IntradayIntensity",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "IntradayMomentumIndex",
+  "native": "IMI",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "InverseFisherTransform",
+  "native": "InverseFisherTransform",
+  "params": [
+   2.0
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "InvertedHammer",
+  "native": "InvertedHammer",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "JarqueBera",
+  "native": "JARQUEBERA",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Jma",
+  "native": "JMA",
+  "params": [
+   7,
+   0.0,
+   2
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "JumpIndicator",
+  "native": "JumpIndicator",
+  "params": [
+   14,
+   2.0
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "KRatio",
+  "native": "KRatio",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Kama",
+  "native": "KAMA",
+  "params": [
+   3,
+   7,
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "KellyCriterion",
+  "native": "KellyCriterion",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "KendallTau",
+  "native": "KendallTau",
+  "params": [
+   14
+  ],
+  "input": "(f64, f64)"
+ },
+ {
+  "canonical": "Kicking",
+  "native": "Kicking",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "KickingByLength",
+  "native": "KickingByLength",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Kurtosis",
+  "native": "Kurtosis",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Kvo",
+  "native": "KVO",
+  "params": [
+   3,
+   7
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "LadderBottom",
+  "native": "LadderBottom",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "LaguerreRsi",
+  "native": "LaguerreRSI",
+  "params": [
+   0.5
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "LogReturn",
+  "native": "LogReturn",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "LongLeggedDoji",
+  "native": "LongLeggedDoji",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "LongLine",
+  "native": "LongLine",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "M2Measure",
+  "native": "M2Measure",
+  "params": [
+   14,
+   2.0,
+   0.5
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "MacdHistogram",
+  "native": "MacdHistogram",
+  "params": [
+   3,
+   7,
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "MarketFacilitationIndex",
+  "native": "MarketFacilitationIndex",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "MartinRatio",
+  "native": "MartinRatio",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Marubozu",
+  "native": "Marubozu",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "MassIndex",
+  "native": "MassIndex",
+  "params": [
+   3,
+   7
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "MatHold",
+  "native": "MatHold",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "MatchingLow",
+  "native": "MatchingLow",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "MaxDrawdown",
+  "native": "MaxDrawdown",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "MedianAbsoluteDeviation",
+  "native": "MedianAbsoluteDeviation",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "MedianMa",
+  "native": "MedianMA",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "MedianPrice",
+  "native": "MedianPrice",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Mfi",
+  "native": "MFI",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "MidPoint",
+  "native": "MIDPOINT",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "MidPrice",
+  "native": "MIDPRICE",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "MinusDi",
+  "native": "MINUS_DI",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "MinusDm",
+  "native": "MINUS_DM",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Mom",
+  "native": "MOM",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "MorningDojiStar",
+  "native": "MorningDojiStar",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "MorningEveningStar",
+  "native": "MorningEveningStar",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "NakedPoc",
+  "native": "NakedPoc",
+  "params": [
+   3,
+   7
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Natr",
+  "native": "NATR",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "NewPriceLines",
+  "native": "NewPriceLines",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Nvi",
+  "native": "NVI",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Obv",
+  "native": "OBV",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "OmegaRatio",
+  "native": "OmegaRatio",
+  "params": [
+   14,
+   2.0
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "OnNeck",
+  "native": "OnNeck",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "OpeningMarubozu",
+  "native": "OpeningMarubozu",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "OuHalfLife",
+  "native": "OuHalfLife",
+  "params": [
+   14
+  ],
+  "input": "(f64, f64)"
+ },
+ {
+  "canonical": "PainIndex",
+  "native": "PainIndex",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "PairwiseBeta",
+  "native": "PairwiseBeta",
+  "params": [
+   14
+  ],
+  "input": "(f64, f64)"
+ },
+ {
+  "canonical": "PearsonCorrelation",
+  "native": "PearsonCorrelation",
+  "params": [
+   14
+  ],
+  "input": "(f64, f64)"
+ },
+ {
+  "canonical": "PercentB",
+  "native": "PercentB",
+  "params": [
+   14,
+   2.0
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "PercentageTrailingStop",
+  "native": "PercentageTrailingStop",
+  "params": [
+   2.0
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Pgo",
+  "native": "PGO",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "PiercingDarkCloud",
+  "native": "PiercingDarkCloud",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "PivotReversal",
+  "native": "PivotReversal",
+  "params": [
+   3,
+   7
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "PlusDi",
+  "native": "PLUS_DI",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "PlusDm",
+  "native": "PLUS_DM",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Pmo",
+  "native": "PMO",
+  "params": [
+   3,
+   7
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Ppo",
+  "native": "PPO",
+  "params": [
+   3,
+   7
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "PpoHistogram",
+  "native": "PpoHistogram",
+  "params": [
+   3,
+   7,
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "ProfileShape",
+  "native": "ProfileShape",
+  "params": [
+   3,
+   7
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "ProfitFactor",
+  "native": "ProfitFactor",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "ProjectionOscillator",
+  "native": "ProjectionOscillator",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Psar",
+  "native": "PSAR",
+  "params": [
+   0.02,
+   0.02,
+   0.2
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Pvi",
+  "native": "PVI",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Qstick",
+  "native": "Qstick",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "RSquared",
+  "native": "RSquared",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "RealizedVolatility",
+  "native": "RealizedVolatility",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "RecoveryFactor",
+  "native": "RecoveryFactor",
+  "params": [],
+  "input": "f64"
+ },
+ {
+  "canonical": "RectangleRange",
+  "native": "RectangleRange",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Reflex",
+  "native": "REFLEX",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "RegimeLabel",
+  "native": "RegimeLabel",
+  "params": [
+   3,
+   7
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "RenkoTrailingStop",
+  "native": "RenkoTrailingStop",
+  "params": [
+   2.0
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "RickshawMan",
+  "native": "RickshawMan",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "RisingThreeMethods",
+  "native": "RisingThreeMethods",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Rmi",
+  "native": "RMI",
+  "params": [
+   3,
+   7
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Roc",
+  "native": "ROC",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Rocp",
+  "native": "ROCP",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Rocr",
+  "native": "ROCR",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Rocr100",
+  "native": "ROCR100",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "RollingCorrelation",
+  "native": "RollingCorrelation",
+  "params": [
+   14
+  ],
+  "input": "(f64, f64)"
+ },
+ {
+  "canonical": "RollingCovariance",
+  "native": "RollingCovariance",
+  "params": [
+   14
+  ],
+  "input": "(f64, f64)"
+ },
+ {
+  "canonical": "RollingIqr",
+  "native": "RollingIqr",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "RollingMinMaxScaler",
+  "native": "ROLLINGMINMAX",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "RollingPercentileRank",
+  "native": "RollingPercentileRank",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "RollingQuantile",
+  "native": "RollingQuantile",
+  "params": [
+   20,
+   0.5
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "RoofingFilter",
+  "native": "RoofingFilter",
+  "params": [
+   3,
+   7
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Rsi",
+  "native": "RSI",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Rsx",
+  "native": "RSX",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Rvi",
+  "native": "RVI",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "RviVolatility",
+  "native": "RVIVolatility",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "SampleEntropy",
+  "native": "SAMPLEENT",
+  "params": [
+   20,
+   2,
+   0.2
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "SarExt",
+  "native": "SAREXT",
+  "params": [
+   2.0,
+   0.5,
+   0.5,
+   0.5,
+   0.5,
+   0.5,
+   0.5,
+   0.5
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "SeasonalZScore",
+  "native": "SeasonalZScore",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "SeparatingLines",
+  "native": "SeparatingLines",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "SessionVwap",
+  "native": "SessionVwap",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "ShannonEntropy",
+  "native": "SHANNONENT",
+  "params": [
+   3,
+   7
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Shark",
+  "native": "Shark",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "SharpeRatio",
+  "native": "SharpeRatio",
+  "params": [
+   14,
+   2.0
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "ShootingStar",
+  "native": "ShootingStar",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "ShortLine",
+  "native": "ShortLine",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "SineWave",
+  "native": "SineWave",
+  "params": [],
+  "input": "f64"
+ },
+ {
+  "canonical": "SineWeightedMa",
+  "native": "SWMA",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "SinglePrints",
+  "native": "SinglePrints",
+  "params": [
+   3,
+   7
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Skewness",
+  "native": "Skewness",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Sma",
+  "native": "SMA",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Smi",
+  "native": "SMI",
+  "params": [
+   3,
+   7,
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Smma",
+  "native": "SMMA",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "SortinoRatio",
+  "native": "SortinoRatio",
+  "params": [
+   14,
+   2.0
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "SpearmanCorrelation",
+  "native": "SpearmanCorrelation",
+  "params": [
+   14
+  ],
+  "input": "(f64, f64)"
+ },
+ {
+  "canonical": "SpinningTop",
+  "native": "SpinningTop",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "SpreadAr1Coefficient",
+  "native": "SpreadAr1Coefficient",
+  "params": [
+   14
+  ],
+  "input": "(f64, f64)"
+ },
+ {
+  "canonical": "SpreadHurst",
+  "native": "SpreadHurst",
+  "params": [
+   14
+  ],
+  "input": "(f64, f64)"
+ },
+ {
+  "canonical": "StalledPattern",
+  "native": "StalledPattern",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "StandardError",
+  "native": "StandardError",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Stc",
+  "native": "STC",
+  "params": [
+   10,
+   23,
+   10,
+   0.5
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "StdDev",
+  "native": "StdDev",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "StepTrailingStop",
+  "native": "StepTrailingStop",
+  "params": [
+   2.0
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "SterlingRatio",
+  "native": "SterlingRatio",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "StickSandwich",
+  "native": "StickSandwich",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "StochRsi",
+  "native": "StochRSI",
+  "params": [
+   3,
+   7
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "StochasticCci",
+  "native": "StochasticCCI",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "SuperSmoother",
+  "native": "SuperSmoother",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "T3",
+  "native": "T3",
+  "params": [
+   5,
+   0.7
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "TailRatio",
+  "native": "TailRatio",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Takuri",
+  "native": "Takuri",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TasukiGap",
+  "native": "TasukiGap",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TdCamouflage",
+  "native": "TDCamouflage",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TdClop",
+  "native": "TDClop",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TdClopwin",
+  "native": "TDClopwin",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TdCombo",
+  "native": "TDCombo",
+  "params": [
+   3,
+   7,
+   14,
+   28
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TdCountdown",
+  "native": "TDCountdown",
+  "params": [
+   3,
+   7,
+   14,
+   28
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TdDifferential",
+  "native": "TDDifferential",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TdOpen",
+  "native": "TDOpen",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TdPressure",
+  "native": "TDPressure",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TdPropulsion",
+  "native": "TDPropulsion",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TdRei",
+  "native": "TDREI",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TdSetup",
+  "native": "TDSetup",
+  "params": [
+   3,
+   7
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TdTrap",
+  "native": "TDTrap",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Tema",
+  "native": "TEMA",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "ThreeDrives",
+  "native": "ThreeDrives",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "ThreeInside",
+  "native": "ThreeInside",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "ThreeLineBreak",
+  "native": "ThreeLineBreak",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "ThreeLineStrike",
+  "native": "ThreeLineStrike",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "ThreeOutside",
+  "native": "ThreeOutside",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "ThreeSoldiersOrCrows",
+  "native": "ThreeSoldiersOrCrows",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "ThreeStarsInSouth",
+  "native": "ThreeStarsInSouth",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Thrusting",
+  "native": "Thrusting",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Tii",
+  "native": "TII",
+  "params": [
+   3,
+   7
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "TimeBasedStop",
+  "native": "TimeBasedStop",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TowerTopBottom",
+  "native": "TowerTopBottom",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TradeVolumeIndex",
+  "native": "TradeVolumeIndex",
+  "params": [
+   2.0
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TrendLabel",
+  "native": "TrendLabel",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Trendflex",
+  "native": "TRENDFLEX",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "TreynorRatio",
+  "native": "TreynorRatio",
+  "params": [
+   14,
+   2.0
+  ],
+  "input": "(f64, f64)"
+ },
+ {
+  "canonical": "Triangle",
+  "native": "Triangle",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Trima",
+  "native": "TRIMA",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "TripleTopBottom",
+  "native": "TripleTopBottom",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Tristar",
+  "native": "Tristar",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Trix",
+  "native": "TRIX",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "TrueRange",
+  "native": "TrueRange",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Tsf",
+  "native": "TSF",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "TsfOscillator",
+  "native": "TsfOscillator",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Tsi",
+  "native": "TSI",
+  "params": [
+   3,
+   7
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Tsv",
+  "native": "TSV",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TtmTrend",
+  "native": "TTM_TREND",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Tweezer",
+  "native": "Tweezer",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TwiggsMoneyFlow",
+  "native": "TwiggsMoneyFlow",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TwoCrows",
+  "native": "TwoCrows",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "TypicalPrice",
+  "native": "TypicalPrice",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "UlcerIndex",
+  "native": "UlcerIndex",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "UltimateOscillator",
+  "native": "UltimateOscillator",
+  "params": [
+   3,
+   7,
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "UniqueThreeRiver",
+  "native": "UniqueThreeRiver",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "UniversalOscillator",
+  "native": "UNIVERSALOSC",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "UpsideGapThreeMethods",
+  "native": "UpsideGapThreeMethods",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "UpsideGapTwoCrows",
+  "native": "UpsideGapTwoCrows",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "UpsidePotentialRatio",
+  "native": "UpsidePotentialRatio",
+  "params": [
+   14,
+   2.0
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "ValueAtRisk",
+  "native": "ValueAtRisk",
+  "params": [
+   20,
+   0.95
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Variance",
+  "native": "Variance",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "VarianceRatio",
+  "native": "VarianceRatio",
+  "params": [
+   60,
+   2
+  ],
+  "input": "(f64, f64)"
+ },
+ {
+  "canonical": "VerticalHorizontalFilter",
+  "native": "VerticalHorizontalFilter",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Vidya",
+  "native": "VIDYA",
+  "params": [
+   3,
+   7
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "VolatilityOfVolatility",
+  "native": "VolatilityOfVolatility",
+  "params": [
+   3,
+   7
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "VolatilityRatio",
+  "native": "VolatilityRatio",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "VoltyStop",
+  "native": "VoltyStop",
+  "params": [
+   14,
+   2.0
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "VolumeOscillator",
+  "native": "VolumeOscillator",
+  "params": [
+   3,
+   7
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "VolumeRsi",
+  "native": "VolumeRsi",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Vwap",
+  "native": "VWAP",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Vwma",
+  "native": "VWMA",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Vzo",
+  "native": "VZO",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "Wad",
+  "native": "Wad",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "WavePm",
+  "native": "WAVE_PM",
+  "params": [
+   3,
+   7
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Wedge",
+  "native": "Wedge",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "WeightedClose",
+  "native": "WeightedClose",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "WickRatio",
+  "native": "WickRatio",
+  "params": [],
+  "input": "Candle"
+ },
+ {
+  "canonical": "WilliamsR",
+  "native": "WilliamsR",
+  "params": [
+   14
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "WinRate",
+  "native": "WinRate",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Wma",
+  "native": "WMA",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "YoyoExit",
+  "native": "YoyoExit",
+  "params": [
+   14,
+   2.0
+  ],
+  "input": "Candle"
+ },
+ {
+  "canonical": "ZScore",
+  "native": "ZScore",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ },
+ {
+  "canonical": "Zlema",
+  "native": "ZLEMA",
+  "params": [
+   14
+  ],
+  "input": "f64"
+ }
 ]
