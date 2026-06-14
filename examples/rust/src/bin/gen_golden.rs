@@ -15,7 +15,10 @@ use std::fmt::Write as _;
 use std::fs;
 use std::path::Path;
 
-use wickra::{Adx, Atr, Beta, Candle, Ema, Indicator, MacdIndicator, Rsi, Sma};
+use wickra::{
+    AdOscillator, Adx, Atr, AverageDrawdown, AwesomeOscillatorHistogram, Beta, Candle, Ema,
+    Indicator, IntradayIntensity, MacdIndicator, Rsi, Sma,
+};
 
 const N: usize = 80;
 
@@ -140,6 +143,35 @@ fn main() {
             .map(|&c| cell(beta.update((c.close, c.open))))
             .collect();
         write_csv(dir, "beta", "beta", &rows);
+    }
+
+    // candle, single output: the de-duplicated indicators, pinned across every
+    // binding so their corrected definitions stay identical to the Rust core.
+    {
+        let mut ad = AdOscillator::new(); // Williams A/D Oscillator (native ADOSC)
+        let rows: Vec<String> = candles.iter().map(|&c| cell(ad.update(c))).collect();
+        write_csv(dir, "ad_oscillator", "ad_oscillator", &rows);
+    }
+    {
+        let mut ii = IntradayIntensity::new(); // per-bar Bostian intensity
+        let rows: Vec<String> = candles.iter().map(|&c| cell(ii.update(c))).collect();
+        write_csv(dir, "intraday_intensity", "intraday_intensity", &rows);
+    }
+    {
+        let mut aoh = AwesomeOscillatorHistogram::new(5, 34, 1).unwrap(); // AO momentum
+        let rows: Vec<String> = candles.iter().map(|&c| cell(aoh.update(c))).collect();
+        write_csv(
+            dir,
+            "awesome_oscillator_histogram",
+            "awesome_oscillator_histogram",
+            &rows,
+        );
+    }
+    // scalar (close-driven equity curve), single output.
+    {
+        let mut avg_dd = AverageDrawdown::new(20).unwrap(); // mean of distinct episodes
+        let rows: Vec<String> = closes.iter().map(|&c| cell(avg_dd.update(c))).collect();
+        write_csv(dir, "average_drawdown", "average_drawdown", &rows);
     }
 
     println!("golden fixtures written to {}", dir.display());
