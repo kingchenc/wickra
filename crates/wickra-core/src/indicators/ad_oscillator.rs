@@ -145,6 +145,8 @@ mod tests {
         assert_eq!(ad.warmup_period(), 14);
         assert!(!ad.is_ready());
         assert_eq!(ad.value(), None);
+        // `Default` matches `new`.
+        assert_eq!(AdOscillator::default().warmup_period(), 14);
     }
 
     #[test]

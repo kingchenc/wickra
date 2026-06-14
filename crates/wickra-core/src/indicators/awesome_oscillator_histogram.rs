@@ -197,14 +197,11 @@ mod tests {
             .unwrap()
             .batch(&candles);
         for i in 0..candles.len() {
-            match (ao_series[i], hist[i]) {
-                (_, None) => {}
-                (Some(ao_now), Some(h)) => {
-                    let ao_prev =
-                        ao_series[i - lookback].expect("prior AO present once histogram emits");
-                    assert_relative_eq!(h, ao_now - ao_prev, epsilon = 1e-9);
-                }
-                _ => panic!("histogram emitted before AO"),
+            if let Some(h) = hist[i] {
+                let ao_now = ao_series[i].expect("AO present once histogram emits");
+                let ao_prev =
+                    ao_series[i - lookback].expect("prior AO present once histogram emits");
+                assert_relative_eq!(h, ao_now - ao_prev, epsilon = 1e-9);
             }
         }
     }
