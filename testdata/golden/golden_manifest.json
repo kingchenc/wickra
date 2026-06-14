@@ -1,0 +1,3559 @@
+[
+ {
+  "canonical": "AbandonedBaby",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Abcd",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "AbsoluteBreadthIndex",
+  "arch": "cross",
+  "params": []
+ },
+ {
+  "canonical": "AccelerationBands",
+  "arch": "multi_candle",
+  "params": [
+   14,
+   2.0
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "AcceleratorOscillator",
+  "arch": "scalar_candle",
+  "params": [
+   3,
+   7,
+   14
+  ]
+ },
+ {
+  "canonical": "AdOscillator",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "AdVolumeLine",
+  "arch": "cross",
+  "params": []
+ },
+ {
+  "canonical": "AdaptiveCci",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "AdaptiveCycle",
+  "arch": "scalar_f64",
+  "params": []
+ },
+ {
+  "canonical": "AdaptiveLaguerreFilter",
+  "arch": "scalar_f64",
+  "params": [
+   20
+  ]
+ },
+ {
+  "canonical": "AdaptiveRsi",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Adl",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "AdvanceBlock",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "AdvanceDecline",
+  "arch": "cross",
+  "params": []
+ },
+ {
+  "canonical": "AdvanceDeclineRatio",
+  "arch": "cross",
+  "params": []
+ },
+ {
+  "canonical": "Adx",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "Adxr",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Alligator",
+  "arch": "multi_candle",
+  "params": [
+   3,
+   7,
+   14
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "Alma",
+  "arch": "scalar_f64",
+  "params": [
+   9,
+   0.85,
+   6.0
+  ]
+ },
+ {
+  "canonical": "Alpha",
+  "arch": "pairwise",
+  "params": [
+   14,
+   2.0
+  ]
+ },
+ {
+  "canonical": "AmihudIlliquidity",
+  "arch": "trade",
+  "params": [
+   20
+  ]
+ },
+ {
+  "canonical": "AnchoredRsi",
+  "arch": "scalar_f64",
+  "params": []
+ },
+ {
+  "canonical": "AnchoredVwap",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "AndrewsPitchfork",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "Apo",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "Aroon",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "AroonOscillator",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Atr",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "AtrBands",
+  "arch": "multi_candle",
+  "params": [
+   14,
+   2.0
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "AtrRatchet",
+  "arch": "multi_candle",
+  "params": [
+   14,
+   2.0,
+   0.5
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "AtrTrailingStop",
+  "arch": "scalar_candle",
+  "params": [
+   14,
+   2.0
+  ]
+ },
+ {
+  "canonical": "AutoFib",
+  "arch": "multi_candle",
+  "params": [],
+  "n": 7
+ },
+ {
+  "canonical": "Autocorrelation",
+  "arch": "scalar_f64",
+  "params": [
+   10,
+   1
+  ]
+ },
+ {
+  "canonical": "AutocorrelationPeriodogram",
+  "arch": "scalar_f64",
+  "params": [
+   10,
+   48
+  ]
+ },
+ {
+  "canonical": "AverageDailyRange",
+  "arch": "scalar_candle",
+  "params": [
+   14,
+   0
+  ]
+ },
+ {
+  "canonical": "AverageDrawdown",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "AvgPrice",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "AwesomeOscillator",
+  "arch": "scalar_candle",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "AwesomeOscillatorHistogram",
+  "arch": "scalar_candle",
+  "params": [
+   3,
+   7,
+   14
+  ]
+ },
+ {
+  "canonical": "BalanceOfPower",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "BandpassFilter",
+  "arch": "scalar_f64",
+  "params": [
+   20,
+   0.3
+  ]
+ },
+ {
+  "canonical": "Bat",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "BeltHold",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Beta",
+  "arch": "pairwise",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "BetaNeutralSpread",
+  "arch": "pairwise",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "BetterVolume",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "BipowerVariation",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "BodySizePct",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "BollingerBands",
+  "arch": "multi_f64",
+  "params": [
+   20,
+   2.0
+  ],
+  "n": 4
+ },
+ {
+  "canonical": "BollingerBandwidth",
+  "arch": "scalar_f64",
+  "params": [
+   14,
+   2.0
+  ]
+ },
+ {
+  "canonical": "BomarBands",
+  "arch": "multi_f64",
+  "params": [
+   4,
+   0.85
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "BreadthThrust",
+  "arch": "cross",
+  "params": [
+   10
+  ]
+ },
+ {
+  "canonical": "Breakaway",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "BullishPercentIndex",
+  "arch": "cross",
+  "params": []
+ },
+ {
+  "canonical": "BurkeRatio",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Butterfly",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "CalendarSpread",
+  "arch": "deriv",
+  "params": []
+ },
+ {
+  "canonical": "CalmarRatio",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Camarilla",
+  "arch": "multi_candle",
+  "params": [],
+  "n": 9
+ },
+ {
+  "canonical": "CandleVolume",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "Cci",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "CenterOfGravity",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "CentralPivotRange",
+  "arch": "multi_candle",
+  "params": [],
+  "n": 3
+ },
+ {
+  "canonical": "Cfo",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "ChaikinMoneyFlow",
+  "arch": "scalar_candle",
+  "params": [
+   20
+  ]
+ },
+ {
+  "canonical": "ChaikinOscillator",
+  "arch": "scalar_candle",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "ChaikinVolatility",
+  "arch": "scalar_candle",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "ChandeKrollStop",
+  "arch": "multi_candle",
+  "params": [
+   3,
+   2.0,
+   7
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "ChandelierExit",
+  "arch": "multi_candle",
+  "params": [
+   14,
+   2.0
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "ChoppinessIndex",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "ClassicPivots",
+  "arch": "multi_candle",
+  "params": [],
+  "n": 7
+ },
+ {
+  "canonical": "CloseVsOpen",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "ClosingMarubozu",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Cmo",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "CoefficientOfVariation",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Cointegration",
+  "arch": "multi_pairwise",
+  "params": [
+   40,
+   1
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "CommonSenseRatio",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "CompositeProfile",
+  "arch": "multi_candle",
+  "params": [
+   20,
+   24,
+   0.7
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "ConcealingBabySwallow",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "ConditionalValueAtRisk",
+  "arch": "scalar_f64",
+  "params": [
+   20,
+   0.95
+  ]
+ },
+ {
+  "canonical": "ConnorsRsi",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7,
+   14
+  ]
+ },
+ {
+  "canonical": "Coppock",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7,
+   14
+  ]
+ },
+ {
+  "canonical": "CorrelationTrendIndicator",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Counterattack",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Crab",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "CumulativeVolumeDelta",
+  "arch": "trade",
+  "params": []
+ },
+ {
+  "canonical": "CumulativeVolumeIndex",
+  "arch": "cross",
+  "params": []
+ },
+ {
+  "canonical": "CupAndHandle",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "CyberneticCycle",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Cypher",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "DayOfWeekProfile",
+  "arch": "profile_bins",
+  "params": [
+   0
+  ],
+  "width": 7
+ },
+ {
+  "canonical": "Decycler",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "DecyclerOscillator",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "Dema",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "DemandIndex",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "DemarkPivots",
+  "arch": "multi_candle",
+  "params": [],
+  "n": 3
+ },
+ {
+  "canonical": "DepthSlope",
+  "arch": "ob",
+  "params": []
+ },
+ {
+  "canonical": "DerivativeOscillator",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7,
+   14,
+   28
+  ]
+ },
+ {
+  "canonical": "DetrendedStdDev",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "DisparityIndex",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "DistanceSsd",
+  "arch": "pairwise",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Doji",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "DojiStar",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "DollarBars",
+  "arch": "bars_candle5",
+  "params": [
+   50000.0
+  ]
+ },
+ {
+  "canonical": "Donchian",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "DonchianStop",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "DoubleBollinger",
+  "arch": "multi_f64",
+  "params": [
+   20,
+   1.0,
+   2.0
+  ],
+  "n": 5
+ },
+ {
+  "canonical": "DoubleTopBottom",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "DownsideGapThreeMethods",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Dpo",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "DragonflyDoji",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "DrawdownDuration",
+  "arch": "scalar_f64",
+  "params": []
+ },
+ {
+  "canonical": "DumplingTop",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Dx",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "DynamicMomentumIndex",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "EaseOfMovement",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "EffectiveSpread",
+  "arch": "trademid",
+  "params": []
+ },
+ {
+  "canonical": "EhlersStochastic",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Ehma",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "ElderImpulse",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7,
+   14,
+   28
+  ]
+ },
+ {
+  "canonical": "ElderRay",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "ElderSafeZone",
+  "arch": "multi_candle",
+  "params": [
+   10,
+   2.0
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "Ema",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "EmpiricalModeDecomposition",
+  "arch": "scalar_f64",
+  "params": [
+   20,
+   0.1
+  ]
+ },
+ {
+  "canonical": "Engulfing",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Equivolume",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "EstimatedLeverageRatio",
+  "arch": "deriv",
+  "params": []
+ },
+ {
+  "canonical": "EvenBetterSinewave",
+  "arch": "scalar_f64",
+  "params": [
+   40,
+   10
+  ]
+ },
+ {
+  "canonical": "EveningDojiStar",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Evwma",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "EwmaVolatility",
+  "arch": "scalar_f64",
+  "params": [
+   0.94
+  ]
+ },
+ {
+  "canonical": "Expectancy",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "FallingThreeMethods",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Fama",
+  "arch": "scalar_f64",
+  "params": [
+   0.5,
+   0.05
+  ]
+ },
+ {
+  "canonical": "FibArcs",
+  "arch": "multi_candle",
+  "params": [],
+  "n": 3
+ },
+ {
+  "canonical": "FibChannel",
+  "arch": "multi_candle",
+  "params": [],
+  "n": 4
+ },
+ {
+  "canonical": "FibConfluence",
+  "arch": "multi_candle",
+  "params": [],
+  "n": 2
+ },
+ {
+  "canonical": "FibExtension",
+  "arch": "multi_candle",
+  "params": [],
+  "n": 5
+ },
+ {
+  "canonical": "FibFan",
+  "arch": "multi_candle",
+  "params": [],
+  "n": 3
+ },
+ {
+  "canonical": "FibProjection",
+  "arch": "multi_candle",
+  "params": [],
+  "n": 4
+ },
+ {
+  "canonical": "FibRetracement",
+  "arch": "multi_candle",
+  "params": [],
+  "n": 7
+ },
+ {
+  "canonical": "FibTimeZones",
+  "arch": "multi_candle",
+  "params": [],
+  "n": 2
+ },
+ {
+  "canonical": "FibonacciPivots",
+  "arch": "multi_candle",
+  "params": [],
+  "n": 7
+ },
+ {
+  "canonical": "FisherRsi",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "FisherTransform",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "FlagPennant",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Footprint",
+  "arch": "footprint",
+  "params": [
+   1.0
+  ]
+ },
+ {
+  "canonical": "ForceIndex",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "FractalChaosBands",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "Frama",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "FryPanBottom",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "FundingBasis",
+  "arch": "deriv",
+  "params": []
+ },
+ {
+  "canonical": "FundingImpliedApr",
+  "arch": "deriv",
+  "params": [
+   1095.0
+  ]
+ },
+ {
+  "canonical": "FundingRate",
+  "arch": "deriv",
+  "params": []
+ },
+ {
+  "canonical": "FundingRateMean",
+  "arch": "deriv",
+  "params": [
+   20
+  ]
+ },
+ {
+  "canonical": "FundingRateZScore",
+  "arch": "deriv",
+  "params": [
+   20
+  ]
+ },
+ {
+  "canonical": "GainLossRatio",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "GainToPainRatio",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "GapSideBySideWhite",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Garch11",
+  "arch": "scalar_f64",
+  "params": [
+   2e-06,
+   0.1,
+   0.88
+  ]
+ },
+ {
+  "canonical": "GarmanKlassVolatility",
+  "arch": "scalar_candle",
+  "params": [
+   20,
+   252
+  ]
+ },
+ {
+  "canonical": "Gartley",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "GatorOscillator",
+  "arch": "multi_candle",
+  "params": [
+   3,
+   7,
+   14
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "GeneralizedDema",
+  "arch": "scalar_f64",
+  "params": [
+   5,
+   0.7
+  ]
+ },
+ {
+  "canonical": "GeometricMa",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "GoldenPocket",
+  "arch": "multi_candle",
+  "params": [],
+  "n": 3
+ },
+ {
+  "canonical": "GrangerCausality",
+  "arch": "pairwise",
+  "params": [
+   60,
+   1
+  ]
+ },
+ {
+  "canonical": "GravestoneDoji",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Hammer",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "HangingMan",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Harami",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "HaramiCross",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "HasbrouckInformationShare",
+  "arch": "pairwise",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "HeadAndShoulders",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "HeikinAshi",
+  "arch": "multi_candle",
+  "params": [],
+  "n": 4
+ },
+ {
+  "canonical": "HeikinAshiOscillator",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "HiLoActivator",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "HighLowIndex",
+  "arch": "cross",
+  "params": [
+   10
+  ]
+ },
+ {
+  "canonical": "HighLowRange",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "HighLowVolumeNodes",
+  "arch": "multi_candle",
+  "params": [
+   3,
+   7
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "HighWave",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "HighpassFilter",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Hikkake",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "HikkakeModified",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "HilbertDominantCycle",
+  "arch": "scalar_f64",
+  "params": []
+ },
+ {
+  "canonical": "HistoricalVolatility",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "Hma",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "HoltWinters",
+  "arch": "scalar_f64",
+  "params": [
+   0.5,
+   0.1
+  ]
+ },
+ {
+  "canonical": "HomingPigeon",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "HtDcPhase",
+  "arch": "scalar_f64",
+  "params": []
+ },
+ {
+  "canonical": "HtPhasor",
+  "arch": "multi_f64",
+  "params": [],
+  "n": 2
+ },
+ {
+  "canonical": "HtTrendMode",
+  "arch": "scalar_f64",
+  "params": []
+ },
+ {
+  "canonical": "HurstChannel",
+  "arch": "multi_candle",
+  "params": [
+   14,
+   2.0
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "HurstExponent",
+  "arch": "scalar_f64",
+  "params": [
+   100,
+   4
+  ]
+ },
+ {
+  "canonical": "Ichimoku",
+  "arch": "multi_candle",
+  "params": [
+   9,
+   26,
+   52,
+   26
+  ],
+  "n": 5
+ },
+ {
+  "canonical": "IdenticalThreeCrows",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "ImbalanceBars",
+  "arch": "bars_candle4",
+  "params": [
+   5.0
+  ]
+ },
+ {
+  "canonical": "InNeck",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Inertia",
+  "arch": "scalar_candle",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "InformationRatio",
+  "arch": "pairwise",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "InitialBalance",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "InstantaneousTrendline",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "IntradayIntensity",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "IntradayMomentumIndex",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "IntradayVolatilityProfile",
+  "arch": "profile_bins",
+  "params": [
+   24,
+   0
+  ],
+  "width": 24
+ },
+ {
+  "canonical": "InverseFisherTransform",
+  "arch": "scalar_f64",
+  "params": [
+   2.0
+  ]
+ },
+ {
+  "canonical": "InvertedHammer",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "JarqueBera",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Jma",
+  "arch": "scalar_f64",
+  "params": [
+   7,
+   0.0,
+   2
+  ]
+ },
+ {
+  "canonical": "JumpIndicator",
+  "arch": "scalar_f64",
+  "params": [
+   14,
+   2.0
+  ]
+ },
+ {
+  "canonical": "KRatio",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "KagiBars",
+  "arch": "bars_close",
+  "params": [
+   2.0
+  ]
+ },
+ {
+  "canonical": "KalmanHedgeRatio",
+  "arch": "multi_pairwise",
+  "params": [
+   0.01,
+   0.001
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "Kama",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7,
+   14
+  ]
+ },
+ {
+  "canonical": "KaseDevStop",
+  "arch": "multi_candle",
+  "params": [
+   14,
+   2.0
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "KasePermissionStochastic",
+  "arch": "multi_candle",
+  "params": [
+   3,
+   7
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "KellyCriterion",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Keltner",
+  "arch": "multi_candle",
+  "params": [
+   3,
+   7,
+   2.0
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "KendallTau",
+  "arch": "pairwise",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Kicking",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "KickingByLength",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Kst",
+  "arch": "multi_f64",
+  "params": [
+   3,
+   7,
+   14,
+   28,
+   35,
+   42,
+   56,
+   63,
+   70
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "Kurtosis",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Kvo",
+  "arch": "scalar_candle",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "KylesLambda",
+  "arch": "trademid",
+  "params": [
+   20
+  ]
+ },
+ {
+  "canonical": "LadderBottom",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "LaguerreRsi",
+  "arch": "scalar_f64",
+  "params": [
+   0.5
+  ]
+ },
+ {
+  "canonical": "LeadLagCrossCorrelation",
+  "arch": "multi_pairwise",
+  "params": [
+   20,
+   10
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "LinRegAngle",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "LinRegChannel",
+  "arch": "multi_f64",
+  "params": [
+   14,
+   2.0
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "LinRegIntercept",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "LinRegSlope",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "LinearRegression",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "LiquidationFeatures",
+  "arch": "deriv_multi",
+  "params": [],
+  "n": 5
+ },
+ {
+  "canonical": "LogReturn",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "LongLeggedDoji",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "LongLine",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "LongShortRatio",
+  "arch": "deriv",
+  "params": []
+ },
+ {
+  "canonical": "M2Measure",
+  "arch": "scalar_f64",
+  "params": [
+   14,
+   2.0,
+   0.5
+  ]
+ },
+ {
+  "canonical": "MaEnvelope",
+  "arch": "multi_f64",
+  "params": [
+   14,
+   2.0
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "MacdExt",
+  "arch": "multi_f64",
+  "params": [
+   12,
+   0,
+   26,
+   0,
+   9,
+   0
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "MacdFix",
+  "arch": "multi_f64",
+  "params": [
+   9
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "MacdHistogram",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7,
+   14
+  ]
+ },
+ {
+  "canonical": "MacdIndicator",
+  "arch": "multi_f64",
+  "params": [
+   12,
+   26,
+   9
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "Mama",
+  "arch": "multi_f64",
+  "params": [
+   0.5,
+   0.05
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "MarketFacilitationIndex",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "MartinRatio",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Marubozu",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "MassIndex",
+  "arch": "scalar_candle",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "MatHold",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "MatchingLow",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "MaxDrawdown",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "McClellanOscillator",
+  "arch": "cross",
+  "params": []
+ },
+ {
+  "canonical": "McClellanSummationIndex",
+  "arch": "cross",
+  "params": []
+ },
+ {
+  "canonical": "McGinleyDynamic",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "MedianAbsoluteDeviation",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "MedianChannel",
+  "arch": "multi_f64",
+  "params": [
+   14,
+   2.0
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "MedianMa",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "MedianPrice",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Mfi",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Microprice",
+  "arch": "ob",
+  "params": []
+ },
+ {
+  "canonical": "MidPoint",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "MidPrice",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "MinusDi",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "MinusDm",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "ModifiedMaStop",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "Mom",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "MorningDojiStar",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "MorningEveningStar",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "MurreyMathLines",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 9
+ },
+ {
+  "canonical": "NakedPoc",
+  "arch": "scalar_candle",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "Natr",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "NewHighsNewLows",
+  "arch": "cross",
+  "params": []
+ },
+ {
+  "canonical": "NewPriceLines",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Nrtr",
+  "arch": "multi_candle",
+  "params": [
+   2.0
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "Nvi",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "OIPriceDivergence",
+  "arch": "deriv",
+  "params": [
+   20
+  ]
+ },
+ {
+  "canonical": "OIWeighted",
+  "arch": "deriv",
+  "params": []
+ },
+ {
+  "canonical": "Obv",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "OiToVolumeRatio",
+  "arch": "deriv",
+  "params": []
+ },
+ {
+  "canonical": "OmegaRatio",
+  "arch": "scalar_f64",
+  "params": [
+   14,
+   2.0
+  ]
+ },
+ {
+  "canonical": "OnNeck",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "OpenInterestDelta",
+  "arch": "deriv",
+  "params": []
+ },
+ {
+  "canonical": "OpenInterestMomentum",
+  "arch": "deriv",
+  "params": [
+   10
+  ]
+ },
+ {
+  "canonical": "OpeningMarubozu",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "OpeningRange",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "OrderBookImbalanceFull",
+  "arch": "ob",
+  "params": []
+ },
+ {
+  "canonical": "OrderBookImbalanceTop1",
+  "arch": "ob",
+  "params": []
+ },
+ {
+  "canonical": "OrderBookImbalanceTopN",
+  "arch": "ob",
+  "params": [
+   5
+  ]
+ },
+ {
+  "canonical": "OrderFlowImbalance",
+  "arch": "ob",
+  "params": [
+   20
+  ]
+ },
+ {
+  "canonical": "OuHalfLife",
+  "arch": "pairwise",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "OvernightGap",
+  "arch": "scalar_candle",
+  "params": [
+   0
+  ]
+ },
+ {
+  "canonical": "OvernightIntradayReturn",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "PainIndex",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "PairSpreadZScore",
+  "arch": "pairwise",
+  "params": [
+   20,
+   20
+  ]
+ },
+ {
+  "canonical": "PairwiseBeta",
+  "arch": "pairwise",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "ParkinsonVolatility",
+  "arch": "scalar_candle",
+  "params": [
+   20,
+   252
+  ]
+ },
+ {
+  "canonical": "PearsonCorrelation",
+  "arch": "pairwise",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "PercentAboveMa",
+  "arch": "cross",
+  "params": []
+ },
+ {
+  "canonical": "PercentB",
+  "arch": "scalar_f64",
+  "params": [
+   14,
+   2.0
+  ]
+ },
+ {
+  "canonical": "PercentageTrailingStop",
+  "arch": "scalar_f64",
+  "params": [
+   2.0
+  ]
+ },
+ {
+  "canonical": "PerpetualPremiumIndex",
+  "arch": "deriv",
+  "params": []
+ },
+ {
+  "canonical": "Pgo",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "PiercingDarkCloud",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Pin",
+  "arch": "trade",
+  "params": [
+   20
+  ]
+ },
+ {
+  "canonical": "PivotReversal",
+  "arch": "scalar_candle",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "PlusDi",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "PlusDm",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Pmo",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "PointAndFigureBars",
+  "arch": "bars_close",
+  "params": [
+   2.0,
+   3
+  ]
+ },
+ {
+  "canonical": "PolarizedFractalEfficiency",
+  "arch": "scalar_f64",
+  "params": [
+   10,
+   5
+  ]
+ },
+ {
+  "canonical": "Ppo",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "PpoHistogram",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7,
+   14
+  ]
+ },
+ {
+  "canonical": "ProfileShape",
+  "arch": "scalar_candle",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "ProfitFactor",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "ProjectionBands",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "ProjectionOscillator",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Psar",
+  "arch": "scalar_candle",
+  "params": [
+   0.02,
+   0.02,
+   0.2
+  ]
+ },
+ {
+  "canonical": "Pvi",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Qqe",
+  "arch": "multi_f64",
+  "params": [
+   3,
+   7,
+   2.0
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "Qstick",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "QuartileBands",
+  "arch": "multi_f64",
+  "params": [
+   14
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "QuotedSpread",
+  "arch": "ob",
+  "params": []
+ },
+ {
+  "canonical": "RSquared",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "RangeBars",
+  "arch": "bars_close",
+  "params": [
+   2.0
+  ]
+ },
+ {
+  "canonical": "RealizedSpread",
+  "arch": "trademid",
+  "params": [
+   20
+  ]
+ },
+ {
+  "canonical": "RealizedVolatility",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "RecoveryFactor",
+  "arch": "scalar_f64",
+  "params": []
+ },
+ {
+  "canonical": "RectangleRange",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Reflex",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "RegimeLabel",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "RelativeStrengthAB",
+  "arch": "multi_pairwise",
+  "params": [
+   14,
+   14
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "RenkoBars",
+  "arch": "bars_close",
+  "params": [
+   2.0
+  ]
+ },
+ {
+  "canonical": "RenkoTrailingStop",
+  "arch": "scalar_f64",
+  "params": [
+   2.0
+  ]
+ },
+ {
+  "canonical": "RickshawMan",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "RisingThreeMethods",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Rmi",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "Roc",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Rocp",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Rocr",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Rocr100",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "RogersSatchellVolatility",
+  "arch": "scalar_candle",
+  "params": [
+   20,
+   252
+  ]
+ },
+ {
+  "canonical": "RollMeasure",
+  "arch": "trade",
+  "params": [
+   20
+  ]
+ },
+ {
+  "canonical": "RollingCorrelation",
+  "arch": "pairwise",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "RollingCovariance",
+  "arch": "pairwise",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "RollingIqr",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "RollingMinMaxScaler",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "RollingPercentileRank",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "RollingQuantile",
+  "arch": "scalar_f64",
+  "params": [
+   20,
+   0.5
+  ]
+ },
+ {
+  "canonical": "RollingVwap",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "RoofingFilter",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "Rsi",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Rsx",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "RunBars",
+  "arch": "bars_candle4",
+  "params": [
+   3
+  ]
+ },
+ {
+  "canonical": "Rvi",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "RviVolatility",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Rwi",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "SampleEntropy",
+  "arch": "scalar_f64",
+  "params": [
+   20,
+   2,
+   0.2
+  ]
+ },
+ {
+  "canonical": "SarExt",
+  "arch": "scalar_candle",
+  "params": [
+   2.0,
+   0.5,
+   0.5,
+   0.5,
+   0.5,
+   0.5,
+   0.5,
+   0.5
+  ]
+ },
+ {
+  "canonical": "SeasonalZScore",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "SeparatingLines",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "SessionHighLow",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "SessionRange",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "SessionVwap",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "ShannonEntropy",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "Shark",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "SharpeRatio",
+  "arch": "scalar_f64",
+  "params": [
+   14,
+   2.0
+  ]
+ },
+ {
+  "canonical": "ShootingStar",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "ShortLine",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "SignedVolume",
+  "arch": "trade",
+  "params": []
+ },
+ {
+  "canonical": "SineWave",
+  "arch": "scalar_f64",
+  "params": []
+ },
+ {
+  "canonical": "SineWeightedMa",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "SinglePrints",
+  "arch": "scalar_candle",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "Skewness",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Sma",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Smi",
+  "arch": "scalar_candle",
+  "params": [
+   3,
+   7,
+   14
+  ]
+ },
+ {
+  "canonical": "Smma",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "SmoothedHeikinAshi",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 4
+ },
+ {
+  "canonical": "SortinoRatio",
+  "arch": "scalar_f64",
+  "params": [
+   14,
+   2.0
+  ]
+ },
+ {
+  "canonical": "SpearmanCorrelation",
+  "arch": "pairwise",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "SpinningTop",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "SpreadAr1Coefficient",
+  "arch": "pairwise",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "SpreadBollingerBands",
+  "arch": "multi_pairwise",
+  "params": [
+   14,
+   2.0
+  ],
+  "n": 4
+ },
+ {
+  "canonical": "SpreadHurst",
+  "arch": "pairwise",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "StalledPattern",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "StandardError",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "StandardErrorBands",
+  "arch": "multi_f64",
+  "params": [
+   14,
+   2.0
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "StarcBands",
+  "arch": "multi_candle",
+  "params": [
+   3,
+   7,
+   2.0
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "Stc",
+  "arch": "scalar_f64",
+  "params": [
+   10,
+   23,
+   10,
+   0.5
+  ]
+ },
+ {
+  "canonical": "StdDev",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "StepTrailingStop",
+  "arch": "scalar_f64",
+  "params": [
+   2.0
+  ]
+ },
+ {
+  "canonical": "SterlingRatio",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "StickSandwich",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "StochRsi",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "Stochastic",
+  "arch": "multi_candle",
+  "params": [
+   3,
+   7
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "StochasticCci",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "SuperSmoother",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "SuperTrend",
+  "arch": "multi_candle",
+  "params": [
+   14,
+   2.0
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "T3",
+  "arch": "scalar_f64",
+  "params": [
+   5,
+   0.7
+  ]
+ },
+ {
+  "canonical": "TailRatio",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "TakerBuySellRatio",
+  "arch": "deriv",
+  "params": []
+ },
+ {
+  "canonical": "Takuri",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "TasukiGap",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "TdCamouflage",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "TdClop",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "TdClopwin",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "TdCombo",
+  "arch": "scalar_candle",
+  "params": [
+   3,
+   7,
+   14,
+   28
+  ]
+ },
+ {
+  "canonical": "TdCountdown",
+  "arch": "scalar_candle",
+  "params": [
+   3,
+   7,
+   14,
+   28
+  ]
+ },
+ {
+  "canonical": "TdDWave",
+  "arch": "scalar_candle",
+  "params": [
+   2
+  ]
+ },
+ {
+  "canonical": "TdDeMarker",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "TdDifferential",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "TdLines",
+  "arch": "multi_candle",
+  "params": [
+   3,
+   7
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "TdMovingAverage",
+  "arch": "multi_candle",
+  "params": [
+   3,
+   7
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "TdOpen",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "TdPressure",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "TdPropulsion",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "TdRangeProjection",
+  "arch": "multi_candle",
+  "params": [],
+  "n": 2
+ },
+ {
+  "canonical": "TdRei",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "TdRiskLevel",
+  "arch": "multi_candle",
+  "params": [
+   3,
+   7
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "TdSequential",
+  "arch": "multi_candle",
+  "params": [
+   3,
+   7,
+   14,
+   28
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "TdSetup",
+  "arch": "scalar_candle",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "TdTrap",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Tema",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "TermStructureBasis",
+  "arch": "deriv",
+  "params": []
+ },
+ {
+  "canonical": "ThreeDrives",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "ThreeInside",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "ThreeLineBreak",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "ThreeLineBreakBars",
+  "arch": "bars_close",
+  "params": [
+   3
+  ]
+ },
+ {
+  "canonical": "ThreeLineStrike",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "ThreeOutside",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "ThreeSoldiersOrCrows",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "ThreeStarsInSouth",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Thrusting",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "TickBars",
+  "arch": "bars_candle5",
+  "params": [
+   2
+  ]
+ },
+ {
+  "canonical": "TickIndex",
+  "arch": "cross",
+  "params": []
+ },
+ {
+  "canonical": "Tii",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "TimeBasedStop",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "TimeOfDayReturnProfile",
+  "arch": "profile_bins",
+  "params": [
+   24,
+   0
+  ],
+  "width": 24
+ },
+ {
+  "canonical": "TowerTopBottom",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "TpoProfile",
+  "arch": "profile_pricebins",
+  "params": [
+   30,
+   50
+  ],
+  "width": 52
+ },
+ {
+  "canonical": "TradeImbalance",
+  "arch": "trade",
+  "params": [
+   20
+  ]
+ },
+ {
+  "canonical": "TradeSignAutocorrelation",
+  "arch": "trade",
+  "params": [
+   20
+  ]
+ },
+ {
+  "canonical": "TradeVolumeIndex",
+  "arch": "scalar_candle",
+  "params": [
+   2.0
+  ]
+ },
+ {
+  "canonical": "TrendLabel",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "TrendStrengthIndex",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Trendflex",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "TreynorRatio",
+  "arch": "pairwise",
+  "params": [
+   14,
+   2.0
+  ]
+ },
+ {
+  "canonical": "Triangle",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Trima",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Trin",
+  "arch": "cross",
+  "params": []
+ },
+ {
+  "canonical": "TripleTopBottom",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Tristar",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Trix",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "TrueRange",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "Tsf",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "TsfOscillator",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Tsi",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "Tsv",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "TtmSqueeze",
+  "arch": "multi_candle",
+  "params": [
+   14,
+   2.0,
+   0.5
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "TtmTrend",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "TurnOfMonth",
+  "arch": "scalar_candle",
+  "params": [
+   3,
+   3,
+   0
+  ]
+ },
+ {
+  "canonical": "Tweezer",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "TwiggsMoneyFlow",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "TwoCrows",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "TypicalPrice",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "UlcerIndex",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "UltimateOscillator",
+  "arch": "scalar_candle",
+  "params": [
+   3,
+   7,
+   14
+  ]
+ },
+ {
+  "canonical": "UniqueThreeRiver",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "UniversalOscillator",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "UpDownVolumeRatio",
+  "arch": "cross",
+  "params": []
+ },
+ {
+  "canonical": "UpsideGapThreeMethods",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "UpsideGapTwoCrows",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "UpsidePotentialRatio",
+  "arch": "scalar_f64",
+  "params": [
+   14,
+   2.0
+  ]
+ },
+ {
+  "canonical": "ValueArea",
+  "arch": "multi_candle",
+  "params": [
+   20,
+   50,
+   0.7
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "ValueAtRisk",
+  "arch": "scalar_f64",
+  "params": [
+   20,
+   0.95
+  ]
+ },
+ {
+  "canonical": "Variance",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "VarianceRatio",
+  "arch": "pairwise",
+  "params": [
+   60,
+   2
+  ]
+ },
+ {
+  "canonical": "VerticalHorizontalFilter",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Vidya",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "VolatilityCone",
+  "arch": "multi_candle",
+  "params": [
+   3,
+   7
+  ],
+  "n": 5
+ },
+ {
+  "canonical": "VolatilityOfVolatility",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "VolatilityRatio",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "VoltyStop",
+  "arch": "scalar_candle",
+  "params": [
+   14,
+   2.0
+  ]
+ },
+ {
+  "canonical": "VolumeBars",
+  "arch": "bars_candle5",
+  "params": [
+   500.0
+  ]
+ },
+ {
+  "canonical": "VolumeByTimeProfile",
+  "arch": "profile_bins",
+  "params": [
+   24,
+   0
+  ],
+  "width": 24
+ },
+ {
+  "canonical": "VolumeOscillator",
+  "arch": "scalar_candle",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "VolumePriceTrend",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "VolumeProfile",
+  "arch": "profile_pricebins",
+  "params": [
+   20,
+   50
+  ],
+  "width": 52
+ },
+ {
+  "canonical": "VolumeRsi",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "VolumeWeightedMacd",
+  "arch": "multi_candle",
+  "params": [
+   3,
+   7,
+   14
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "VolumeWeightedSr",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "Vortex",
+  "arch": "multi_candle",
+  "params": [
+   14
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "Vpin",
+  "arch": "trade",
+  "params": [
+   5000.0,
+   10
+  ]
+ },
+ {
+  "canonical": "Vwap",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "VwapStdDevBands",
+  "arch": "multi_candle",
+  "params": [
+   2.0
+  ],
+  "n": 4
+ },
+ {
+  "canonical": "Vwma",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Vzo",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Wad",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "WavePm",
+  "arch": "scalar_f64",
+  "params": [
+   3,
+   7
+  ]
+ },
+ {
+  "canonical": "WaveTrend",
+  "arch": "multi_candle",
+  "params": [
+   3,
+   7,
+   14
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "Wedge",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "WeightedClose",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "WickRatio",
+  "arch": "scalar_candle",
+  "params": []
+ },
+ {
+  "canonical": "WilliamsFractals",
+  "arch": "multi_candle",
+  "params": [],
+  "n": 2
+ },
+ {
+  "canonical": "WilliamsR",
+  "arch": "scalar_candle",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "WinRate",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "Wma",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "WoodiePivots",
+  "arch": "multi_candle",
+  "params": [],
+  "n": 5
+ },
+ {
+  "canonical": "YangZhangVolatility",
+  "arch": "scalar_candle",
+  "params": [
+   20,
+   252
+  ]
+ },
+ {
+  "canonical": "YoyoExit",
+  "arch": "scalar_candle",
+  "params": [
+   14,
+   2.0
+  ]
+ },
+ {
+  "canonical": "ZScore",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ },
+ {
+  "canonical": "ZeroLagMacd",
+  "arch": "multi_f64",
+  "params": [
+   3,
+   7,
+   14
+  ],
+  "n": 3
+ },
+ {
+  "canonical": "ZigZag",
+  "arch": "multi_candle",
+  "params": [
+   0.02
+  ],
+  "n": 2
+ },
+ {
+  "canonical": "Zlema",
+  "arch": "scalar_f64",
+  "params": [
+   14
+  ]
+ }
+]
