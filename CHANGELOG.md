@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI now runs the WASM golden suite; the C/C++ golden tests run as `ctest`
   targets in the existing C-ABI job, and the Python/Node/Go/C#/Java/R suites pick
   up their golden runners automatically.
+- **README:** a "verified across 10 languages" badge (linking to the FAQ that
+  explains the cross-language golden parity) and a per-binding throughput table so
+  readers can pick a binding by its streaming FFI cost.
 
 ### Fixed
 - **Java binding marshalled C ABI `bool` parameters incorrectly.** The
