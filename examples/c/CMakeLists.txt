@@ -78,6 +78,33 @@ if(OpenMP_C_FOUND)
     target_link_libraries(parallel_assets PRIVATE OpenMP::OpenMP_C)
 endif()
 
+# Golden-fixture parity over the whole 514-indicator catalogue, built and run as
+# BOTH C (golden_test.c) and C++ (golden_test.cpp #includes the same source) to
+# prove the C ABI header is consumable from each language. The fixtures live at
+# the repo root; pass the absolute path as the test argument.
+get_filename_component(WICKRA_GOLDEN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../testdata/golden" ABSOLUTE)
+foreach(gt_pair "golden_test:golden_test.c" "golden_test_cpp:golden_test.cpp")
+    string(REPLACE ":" ";" gt_list "${gt_pair}")
+    list(GET gt_list 0 gt_name)
+    list(GET gt_list 1 gt_src)
+    add_executable(${gt_name} ${gt_src})
+    target_include_directories(${gt_name} PRIVATE "${WICKRA_INCLUDE_DIR}")
+    target_link_libraries(${gt_name} PRIVATE "${WICKRA_LINK_LIB}")
+    if(UNIX AND NOT APPLE)
+        target_link_libraries(${gt_name} PRIVATE m)
+    endif()
+    if(WIN32)
+        add_custom_command(TARGET ${gt_name} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "${WICKRA_RUNTIME}" "$<TARGET_FILE_DIR:${gt_name}>")
+    endif()
+    add_test(NAME ${gt_name} COMMAND ${gt_name} "${WICKRA_GOLDEN_DIR}")
+    if(NOT WIN32)
+        set_tests_properties(${gt_name} PROPERTIES
+            ENVIRONMENT "LD_LIBRARY_PATH=${WICKRA_LIB_DIR};DYLD_LIBRARY_PATH=${WICKRA_LIB_DIR}")
+    endif()
+endforeach()
+
 # Network examples — built (so they stay compilable) but not run in CI.
 add_wickra_example(fetch_btcusdt fetch_btcusdt.c FALSE) # downloads CSVs via curl
 add_wickra_example(live_binance live_binance.c FALSE)   # polls Binance REST via curl
