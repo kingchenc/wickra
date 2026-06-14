@@ -178,6 +178,7 @@ fn main() {
     emit_scalar(dir, &candles, &closes);
     emit_multi(dir, &candles, &closes);
     emit_skips(dir, &candles, &closes);
+    emit_missed(dir, &candles, &closes);
     println!("golden fixtures written to {}", dir.display());
 }
 
@@ -3488,5 +3489,292 @@ fn emit_skips(dir: &Path, candles: &[Candle], closes: &[f64]) {
         write_csv(dir, "g_ZigZag", "swing,direction", &rows);
     } else {
         eprintln!("skip2 ZigZag");
+    }
+}
+
+// AUTO-GENERATED missed scalar/multi tranche (single + multi f64 output).
+#[allow(clippy::too_many_lines)]
+fn emit_missed(dir: &Path, candles: &[Candle], closes: &[f64]) {
+    {
+        let mut ind = wickra::AdaptiveLaguerreFilter::new(20).unwrap();
+        let rows: Vec<String> = closes.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(
+            dir,
+            "g_AdaptiveLaguerreFilter",
+            "AdaptiveLaguerreFilter",
+            &rows,
+        );
+    }
+    {
+        let mut ind = wickra::EvenBetterSinewave::new(40, 10).unwrap();
+        let rows: Vec<String> = closes.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(dir, "g_EvenBetterSinewave", "EvenBetterSinewave", &rows);
+    }
+    {
+        let mut ind = wickra::HtDcPhase::new();
+        let rows: Vec<String> = closes.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(dir, "g_HtDcPhase", "HtDcPhase", &rows);
+    }
+    {
+        let mut ind = wickra::HtTrendMode::new();
+        let rows: Vec<String> = closes.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(dir, "g_HtTrendMode", "HtTrendMode", &rows);
+    }
+    {
+        let mut ind = wickra::LinearRegression::new(14).unwrap();
+        let rows: Vec<String> = closes.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(dir, "g_LinearRegression", "LinearRegression", &rows);
+    }
+    {
+        let mut ind = wickra::LinRegAngle::new(14).unwrap();
+        let rows: Vec<String> = closes.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(dir, "g_LinRegAngle", "LinRegAngle", &rows);
+    }
+    {
+        let mut ind = wickra::LinRegIntercept::new(14).unwrap();
+        let rows: Vec<String> = closes.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(dir, "g_LinRegIntercept", "LinRegIntercept", &rows);
+    }
+    {
+        let mut ind = wickra::LinRegSlope::new(14).unwrap();
+        let rows: Vec<String> = closes.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(dir, "g_LinRegSlope", "LinRegSlope", &rows);
+    }
+    {
+        let mut ind = wickra::McGinleyDynamic::new(14).unwrap();
+        let rows: Vec<String> = closes.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(dir, "g_McGinleyDynamic", "McGinleyDynamic", &rows);
+    }
+    {
+        let mut ind = wickra::PolarizedFractalEfficiency::new(10, 5).unwrap();
+        let rows: Vec<String> = closes.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(
+            dir,
+            "g_PolarizedFractalEfficiency",
+            "PolarizedFractalEfficiency",
+            &rows,
+        );
+    }
+    {
+        let mut ind = wickra::TrendStrengthIndex::new(14).unwrap();
+        let rows: Vec<String> = closes.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(dir, "g_TrendStrengthIndex", "TrendStrengthIndex", &rows);
+    }
+    {
+        let mut ind = wickra::PairSpreadZScore::new(20, 20).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| cell(ind.update((c.close, c.open))))
+            .collect();
+        write_csv(dir, "g_PairSpreadZScore", "PairSpreadZScore", &rows);
+    }
+    {
+        let mut ind = wickra::AverageDailyRange::new(14, 0).unwrap();
+        let rows: Vec<String> = candles.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(dir, "g_AverageDailyRange", "AverageDailyRange", &rows);
+    }
+    {
+        let mut ind = wickra::ChaikinMoneyFlow::new(20).unwrap();
+        let rows: Vec<String> = candles.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(dir, "g_ChaikinMoneyFlow", "ChaikinMoneyFlow", &rows);
+    }
+    {
+        let mut ind = wickra::GarmanKlassVolatility::new(20, 252).unwrap();
+        let rows: Vec<String> = candles.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(
+            dir,
+            "g_GarmanKlassVolatility",
+            "GarmanKlassVolatility",
+            &rows,
+        );
+    }
+    {
+        let mut ind = wickra::HiLoActivator::new(14).unwrap();
+        let rows: Vec<String> = candles.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(dir, "g_HiLoActivator", "HiLoActivator", &rows);
+    }
+    {
+        let mut ind = wickra::OvernightGap::new(0);
+        let rows: Vec<String> = candles.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(dir, "g_OvernightGap", "OvernightGap", &rows);
+    }
+    {
+        let mut ind = wickra::ParkinsonVolatility::new(20, 252).unwrap();
+        let rows: Vec<String> = candles.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(dir, "g_ParkinsonVolatility", "ParkinsonVolatility", &rows);
+    }
+    {
+        let mut ind = wickra::RogersSatchellVolatility::new(20, 252).unwrap();
+        let rows: Vec<String> = candles.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(
+            dir,
+            "g_RogersSatchellVolatility",
+            "RogersSatchellVolatility",
+            &rows,
+        );
+    }
+    {
+        let mut ind = wickra::TdDeMarker::new(14).unwrap();
+        let rows: Vec<String> = candles.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(dir, "g_TdDeMarker", "TdDeMarker", &rows);
+    }
+    {
+        let mut ind = wickra::TdDWave::new(2).unwrap();
+        let rows: Vec<String> = candles.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(dir, "g_TdDWave", "TdDWave", &rows);
+    }
+    {
+        let mut ind = wickra::TurnOfMonth::new(3, 3, 0).unwrap();
+        let rows: Vec<String> = candles.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(dir, "g_TurnOfMonth", "TurnOfMonth", &rows);
+    }
+    {
+        let mut ind = wickra::VolumePriceTrend::new();
+        let rows: Vec<String> = candles.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(dir, "g_VolumePriceTrend", "VolumePriceTrend", &rows);
+    }
+    {
+        let mut ind = wickra::RollingVwap::new(14).unwrap();
+        let rows: Vec<String> = candles.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(dir, "g_RollingVwap", "RollingVwap", &rows);
+    }
+    {
+        let mut ind = wickra::YangZhangVolatility::new(20, 252).unwrap();
+        let rows: Vec<String> = candles.iter().map(|&c| cell(ind.update(c))).collect();
+        write_csv(dir, "g_YangZhangVolatility", "YangZhangVolatility", &rows);
+    }
+    {
+        let mut ind = wickra::DrawdownDuration::new();
+        let rows: Vec<String> = closes
+            .iter()
+            .map(|&c| cell(ind.update(c).map(f64::from)))
+            .collect();
+        write_csv(dir, "g_DrawdownDuration", "DrawdownDuration", &rows);
+    }
+    {
+        let mut ind = wickra::BollingerBands::new(20, 2.0).unwrap();
+        let rows: Vec<String> = closes
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{},{}", o.upper, o.middle, o.lower, o.stddev),
+                None => "nan,nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_BollingerBands", "upper,middle,lower,stddev", &rows);
+    }
+    {
+        let mut ind = wickra::LinRegChannel::new(14, 2.0).unwrap();
+        let rows: Vec<String> = closes
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.upper, o.middle, o.lower),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_LinRegChannel", "upper,middle,lower", &rows);
+    }
+    {
+        let mut ind = wickra::MacdIndicator::new(12, 26, 9).unwrap();
+        let rows: Vec<String> = closes
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.macd, o.signal, o.histogram),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_MacdIndicator", "macd,signal,histogram", &rows);
+    }
+    {
+        let mut ind = wickra::MacdExt::new(
+            12,
+            wickra::MaType::Sma,
+            26,
+            wickra::MaType::Sma,
+            9,
+            wickra::MaType::Sma,
+        )
+        .unwrap();
+        let rows: Vec<String> = closes
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.macd, o.signal, o.histogram),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_MacdExt", "macd,signal,histogram", &rows);
+    }
+    {
+        let mut ind = wickra::MacdFix::new(9).unwrap();
+        let rows: Vec<String> = closes
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{}", o.macd, o.signal, o.histogram),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_MacdFix", "macd,signal,histogram", &rows);
+    }
+    {
+        let mut ind = wickra::RelativeStrengthAB::new(14, 14).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update((c.close, c.open)) {
+                Some(o) => format!("{},{},{}", o.ratio, o.ratio_ma, o.ratio_rsi),
+                None => "nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(
+            dir,
+            "g_RelativeStrengthAB",
+            "ratio,ratio_ma,ratio_rsi",
+            &rows,
+        );
+    }
+    {
+        let mut ind = wickra::Camarilla::new();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!(
+                    "{},{},{},{},{},{},{},{},{}",
+                    o.pp, o.r1, o.r2, o.r3, o.r4, o.s1, o.s2, o.s3, o.s4
+                ),
+                None => "nan,nan,nan,nan,nan,nan,nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_Camarilla", "pp,r1,r2,r3,r4,s1,s2,s3,s4", &rows);
+    }
+    {
+        let mut ind = wickra::ElderSafeZone::new(10, 2.0).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.value, o.direction),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_ElderSafeZone", "value,direction", &rows);
+    }
+    {
+        let mut ind = wickra::KaseDevStop::new(14, 2.0).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{}", o.value, o.direction),
+                None => "nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_KaseDevStop", "value,direction", &rows);
+    }
+    {
+        let mut ind = wickra::VwapStdDevBands::new(2.0).unwrap();
+        let rows: Vec<String> = candles
+            .iter()
+            .map(|&c| match ind.update(c) {
+                Some(o) => format!("{},{},{},{}", o.upper, o.middle, o.lower, o.stddev),
+                None => "nan,nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(dir, "g_VwapStdDevBands", "upper,middle,lower,stddev", &rows);
     }
 }
