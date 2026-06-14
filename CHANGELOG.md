@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Breaking — de-duplicated four indicators that computed identically to another
+  one.** Each is now its own distinct, correctly-defined indicator (the catalogue
+  stays at the same count):
+  - `AverageDrawdown` now reports the mean of the maximum depths of the distinct
+    drawdown episodes in the window (previously the per-bar mean under-water
+    fraction, which equalled `PainIndex`).
+  - `IntradayIntensity` now reports the raw per-bar Bostian intensity
+    `volume * (2*close − high − low) / (high − low)` (previously a cumulative line
+    that equalled the A/D Line `Adl`; its normalized form is `Cmf`).
+  - `AwesomeOscillatorHistogram` now reports the AO momentum
+    `AO[t] − AO[t−lookback]`; its third parameter is the momentum `lookback`
+    (default 1) instead of an SMA period (the old `AO − SMA(AO, n)` equalled
+    `AcceleratorOscillator`).
+  - `AdOscillator` is now the Williams **A/D Oscillator** (`WAD − SMA(WAD, 13)`),
+    distinct from the cumulative Williams A/D line `Wad`. Its native (Python /
+    Node.js / WASM) alias is renamed **`WilliamsAD` → `ADOSC`**.
+
 ## [0.9.1] - 2026-06-14
 
 ### Added
