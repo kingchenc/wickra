@@ -179,6 +179,7 @@ fn main() {
     emit_multi(dir, &candles, &closes);
     emit_skips(dir, &candles, &closes);
     emit_missed(dir, &candles, &closes);
+    emit_exotic(dir, &candles);
     println!("golden fixtures written to {}", dir.display());
 }
 
@@ -3776,5 +3777,448 @@ fn emit_missed(dir: &Path, candles: &[Candle], closes: &[f64]) {
             })
             .collect();
         write_csv(dir, "g_VwapStdDevBands", "upper,middle,lower,stddev", &rows);
+    }
+}
+
+// AUTO-GENERATED exotic-input tranche (DerivativesTick / CrossSection / Trade / TradeQuote / OrderBook).
+#[allow(clippy::too_many_lines)]
+fn emit_exotic(dir: &Path, candles: &[Candle]) {
+    use wickra::{
+        CrossSection, DerivativesTick, Level, Member, OrderBook, Side, Trade, TradeQuote,
+    };
+    let ticks: Vec<DerivativesTick> = candles
+        .iter()
+        .map(|c| {
+            let funding_rate = (c.close - c.open) / c.close * 0.01;
+            DerivativesTick::new(
+                funding_rate,
+                c.close,
+                c.close - 0.5,
+                c.close + 1.0,
+                c.volume * 10.0,
+                c.volume * 0.6,
+                c.volume * 0.4,
+                c.volume * 0.55,
+                c.volume * 0.45,
+                c.high - c.close,
+                c.close - c.low,
+                c.timestamp,
+            )
+            .unwrap()
+        })
+        .collect();
+    let sections: Vec<CrossSection> = candles
+        .iter()
+        .map(|c| {
+            let members: Vec<Member> = (0..5)
+                .map(|j| {
+                    let jf = f64::from(j);
+                    Member::with_signals(
+                        (c.close - c.open) + jf,
+                        c.volume + jf * 10.0,
+                        j % 2 == 0,
+                        j % 3 == 0,
+                        j % 2 == 0,
+                        j % 3 == 0,
+                    )
+                })
+                .collect();
+            CrossSection::new(members, c.timestamp).unwrap()
+        })
+        .collect();
+    let trades: Vec<Trade> = candles
+        .iter()
+        .map(|c| {
+            let side = if c.close >= c.open {
+                Side::Buy
+            } else {
+                Side::Sell
+            };
+            Trade::new(c.close, c.volume, side, c.timestamp).unwrap()
+        })
+        .collect();
+    let quotes: Vec<TradeQuote> = candles
+        .iter()
+        .map(|c| {
+            let side = if c.close >= c.open {
+                Side::Buy
+            } else {
+                Side::Sell
+            };
+            let trade = Trade::new(c.close, c.volume, side, c.timestamp).unwrap();
+            TradeQuote::new(trade, c.high.midpoint(c.low)).unwrap()
+        })
+        .collect();
+    let books: Vec<OrderBook> = candles
+        .iter()
+        .map(|c| {
+            let bids: Vec<Level> = (0..5)
+                .map(|k| {
+                    let kf = f64::from(k + 1);
+                    Level::new(c.close - 0.1 * kf, c.volume / kf).unwrap()
+                })
+                .collect();
+            let asks: Vec<Level> = (0..5)
+                .map(|k| {
+                    let kf = f64::from(k + 1);
+                    Level::new(c.close + 0.1 * kf, c.volume * 0.9 / kf).unwrap()
+                })
+                .collect();
+            OrderBook::new(bids, asks).unwrap()
+        })
+        .collect();
+    {
+        let mut ind = wickra::CalendarSpread::new();
+        let rows: Vec<String> = ticks.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(dir, "g_CalendarSpread", "CalendarSpread", &rows);
+    }
+    {
+        let mut ind = wickra::EstimatedLeverageRatio::new();
+        let rows: Vec<String> = ticks.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(
+            dir,
+            "g_EstimatedLeverageRatio",
+            "EstimatedLeverageRatio",
+            &rows,
+        );
+    }
+    {
+        let mut ind = wickra::FundingBasis::new();
+        let rows: Vec<String> = ticks.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(dir, "g_FundingBasis", "FundingBasis", &rows);
+    }
+    {
+        let mut ind = wickra::FundingImpliedApr::new(1095.0).unwrap();
+        let rows: Vec<String> = ticks.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(dir, "g_FundingImpliedApr", "FundingImpliedApr", &rows);
+    }
+    {
+        let mut ind = wickra::FundingRate::new();
+        let rows: Vec<String> = ticks.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(dir, "g_FundingRate", "FundingRate", &rows);
+    }
+    {
+        let mut ind = wickra::FundingRateMean::new(20).unwrap();
+        let rows: Vec<String> = ticks.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(dir, "g_FundingRateMean", "FundingRateMean", &rows);
+    }
+    {
+        let mut ind = wickra::FundingRateZScore::new(20).unwrap();
+        let rows: Vec<String> = ticks.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(dir, "g_FundingRateZScore", "FundingRateZScore", &rows);
+    }
+    {
+        let mut ind = wickra::LongShortRatio::new();
+        let rows: Vec<String> = ticks.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(dir, "g_LongShortRatio", "LongShortRatio", &rows);
+    }
+    {
+        let mut ind = wickra::OpenInterestDelta::new();
+        let rows: Vec<String> = ticks.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(dir, "g_OpenInterestDelta", "OpenInterestDelta", &rows);
+    }
+    {
+        let mut ind = wickra::OIPriceDivergence::new(20).unwrap();
+        let rows: Vec<String> = ticks.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(dir, "g_OIPriceDivergence", "OIPriceDivergence", &rows);
+    }
+    {
+        let mut ind = wickra::OiToVolumeRatio::new();
+        let rows: Vec<String> = ticks.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(dir, "g_OiToVolumeRatio", "OiToVolumeRatio", &rows);
+    }
+    {
+        let mut ind = wickra::OIWeighted::new();
+        let rows: Vec<String> = ticks.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(dir, "g_OIWeighted", "OIWeighted", &rows);
+    }
+    {
+        let mut ind = wickra::OpenInterestMomentum::new(10).unwrap();
+        let rows: Vec<String> = ticks.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(dir, "g_OpenInterestMomentum", "OpenInterestMomentum", &rows);
+    }
+    {
+        let mut ind = wickra::PerpetualPremiumIndex::new();
+        let rows: Vec<String> = ticks.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(
+            dir,
+            "g_PerpetualPremiumIndex",
+            "PerpetualPremiumIndex",
+            &rows,
+        );
+    }
+    {
+        let mut ind = wickra::TakerBuySellRatio::new();
+        let rows: Vec<String> = ticks.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(dir, "g_TakerBuySellRatio", "TakerBuySellRatio", &rows);
+    }
+    {
+        let mut ind = wickra::TermStructureBasis::new();
+        let rows: Vec<String> = ticks.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(dir, "g_TermStructureBasis", "TermStructureBasis", &rows);
+    }
+    {
+        let mut ind = wickra::LiquidationFeatures::new();
+        let rows: Vec<String> = ticks
+            .iter()
+            .map(|&t| match ind.update(t) {
+                Some(o) => format!(
+                    "{},{},{},{},{}",
+                    o.long, o.short, o.net, o.total, o.imbalance
+                ),
+                None => "nan,nan,nan,nan,nan".to_owned(),
+            })
+            .collect();
+        write_csv(
+            dir,
+            "g_LiquidationFeatures",
+            "long,short,net,total,imbalance",
+            &rows,
+        );
+    }
+    {
+        let mut ind = wickra::AbsoluteBreadthIndex::new();
+        let rows: Vec<String> = sections
+            .iter()
+            .map(|s| cell(ind.update(s.clone())))
+            .collect();
+        write_csv(dir, "g_AbsoluteBreadthIndex", "AbsoluteBreadthIndex", &rows);
+    }
+    {
+        let mut ind = wickra::AdvanceDecline::new();
+        let rows: Vec<String> = sections
+            .iter()
+            .map(|s| cell(ind.update(s.clone())))
+            .collect();
+        write_csv(dir, "g_AdvanceDecline", "AdvanceDecline", &rows);
+    }
+    {
+        let mut ind = wickra::AdvanceDeclineRatio::new();
+        let rows: Vec<String> = sections
+            .iter()
+            .map(|s| cell(ind.update(s.clone())))
+            .collect();
+        write_csv(dir, "g_AdvanceDeclineRatio", "AdvanceDeclineRatio", &rows);
+    }
+    {
+        let mut ind = wickra::AdVolumeLine::new();
+        let rows: Vec<String> = sections
+            .iter()
+            .map(|s| cell(ind.update(s.clone())))
+            .collect();
+        write_csv(dir, "g_AdVolumeLine", "AdVolumeLine", &rows);
+    }
+    {
+        let mut ind = wickra::BreadthThrust::new(10).unwrap();
+        let rows: Vec<String> = sections
+            .iter()
+            .map(|s| cell(ind.update(s.clone())))
+            .collect();
+        write_csv(dir, "g_BreadthThrust", "BreadthThrust", &rows);
+    }
+    {
+        let mut ind = wickra::BullishPercentIndex::new();
+        let rows: Vec<String> = sections
+            .iter()
+            .map(|s| cell(ind.update(s.clone())))
+            .collect();
+        write_csv(dir, "g_BullishPercentIndex", "BullishPercentIndex", &rows);
+    }
+    {
+        let mut ind = wickra::CumulativeVolumeIndex::new();
+        let rows: Vec<String> = sections
+            .iter()
+            .map(|s| cell(ind.update(s.clone())))
+            .collect();
+        write_csv(
+            dir,
+            "g_CumulativeVolumeIndex",
+            "CumulativeVolumeIndex",
+            &rows,
+        );
+    }
+    {
+        let mut ind = wickra::HighLowIndex::new(10).unwrap();
+        let rows: Vec<String> = sections
+            .iter()
+            .map(|s| cell(ind.update(s.clone())))
+            .collect();
+        write_csv(dir, "g_HighLowIndex", "HighLowIndex", &rows);
+    }
+    {
+        let mut ind = wickra::McClellanOscillator::new();
+        let rows: Vec<String> = sections
+            .iter()
+            .map(|s| cell(ind.update(s.clone())))
+            .collect();
+        write_csv(dir, "g_McClellanOscillator", "McClellanOscillator", &rows);
+    }
+    {
+        let mut ind = wickra::McClellanSummationIndex::new();
+        let rows: Vec<String> = sections
+            .iter()
+            .map(|s| cell(ind.update(s.clone())))
+            .collect();
+        write_csv(
+            dir,
+            "g_McClellanSummationIndex",
+            "McClellanSummationIndex",
+            &rows,
+        );
+    }
+    {
+        let mut ind = wickra::NewHighsNewLows::new();
+        let rows: Vec<String> = sections
+            .iter()
+            .map(|s| cell(ind.update(s.clone())))
+            .collect();
+        write_csv(dir, "g_NewHighsNewLows", "NewHighsNewLows", &rows);
+    }
+    {
+        let mut ind = wickra::PercentAboveMa::new();
+        let rows: Vec<String> = sections
+            .iter()
+            .map(|s| cell(ind.update(s.clone())))
+            .collect();
+        write_csv(dir, "g_PercentAboveMa", "PercentAboveMa", &rows);
+    }
+    {
+        let mut ind = wickra::TickIndex::new();
+        let rows: Vec<String> = sections
+            .iter()
+            .map(|s| cell(ind.update(s.clone())))
+            .collect();
+        write_csv(dir, "g_TickIndex", "TickIndex", &rows);
+    }
+    {
+        let mut ind = wickra::Trin::new();
+        let rows: Vec<String> = sections
+            .iter()
+            .map(|s| cell(ind.update(s.clone())))
+            .collect();
+        write_csv(dir, "g_Trin", "Trin", &rows);
+    }
+    {
+        let mut ind = wickra::UpDownVolumeRatio::new();
+        let rows: Vec<String> = sections
+            .iter()
+            .map(|s| cell(ind.update(s.clone())))
+            .collect();
+        write_csv(dir, "g_UpDownVolumeRatio", "UpDownVolumeRatio", &rows);
+    }
+    {
+        let mut ind = wickra::AmihudIlliquidity::new(20).unwrap();
+        let rows: Vec<String> = trades.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(dir, "g_AmihudIlliquidity", "AmihudIlliquidity", &rows);
+    }
+    {
+        let mut ind = wickra::CumulativeVolumeDelta::new();
+        let rows: Vec<String> = trades.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(
+            dir,
+            "g_CumulativeVolumeDelta",
+            "CumulativeVolumeDelta",
+            &rows,
+        );
+    }
+    {
+        let mut ind = wickra::Pin::new(20).unwrap();
+        let rows: Vec<String> = trades.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(dir, "g_Pin", "Pin", &rows);
+    }
+    {
+        let mut ind = wickra::RollMeasure::new(20).unwrap();
+        let rows: Vec<String> = trades.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(dir, "g_RollMeasure", "RollMeasure", &rows);
+    }
+    {
+        let mut ind = wickra::SignedVolume::new();
+        let rows: Vec<String> = trades.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(dir, "g_SignedVolume", "SignedVolume", &rows);
+    }
+    {
+        let mut ind = wickra::TradeImbalance::new(20).unwrap();
+        let rows: Vec<String> = trades.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(dir, "g_TradeImbalance", "TradeImbalance", &rows);
+    }
+    {
+        let mut ind = wickra::TradeSignAutocorrelation::new(20).unwrap();
+        let rows: Vec<String> = trades.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(
+            dir,
+            "g_TradeSignAutocorrelation",
+            "TradeSignAutocorrelation",
+            &rows,
+        );
+    }
+    {
+        let mut ind = wickra::Vpin::new(5000.0, 10).unwrap();
+        let rows: Vec<String> = trades.iter().map(|&t| cell(ind.update(t))).collect();
+        write_csv(dir, "g_Vpin", "Vpin", &rows);
+    }
+    {
+        let mut ind = wickra::KylesLambda::new(20).unwrap();
+        let rows: Vec<String> = quotes.iter().map(|&q| cell(ind.update(q))).collect();
+        write_csv(dir, "g_KylesLambda", "KylesLambda", &rows);
+    }
+    {
+        let mut ind = wickra::RealizedSpread::new(20).unwrap();
+        let rows: Vec<String> = quotes.iter().map(|&q| cell(ind.update(q))).collect();
+        write_csv(dir, "g_RealizedSpread", "RealizedSpread", &rows);
+    }
+    {
+        let mut ind = wickra::EffectiveSpread::new();
+        let rows: Vec<String> = quotes.iter().map(|&q| cell(ind.update(q))).collect();
+        write_csv(dir, "g_EffectiveSpread", "EffectiveSpread", &rows);
+    }
+    {
+        let mut ind = wickra::DepthSlope::new();
+        let rows: Vec<String> = books.iter().map(|b| cell(ind.update(b.clone()))).collect();
+        write_csv(dir, "g_DepthSlope", "DepthSlope", &rows);
+    }
+    {
+        let mut ind = wickra::Microprice::new();
+        let rows: Vec<String> = books.iter().map(|b| cell(ind.update(b.clone()))).collect();
+        write_csv(dir, "g_Microprice", "Microprice", &rows);
+    }
+    {
+        let mut ind = wickra::OrderBookImbalanceFull::new();
+        let rows: Vec<String> = books.iter().map(|b| cell(ind.update(b.clone()))).collect();
+        write_csv(
+            dir,
+            "g_OrderBookImbalanceFull",
+            "OrderBookImbalanceFull",
+            &rows,
+        );
+    }
+    {
+        let mut ind = wickra::OrderBookImbalanceTop1::new();
+        let rows: Vec<String> = books.iter().map(|b| cell(ind.update(b.clone()))).collect();
+        write_csv(
+            dir,
+            "g_OrderBookImbalanceTop1",
+            "OrderBookImbalanceTop1",
+            &rows,
+        );
+    }
+    {
+        let mut ind = wickra::OrderBookImbalanceTopN::new(5).unwrap();
+        let rows: Vec<String> = books.iter().map(|b| cell(ind.update(b.clone()))).collect();
+        write_csv(
+            dir,
+            "g_OrderBookImbalanceTopN",
+            "OrderBookImbalanceTopN",
+            &rows,
+        );
+    }
+    {
+        let mut ind = wickra::OrderFlowImbalance::new(20).unwrap();
+        let rows: Vec<String> = books.iter().map(|b| cell(ind.update(b.clone()))).collect();
+        write_csv(dir, "g_OrderFlowImbalance", "OrderFlowImbalance", &rows);
+    }
+    {
+        let mut ind = wickra::QuotedSpread::new();
+        let rows: Vec<String> = books.iter().map(|b| cell(ind.update(b.clone()))).collect();
+        write_csv(dir, "g_QuotedSpread", "QuotedSpread", &rows);
     }
 }
