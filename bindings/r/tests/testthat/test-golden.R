@@ -117,3 +117,37 @@ test_that("multi-output ADX matches golden", {
     }
   }
 })
+
+# The four de-duplicated indicators, pinned against the Rust reference.
+
+test_that("de-duplicated candle indicators match golden", {
+  skip_if_no_golden()
+  golden_input <- read_golden_input()
+  specs <- list(
+    list("ad_oscillator", AdOscillator()),
+    list("intraday_intensity", IntradayIntensity()),
+    list("awesome_oscillator_histogram", AwesomeOscillatorHistogram(5, 34, 1))
+  )
+  for (spec in specs) {
+    name <- spec[[1]]
+    ind <- spec[[2]]
+    exp <- read_golden(name)
+    for (i in seq_len(nrow(golden_input))) {
+      got <- update(ind, golden_input$open[i], golden_input$high[i], golden_input$low[i],
+                    golden_input$close[i], golden_input$volume[i], i - 1)
+      expect_close(got, gcell(exp[i, 1]), i, name)
+    }
+  }
+})
+
+test_that("AverageDrawdown matches golden", {
+  skip_if_no_golden()
+  golden_input <- read_golden_input()
+  avg <- AverageDrawdown(20)
+  exp <- read_golden("average_drawdown")
+  for (i in seq_len(nrow(golden_input))) {
+    # generator fed the close column as the equity-curve sample.
+    got <- update(avg, golden_input$close[i])
+    expect_close(got, gcell(exp[i, 1]), i, "average_drawdown")
+  }
+})

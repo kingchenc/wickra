@@ -189,3 +189,62 @@ func TestGoldenAdx(t *testing.T) {
 		assertGoldenClose(t, out.Adx, goldenCell(exp[i][2]), i, "adx.adx")
 	}
 }
+
+// The four de-duplicated indicators: pin their corrected definitions against
+// the Rust reference so the Go FFI stays bit-identical.
+
+func TestGoldenAdOscillator(t *testing.T) {
+	input := goldenInput(t)
+	exp := readGolden(t, "ad_oscillator")
+	ad, err := NewAdOscillator()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer ad.Close()
+	for i := range input {
+		got := ad.Update(input[i][0], input[i][1], input[i][2], input[i][3], input[i][4], int64(i))
+		assertGoldenClose(t, got, goldenCell(exp[i][0]), i, "ad_oscillator")
+	}
+}
+
+func TestGoldenIntradayIntensity(t *testing.T) {
+	input := goldenInput(t)
+	exp := readGolden(t, "intraday_intensity")
+	ii, err := NewIntradayIntensity()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer ii.Close()
+	for i := range input {
+		got := ii.Update(input[i][0], input[i][1], input[i][2], input[i][3], input[i][4], int64(i))
+		assertGoldenClose(t, got, goldenCell(exp[i][0]), i, "intraday_intensity")
+	}
+}
+
+func TestGoldenAwesomeOscillatorHistogram(t *testing.T) {
+	input := goldenInput(t)
+	exp := readGolden(t, "awesome_oscillator_histogram")
+	aoh, err := NewAwesomeOscillatorHistogram(5, 34, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer aoh.Close()
+	for i := range input {
+		got := aoh.Update(input[i][0], input[i][1], input[i][2], input[i][3], input[i][4], int64(i))
+		assertGoldenClose(t, got, goldenCell(exp[i][0]), i, "awesome_oscillator_histogram")
+	}
+}
+
+func TestGoldenAverageDrawdown(t *testing.T) {
+	input := goldenInput(t)
+	exp := readGolden(t, "average_drawdown")
+	avg, err := NewAverageDrawdown(20)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer avg.Close()
+	for i := range input {
+		// generator fed the close column as the equity-curve sample.
+		assertGoldenClose(t, avg.Update(input[i][3]), goldenCell(exp[i][0]), i, "average_drawdown")
+	}
+}
