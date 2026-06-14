@@ -1,0 +1,11569 @@
+[
+ {
+  "canonical": "AbandonedBaby",
+  "js": "AbandonedBaby",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Abcd",
+  "js": "Abcd",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "AbsoluteBreadthIndex",
+  "js": "AbsoluteBreadthIndex",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_high",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_low",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "cross"
+ },
+ {
+  "canonical": "AccelerationBands",
+  "js": "AccelerationBands",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "AcceleratorOscillator",
+  "js": "AcceleratorOscillator",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "AdOscillator",
+  "js": "ADOSC",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "AdVolumeLine",
+  "js": "AdVolumeLine",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_high",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_low",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "cross"
+ },
+ {
+  "canonical": "AdaptiveCci",
+  "js": "ADAPTIVECCI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "AdaptiveCycle",
+  "js": "AdaptiveCycle",
+  "ctor": [],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "AdaptiveLaguerreFilter",
+  "js": "AdaptiveLaguerre",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "AdaptiveRsi",
+  "js": "ADAPTIVERSI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Adl",
+  "js": "ADL",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "AdvanceBlock",
+  "js": "AdvanceBlock",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "AdvanceDecline",
+  "js": "AdvanceDecline",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_high",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_low",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "cross"
+ },
+ {
+  "canonical": "AdvanceDeclineRatio",
+  "js": "AdvanceDeclineRatio",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_high",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_low",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "cross"
+ },
+ {
+  "canonical": "Adx",
+  "js": "ADX",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "Adxr",
+  "js": "ADXR",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Alligator",
+  "js": "Alligator",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "Alma",
+  "js": "ALMA",
+  "ctor": [
+   9,
+   0.85,
+   6.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Alpha",
+  "js": "Alpha",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "asset",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "benchmark",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "pairwise"
+ },
+ {
+  "canonical": "AmihudIlliquidity",
+  "js": "AmihudIlliquidity",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "price",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "size",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "is_buy",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "trade"
+ },
+ {
+  "canonical": "AnchoredRsi",
+  "js": "AnchoredRSI",
+  "ctor": [],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "AnchoredVwap",
+  "js": "AnchoredVWAP",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "AndrewsPitchfork",
+  "js": "AndrewsPitchfork",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "Apo",
+  "js": "APO",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Aroon",
+  "js": "Aroon",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "AroonOscillator",
+  "js": "AroonOscillator",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Atr",
+  "js": "ATR",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "AtrBands",
+  "js": "AtrBands",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "AtrRatchet",
+  "js": "AtrRatchet",
+  "ctor": [
+   14,
+   2.0,
+   0.5
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "AtrTrailingStop",
+  "js": "AtrTrailingStop",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "AutoFib",
+  "js": "AutoFib",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 7
+ },
+ {
+  "canonical": "Autocorrelation",
+  "js": "Autocorrelation",
+  "ctor": [
+   10,
+   1
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "AutocorrelationPeriodogram",
+  "js": "AUTOCORRPGRAM",
+  "ctor": [
+   10,
+   48
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "AverageDailyRange",
+  "js": "AverageDailyRange",
+  "ctor": [
+   14,
+   0
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "timestamp",
+    "array": false,
+    "bigint": true
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "AverageDrawdown",
+  "js": "AverageDrawdown",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "AvgPrice",
+  "js": "AVGPRICE",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "AwesomeOscillator",
+  "js": "AwesomeOscillator",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "AwesomeOscillatorHistogram",
+  "js": "AwesomeOscillatorHistogram",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "BalanceOfPower",
+  "js": "BalanceOfPower",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "BandpassFilter",
+  "js": "BANDPASS",
+  "ctor": [
+   20,
+   0.3
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Bat",
+  "js": "Bat",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "BeltHold",
+  "js": "BeltHold",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Beta",
+  "js": "Beta",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "y",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "pairwise"
+ },
+ {
+  "canonical": "BetaNeutralSpread",
+  "js": "BetaNeutralSpread",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "y",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "pairwise"
+ },
+ {
+  "canonical": "BetterVolume",
+  "js": "BetterVolume",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "BipowerVariation",
+  "js": "BipowerVariation",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "BodySizePct",
+  "js": "BodySizePct",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "BollingerBands",
+  "js": "BollingerBands",
+  "ctor": [
+   20,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_f64",
+  "n": 4
+ },
+ {
+  "canonical": "BollingerBandwidth",
+  "js": "BollingerBandwidth",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "BomarBands",
+  "js": "BomarBands",
+  "ctor": [
+   4,
+   0.85
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_f64",
+  "n": 3
+ },
+ {
+  "canonical": "BreadthThrust",
+  "js": "BreadthThrust",
+  "ctor": [
+   10
+  ],
+  "args": [
+   {
+    "name": "change",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_high",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_low",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "cross"
+ },
+ {
+  "canonical": "Breakaway",
+  "js": "Breakaway",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "BullishPercentIndex",
+  "js": "BullishPercentIndex",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_high",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_low",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "on_buy_signal",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "cross"
+ },
+ {
+  "canonical": "BurkeRatio",
+  "js": "BurkeRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Butterfly",
+  "js": "Butterfly",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "CalendarSpread",
+  "js": "CalendarSpread",
+  "ctor": [],
+  "args": [
+   {
+    "name": "futures_price",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "mark_price",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "deriv"
+ },
+ {
+  "canonical": "CalmarRatio",
+  "js": "CalmarRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Camarilla",
+  "js": "Camarilla",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 9
+ },
+ {
+  "canonical": "CandleVolume",
+  "js": "CandleVolume",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "Cci",
+  "js": "CCI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "CenterOfGravity",
+  "js": "CenterOfGravity",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "CentralPivotRange",
+  "js": "CentralPivotRange",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "Cfo",
+  "js": "CFO",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "ChaikinMoneyFlow",
+  "js": "ChaikinMoneyFlow",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "ChaikinOscillator",
+  "js": "ChaikinOscillator",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "ChaikinVolatility",
+  "js": "ChaikinVolatility",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "ChandeKrollStop",
+  "js": "ChandeKrollStop",
+  "ctor": [
+   3,
+   2.0,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "ChandelierExit",
+  "js": "ChandelierExit",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "ChoppinessIndex",
+  "js": "ChoppinessIndex",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "ClassicPivots",
+  "js": "ClassicPivots",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 7
+ },
+ {
+  "canonical": "CloseVsOpen",
+  "js": "CloseVsOpen",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "ClosingMarubozu",
+  "js": "ClosingMarubozu",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Cmo",
+  "js": "CMO",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "CoefficientOfVariation",
+  "js": "CoefficientOfVariation",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Cointegration",
+  "js": "Cointegration",
+  "ctor": [
+   40,
+   1
+  ],
+  "args": [
+   {
+    "name": "a",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "b",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_pairwise",
+  "n": 3
+ },
+ {
+  "canonical": "CommonSenseRatio",
+  "js": "CommonSenseRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "CompositeProfile",
+  "js": "CompositeProfile",
+  "ctor": [
+   20,
+   24,
+   0.7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "ConcealingBabySwallow",
+  "js": "ConcealingBabySwallow",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "ConditionalValueAtRisk",
+  "js": "ConditionalValueAtRisk",
+  "ctor": [
+   20,
+   0.95
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "ConnorsRsi",
+  "js": "ConnorsRSI",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Coppock",
+  "js": "Coppock",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "CorrelationTrendIndicator",
+  "js": "CTI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Counterattack",
+  "js": "Counterattack",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Crab",
+  "js": "Crab",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "CumulativeVolumeDelta",
+  "js": "CumulativeVolumeDelta",
+  "ctor": [],
+  "args": [
+   {
+    "name": "price",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "size",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "is_buy",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "trade"
+ },
+ {
+  "canonical": "CumulativeVolumeIndex",
+  "js": "CumulativeVolumeIndex",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_high",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_low",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "cross"
+ },
+ {
+  "canonical": "CupAndHandle",
+  "js": "CupAndHandle",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "CyberneticCycle",
+  "js": "CyberneticCycle",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Cypher",
+  "js": "Cypher",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "DayOfWeekProfile",
+  "js": "DayOfWeekProfile",
+  "ctor": [
+   0
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "timestamp",
+    "array": false,
+    "bigint": true
+   }
+  ],
+  "out": "profile_bins",
+  "width": 7
+ },
+ {
+  "canonical": "Decycler",
+  "js": "Decycler",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "DecyclerOscillator",
+  "js": "DecyclerOscillator",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Dema",
+  "js": "DEMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "DemandIndex",
+  "js": "DemandIndex",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "DemarkPivots",
+  "js": "DemarkPivots",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "DepthSlope",
+  "js": "DepthSlope",
+  "ctor": [],
+  "args": [
+   {
+    "name": "bid_px",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "bid_sz",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "ask_px",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "ask_sz",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "ob"
+ },
+ {
+  "canonical": "DerivativeOscillator",
+  "js": "DerivativeOscillator",
+  "ctor": [
+   3,
+   7,
+   14,
+   28
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "DetrendedStdDev",
+  "js": "DetrendedStdDev",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "DisparityIndex",
+  "js": "DisparityIndex",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "DistanceSsd",
+  "js": "DistanceSsd",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "y",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "pairwise"
+ },
+ {
+  "canonical": "Doji",
+  "js": "Doji",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "DojiStar",
+  "js": "DojiStar",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "DollarBars",
+  "js": "DollarBars",
+  "ctor": [
+   50000.0
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "bars"
+ },
+ {
+  "canonical": "Donchian",
+  "js": "Donchian",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "DonchianStop",
+  "js": "DonchianStop",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "DoubleBollinger",
+  "js": "DoubleBollinger",
+  "ctor": [
+   20,
+   1.0,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_f64",
+  "n": 5
+ },
+ {
+  "canonical": "DoubleTopBottom",
+  "js": "DoubleTopBottom",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "DownsideGapThreeMethods",
+  "js": "DownsideGapThreeMethods",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Dpo",
+  "js": "DPO",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "DragonflyDoji",
+  "js": "DragonflyDoji",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "DrawdownDuration",
+  "js": "DrawdownDuration",
+  "ctor": [],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "DumplingTop",
+  "js": "DumplingTop",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Dx",
+  "js": "DX",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "DynamicMomentumIndex",
+  "js": "DynamicMomentumIndex",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "EaseOfMovement",
+  "js": "EaseOfMovement",
+  "ctor": [
+   14,
+   100000000.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "EffectiveSpread",
+  "js": "EffectiveSpread",
+  "ctor": [],
+  "args": [
+   {
+    "name": "price",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "size",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "is_buy",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "mid",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "trademid"
+ },
+ {
+  "canonical": "EhlersStochastic",
+  "js": "EhlersStochastic",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Ehma",
+  "js": "EHMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "ElderImpulse",
+  "js": "ElderImpulse",
+  "ctor": [
+   3,
+   7,
+   14,
+   28
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "ElderRay",
+  "js": "ElderRay",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "ElderSafeZone",
+  "js": "ElderSafeZone",
+  "ctor": [
+   10,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "Ema",
+  "js": "EMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "EmpiricalModeDecomposition",
+  "js": "EmpiricalModeDecomposition",
+  "ctor": [
+   20,
+   0.1
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Engulfing",
+  "js": "Engulfing",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Equivolume",
+  "js": "Equivolume",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "EstimatedLeverageRatio",
+  "js": "EstimatedLeverageRatio",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open_interest",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "long_size",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "short_size",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "deriv"
+ },
+ {
+  "canonical": "EvenBetterSinewave",
+  "js": "EVENBETTERSINE",
+  "ctor": [
+   40,
+   10
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "EveningDojiStar",
+  "js": "EveningDojiStar",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Evwma",
+  "js": "EVWMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "EwmaVolatility",
+  "js": "EwmaVolatility",
+  "ctor": [
+   0.94
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Expectancy",
+  "js": "Expectancy",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "FallingThreeMethods",
+  "js": "FallingThreeMethods",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Fama",
+  "js": "FAMA",
+  "ctor": [
+   0.5,
+   0.05
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "FibArcs",
+  "js": "FibArcs",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "FibChannel",
+  "js": "FibChannel",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 4
+ },
+ {
+  "canonical": "FibConfluence",
+  "js": "FibConfluence",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "FibExtension",
+  "js": "FibExtension",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 5
+ },
+ {
+  "canonical": "FibFan",
+  "js": "FibFan",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "FibProjection",
+  "js": "FibProjection",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 4
+ },
+ {
+  "canonical": "FibRetracement",
+  "js": "FibRetracement",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 7
+ },
+ {
+  "canonical": "FibTimeZones",
+  "js": "FibTimeZones",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "FibonacciPivots",
+  "js": "FibonacciPivots",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 7
+ },
+ {
+  "canonical": "FisherRsi",
+  "js": "FisherRSI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "FisherTransform",
+  "js": "FisherTransform",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "FlagPennant",
+  "js": "FlagPennant",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Footprint",
+  "js": "Footprint",
+  "ctor": [
+   1.0
+  ],
+  "args": [
+   {
+    "name": "price",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "size",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "is_buy",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "footprint"
+ },
+ {
+  "canonical": "ForceIndex",
+  "js": "ForceIndex",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "FractalChaosBands",
+  "js": "FractalChaosBands",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "Frama",
+  "js": "FRAMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "FryPanBottom",
+  "js": "FryPanBottom",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "FundingBasis",
+  "js": "FundingBasis",
+  "ctor": [],
+  "args": [
+   {
+    "name": "mark_price",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "index_price",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "deriv"
+ },
+ {
+  "canonical": "FundingImpliedApr",
+  "js": "FundingImpliedApr",
+  "ctor": [
+   1095.0
+  ],
+  "args": [
+   {
+    "name": "funding_rate",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "deriv"
+ },
+ {
+  "canonical": "FundingRate",
+  "js": "FundingRate",
+  "ctor": [],
+  "args": [
+   {
+    "name": "funding_rate",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "deriv"
+ },
+ {
+  "canonical": "FundingRateMean",
+  "js": "FundingRateMean",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "funding_rate",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "deriv"
+ },
+ {
+  "canonical": "FundingRateZScore",
+  "js": "FundingRateZScore",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "funding_rate",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "deriv"
+ },
+ {
+  "canonical": "GainLossRatio",
+  "js": "GainLossRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "GainToPainRatio",
+  "js": "GainToPainRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "GapSideBySideWhite",
+  "js": "GapSideBySideWhite",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Garch11",
+  "js": "Garch11",
+  "ctor": [
+   2e-06,
+   0.1,
+   0.88
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "GarmanKlassVolatility",
+  "js": "GarmanKlassVolatility",
+  "ctor": [
+   20,
+   252
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Gartley",
+  "js": "Gartley",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "GatorOscillator",
+  "js": "GatorOscillator",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "GeneralizedDema",
+  "js": "GD",
+  "ctor": [
+   5,
+   0.7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "GeometricMa",
+  "js": "GMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "GoldenPocket",
+  "js": "GoldenPocket",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "GrangerCausality",
+  "js": "GrangerCausality",
+  "ctor": [
+   60,
+   1
+  ],
+  "args": [
+   {
+    "name": "a",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "b",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "pairwise"
+ },
+ {
+  "canonical": "GravestoneDoji",
+  "js": "GravestoneDoji",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Hammer",
+  "js": "Hammer",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "HangingMan",
+  "js": "HangingMan",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Harami",
+  "js": "Harami",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "HaramiCross",
+  "js": "HaramiCross",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "HasbrouckInformationShare",
+  "js": "HasbrouckInformationShare",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "y",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "pairwise"
+ },
+ {
+  "canonical": "HeadAndShoulders",
+  "js": "HeadAndShoulders",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "HeikinAshi",
+  "js": "HeikinAshi",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 4
+ },
+ {
+  "canonical": "HeikinAshiOscillator",
+  "js": "HeikinAshiOscillator",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "HiLoActivator",
+  "js": "HiLoActivator",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "HighLowIndex",
+  "js": "HighLowIndex",
+  "ctor": [
+   10
+  ],
+  "args": [
+   {
+    "name": "change",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_high",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_low",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "cross"
+ },
+ {
+  "canonical": "HighLowRange",
+  "js": "HighLowRange",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "HighLowVolumeNodes",
+  "js": "HighLowVolumeNodes",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "HighWave",
+  "js": "HighWave",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "HighpassFilter",
+  "js": "HIGHPASS",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Hikkake",
+  "js": "Hikkake",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "HikkakeModified",
+  "js": "HikkakeModified",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "HilbertDominantCycle",
+  "js": "HilbertDominantCycle",
+  "ctor": [],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "HistoricalVolatility",
+  "js": "HistoricalVolatility",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Hma",
+  "js": "HMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "HoltWinters",
+  "js": "HoltWinters",
+  "ctor": [
+   0.5,
+   0.1
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "HomingPigeon",
+  "js": "HomingPigeon",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "HtDcPhase",
+  "js": "HT_DCPHASE",
+  "ctor": [],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "HtPhasor",
+  "js": "HT_PHASOR",
+  "ctor": [],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_f64",
+  "n": 2
+ },
+ {
+  "canonical": "HtTrendMode",
+  "js": "HT_TRENDMODE",
+  "ctor": [],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "HurstChannel",
+  "js": "HurstChannel",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "HurstExponent",
+  "js": "HurstExponent",
+  "ctor": [
+   100,
+   4
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Ichimoku",
+  "js": "Ichimoku",
+  "ctor": [
+   9,
+   26,
+   52,
+   26
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 5
+ },
+ {
+  "canonical": "IdenticalThreeCrows",
+  "js": "IdenticalThreeCrows",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "ImbalanceBars",
+  "js": "ImbalanceBars",
+  "ctor": [
+   5.0
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "bars"
+ },
+ {
+  "canonical": "InNeck",
+  "js": "InNeck",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Inertia",
+  "js": "Inertia",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "InformationRatio",
+  "js": "InformationRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "asset",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "benchmark",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "pairwise"
+ },
+ {
+  "canonical": "InitialBalance",
+  "js": "InitialBalance",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "InstantaneousTrendline",
+  "js": "InstantaneousTrendline",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "IntradayIntensity",
+  "js": "IntradayIntensity",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "IntradayMomentumIndex",
+  "js": "IMI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "IntradayVolatilityProfile",
+  "js": "IntradayVolatilityProfile",
+  "ctor": [
+   24,
+   0
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "timestamp",
+    "array": false,
+    "bigint": true
+   }
+  ],
+  "out": "profile_bins",
+  "width": 24
+ },
+ {
+  "canonical": "InverseFisherTransform",
+  "js": "InverseFisherTransform",
+  "ctor": [
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "InvertedHammer",
+  "js": "InvertedHammer",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "JarqueBera",
+  "js": "JARQUEBERA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Jma",
+  "js": "JMA",
+  "ctor": [
+   7,
+   0.0,
+   2
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "JumpIndicator",
+  "js": "JumpIndicator",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "KRatio",
+  "js": "KRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "KagiBars",
+  "js": "KagiBars",
+  "ctor": [
+   2.0
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "bars"
+ },
+ {
+  "canonical": "KalmanHedgeRatio",
+  "js": "KalmanHedgeRatio",
+  "ctor": [
+   0.01,
+   0.001
+  ],
+  "args": [
+   {
+    "name": "a",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "b",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_pairwise",
+  "n": 3
+ },
+ {
+  "canonical": "Kama",
+  "js": "KAMA",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "KaseDevStop",
+  "js": "KaseDevStop",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "KasePermissionStochastic",
+  "js": "KasePermissionStochastic",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "KellyCriterion",
+  "js": "KellyCriterion",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Keltner",
+  "js": "Keltner",
+  "ctor": [
+   3,
+   7,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "KendallTau",
+  "js": "KendallTau",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "y",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "pairwise"
+ },
+ {
+  "canonical": "Kicking",
+  "js": "Kicking",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "KickingByLength",
+  "js": "KickingByLength",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Kst",
+  "js": "KST",
+  "ctor": [
+   3,
+   7,
+   14,
+   28,
+   35,
+   42,
+   56,
+   63,
+   70
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_f64",
+  "n": 2
+ },
+ {
+  "canonical": "Kurtosis",
+  "js": "Kurtosis",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Kvo",
+  "js": "KVO",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "KylesLambda",
+  "js": "KylesLambda",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "price",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "size",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "is_buy",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "mid",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "trademid"
+ },
+ {
+  "canonical": "LadderBottom",
+  "js": "LadderBottom",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "LaguerreRsi",
+  "js": "LaguerreRSI",
+  "ctor": [
+   0.5
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "LeadLagCrossCorrelation",
+  "js": "LeadLagCrossCorrelation",
+  "ctor": [
+   20,
+   10
+  ],
+  "args": [
+   {
+    "name": "a",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "b",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_pairwise",
+  "n": 2
+ },
+ {
+  "canonical": "LinRegAngle",
+  "js": "LinRegAngle",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "LinRegChannel",
+  "js": "LinRegChannel",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_f64",
+  "n": 3
+ },
+ {
+  "canonical": "LinRegIntercept",
+  "js": "LINEARREG_INTERCEPT",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "LinRegSlope",
+  "js": "LinRegSlope",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "LinearRegression",
+  "js": "LinearRegression",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "LiquidationFeatures",
+  "js": "LiquidationFeatures",
+  "ctor": [],
+  "args": [
+   {
+    "name": "long_liquidation",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "short_liquidation",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "deriv_multi",
+  "n": 5
+ },
+ {
+  "canonical": "LogReturn",
+  "js": "LogReturn",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "LongLeggedDoji",
+  "js": "LongLeggedDoji",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "LongLine",
+  "js": "LongLine",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "LongShortRatio",
+  "js": "LongShortRatio",
+  "ctor": [],
+  "args": [
+   {
+    "name": "long_size",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "short_size",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "deriv"
+ },
+ {
+  "canonical": "M2Measure",
+  "js": "M2Measure",
+  "ctor": [
+   14,
+   2.0,
+   0.5
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "MaEnvelope",
+  "js": "MaEnvelope",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_f64",
+  "n": 3
+ },
+ {
+  "canonical": "MacdExt",
+  "js": "MACDEXT",
+  "ctor": [
+   12,
+   0,
+   26,
+   0,
+   9,
+   0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_f64",
+  "n": 3
+ },
+ {
+  "canonical": "MacdFix",
+  "js": "MACDFIX",
+  "ctor": [
+   9
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_f64",
+  "n": 3
+ },
+ {
+  "canonical": "MacdHistogram",
+  "js": "MacdHistogram",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "MacdIndicator",
+  "js": "MACD",
+  "ctor": [
+   12,
+   26,
+   9
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_f64",
+  "n": 3
+ },
+ {
+  "canonical": "Mama",
+  "js": "MAMA",
+  "ctor": [
+   0.5,
+   0.05
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_f64",
+  "n": 2
+ },
+ {
+  "canonical": "MarketFacilitationIndex",
+  "js": "MarketFacilitationIndex",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "MartinRatio",
+  "js": "MartinRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Marubozu",
+  "js": "Marubozu",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "MassIndex",
+  "js": "MassIndex",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "MatHold",
+  "js": "MatHold",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "MatchingLow",
+  "js": "MatchingLow",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "MaxDrawdown",
+  "js": "MaxDrawdown",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "McClellanOscillator",
+  "js": "McClellanOscillator",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_high",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_low",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "cross"
+ },
+ {
+  "canonical": "McClellanSummationIndex",
+  "js": "McClellanSummationIndex",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_high",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_low",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "cross"
+ },
+ {
+  "canonical": "McGinleyDynamic",
+  "js": "McGinleyDynamic",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "MedianAbsoluteDeviation",
+  "js": "MedianAbsoluteDeviation",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "MedianChannel",
+  "js": "MedianChannel",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_f64",
+  "n": 3
+ },
+ {
+  "canonical": "MedianMa",
+  "js": "MedianMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "MedianPrice",
+  "js": "MedianPrice",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Mfi",
+  "js": "MFI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Microprice",
+  "js": "Microprice",
+  "ctor": [],
+  "args": [
+   {
+    "name": "bid_px",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "bid_sz",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "ask_px",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "ask_sz",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "ob"
+ },
+ {
+  "canonical": "MidPoint",
+  "js": "MIDPOINT",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "MidPrice",
+  "js": "MIDPRICE",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "MinusDi",
+  "js": "MINUS_DI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "MinusDm",
+  "js": "MINUS_DM",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "ModifiedMaStop",
+  "js": "ModifiedMaStop",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "Mom",
+  "js": "MOM",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "MorningDojiStar",
+  "js": "MorningDojiStar",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "MorningEveningStar",
+  "js": "MorningEveningStar",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "MurreyMathLines",
+  "js": "MurreyMathLines",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 9
+ },
+ {
+  "canonical": "NakedPoc",
+  "js": "NakedPoc",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Natr",
+  "js": "NATR",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "NewHighsNewLows",
+  "js": "NewHighsNewLows",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_high",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_low",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "cross"
+ },
+ {
+  "canonical": "NewPriceLines",
+  "js": "NewPriceLines",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Nrtr",
+  "js": "Nrtr",
+  "ctor": [
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "Nvi",
+  "js": "NVI",
+  "ctor": [],
+  "args": [
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "OIPriceDivergence",
+  "js": "OIPriceDivergence",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "open_interest",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "mark_price",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "deriv"
+ },
+ {
+  "canonical": "OIWeighted",
+  "js": "OIWeighted",
+  "ctor": [],
+  "args": [
+   {
+    "name": "mark_price",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "open_interest",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "deriv"
+ },
+ {
+  "canonical": "Obv",
+  "js": "OBV",
+  "ctor": [],
+  "args": [
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "OiToVolumeRatio",
+  "js": "OiToVolumeRatio",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open_interest",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "taker_buy_volume",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "taker_sell_volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "deriv"
+ },
+ {
+  "canonical": "OmegaRatio",
+  "js": "OmegaRatio",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "OnNeck",
+  "js": "OnNeck",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "OpenInterestDelta",
+  "js": "OpenInterestDelta",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open_interest",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "deriv"
+ },
+ {
+  "canonical": "OpenInterestMomentum",
+  "js": "OpenInterestMomentum",
+  "ctor": [
+   10
+  ],
+  "args": [
+   {
+    "name": "open_interest",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "deriv"
+ },
+ {
+  "canonical": "OpeningMarubozu",
+  "js": "OpeningMarubozu",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "OpeningRange",
+  "js": "OpeningRange",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "OrderBookImbalanceFull",
+  "js": "OrderBookImbalanceFull",
+  "ctor": [],
+  "args": [
+   {
+    "name": "bid_px",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "bid_sz",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "ask_px",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "ask_sz",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "ob"
+ },
+ {
+  "canonical": "OrderBookImbalanceTop1",
+  "js": "OrderBookImbalanceTop1",
+  "ctor": [],
+  "args": [
+   {
+    "name": "bid_px",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "bid_sz",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "ask_px",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "ask_sz",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "ob"
+ },
+ {
+  "canonical": "OrderBookImbalanceTopN",
+  "js": "OrderBookImbalanceTopN",
+  "ctor": [
+   5
+  ],
+  "args": [
+   {
+    "name": "bid_px",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "bid_sz",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "ask_px",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "ask_sz",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "ob"
+ },
+ {
+  "canonical": "OrderFlowImbalance",
+  "js": "OrderFlowImbalance",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "bid_px",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "bid_sz",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "ask_px",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "ask_sz",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "ob"
+ },
+ {
+  "canonical": "OuHalfLife",
+  "js": "OuHalfLife",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "y",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "pairwise"
+ },
+ {
+  "canonical": "OvernightGap",
+  "js": "OvernightGap",
+  "ctor": [
+   0
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "timestamp",
+    "array": false,
+    "bigint": true
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "OvernightIntradayReturn",
+  "js": "OvernightIntradayReturn",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "timestamp",
+    "array": false,
+    "bigint": true
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "PainIndex",
+  "js": "PainIndex",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "PairSpreadZScore",
+  "js": "PairSpreadZScore",
+  "ctor": [
+   20,
+   20
+  ],
+  "args": [
+   {
+    "name": "a",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "b",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "pairwise"
+ },
+ {
+  "canonical": "PairwiseBeta",
+  "js": "PairwiseBeta",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "y",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "pairwise"
+ },
+ {
+  "canonical": "ParkinsonVolatility",
+  "js": "ParkinsonVolatility",
+  "ctor": [
+   20,
+   252
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "PearsonCorrelation",
+  "js": "PearsonCorrelation",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "y",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "pairwise"
+ },
+ {
+  "canonical": "PercentAboveMa",
+  "js": "PercentAboveMa",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_high",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_low",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "above_ma",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "cross"
+ },
+ {
+  "canonical": "PercentB",
+  "js": "PercentB",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "PercentageTrailingStop",
+  "js": "PercentageTrailingStop",
+  "ctor": [
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "PerpetualPremiumIndex",
+  "js": "PerpetualPremiumIndex",
+  "ctor": [],
+  "args": [
+   {
+    "name": "mark_price",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "index_price",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "deriv"
+ },
+ {
+  "canonical": "Pgo",
+  "js": "PGO",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "PiercingDarkCloud",
+  "js": "PiercingDarkCloud",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Pin",
+  "js": "Pin",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "price",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "size",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "is_buy",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "trade"
+ },
+ {
+  "canonical": "PivotReversal",
+  "js": "PivotReversal",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "PlusDi",
+  "js": "PLUS_DI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "PlusDm",
+  "js": "PLUS_DM",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Pmo",
+  "js": "PMO",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "PointAndFigureBars",
+  "js": "PointAndFigureBars",
+  "ctor": [
+   2.0,
+   3
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "bars"
+ },
+ {
+  "canonical": "PolarizedFractalEfficiency",
+  "js": "POLARIZED_FRACTAL_EFFICIENCY",
+  "ctor": [
+   10,
+   5
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Ppo",
+  "js": "PPO",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "PpoHistogram",
+  "js": "PpoHistogram",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "ProfileShape",
+  "js": "ProfileShape",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "ProfitFactor",
+  "js": "ProfitFactor",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "ProjectionBands",
+  "js": "ProjectionBands",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "ProjectionOscillator",
+  "js": "ProjectionOscillator",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Psar",
+  "js": "PSAR",
+  "ctor": [
+   0.02,
+   0.02,
+   0.2
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Pvi",
+  "js": "PVI",
+  "ctor": [],
+  "args": [
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Qqe",
+  "js": "QQE",
+  "ctor": [
+   3,
+   7,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_f64",
+  "n": 2
+ },
+ {
+  "canonical": "Qstick",
+  "js": "Qstick",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "QuartileBands",
+  "js": "QuartileBands",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_f64",
+  "n": 3
+ },
+ {
+  "canonical": "QuotedSpread",
+  "js": "QuotedSpread",
+  "ctor": [],
+  "args": [
+   {
+    "name": "bid_px",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "bid_sz",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "ask_px",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "ask_sz",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "ob"
+ },
+ {
+  "canonical": "RSquared",
+  "js": "RSquared",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "RangeBars",
+  "js": "RangeBars",
+  "ctor": [
+   2.0
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "bars"
+ },
+ {
+  "canonical": "RealizedSpread",
+  "js": "RealizedSpread",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "price",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "size",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "is_buy",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "mid",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "trademid"
+ },
+ {
+  "canonical": "RealizedVolatility",
+  "js": "RealizedVolatility",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "RecoveryFactor",
+  "js": "RecoveryFactor",
+  "ctor": [],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "RectangleRange",
+  "js": "RectangleRange",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Reflex",
+  "js": "REFLEX",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "RegimeLabel",
+  "js": "RegimeLabel",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "RelativeStrengthAB",
+  "js": "RelativeStrengthAB",
+  "ctor": [
+   14,
+   14
+  ],
+  "args": [
+   {
+    "name": "a",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "b",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_pairwise",
+  "n": 3
+ },
+ {
+  "canonical": "RenkoBars",
+  "js": "RenkoBars",
+  "ctor": [
+   2.0
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "bars"
+ },
+ {
+  "canonical": "RenkoTrailingStop",
+  "js": "RenkoTrailingStop",
+  "ctor": [
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "RickshawMan",
+  "js": "RickshawMan",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "RisingThreeMethods",
+  "js": "RisingThreeMethods",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Rmi",
+  "js": "RMI",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Roc",
+  "js": "ROC",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Rocp",
+  "js": "ROCP",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Rocr",
+  "js": "ROCR",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Rocr100",
+  "js": "ROCR100",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "RogersSatchellVolatility",
+  "js": "RogersSatchellVolatility",
+  "ctor": [
+   20,
+   252
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "RollMeasure",
+  "js": "RollMeasure",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "price",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "size",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "is_buy",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "trade"
+ },
+ {
+  "canonical": "RollingCorrelation",
+  "js": "RollingCorrelation",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "y",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "pairwise"
+ },
+ {
+  "canonical": "RollingCovariance",
+  "js": "RollingCovariance",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "y",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "pairwise"
+ },
+ {
+  "canonical": "RollingIqr",
+  "js": "RollingIqr",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "RollingMinMaxScaler",
+  "js": "ROLLINGMINMAX",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "RollingPercentileRank",
+  "js": "RollingPercentileRank",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "RollingQuantile",
+  "js": "RollingQuantile",
+  "ctor": [
+   20,
+   0.5
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "RollingVwap",
+  "js": "RollingVWAP",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "RoofingFilter",
+  "js": "RoofingFilter",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Rsi",
+  "js": "RSI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Rsx",
+  "js": "RSX",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "RunBars",
+  "js": "RunBars",
+  "ctor": [
+   3
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "bars"
+ },
+ {
+  "canonical": "Rvi",
+  "js": "RVI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "RviVolatility",
+  "js": "RVIVolatility",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Rwi",
+  "js": "RWI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "SampleEntropy",
+  "js": "SAMPLEENT",
+  "ctor": [
+   20,
+   2,
+   0.2
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "SarExt",
+  "js": "SAREXT",
+  "ctor": [
+   2.0,
+   0.5,
+   0.5,
+   0.5,
+   0.5,
+   0.5,
+   0.5,
+   0.5
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "SeasonalZScore",
+  "js": "SeasonalZScore",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "timestamp",
+    "array": false,
+    "bigint": true
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "SeparatingLines",
+  "js": "SeparatingLines",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "SessionHighLow",
+  "js": "SessionHighLow",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "timestamp",
+    "array": false,
+    "bigint": true
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "SessionRange",
+  "js": "SessionRange",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "timestamp",
+    "array": false,
+    "bigint": true
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "SessionVwap",
+  "js": "SessionVwap",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "timestamp",
+    "array": false,
+    "bigint": true
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "ShannonEntropy",
+  "js": "SHANNONENT",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Shark",
+  "js": "Shark",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "SharpeRatio",
+  "js": "SharpeRatio",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "ShootingStar",
+  "js": "ShootingStar",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "ShortLine",
+  "js": "ShortLine",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "SignedVolume",
+  "js": "SignedVolume",
+  "ctor": [],
+  "args": [
+   {
+    "name": "price",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "size",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "is_buy",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "trade"
+ },
+ {
+  "canonical": "SineWave",
+  "js": "SineWave",
+  "ctor": [],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "SineWeightedMa",
+  "js": "SWMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "SinglePrints",
+  "js": "SinglePrints",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Skewness",
+  "js": "Skewness",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Sma",
+  "js": "SMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Smi",
+  "js": "SMI",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Smma",
+  "js": "SMMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "SmoothedHeikinAshi",
+  "js": "SmoothedHeikinAshi",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 4
+ },
+ {
+  "canonical": "SortinoRatio",
+  "js": "SortinoRatio",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "SpearmanCorrelation",
+  "js": "SpearmanCorrelation",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "y",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "pairwise"
+ },
+ {
+  "canonical": "SpinningTop",
+  "js": "SpinningTop",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "SpreadAr1Coefficient",
+  "js": "SpreadAr1Coefficient",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "y",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "pairwise"
+ },
+ {
+  "canonical": "SpreadBollingerBands",
+  "js": "SpreadBollingerBands",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "a",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "b",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_pairwise",
+  "n": 4
+ },
+ {
+  "canonical": "SpreadHurst",
+  "js": "SpreadHurst",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "x",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "y",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "pairwise"
+ },
+ {
+  "canonical": "StalledPattern",
+  "js": "StalledPattern",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "StandardError",
+  "js": "StandardError",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "StandardErrorBands",
+  "js": "StandardErrorBands",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_f64",
+  "n": 3
+ },
+ {
+  "canonical": "StarcBands",
+  "js": "StarcBands",
+  "ctor": [
+   3,
+   7,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "Stc",
+  "js": "STC",
+  "ctor": [
+   10,
+   23,
+   10,
+   0.5
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "StdDev",
+  "js": "StdDev",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "StepTrailingStop",
+  "js": "StepTrailingStop",
+  "ctor": [
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "SterlingRatio",
+  "js": "SterlingRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "StickSandwich",
+  "js": "StickSandwich",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "StochRsi",
+  "js": "StochRSI",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Stochastic",
+  "js": "Stochastic",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "StochasticCci",
+  "js": "StochasticCCI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "SuperSmoother",
+  "js": "SuperSmoother",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "SuperTrend",
+  "js": "SuperTrend",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "T3",
+  "js": "T3",
+  "ctor": [
+   5,
+   0.7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "TailRatio",
+  "js": "TailRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "TakerBuySellRatio",
+  "js": "TakerBuySellRatio",
+  "ctor": [],
+  "args": [
+   {
+    "name": "taker_buy_volume",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "taker_sell_volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "deriv"
+ },
+ {
+  "canonical": "Takuri",
+  "js": "Takuri",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TasukiGap",
+  "js": "TasukiGap",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TdCamouflage",
+  "js": "TDCamouflage",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TdClop",
+  "js": "TDClop",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TdClopwin",
+  "js": "TDClopwin",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TdCombo",
+  "js": "TDCombo",
+  "ctor": [
+   3,
+   7,
+   14,
+   28
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TdCountdown",
+  "js": "TDCountdown",
+  "ctor": [
+   3,
+   7,
+   14,
+   28
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TdDWave",
+  "js": "TDDWave",
+  "ctor": [
+   2
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TdDeMarker",
+  "js": "TDDeMarker",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TdDifferential",
+  "js": "TDDifferential",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TdLines",
+  "js": "TDLines",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "TdMovingAverage",
+  "js": "TDMovingAverage",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "TdOpen",
+  "js": "TDOpen",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TdPressure",
+  "js": "TDPressure",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TdPropulsion",
+  "js": "TDPropulsion",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TdRangeProjection",
+  "js": "TDRangeProjection",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "TdRei",
+  "js": "TDREI",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TdRiskLevel",
+  "js": "TDRiskLevel",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "TdSequential",
+  "js": "TDSequential",
+  "ctor": [
+   3,
+   7,
+   14,
+   28
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "TdSetup",
+  "js": "TDSetup",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TdTrap",
+  "js": "TDTrap",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Tema",
+  "js": "TEMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "TermStructureBasis",
+  "js": "TermStructureBasis",
+  "ctor": [],
+  "args": [
+   {
+    "name": "futures_price",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "index_price",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "deriv"
+ },
+ {
+  "canonical": "ThreeDrives",
+  "js": "ThreeDrives",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "ThreeInside",
+  "js": "ThreeInside",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "ThreeLineBreak",
+  "js": "ThreeLineBreak",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "ThreeLineBreakBars",
+  "js": "ThreeLineBreakBars",
+  "ctor": [
+   3
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "bars"
+ },
+ {
+  "canonical": "ThreeLineStrike",
+  "js": "ThreeLineStrike",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "ThreeOutside",
+  "js": "ThreeOutside",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "ThreeSoldiersOrCrows",
+  "js": "ThreeSoldiersOrCrows",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "ThreeStarsInSouth",
+  "js": "ThreeStarsInSouth",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Thrusting",
+  "js": "Thrusting",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TickBars",
+  "js": "TickBars",
+  "ctor": [
+   2
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "bars"
+ },
+ {
+  "canonical": "TickIndex",
+  "js": "TickIndex",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_high",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_low",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "cross"
+ },
+ {
+  "canonical": "Tii",
+  "js": "TII",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "TimeBasedStop",
+  "js": "TimeBasedStop",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TimeOfDayReturnProfile",
+  "js": "TimeOfDayReturnProfile",
+  "ctor": [
+   24,
+   0
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "timestamp",
+    "array": false,
+    "bigint": true
+   }
+  ],
+  "out": "profile_bins",
+  "width": 24
+ },
+ {
+  "canonical": "TowerTopBottom",
+  "js": "TowerTopBottom",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TpoProfile",
+  "js": "TpoProfile",
+  "ctor": [
+   30,
+   50
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "profile_pricebins",
+  "width": 52,
+  "arrayField": "counts"
+ },
+ {
+  "canonical": "TradeImbalance",
+  "js": "TradeImbalance",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "price",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "size",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "is_buy",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "trade"
+ },
+ {
+  "canonical": "TradeSignAutocorrelation",
+  "js": "TradeSignAutocorrelation",
+  "ctor": [
+   20
+  ],
+  "args": [
+   {
+    "name": "price",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "size",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "is_buy",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "trade"
+ },
+ {
+  "canonical": "TradeVolumeIndex",
+  "js": "TradeVolumeIndex",
+  "ctor": [
+   2.0
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TrendLabel",
+  "js": "TrendLabel",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "TrendStrengthIndex",
+  "js": "TREND_STRENGTH_INDEX",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Trendflex",
+  "js": "TRENDFLEX",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "TreynorRatio",
+  "js": "TreynorRatio",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "asset",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "benchmark",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "pairwise"
+ },
+ {
+  "canonical": "Triangle",
+  "js": "Triangle",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Trima",
+  "js": "TRIMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Trin",
+  "js": "Trin",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_high",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_low",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "cross"
+ },
+ {
+  "canonical": "TripleTopBottom",
+  "js": "TripleTopBottom",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Tristar",
+  "js": "Tristar",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Trix",
+  "js": "TRIX",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "TrueRange",
+  "js": "TrueRange",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Tsf",
+  "js": "TSF",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "TsfOscillator",
+  "js": "TsfOscillator",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Tsi",
+  "js": "TSI",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Tsv",
+  "js": "TSV",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TtmSqueeze",
+  "js": "TtmSqueeze",
+  "ctor": [
+   14,
+   2.0,
+   0.5
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "TtmTrend",
+  "js": "TTM_TREND",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TurnOfMonth",
+  "js": "TurnOfMonth",
+  "ctor": [
+   3,
+   3,
+   0
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "timestamp",
+    "array": false,
+    "bigint": true
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Tweezer",
+  "js": "Tweezer",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TwiggsMoneyFlow",
+  "js": "TwiggsMoneyFlow",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TwoCrows",
+  "js": "TwoCrows",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "TypicalPrice",
+  "js": "TypicalPrice",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "UlcerIndex",
+  "js": "UlcerIndex",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "UltimateOscillator",
+  "js": "UltimateOscillator",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "UniqueThreeRiver",
+  "js": "UniqueThreeRiver",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "UniversalOscillator",
+  "js": "UNIVERSALOSC",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "UpDownVolumeRatio",
+  "js": "UpDownVolumeRatio",
+  "ctor": [],
+  "args": [
+   {
+    "name": "change",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_high",
+    "array": true,
+    "bigint": false
+   },
+   {
+    "name": "new_low",
+    "array": true,
+    "bigint": false
+   }
+  ],
+  "out": "cross"
+ },
+ {
+  "canonical": "UpsideGapThreeMethods",
+  "js": "UpsideGapThreeMethods",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "UpsideGapTwoCrows",
+  "js": "UpsideGapTwoCrows",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "UpsidePotentialRatio",
+  "js": "UpsidePotentialRatio",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "ValueArea",
+  "js": "ValueArea",
+  "ctor": [
+   20,
+   50,
+   0.7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "ValueAtRisk",
+  "js": "ValueAtRisk",
+  "ctor": [
+   20,
+   0.95
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Variance",
+  "js": "Variance",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "VarianceRatio",
+  "js": "VarianceRatio",
+  "ctor": [
+   60,
+   2
+  ],
+  "args": [
+   {
+    "name": "a",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "b",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "pairwise"
+ },
+ {
+  "canonical": "VerticalHorizontalFilter",
+  "js": "VerticalHorizontalFilter",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Vidya",
+  "js": "VIDYA",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "VolatilityCone",
+  "js": "VolatilityCone",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 5
+ },
+ {
+  "canonical": "VolatilityOfVolatility",
+  "js": "VolatilityOfVolatility",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "VolatilityRatio",
+  "js": "VolatilityRatio",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "VoltyStop",
+  "js": "VoltyStop",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "VolumeBars",
+  "js": "VolumeBars",
+  "ctor": [
+   500.0
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "bars"
+ },
+ {
+  "canonical": "VolumeByTimeProfile",
+  "js": "VolumeByTimeProfile",
+  "ctor": [
+   24,
+   0
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "timestamp",
+    "array": false,
+    "bigint": true
+   }
+  ],
+  "out": "profile_bins",
+  "width": 24
+ },
+ {
+  "canonical": "VolumeOscillator",
+  "js": "VolumeOscillator",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "VolumePriceTrend",
+  "js": "VolumePriceTrend",
+  "ctor": [],
+  "args": [
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "VolumeProfile",
+  "js": "VolumeProfile",
+  "ctor": [
+   20,
+   50
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "profile_pricebins",
+  "width": 52,
+  "arrayField": "bins"
+ },
+ {
+  "canonical": "VolumeRsi",
+  "js": "VolumeRsi",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "VolumeWeightedMacd",
+  "js": "VolumeWeightedMacd",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 3
+ },
+ {
+  "canonical": "VolumeWeightedSr",
+  "js": "VolumeWeightedSr",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "Vortex",
+  "js": "Vortex",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "Vpin",
+  "js": "Vpin",
+  "ctor": [
+   5000.0,
+   10
+  ],
+  "args": [
+   {
+    "name": "price",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "size",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "is_buy",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "trade"
+ },
+ {
+  "canonical": "Vwap",
+  "js": "VWAP",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "VwapStdDevBands",
+  "js": "VwapStdDevBands",
+  "ctor": [
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 4
+ },
+ {
+  "canonical": "Vwma",
+  "js": "VWMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Vzo",
+  "js": "VZO",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "volume",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "Wad",
+  "js": "Wad",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "WavePm",
+  "js": "WAVE_PM",
+  "ctor": [
+   3,
+   7
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "WaveTrend",
+  "js": "WaveTrend",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "Wedge",
+  "js": "Wedge",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "WeightedClose",
+  "js": "WeightedClose",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "WickRatio",
+  "js": "WickRatio",
+  "ctor": [],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "WilliamsFractals",
+  "js": "WilliamsFractals",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "WilliamsR",
+  "js": "WilliamsR",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "WinRate",
+  "js": "WinRate",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "Wma",
+  "js": "WMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "WoodiePivots",
+  "js": "WoodiePivots",
+  "ctor": [],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 5
+ },
+ {
+  "canonical": "YangZhangVolatility",
+  "js": "YangZhangVolatility",
+  "ctor": [
+   20,
+   252
+  ],
+  "args": [
+   {
+    "name": "open",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "YoyoExit",
+  "js": "YoyoExit",
+  "ctor": [
+   14,
+   2.0
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "close",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_candle"
+ },
+ {
+  "canonical": "ZScore",
+  "js": "ZScore",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ },
+ {
+  "canonical": "ZeroLagMacd",
+  "js": "ZeroLagMACD",
+  "ctor": [
+   3,
+   7,
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_f64",
+  "n": 3
+ },
+ {
+  "canonical": "ZigZag",
+  "js": "ZigZag",
+  "ctor": [
+   0.02
+  ],
+  "args": [
+   {
+    "name": "high",
+    "array": false,
+    "bigint": false
+   },
+   {
+    "name": "low",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "multi_candle",
+  "n": 2
+ },
+ {
+  "canonical": "Zlema",
+  "js": "ZLEMA",
+  "ctor": [
+   14
+  ],
+  "args": [
+   {
+    "name": "value",
+    "array": false,
+    "bigint": false
+   }
+  ],
+  "out": "scalar_f64"
+ }
+]
