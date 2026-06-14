@@ -38,7 +38,7 @@ Then open the demo you want at `http://localhost:8000/examples/wasm/<file>`.
 | --- | --- |
 | `index.html` | The original showcase: streams a synthetic price series through six indicators and draws a live `<canvas>` chart with `SMA`, `EMA`, `RSI`, `MACD`, `BollingerBands` and `ATR` cards. |
 | `backtest.html` | Backtest: fetches an OHLCV CSV (default the bundled BTCUSDT daily dataset), streams every candle through a basket of eight indicators, prints a summary table. Mirrors `examples/python/backtest.py`. |
-| `live_trading.html` | Browser-native `WebSocket` to Binance kline streams; runs RSI / MACD / Bollinger on the incoming closes and flags BUY/SELL candidates when the three agree. Mirrors `examples/python/live_trading.py`. |
+| `live_binance.html` | Browser-native `WebSocket` to Binance kline streams; runs RSI / MACD / Bollinger on the incoming closes and flags BUY/SELL candidates when the three agree. Mirrors `examples/python/live_binance.py`. |
 | `multi_timeframe.html` | Fetches a 1-minute CSV, rolls it up in-page to 5m / 15m / 1h / 4h / 1d buckets and prints RSI / MACD-histogram / ADX per timeframe. Mirrors `examples/python/multi_timeframe.py`. |
 | `parallel_assets.html` | Synthetic `(assets, bars)` panel, serial baseline on the main thread vs. a pool of module Workers each loading its own copy of the WASM module. Mirrors `examples/python/parallel_assets.py`. |
 | `parallel_worker.js` | Module worker used by `parallel_assets.html` (not loaded directly). |

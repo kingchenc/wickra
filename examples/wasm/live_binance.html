@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Wickra WASM — live trading</title>
+  <title>Wickra WASM — live Binance feed</title>
   <style>
     body { font-family: ui-sans-serif, system-ui, sans-serif; max-width: 980px; margin: 2rem auto; padding: 0 1rem; color: #1d1d1d; }
     h1 { margin-bottom: .25rem; }
@@ -22,14 +22,14 @@
   </style>
 </head>
 <body>
-  <h1>Wickra WASM — live trading</h1>
+  <h1>Wickra WASM — live Binance feed</h1>
   <p class="meta">
     Connects to Binance's public kline WebSocket from the browser, streams
     every tick through RSI(14), MACD(12,26,9) and Bollinger(20, 2.0) via
     the WebAssembly bindings, and flags BUY/SELL candidates when all
     three indicators agree. No orders are placed. Mirrors
-    <code>examples/python/live_trading.py</code> and
-    <code>examples/node/live_trading.js</code>.
+    <code>examples/python/live_binance.py</code> and
+    <code>examples/node/live_binance.js</code>.
   </p>
 
   <p>

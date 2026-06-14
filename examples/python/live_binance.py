@@ -1,4 +1,4 @@
-"""Live trading skeleton: stream Binance kline ticks → incremental indicators → signals.
+"""Live Binance feed: stream Binance kline ticks → incremental indicators → signals.
 
 This example connects to Binance's public WebSocket feed (no API key needed)
 and runs RSI / MACD / Bollinger Bands on the close prices coming in. When the
@@ -7,7 +7,7 @@ confirms the direction, a `Signal` event is printed. No orders are placed.
 
 Run with::
 
-    python -m examples.python.live_trading --symbol BTCUSDT --interval 1m
+    python -m examples.python.live_binance --symbol BTCUSDT --interval 1m
 
 Dependencies::
 

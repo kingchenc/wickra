@@ -1,17 +1,17 @@
-// Live trading skeleton for the Wickra Node binding.
+// Live Binance feed example for the Wickra Node binding.
 //
 // Connects to Binance's public WebSocket feed (no API key needed) and runs
 // RSI / MACD / Bollinger Bands on the incoming close prices. When RSI crosses
 // the common overbought / oversold thresholds *and* the MACD histogram
 // confirms the direction *and* price pierces the matching Bollinger band, a
 // signal line is printed. No orders are placed. It is the Node counterpart of
-// examples/python/live_trading.py.
+// examples/python/live_binance.py.
 //
 // Run it from the repository after building the native binding:
 //
 //   cd bindings/node && npm install && npx napi build --platform --release
 //   cd ../../examples/node && npm install     # pulls `ws` for this example
-//   node live_trading.js --symbol BTCUSDT --interval 1m
+//   node live_binance.js --symbol BTCUSDT --interval 1m
 //
 // Stop it with Ctrl+C.
 

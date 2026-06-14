@@ -270,8 +270,8 @@ while let Some(event) = stream.next_event().await? {
 }
 ```
 
-A Python live-trading example using the public `websockets` package lives at
-`examples/python/live_trading.py`.
+A Python live Binance feed example using the public `websockets` package lives at
+`examples/python/live_binance.py`.
 
 ## Project layout
 
@@ -294,8 +294,8 @@ wickra/
 ├── examples/                examples/README.md indexes every language
 │   ├── data/                real BTCUSDT OHLCV datasets, one per timeframe
 │   ├── rust/                Rust workspace member (`wickra-examples`)
-│   ├── python/              backtest, live trading, parallel assets, multi-tf
-│   ├── node/                streaming, backtest, live trading (load `wickra`)
+│   ├── python/              backtest, live Binance feed, parallel assets, multi-tf
+│   ├── node/                streaming, backtest, live Binance feed (load `wickra`)
 │   ├── wasm/                browser demo for `wickra-wasm`
 │   ├── c/                   C smoke + streaming, C++ RAII wrapper
 │   ├── csharp/              streaming, backtest, strategies (load `Wickra`)
