@@ -1,29 +1,28 @@
-//! Intraday Intensity Index (Bostian) — a cumulative volume-weighted close-location line.
+//! Intraday Intensity (Bostian) — the per-bar volume-weighted close-location.
 
 use crate::ohlcv::Candle;
 use crate::traits::Indicator;
 
-/// Intraday Intensity Index — David Bostian's cumulative line that weights each
-/// bar's volume by where the close lands inside the bar's range.
+/// Intraday Intensity — David Bostian's per-bar measure that weights each bar's
+/// volume by where the close lands inside the bar's range:
 ///
 /// ```text
-/// II_t  = volume * (2*close − high − low) / (high − low)   (0 if high == low)
-/// III_t = III_{t−1} + II_t
+/// II_t = volume * (2*close − high − low) / (high − low)   (0 if high == low)
 /// ```
 ///
 /// The fraction `(2*close − high − low) / (high − low)` is `+1` when the bar
-/// closes on its high, `−1` when it closes on its low, and `0` at the midpoint.
-/// Scaling it by volume and accumulating produces a running measure of how
-/// aggressively the close is being pushed toward the extremes — Bostian's proxy
-/// for institutional accumulation (rising line) or distribution (falling line).
+/// closes on its high, `−1` when it closes on its low, and `0` at the midpoint,
+/// so `II_t` is the volume pushed toward the extremes on that single bar —
+/// Bostian's proxy for per-bar accumulation (positive) or distribution
+/// (negative).
 ///
-/// This is the **cumulative** Intraday Intensity (the original index), not the
-/// normalized "Intraday Intensity %" — the latter divides a windowed sum of `II`
-/// by a windowed sum of volume and is mathematically identical to
-/// [`Cmf`](crate::Cmf), so it is not duplicated here. The level of this line is
-/// arbitrary; only its slope and divergences against price matter. A doji whose
-/// `high == low` contributes nothing. Each `update` is O(1) and the first bar
-/// already emits a value.
+/// This emits the **raw per-bar** intensity, which is distinct from the two
+/// derived forms Wickra ships separately: the **cumulative** running total is
+/// the Accumulation/Distribution Line ([`Adl`](crate::Adl)), and the
+/// volume-normalized windowed form ("Intraday Intensity %") is mathematically
+/// the Chaikin Money Flow ([`Cmf`](crate::Cmf)). A doji whose `high == low`
+/// contributes nothing. Each `update` is O(1) and the first bar already emits a
+/// value.
 ///
 /// # Example
 ///
@@ -41,12 +40,11 @@ use crate::traits::Indicator;
 /// ```
 #[derive(Debug, Clone, Default)]
 pub struct IntradayIntensity {
-    iii: f64,
     last: Option<f64>,
 }
 
 impl IntradayIntensity {
-    /// Construct a new Intraday Intensity Index. The line is parameter-free.
+    /// Construct a new Intraday Intensity. It is parameter-free.
     #[must_use]
     pub fn new() -> Self {
         Self::default()
@@ -69,13 +67,11 @@ impl Indicator for IntradayIntensity {
         } else {
             0.0
         };
-        self.iii += ii;
-        self.last = Some(self.iii);
-        Some(self.iii)
+        self.last = Some(ii);
+        Some(ii)
     }
 
     fn reset(&mut self) {
-        self.iii = 0.0;
         self.last = None;
     }
 
@@ -149,11 +145,14 @@ mod tests {
     }
 
     #[test]
-    fn accumulates_across_bars() {
+    fn each_bar_is_independent() {
+        // Per-bar (non-cumulative): each output depends only on that bar, so a
+        // close-on-high +1000 bar is not carried into the next close-on-low bar.
         let mut iii = IntradayIntensity::new();
-        iii.update(candle(110.0, 100.0, 110.0, 1_000.0)); // +1000
-        let v = iii.update(candle(110.0, 100.0, 100.0, 400.0)).unwrap(); // -400 -> 600
-        assert_relative_eq!(v, 600.0, epsilon = 1e-9);
+        let a = iii.update(candle(110.0, 100.0, 110.0, 1_000.0)).unwrap();
+        let b = iii.update(candle(110.0, 100.0, 100.0, 400.0)).unwrap();
+        assert_relative_eq!(a, 1_000.0, epsilon = 1e-9);
+        assert_relative_eq!(b, -400.0, epsilon = 1e-9);
     }
 
     #[test]

@@ -7,19 +7,23 @@ use crate::traits::Indicator;
 
 /// Rolling Average Drawdown.
 ///
-/// Input is treated as an equity-curve sample. The indicator scans the
-/// trailing window of `period` values, tracks the running peak inside the
-/// window, and reports the **mean** of all bar-by-bar drawdowns (the average
-/// "pain" of being under water):
+/// Input is treated as an equity-curve sample. Over the trailing window of
+/// `period` values the indicator identifies each **distinct drawdown episode**
+/// — a stretch where equity is below the running peak — and reports the **mean
+/// of the episodes' maximum depths**:
 ///
 /// ```text
-/// drawdown_t = (peak_t − equity_t) / peak_t  (running peak inside window)
-/// AvgDD      = mean(drawdown_t over window)
+/// episode opens when equity < running peak
+/// episode closes when equity reaches a new peak (full recovery)
+/// depth(episode) = (episode_peak − episode_trough) / episode_peak
+/// AvgDD          = mean(depth over episodes in window)   (0 if no drawdown)
 /// ```
 ///
-/// Output is non-negative (a fraction; `0.05` ≈ 5 % average drawdown). This
-/// is the **Pain Index** under a different name — see [`crate::PainIndex`]
-/// for the same metric exposed under its conventional label.
+/// This is the conventional "average drawdown" (mean depth across separate
+/// drawdowns), which is distinct from the [`crate::PainIndex`] — the latter
+/// averages the under-water fraction at *every* bar, so a long shallow
+/// drawdown weighs more there than here. Output is a non-negative fraction
+/// (`0.05` ≈ 5 % mean episode depth).
 ///
 /// Each `update` is O(period).
 #[derive(Debug, Clone)]
@@ -65,16 +69,40 @@ impl Indicator for AverageDrawdown {
             return None;
         }
         let mut peak = f64::NEG_INFINITY;
-        let mut sum_dd = 0.0_f64;
+        let mut sum_depth = 0.0_f64;
+        let mut episodes = 0_u32;
+        let mut in_dd = false;
+        let mut episode_peak = 0.0_f64;
+        let mut episode_trough = 0.0_f64;
         for &v in &self.window {
-            if v > peak {
+            if v >= peak {
+                if in_dd {
+                    if episode_peak > 0.0 {
+                        sum_depth += (episode_peak - episode_trough) / episode_peak;
+                        episodes += 1;
+                    }
+                    in_dd = false;
+                }
                 peak = v;
-            }
-            if peak > 0.0 {
-                sum_dd += (peak - v) / peak;
+            } else if in_dd {
+                if v < episode_trough {
+                    episode_trough = v;
+                }
+            } else {
+                in_dd = true;
+                episode_peak = peak;
+                episode_trough = v;
             }
         }
-        Some(sum_dd / self.period as f64)
+        if in_dd && episode_peak > 0.0 {
+            sum_depth += (episode_peak - episode_trough) / episode_peak;
+            episodes += 1;
+        }
+        Some(if episodes == 0 {
+            0.0
+        } else {
+            sum_depth / f64::from(episodes)
+        })
     }
 
     fn reset(&mut self) {
@@ -124,13 +152,24 @@ mod tests {
 
     #[test]
     fn reference_value() {
-        // window [100, 120, 90, 110]:
-        // peaks: 100, 120, 120, 120; dd: 0, 0, (30/120)=.25, (10/120)=.0833...
-        // avg = (.25 + .0833...) / 4 = .0833...
+        // window [100, 120, 90, 110]: one drawdown episode, opened at 90 (peak
+        // 120) and never recovering to 120 within the window. Its depth is
+        // (120 - 90) / 120 = 0.25; 110 stays inside the same episode and does
+        // not deepen the trough. One episode -> AvgDD = 0.25.
         let mut a = AverageDrawdown::new(4).unwrap();
         let out = a.batch(&[100.0, 120.0, 90.0, 110.0]);
-        let expected = (0.25 + (10.0 / 120.0)) / 4.0;
-        assert_relative_eq!(out[3].unwrap(), expected, epsilon = 1e-12);
+        assert_relative_eq!(out[3].unwrap(), 0.25, epsilon = 1e-12);
+    }
+
+    #[test]
+    fn averages_distinct_episodes() {
+        // [100, 90, 100, 80, 100]: episode 1 troughs at 90 then recovers to 100
+        // -> depth 0.10; episode 2 troughs at 80 then recovers -> depth 0.20.
+        // Mean of the two episode depths = 0.15 (distinct from the Pain Index,
+        // which would weight every under-water bar instead).
+        let mut a = AverageDrawdown::new(5).unwrap();
+        let out = a.batch(&[100.0, 90.0, 100.0, 80.0, 100.0]);
+        assert_relative_eq!(out[4].unwrap(), 0.15, epsilon = 1e-12);
     }
 
     #[test]
