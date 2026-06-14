@@ -9450,7 +9450,7 @@ impl PyKvo {
 
 // ============================== Williams A/D Oscillator ==============================
 
-#[pyclass(name = "WilliamsAD", module = "wickra._wickra", skip_from_py_object)]
+#[pyclass(name = "ADOSC", module = "wickra._wickra", skip_from_py_object)]
 #[derive(Clone)]
 struct PyAdOscillator {
     inner: wc::AdOscillator,
@@ -9507,7 +9507,7 @@ impl PyAdOscillator {
         self.inner.warmup_period()
     }
     fn __repr__(&self) -> String {
-        "WilliamsAD()".to_string()
+        "ADOSC()".to_string()
     }
 }
 
