@@ -53,6 +53,7 @@ Full documentation lives at **[docs.wickra.org](https://docs.wickra.org)**:
   [Node](https://docs.wickra.org/Quickstart-Node),
   [WASM](https://docs.wickra.org/Quickstart-WASM),
   [C](https://docs.wickra.org/Quickstart-C),
+  [C++](https://docs.wickra.org/Quickstart-C),
   [C#](https://docs.wickra.org/Quickstart-CSharp),
   [Go](https://docs.wickra.org/Quickstart-Go),
   [Java](https://docs.wickra.org/Quickstart-Java),
@@ -89,6 +90,11 @@ times to get there.
   runs a real warmup, and returns an `Option` so a single bad tick can't silently
   poison state. `batch == streaming` is **bit-exact, fuzzed and 100 %-line-covered
   for all 514 indicators**.
+- **Identical across every language — proven, not promised.** All 514 indicators
+  are replayed through **all 10 languages** (Rust · Python · Node.js · WASM · C ·
+  C++ · C# · Go · Java · R) and checked **bit-for-bit against the Rust reference**
+  via shared golden fixtures in CI. The math is verifiably the same everywhere —
+  this very check caught and fixed two real cross-language marshalling bugs.
 - **Orders of magnitude faster where it counts.** In streaming Wickra is **11–56×**
   faster than the only other incremental peer and **thousands of times** faster
   than recompute-on-every-tick libraries. On batch it wins several rows outright
@@ -141,8 +147,10 @@ Full tables (Rust + Python, streaming + batch) and how to reproduce them live in
 
 514 streaming-first indicators across twenty-four families. Every one passes the
 `batch == streaming` equivalence test, reference-value tests, and reset
-semantics tests. Each has a per-indicator deep dive (formula, parameters,
-warmup) at [docs.wickra.org](https://docs.wickra.org/Indicators-Overview).
+semantics tests — and is replayed through **all 10 languages** and checked
+bit-for-bit against the Rust reference (golden fixtures, in CI). Each has a
+per-indicator deep dive (formula, parameters, warmup) at
+[docs.wickra.org](https://docs.wickra.org/Indicators-Overview).
 
 | Family | Indicators |
 |--------|-----------|
