@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.2] - 2026-06-15
+
 ### Added
 - **Cross-language golden parity for all 514 indicators across all 10 languages.**
   A new `gen_golden` reference emits a deterministic OHLCV input series plus the
@@ -1717,7 +1719,8 @@ public API changes.
   optional Binance live feed.
 - Bindings for Python, Node.js, and WebAssembly.
 
-[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.1...HEAD
+[Unreleased]: https://github.com/wickra-lib/wickra/compare/v0.9.2...HEAD
+[0.9.2]: https://github.com/wickra-lib/wickra/compare/v0.9.1...v0.9.2
 [0.9.1]: https://github.com/wickra-lib/wickra/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/wickra-lib/wickra/compare/v0.8.9...v0.9.0
 [0.8.9]: https://github.com/wickra-lib/wickra/compare/v0.8.8...v0.8.9
