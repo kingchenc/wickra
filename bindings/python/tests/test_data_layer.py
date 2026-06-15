@@ -42,3 +42,24 @@ def test_tick_aggregator_matches_golden(gap_fill, fixture):
         for j in range(6):
             tol = 1e-9 * max(1.0, abs(w[j]))
             assert abs(g[j] - w[j]) <= tol, f"row {i} col {j}: {g[j]} vs {w[j]}"
+
+
+INPUT = _read("input")  # open,high,low,close,volume (timestamp = row index)
+
+
+def test_resampler_matches_golden():
+    r = ta.Resampler(5)
+    got = []
+    for i, (o, h, l, c, v) in enumerate(INPUT):
+        candle = r.update(o, h, l, c, v, i)
+        if candle is not None:
+            got.append(candle)
+    f = r.flush()
+    if f is not None:
+        got.append(f)
+    want = _read("data_resampled")
+    assert len(got) == len(want)
+    for i, (g, w) in enumerate(zip(got, want)):
+        for j in range(6):
+            tol = 1e-9 * max(1.0, abs(w[j]))
+            assert abs(g[j] - w[j]) <= tol, f"row {i} col {j}: {g[j]} vs {w[j]}"

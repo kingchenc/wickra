@@ -360,6 +360,7 @@ from ._wickra import (
     CandleVolume,
     # Data layer
     TickAggregator,
+    Resampler,
     # Market Profile
     CompositeProfile,
     HighLowVolumeNodes,
@@ -906,6 +907,7 @@ __all__ = [
     "CandleVolume",
     # Data layer
     "TickAggregator",
+    "Resampler",
     # Market Profile
     "CompositeProfile",
     "HighLowVolumeNodes",

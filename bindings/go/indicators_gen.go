@@ -28057,6 +28057,56 @@ func (ind *RenkoTrailingStop) Close() {
 	}
 }
 
+// Resampler wraps the Resampler indicator over the Wickra C ABI.
+type Resampler struct {
+	handle *C.struct_Resampler
+}
+
+// NewResampler constructs a Resampler. It returns ErrInvalidParams when the
+// native constructor rejects the arguments.
+func NewResampler(timeframe int64) (*Resampler, error) {
+	ptr := C.wickra_resampler_new(C.int64_t(timeframe))
+	if ptr == nil {
+		return nil, ErrInvalidParams
+	}
+	obj := &Resampler{handle: ptr}
+	runtime.SetFinalizer(obj, (*Resampler).Close)
+	return obj, nil
+}
+
+// Update feeds one observation. The bool reports whether a value is
+// available yet (false during warmup).
+func (ind *Resampler) Update(open float64, high float64, low float64, close float64, volume float64, timestamp int64) (Candle, bool) {
+	var out C.struct_WickraCandle
+	ok := bool(C.wickra_resampler_update(ind.handle, C.double(open), C.double(high), C.double(low), C.double(close), C.double(volume), C.int64_t(timestamp), &out))
+	runtime.KeepAlive(ind)
+	if !ok {
+		return Candle{}, false
+	}
+	return Candle{float64(out.open), float64(out.high), float64(out.low), float64(out.close), float64(out.volume), int64(out.timestamp)}, true
+}
+
+// Flush emits the final, still-open candle (ok is false if none is pending).
+func (ind *Resampler) Flush() (Candle, bool) {
+	var out C.struct_WickraCandle
+	ok := bool(C.wickra_resampler_flush(ind.handle, &out))
+	runtime.KeepAlive(ind)
+	if !ok {
+		return Candle{}, false
+	}
+	return Candle{float64(out.open), float64(out.high), float64(out.low), float64(out.close), float64(out.volume), int64(out.timestamp)}, true
+}
+
+// Close frees the native handle. It is idempotent and safe to call
+// alongside the finalizer.
+func (ind *Resampler) Close() {
+	if ind.handle != nil {
+		C.wickra_resampler_free(ind.handle)
+		ind.handle = nil
+		runtime.SetFinalizer(ind, nil)
+	}
+}
+
 // RickshawMan wraps the RickshawMan indicator over the Wickra C ABI.
 type RickshawMan struct {
 	handle *C.struct_RickshawMan

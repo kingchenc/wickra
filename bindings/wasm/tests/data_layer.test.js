@@ -49,3 +49,25 @@ test('wasm tick aggregator matches the golden candles', () => {
 test('wasm tick aggregator gap-fill matches the golden candles', () => {
   assertCandles(run(true), readCsv('data_candles_gap'), 'gap');
 });
+
+const INPUT = readCsv('input'); // open,high,low,close,volume (timestamp = row index)
+
+function runResample() {
+  const r = new W.Resampler(5);
+  const out = [];
+  INPUT.forEach(([o, h, l, c, v], i) => {
+    const candle = r.update(o, h, l, c, v, i);
+    if (candle) {
+      out.push([candle.open, candle.high, candle.low, candle.close, candle.volume, candle.timestamp]);
+    }
+  });
+  const f = r.flush();
+  if (f) {
+    out.push([f.open, f.high, f.low, f.close, f.volume, f.timestamp]);
+  }
+  return out;
+}
+
+test('wasm resampler matches the golden candles', () => {
+  assertCandles(runResample(), readCsv('data_resampled'), 'resample');
+});

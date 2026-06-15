@@ -678,6 +678,8 @@ typedef struct RenkoBars RenkoBars;
 
 typedef struct RenkoTrailingStop RenkoTrailingStop;
 
+typedef struct Resampler Resampler;
+
 typedef struct RickshawMan RickshawMan;
 
 typedef struct RisingThreeMethods RisingThreeMethods;
@@ -13718,6 +13720,21 @@ intptr_t wickra_tick_aggregator_drain(struct TickAggregator *handle,
                                       uintptr_t cap);
 
 void wickra_tick_aggregator_free(struct TickAggregator *handle);
+
+struct Resampler *wickra_resampler_new(int64_t timeframe);
+
+bool wickra_resampler_update(struct Resampler *handle,
+                             double open,
+                             double high,
+                             double low,
+                             double close,
+                             double volume,
+                             int64_t timestamp,
+                             struct WickraCandle *out);
+
+bool wickra_resampler_flush(struct Resampler *handle, struct WickraCandle *out);
+
+void wickra_resampler_free(struct Resampler *handle);
 
 #ifdef __cplusplus
 }  // extern "C"

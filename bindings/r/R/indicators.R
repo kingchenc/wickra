@@ -2679,6 +2679,14 @@ RenkoTrailingStop <- function(block_size) {
   .wk_obj("renko_trailing_stop", ptr, "RenkoTrailingStop")
 }
 
+#' Resampler indicator
+#' @keywords internal
+#' @export
+Resampler <- function(timeframe) {
+  ptr <- .Call("wk_resampler_new", timeframe, PACKAGE = "wickra")
+  .wk_obj("resampler", ptr, "Resampler")
+}
+
 #' RickshawMan indicator
 #' @keywords internal
 #' @export

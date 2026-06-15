@@ -26580,6 +26580,50 @@ public sealed class RenkoTrailingStop : IDisposable
     public void Dispose() => _handle.Dispose();
 }
 
+public sealed class Resampler : IDisposable
+{
+    private readonly WickraHandle _handle;
+
+    public Resampler(long timeframe)
+    {
+        var ptr = NativeMethods.wickra_resampler_new(timeframe);
+        if (ptr == nint.Zero)
+        {
+            throw new ArgumentException("invalid Resampler parameters");
+        }
+
+        _handle = new WickraHandle(ptr, NativeMethods.wickra_resampler_free);
+    }
+
+    public Candle? Update(double open, double high, double low, double close, double volume, long timestamp)
+    {
+        WickraCandle native;
+        bool ok;
+        unsafe
+        {
+            ok = NativeMethods.wickra_resampler_update(_handle.DangerousGetHandle(), open, high, low, close, volume, timestamp, &native);
+        }
+
+        GC.KeepAlive(_handle);
+        return ok ? new Candle(native.open, native.high, native.low, native.close, native.volume, native.timestamp) : null;
+    }
+
+    /// <summary>Emit the final, still-open candle (null if none is pending).</summary>
+    public Candle? Flush()
+    {
+        WickraCandle native;
+        bool ok;
+        unsafe
+        {
+            ok = NativeMethods.wickra_resampler_flush(_handle.DangerousGetHandle(), &native);
+        }
+        GC.KeepAlive(_handle);
+        return ok ? new Candle(native.open, native.high, native.low, native.close, native.volume, native.timestamp) : null;
+    }
+
+    public void Dispose() => _handle.Dispose();
+}
+
 public sealed class RickshawMan : IDisposable
 {
     private readonly WickraHandle _handle;
