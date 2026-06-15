@@ -314,8 +314,8 @@ AwesomeOscillator <- function(fast, slow) {
 #' AwesomeOscillatorHistogram indicator
 #' @keywords internal
 #' @export
-AwesomeOscillatorHistogram <- function(fast, slow, sma_period) {
-  ptr <- .Call("wk_awesome_oscillator_histogram_new", fast, slow, sma_period, PACKAGE = "wickra")
+AwesomeOscillatorHistogram <- function(fast, slow, lookback) {
+  ptr <- .Call("wk_awesome_oscillator_histogram_new", fast, slow, lookback, PACKAGE = "wickra")
   .wk_obj("awesome_oscillator_histogram", ptr, "AwesomeOscillatorHistogram")
 }
 

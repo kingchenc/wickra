@@ -190,6 +190,14 @@ public sealed class AbandonedBaby : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_abandoned_baby_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_abandoned_baby_reset(_handle.DangerousGetHandle());
@@ -280,6 +288,14 @@ public sealed class Abcd : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_abcd_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_abcd_reset(_handle.DangerousGetHandle());
@@ -361,6 +377,14 @@ public sealed class AbsoluteBreadthIndex : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_absolute_breadth_index_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_absolute_breadth_index_reset(_handle.DangerousGetHandle());
@@ -413,6 +437,14 @@ public sealed class AccelerationBands : IDisposable
         var result = NativeMethods.wickra_acceleration_bands_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_acceleration_bands_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -508,6 +540,14 @@ public sealed class AcceleratorOscillator : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_accelerator_oscillator_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_accelerator_oscillator_reset(_handle.DangerousGetHandle());
@@ -598,6 +638,14 @@ public sealed class AdOscillator : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_ad_oscillator_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_ad_oscillator_reset(_handle.DangerousGetHandle());
@@ -677,6 +725,14 @@ public sealed class AdVolumeLine : IDisposable
         var result = NativeMethods.wickra_ad_volume_line_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_ad_volume_line_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -770,6 +826,14 @@ public sealed class AdaptiveCci : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_adaptive_cci_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_adaptive_cci_reset(_handle.DangerousGetHandle());
@@ -833,6 +897,14 @@ public sealed class AdaptiveCycle : IDisposable
         var result = NativeMethods.wickra_adaptive_cycle_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_adaptive_cycle_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -901,6 +973,14 @@ public sealed class AdaptiveLaguerreFilter : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_adaptive_laguerre_filter_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_adaptive_laguerre_filter_reset(_handle.DangerousGetHandle());
@@ -965,6 +1045,14 @@ public sealed class AdaptiveRsi : IDisposable
         var result = NativeMethods.wickra_adaptive_rsi_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_adaptive_rsi_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -1057,6 +1145,14 @@ public sealed class Adl : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_adl_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_adl_reset(_handle.DangerousGetHandle());
@@ -1147,6 +1243,14 @@ public sealed class AdvanceBlock : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_advance_block_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_advance_block_reset(_handle.DangerousGetHandle());
@@ -1226,6 +1330,14 @@ public sealed class AdvanceDecline : IDisposable
         var result = NativeMethods.wickra_advance_decline_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_advance_decline_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -1309,6 +1421,14 @@ public sealed class AdvanceDeclineRatio : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_advance_decline_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_advance_decline_ratio_reset(_handle.DangerousGetHandle());
@@ -1361,6 +1481,14 @@ public sealed class Adx : IDisposable
         var result = NativeMethods.wickra_adx_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_adx_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -1454,6 +1582,14 @@ public sealed class Adxr : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_adxr_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_adxr_reset(_handle.DangerousGetHandle());
@@ -1508,6 +1644,14 @@ public sealed class Alligator : IDisposable
         var result = NativeMethods.wickra_alligator_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_alligator_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -1574,6 +1718,14 @@ public sealed class Alma : IDisposable
         var result = NativeMethods.wickra_alma_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_alma_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -1647,6 +1799,14 @@ public sealed class Alpha : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_alpha_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_alpha_reset(_handle.DangerousGetHandle());
@@ -1693,6 +1853,14 @@ public sealed class AmihudIlliquidity : IDisposable
         var result = NativeMethods.wickra_amihud_illiquidity_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_amihud_illiquidity_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -1758,6 +1926,14 @@ public sealed class AnchoredRsi : IDisposable
         var result = NativeMethods.wickra_anchored_rsi_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_anchored_rsi_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -1850,6 +2026,14 @@ public sealed class AnchoredVwap : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_anchored_vwap_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_anchored_vwap_reset(_handle.DangerousGetHandle());
@@ -1902,6 +2086,14 @@ public sealed class AndrewsPitchfork : IDisposable
         var result = NativeMethods.wickra_andrews_pitchfork_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_andrews_pitchfork_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -1971,6 +2163,14 @@ public sealed class Apo : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_apo_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_apo_reset(_handle.DangerousGetHandle());
@@ -2023,6 +2223,14 @@ public sealed class Aroon : IDisposable
         var result = NativeMethods.wickra_aroon_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_aroon_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -2116,6 +2324,14 @@ public sealed class AroonOscillator : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_aroon_oscillator_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_aroon_oscillator_reset(_handle.DangerousGetHandle());
@@ -2207,6 +2423,14 @@ public sealed class Atr : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_atr_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_atr_reset(_handle.DangerousGetHandle());
@@ -2261,6 +2485,14 @@ public sealed class AtrBands : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_atr_bands_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_atr_bands_reset(_handle.DangerousGetHandle());
@@ -2313,6 +2545,14 @@ public sealed class AtrRatchet : IDisposable
         var result = NativeMethods.wickra_atr_ratchet_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_atr_ratchet_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -2406,6 +2646,14 @@ public sealed class AtrTrailingStop : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_atr_trailing_stop_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_atr_trailing_stop_reset(_handle.DangerousGetHandle());
@@ -2457,6 +2705,14 @@ public sealed class AutoFib : IDisposable
         var result = NativeMethods.wickra_auto_fib_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_auto_fib_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -2526,6 +2782,14 @@ public sealed class Autocorrelation : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_autocorrelation_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_autocorrelation_reset(_handle.DangerousGetHandle());
@@ -2591,6 +2855,14 @@ public sealed class AutocorrelationPeriodogram : IDisposable
         var result = NativeMethods.wickra_autocorrelation_periodogram_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_autocorrelation_periodogram_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -2684,6 +2956,14 @@ public sealed class AverageDailyRange : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_average_daily_range_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_average_daily_range_reset(_handle.DangerousGetHandle());
@@ -2748,6 +3028,14 @@ public sealed class AverageDrawdown : IDisposable
         var result = NativeMethods.wickra_average_drawdown_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_average_drawdown_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -2838,6 +3126,14 @@ public sealed class AvgPrice : IDisposable
         var result = NativeMethods.wickra_avg_price_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_avg_price_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -2932,6 +3228,14 @@ public sealed class AwesomeOscillator : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_awesome_oscillator_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_awesome_oscillator_reset(_handle.DangerousGetHandle());
@@ -2945,12 +3249,12 @@ public sealed class AwesomeOscillatorHistogram : IDisposable
 {
     private readonly WickraHandle _handle;
 
-    public AwesomeOscillatorHistogram(int fast, int slow, int smaPeriod)
+    public AwesomeOscillatorHistogram(int fast, int slow, int lookback)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(fast);
         ArgumentOutOfRangeException.ThrowIfNegative(slow);
-        ArgumentOutOfRangeException.ThrowIfNegative(smaPeriod);
-        var ptr = NativeMethods.wickra_awesome_oscillator_histogram_new((nuint)fast, (nuint)slow, (nuint)smaPeriod);
+        ArgumentOutOfRangeException.ThrowIfNegative(lookback);
+        var ptr = NativeMethods.wickra_awesome_oscillator_histogram_new((nuint)fast, (nuint)slow, (nuint)lookback);
         if (ptr == nint.Zero)
         {
             throw new ArgumentException("invalid AwesomeOscillatorHistogram parameters");
@@ -3023,6 +3327,14 @@ public sealed class AwesomeOscillatorHistogram : IDisposable
         var result = NativeMethods.wickra_awesome_oscillator_histogram_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_awesome_oscillator_histogram_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -3115,6 +3427,14 @@ public sealed class BalanceOfPower : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_balance_of_power_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_balance_of_power_reset(_handle.DangerousGetHandle());
@@ -3179,6 +3499,14 @@ public sealed class BandpassFilter : IDisposable
         var result = NativeMethods.wickra_bandpass_filter_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_bandpass_filter_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -3271,6 +3599,14 @@ public sealed class Bat : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_bat_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_bat_reset(_handle.DangerousGetHandle());
@@ -3361,6 +3697,14 @@ public sealed class BeltHold : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_belt_hold_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_belt_hold_reset(_handle.DangerousGetHandle());
@@ -3432,6 +3776,14 @@ public sealed class Beta : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_beta_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_beta_reset(_handle.DangerousGetHandle());
@@ -3501,6 +3853,14 @@ public sealed class BetaNeutralSpread : IDisposable
         var result = NativeMethods.wickra_beta_neutral_spread_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_beta_neutral_spread_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -3594,6 +3954,14 @@ public sealed class BetterVolume : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_better_volume_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_better_volume_reset(_handle.DangerousGetHandle());
@@ -3658,6 +4026,14 @@ public sealed class BipowerVariation : IDisposable
         var result = NativeMethods.wickra_bipower_variation_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_bipower_variation_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -3750,6 +4126,14 @@ public sealed class BodySizePct : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_body_size_pct_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_body_size_pct_reset(_handle.DangerousGetHandle());
@@ -3802,6 +4186,14 @@ public sealed class BollingerBands : IDisposable
         var result = NativeMethods.wickra_bollinger_bands_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_bollinger_bands_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -3870,6 +4262,14 @@ public sealed class BollingerBandwidth : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_bollinger_bandwidth_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_bollinger_bandwidth_reset(_handle.DangerousGetHandle());
@@ -3922,6 +4322,14 @@ public sealed class BomarBands : IDisposable
         var result = NativeMethods.wickra_bomar_bands_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_bomar_bands_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -4004,6 +4412,14 @@ public sealed class BreadthThrust : IDisposable
         var result = NativeMethods.wickra_breadth_thrust_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_breadth_thrust_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -4096,6 +4512,14 @@ public sealed class Breakaway : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_breakaway_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_breakaway_reset(_handle.DangerousGetHandle());
@@ -4177,6 +4601,14 @@ public sealed class BullishPercentIndex : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_bullish_percent_index_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_bullish_percent_index_reset(_handle.DangerousGetHandle());
@@ -4241,6 +4673,14 @@ public sealed class BurkeRatio : IDisposable
         var result = NativeMethods.wickra_burke_ratio_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_burke_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -4333,6 +4773,14 @@ public sealed class Butterfly : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_butterfly_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_butterfly_reset(_handle.DangerousGetHandle());
@@ -4378,6 +4826,14 @@ public sealed class CalendarSpread : IDisposable
         var result = NativeMethods.wickra_calendar_spread_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_calendar_spread_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -4446,6 +4902,14 @@ public sealed class CalmarRatio : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_calmar_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_calmar_ratio_reset(_handle.DangerousGetHandle());
@@ -4497,6 +4961,14 @@ public sealed class Camarilla : IDisposable
         var result = NativeMethods.wickra_camarilla_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_camarilla_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -4551,6 +5023,14 @@ public sealed class CandleVolume : IDisposable
         var result = NativeMethods.wickra_candle_volume_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_candle_volume_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -4644,6 +5124,14 @@ public sealed class Cci : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_cci_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_cci_reset(_handle.DangerousGetHandle());
@@ -4710,6 +5198,14 @@ public sealed class CenterOfGravity : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_center_of_gravity_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_center_of_gravity_reset(_handle.DangerousGetHandle());
@@ -4761,6 +5257,14 @@ public sealed class CentralPivotRange : IDisposable
         var result = NativeMethods.wickra_central_pivot_range_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_central_pivot_range_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -4827,6 +5331,14 @@ public sealed class Cfo : IDisposable
         var result = NativeMethods.wickra_cfo_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_cfo_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -4918,6 +5430,14 @@ public sealed class ChaikinMoneyFlow : IDisposable
         var result = NativeMethods.wickra_chaikin_money_flow_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_chaikin_money_flow_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -5012,6 +5532,14 @@ public sealed class ChaikinOscillator : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_chaikin_oscillator_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_chaikin_oscillator_reset(_handle.DangerousGetHandle());
@@ -5104,6 +5632,14 @@ public sealed class ChaikinVolatility : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_chaikin_volatility_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_chaikin_volatility_reset(_handle.DangerousGetHandle());
@@ -5159,6 +5695,14 @@ public sealed class ChandeKrollStop : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_chande_kroll_stop_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_chande_kroll_stop_reset(_handle.DangerousGetHandle());
@@ -5211,6 +5755,14 @@ public sealed class ChandelierExit : IDisposable
         var result = NativeMethods.wickra_chandelier_exit_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_chandelier_exit_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -5304,6 +5856,14 @@ public sealed class ChoppinessIndex : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_choppiness_index_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_choppiness_index_reset(_handle.DangerousGetHandle());
@@ -5355,6 +5915,14 @@ public sealed class ClassicPivots : IDisposable
         var result = NativeMethods.wickra_classic_pivots_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_classic_pivots_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -5447,6 +6015,14 @@ public sealed class CloseVsOpen : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_close_vs_open_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_close_vs_open_reset(_handle.DangerousGetHandle());
@@ -5537,6 +6113,14 @@ public sealed class ClosingMarubozu : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_closing_marubozu_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_closing_marubozu_reset(_handle.DangerousGetHandle());
@@ -5601,6 +6185,14 @@ public sealed class Cmo : IDisposable
         var result = NativeMethods.wickra_cmo_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_cmo_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -5669,6 +6261,14 @@ public sealed class CoefficientOfVariation : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_coefficient_of_variation_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_coefficient_of_variation_reset(_handle.DangerousGetHandle());
@@ -5722,6 +6322,14 @@ public sealed class Cointegration : IDisposable
         var result = NativeMethods.wickra_cointegration_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_cointegration_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -5790,6 +6398,14 @@ public sealed class CommonSenseRatio : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_common_sense_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_common_sense_ratio_reset(_handle.DangerousGetHandle());
@@ -5843,6 +6459,14 @@ public sealed class CompositeProfile : IDisposable
         var result = NativeMethods.wickra_composite_profile_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_composite_profile_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -5935,6 +6559,14 @@ public sealed class ConcealingBabySwallow : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_concealing_baby_swallow_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_concealing_baby_swallow_reset(_handle.DangerousGetHandle());
@@ -5999,6 +6631,14 @@ public sealed class ConditionalValueAtRisk : IDisposable
         var result = NativeMethods.wickra_conditional_value_at_risk_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_conditional_value_at_risk_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -6069,6 +6709,14 @@ public sealed class ConnorsRsi : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_connors_rsi_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_connors_rsi_reset(_handle.DangerousGetHandle());
@@ -6137,6 +6785,14 @@ public sealed class Coppock : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_coppock_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_coppock_reset(_handle.DangerousGetHandle());
@@ -6201,6 +6857,14 @@ public sealed class CorrelationTrendIndicator : IDisposable
         var result = NativeMethods.wickra_correlation_trend_indicator_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_correlation_trend_indicator_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -6293,6 +6957,14 @@ public sealed class Counterattack : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_counterattack_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_counterattack_reset(_handle.DangerousGetHandle());
@@ -6383,6 +7055,14 @@ public sealed class Crab : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_crab_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_crab_reset(_handle.DangerousGetHandle());
@@ -6428,6 +7108,14 @@ public sealed class CumulativeVolumeDelta : IDisposable
         var result = NativeMethods.wickra_cumulative_volume_delta_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_cumulative_volume_delta_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -6509,6 +7197,14 @@ public sealed class CumulativeVolumeIndex : IDisposable
         var result = NativeMethods.wickra_cumulative_volume_index_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_cumulative_volume_index_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -6601,6 +7297,14 @@ public sealed class CupAndHandle : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_cup_and_handle_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_cup_and_handle_reset(_handle.DangerousGetHandle());
@@ -6665,6 +7369,14 @@ public sealed class CyberneticCycle : IDisposable
         var result = NativeMethods.wickra_cybernetic_cycle_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_cybernetic_cycle_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -6757,6 +7469,14 @@ public sealed class Cypher : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_cypher_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_cypher_reset(_handle.DangerousGetHandle());
@@ -6825,6 +7545,14 @@ public sealed class DayOfWeekProfile : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_day_of_week_profile_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_day_of_week_profile_reset(_handle.DangerousGetHandle());
@@ -6889,6 +7617,14 @@ public sealed class Decycler : IDisposable
         var result = NativeMethods.wickra_decycler_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_decycler_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -6958,6 +7694,14 @@ public sealed class DecyclerOscillator : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_decycler_oscillator_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_decycler_oscillator_reset(_handle.DangerousGetHandle());
@@ -7022,6 +7766,14 @@ public sealed class Dema : IDisposable
         var result = NativeMethods.wickra_dema_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_dema_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -7115,6 +7867,14 @@ public sealed class DemandIndex : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_demand_index_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_demand_index_reset(_handle.DangerousGetHandle());
@@ -7166,6 +7926,14 @@ public sealed class DemarkPivots : IDisposable
         var result = NativeMethods.wickra_demark_pivots_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_demark_pivots_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -7233,6 +8001,14 @@ public sealed class DepthSlope : IDisposable
         var result = NativeMethods.wickra_depth_slope_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_depth_slope_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -7304,6 +8080,14 @@ public sealed class DerivativeOscillator : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_derivative_oscillator_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_derivative_oscillator_reset(_handle.DangerousGetHandle());
@@ -7370,6 +8154,14 @@ public sealed class DetrendedStdDev : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_detrended_std_dev_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_detrended_std_dev_reset(_handle.DangerousGetHandle());
@@ -7434,6 +8226,14 @@ public sealed class DisparityIndex : IDisposable
         var result = NativeMethods.wickra_disparity_index_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_disparity_index_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -7505,6 +8305,14 @@ public sealed class DistanceSsd : IDisposable
         var result = NativeMethods.wickra_distance_ssd_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_distance_ssd_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -7597,6 +8405,14 @@ public sealed class Doji : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_doji_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_doji_reset(_handle.DangerousGetHandle());
@@ -7687,6 +8503,14 @@ public sealed class DojiStar : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_doji_star_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_doji_star_reset(_handle.DangerousGetHandle());
@@ -7737,6 +8561,14 @@ public sealed class DollarBars : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_dollar_bars_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -7793,6 +8625,14 @@ public sealed class Donchian : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_donchian_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_donchian_reset(_handle.DangerousGetHandle());
@@ -7847,6 +8687,14 @@ public sealed class DonchianStop : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_donchian_stop_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_donchian_stop_reset(_handle.DangerousGetHandle());
@@ -7899,6 +8747,14 @@ public sealed class DoubleBollinger : IDisposable
         var result = NativeMethods.wickra_double_bollinger_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_double_bollinger_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -7991,6 +8847,14 @@ public sealed class DoubleTopBottom : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_double_top_bottom_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_double_top_bottom_reset(_handle.DangerousGetHandle());
@@ -8081,6 +8945,14 @@ public sealed class DownsideGapThreeMethods : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_downside_gap_three_methods_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_downside_gap_three_methods_reset(_handle.DangerousGetHandle());
@@ -8145,6 +9017,14 @@ public sealed class Dpo : IDisposable
         var result = NativeMethods.wickra_dpo_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_dpo_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -8237,6 +9117,14 @@ public sealed class DragonflyDoji : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_dragonfly_doji_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_dragonfly_doji_reset(_handle.DangerousGetHandle());
@@ -8300,6 +9188,14 @@ public sealed class DrawdownDuration : IDisposable
         var result = NativeMethods.wickra_drawdown_duration_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_drawdown_duration_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -8393,6 +9289,14 @@ public sealed class DumplingTop : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_dumpling_top_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_dumpling_top_reset(_handle.DangerousGetHandle());
@@ -8484,6 +9388,14 @@ public sealed class Dx : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_dx_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_dx_reset(_handle.DangerousGetHandle());
@@ -8548,6 +9460,14 @@ public sealed class DynamicMomentumIndex : IDisposable
         var result = NativeMethods.wickra_dynamic_momentum_index_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_dynamic_momentum_index_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -8641,6 +9561,14 @@ public sealed class EaseOfMovement : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_ease_of_movement_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_ease_of_movement_reset(_handle.DangerousGetHandle());
@@ -8686,6 +9614,14 @@ public sealed class EffectiveSpread : IDisposable
         var result = NativeMethods.wickra_effective_spread_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_effective_spread_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -8754,6 +9690,14 @@ public sealed class EhlersStochastic : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_ehlers_stochastic_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_ehlers_stochastic_reset(_handle.DangerousGetHandle());
@@ -8818,6 +9762,14 @@ public sealed class Ehma : IDisposable
         var result = NativeMethods.wickra_ehma_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_ehma_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -8889,6 +9841,14 @@ public sealed class ElderImpulse : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_elder_impulse_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_elder_impulse_reset(_handle.DangerousGetHandle());
@@ -8943,6 +9903,14 @@ public sealed class ElderRay : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_elder_ray_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_elder_ray_reset(_handle.DangerousGetHandle());
@@ -8995,6 +9963,14 @@ public sealed class ElderSafeZone : IDisposable
         var result = NativeMethods.wickra_elder_safe_zone_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_elder_safe_zone_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -9063,6 +10039,14 @@ public sealed class Ema : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_ema_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_ema_reset(_handle.DangerousGetHandle());
@@ -9127,6 +10111,14 @@ public sealed class EmpiricalModeDecomposition : IDisposable
         var result = NativeMethods.wickra_empirical_mode_decomposition_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_empirical_mode_decomposition_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -9219,6 +10211,14 @@ public sealed class Engulfing : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_engulfing_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_engulfing_reset(_handle.DangerousGetHandle());
@@ -9273,6 +10273,14 @@ public sealed class Equivolume : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_equivolume_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_equivolume_reset(_handle.DangerousGetHandle());
@@ -9318,6 +10326,14 @@ public sealed class EstimatedLeverageRatio : IDisposable
         var result = NativeMethods.wickra_estimated_leverage_ratio_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_estimated_leverage_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -9385,6 +10401,14 @@ public sealed class EvenBetterSinewave : IDisposable
         var result = NativeMethods.wickra_even_better_sinewave_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_even_better_sinewave_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -9475,6 +10499,14 @@ public sealed class EveningDojiStar : IDisposable
         var result = NativeMethods.wickra_evening_doji_star_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_evening_doji_star_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -9568,6 +10600,14 @@ public sealed class Evwma : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_evwma_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_evwma_reset(_handle.DangerousGetHandle());
@@ -9631,6 +10671,14 @@ public sealed class EwmaVolatility : IDisposable
         var result = NativeMethods.wickra_ewma_volatility_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_ewma_volatility_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -9697,6 +10745,14 @@ public sealed class Expectancy : IDisposable
         var result = NativeMethods.wickra_expectancy_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_expectancy_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -9789,6 +10845,14 @@ public sealed class FallingThreeMethods : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_falling_three_methods_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_falling_three_methods_reset(_handle.DangerousGetHandle());
@@ -9854,6 +10918,14 @@ public sealed class Fama : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_fama_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_fama_reset(_handle.DangerousGetHandle());
@@ -9905,6 +10977,14 @@ public sealed class FibArcs : IDisposable
         var result = NativeMethods.wickra_fib_arcs_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_fib_arcs_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -9960,6 +11040,14 @@ public sealed class FibChannel : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_fib_channel_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_fib_channel_reset(_handle.DangerousGetHandle());
@@ -10011,6 +11099,14 @@ public sealed class FibConfluence : IDisposable
         var result = NativeMethods.wickra_fib_confluence_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_fib_confluence_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -10066,6 +11162,14 @@ public sealed class FibExtension : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_fib_extension_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_fib_extension_reset(_handle.DangerousGetHandle());
@@ -10117,6 +11221,14 @@ public sealed class FibFan : IDisposable
         var result = NativeMethods.wickra_fib_fan_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_fib_fan_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -10172,6 +11284,14 @@ public sealed class FibProjection : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_fib_projection_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_fib_projection_reset(_handle.DangerousGetHandle());
@@ -10223,6 +11343,14 @@ public sealed class FibRetracement : IDisposable
         var result = NativeMethods.wickra_fib_retracement_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_fib_retracement_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -10278,6 +11406,14 @@ public sealed class FibTimeZones : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_fib_time_zones_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_fib_time_zones_reset(_handle.DangerousGetHandle());
@@ -10329,6 +11465,14 @@ public sealed class FibonacciPivots : IDisposable
         var result = NativeMethods.wickra_fibonacci_pivots_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_fibonacci_pivots_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -10397,6 +11541,14 @@ public sealed class FisherRsi : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_fisher_rsi_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_fisher_rsi_reset(_handle.DangerousGetHandle());
@@ -10461,6 +11613,14 @@ public sealed class FisherTransform : IDisposable
         var result = NativeMethods.wickra_fisher_transform_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_fisher_transform_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -10553,6 +11713,14 @@ public sealed class FlagPennant : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_flag_pennant_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_flag_pennant_reset(_handle.DangerousGetHandle());
@@ -10619,6 +11787,14 @@ public sealed class Footprint : IDisposable
         var result = NativeMethods.wickra_footprint_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_footprint_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -10712,6 +11888,14 @@ public sealed class ForceIndex : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_force_index_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_force_index_reset(_handle.DangerousGetHandle());
@@ -10764,6 +11948,14 @@ public sealed class FractalChaosBands : IDisposable
         var result = NativeMethods.wickra_fractal_chaos_bands_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_fractal_chaos_bands_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -10830,6 +12022,14 @@ public sealed class Frama : IDisposable
         var result = NativeMethods.wickra_frama_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_frama_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -10923,6 +12123,14 @@ public sealed class FryPanBottom : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_fry_pan_bottom_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_fry_pan_bottom_reset(_handle.DangerousGetHandle());
@@ -10968,6 +12176,14 @@ public sealed class FundingBasis : IDisposable
         var result = NativeMethods.wickra_funding_basis_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_funding_basis_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -11017,6 +12233,14 @@ public sealed class FundingImpliedApr : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_funding_implied_apr_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_funding_implied_apr_reset(_handle.DangerousGetHandle());
@@ -11062,6 +12286,14 @@ public sealed class FundingRate : IDisposable
         var result = NativeMethods.wickra_funding_rate_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_funding_rate_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -11112,6 +12344,14 @@ public sealed class FundingRateMean : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_funding_rate_mean_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_funding_rate_mean_reset(_handle.DangerousGetHandle());
@@ -11158,6 +12398,14 @@ public sealed class FundingRateZScore : IDisposable
         var result = NativeMethods.wickra_funding_rate_z_score_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_funding_rate_z_score_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -11226,6 +12474,14 @@ public sealed class GainLossRatio : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_gain_loss_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_gain_loss_ratio_reset(_handle.DangerousGetHandle());
@@ -11290,6 +12546,14 @@ public sealed class GainToPainRatio : IDisposable
         var result = NativeMethods.wickra_gain_to_pain_ratio_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_gain_to_pain_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -11382,6 +12646,14 @@ public sealed class GapSideBySideWhite : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_gap_side_by_side_white_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_gap_side_by_side_white_reset(_handle.DangerousGetHandle());
@@ -11445,6 +12717,14 @@ public sealed class Garch11 : IDisposable
         var result = NativeMethods.wickra_garch11_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_garch11_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -11539,6 +12819,14 @@ public sealed class GarmanKlassVolatility : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_garman_klass_volatility_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_garman_klass_volatility_reset(_handle.DangerousGetHandle());
@@ -11629,6 +12917,14 @@ public sealed class Gartley : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_gartley_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_gartley_reset(_handle.DangerousGetHandle());
@@ -11683,6 +12979,14 @@ public sealed class GatorOscillator : IDisposable
         var result = NativeMethods.wickra_gator_oscillator_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_gator_oscillator_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -11751,6 +13055,14 @@ public sealed class GeneralizedDema : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_generalized_dema_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_generalized_dema_reset(_handle.DangerousGetHandle());
@@ -11817,6 +13129,14 @@ public sealed class GeometricMa : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_geometric_ma_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_geometric_ma_reset(_handle.DangerousGetHandle());
@@ -11868,6 +13188,14 @@ public sealed class GoldenPocket : IDisposable
         var result = NativeMethods.wickra_golden_pocket_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_golden_pocket_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -11940,6 +13268,14 @@ public sealed class GrangerCausality : IDisposable
         var result = NativeMethods.wickra_granger_causality_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_granger_causality_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -12032,6 +13368,14 @@ public sealed class GravestoneDoji : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_gravestone_doji_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_gravestone_doji_reset(_handle.DangerousGetHandle());
@@ -12120,6 +13464,14 @@ public sealed class Hammer : IDisposable
         var result = NativeMethods.wickra_hammer_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_hammer_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -12212,6 +13564,14 @@ public sealed class HangingMan : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_hanging_man_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_hanging_man_reset(_handle.DangerousGetHandle());
@@ -12300,6 +13660,14 @@ public sealed class Harami : IDisposable
         var result = NativeMethods.wickra_harami_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_harami_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -12392,6 +13760,14 @@ public sealed class HaramiCross : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_harami_cross_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_harami_cross_reset(_handle.DangerousGetHandle());
@@ -12461,6 +13837,14 @@ public sealed class HasbrouckInformationShare : IDisposable
         var result = NativeMethods.wickra_hasbrouck_information_share_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_hasbrouck_information_share_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -12553,6 +13937,14 @@ public sealed class HeadAndShoulders : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_head_and_shoulders_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_head_and_shoulders_reset(_handle.DangerousGetHandle());
@@ -12604,6 +13996,14 @@ public sealed class HeikinAshi : IDisposable
         var result = NativeMethods.wickra_heikin_ashi_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_heikin_ashi_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -12697,6 +14097,14 @@ public sealed class HeikinAshiOscillator : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_heikin_ashi_oscillator_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_heikin_ashi_oscillator_reset(_handle.DangerousGetHandle());
@@ -12788,6 +14196,14 @@ public sealed class HiLoActivator : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_hi_lo_activator_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_hi_lo_activator_reset(_handle.DangerousGetHandle());
@@ -12868,6 +14284,14 @@ public sealed class HighLowIndex : IDisposable
         var result = NativeMethods.wickra_high_low_index_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_high_low_index_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -12960,6 +14384,14 @@ public sealed class HighLowRange : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_high_low_range_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_high_low_range_reset(_handle.DangerousGetHandle());
@@ -13013,6 +14445,14 @@ public sealed class HighLowVolumeNodes : IDisposable
         var result = NativeMethods.wickra_high_low_volume_nodes_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_high_low_volume_nodes_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -13105,6 +14545,14 @@ public sealed class HighWave : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_high_wave_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_high_wave_reset(_handle.DangerousGetHandle());
@@ -13169,6 +14617,14 @@ public sealed class HighpassFilter : IDisposable
         var result = NativeMethods.wickra_highpass_filter_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_highpass_filter_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -13261,6 +14717,14 @@ public sealed class Hikkake : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_hikkake_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_hikkake_reset(_handle.DangerousGetHandle());
@@ -13351,6 +14815,14 @@ public sealed class HikkakeModified : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_hikkake_modified_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_hikkake_modified_reset(_handle.DangerousGetHandle());
@@ -13414,6 +14886,14 @@ public sealed class HilbertDominantCycle : IDisposable
         var result = NativeMethods.wickra_hilbert_dominant_cycle_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_hilbert_dominant_cycle_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -13483,6 +14963,14 @@ public sealed class HistoricalVolatility : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_historical_volatility_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_historical_volatility_reset(_handle.DangerousGetHandle());
@@ -13549,6 +15037,14 @@ public sealed class Hma : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_hma_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_hma_reset(_handle.DangerousGetHandle());
@@ -13612,6 +15108,14 @@ public sealed class HoltWinters : IDisposable
         var result = NativeMethods.wickra_holt_winters_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_holt_winters_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -13704,6 +15208,14 @@ public sealed class HomingPigeon : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_homing_pigeon_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_homing_pigeon_reset(_handle.DangerousGetHandle());
@@ -13769,6 +15281,14 @@ public sealed class HtDcPhase : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_ht_dc_phase_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_ht_dc_phase_reset(_handle.DangerousGetHandle());
@@ -13820,6 +15340,14 @@ public sealed class HtPhasor : IDisposable
         var result = NativeMethods.wickra_ht_phasor_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_ht_phasor_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -13887,6 +15415,14 @@ public sealed class HtTrendMode : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_ht_trend_mode_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_ht_trend_mode_reset(_handle.DangerousGetHandle());
@@ -13939,6 +15475,14 @@ public sealed class HurstChannel : IDisposable
         var result = NativeMethods.wickra_hurst_channel_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_hurst_channel_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -14008,6 +15552,14 @@ public sealed class HurstExponent : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_hurst_exponent_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_hurst_exponent_reset(_handle.DangerousGetHandle());
@@ -14063,6 +15615,14 @@ public sealed class Ichimoku : IDisposable
         var result = NativeMethods.wickra_ichimoku_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_ichimoku_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -14155,6 +15715,14 @@ public sealed class IdenticalThreeCrows : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_identical_three_crows_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_identical_three_crows_reset(_handle.DangerousGetHandle());
@@ -14205,6 +15773,14 @@ public sealed class ImbalanceBars : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_imbalance_bars_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -14295,6 +15871,14 @@ public sealed class InNeck : IDisposable
         var result = NativeMethods.wickra_in_neck_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_in_neck_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -14389,6 +15973,14 @@ public sealed class Inertia : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_inertia_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_inertia_reset(_handle.DangerousGetHandle());
@@ -14460,6 +16052,14 @@ public sealed class InformationRatio : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_information_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_information_ratio_reset(_handle.DangerousGetHandle());
@@ -14512,6 +16112,14 @@ public sealed class InitialBalance : IDisposable
         var result = NativeMethods.wickra_initial_balance_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_initial_balance_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -14578,6 +16186,14 @@ public sealed class InstantaneousTrendline : IDisposable
         var result = NativeMethods.wickra_instantaneous_trendline_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_instantaneous_trendline_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -14668,6 +16284,14 @@ public sealed class IntradayIntensity : IDisposable
         var result = NativeMethods.wickra_intraday_intensity_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_intraday_intensity_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -14761,6 +16385,14 @@ public sealed class IntradayMomentumIndex : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_intraday_momentum_index_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_intraday_momentum_index_reset(_handle.DangerousGetHandle());
@@ -14830,6 +16462,14 @@ public sealed class IntradayVolatilityProfile : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_intraday_volatility_profile_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_intraday_volatility_profile_reset(_handle.DangerousGetHandle());
@@ -14893,6 +16533,14 @@ public sealed class InverseFisherTransform : IDisposable
         var result = NativeMethods.wickra_inverse_fisher_transform_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_inverse_fisher_transform_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -14985,6 +16633,14 @@ public sealed class InvertedHammer : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_inverted_hammer_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_inverted_hammer_reset(_handle.DangerousGetHandle());
@@ -15049,6 +16705,14 @@ public sealed class JarqueBera : IDisposable
         var result = NativeMethods.wickra_jarque_bera_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_jarque_bera_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -15117,6 +16781,14 @@ public sealed class Jma : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_jma_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_jma_reset(_handle.DangerousGetHandle());
@@ -15181,6 +16853,14 @@ public sealed class JumpIndicator : IDisposable
         var result = NativeMethods.wickra_jump_indicator_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_jump_indicator_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -15249,6 +16929,14 @@ public sealed class KRatio : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_k_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_k_ratio_reset(_handle.DangerousGetHandle());
@@ -15299,6 +16987,14 @@ public sealed class KagiBars : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_kagi_bars_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -15352,6 +17048,14 @@ public sealed class KalmanHedgeRatio : IDisposable
         var result = NativeMethods.wickra_kalman_hedge_ratio_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_kalman_hedge_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -15422,6 +17126,14 @@ public sealed class Kama : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_kama_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_kama_reset(_handle.DangerousGetHandle());
@@ -15474,6 +17186,14 @@ public sealed class KaseDevStop : IDisposable
         var result = NativeMethods.wickra_kase_dev_stop_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_kase_dev_stop_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -15529,6 +17249,14 @@ public sealed class KasePermissionStochastic : IDisposable
         var result = NativeMethods.wickra_kase_permission_stochastic_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_kase_permission_stochastic_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -15597,6 +17325,14 @@ public sealed class KellyCriterion : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_kelly_criterion_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_kelly_criterion_reset(_handle.DangerousGetHandle());
@@ -15650,6 +17386,14 @@ public sealed class Keltner : IDisposable
         var result = NativeMethods.wickra_keltner_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_keltner_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -15721,6 +17465,14 @@ public sealed class KendallTau : IDisposable
         var result = NativeMethods.wickra_kendall_tau_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_kendall_tau_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -15813,6 +17565,14 @@ public sealed class Kicking : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_kicking_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_kicking_reset(_handle.DangerousGetHandle());
@@ -15903,6 +17663,14 @@ public sealed class KickingByLength : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_kicking_by_length_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_kicking_by_length_reset(_handle.DangerousGetHandle());
@@ -15963,6 +17731,14 @@ public sealed class Kst : IDisposable
         var result = NativeMethods.wickra_kst_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_kst_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -16029,6 +17805,14 @@ public sealed class Kurtosis : IDisposable
         var result = NativeMethods.wickra_kurtosis_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_kurtosis_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -16123,6 +17907,14 @@ public sealed class Kvo : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_kvo_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_kvo_reset(_handle.DangerousGetHandle());
@@ -16169,6 +17961,14 @@ public sealed class KylesLambda : IDisposable
         var result = NativeMethods.wickra_kyles_lambda_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_kyles_lambda_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -16261,6 +18061,14 @@ public sealed class LadderBottom : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_ladder_bottom_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_ladder_bottom_reset(_handle.DangerousGetHandle());
@@ -16326,6 +18134,14 @@ public sealed class LaguerreRsi : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_laguerre_rsi_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_laguerre_rsi_reset(_handle.DangerousGetHandle());
@@ -16379,6 +18195,14 @@ public sealed class LeadLagCrossCorrelation : IDisposable
         var result = NativeMethods.wickra_lead_lag_cross_correlation_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_lead_lag_cross_correlation_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -16447,6 +18271,14 @@ public sealed class LinRegAngle : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_lin_reg_angle_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_lin_reg_angle_reset(_handle.DangerousGetHandle());
@@ -16499,6 +18331,14 @@ public sealed class LinRegChannel : IDisposable
         var result = NativeMethods.wickra_lin_reg_channel_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_lin_reg_channel_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -16567,6 +18407,14 @@ public sealed class LinRegIntercept : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_lin_reg_intercept_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_lin_reg_intercept_reset(_handle.DangerousGetHandle());
@@ -16631,6 +18479,14 @@ public sealed class LinRegSlope : IDisposable
         var result = NativeMethods.wickra_lin_reg_slope_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_lin_reg_slope_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -16699,6 +18555,14 @@ public sealed class LinearRegression : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_linear_regression_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_linear_regression_reset(_handle.DangerousGetHandle());
@@ -16750,6 +18614,14 @@ public sealed class LiquidationFeatures : IDisposable
         var result = NativeMethods.wickra_liquidation_features_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_liquidation_features_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -16816,6 +18688,14 @@ public sealed class LogReturn : IDisposable
         var result = NativeMethods.wickra_log_return_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_log_return_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -16908,6 +18788,14 @@ public sealed class LongLeggedDoji : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_long_legged_doji_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_long_legged_doji_reset(_handle.DangerousGetHandle());
@@ -16998,6 +18886,14 @@ public sealed class LongLine : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_long_line_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_long_line_reset(_handle.DangerousGetHandle());
@@ -17043,6 +18939,14 @@ public sealed class LongShortRatio : IDisposable
         var result = NativeMethods.wickra_long_short_ratio_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_long_short_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -17111,6 +19015,14 @@ public sealed class M2Measure : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_m2_measure_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_m2_measure_reset(_handle.DangerousGetHandle());
@@ -17163,6 +19075,14 @@ public sealed class MaEnvelope : IDisposable
         var result = NativeMethods.wickra_ma_envelope_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_ma_envelope_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -17221,6 +19141,14 @@ public sealed class MacdExt : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_macd_ext_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_macd_ext_reset(_handle.DangerousGetHandle());
@@ -17273,6 +19201,14 @@ public sealed class MacdFix : IDisposable
         var result = NativeMethods.wickra_macd_fix_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_macd_fix_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -17343,6 +19279,14 @@ public sealed class MacdHistogram : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_macd_histogram_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_macd_histogram_reset(_handle.DangerousGetHandle());
@@ -17399,6 +19343,14 @@ public sealed class MacdIndicator : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_macd_indicator_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_macd_indicator_reset(_handle.DangerousGetHandle());
@@ -17450,6 +19402,14 @@ public sealed class Mama : IDisposable
         var result = NativeMethods.wickra_mama_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_mama_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -17542,6 +19502,14 @@ public sealed class MarketFacilitationIndex : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_market_facilitation_index_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_market_facilitation_index_reset(_handle.DangerousGetHandle());
@@ -17606,6 +19574,14 @@ public sealed class MartinRatio : IDisposable
         var result = NativeMethods.wickra_martin_ratio_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_martin_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -17696,6 +19672,14 @@ public sealed class Marubozu : IDisposable
         var result = NativeMethods.wickra_marubozu_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_marubozu_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -17790,6 +19774,14 @@ public sealed class MassIndex : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_mass_index_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_mass_index_reset(_handle.DangerousGetHandle());
@@ -17878,6 +19870,14 @@ public sealed class MatHold : IDisposable
         var result = NativeMethods.wickra_mat_hold_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_mat_hold_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -17970,6 +19970,14 @@ public sealed class MatchingLow : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_matching_low_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_matching_low_reset(_handle.DangerousGetHandle());
@@ -18034,6 +20042,14 @@ public sealed class MaxDrawdown : IDisposable
         var result = NativeMethods.wickra_max_drawdown_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_max_drawdown_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -18117,6 +20133,14 @@ public sealed class McClellanOscillator : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_mc_clellan_oscillator_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_mc_clellan_oscillator_reset(_handle.DangerousGetHandle());
@@ -18198,6 +20222,14 @@ public sealed class McClellanSummationIndex : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_mc_clellan_summation_index_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_mc_clellan_summation_index_reset(_handle.DangerousGetHandle());
@@ -18262,6 +20294,14 @@ public sealed class McGinleyDynamic : IDisposable
         var result = NativeMethods.wickra_mc_ginley_dynamic_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_mc_ginley_dynamic_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -18330,6 +20370,14 @@ public sealed class MedianAbsoluteDeviation : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_median_absolute_deviation_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_median_absolute_deviation_reset(_handle.DangerousGetHandle());
@@ -18382,6 +20430,14 @@ public sealed class MedianChannel : IDisposable
         var result = NativeMethods.wickra_median_channel_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_median_channel_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -18448,6 +20504,14 @@ public sealed class MedianMa : IDisposable
         var result = NativeMethods.wickra_median_ma_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_median_ma_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -18538,6 +20602,14 @@ public sealed class MedianPrice : IDisposable
         var result = NativeMethods.wickra_median_price_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_median_price_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -18631,6 +20703,14 @@ public sealed class Mfi : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_mfi_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_mfi_reset(_handle.DangerousGetHandle());
@@ -18698,6 +20778,14 @@ public sealed class Microprice : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_microprice_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_microprice_reset(_handle.DangerousGetHandle());
@@ -18762,6 +20850,14 @@ public sealed class MidPoint : IDisposable
         var result = NativeMethods.wickra_mid_point_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_mid_point_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -18855,6 +20951,14 @@ public sealed class MidPrice : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_mid_price_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_mid_price_reset(_handle.DangerousGetHandle());
@@ -18944,6 +21048,14 @@ public sealed class MinusDi : IDisposable
         var result = NativeMethods.wickra_minus_di_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_minus_di_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -19037,6 +21149,14 @@ public sealed class MinusDm : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_minus_dm_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_minus_dm_reset(_handle.DangerousGetHandle());
@@ -19089,6 +21209,14 @@ public sealed class ModifiedMaStop : IDisposable
         var result = NativeMethods.wickra_modified_ma_stop_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_modified_ma_stop_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -19155,6 +21283,14 @@ public sealed class Mom : IDisposable
         var result = NativeMethods.wickra_mom_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_mom_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -19247,6 +21383,14 @@ public sealed class MorningDojiStar : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_morning_doji_star_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_morning_doji_star_reset(_handle.DangerousGetHandle());
@@ -19337,6 +21481,14 @@ public sealed class MorningEveningStar : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_morning_evening_star_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_morning_evening_star_reset(_handle.DangerousGetHandle());
@@ -19389,6 +21541,14 @@ public sealed class MurreyMathLines : IDisposable
         var result = NativeMethods.wickra_murrey_math_lines_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_murrey_math_lines_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -19483,6 +21643,14 @@ public sealed class NakedPoc : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_naked_poc_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_naked_poc_reset(_handle.DangerousGetHandle());
@@ -19574,6 +21742,14 @@ public sealed class Natr : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_natr_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_natr_reset(_handle.DangerousGetHandle());
@@ -19653,6 +21829,14 @@ public sealed class NewHighsNewLows : IDisposable
         var result = NativeMethods.wickra_new_highs_new_lows_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_new_highs_new_lows_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -19746,6 +21930,14 @@ public sealed class NewPriceLines : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_new_price_lines_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_new_price_lines_reset(_handle.DangerousGetHandle());
@@ -19797,6 +21989,14 @@ public sealed class Nrtr : IDisposable
         var result = NativeMethods.wickra_nrtr_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_nrtr_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -19889,6 +22089,14 @@ public sealed class Nvi : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_nvi_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_nvi_reset(_handle.DangerousGetHandle());
@@ -19979,6 +22187,14 @@ public sealed class Obv : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_obv_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_obv_reset(_handle.DangerousGetHandle());
@@ -20025,6 +22241,14 @@ public sealed class OIPriceDivergence : IDisposable
         var result = NativeMethods.wickra_oi_price_divergence_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_oi_price_divergence_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -20074,6 +22298,14 @@ public sealed class OiToVolumeRatio : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_oi_to_volume_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_oi_to_volume_ratio_reset(_handle.DangerousGetHandle());
@@ -20119,6 +22351,14 @@ public sealed class OIWeighted : IDisposable
         var result = NativeMethods.wickra_oi_weighted_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_oi_weighted_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -20185,6 +22425,14 @@ public sealed class OmegaRatio : IDisposable
         var result = NativeMethods.wickra_omega_ratio_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_omega_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -20277,6 +22525,14 @@ public sealed class OnNeck : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_on_neck_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_on_neck_reset(_handle.DangerousGetHandle());
@@ -20322,6 +22578,14 @@ public sealed class OpenInterestDelta : IDisposable
         var result = NativeMethods.wickra_open_interest_delta_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_open_interest_delta_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -20370,6 +22634,14 @@ public sealed class OpenInterestMomentum : IDisposable
         var result = NativeMethods.wickra_open_interest_momentum_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_open_interest_momentum_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -20462,6 +22734,14 @@ public sealed class OpeningMarubozu : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_opening_marubozu_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_opening_marubozu_reset(_handle.DangerousGetHandle());
@@ -20514,6 +22794,14 @@ public sealed class OpeningRange : IDisposable
         var result = NativeMethods.wickra_opening_range_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_opening_range_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -20583,6 +22871,14 @@ public sealed class OrderBookImbalanceFull : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_order_book_imbalance_full_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_order_book_imbalance_full_reset(_handle.DangerousGetHandle());
@@ -20648,6 +22944,14 @@ public sealed class OrderBookImbalanceTop1 : IDisposable
         var result = NativeMethods.wickra_order_book_imbalance_top1_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_order_book_imbalance_top1_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -20718,6 +23022,14 @@ public sealed class OrderBookImbalanceTopN : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_order_book_imbalance_top_n_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_order_book_imbalance_top_n_reset(_handle.DangerousGetHandle());
@@ -20784,6 +23096,14 @@ public sealed class OrderFlowImbalance : IDisposable
         var result = NativeMethods.wickra_order_flow_imbalance_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_order_flow_imbalance_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -20855,6 +23175,14 @@ public sealed class OuHalfLife : IDisposable
         var result = NativeMethods.wickra_ou_half_life_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_ou_half_life_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -20947,6 +23275,14 @@ public sealed class OvernightGap : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_overnight_gap_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_overnight_gap_reset(_handle.DangerousGetHandle());
@@ -20998,6 +23334,14 @@ public sealed class OvernightIntradayReturn : IDisposable
         var result = NativeMethods.wickra_overnight_intraday_return_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_overnight_intraday_return_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -21064,6 +23408,14 @@ public sealed class PainIndex : IDisposable
         var result = NativeMethods.wickra_pain_index_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_pain_index_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -21138,6 +23490,14 @@ public sealed class PairSpreadZScore : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_pair_spread_z_score_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_pair_spread_z_score_reset(_handle.DangerousGetHandle());
@@ -21207,6 +23567,14 @@ public sealed class PairwiseBeta : IDisposable
         var result = NativeMethods.wickra_pairwise_beta_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_pairwise_beta_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -21301,6 +23669,14 @@ public sealed class ParkinsonVolatility : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_parkinson_volatility_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_parkinson_volatility_reset(_handle.DangerousGetHandle());
@@ -21370,6 +23746,14 @@ public sealed class PearsonCorrelation : IDisposable
         var result = NativeMethods.wickra_pearson_correlation_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_pearson_correlation_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -21453,6 +23837,14 @@ public sealed class PercentAboveMa : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_percent_above_ma_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_percent_above_ma_reset(_handle.DangerousGetHandle());
@@ -21517,6 +23909,14 @@ public sealed class PercentB : IDisposable
         var result = NativeMethods.wickra_percent_b_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_percent_b_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -21584,6 +23984,14 @@ public sealed class PercentageTrailingStop : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_percentage_trailing_stop_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_percentage_trailing_stop_reset(_handle.DangerousGetHandle());
@@ -21629,6 +24037,14 @@ public sealed class PerpetualPremiumIndex : IDisposable
         var result = NativeMethods.wickra_perpetual_premium_index_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_perpetual_premium_index_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -21722,6 +24138,14 @@ public sealed class Pgo : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_pgo_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_pgo_reset(_handle.DangerousGetHandle());
@@ -21812,6 +24236,14 @@ public sealed class PiercingDarkCloud : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_piercing_dark_cloud_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_piercing_dark_cloud_reset(_handle.DangerousGetHandle());
@@ -21858,6 +24290,14 @@ public sealed class Pin : IDisposable
         var result = NativeMethods.wickra_pin_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_pin_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -21952,6 +24392,14 @@ public sealed class PivotReversal : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_pivot_reversal_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_pivot_reversal_reset(_handle.DangerousGetHandle());
@@ -22041,6 +24489,14 @@ public sealed class PlusDi : IDisposable
         var result = NativeMethods.wickra_plus_di_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_plus_di_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -22134,6 +24590,14 @@ public sealed class PlusDm : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_plus_dm_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_plus_dm_reset(_handle.DangerousGetHandle());
@@ -22201,6 +24665,14 @@ public sealed class Pmo : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_pmo_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_pmo_reset(_handle.DangerousGetHandle());
@@ -22252,6 +24724,14 @@ public sealed class PointAndFigureBars : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_point_and_figure_bars_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -22321,6 +24801,14 @@ public sealed class PolarizedFractalEfficiency : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_polarized_fractal_efficiency_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_polarized_fractal_efficiency_reset(_handle.DangerousGetHandle());
@@ -22386,6 +24874,14 @@ public sealed class Ppo : IDisposable
         var result = NativeMethods.wickra_ppo_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_ppo_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -22454,6 +24950,14 @@ public sealed class PpoHistogram : IDisposable
         var result = NativeMethods.wickra_ppo_histogram_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_ppo_histogram_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -22548,6 +25052,14 @@ public sealed class ProfileShape : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_profile_shape_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_profile_shape_reset(_handle.DangerousGetHandle());
@@ -22614,6 +25126,14 @@ public sealed class ProfitFactor : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_profit_factor_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_profit_factor_reset(_handle.DangerousGetHandle());
@@ -22666,6 +25186,14 @@ public sealed class ProjectionBands : IDisposable
         var result = NativeMethods.wickra_projection_bands_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_projection_bands_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -22759,6 +25287,14 @@ public sealed class ProjectionOscillator : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_projection_oscillator_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_projection_oscillator_reset(_handle.DangerousGetHandle());
@@ -22847,6 +25383,14 @@ public sealed class Psar : IDisposable
         var result = NativeMethods.wickra_psar_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_psar_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -22939,6 +25483,14 @@ public sealed class Pvi : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_pvi_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_pvi_reset(_handle.DangerousGetHandle());
@@ -22992,6 +25544,14 @@ public sealed class Qqe : IDisposable
         var result = NativeMethods.wickra_qqe_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_qqe_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -23085,6 +25645,14 @@ public sealed class Qstick : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_qstick_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_qstick_reset(_handle.DangerousGetHandle());
@@ -23137,6 +25705,14 @@ public sealed class QuartileBands : IDisposable
         var result = NativeMethods.wickra_quartile_bands_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_quartile_bands_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -23206,6 +25782,14 @@ public sealed class QuotedSpread : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_quoted_spread_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_quoted_spread_reset(_handle.DangerousGetHandle());
@@ -23272,6 +25856,14 @@ public sealed class RSquared : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_r_squared_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_r_squared_reset(_handle.DangerousGetHandle());
@@ -23324,6 +25916,14 @@ public sealed class RangeBars : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_range_bars_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_range_bars_reset(_handle.DangerousGetHandle());
@@ -23370,6 +25970,14 @@ public sealed class RealizedSpread : IDisposable
         var result = NativeMethods.wickra_realized_spread_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_realized_spread_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -23438,6 +26046,14 @@ public sealed class RealizedVolatility : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_realized_volatility_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_realized_volatility_reset(_handle.DangerousGetHandle());
@@ -23501,6 +26117,14 @@ public sealed class RecoveryFactor : IDisposable
         var result = NativeMethods.wickra_recovery_factor_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_recovery_factor_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -23593,6 +26217,14 @@ public sealed class RectangleRange : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_rectangle_range_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rectangle_range_reset(_handle.DangerousGetHandle());
@@ -23657,6 +26289,14 @@ public sealed class Reflex : IDisposable
         var result = NativeMethods.wickra_reflex_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_reflex_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -23726,6 +26366,14 @@ public sealed class RegimeLabel : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_regime_label_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_regime_label_reset(_handle.DangerousGetHandle());
@@ -23781,6 +26429,14 @@ public sealed class RelativeStrengthAB : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_relative_strength_ab_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_relative_strength_ab_reset(_handle.DangerousGetHandle());
@@ -23831,6 +26487,14 @@ public sealed class RenkoBars : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_renko_bars_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -23896,6 +26560,14 @@ public sealed class RenkoTrailingStop : IDisposable
         var result = NativeMethods.wickra_renko_trailing_stop_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_renko_trailing_stop_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -23988,6 +26660,14 @@ public sealed class RickshawMan : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_rickshaw_man_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rickshaw_man_reset(_handle.DangerousGetHandle());
@@ -24078,6 +26758,14 @@ public sealed class RisingThreeMethods : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_rising_three_methods_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rising_three_methods_reset(_handle.DangerousGetHandle());
@@ -24143,6 +26831,14 @@ public sealed class Rmi : IDisposable
         var result = NativeMethods.wickra_rmi_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_rmi_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -24211,6 +26907,14 @@ public sealed class Roc : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_roc_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_roc_reset(_handle.DangerousGetHandle());
@@ -24275,6 +26979,14 @@ public sealed class Rocp : IDisposable
         var result = NativeMethods.wickra_rocp_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_rocp_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -24343,6 +27055,14 @@ public sealed class Rocr : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_rocr_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rocr_reset(_handle.DangerousGetHandle());
@@ -24407,6 +27127,14 @@ public sealed class Rocr100 : IDisposable
         var result = NativeMethods.wickra_rocr100_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_rocr100_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -24501,6 +27229,14 @@ public sealed class RogersSatchellVolatility : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_rogers_satchell_volatility_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rogers_satchell_volatility_reset(_handle.DangerousGetHandle());
@@ -24547,6 +27283,14 @@ public sealed class RollMeasure : IDisposable
         var result = NativeMethods.wickra_roll_measure_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_roll_measure_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -24620,6 +27364,14 @@ public sealed class RollingCorrelation : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_rolling_correlation_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rolling_correlation_reset(_handle.DangerousGetHandle());
@@ -24691,6 +27443,14 @@ public sealed class RollingCovariance : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_rolling_covariance_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rolling_covariance_reset(_handle.DangerousGetHandle());
@@ -24755,6 +27515,14 @@ public sealed class RollingIqr : IDisposable
         var result = NativeMethods.wickra_rolling_iqr_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_rolling_iqr_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -24823,6 +27591,14 @@ public sealed class RollingMinMaxScaler : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_rolling_min_max_scaler_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rolling_min_max_scaler_reset(_handle.DangerousGetHandle());
@@ -24889,6 +27665,14 @@ public sealed class RollingPercentileRank : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_rolling_percentile_rank_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rolling_percentile_rank_reset(_handle.DangerousGetHandle());
@@ -24953,6 +27737,14 @@ public sealed class RollingQuantile : IDisposable
         var result = NativeMethods.wickra_rolling_quantile_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_rolling_quantile_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -25046,6 +27838,14 @@ public sealed class RollingVwap : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_rolling_vwap_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rolling_vwap_reset(_handle.DangerousGetHandle());
@@ -25111,6 +27911,14 @@ public sealed class RoofingFilter : IDisposable
         var result = NativeMethods.wickra_roofing_filter_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_roofing_filter_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -25179,6 +27987,14 @@ public sealed class Rsi : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_rsi_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rsi_reset(_handle.DangerousGetHandle());
@@ -25245,6 +28061,14 @@ public sealed class Rsx : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_rsx_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rsx_reset(_handle.DangerousGetHandle());
@@ -25296,6 +28120,14 @@ public sealed class RunBars : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_run_bars_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -25389,6 +28221,14 @@ public sealed class Rvi : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_rvi_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rvi_reset(_handle.DangerousGetHandle());
@@ -25455,6 +28295,14 @@ public sealed class RviVolatility : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_rvi_volatility_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_rvi_volatility_reset(_handle.DangerousGetHandle());
@@ -25507,6 +28355,14 @@ public sealed class Rwi : IDisposable
         var result = NativeMethods.wickra_rwi_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_rwi_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -25574,6 +28430,14 @@ public sealed class SampleEntropy : IDisposable
         var result = NativeMethods.wickra_sample_entropy_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_sample_entropy_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -25666,6 +28530,14 @@ public sealed class SarExt : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_sar_ext_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_sar_ext_reset(_handle.DangerousGetHandle());
@@ -25754,6 +28626,14 @@ public sealed class SeasonalZScore : IDisposable
         var result = NativeMethods.wickra_seasonal_z_score_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_seasonal_z_score_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -25846,6 +28726,14 @@ public sealed class SeparatingLines : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_separating_lines_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_separating_lines_reset(_handle.DangerousGetHandle());
@@ -25899,6 +28787,14 @@ public sealed class SessionHighLow : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_session_high_low_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_session_high_low_reset(_handle.DangerousGetHandle());
@@ -25950,6 +28846,14 @@ public sealed class SessionRange : IDisposable
         var result = NativeMethods.wickra_session_range_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_session_range_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -26042,6 +28946,14 @@ public sealed class SessionVwap : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_session_vwap_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_session_vwap_reset(_handle.DangerousGetHandle());
@@ -26107,6 +29019,14 @@ public sealed class ShannonEntropy : IDisposable
         var result = NativeMethods.wickra_shannon_entropy_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_shannon_entropy_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -26199,6 +29119,14 @@ public sealed class Shark : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_shark_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_shark_reset(_handle.DangerousGetHandle());
@@ -26263,6 +29191,14 @@ public sealed class SharpeRatio : IDisposable
         var result = NativeMethods.wickra_sharpe_ratio_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_sharpe_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -26355,6 +29291,14 @@ public sealed class ShootingStar : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_shooting_star_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_shooting_star_reset(_handle.DangerousGetHandle());
@@ -26445,6 +29389,14 @@ public sealed class ShortLine : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_short_line_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_short_line_reset(_handle.DangerousGetHandle());
@@ -26490,6 +29442,14 @@ public sealed class SignedVolume : IDisposable
         var result = NativeMethods.wickra_signed_volume_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_signed_volume_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -26557,6 +29517,14 @@ public sealed class SineWave : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_sine_wave_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_sine_wave_reset(_handle.DangerousGetHandle());
@@ -26621,6 +29589,14 @@ public sealed class SineWeightedMa : IDisposable
         var result = NativeMethods.wickra_sine_weighted_ma_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_sine_weighted_ma_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -26715,6 +29691,14 @@ public sealed class SinglePrints : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_single_prints_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_single_prints_reset(_handle.DangerousGetHandle());
@@ -26781,6 +29765,14 @@ public sealed class Skewness : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_skewness_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_skewness_reset(_handle.DangerousGetHandle());
@@ -26845,6 +29837,14 @@ public sealed class Sma : IDisposable
         var result = NativeMethods.wickra_sma_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_sma_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -26940,6 +29940,14 @@ public sealed class Smi : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_smi_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_smi_reset(_handle.DangerousGetHandle());
@@ -27006,6 +30014,14 @@ public sealed class Smma : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_smma_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_smma_reset(_handle.DangerousGetHandle());
@@ -27058,6 +30074,14 @@ public sealed class SmoothedHeikinAshi : IDisposable
         var result = NativeMethods.wickra_smoothed_heikin_ashi_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_smoothed_heikin_ashi_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -27124,6 +30148,14 @@ public sealed class SortinoRatio : IDisposable
         var result = NativeMethods.wickra_sortino_ratio_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_sortino_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -27195,6 +30227,14 @@ public sealed class SpearmanCorrelation : IDisposable
         var result = NativeMethods.wickra_spearman_correlation_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_spearman_correlation_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -27287,6 +30327,14 @@ public sealed class SpinningTop : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_spinning_top_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_spinning_top_reset(_handle.DangerousGetHandle());
@@ -27358,6 +30406,14 @@ public sealed class SpreadAr1Coefficient : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_spread_ar1_coefficient_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_spread_ar1_coefficient_reset(_handle.DangerousGetHandle());
@@ -27410,6 +30466,14 @@ public sealed class SpreadBollingerBands : IDisposable
         var result = NativeMethods.wickra_spread_bollinger_bands_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_spread_bollinger_bands_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -27481,6 +30545,14 @@ public sealed class SpreadHurst : IDisposable
         var result = NativeMethods.wickra_spread_hurst_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_spread_hurst_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -27573,6 +30645,14 @@ public sealed class StalledPattern : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_stalled_pattern_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_stalled_pattern_reset(_handle.DangerousGetHandle());
@@ -27639,6 +30719,14 @@ public sealed class StandardError : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_standard_error_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_standard_error_reset(_handle.DangerousGetHandle());
@@ -27691,6 +30779,14 @@ public sealed class StandardErrorBands : IDisposable
         var result = NativeMethods.wickra_standard_error_bands_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_standard_error_bands_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -27746,6 +30842,14 @@ public sealed class StarcBands : IDisposable
         var result = NativeMethods.wickra_starc_bands_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_starc_bands_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -27816,6 +30920,14 @@ public sealed class Stc : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_stc_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_stc_reset(_handle.DangerousGetHandle());
@@ -27880,6 +30992,14 @@ public sealed class StdDev : IDisposable
         var result = NativeMethods.wickra_std_dev_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_std_dev_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -27947,6 +31067,14 @@ public sealed class StepTrailingStop : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_step_trailing_stop_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_step_trailing_stop_reset(_handle.DangerousGetHandle());
@@ -28011,6 +31139,14 @@ public sealed class SterlingRatio : IDisposable
         var result = NativeMethods.wickra_sterling_ratio_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_sterling_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -28103,6 +31239,14 @@ public sealed class StickSandwich : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_stick_sandwich_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_stick_sandwich_reset(_handle.DangerousGetHandle());
@@ -28170,6 +31314,14 @@ public sealed class StochRsi : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_stoch_rsi_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_stoch_rsi_reset(_handle.DangerousGetHandle());
@@ -28223,6 +31375,14 @@ public sealed class Stochastic : IDisposable
         var result = NativeMethods.wickra_stochastic_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_stochastic_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -28316,6 +31476,14 @@ public sealed class StochasticCci : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_stochastic_cci_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_stochastic_cci_reset(_handle.DangerousGetHandle());
@@ -28382,6 +31550,14 @@ public sealed class SuperSmoother : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_super_smoother_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_super_smoother_reset(_handle.DangerousGetHandle());
@@ -28434,6 +31610,14 @@ public sealed class SuperTrend : IDisposable
         var result = NativeMethods.wickra_super_trend_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_super_trend_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -28502,6 +31686,14 @@ public sealed class T3 : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_t3_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_t3_reset(_handle.DangerousGetHandle());
@@ -28568,6 +31760,14 @@ public sealed class TailRatio : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_tail_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_tail_ratio_reset(_handle.DangerousGetHandle());
@@ -28613,6 +31813,14 @@ public sealed class TakerBuySellRatio : IDisposable
         var result = NativeMethods.wickra_taker_buy_sell_ratio_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_taker_buy_sell_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -28705,6 +31913,14 @@ public sealed class Takuri : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_takuri_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_takuri_reset(_handle.DangerousGetHandle());
@@ -28793,6 +32009,14 @@ public sealed class TasukiGap : IDisposable
         var result = NativeMethods.wickra_tasuki_gap_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_tasuki_gap_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -28885,6 +32109,14 @@ public sealed class TdCamouflage : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_td_camouflage_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_camouflage_reset(_handle.DangerousGetHandle());
@@ -28975,6 +32207,14 @@ public sealed class TdClop : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_td_clop_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_clop_reset(_handle.DangerousGetHandle());
@@ -29063,6 +32303,14 @@ public sealed class TdClopwin : IDisposable
         var result = NativeMethods.wickra_td_clopwin_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_td_clopwin_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -29159,6 +32407,14 @@ public sealed class TdCombo : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_td_combo_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_combo_reset(_handle.DangerousGetHandle());
@@ -29253,6 +32509,14 @@ public sealed class TdCountdown : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_td_countdown_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_countdown_reset(_handle.DangerousGetHandle());
@@ -29342,6 +32606,14 @@ public sealed class TdDWave : IDisposable
         var result = NativeMethods.wickra_td_d_wave_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_td_d_wave_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -29435,6 +32707,14 @@ public sealed class TdDeMarker : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_td_de_marker_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_de_marker_reset(_handle.DangerousGetHandle());
@@ -29525,6 +32805,14 @@ public sealed class TdDifferential : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_td_differential_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_differential_reset(_handle.DangerousGetHandle());
@@ -29580,6 +32868,14 @@ public sealed class TdLines : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_td_lines_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_lines_reset(_handle.DangerousGetHandle());
@@ -29633,6 +32929,14 @@ public sealed class TdMovingAverage : IDisposable
         var result = NativeMethods.wickra_td_moving_average_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_td_moving_average_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -29723,6 +33027,14 @@ public sealed class TdOpen : IDisposable
         var result = NativeMethods.wickra_td_open_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_td_open_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -29816,6 +33128,14 @@ public sealed class TdPressure : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_td_pressure_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_pressure_reset(_handle.DangerousGetHandle());
@@ -29906,6 +33226,14 @@ public sealed class TdPropulsion : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_td_propulsion_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_propulsion_reset(_handle.DangerousGetHandle());
@@ -29957,6 +33285,14 @@ public sealed class TdRangeProjection : IDisposable
         var result = NativeMethods.wickra_td_range_projection_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_td_range_projection_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -30050,6 +33386,14 @@ public sealed class TdRei : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_td_rei_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_rei_reset(_handle.DangerousGetHandle());
@@ -30103,6 +33447,14 @@ public sealed class TdRiskLevel : IDisposable
         var result = NativeMethods.wickra_td_risk_level_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_td_risk_level_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -30160,6 +33512,14 @@ public sealed class TdSequential : IDisposable
         var result = NativeMethods.wickra_td_sequential_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_td_sequential_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -30254,6 +33614,14 @@ public sealed class TdSetup : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_td_setup_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_setup_reset(_handle.DangerousGetHandle());
@@ -30344,6 +33712,14 @@ public sealed class TdTrap : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_td_trap_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_td_trap_reset(_handle.DangerousGetHandle());
@@ -30410,6 +33786,14 @@ public sealed class Tema : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_tema_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_tema_reset(_handle.DangerousGetHandle());
@@ -30455,6 +33839,14 @@ public sealed class TermStructureBasis : IDisposable
         var result = NativeMethods.wickra_term_structure_basis_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_term_structure_basis_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -30547,6 +33939,14 @@ public sealed class ThreeDrives : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_three_drives_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_three_drives_reset(_handle.DangerousGetHandle());
@@ -30635,6 +34035,14 @@ public sealed class ThreeInside : IDisposable
         var result = NativeMethods.wickra_three_inside_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_three_inside_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -30728,6 +34136,14 @@ public sealed class ThreeLineBreak : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_three_line_break_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_three_line_break_reset(_handle.DangerousGetHandle());
@@ -30779,6 +34195,14 @@ public sealed class ThreeLineBreakBars : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_three_line_break_bars_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -30871,6 +34295,14 @@ public sealed class ThreeLineStrike : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_three_line_strike_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_three_line_strike_reset(_handle.DangerousGetHandle());
@@ -30959,6 +34391,14 @@ public sealed class ThreeOutside : IDisposable
         var result = NativeMethods.wickra_three_outside_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_three_outside_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -31051,6 +34491,14 @@ public sealed class ThreeSoldiersOrCrows : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_three_soldiers_or_crows_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_three_soldiers_or_crows_reset(_handle.DangerousGetHandle());
@@ -31139,6 +34587,14 @@ public sealed class ThreeStarsInSouth : IDisposable
         var result = NativeMethods.wickra_three_stars_in_south_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_three_stars_in_south_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -31231,6 +34687,14 @@ public sealed class Thrusting : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_thrusting_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_thrusting_reset(_handle.DangerousGetHandle());
@@ -31282,6 +34746,14 @@ public sealed class TickBars : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_tick_bars_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -31365,6 +34837,14 @@ public sealed class TickIndex : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_tick_index_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_tick_index_reset(_handle.DangerousGetHandle());
@@ -31430,6 +34910,14 @@ public sealed class Tii : IDisposable
         var result = NativeMethods.wickra_tii_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_tii_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -31523,6 +35011,14 @@ public sealed class TimeBasedStop : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_time_based_stop_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_time_based_stop_reset(_handle.DangerousGetHandle());
@@ -31590,6 +35086,14 @@ public sealed class TimeOfDayReturnProfile : IDisposable
         var result = NativeMethods.wickra_time_of_day_return_profile_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_time_of_day_return_profile_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -31682,6 +35186,14 @@ public sealed class TowerTopBottom : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_tower_top_bottom_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_tower_top_bottom_reset(_handle.DangerousGetHandle());
@@ -31753,6 +35265,14 @@ public sealed class TpoProfile : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_tpo_profile_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_tpo_profile_reset(_handle.DangerousGetHandle());
@@ -31801,6 +35321,14 @@ public sealed class TradeImbalance : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_trade_imbalance_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_trade_imbalance_reset(_handle.DangerousGetHandle());
@@ -31847,6 +35375,14 @@ public sealed class TradeSignAutocorrelation : IDisposable
         var result = NativeMethods.wickra_trade_sign_autocorrelation_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_trade_sign_autocorrelation_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -31939,6 +35475,14 @@ public sealed class TradeVolumeIndex : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_trade_volume_index_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_trade_volume_index_reset(_handle.DangerousGetHandle());
@@ -32003,6 +35547,14 @@ public sealed class TrendLabel : IDisposable
         var result = NativeMethods.wickra_trend_label_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_trend_label_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -32071,6 +35623,14 @@ public sealed class TrendStrengthIndex : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_trend_strength_index_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_trend_strength_index_reset(_handle.DangerousGetHandle());
@@ -32135,6 +35695,14 @@ public sealed class Trendflex : IDisposable
         var result = NativeMethods.wickra_trendflex_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_trendflex_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -32206,6 +35774,14 @@ public sealed class TreynorRatio : IDisposable
         var result = NativeMethods.wickra_treynor_ratio_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_treynor_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -32298,6 +35874,14 @@ public sealed class Triangle : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_triangle_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_triangle_reset(_handle.DangerousGetHandle());
@@ -32362,6 +35946,14 @@ public sealed class Trima : IDisposable
         var result = NativeMethods.wickra_trima_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_trima_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -32443,6 +36035,14 @@ public sealed class Trin : IDisposable
         var result = NativeMethods.wickra_trin_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_trin_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -32535,6 +36135,14 @@ public sealed class TripleTopBottom : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_triple_top_bottom_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_triple_top_bottom_reset(_handle.DangerousGetHandle());
@@ -32625,6 +36233,14 @@ public sealed class Tristar : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_tristar_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_tristar_reset(_handle.DangerousGetHandle());
@@ -32689,6 +36305,14 @@ public sealed class Trix : IDisposable
         var result = NativeMethods.wickra_trix_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_trix_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -32781,6 +36405,14 @@ public sealed class TrueRange : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_true_range_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_true_range_reset(_handle.DangerousGetHandle());
@@ -32845,6 +36477,14 @@ public sealed class Tsf : IDisposable
         var result = NativeMethods.wickra_tsf_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_tsf_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -32913,6 +36553,14 @@ public sealed class TsfOscillator : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_tsf_oscillator_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_tsf_oscillator_reset(_handle.DangerousGetHandle());
@@ -32978,6 +36626,14 @@ public sealed class Tsi : IDisposable
         var result = NativeMethods.wickra_tsi_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_tsi_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -33071,6 +36727,14 @@ public sealed class Tsv : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_tsv_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_tsv_reset(_handle.DangerousGetHandle());
@@ -33123,6 +36787,14 @@ public sealed class TtmSqueeze : IDisposable
         var result = NativeMethods.wickra_ttm_squeeze_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_ttm_squeeze_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -33216,6 +36888,14 @@ public sealed class TtmTrend : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_ttm_trend_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_ttm_trend_reset(_handle.DangerousGetHandle());
@@ -33306,6 +36986,14 @@ public sealed class TurnOfMonth : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_turn_of_month_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_turn_of_month_reset(_handle.DangerousGetHandle());
@@ -33394,6 +37082,14 @@ public sealed class Tweezer : IDisposable
         var result = NativeMethods.wickra_tweezer_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_tweezer_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -33487,6 +37183,14 @@ public sealed class TwiggsMoneyFlow : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_twiggs_money_flow_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_twiggs_money_flow_reset(_handle.DangerousGetHandle());
@@ -33575,6 +37279,14 @@ public sealed class TwoCrows : IDisposable
         var result = NativeMethods.wickra_two_crows_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_two_crows_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -33667,6 +37379,14 @@ public sealed class TypicalPrice : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_typical_price_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_typical_price_reset(_handle.DangerousGetHandle());
@@ -33731,6 +37451,14 @@ public sealed class UlcerIndex : IDisposable
         var result = NativeMethods.wickra_ulcer_index_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_ulcer_index_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -33826,6 +37554,14 @@ public sealed class UltimateOscillator : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_ultimate_oscillator_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_ultimate_oscillator_reset(_handle.DangerousGetHandle());
@@ -33916,6 +37652,14 @@ public sealed class UniqueThreeRiver : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_unique_three_river_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_unique_three_river_reset(_handle.DangerousGetHandle());
@@ -33980,6 +37724,14 @@ public sealed class UniversalOscillator : IDisposable
         var result = NativeMethods.wickra_universal_oscillator_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_universal_oscillator_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -34061,6 +37813,14 @@ public sealed class UpDownVolumeRatio : IDisposable
         var result = NativeMethods.wickra_up_down_volume_ratio_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_up_down_volume_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -34153,6 +37913,14 @@ public sealed class UpsideGapThreeMethods : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_upside_gap_three_methods_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_upside_gap_three_methods_reset(_handle.DangerousGetHandle());
@@ -34243,6 +38011,14 @@ public sealed class UpsideGapTwoCrows : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_upside_gap_two_crows_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_upside_gap_two_crows_reset(_handle.DangerousGetHandle());
@@ -34309,6 +38085,14 @@ public sealed class UpsidePotentialRatio : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_upside_potential_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_upside_potential_ratio_reset(_handle.DangerousGetHandle());
@@ -34362,6 +38146,14 @@ public sealed class ValueArea : IDisposable
         var result = NativeMethods.wickra_value_area_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_value_area_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -34430,6 +38222,14 @@ public sealed class ValueAtRisk : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_value_at_risk_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_value_at_risk_reset(_handle.DangerousGetHandle());
@@ -34494,6 +38294,14 @@ public sealed class Variance : IDisposable
         var result = NativeMethods.wickra_variance_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_variance_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -34568,6 +38376,14 @@ public sealed class VarianceRatio : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_variance_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_variance_ratio_reset(_handle.DangerousGetHandle());
@@ -34632,6 +38448,14 @@ public sealed class VerticalHorizontalFilter : IDisposable
         var result = NativeMethods.wickra_vertical_horizontal_filter_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_vertical_horizontal_filter_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -34701,6 +38525,14 @@ public sealed class Vidya : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_vidya_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_vidya_reset(_handle.DangerousGetHandle());
@@ -34754,6 +38586,14 @@ public sealed class VolatilityCone : IDisposable
         var result = NativeMethods.wickra_volatility_cone_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_volatility_cone_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -34821,6 +38661,14 @@ public sealed class VolatilityOfVolatility : IDisposable
         var result = NativeMethods.wickra_volatility_of_volatility_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_volatility_of_volatility_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -34914,6 +38762,14 @@ public sealed class VolatilityRatio : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_volatility_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_volatility_ratio_reset(_handle.DangerousGetHandle());
@@ -35005,6 +38861,14 @@ public sealed class VoltyStop : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_volty_stop_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_volty_stop_reset(_handle.DangerousGetHandle());
@@ -35055,6 +38919,14 @@ public sealed class VolumeBars : IDisposable
         }
 
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_volume_bars_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -35124,6 +38996,14 @@ public sealed class VolumeByTimeProfile : IDisposable
         var result = NativeMethods.wickra_volume_by_time_profile_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_volume_by_time_profile_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -35218,6 +39098,14 @@ public sealed class VolumeOscillator : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_volume_oscillator_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_volume_oscillator_reset(_handle.DangerousGetHandle());
@@ -35308,6 +39196,14 @@ public sealed class VolumePriceTrend : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_volume_price_trend_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_volume_price_trend_reset(_handle.DangerousGetHandle());
@@ -35377,6 +39273,14 @@ public sealed class VolumeProfile : IDisposable
         var result = NativeMethods.wickra_volume_profile_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_volume_profile_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -35470,6 +39374,14 @@ public sealed class VolumeRsi : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_volume_rsi_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_volume_rsi_reset(_handle.DangerousGetHandle());
@@ -35526,6 +39438,14 @@ public sealed class VolumeWeightedMacd : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_volume_weighted_macd_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_volume_weighted_macd_reset(_handle.DangerousGetHandle());
@@ -35578,6 +39498,14 @@ public sealed class VolumeWeightedSr : IDisposable
         var result = NativeMethods.wickra_volume_weighted_sr_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_volume_weighted_sr_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -35634,6 +39562,14 @@ public sealed class Vortex : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_vortex_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_vortex_reset(_handle.DangerousGetHandle());
@@ -35680,6 +39616,14 @@ public sealed class Vpin : IDisposable
         var result = NativeMethods.wickra_vpin_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_vpin_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -35772,6 +39716,14 @@ public sealed class Vwap : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_vwap_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_vwap_reset(_handle.DangerousGetHandle());
@@ -35823,6 +39775,14 @@ public sealed class VwapStdDevBands : IDisposable
         var result = NativeMethods.wickra_vwap_std_dev_bands_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_vwap_std_dev_bands_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -35916,6 +39876,14 @@ public sealed class Vwma : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_vwma_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_vwma_reset(_handle.DangerousGetHandle());
@@ -36005,6 +39973,14 @@ public sealed class Vzo : IDisposable
         var result = NativeMethods.wickra_vzo_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_vzo_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -36097,6 +40073,14 @@ public sealed class Wad : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_wad_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_wad_reset(_handle.DangerousGetHandle());
@@ -36164,6 +40148,14 @@ public sealed class WavePm : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_wave_pm_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_wave_pm_reset(_handle.DangerousGetHandle());
@@ -36218,6 +40210,14 @@ public sealed class WaveTrend : IDisposable
         var result = NativeMethods.wickra_wave_trend_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_wave_trend_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -36310,6 +40310,14 @@ public sealed class Wedge : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_wedge_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_wedge_reset(_handle.DangerousGetHandle());
@@ -36398,6 +40406,14 @@ public sealed class WeightedClose : IDisposable
         var result = NativeMethods.wickra_weighted_close_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_weighted_close_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -36490,6 +40506,14 @@ public sealed class WickRatio : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_wick_ratio_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_wick_ratio_reset(_handle.DangerousGetHandle());
@@ -36541,6 +40565,14 @@ public sealed class WilliamsFractals : IDisposable
         var result = NativeMethods.wickra_williams_fractals_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_williams_fractals_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -36634,6 +40666,14 @@ public sealed class WilliamsR : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_williams_r_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_williams_r_reset(_handle.DangerousGetHandle());
@@ -36698,6 +40738,14 @@ public sealed class WinRate : IDisposable
         var result = NativeMethods.wickra_win_rate_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_win_rate_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -36766,6 +40814,14 @@ public sealed class Wma : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_wma_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_wma_reset(_handle.DangerousGetHandle());
@@ -36817,6 +40873,14 @@ public sealed class WoodiePivots : IDisposable
         var result = NativeMethods.wickra_woodie_pivots_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_woodie_pivots_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -36911,6 +40975,14 @@ public sealed class YangZhangVolatility : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_yang_zhang_volatility_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_yang_zhang_volatility_reset(_handle.DangerousGetHandle());
@@ -37002,6 +41074,14 @@ public sealed class YoyoExit : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_yoyo_exit_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_yoyo_exit_reset(_handle.DangerousGetHandle());
@@ -37068,6 +41148,14 @@ public sealed class ZScore : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_z_score_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_z_score_reset(_handle.DangerousGetHandle());
@@ -37124,6 +41212,14 @@ public sealed class ZeroLagMacd : IDisposable
         return result;
     }
 
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_zero_lag_macd_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
+    }
+
     public void Reset()
     {
         NativeMethods.wickra_zero_lag_macd_reset(_handle.DangerousGetHandle());
@@ -37175,6 +41271,14 @@ public sealed class ZigZag : IDisposable
         var result = NativeMethods.wickra_zig_zag_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_zig_zag_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()
@@ -37241,6 +41345,14 @@ public sealed class Zlema : IDisposable
         var result = NativeMethods.wickra_zlema_is_ready(_handle.DangerousGetHandle());
         GC.KeepAlive(_handle);
         return result;
+    }
+
+    /// <summary>The indicator's canonical name.</summary>
+    public string Name()
+    {
+        var ptr = NativeMethods.wickra_zlema_name(_handle.DangerousGetHandle());
+        GC.KeepAlive(_handle);
+        return System.Runtime.InteropServices.Marshal.PtrToStringUTF8(ptr) ?? string.Empty;
     }
 
     public void Reset()

@@ -78,6 +78,16 @@ public final class PairwiseBeta implements AutoCloseable {
         }
     }
 
+    /** The indicator's canonical name. */
+    public String name() {
+        try {
+            MemorySegment s = (MemorySegment) NativeMethods.WICKRA_PAIRWISE_BETA_NAME.invokeExact(handle);
+            return s.address() == 0 ? "" : s.reinterpret(Long.MAX_VALUE).getString(0);
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        }
+    }
+
     /** Reset to the just-constructed state. */
     public void reset() {
         try {

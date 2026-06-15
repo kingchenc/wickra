@@ -12,6 +12,9 @@
 //! - `wickra_<ind>_is_ready(h)` — whether enough input has been consumed to emit
 //!   a value (`false` on a `NULL` handle). Both are absent for the alt-chart bar
 //!   builders, which have no warmup.
+//! - `wickra_<ind>_name(h)` — canonical indicator name as a NUL-terminated C
+//!   string with `'static` lifetime (`NULL` on a `NULL` handle). Present for every
+//!   indicator and bar builder.
 //! - `wickra_<ind>_reset(h)` — clear all state.
 //! - `wickra_<ind>_free(h)` — destroy the handle. Every `_new` must be paired
 //!   with exactly one `_free`; there is no RAII across the C boundary.
@@ -19,8 +22,11 @@
 //! GENERATED from the Wickra core. Do not edit by hand — regenerate from the
 //! core and commit this file together with `include/wickra.h`.
 
+use core::ffi::c_char;
 use core::ptr;
 use core::slice;
+use std::ffi::CString;
+use std::sync::OnceLock;
 
 use wickra_core::{
     AbandonedBaby, Abcd, AbsoluteBreadthIndex, AccelerationBands, AcceleratorOscillator,
@@ -181,6 +187,25 @@ pub unsafe extern "C" fn wickra_adaptive_cycle_is_ready(handle: *mut AdaptiveCyc
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adaptive_cycle_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adaptive_cycle_name(handle: *mut AdaptiveCycle) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -283,6 +308,27 @@ pub unsafe extern "C" fn wickra_adaptive_laguerre_filter_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adaptive_laguerre_filter_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adaptive_laguerre_filter_name(
+    handle: *mut AdaptiveLaguerreFilter,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -375,6 +421,25 @@ pub unsafe extern "C" fn wickra_adaptive_rsi_is_ready(handle: *mut AdaptiveRsi) 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adaptive_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adaptive_rsi_name(handle: *mut AdaptiveRsi) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -471,6 +536,25 @@ pub unsafe extern "C" fn wickra_alma_is_ready(handle: *mut Alma) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_alma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_alma_name(handle: *mut Alma) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -558,6 +642,25 @@ pub unsafe extern "C" fn wickra_anchored_rsi_is_ready(handle: *mut AnchoredRsi) 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_anchored_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_anchored_rsi_name(handle: *mut AnchoredRsi) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -651,6 +754,25 @@ pub unsafe extern "C" fn wickra_apo_is_ready(handle: *mut Apo) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_apo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_apo_name(handle: *mut Apo) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -749,6 +871,27 @@ pub unsafe extern "C" fn wickra_autocorrelation_is_ready(handle: *mut Autocorrel
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_autocorrelation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_autocorrelation_name(
+    handle: *mut Autocorrelation,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -855,6 +998,27 @@ pub unsafe extern "C" fn wickra_autocorrelation_periodogram_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_autocorrelation_periodogram_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_autocorrelation_periodogram_name(
+    handle: *mut AutocorrelationPeriodogram,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -957,6 +1121,27 @@ pub unsafe extern "C" fn wickra_average_drawdown_is_ready(handle: *mut AverageDr
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_average_drawdown_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_average_drawdown_name(
+    handle: *mut AverageDrawdown,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -1055,6 +1240,25 @@ pub unsafe extern "C" fn wickra_bandpass_filter_is_ready(handle: *mut BandpassFi
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bandpass_filter_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bandpass_filter_name(handle: *mut BandpassFilter) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -1150,6 +1354,27 @@ pub unsafe extern "C" fn wickra_bipower_variation_is_ready(handle: *mut BipowerV
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bipower_variation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bipower_variation_name(
+    handle: *mut BipowerVariation,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -1256,6 +1481,27 @@ pub unsafe extern "C" fn wickra_bollinger_bandwidth_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bollinger_bandwidth_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bollinger_bandwidth_name(
+    handle: *mut BollingerBandwidth,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -1349,6 +1595,25 @@ pub unsafe extern "C" fn wickra_burke_ratio_is_ready(handle: *mut BurkeRatio) ->
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_burke_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_burke_ratio_name(handle: *mut BurkeRatio) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -1439,6 +1704,25 @@ pub unsafe extern "C" fn wickra_calmar_ratio_is_ready(handle: *mut CalmarRatio) 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_calmar_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_calmar_ratio_name(handle: *mut CalmarRatio) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -1540,6 +1824,27 @@ pub unsafe extern "C" fn wickra_center_of_gravity_is_ready(handle: *mut CenterOf
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_center_of_gravity_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_center_of_gravity_name(
+    handle: *mut CenterOfGravity,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -1633,6 +1938,25 @@ pub unsafe extern "C" fn wickra_cfo_is_ready(handle: *mut Cfo) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cfo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cfo_name(handle: *mut Cfo) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -1723,6 +2047,25 @@ pub unsafe extern "C" fn wickra_cmo_is_ready(handle: *mut Cmo) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cmo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cmo_name(handle: *mut Cmo) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -1828,6 +2171,27 @@ pub unsafe extern "C" fn wickra_coefficient_of_variation_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_coefficient_of_variation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_coefficient_of_variation_name(
+    handle: *mut CoefficientOfVariation,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -1925,6 +2289,27 @@ pub unsafe extern "C" fn wickra_common_sense_ratio_is_ready(handle: *mut CommonS
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_common_sense_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_common_sense_ratio_name(
+    handle: *mut CommonSenseRatio,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -2031,6 +2416,27 @@ pub unsafe extern "C" fn wickra_conditional_value_at_risk_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_conditional_value_at_risk_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_conditional_value_at_risk_name(
+    handle: *mut ConditionalValueAtRisk,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -2132,6 +2538,25 @@ pub unsafe extern "C" fn wickra_connors_rsi_is_ready(handle: *mut ConnorsRsi) ->
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_connors_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_connors_rsi_name(handle: *mut ConnorsRsi) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -2226,6 +2651,25 @@ pub unsafe extern "C" fn wickra_coppock_is_ready(handle: *mut Coppock) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_coppock_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_coppock_name(handle: *mut Coppock) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -2331,6 +2775,27 @@ pub unsafe extern "C" fn wickra_correlation_trend_indicator_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_correlation_trend_indicator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_correlation_trend_indicator_name(
+    handle: *mut CorrelationTrendIndicator,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -2433,6 +2898,27 @@ pub unsafe extern "C" fn wickra_cybernetic_cycle_is_ready(handle: *mut Cyberneti
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cybernetic_cycle_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cybernetic_cycle_name(
+    handle: *mut CyberneticCycle,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -2523,6 +3009,25 @@ pub unsafe extern "C" fn wickra_decycler_is_ready(handle: *mut Decycler) -> bool
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_decycler_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_decycler_name(handle: *mut Decycler) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -2629,6 +3134,27 @@ pub unsafe extern "C" fn wickra_decycler_oscillator_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_decycler_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_decycler_oscillator_name(
+    handle: *mut DecyclerOscillator,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -2719,6 +3245,25 @@ pub unsafe extern "C" fn wickra_dema_is_ready(handle: *mut Dema) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_dema_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dema_name(handle: *mut Dema) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -2827,6 +3372,27 @@ pub unsafe extern "C" fn wickra_derivative_oscillator_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_derivative_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_derivative_oscillator_name(
+    handle: *mut DerivativeOscillator,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -2922,6 +3488,27 @@ pub unsafe extern "C" fn wickra_detrended_std_dev_is_ready(handle: *mut Detrende
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_detrended_std_dev_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_detrended_std_dev_name(
+    handle: *mut DetrendedStdDev,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -3023,6 +3610,25 @@ pub unsafe extern "C" fn wickra_disparity_index_is_ready(handle: *mut DisparityI
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_disparity_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_disparity_index_name(handle: *mut DisparityIndex) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -3113,6 +3719,25 @@ pub unsafe extern "C" fn wickra_dpo_is_ready(handle: *mut Dpo) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_dpo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dpo_name(handle: *mut Dpo) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -3208,6 +3833,27 @@ pub unsafe extern "C" fn wickra_drawdown_duration_is_ready(handle: *mut Drawdown
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_drawdown_duration_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_drawdown_duration_name(
+    handle: *mut DrawdownDuration,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -3311,6 +3957,27 @@ pub unsafe extern "C" fn wickra_dynamic_momentum_index_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_dynamic_momentum_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dynamic_momentum_index_name(
+    handle: *mut DynamicMomentumIndex,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -3409,6 +4076,27 @@ pub unsafe extern "C" fn wickra_ehlers_stochastic_is_ready(handle: *mut EhlersSt
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ehlers_stochastic_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ehlers_stochastic_name(
+    handle: *mut EhlersStochastic,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -3499,6 +4187,25 @@ pub unsafe extern "C" fn wickra_ehma_is_ready(handle: *mut Ehma) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ehma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ehma_name(handle: *mut Ehma) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -3600,6 +4307,25 @@ pub unsafe extern "C" fn wickra_elder_impulse_is_ready(handle: *mut ElderImpulse
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_elder_impulse_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_elder_impulse_name(handle: *mut ElderImpulse) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -3690,6 +4416,25 @@ pub unsafe extern "C" fn wickra_ema_is_ready(handle: *mut Ema) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ema_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ema_name(handle: *mut Ema) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -3793,6 +4538,27 @@ pub unsafe extern "C" fn wickra_empirical_mode_decomposition_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_empirical_mode_decomposition_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_empirical_mode_decomposition_name(
+    handle: *mut EmpiricalModeDecomposition,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -3903,6 +4669,27 @@ pub unsafe extern "C" fn wickra_even_better_sinewave_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_even_better_sinewave_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_even_better_sinewave_name(
+    handle: *mut EvenBetterSinewave,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -4001,6 +4788,25 @@ pub unsafe extern "C" fn wickra_ewma_volatility_is_ready(handle: *mut EwmaVolati
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ewma_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ewma_volatility_name(handle: *mut EwmaVolatility) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -4091,6 +4897,25 @@ pub unsafe extern "C" fn wickra_expectancy_is_ready(handle: *mut Expectancy) -> 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_expectancy_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_expectancy_name(handle: *mut Expectancy) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -4187,6 +5012,25 @@ pub unsafe extern "C" fn wickra_fama_is_ready(handle: *mut Fama) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fama_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fama_name(handle: *mut Fama) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -4277,6 +5121,25 @@ pub unsafe extern "C" fn wickra_fisher_rsi_is_ready(handle: *mut FisherRsi) -> b
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fisher_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fisher_rsi_name(handle: *mut FisherRsi) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -4378,6 +5241,27 @@ pub unsafe extern "C" fn wickra_fisher_transform_is_ready(handle: *mut FisherTra
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fisher_transform_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fisher_transform_name(
+    handle: *mut FisherTransform,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -4468,6 +5352,25 @@ pub unsafe extern "C" fn wickra_frama_is_ready(handle: *mut Frama) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_frama_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_frama_name(handle: *mut Frama) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -4564,6 +5467,25 @@ pub unsafe extern "C" fn wickra_gain_loss_ratio_is_ready(handle: *mut GainLossRa
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_gain_loss_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gain_loss_ratio_name(handle: *mut GainLossRatio) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -4665,6 +5587,27 @@ pub unsafe extern "C" fn wickra_gain_to_pain_ratio_is_ready(handle: *mut GainToP
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_gain_to_pain_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gain_to_pain_ratio_name(
+    handle: *mut GainToPainRatio,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -4755,6 +5698,25 @@ pub unsafe extern "C" fn wickra_garch11_is_ready(handle: *mut Garch11) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_garch11_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_garch11_name(handle: *mut Garch11) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -4856,6 +5818,27 @@ pub unsafe extern "C" fn wickra_generalized_dema_is_ready(handle: *mut Generaliz
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_generalized_dema_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_generalized_dema_name(
+    handle: *mut GeneralizedDema,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -4946,6 +5929,25 @@ pub unsafe extern "C" fn wickra_geometric_ma_is_ready(handle: *mut GeometricMa) 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_geometric_ma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_geometric_ma_name(handle: *mut GeometricMa) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -5047,6 +6049,25 @@ pub unsafe extern "C" fn wickra_highpass_filter_is_ready(handle: *mut HighpassFi
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_highpass_filter_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_highpass_filter_name(handle: *mut HighpassFilter) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -5141,6 +6162,27 @@ pub unsafe extern "C" fn wickra_hilbert_dominant_cycle_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hilbert_dominant_cycle_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hilbert_dominant_cycle_name(
+    handle: *mut HilbertDominantCycle,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -5247,6 +6289,27 @@ pub unsafe extern "C" fn wickra_historical_volatility_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_historical_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_historical_volatility_name(
+    handle: *mut HistoricalVolatility,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -5337,6 +6400,25 @@ pub unsafe extern "C" fn wickra_hma_is_ready(handle: *mut Hma) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hma_name(handle: *mut Hma) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -5433,6 +6515,25 @@ pub unsafe extern "C" fn wickra_holt_winters_is_ready(handle: *mut HoltWinters) 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_holt_winters_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_holt_winters_name(handle: *mut HoltWinters) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -5523,6 +6624,25 @@ pub unsafe extern "C" fn wickra_ht_dc_phase_is_ready(handle: *mut HtDcPhase) -> 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ht_dc_phase_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ht_dc_phase_name(handle: *mut HtDcPhase) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -5610,6 +6730,25 @@ pub unsafe extern "C" fn wickra_ht_trend_mode_is_ready(handle: *mut HtTrendMode)
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ht_trend_mode_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ht_trend_mode_name(handle: *mut HtTrendMode) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -5706,6 +6845,25 @@ pub unsafe extern "C" fn wickra_hurst_exponent_is_ready(handle: *mut HurstExpone
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hurst_exponent_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hurst_exponent_name(handle: *mut HurstExponent) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -5809,6 +6967,27 @@ pub unsafe extern "C" fn wickra_instantaneous_trendline_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_instantaneous_trendline_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_instantaneous_trendline_name(
+    handle: *mut InstantaneousTrendline,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -5909,6 +7088,27 @@ pub unsafe extern "C" fn wickra_inverse_fisher_transform_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_inverse_fisher_transform_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_inverse_fisher_transform_name(
+    handle: *mut InverseFisherTransform,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -6004,6 +7204,25 @@ pub unsafe extern "C" fn wickra_jarque_bera_is_ready(handle: *mut JarqueBera) ->
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_jarque_bera_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_jarque_bera_name(handle: *mut JarqueBera) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -6094,6 +7313,25 @@ pub unsafe extern "C" fn wickra_jma_is_ready(handle: *mut Jma) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_jma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_jma_name(handle: *mut Jma) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -6193,6 +7431,25 @@ pub unsafe extern "C" fn wickra_jump_indicator_is_ready(handle: *mut JumpIndicat
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_jump_indicator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_jump_indicator_name(handle: *mut JumpIndicator) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -6286,6 +7543,25 @@ pub unsafe extern "C" fn wickra_k_ratio_is_ready(handle: *mut KRatio) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_k_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_k_ratio_name(handle: *mut KRatio) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -6376,6 +7652,25 @@ pub unsafe extern "C" fn wickra_kama_is_ready(handle: *mut Kama) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kama_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kama_name(handle: *mut Kama) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -6477,6 +7772,25 @@ pub unsafe extern "C" fn wickra_kelly_criterion_is_ready(handle: *mut KellyCrite
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kelly_criterion_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kelly_criterion_name(handle: *mut KellyCriterion) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -6570,6 +7884,25 @@ pub unsafe extern "C" fn wickra_kurtosis_is_ready(handle: *mut Kurtosis) -> bool
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kurtosis_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kurtosis_name(handle: *mut Kurtosis) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -6660,6 +7993,25 @@ pub unsafe extern "C" fn wickra_laguerre_rsi_is_ready(handle: *mut LaguerreRsi) 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_laguerre_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_laguerre_rsi_name(handle: *mut LaguerreRsi) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -6761,6 +8113,27 @@ pub unsafe extern "C" fn wickra_linear_regression_is_ready(handle: *mut LinearRe
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_linear_regression_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_linear_regression_name(
+    handle: *mut LinearRegression,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -6851,6 +8224,25 @@ pub unsafe extern "C" fn wickra_lin_reg_angle_is_ready(handle: *mut LinRegAngle)
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_lin_reg_angle_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lin_reg_angle_name(handle: *mut LinRegAngle) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -6952,6 +8344,27 @@ pub unsafe extern "C" fn wickra_lin_reg_intercept_is_ready(handle: *mut LinRegIn
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_lin_reg_intercept_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lin_reg_intercept_name(
+    handle: *mut LinRegIntercept,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -7045,6 +8458,25 @@ pub unsafe extern "C" fn wickra_lin_reg_slope_is_ready(handle: *mut LinRegSlope)
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_lin_reg_slope_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lin_reg_slope_name(handle: *mut LinRegSlope) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -7135,6 +8567,25 @@ pub unsafe extern "C" fn wickra_log_return_is_ready(handle: *mut LogReturn) -> b
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_log_return_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_log_return_name(handle: *mut LogReturn) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -7232,6 +8683,25 @@ pub unsafe extern "C" fn wickra_m2_measure_is_ready(handle: *mut M2Measure) -> b
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_m2_measure_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_m2_measure_name(handle: *mut M2Measure) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -7335,6 +8805,25 @@ pub unsafe extern "C" fn wickra_macd_histogram_is_ready(handle: *mut MacdHistogr
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_macd_histogram_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_histogram_name(handle: *mut MacdHistogram) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -7428,6 +8917,25 @@ pub unsafe extern "C" fn wickra_martin_ratio_is_ready(handle: *mut MartinRatio) 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_martin_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_martin_ratio_name(handle: *mut MartinRatio) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -7518,6 +9026,25 @@ pub unsafe extern "C" fn wickra_max_drawdown_is_ready(handle: *mut MaxDrawdown) 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_max_drawdown_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_max_drawdown_name(handle: *mut MaxDrawdown) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -7616,6 +9143,27 @@ pub unsafe extern "C" fn wickra_mc_ginley_dynamic_is_ready(handle: *mut McGinley
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mc_ginley_dynamic_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mc_ginley_dynamic_name(
+    handle: *mut McGinleyDynamic,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -7721,6 +9269,27 @@ pub unsafe extern "C" fn wickra_median_absolute_deviation_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_median_absolute_deviation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_median_absolute_deviation_name(
+    handle: *mut MedianAbsoluteDeviation,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -7818,6 +9387,25 @@ pub unsafe extern "C" fn wickra_median_ma_is_ready(handle: *mut MedianMa) -> boo
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_median_ma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_median_ma_name(handle: *mut MedianMa) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -7908,6 +9496,25 @@ pub unsafe extern "C" fn wickra_mid_point_is_ready(handle: *mut MidPoint) -> boo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mid_point_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mid_point_name(handle: *mut MidPoint) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -8004,6 +9611,25 @@ pub unsafe extern "C" fn wickra_mom_is_ready(handle: *mut Mom) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mom_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mom_name(handle: *mut Mom) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -8094,6 +9720,25 @@ pub unsafe extern "C" fn wickra_omega_ratio_is_ready(handle: *mut OmegaRatio) ->
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_omega_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_omega_ratio_name(handle: *mut OmegaRatio) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -8190,6 +9835,25 @@ pub unsafe extern "C" fn wickra_pain_index_is_ready(handle: *mut PainIndex) -> b
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pain_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pain_index_name(handle: *mut PainIndex) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -8280,6 +9944,25 @@ pub unsafe extern "C" fn wickra_percent_b_is_ready(handle: *mut PercentB) -> boo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_percent_b_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_percent_b_name(handle: *mut PercentB) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -8383,6 +10066,27 @@ pub unsafe extern "C" fn wickra_percentage_trailing_stop_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_percentage_trailing_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_percentage_trailing_stop_name(
+    handle: *mut PercentageTrailingStop,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -8475,6 +10179,25 @@ pub unsafe extern "C" fn wickra_pmo_is_ready(handle: *mut Pmo) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pmo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pmo_name(handle: *mut Pmo) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -8581,6 +10304,27 @@ pub unsafe extern "C" fn wickra_polarized_fractal_efficiency_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_polarized_fractal_efficiency_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_polarized_fractal_efficiency_name(
+    handle: *mut PolarizedFractalEfficiency,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -8675,6 +10419,25 @@ pub unsafe extern "C" fn wickra_ppo_is_ready(handle: *mut Ppo) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ppo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ppo_name(handle: *mut Ppo) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -8775,6 +10538,25 @@ pub unsafe extern "C" fn wickra_ppo_histogram_is_ready(handle: *mut PpoHistogram
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ppo_histogram_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ppo_histogram_name(handle: *mut PpoHistogram) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -8868,6 +10650,25 @@ pub unsafe extern "C" fn wickra_profit_factor_is_ready(handle: *mut ProfitFactor
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_profit_factor_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_profit_factor_name(handle: *mut ProfitFactor) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -8958,6 +10759,25 @@ pub unsafe extern "C" fn wickra_r_squared_is_ready(handle: *mut RSquared) -> boo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_r_squared_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_r_squared_name(handle: *mut RSquared) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -9061,6 +10881,27 @@ pub unsafe extern "C" fn wickra_realized_volatility_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_realized_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_realized_volatility_name(
+    handle: *mut RealizedVolatility,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -9153,6 +10994,25 @@ pub unsafe extern "C" fn wickra_recovery_factor_is_ready(handle: *mut RecoveryFa
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_recovery_factor_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_recovery_factor_name(handle: *mut RecoveryFactor) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -9249,6 +11109,25 @@ pub unsafe extern "C" fn wickra_reflex_is_ready(handle: *mut Reflex) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_reflex_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_reflex_name(handle: *mut Reflex) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -9339,6 +11218,25 @@ pub unsafe extern "C" fn wickra_regime_label_is_ready(handle: *mut RegimeLabel) 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_regime_label_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_regime_label_name(handle: *mut RegimeLabel) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -9442,6 +11340,27 @@ pub unsafe extern "C" fn wickra_renko_trailing_stop_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_renko_trailing_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_renko_trailing_stop_name(
+    handle: *mut RenkoTrailingStop,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -9532,6 +11451,25 @@ pub unsafe extern "C" fn wickra_rmi_is_ready(handle: *mut Rmi) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rmi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rmi_name(handle: *mut Rmi) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -9628,6 +11566,25 @@ pub unsafe extern "C" fn wickra_roc_is_ready(handle: *mut Roc) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_roc_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_roc_name(handle: *mut Roc) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -9718,6 +11675,25 @@ pub unsafe extern "C" fn wickra_rocp_is_ready(handle: *mut Rocp) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rocp_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rocp_name(handle: *mut Rocp) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -9814,6 +11790,25 @@ pub unsafe extern "C" fn wickra_rocr_is_ready(handle: *mut Rocr) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rocr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rocr_name(handle: *mut Rocr) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -9907,6 +11902,25 @@ pub unsafe extern "C" fn wickra_rocr100_is_ready(handle: *mut Rocr100) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rocr100_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rocr100_name(handle: *mut Rocr100) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -9997,6 +12011,25 @@ pub unsafe extern "C" fn wickra_rolling_iqr_is_ready(handle: *mut RollingIqr) ->
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_iqr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_iqr_name(handle: *mut RollingIqr) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -10100,6 +12133,27 @@ pub unsafe extern "C" fn wickra_rolling_min_max_scaler_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_min_max_scaler_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_min_max_scaler_name(
+    handle: *mut RollingMinMaxScaler,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -10197,6 +12251,27 @@ pub unsafe extern "C" fn wickra_rolling_percentile_rank_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_percentile_rank_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_percentile_rank_name(
+    handle: *mut RollingPercentileRank,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -10301,6 +12376,27 @@ pub unsafe extern "C" fn wickra_rolling_quantile_is_ready(handle: *mut RollingQu
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_quantile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_quantile_name(
+    handle: *mut RollingQuantile,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -10400,6 +12496,25 @@ pub unsafe extern "C" fn wickra_roofing_filter_is_ready(handle: *mut RoofingFilt
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_roofing_filter_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_roofing_filter_name(handle: *mut RoofingFilter) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -10490,6 +12605,25 @@ pub unsafe extern "C" fn wickra_rsi_is_ready(handle: *mut Rsi) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rsi_name(handle: *mut Rsi) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -10586,6 +12720,25 @@ pub unsafe extern "C" fn wickra_rsx_is_ready(handle: *mut Rsx) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rsx_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rsx_name(handle: *mut Rsx) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -10679,6 +12832,25 @@ pub unsafe extern "C" fn wickra_rvi_volatility_is_ready(handle: *mut RviVolatili
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rvi_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rvi_volatility_name(handle: *mut RviVolatility) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -10782,6 +12954,25 @@ pub unsafe extern "C" fn wickra_sample_entropy_is_ready(handle: *mut SampleEntro
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sample_entropy_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sample_entropy_name(handle: *mut SampleEntropy) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -10880,6 +13071,25 @@ pub unsafe extern "C" fn wickra_shannon_entropy_is_ready(handle: *mut ShannonEnt
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_shannon_entropy_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_shannon_entropy_name(handle: *mut ShannonEntropy) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -10973,6 +13183,25 @@ pub unsafe extern "C" fn wickra_sharpe_ratio_is_ready(handle: *mut SharpeRatio) 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sharpe_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sharpe_ratio_name(handle: *mut SharpeRatio) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -11060,6 +13289,25 @@ pub unsafe extern "C" fn wickra_sine_wave_is_ready(handle: *mut SineWave) -> boo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sine_wave_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sine_wave_name(handle: *mut SineWave) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -11161,6 +13409,27 @@ pub unsafe extern "C" fn wickra_sine_weighted_ma_is_ready(handle: *mut SineWeigh
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sine_weighted_ma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sine_weighted_ma_name(
+    handle: *mut SineWeightedMa,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -11251,6 +13520,25 @@ pub unsafe extern "C" fn wickra_skewness_is_ready(handle: *mut Skewness) -> bool
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_skewness_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_skewness_name(handle: *mut Skewness) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -11347,6 +13635,25 @@ pub unsafe extern "C" fn wickra_sma_is_ready(handle: *mut Sma) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sma_name(handle: *mut Sma) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -11437,6 +13744,25 @@ pub unsafe extern "C" fn wickra_smma_is_ready(handle: *mut Smma) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_smma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_smma_name(handle: *mut Smma) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -11533,6 +13859,25 @@ pub unsafe extern "C" fn wickra_sortino_ratio_is_ready(handle: *mut SortinoRatio
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sortino_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sortino_ratio_name(handle: *mut SortinoRatio) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -11626,6 +13971,25 @@ pub unsafe extern "C" fn wickra_standard_error_is_ready(handle: *mut StandardErr
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_standard_error_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_standard_error_name(handle: *mut StandardError) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -11727,6 +14091,25 @@ pub unsafe extern "C" fn wickra_stc_is_ready(handle: *mut Stc) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_stc_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stc_name(handle: *mut Stc) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -11817,6 +14200,25 @@ pub unsafe extern "C" fn wickra_std_dev_is_ready(handle: *mut StdDev) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_std_dev_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_std_dev_name(handle: *mut StdDev) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -11918,6 +14320,27 @@ pub unsafe extern "C" fn wickra_step_trailing_stop_is_ready(handle: *mut StepTra
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_step_trailing_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_step_trailing_stop_name(
+    handle: *mut StepTrailingStop,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -12014,6 +14437,25 @@ pub unsafe extern "C" fn wickra_sterling_ratio_is_ready(handle: *mut SterlingRat
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sterling_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sterling_ratio_name(handle: *mut SterlingRatio) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -12104,6 +14546,25 @@ pub unsafe extern "C" fn wickra_stoch_rsi_is_ready(handle: *mut StochRsi) -> boo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_stoch_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stoch_rsi_name(handle: *mut StochRsi) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -12203,6 +14664,25 @@ pub unsafe extern "C" fn wickra_super_smoother_is_ready(handle: *mut SuperSmooth
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_super_smoother_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_super_smoother_name(handle: *mut SuperSmoother) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -12293,6 +14773,25 @@ pub unsafe extern "C" fn wickra_t3_is_ready(handle: *mut T3) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_t3_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_t3_name(handle: *mut T3) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -12389,6 +14888,25 @@ pub unsafe extern "C" fn wickra_tail_ratio_is_ready(handle: *mut TailRatio) -> b
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tail_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tail_ratio_name(handle: *mut TailRatio) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -12479,6 +14997,25 @@ pub unsafe extern "C" fn wickra_tema_is_ready(handle: *mut Tema) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tema_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tema_name(handle: *mut Tema) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -12575,6 +15112,25 @@ pub unsafe extern "C" fn wickra_tii_is_ready(handle: *mut Tii) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tii_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tii_name(handle: *mut Tii) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -12665,6 +15221,25 @@ pub unsafe extern "C" fn wickra_trend_label_is_ready(handle: *mut TrendLabel) ->
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trend_label_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trend_label_name(handle: *mut TrendLabel) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -12768,6 +15343,27 @@ pub unsafe extern "C" fn wickra_trend_strength_index_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trend_strength_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trend_strength_index_name(
+    handle: *mut TrendStrengthIndex,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -12858,6 +15454,25 @@ pub unsafe extern "C" fn wickra_trendflex_is_ready(handle: *mut Trendflex) -> bo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trendflex_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trendflex_name(handle: *mut Trendflex) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -12954,6 +15569,25 @@ pub unsafe extern "C" fn wickra_trima_is_ready(handle: *mut Trima) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trima_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trima_name(handle: *mut Trima) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -13047,6 +15681,25 @@ pub unsafe extern "C" fn wickra_trix_is_ready(handle: *mut Trix) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trix_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trix_name(handle: *mut Trix) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -13137,6 +15790,25 @@ pub unsafe extern "C" fn wickra_tsf_is_ready(handle: *mut Tsf) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tsf_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tsf_name(handle: *mut Tsf) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -13236,6 +15908,25 @@ pub unsafe extern "C" fn wickra_tsf_oscillator_is_ready(handle: *mut TsfOscillat
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tsf_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tsf_oscillator_name(handle: *mut TsfOscillator) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -13329,6 +16020,25 @@ pub unsafe extern "C" fn wickra_tsi_is_ready(handle: *mut Tsi) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tsi_name(handle: *mut Tsi) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -13419,6 +16129,25 @@ pub unsafe extern "C" fn wickra_ulcer_index_is_ready(handle: *mut UlcerIndex) ->
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ulcer_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ulcer_index_name(handle: *mut UlcerIndex) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -13519,6 +16248,27 @@ pub unsafe extern "C" fn wickra_universal_oscillator_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_universal_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_universal_oscillator_name(
+    handle: *mut UniversalOscillator,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -13625,6 +16375,27 @@ pub unsafe extern "C" fn wickra_upside_potential_ratio_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_upside_potential_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_upside_potential_ratio_name(
+    handle: *mut UpsidePotentialRatio,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -13718,6 +16489,25 @@ pub unsafe extern "C" fn wickra_value_at_risk_is_ready(handle: *mut ValueAtRisk)
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_value_at_risk_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_value_at_risk_name(handle: *mut ValueAtRisk) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -13808,6 +16598,25 @@ pub unsafe extern "C" fn wickra_variance_is_ready(handle: *mut Variance) -> bool
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_variance_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_variance_name(handle: *mut Variance) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -13913,6 +16722,27 @@ pub unsafe extern "C" fn wickra_vertical_horizontal_filter_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vertical_horizontal_filter_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vertical_horizontal_filter_name(
+    handle: *mut VerticalHorizontalFilter,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -14007,6 +16837,25 @@ pub unsafe extern "C" fn wickra_vidya_is_ready(handle: *mut Vidya) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vidya_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vidya_name(handle: *mut Vidya) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -14113,6 +16962,27 @@ pub unsafe extern "C" fn wickra_volatility_of_volatility_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volatility_of_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volatility_of_volatility_name(
+    handle: *mut VolatilityOfVolatility,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -14205,6 +17075,25 @@ pub unsafe extern "C" fn wickra_wave_pm_is_ready(handle: *mut WavePm) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_wave_pm_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wave_pm_name(handle: *mut WavePm) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -14301,6 +17190,25 @@ pub unsafe extern "C" fn wickra_win_rate_is_ready(handle: *mut WinRate) -> bool 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_win_rate_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_win_rate_name(handle: *mut WinRate) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -14391,6 +17299,25 @@ pub unsafe extern "C" fn wickra_wma_is_ready(handle: *mut Wma) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_wma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wma_name(handle: *mut Wma) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -14487,6 +17414,25 @@ pub unsafe extern "C" fn wickra_z_score_is_ready(handle: *mut ZScore) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_z_score_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_z_score_name(handle: *mut ZScore) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -14577,6 +17523,25 @@ pub unsafe extern "C" fn wickra_zlema_is_ready(handle: *mut Zlema) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_zlema_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_zlema_name(handle: *mut Zlema) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -14677,6 +17642,25 @@ pub unsafe extern "C" fn wickra_alpha_is_ready(handle: *mut Alpha) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_alpha_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_alpha_name(handle: *mut Alpha) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -14769,6 +17753,25 @@ pub unsafe extern "C" fn wickra_beta_is_ready(handle: *mut Beta) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_beta_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_beta_name(handle: *mut Beta) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -14875,6 +17878,27 @@ pub unsafe extern "C" fn wickra_beta_neutral_spread_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_beta_neutral_spread_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_beta_neutral_spread_name(
+    handle: *mut BetaNeutralSpread,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -14971,6 +17995,25 @@ pub unsafe extern "C" fn wickra_distance_ssd_is_ready(handle: *mut DistanceSsd) 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_distance_ssd_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_distance_ssd_name(handle: *mut DistanceSsd) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -15072,6 +18115,27 @@ pub unsafe extern "C" fn wickra_granger_causality_is_ready(handle: *mut GrangerC
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_granger_causality_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_granger_causality_name(
+    handle: *mut GrangerCausality,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -15180,6 +18244,27 @@ pub unsafe extern "C" fn wickra_hasbrouck_information_share_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hasbrouck_information_share_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hasbrouck_information_share_name(
+    handle: *mut HasbrouckInformationShare,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -15285,6 +18370,27 @@ pub unsafe extern "C" fn wickra_information_ratio_is_ready(handle: *mut Informat
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_information_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_information_ratio_name(
+    handle: *mut InformationRatio,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -15377,6 +18483,25 @@ pub unsafe extern "C" fn wickra_kendall_tau_is_ready(handle: *mut KendallTau) ->
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kendall_tau_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kendall_tau_name(handle: *mut KendallTau) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -15476,6 +18601,25 @@ pub unsafe extern "C" fn wickra_ou_half_life_is_ready(handle: *mut OuHalfLife) -
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ou_half_life_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ou_half_life_name(handle: *mut OuHalfLife) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -15585,6 +18729,27 @@ pub unsafe extern "C" fn wickra_pair_spread_z_score_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pair_spread_z_score_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pair_spread_z_score_name(
+    handle: *mut PairSpreadZScore,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -15681,6 +18846,25 @@ pub unsafe extern "C" fn wickra_pairwise_beta_is_ready(handle: *mut PairwiseBeta
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pairwise_beta_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pairwise_beta_name(handle: *mut PairwiseBeta) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -15787,6 +18971,27 @@ pub unsafe extern "C" fn wickra_pearson_correlation_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pearson_correlation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pearson_correlation_name(
+    handle: *mut PearsonCorrelation,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -15887,6 +19092,27 @@ pub unsafe extern "C" fn wickra_rolling_correlation_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_correlation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_correlation_name(
+    handle: *mut RollingCorrelation,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -15993,6 +19219,27 @@ pub unsafe extern "C" fn wickra_rolling_covariance_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_covariance_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_covariance_name(
+    handle: *mut RollingCovariance,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -16093,6 +19340,27 @@ pub unsafe extern "C" fn wickra_spearman_correlation_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_spearman_correlation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_spearman_correlation_name(
+    handle: *mut SpearmanCorrelation,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -16199,6 +19467,27 @@ pub unsafe extern "C" fn wickra_spread_ar1_coefficient_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_spread_ar1_coefficient_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_spread_ar1_coefficient_name(
+    handle: *mut SpreadAr1Coefficient,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -16295,6 +19584,25 @@ pub unsafe extern "C" fn wickra_spread_hurst_is_ready(handle: *mut SpreadHurst) 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_spread_hurst_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_spread_hurst_name(handle: *mut SpreadHurst) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -16397,6 +19705,25 @@ pub unsafe extern "C" fn wickra_treynor_ratio_is_ready(handle: *mut TreynorRatio
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_treynor_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_treynor_ratio_name(handle: *mut TreynorRatio) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -16493,6 +19820,25 @@ pub unsafe extern "C" fn wickra_variance_ratio_is_ready(handle: *mut VarianceRat
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_variance_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_variance_ratio_name(handle: *mut VarianceRatio) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -16630,6 +19976,25 @@ pub unsafe extern "C" fn wickra_abandoned_baby_is_ready(handle: *mut AbandonedBa
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_abandoned_baby_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_abandoned_baby_name(handle: *mut AbandonedBaby) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -16759,6 +20124,25 @@ pub unsafe extern "C" fn wickra_abcd_is_ready(handle: *mut Abcd) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_abcd_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_abcd_name(handle: *mut Abcd) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -16905,6 +20289,27 @@ pub unsafe extern "C" fn wickra_accelerator_oscillator_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_accelerator_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_accelerator_oscillator_name(
+    handle: *mut AcceleratorOscillator,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -17034,6 +20439,25 @@ pub unsafe extern "C" fn wickra_ad_oscillator_is_ready(handle: *mut AdOscillator
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ad_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ad_oscillator_name(handle: *mut AdOscillator) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -17172,6 +20596,25 @@ pub unsafe extern "C" fn wickra_adaptive_cci_is_ready(handle: *mut AdaptiveCci) 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adaptive_cci_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adaptive_cci_name(handle: *mut AdaptiveCci) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -17304,6 +20747,25 @@ pub unsafe extern "C" fn wickra_adl_is_ready(handle: *mut Adl) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adl_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adl_name(handle: *mut Adl) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -17433,6 +20895,25 @@ pub unsafe extern "C" fn wickra_advance_block_is_ready(handle: *mut AdvanceBlock
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_advance_block_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_advance_block_name(handle: *mut AdvanceBlock) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -17571,6 +21052,25 @@ pub unsafe extern "C" fn wickra_adxr_is_ready(handle: *mut Adxr) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adxr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adxr_name(handle: *mut Adxr) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -17700,6 +21200,25 @@ pub unsafe extern "C" fn wickra_anchored_vwap_is_ready(handle: *mut AnchoredVwap
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_anchored_vwap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_anchored_vwap_name(handle: *mut AnchoredVwap) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -17840,6 +21359,27 @@ pub unsafe extern "C" fn wickra_aroon_oscillator_is_ready(handle: *mut AroonOsci
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_aroon_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_aroon_oscillator_name(
+    handle: *mut AroonOscillator,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -17972,6 +21512,25 @@ pub unsafe extern "C" fn wickra_atr_is_ready(handle: *mut Atr) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_atr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_atr_name(handle: *mut Atr) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -18112,6 +21671,27 @@ pub unsafe extern "C" fn wickra_atr_trailing_stop_is_ready(handle: *mut AtrTrail
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_atr_trailing_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_atr_trailing_stop_name(
+    handle: *mut AtrTrailingStop,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -18257,6 +21837,27 @@ pub unsafe extern "C" fn wickra_average_daily_range_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_average_daily_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_average_daily_range_name(
+    handle: *mut AverageDailyRange,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -18386,6 +21987,25 @@ pub unsafe extern "C" fn wickra_avg_price_is_ready(handle: *mut AvgPrice) -> boo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_avg_price_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_avg_price_name(handle: *mut AvgPrice) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -18531,6 +22151,27 @@ pub unsafe extern "C" fn wickra_awesome_oscillator_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_awesome_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_awesome_oscillator_name(
+    handle: *mut AwesomeOscillator,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -18560,9 +22201,9 @@ pub unsafe extern "C" fn wickra_awesome_oscillator_free(handle: *mut AwesomeOsci
 pub extern "C" fn wickra_awesome_oscillator_histogram_new(
     fast: usize,
     slow: usize,
-    sma_period: usize,
+    lookback: usize,
 ) -> *mut AwesomeOscillatorHistogram {
-    match AwesomeOscillatorHistogram::new(fast, slow, sma_period) {
+    match AwesomeOscillatorHistogram::new(fast, slow, lookback) {
         Ok(ind) => Box::into_raw(Box::new(ind)),
         Err(_) => ptr::null_mut(),
     }
@@ -18671,6 +22312,27 @@ pub unsafe extern "C" fn wickra_awesome_oscillator_histogram_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_awesome_oscillator_histogram_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_awesome_oscillator_histogram_name(
+    handle: *mut AwesomeOscillatorHistogram,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -18812,6 +22474,27 @@ pub unsafe extern "C" fn wickra_balance_of_power_is_ready(handle: *mut BalanceOf
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_balance_of_power_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_balance_of_power_name(
+    handle: *mut BalanceOfPower,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -18944,6 +22627,25 @@ pub unsafe extern "C" fn wickra_bat_is_ready(handle: *mut Bat) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bat_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bat_name(handle: *mut Bat) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -19073,6 +22775,25 @@ pub unsafe extern "C" fn wickra_belt_hold_is_ready(handle: *mut BeltHold) -> boo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_belt_hold_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_belt_hold_name(handle: *mut BeltHold) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -19211,6 +22932,25 @@ pub unsafe extern "C" fn wickra_better_volume_is_ready(handle: *mut BetterVolume
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_better_volume_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_better_volume_name(handle: *mut BetterVolume) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -19340,6 +23080,25 @@ pub unsafe extern "C" fn wickra_body_size_pct_is_ready(handle: *mut BodySizePct)
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_body_size_pct_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_body_size_pct_name(handle: *mut BodySizePct) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -19475,6 +23234,25 @@ pub unsafe extern "C" fn wickra_breakaway_is_ready(handle: *mut Breakaway) -> bo
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_breakaway_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_breakaway_name(handle: *mut Breakaway) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -19604,6 +23382,25 @@ pub unsafe extern "C" fn wickra_butterfly_is_ready(handle: *mut Butterfly) -> bo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_butterfly_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_butterfly_name(handle: *mut Butterfly) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -19739,6 +23536,25 @@ pub unsafe extern "C" fn wickra_cci_is_ready(handle: *mut Cci) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cci_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cci_name(handle: *mut Cci) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -19884,6 +23700,27 @@ pub unsafe extern "C" fn wickra_chaikin_oscillator_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_chaikin_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chaikin_oscillator_name(
+    handle: *mut ChaikinOscillator,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -20026,6 +23863,27 @@ pub unsafe extern "C" fn wickra_chaikin_volatility_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_chaikin_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chaikin_volatility_name(
+    handle: *mut ChaikinVolatility,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -20163,6 +24021,27 @@ pub unsafe extern "C" fn wickra_choppiness_index_is_ready(handle: *mut Choppines
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_choppiness_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_choppiness_index_name(
+    handle: *mut ChoppinessIndex,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -20292,6 +24171,25 @@ pub unsafe extern "C" fn wickra_close_vs_open_is_ready(handle: *mut CloseVsOpen)
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_close_vs_open_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_close_vs_open_name(handle: *mut CloseVsOpen) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -20426,6 +24324,27 @@ pub unsafe extern "C" fn wickra_closing_marubozu_is_ready(handle: *mut ClosingMa
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_closing_marubozu_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_closing_marubozu_name(
+    handle: *mut ClosingMarubozu,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -20566,6 +24485,27 @@ pub unsafe extern "C" fn wickra_chaikin_money_flow_is_ready(handle: *mut Chaikin
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_chaikin_money_flow_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chaikin_money_flow_name(
+    handle: *mut ChaikinMoneyFlow,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -20702,6 +24642,27 @@ pub unsafe extern "C" fn wickra_concealing_baby_swallow_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_concealing_baby_swallow_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_concealing_baby_swallow_name(
+    handle: *mut ConcealingBabySwallow,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -20831,6 +24792,25 @@ pub unsafe extern "C" fn wickra_counterattack_is_ready(handle: *mut Counterattac
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_counterattack_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_counterattack_name(handle: *mut Counterattack) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -20966,6 +24946,25 @@ pub unsafe extern "C" fn wickra_crab_is_ready(handle: *mut Crab) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_crab_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_crab_name(handle: *mut Crab) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -21098,6 +25097,25 @@ pub unsafe extern "C" fn wickra_cup_and_handle_is_ready(handle: *mut CupAndHandl
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cup_and_handle_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cup_and_handle_name(handle: *mut CupAndHandle) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -21227,6 +25245,25 @@ pub unsafe extern "C" fn wickra_cypher_is_ready(handle: *mut Cypher) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cypher_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cypher_name(handle: *mut Cypher) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -21365,6 +25402,25 @@ pub unsafe extern "C" fn wickra_demand_index_is_ready(handle: *mut DemandIndex) 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_demand_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_demand_index_name(handle: *mut DemandIndex) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -21494,6 +25550,25 @@ pub unsafe extern "C" fn wickra_doji_is_ready(handle: *mut Doji) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_doji_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_doji_name(handle: *mut Doji) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -21629,6 +25704,25 @@ pub unsafe extern "C" fn wickra_doji_star_is_ready(handle: *mut DojiStar) -> boo
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_doji_star_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_doji_star_name(handle: *mut DojiStar) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -21760,6 +25854,27 @@ pub unsafe extern "C" fn wickra_double_top_bottom_is_ready(handle: *mut DoubleTo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_double_top_bottom_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_double_top_bottom_name(
+    handle: *mut DoubleTopBottom,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -21899,6 +26014,27 @@ pub unsafe extern "C" fn wickra_downside_gap_three_methods_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_downside_gap_three_methods_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_downside_gap_three_methods_name(
+    handle: *mut DownsideGapThreeMethods,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -22032,6 +26168,25 @@ pub unsafe extern "C" fn wickra_dragonfly_doji_is_ready(handle: *mut DragonflyDo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_dragonfly_doji_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dragonfly_doji_name(handle: *mut DragonflyDoji) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -22170,6 +26325,25 @@ pub unsafe extern "C" fn wickra_dumpling_top_is_ready(handle: *mut DumplingTop) 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_dumpling_top_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dumpling_top_name(handle: *mut DumplingTop) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -22302,6 +26476,25 @@ pub unsafe extern "C" fn wickra_dx_is_ready(handle: *mut Dx) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_dx_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dx_name(handle: *mut Dx) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -22442,6 +26635,27 @@ pub unsafe extern "C" fn wickra_ease_of_movement_is_ready(handle: *mut EaseOfMov
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ease_of_movement_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ease_of_movement_name(
+    handle: *mut EaseOfMovement,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -22571,6 +26785,25 @@ pub unsafe extern "C" fn wickra_engulfing_is_ready(handle: *mut Engulfing) -> bo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_engulfing_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_engulfing_name(handle: *mut Engulfing) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -22708,6 +26941,27 @@ pub unsafe extern "C" fn wickra_evening_doji_star_is_ready(handle: *mut EveningD
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_evening_doji_star_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_evening_doji_star_name(
+    handle: *mut EveningDojiStar,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -22840,6 +27094,25 @@ pub unsafe extern "C" fn wickra_evwma_is_ready(handle: *mut Evwma) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_evwma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_evwma_name(handle: *mut Evwma) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -22979,6 +27252,27 @@ pub unsafe extern "C" fn wickra_falling_three_methods_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_falling_three_methods_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_falling_three_methods_name(
+    handle: *mut FallingThreeMethods,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -23108,6 +27402,25 @@ pub unsafe extern "C" fn wickra_flag_pennant_is_ready(handle: *mut FlagPennant) 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_flag_pennant_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_flag_pennant_name(handle: *mut FlagPennant) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -23246,6 +27559,25 @@ pub unsafe extern "C" fn wickra_force_index_is_ready(handle: *mut ForceIndex) ->
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_force_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_force_index_name(handle: *mut ForceIndex) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -23378,6 +27710,25 @@ pub unsafe extern "C" fn wickra_fry_pan_bottom_is_ready(handle: *mut FryPanBotto
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fry_pan_bottom_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fry_pan_bottom_name(handle: *mut FryPanBottom) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -23514,6 +27865,27 @@ pub unsafe extern "C" fn wickra_gap_side_by_side_white_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_gap_side_by_side_white_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gap_side_by_side_white_name(
+    handle: *mut GapSideBySideWhite,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -23659,6 +28031,27 @@ pub unsafe extern "C" fn wickra_garman_klass_volatility_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_garman_klass_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_garman_klass_volatility_name(
+    handle: *mut GarmanKlassVolatility,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -23788,6 +28181,25 @@ pub unsafe extern "C" fn wickra_gartley_is_ready(handle: *mut Gartley) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_gartley_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gartley_name(handle: *mut Gartley) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -23925,6 +28337,25 @@ pub unsafe extern "C" fn wickra_gravestone_doji_is_ready(handle: *mut Gravestone
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_gravestone_doji_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gravestone_doji_name(handle: *mut GravestoneDoji) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -24054,6 +28485,25 @@ pub unsafe extern "C" fn wickra_hammer_is_ready(handle: *mut Hammer) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hammer_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hammer_name(handle: *mut Hammer) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -24189,6 +28639,25 @@ pub unsafe extern "C" fn wickra_hanging_man_is_ready(handle: *mut HangingMan) ->
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hanging_man_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hanging_man_name(handle: *mut HangingMan) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -24318,6 +28787,25 @@ pub unsafe extern "C" fn wickra_harami_is_ready(handle: *mut Harami) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_harami_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_harami_name(handle: *mut Harami) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -24453,6 +28941,25 @@ pub unsafe extern "C" fn wickra_harami_cross_is_ready(handle: *mut HaramiCross) 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_harami_cross_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_harami_cross_name(handle: *mut HaramiCross) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -24584,6 +29091,27 @@ pub unsafe extern "C" fn wickra_head_and_shoulders_is_ready(handle: *mut HeadAnd
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_head_and_shoulders_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_head_and_shoulders_name(
+    handle: *mut HeadAndShoulders,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -24726,6 +29254,27 @@ pub unsafe extern "C" fn wickra_heikin_ashi_oscillator_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_heikin_ashi_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_heikin_ashi_oscillator_name(
+    handle: *mut HeikinAshiOscillator,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -24855,6 +29404,25 @@ pub unsafe extern "C" fn wickra_high_low_range_is_ready(handle: *mut HighLowRang
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_high_low_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_high_low_range_name(handle: *mut HighLowRange) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -24990,6 +29558,25 @@ pub unsafe extern "C" fn wickra_high_wave_is_ready(handle: *mut HighWave) -> boo
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_high_wave_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_high_wave_name(handle: *mut HighWave) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -25119,6 +29706,25 @@ pub unsafe extern "C" fn wickra_hikkake_is_ready(handle: *mut Hikkake) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hikkake_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hikkake_name(handle: *mut Hikkake) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -25253,6 +29859,27 @@ pub unsafe extern "C" fn wickra_hikkake_modified_is_ready(handle: *mut HikkakeMo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hikkake_modified_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hikkake_modified_name(
+    handle: *mut HikkakeModified,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -25391,6 +30018,25 @@ pub unsafe extern "C" fn wickra_hi_lo_activator_is_ready(handle: *mut HiLoActiva
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hi_lo_activator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hi_lo_activator_name(handle: *mut HiLoActivator) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -25520,6 +30166,25 @@ pub unsafe extern "C" fn wickra_homing_pigeon_is_ready(handle: *mut HomingPigeon
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_homing_pigeon_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_homing_pigeon_name(handle: *mut HomingPigeon) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -25659,6 +30324,27 @@ pub unsafe extern "C" fn wickra_identical_three_crows_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_identical_three_crows_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_identical_three_crows_name(
+    handle: *mut IdenticalThreeCrows,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -25788,6 +30474,25 @@ pub unsafe extern "C" fn wickra_in_neck_is_ready(handle: *mut InNeck) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_in_neck_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_in_neck_name(handle: *mut InNeck) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -25926,6 +30631,25 @@ pub unsafe extern "C" fn wickra_inertia_is_ready(handle: *mut Inertia) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_inertia_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_inertia_name(handle: *mut Inertia) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -26059,6 +30783,27 @@ pub unsafe extern "C" fn wickra_intraday_intensity_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_intraday_intensity_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_intraday_intensity_name(
+    handle: *mut IntradayIntensity,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -26201,6 +30946,27 @@ pub unsafe extern "C" fn wickra_intraday_momentum_index_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_intraday_momentum_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_intraday_momentum_index_name(
+    handle: *mut IntradayMomentumIndex,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -26332,6 +31098,25 @@ pub unsafe extern "C" fn wickra_inverted_hammer_is_ready(handle: *mut InvertedHa
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_inverted_hammer_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_inverted_hammer_name(handle: *mut InvertedHammer) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -26467,6 +31252,25 @@ pub unsafe extern "C" fn wickra_kicking_is_ready(handle: *mut Kicking) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kicking_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kicking_name(handle: *mut Kicking) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -26598,6 +31402,27 @@ pub unsafe extern "C" fn wickra_kicking_by_length_is_ready(handle: *mut KickingB
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kicking_by_length_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kicking_by_length_name(
+    handle: *mut KickingByLength,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -26736,6 +31561,25 @@ pub unsafe extern "C" fn wickra_kvo_is_ready(handle: *mut Kvo) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kvo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kvo_name(handle: *mut Kvo) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -26865,6 +31709,25 @@ pub unsafe extern "C" fn wickra_ladder_bottom_is_ready(handle: *mut LadderBottom
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ladder_bottom_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ladder_bottom_name(handle: *mut LadderBottom) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -27002,6 +31865,27 @@ pub unsafe extern "C" fn wickra_long_legged_doji_is_ready(handle: *mut LongLegge
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_long_legged_doji_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_long_legged_doji_name(
+    handle: *mut LongLeggedDoji,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -27131,6 +32015,25 @@ pub unsafe extern "C" fn wickra_long_line_is_ready(handle: *mut LongLine) -> boo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_long_line_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_long_line_name(handle: *mut LongLine) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -27270,6 +32173,27 @@ pub unsafe extern "C" fn wickra_market_facilitation_index_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_market_facilitation_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_market_facilitation_index_name(
+    handle: *mut MarketFacilitationIndex,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -27403,6 +32327,25 @@ pub unsafe extern "C" fn wickra_marubozu_is_ready(handle: *mut Marubozu) -> bool
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_marubozu_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_marubozu_name(handle: *mut Marubozu) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -27541,6 +32484,25 @@ pub unsafe extern "C" fn wickra_mass_index_is_ready(handle: *mut MassIndex) -> b
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mass_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mass_index_name(handle: *mut MassIndex) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -27670,6 +32632,25 @@ pub unsafe extern "C" fn wickra_mat_hold_is_ready(handle: *mut MatHold) -> bool 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mat_hold_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mat_hold_name(handle: *mut MatHold) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -27805,6 +32786,25 @@ pub unsafe extern "C" fn wickra_matching_low_is_ready(handle: *mut MatchingLow) 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_matching_low_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_matching_low_name(handle: *mut MatchingLow) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -27934,6 +32934,25 @@ pub unsafe extern "C" fn wickra_median_price_is_ready(handle: *mut MedianPrice) 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_median_price_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_median_price_name(handle: *mut MedianPrice) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -28072,6 +33091,25 @@ pub unsafe extern "C" fn wickra_mfi_is_ready(handle: *mut Mfi) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mfi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mfi_name(handle: *mut Mfi) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -28204,6 +33242,25 @@ pub unsafe extern "C" fn wickra_mid_price_is_ready(handle: *mut MidPrice) -> boo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mid_price_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mid_price_name(handle: *mut MidPrice) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -28342,6 +33399,25 @@ pub unsafe extern "C" fn wickra_minus_di_is_ready(handle: *mut MinusDi) -> bool 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_minus_di_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_minus_di_name(handle: *mut MinusDi) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -28477,6 +33553,25 @@ pub unsafe extern "C" fn wickra_minus_dm_is_ready(handle: *mut MinusDm) -> bool 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_minus_dm_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_minus_dm_name(handle: *mut MinusDm) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -28608,6 +33703,27 @@ pub unsafe extern "C" fn wickra_morning_doji_star_is_ready(handle: *mut MorningD
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_morning_doji_star_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_morning_doji_star_name(
+    handle: *mut MorningDojiStar,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -28747,6 +33863,27 @@ pub unsafe extern "C" fn wickra_morning_evening_star_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_morning_evening_star_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_morning_evening_star_name(
+    handle: *mut MorningEveningStar,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -28879,6 +34016,25 @@ pub unsafe extern "C" fn wickra_naked_poc_is_ready(handle: *mut NakedPoc) -> boo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_naked_poc_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_naked_poc_name(handle: *mut NakedPoc) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -29017,6 +34173,25 @@ pub unsafe extern "C" fn wickra_natr_is_ready(handle: *mut Natr) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_natr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_natr_name(handle: *mut Natr) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -29152,6 +34327,25 @@ pub unsafe extern "C" fn wickra_new_price_lines_is_ready(handle: *mut NewPriceLi
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_new_price_lines_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_new_price_lines_name(handle: *mut NewPriceLines) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -29281,6 +34475,25 @@ pub unsafe extern "C" fn wickra_nvi_is_ready(handle: *mut Nvi) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_nvi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_nvi_name(handle: *mut Nvi) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -29416,6 +34629,25 @@ pub unsafe extern "C" fn wickra_obv_is_ready(handle: *mut Obv) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_obv_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_obv_name(handle: *mut Obv) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -29545,6 +34777,25 @@ pub unsafe extern "C" fn wickra_on_neck_is_ready(handle: *mut OnNeck) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_on_neck_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_on_neck_name(handle: *mut OnNeck) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -29682,6 +34933,27 @@ pub unsafe extern "C" fn wickra_opening_marubozu_is_ready(handle: *mut OpeningMa
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_opening_marubozu_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_opening_marubozu_name(
+    handle: *mut OpeningMarubozu,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -29811,6 +35083,25 @@ pub unsafe extern "C" fn wickra_overnight_gap_is_ready(handle: *mut OvernightGap
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_overnight_gap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_overnight_gap_name(handle: *mut OvernightGap) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -29956,6 +35247,27 @@ pub unsafe extern "C" fn wickra_parkinson_volatility_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_parkinson_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_parkinson_volatility_name(
+    handle: *mut ParkinsonVolatility,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -30088,6 +35400,25 @@ pub unsafe extern "C" fn wickra_pgo_is_ready(handle: *mut Pgo) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pgo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pgo_name(handle: *mut Pgo) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -30227,6 +35558,27 @@ pub unsafe extern "C" fn wickra_piercing_dark_cloud_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_piercing_dark_cloud_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_piercing_dark_cloud_name(
+    handle: *mut PiercingDarkCloud,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -30359,6 +35711,25 @@ pub unsafe extern "C" fn wickra_pivot_reversal_is_ready(handle: *mut PivotRevers
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pivot_reversal_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pivot_reversal_name(handle: *mut PivotReversal) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -30497,6 +35868,25 @@ pub unsafe extern "C" fn wickra_plus_di_is_ready(handle: *mut PlusDi) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_plus_di_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_plus_di_name(handle: *mut PlusDi) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -30632,6 +36022,25 @@ pub unsafe extern "C" fn wickra_plus_dm_is_ready(handle: *mut PlusDm) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_plus_dm_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_plus_dm_name(handle: *mut PlusDm) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -30764,6 +36173,25 @@ pub unsafe extern "C" fn wickra_profile_shape_is_ready(handle: *mut ProfileShape
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_profile_shape_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_profile_shape_name(handle: *mut ProfileShape) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -30906,6 +36334,27 @@ pub unsafe extern "C" fn wickra_projection_oscillator_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_projection_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_projection_oscillator_name(
+    handle: *mut ProjectionOscillator,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -31041,6 +36490,25 @@ pub unsafe extern "C" fn wickra_psar_is_ready(handle: *mut Psar) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_psar_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_psar_name(handle: *mut Psar) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -31170,6 +36638,25 @@ pub unsafe extern "C" fn wickra_pvi_is_ready(handle: *mut Pvi) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pvi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pvi_name(handle: *mut Pvi) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -31308,6 +36795,25 @@ pub unsafe extern "C" fn wickra_qstick_is_ready(handle: *mut Qstick) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_qstick_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_qstick_name(handle: *mut Qstick) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -31442,6 +36948,25 @@ pub unsafe extern "C" fn wickra_rectangle_range_is_ready(handle: *mut RectangleR
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rectangle_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rectangle_range_name(handle: *mut RectangleRange) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -31571,6 +37096,25 @@ pub unsafe extern "C" fn wickra_rickshaw_man_is_ready(handle: *mut RickshawMan) 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rickshaw_man_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rickshaw_man_name(handle: *mut RickshawMan) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -31707,6 +37251,27 @@ pub unsafe extern "C" fn wickra_rising_three_methods_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rising_three_methods_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rising_three_methods_name(
+    handle: *mut RisingThreeMethods,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -31852,6 +37417,27 @@ pub unsafe extern "C" fn wickra_rogers_satchell_volatility_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rogers_satchell_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rogers_satchell_volatility_name(
+    handle: *mut RogersSatchellVolatility,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -31988,6 +37574,25 @@ pub unsafe extern "C" fn wickra_rvi_is_ready(handle: *mut Rvi) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rvi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rvi_name(handle: *mut Rvi) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -32144,6 +37749,25 @@ pub unsafe extern "C" fn wickra_sar_ext_is_ready(handle: *mut SarExt) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_sar_ext_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_sar_ext_name(handle: *mut SarExt) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -32275,6 +37899,27 @@ pub unsafe extern "C" fn wickra_seasonal_z_score_is_ready(handle: *mut SeasonalZ
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_seasonal_z_score_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_seasonal_z_score_name(
+    handle: *mut SeasonalZScore,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -32412,6 +38057,27 @@ pub unsafe extern "C" fn wickra_separating_lines_is_ready(handle: *mut Separatin
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_separating_lines_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_separating_lines_name(
+    handle: *mut SeparatingLines,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -32541,6 +38207,25 @@ pub unsafe extern "C" fn wickra_session_vwap_is_ready(handle: *mut SessionVwap) 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_session_vwap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_session_vwap_name(handle: *mut SessionVwap) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -32676,6 +38361,25 @@ pub unsafe extern "C" fn wickra_shark_is_ready(handle: *mut Shark) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_shark_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_shark_name(handle: *mut Shark) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -32808,6 +38512,25 @@ pub unsafe extern "C" fn wickra_shooting_star_is_ready(handle: *mut ShootingStar
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_shooting_star_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_shooting_star_name(handle: *mut ShootingStar) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -32937,6 +38660,25 @@ pub unsafe extern "C" fn wickra_short_line_is_ready(handle: *mut ShortLine) -> b
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_short_line_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_short_line_name(handle: *mut ShortLine) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -33075,6 +38817,25 @@ pub unsafe extern "C" fn wickra_single_prints_is_ready(handle: *mut SinglePrints
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_single_prints_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_single_prints_name(handle: *mut SinglePrints) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -33210,6 +38971,25 @@ pub unsafe extern "C" fn wickra_smi_is_ready(handle: *mut Smi) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_smi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_smi_name(handle: *mut Smi) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -33339,6 +39119,25 @@ pub unsafe extern "C" fn wickra_spinning_top_is_ready(handle: *mut SpinningTop) 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_spinning_top_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_spinning_top_name(handle: *mut SpinningTop) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -33476,6 +39275,25 @@ pub unsafe extern "C" fn wickra_stalled_pattern_is_ready(handle: *mut StalledPat
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_stalled_pattern_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stalled_pattern_name(handle: *mut StalledPattern) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -33605,6 +39423,25 @@ pub unsafe extern "C" fn wickra_stick_sandwich_is_ready(handle: *mut StickSandwi
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_stick_sandwich_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stick_sandwich_name(handle: *mut StickSandwich) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -33743,6 +39580,25 @@ pub unsafe extern "C" fn wickra_stochastic_cci_is_ready(handle: *mut StochasticC
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_stochastic_cci_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stochastic_cci_name(handle: *mut StochasticCci) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -33872,6 +39728,25 @@ pub unsafe extern "C" fn wickra_takuri_is_ready(handle: *mut Takuri) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_takuri_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_takuri_name(handle: *mut Takuri) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -34007,6 +39882,25 @@ pub unsafe extern "C" fn wickra_tasuki_gap_is_ready(handle: *mut TasukiGap) -> b
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tasuki_gap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tasuki_gap_name(handle: *mut TasukiGap) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -34136,6 +40030,25 @@ pub unsafe extern "C" fn wickra_td_camouflage_is_ready(handle: *mut TdCamouflage
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_camouflage_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_camouflage_name(handle: *mut TdCamouflage) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -34271,6 +40184,25 @@ pub unsafe extern "C" fn wickra_td_clop_is_ready(handle: *mut TdClop) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_clop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_clop_name(handle: *mut TdClop) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -34400,6 +40332,25 @@ pub unsafe extern "C" fn wickra_td_clopwin_is_ready(handle: *mut TdClopwin) -> b
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_clopwin_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_clopwin_name(handle: *mut TdClopwin) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -34548,6 +40499,25 @@ pub unsafe extern "C" fn wickra_td_combo_is_ready(handle: *mut TdCombo) -> bool 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_combo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_combo_name(handle: *mut TdCombo) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -34693,6 +40663,25 @@ pub unsafe extern "C" fn wickra_td_countdown_is_ready(handle: *mut TdCountdown) 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_countdown_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_countdown_name(handle: *mut TdCountdown) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -34828,6 +40817,25 @@ pub unsafe extern "C" fn wickra_td_de_marker_is_ready(handle: *mut TdDeMarker) -
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_de_marker_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_de_marker_name(handle: *mut TdDeMarker) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -34959,6 +40967,25 @@ pub unsafe extern "C" fn wickra_td_differential_is_ready(handle: *mut TdDifferen
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_differential_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_differential_name(handle: *mut TdDifferential) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -35097,6 +41124,25 @@ pub unsafe extern "C" fn wickra_td_d_wave_is_ready(handle: *mut TdDWave) -> bool
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_d_wave_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_d_wave_name(handle: *mut TdDWave) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -35226,6 +41272,25 @@ pub unsafe extern "C" fn wickra_td_open_is_ready(handle: *mut TdOpen) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_open_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_open_name(handle: *mut TdOpen) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -35364,6 +41429,25 @@ pub unsafe extern "C" fn wickra_td_pressure_is_ready(handle: *mut TdPressure) ->
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_pressure_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_pressure_name(handle: *mut TdPressure) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -35493,6 +41577,25 @@ pub unsafe extern "C" fn wickra_td_propulsion_is_ready(handle: *mut TdPropulsion
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_propulsion_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_propulsion_name(handle: *mut TdPropulsion) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -35631,6 +41734,25 @@ pub unsafe extern "C" fn wickra_td_rei_is_ready(handle: *mut TdRei) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_rei_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_rei_name(handle: *mut TdRei) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -35766,6 +41888,25 @@ pub unsafe extern "C" fn wickra_td_setup_is_ready(handle: *mut TdSetup) -> bool 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_setup_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_setup_name(handle: *mut TdSetup) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -35895,6 +42036,25 @@ pub unsafe extern "C" fn wickra_td_trap_is_ready(handle: *mut TdTrap) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_trap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_trap_name(handle: *mut TdTrap) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -36030,6 +42190,25 @@ pub unsafe extern "C" fn wickra_three_drives_is_ready(handle: *mut ThreeDrives) 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_drives_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_drives_name(handle: *mut ThreeDrives) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -36159,6 +42338,25 @@ pub unsafe extern "C" fn wickra_three_inside_is_ready(handle: *mut ThreeInside) 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_inside_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_inside_name(handle: *mut ThreeInside) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -36299,6 +42497,27 @@ pub unsafe extern "C" fn wickra_three_line_break_is_ready(handle: *mut ThreeLine
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_line_break_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_line_break_name(
+    handle: *mut ThreeLineBreak,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -36433,6 +42652,27 @@ pub unsafe extern "C" fn wickra_three_line_strike_is_ready(handle: *mut ThreeLin
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_line_strike_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_line_strike_name(
+    handle: *mut ThreeLineStrike,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -36562,6 +42802,25 @@ pub unsafe extern "C" fn wickra_three_outside_is_ready(handle: *mut ThreeOutside
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_outside_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_outside_name(handle: *mut ThreeOutside) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -36701,6 +42960,27 @@ pub unsafe extern "C" fn wickra_three_soldiers_or_crows_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_soldiers_or_crows_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_soldiers_or_crows_name(
+    handle: *mut ThreeSoldiersOrCrows,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -36837,6 +43117,27 @@ pub unsafe extern "C" fn wickra_three_stars_in_south_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_stars_in_south_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_stars_in_south_name(
+    handle: *mut ThreeStarsInSouth,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -36966,6 +43267,25 @@ pub unsafe extern "C" fn wickra_thrusting_is_ready(handle: *mut Thrusting) -> bo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_thrusting_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_thrusting_name(handle: *mut Thrusting) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -37104,6 +43424,25 @@ pub unsafe extern "C" fn wickra_time_based_stop_is_ready(handle: *mut TimeBasedS
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_time_based_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_time_based_stop_name(handle: *mut TimeBasedStop) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -37235,6 +43574,27 @@ pub unsafe extern "C" fn wickra_tower_top_bottom_is_ready(handle: *mut TowerTopB
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tower_top_bottom_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tower_top_bottom_name(
+    handle: *mut TowerTopBottom,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -37375,6 +43735,27 @@ pub unsafe extern "C" fn wickra_trade_volume_index_is_ready(handle: *mut TradeVo
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trade_volume_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trade_volume_index_name(
+    handle: *mut TradeVolumeIndex,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -37504,6 +43885,25 @@ pub unsafe extern "C" fn wickra_triangle_is_ready(handle: *mut Triangle) -> bool
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_triangle_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_triangle_name(handle: *mut Triangle) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -37641,6 +44041,27 @@ pub unsafe extern "C" fn wickra_triple_top_bottom_is_ready(handle: *mut TripleTo
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_triple_top_bottom_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_triple_top_bottom_name(
+    handle: *mut TripleTopBottom,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -37773,6 +44194,25 @@ pub unsafe extern "C" fn wickra_tristar_is_ready(handle: *mut Tristar) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tristar_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tristar_name(handle: *mut Tristar) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -37902,6 +44342,25 @@ pub unsafe extern "C" fn wickra_true_range_is_ready(handle: *mut TrueRange) -> b
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_true_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_true_range_name(handle: *mut TrueRange) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -38040,6 +44499,25 @@ pub unsafe extern "C" fn wickra_tsv_is_ready(handle: *mut Tsv) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tsv_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tsv_name(handle: *mut Tsv) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -38172,6 +44650,25 @@ pub unsafe extern "C" fn wickra_ttm_trend_is_ready(handle: *mut TtmTrend) -> boo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ttm_trend_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ttm_trend_name(handle: *mut TtmTrend) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -38314,6 +44811,25 @@ pub unsafe extern "C" fn wickra_turn_of_month_is_ready(handle: *mut TurnOfMonth)
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_turn_of_month_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_turn_of_month_name(handle: *mut TurnOfMonth) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -38443,6 +44959,25 @@ pub unsafe extern "C" fn wickra_tweezer_is_ready(handle: *mut Tweezer) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tweezer_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tweezer_name(handle: *mut Tweezer) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -38583,6 +45118,27 @@ pub unsafe extern "C" fn wickra_twiggs_money_flow_is_ready(handle: *mut TwiggsMo
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_twiggs_money_flow_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_twiggs_money_flow_name(
+    handle: *mut TwiggsMoneyFlow,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -38715,6 +45271,25 @@ pub unsafe extern "C" fn wickra_two_crows_is_ready(handle: *mut TwoCrows) -> boo
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_two_crows_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_two_crows_name(handle: *mut TwoCrows) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -38844,6 +45419,25 @@ pub unsafe extern "C" fn wickra_typical_price_is_ready(handle: *mut TypicalPrice
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_typical_price_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_typical_price_name(handle: *mut TypicalPrice) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -38990,6 +45584,27 @@ pub unsafe extern "C" fn wickra_ultimate_oscillator_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ultimate_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ultimate_oscillator_name(
+    handle: *mut UltimateOscillator,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -39121,6 +45736,27 @@ pub unsafe extern "C" fn wickra_unique_three_river_is_ready(handle: *mut UniqueT
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_unique_three_river_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_unique_three_river_name(
+    handle: *mut UniqueThreeRiver,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -39260,6 +45896,27 @@ pub unsafe extern "C" fn wickra_upside_gap_three_methods_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_upside_gap_three_methods_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_upside_gap_three_methods_name(
+    handle: *mut UpsideGapThreeMethods,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -39393,6 +46050,27 @@ pub unsafe extern "C" fn wickra_upside_gap_two_crows_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_upside_gap_two_crows_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_upside_gap_two_crows_name(
+    handle: *mut UpsideGapTwoCrows,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -39533,6 +46211,27 @@ pub unsafe extern "C" fn wickra_volatility_ratio_is_ready(handle: *mut Volatilit
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volatility_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volatility_ratio_name(
+    handle: *mut VolatilityRatio,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -39665,6 +46364,25 @@ pub unsafe extern "C" fn wickra_volty_stop_is_ready(handle: *mut VoltyStop) -> b
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volty_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volty_stop_name(handle: *mut VoltyStop) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -39805,6 +46523,27 @@ pub unsafe extern "C" fn wickra_volume_oscillator_is_ready(handle: *mut VolumeOs
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_oscillator_name(
+    handle: *mut VolumeOscillator,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -39937,6 +46676,25 @@ pub unsafe extern "C" fn wickra_volume_rsi_is_ready(handle: *mut VolumeRsi) -> b
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_rsi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_rsi_name(handle: *mut VolumeRsi) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -40074,6 +46832,27 @@ pub unsafe extern "C" fn wickra_volume_price_trend_is_ready(handle: *mut VolumeP
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_price_trend_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_price_trend_name(
+    handle: *mut VolumePriceTrend,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -40203,6 +46982,25 @@ pub unsafe extern "C" fn wickra_vwap_is_ready(handle: *mut Vwap) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vwap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vwap_name(handle: *mut Vwap) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -40341,6 +47139,25 @@ pub unsafe extern "C" fn wickra_rolling_vwap_is_ready(handle: *mut RollingVwap) 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rolling_vwap_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rolling_vwap_name(handle: *mut RollingVwap) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -40473,6 +47290,25 @@ pub unsafe extern "C" fn wickra_vwma_is_ready(handle: *mut Vwma) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vwma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vwma_name(handle: *mut Vwma) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -40611,6 +47447,25 @@ pub unsafe extern "C" fn wickra_vzo_is_ready(handle: *mut Vzo) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vzo_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vzo_name(handle: *mut Vzo) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -40740,6 +47595,25 @@ pub unsafe extern "C" fn wickra_wad_is_ready(handle: *mut Wad) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_wad_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wad_name(handle: *mut Wad) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -40875,6 +47749,25 @@ pub unsafe extern "C" fn wickra_wedge_is_ready(handle: *mut Wedge) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_wedge_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wedge_name(handle: *mut Wedge) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -41004,6 +47897,25 @@ pub unsafe extern "C" fn wickra_weighted_close_is_ready(handle: *mut WeightedClo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_weighted_close_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_weighted_close_name(handle: *mut WeightedClose) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -41139,6 +48051,25 @@ pub unsafe extern "C" fn wickra_wick_ratio_is_ready(handle: *mut WickRatio) -> b
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_wick_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wick_ratio_name(handle: *mut WickRatio) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -41271,6 +48202,25 @@ pub unsafe extern "C" fn wickra_williams_r_is_ready(handle: *mut WilliamsR) -> b
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_williams_r_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_williams_r_name(handle: *mut WilliamsR) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -41416,6 +48366,27 @@ pub unsafe extern "C" fn wickra_yang_zhang_volatility_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_yang_zhang_volatility_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_yang_zhang_volatility_name(
+    handle: *mut YangZhangVolatility,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -41551,6 +48522,25 @@ pub unsafe extern "C" fn wickra_yoyo_exit_is_ready(handle: *mut YoyoExit) -> boo
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_yoyo_exit_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_yoyo_exit_name(handle: *mut YoyoExit) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -41639,6 +48629,27 @@ pub unsafe extern "C" fn wickra_amihud_illiquidity_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_amihud_illiquidity_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_amihud_illiquidity_name(
+    handle: *mut AmihudIlliquidity,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -41719,6 +48730,27 @@ pub unsafe extern "C" fn wickra_cumulative_volume_delta_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cumulative_volume_delta_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cumulative_volume_delta_name(
+    handle: *mut CumulativeVolumeDelta,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -41804,6 +48836,25 @@ pub unsafe extern "C" fn wickra_pin_is_ready(handle: *mut Pin) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_pin_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_pin_name(handle: *mut Pin) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -41886,6 +48937,25 @@ pub unsafe extern "C" fn wickra_roll_measure_is_ready(handle: *mut RollMeasure) 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_roll_measure_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_roll_measure_name(handle: *mut RollMeasure) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -41962,6 +49032,25 @@ pub unsafe extern "C" fn wickra_signed_volume_is_ready(handle: *mut SignedVolume
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_signed_volume_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_signed_volume_name(handle: *mut SignedVolume) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -42046,6 +49135,25 @@ pub unsafe extern "C" fn wickra_trade_imbalance_is_ready(handle: *mut TradeImbal
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trade_imbalance_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trade_imbalance_name(handle: *mut TradeImbalance) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -42137,6 +49245,27 @@ pub unsafe extern "C" fn wickra_trade_sign_autocorrelation_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trade_sign_autocorrelation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trade_sign_autocorrelation_name(
+    handle: *mut TradeSignAutocorrelation,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -42220,6 +49349,25 @@ pub unsafe extern "C" fn wickra_vpin_is_ready(handle: *mut Vpin) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vpin_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vpin_name(handle: *mut Vpin) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -42310,6 +49458,27 @@ pub unsafe extern "C" fn wickra_effective_spread_is_ready(handle: *mut Effective
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_effective_spread_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_effective_spread_name(
+    handle: *mut EffectiveSpread,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -42393,6 +49562,25 @@ pub unsafe extern "C" fn wickra_kyles_lambda_is_ready(handle: *mut KylesLambda) 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kyles_lambda_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kyles_lambda_name(handle: *mut KylesLambda) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -42481,6 +49669,25 @@ pub unsafe extern "C" fn wickra_realized_spread_is_ready(handle: *mut RealizedSp
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_realized_spread_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_realized_spread_name(handle: *mut RealizedSpread) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -42587,6 +49794,25 @@ pub unsafe extern "C" fn wickra_calendar_spread_is_ready(handle: *mut CalendarSp
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_calendar_spread_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_calendar_spread_name(handle: *mut CalendarSpread) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -42690,6 +49916,27 @@ pub unsafe extern "C" fn wickra_estimated_leverage_ratio_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_estimated_leverage_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_estimated_leverage_ratio_name(
+    handle: *mut EstimatedLeverageRatio,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -42788,6 +50035,25 @@ pub unsafe extern "C" fn wickra_funding_basis_is_ready(handle: *mut FundingBasis
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_funding_basis_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_basis_name(handle: *mut FundingBasis) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -42899,6 +50165,27 @@ pub unsafe extern "C" fn wickra_funding_implied_apr_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_funding_implied_apr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_implied_apr_name(
+    handle: *mut FundingImpliedApr,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -42995,6 +50282,25 @@ pub unsafe extern "C" fn wickra_funding_rate_is_ready(handle: *mut FundingRate) 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_funding_rate_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_name(handle: *mut FundingRate) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -43099,6 +50405,27 @@ pub unsafe extern "C" fn wickra_funding_rate_mean_is_ready(handle: *mut FundingR
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_funding_rate_mean_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_mean_name(
+    handle: *mut FundingRateMean,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -43208,6 +50535,27 @@ pub unsafe extern "C" fn wickra_funding_rate_z_score_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_funding_rate_z_score_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_funding_rate_z_score_name(
+    handle: *mut FundingRateZScore,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -43306,6 +50654,27 @@ pub unsafe extern "C" fn wickra_long_short_ratio_is_ready(handle: *mut LongShort
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_long_short_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_long_short_ratio_name(
+    handle: *mut LongShortRatio,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -43409,6 +50778,27 @@ pub unsafe extern "C" fn wickra_open_interest_delta_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_open_interest_delta_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_open_interest_delta_name(
+    handle: *mut OpenInterestDelta,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -43518,6 +50908,27 @@ pub unsafe extern "C" fn wickra_oi_price_divergence_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_oi_price_divergence_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_price_divergence_name(
+    handle: *mut OIPriceDivergence,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -43619,6 +51030,27 @@ pub unsafe extern "C" fn wickra_oi_to_volume_ratio_is_ready(handle: *mut OiToVol
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_oi_to_volume_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_to_volume_ratio_name(
+    handle: *mut OiToVolumeRatio,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -43715,6 +51147,25 @@ pub unsafe extern "C" fn wickra_oi_weighted_is_ready(handle: *mut OIWeighted) ->
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_oi_weighted_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_oi_weighted_name(handle: *mut OIWeighted) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -43824,6 +51275,27 @@ pub unsafe extern "C" fn wickra_open_interest_momentum_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_open_interest_momentum_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_open_interest_momentum_name(
+    handle: *mut OpenInterestMomentum,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -43924,6 +51396,27 @@ pub unsafe extern "C" fn wickra_perpetual_premium_index_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_perpetual_premium_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_perpetual_premium_index_name(
+    handle: *mut PerpetualPremiumIndex,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -44030,6 +51523,27 @@ pub unsafe extern "C" fn wickra_taker_buy_sell_ratio_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_taker_buy_sell_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_taker_buy_sell_ratio_name(
+    handle: *mut TakerBuySellRatio,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -44130,6 +51644,27 @@ pub unsafe extern "C" fn wickra_term_structure_basis_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_term_structure_basis_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_term_structure_basis_name(
+    handle: *mut TermStructureBasis,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -44237,6 +51772,25 @@ pub unsafe extern "C" fn wickra_depth_slope_is_ready(handle: *mut DepthSlope) ->
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_depth_slope_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_depth_slope_name(handle: *mut DepthSlope) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -44336,6 +51890,25 @@ pub unsafe extern "C" fn wickra_microprice_is_ready(handle: *mut Microprice) -> 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_microprice_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_microprice_name(handle: *mut Microprice) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -44442,6 +52015,27 @@ pub unsafe extern "C" fn wickra_order_book_imbalance_full_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_order_book_imbalance_full_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_full_name(
+    handle: *mut OrderBookImbalanceFull,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -44552,6 +52146,27 @@ pub unsafe extern "C" fn wickra_order_book_imbalance_top1_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_order_book_imbalance_top1_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_top1_name(
+    handle: *mut OrderBookImbalanceTop1,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -44670,6 +52285,27 @@ pub unsafe extern "C" fn wickra_order_book_imbalance_top_n_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_order_book_imbalance_top_n_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_book_imbalance_top_n_name(
+    handle: *mut OrderBookImbalanceTopN,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -44783,6 +52419,27 @@ pub unsafe extern "C" fn wickra_order_flow_imbalance_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_order_flow_imbalance_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_order_flow_imbalance_name(
+    handle: *mut OrderFlowImbalance,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -44882,6 +52539,25 @@ pub unsafe extern "C" fn wickra_quoted_spread_is_ready(handle: *mut QuotedSpread
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_quoted_spread_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_quoted_spread_name(handle: *mut QuotedSpread) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -44997,6 +52673,27 @@ pub unsafe extern "C" fn wickra_absolute_breadth_index_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_absolute_breadth_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_absolute_breadth_index_name(
+    handle: *mut AbsoluteBreadthIndex,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -45100,6 +52797,25 @@ pub unsafe extern "C" fn wickra_ad_volume_line_is_ready(handle: *mut AdVolumeLin
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ad_volume_line_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ad_volume_line_name(handle: *mut AdVolumeLine) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -45208,6 +52924,25 @@ pub unsafe extern "C" fn wickra_advance_decline_is_ready(handle: *mut AdvanceDec
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_advance_decline_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_advance_decline_name(handle: *mut AdvanceDecline) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -45321,6 +53056,27 @@ pub unsafe extern "C" fn wickra_advance_decline_ratio_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_advance_decline_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_advance_decline_ratio_name(
+    handle: *mut AdvanceDeclineRatio,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -45427,6 +53183,25 @@ pub unsafe extern "C" fn wickra_breadth_thrust_is_ready(handle: *mut BreadthThru
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_breadth_thrust_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_breadth_thrust_name(handle: *mut BreadthThrust) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -45540,6 +53315,27 @@ pub unsafe extern "C" fn wickra_bullish_percent_index_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bullish_percent_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bullish_percent_index_name(
+    handle: *mut BullishPercentIndex,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -45650,6 +53446,27 @@ pub unsafe extern "C" fn wickra_cumulative_volume_index_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cumulative_volume_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cumulative_volume_index_name(
+    handle: *mut CumulativeVolumeIndex,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -45756,6 +53573,25 @@ pub unsafe extern "C" fn wickra_high_low_index_is_ready(handle: *mut HighLowInde
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_high_low_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_high_low_index_name(handle: *mut HighLowIndex) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -45869,6 +53705,27 @@ pub unsafe extern "C" fn wickra_mc_clellan_oscillator_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mc_clellan_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mc_clellan_oscillator_name(
+    handle: *mut McClellanOscillator,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -45976,6 +53833,27 @@ pub unsafe extern "C" fn wickra_mc_clellan_summation_index_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mc_clellan_summation_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mc_clellan_summation_index_name(
+    handle: *mut McClellanSummationIndex,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -46091,6 +53969,27 @@ pub unsafe extern "C" fn wickra_new_highs_new_lows_is_ready(handle: *mut NewHigh
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_new_highs_new_lows_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_new_highs_new_lows_name(
+    handle: *mut NewHighsNewLows,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -46196,6 +54095,27 @@ pub unsafe extern "C" fn wickra_percent_above_ma_is_ready(handle: *mut PercentAb
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_percent_above_ma_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_percent_above_ma_name(
+    handle: *mut PercentAboveMa,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -46305,6 +54225,25 @@ pub unsafe extern "C" fn wickra_tick_index_is_ready(handle: *mut TickIndex) -> b
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tick_index_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tick_index_name(handle: *mut TickIndex) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -46408,6 +54347,25 @@ pub unsafe extern "C" fn wickra_trin_is_ready(handle: *mut Trin) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_trin_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_trin_name(handle: *mut Trin) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -46518,6 +54476,27 @@ pub unsafe extern "C" fn wickra_up_down_volume_ratio_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_up_down_volume_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_up_down_volume_ratio_name(
+    handle: *mut UpDownVolumeRatio,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -47445,6 +55424,27 @@ pub unsafe extern "C" fn wickra_acceleration_bands_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_acceleration_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_acceleration_bands_name(
+    handle: *mut AccelerationBands,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -47539,6 +55539,25 @@ pub unsafe extern "C" fn wickra_adx_is_ready(handle: *mut Adx) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_adx_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_adx_name(handle: *mut Adx) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -47643,6 +55662,25 @@ pub unsafe extern "C" fn wickra_alligator_is_ready(handle: *mut Alligator) -> bo
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_alligator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_alligator_name(handle: *mut Alligator) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -47742,6 +55780,27 @@ pub unsafe extern "C" fn wickra_andrews_pitchfork_is_ready(handle: *mut AndrewsP
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_andrews_pitchfork_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_andrews_pitchfork_name(
+    handle: *mut AndrewsPitchfork,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -47835,6 +55894,25 @@ pub unsafe extern "C" fn wickra_aroon_is_ready(handle: *mut Aroon) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_aroon_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_aroon_name(handle: *mut Aroon) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -47932,6 +56010,25 @@ pub unsafe extern "C" fn wickra_atr_bands_is_ready(handle: *mut AtrBands) -> boo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_atr_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_atr_bands_name(handle: *mut AtrBands) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -48035,6 +56132,25 @@ pub unsafe extern "C" fn wickra_atr_ratchet_is_ready(handle: *mut AtrRatchet) ->
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_atr_ratchet_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_atr_ratchet_name(handle: *mut AtrRatchet) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -48133,6 +56249,25 @@ pub unsafe extern "C" fn wickra_auto_fib_is_ready(handle: *mut AutoFib) -> bool 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_auto_fib_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_auto_fib_name(handle: *mut AutoFib) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -48228,6 +56363,25 @@ pub unsafe extern "C" fn wickra_bollinger_bands_is_ready(handle: *mut BollingerB
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bollinger_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bollinger_bands_name(handle: *mut BollingerBands) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -48314,6 +56468,25 @@ pub unsafe extern "C" fn wickra_bomar_bands_is_ready(handle: *mut BomarBands) ->
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_bomar_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_bomar_bands_name(handle: *mut BomarBands) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -48417,6 +56590,25 @@ pub unsafe extern "C" fn wickra_camarilla_is_ready(handle: *mut Camarilla) -> bo
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_camarilla_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_camarilla_name(handle: *mut Camarilla) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -48510,6 +56702,25 @@ pub unsafe extern "C" fn wickra_candle_volume_is_ready(handle: *mut CandleVolume
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_candle_volume_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_candle_volume_name(handle: *mut CandleVolume) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -48608,6 +56819,27 @@ pub unsafe extern "C" fn wickra_central_pivot_range_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_central_pivot_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_central_pivot_range_name(
+    handle: *mut CentralPivotRange,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -48713,6 +56945,27 @@ pub unsafe extern "C" fn wickra_chande_kroll_stop_is_ready(handle: *mut ChandeKr
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_chande_kroll_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chande_kroll_stop_name(
+    handle: *mut ChandeKrollStop,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -48814,6 +57067,25 @@ pub unsafe extern "C" fn wickra_chandelier_exit_is_ready(handle: *mut Chandelier
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_chandelier_exit_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_chandelier_exit_name(handle: *mut ChandelierExit) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -48912,6 +57184,25 @@ pub unsafe extern "C" fn wickra_classic_pivots_is_ready(handle: *mut ClassicPivo
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_classic_pivots_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_classic_pivots_name(handle: *mut ClassicPivots) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -48999,6 +57290,25 @@ pub unsafe extern "C" fn wickra_cointegration_is_ready(handle: *mut Cointegratio
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_cointegration_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_cointegration_name(handle: *mut Cointegration) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -49105,6 +57415,27 @@ pub unsafe extern "C" fn wickra_composite_profile_is_ready(handle: *mut Composit
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_composite_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_composite_profile_name(
+    handle: *mut CompositeProfile,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -49196,6 +57527,25 @@ pub unsafe extern "C" fn wickra_demark_pivots_is_ready(handle: *mut DemarkPivots
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_demark_pivots_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_demark_pivots_name(handle: *mut DemarkPivots) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -49296,6 +57646,25 @@ pub unsafe extern "C" fn wickra_donchian_is_ready(handle: *mut Donchian) -> bool
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_donchian_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_donchian_name(handle: *mut Donchian) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -49389,6 +57758,25 @@ pub unsafe extern "C" fn wickra_donchian_stop_is_ready(handle: *mut DonchianStop
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_donchian_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_donchian_stop_name(handle: *mut DonchianStop) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -49489,6 +57877,27 @@ pub unsafe extern "C" fn wickra_double_bollinger_is_ready(handle: *mut DoubleBol
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_double_bollinger_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_double_bollinger_name(
+    handle: *mut DoubleBollinger,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -49582,6 +57991,25 @@ pub unsafe extern "C" fn wickra_elder_ray_is_ready(handle: *mut ElderRay) -> boo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_elder_ray_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_elder_ray_name(handle: *mut ElderRay) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -49681,6 +58109,25 @@ pub unsafe extern "C" fn wickra_elder_safe_zone_is_ready(handle: *mut ElderSafeZ
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_elder_safe_zone_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_elder_safe_zone_name(handle: *mut ElderSafeZone) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -49777,6 +58224,25 @@ pub unsafe extern "C" fn wickra_equivolume_is_ready(handle: *mut Equivolume) -> 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_equivolume_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_equivolume_name(handle: *mut Equivolume) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -49868,6 +58334,25 @@ pub unsafe extern "C" fn wickra_fib_arcs_is_ready(handle: *mut FibArcs) -> bool 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_arcs_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_arcs_name(handle: *mut FibArcs) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -49966,6 +58451,25 @@ pub unsafe extern "C" fn wickra_fib_channel_is_ready(handle: *mut FibChannel) ->
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_channel_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_channel_name(handle: *mut FibChannel) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -50056,6 +58560,25 @@ pub unsafe extern "C" fn wickra_fib_confluence_is_ready(handle: *mut FibConfluen
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_confluence_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_confluence_name(handle: *mut FibConfluence) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -50155,6 +58678,25 @@ pub unsafe extern "C" fn wickra_fib_extension_is_ready(handle: *mut FibExtension
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_extension_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_extension_name(handle: *mut FibExtension) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -50246,6 +58788,25 @@ pub unsafe extern "C" fn wickra_fib_fan_is_ready(handle: *mut FibFan) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_fan_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_fan_name(handle: *mut FibFan) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -50341,6 +58902,25 @@ pub unsafe extern "C" fn wickra_fib_projection_is_ready(handle: *mut FibProjecti
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_projection_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_projection_name(handle: *mut FibProjection) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -50444,6 +59024,25 @@ pub unsafe extern "C" fn wickra_fib_retracement_is_ready(handle: *mut FibRetrace
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_retracement_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_retracement_name(handle: *mut FibRetracement) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -50534,6 +59133,25 @@ pub unsafe extern "C" fn wickra_fib_time_zones_is_ready(handle: *mut FibTimeZone
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fib_time_zones_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fib_time_zones_name(handle: *mut FibTimeZones) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -50637,6 +59255,27 @@ pub unsafe extern "C" fn wickra_fibonacci_pivots_is_ready(handle: *mut Fibonacci
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fibonacci_pivots_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fibonacci_pivots_name(
+    handle: *mut FibonacciPivots,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -50734,6 +59373,27 @@ pub unsafe extern "C" fn wickra_fractal_chaos_bands_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_fractal_chaos_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_fractal_chaos_bands_name(
+    handle: *mut FractalChaosBands,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -50839,6 +59499,27 @@ pub unsafe extern "C" fn wickra_gator_oscillator_is_ready(handle: *mut GatorOsci
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_gator_oscillator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_gator_oscillator_name(
+    handle: *mut GatorOscillator,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -50930,6 +59611,25 @@ pub unsafe extern "C" fn wickra_golden_pocket_is_ready(handle: *mut GoldenPocket
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_golden_pocket_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_golden_pocket_name(handle: *mut GoldenPocket) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -51025,6 +59725,25 @@ pub unsafe extern "C" fn wickra_heikin_ashi_is_ready(handle: *mut HeikinAshi) ->
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_heikin_ashi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_heikin_ashi_name(handle: *mut HeikinAshi) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -51131,6 +59850,27 @@ pub unsafe extern "C" fn wickra_high_low_volume_nodes_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_high_low_volume_nodes_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_high_low_volume_nodes_name(
+    handle: *mut HighLowVolumeNodes,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -51213,6 +59953,25 @@ pub unsafe extern "C" fn wickra_ht_phasor_is_ready(handle: *mut HtPhasor) -> boo
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ht_phasor_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ht_phasor_name(handle: *mut HtPhasor) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -51310,6 +60069,25 @@ pub unsafe extern "C" fn wickra_hurst_channel_is_ready(handle: *mut HurstChannel
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_hurst_channel_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_hurst_channel_name(handle: *mut HurstChannel) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -51417,6 +60195,25 @@ pub unsafe extern "C" fn wickra_ichimoku_is_ready(handle: *mut Ichimoku) -> bool
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ichimoku_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ichimoku_name(handle: *mut Ichimoku) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -51515,6 +60312,25 @@ pub unsafe extern "C" fn wickra_initial_balance_is_ready(handle: *mut InitialBal
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_initial_balance_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_initial_balance_name(handle: *mut InitialBalance) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -51607,6 +60423,27 @@ pub unsafe extern "C" fn wickra_kalman_hedge_ratio_is_ready(handle: *mut KalmanH
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kalman_hedge_ratio_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kalman_hedge_ratio_name(
+    handle: *mut KalmanHedgeRatio,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -51703,6 +60540,25 @@ pub unsafe extern "C" fn wickra_kase_dev_stop_is_ready(handle: *mut KaseDevStop)
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kase_dev_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kase_dev_stop_name(handle: *mut KaseDevStop) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -51806,6 +60662,27 @@ pub unsafe extern "C" fn wickra_kase_permission_stochastic_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kase_permission_stochastic_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kase_permission_stochastic_name(
+    handle: *mut KasePermissionStochastic,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -51914,6 +60791,25 @@ pub unsafe extern "C" fn wickra_keltner_is_ready(handle: *mut Keltner) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_keltner_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_keltner_name(handle: *mut Keltner) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -52009,6 +60905,25 @@ pub unsafe extern "C" fn wickra_kst_is_ready(handle: *mut Kst) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kst_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kst_name(handle: *mut Kst) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -52108,6 +61023,27 @@ pub unsafe extern "C" fn wickra_lead_lag_cross_correlation_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_lead_lag_cross_correlation_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lead_lag_cross_correlation_name(
+    handle: *mut LeadLagCrossCorrelation,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -52198,6 +61134,25 @@ pub unsafe extern "C" fn wickra_lin_reg_channel_is_ready(handle: *mut LinRegChan
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_lin_reg_channel_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_lin_reg_channel_name(handle: *mut LinRegChannel) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -52320,6 +61275,27 @@ pub unsafe extern "C" fn wickra_liquidation_features_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_liquidation_features_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_liquidation_features_name(
+    handle: *mut LiquidationFeatures,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -52406,6 +61382,25 @@ pub unsafe extern "C" fn wickra_ma_envelope_is_ready(handle: *mut MaEnvelope) ->
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ma_envelope_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ma_envelope_name(handle: *mut MaEnvelope) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -52502,6 +61497,25 @@ pub unsafe extern "C" fn wickra_macd_indicator_is_ready(handle: *mut MacdIndicat
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_macd_indicator_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_indicator_name(handle: *mut MacdIndicator) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -52588,6 +61602,25 @@ pub unsafe extern "C" fn wickra_macd_fix_is_ready(handle: *mut MacdFix) -> bool 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_macd_fix_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_fix_name(handle: *mut MacdFix) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -52679,6 +61712,25 @@ pub unsafe extern "C" fn wickra_mama_is_ready(handle: *mut Mama) -> bool {
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_mama_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_mama_name(handle: *mut Mama) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -52765,6 +61817,25 @@ pub unsafe extern "C" fn wickra_median_channel_is_ready(handle: *mut MedianChann
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_median_channel_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_median_channel_name(handle: *mut MedianChannel) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -52863,6 +61934,27 @@ pub unsafe extern "C" fn wickra_modified_ma_stop_is_ready(handle: *mut ModifiedM
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_modified_ma_stop_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_modified_ma_stop_name(
+    handle: *mut ModifiedMaStop,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -52971,6 +62063,27 @@ pub unsafe extern "C" fn wickra_murrey_math_lines_is_ready(handle: *mut MurreyMa
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_murrey_math_lines_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_murrey_math_lines_name(
+    handle: *mut MurreyMathLines,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -53064,6 +62177,25 @@ pub unsafe extern "C" fn wickra_nrtr_is_ready(handle: *mut Nrtr) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_nrtr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_nrtr_name(handle: *mut Nrtr) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -53164,6 +62296,25 @@ pub unsafe extern "C" fn wickra_opening_range_is_ready(handle: *mut OpeningRange
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_opening_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_opening_range_name(handle: *mut OpeningRange) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -53260,6 +62411,27 @@ pub unsafe extern "C" fn wickra_overnight_intraday_return_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_overnight_intraday_return_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_overnight_intraday_return_name(
+    handle: *mut OvernightIntradayReturn,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -53366,6 +62538,27 @@ pub unsafe extern "C" fn wickra_projection_bands_is_ready(handle: *mut Projectio
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_projection_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_projection_bands_name(
+    handle: *mut ProjectionBands,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -53451,6 +62644,25 @@ pub unsafe extern "C" fn wickra_qqe_is_ready(handle: *mut Qqe) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_qqe_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_qqe_name(handle: *mut Qqe) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -53540,6 +62752,25 @@ pub unsafe extern "C" fn wickra_quartile_bands_is_ready(handle: *mut QuartileBan
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_quartile_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_quartile_bands_name(handle: *mut QuartileBands) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -53640,6 +62871,27 @@ pub unsafe extern "C" fn wickra_relative_strength_ab_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_relative_strength_ab_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_relative_strength_ab_name(
+    handle: *mut RelativeStrengthAB,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -53733,6 +62985,25 @@ pub unsafe extern "C" fn wickra_rwi_is_ready(handle: *mut Rwi) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_rwi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_rwi_name(handle: *mut Rwi) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -53831,6 +63102,27 @@ pub unsafe extern "C" fn wickra_session_high_low_is_ready(handle: *mut SessionHi
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_session_high_low_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_session_high_low_name(
+    handle: *mut SessionHighLow,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -53922,6 +63214,25 @@ pub unsafe extern "C" fn wickra_session_range_is_ready(handle: *mut SessionRange
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_session_range_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_session_range_name(handle: *mut SessionRange) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -54027,6 +63338,27 @@ pub unsafe extern "C" fn wickra_smoothed_heikin_ashi_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_smoothed_heikin_ashi_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_smoothed_heikin_ashi_name(
+    handle: *mut SmoothedHeikinAshi,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -54125,6 +63457,27 @@ pub unsafe extern "C" fn wickra_spread_bollinger_bands_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_spread_bollinger_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_spread_bollinger_bands_name(
+    handle: *mut SpreadBollingerBands,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -54218,6 +63571,27 @@ pub unsafe extern "C" fn wickra_standard_error_bands_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_standard_error_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_standard_error_bands_name(
+    handle: *mut StandardErrorBands,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -54322,6 +63696,25 @@ pub unsafe extern "C" fn wickra_starc_bands_is_ready(handle: *mut StarcBands) ->
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_starc_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_starc_bands_name(handle: *mut StarcBands) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -54415,6 +63808,25 @@ pub unsafe extern "C" fn wickra_stochastic_is_ready(handle: *mut Stochastic) -> 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_stochastic_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_stochastic_name(handle: *mut Stochastic) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -54514,6 +63926,25 @@ pub unsafe extern "C" fn wickra_super_trend_is_ready(handle: *mut SuperTrend) ->
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_super_trend_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_super_trend_name(handle: *mut SuperTrend) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -54607,6 +64038,25 @@ pub unsafe extern "C" fn wickra_td_lines_is_ready(handle: *mut TdLines) -> bool 
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_lines_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_lines_name(handle: *mut TdLines) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -54711,6 +64161,27 @@ pub unsafe extern "C" fn wickra_td_moving_average_is_ready(handle: *mut TdMoving
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_moving_average_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_moving_average_name(
+    handle: *mut TdMovingAverage,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -54808,6 +64279,27 @@ pub unsafe extern "C" fn wickra_td_range_projection_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_range_projection_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_range_projection_name(
+    handle: *mut TdRangeProjection,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -54901,6 +64393,25 @@ pub unsafe extern "C" fn wickra_td_risk_level_is_ready(handle: *mut TdRiskLevel)
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_risk_level_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_risk_level_name(handle: *mut TdRiskLevel) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -55011,6 +64522,25 @@ pub unsafe extern "C" fn wickra_td_sequential_is_ready(handle: *mut TdSequential
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_td_sequential_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_td_sequential_name(handle: *mut TdSequential) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -55108,6 +64638,25 @@ pub unsafe extern "C" fn wickra_ttm_squeeze_is_ready(handle: *mut TtmSqueeze) ->
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_ttm_squeeze_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_ttm_squeeze_name(handle: *mut TtmSqueeze) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -55212,6 +64761,25 @@ pub unsafe extern "C" fn wickra_value_area_is_ready(handle: *mut ValueArea) -> b
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_value_area_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_value_area_name(handle: *mut ValueArea) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -55313,6 +64881,25 @@ pub unsafe extern "C" fn wickra_volatility_cone_is_ready(handle: *mut Volatility
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volatility_cone_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volatility_cone_name(handle: *mut VolatilityCone) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -55421,6 +65008,27 @@ pub unsafe extern "C" fn wickra_volume_weighted_macd_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_weighted_macd_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_weighted_macd_name(
+    handle: *mut VolumeWeightedMacd,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -55519,6 +65127,27 @@ pub unsafe extern "C" fn wickra_volume_weighted_sr_is_ready(handle: *mut VolumeW
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_weighted_sr_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_weighted_sr_name(
+    handle: *mut VolumeWeightedSr,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -55612,6 +65241,25 @@ pub unsafe extern "C" fn wickra_vortex_is_ready(handle: *mut Vortex) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vortex_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vortex_name(handle: *mut Vortex) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -55715,6 +65363,27 @@ pub unsafe extern "C" fn wickra_vwap_std_dev_bands_is_ready(handle: *mut VwapStd
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_vwap_std_dev_bands_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_vwap_std_dev_bands_name(
+    handle: *mut VwapStdDevBands,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -55815,6 +65484,25 @@ pub unsafe extern "C" fn wickra_wave_trend_is_ready(handle: *mut WaveTrend) -> b
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_wave_trend_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_wave_trend_name(handle: *mut WaveTrend) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -55907,6 +65595,27 @@ pub unsafe extern "C" fn wickra_williams_fractals_is_ready(handle: *mut Williams
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_williams_fractals_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_williams_fractals_name(
+    handle: *mut WilliamsFractals,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -56006,6 +65715,25 @@ pub unsafe extern "C" fn wickra_woodie_pivots_is_ready(handle: *mut WoodiePivots
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_woodie_pivots_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_woodie_pivots_name(handle: *mut WoodiePivots) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -56096,6 +65824,25 @@ pub unsafe extern "C" fn wickra_zero_lag_macd_is_ready(handle: *mut ZeroLagMacd)
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_zero_lag_macd_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_zero_lag_macd_name(handle: *mut ZeroLagMacd) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -56192,6 +65939,25 @@ pub unsafe extern "C" fn wickra_zig_zag_is_ready(handle: *mut ZigZag) -> bool {
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_zig_zag_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_zig_zag_name(handle: *mut ZigZag) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -56313,6 +66079,27 @@ pub unsafe extern "C" fn wickra_day_of_week_profile_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_day_of_week_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_day_of_week_profile_name(
+    handle: *mut DayOfWeekProfile,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -56416,6 +66203,27 @@ pub unsafe extern "C" fn wickra_intraday_volatility_profile_is_ready(
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_intraday_volatility_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_intraday_volatility_profile_name(
+    handle: *mut IntradayVolatilityProfile,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -56529,6 +66337,27 @@ pub unsafe extern "C" fn wickra_time_of_day_return_profile_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_time_of_day_return_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_time_of_day_return_profile_name(
+    handle: *mut TimeOfDayReturnProfile,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -56639,6 +66468,25 @@ pub unsafe extern "C" fn wickra_tpo_profile_is_ready(handle: *mut TpoProfile) ->
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tpo_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tpo_profile_name(handle: *mut TpoProfile) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -56745,6 +66593,27 @@ pub unsafe extern "C" fn wickra_volume_by_time_profile_is_ready(
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_by_time_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_by_time_profile_name(
+    handle: *mut VolumeByTimeProfile,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -56848,6 +66717,25 @@ pub unsafe extern "C" fn wickra_volume_profile_is_ready(handle: *mut VolumeProfi
     match handle.as_ref() {
         Some(ind) => ind.is_ready(),
         None => false,
+    }
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_profile_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_profile_name(handle: *mut VolumeProfile) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
     }
 }
 
@@ -57032,6 +66920,25 @@ pub unsafe extern "C" fn wickra_dollar_bars_update(
     bars.len()
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_dollar_bars_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_dollar_bars_name(handle: *mut DollarBars) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -57108,6 +67015,25 @@ pub unsafe extern "C" fn wickra_imbalance_bars_update(
     bars.len()
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_imbalance_bars_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_imbalance_bars_name(handle: *mut ImbalanceBars) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -57179,6 +67105,25 @@ pub unsafe extern "C" fn wickra_kagi_bars_update(
         }
     }
     bars.len()
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_kagi_bars_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_kagi_bars_name(handle: *mut KagiBars) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
 }
 
 /// Reset all internal state. No-op if `handle` is `NULL`.
@@ -57257,6 +67202,27 @@ pub unsafe extern "C" fn wickra_point_and_figure_bars_update(
     bars.len()
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_point_and_figure_bars_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_point_and_figure_bars_name(
+    handle: *mut PointAndFigureBars,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -57330,6 +67296,25 @@ pub unsafe extern "C" fn wickra_range_bars_update(
     bars.len()
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_range_bars_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_range_bars_name(handle: *mut RangeBars) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -57401,6 +67386,25 @@ pub unsafe extern "C" fn wickra_renko_bars_update(
         }
     }
     bars.len()
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_renko_bars_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_renko_bars_name(handle: *mut RenkoBars) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
 }
 
 /// Reset all internal state. No-op if `handle` is `NULL`.
@@ -57479,6 +67483,25 @@ pub unsafe extern "C" fn wickra_run_bars_update(
     bars.len()
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_run_bars_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_run_bars_name(handle: *mut RunBars) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -57550,6 +67573,27 @@ pub unsafe extern "C" fn wickra_three_line_break_bars_update(
         }
     }
     bars.len()
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_three_line_break_bars_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_three_line_break_bars_name(
+    handle: *mut ThreeLineBreakBars,
+) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
 }
 
 /// Reset all internal state. No-op if `handle` is `NULL`.
@@ -57627,6 +67671,25 @@ pub unsafe extern "C" fn wickra_tick_bars_update(
     bars.len()
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_tick_bars_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_tick_bars_name(handle: *mut TickBars) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -57700,6 +67763,25 @@ pub unsafe extern "C" fn wickra_volume_bars_update(
         }
     }
     bars.len()
+}
+
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_volume_bars_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_volume_bars_name(handle: *mut VolumeBars) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
 }
 
 /// Reset all internal state. No-op if `handle` is `NULL`.
@@ -57821,6 +67903,25 @@ pub unsafe extern "C" fn wickra_macd_ext_is_ready(handle: *mut MacdExt) -> bool 
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_macd_ext_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_macd_ext_name(handle: *mut MacdExt) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -57930,6 +68031,25 @@ pub unsafe extern "C" fn wickra_footprint_is_ready(handle: *mut Footprint) -> bo
     }
 }
 
+/// Canonical indicator name as a NUL-terminated C string with `'static` lifetime
+/// (cached on first call). Returns `NULL` if `handle` is `NULL`.
+///
+/// # Safety
+/// `handle` must be valid (from `wickra_footprint_new`, not freed), or `NULL`.
+#[no_mangle]
+pub unsafe extern "C" fn wickra_footprint_name(handle: *mut Footprint) -> *const c_char {
+    match handle.as_ref() {
+        Some(ind) => {
+            static NAME: OnceLock<CString> = OnceLock::new();
+            NAME.get_or_init(|| {
+                CString::new(ind.name()).expect("indicator name has no interior NUL")
+            })
+            .as_ptr()
+        }
+        None => ptr::null(),
+    }
+}
+
 /// Reset all internal state. No-op if `handle` is `NULL`.
 ///
 /// # Safety
@@ -57974,6 +68094,9 @@ mod tests {
             assert!((wickra_sma_update(handle, 3.0) - 2.0).abs() < 1e-9);
             assert!(wickra_sma_is_ready(handle));
 
+            let name = core::ffi::CStr::from_ptr(wickra_sma_name(handle));
+            assert_eq!(name.to_str().unwrap(), "SMA");
+
             wickra_sma_reset(handle);
             assert!(!wickra_sma_is_ready(handle));
             let input = [1.0_f64, 2.0, 3.0, 4.0, 5.0];
@@ -57993,6 +68116,7 @@ mod tests {
             assert!(wickra_sma_update(ptr::null_mut(), 1.0).is_nan());
             assert_eq!(wickra_sma_warmup_period(ptr::null_mut()), 0);
             assert!(!wickra_sma_is_ready(ptr::null_mut()));
+            assert!(wickra_sma_name(ptr::null_mut()).is_null());
             wickra_sma_reset(ptr::null_mut());
             wickra_sma_free(ptr::null_mut());
         }

@@ -13,19 +13,19 @@ public final class AwesomeOscillatorHistogram implements AutoCloseable {
     private final MemorySegment handle;
     private final Cleaner.Cleanable cleanable;
 
-    public AwesomeOscillatorHistogram(int fast, int slow, int smaPeriod) {
+    public AwesomeOscillatorHistogram(int fast, int slow, int lookback) {
         if (fast < 0) {
             throw new IllegalArgumentException("fast must be non-negative");
         }
         if (slow < 0) {
             throw new IllegalArgumentException("slow must be non-negative");
         }
-        if (smaPeriod < 0) {
-            throw new IllegalArgumentException("smaPeriod must be non-negative");
+        if (lookback < 0) {
+            throw new IllegalArgumentException("lookback must be non-negative");
         }
         MemorySegment h;
         try {
-            h = (MemorySegment) NativeMethods.WICKRA_AWESOME_OSCILLATOR_HISTOGRAM_NEW.invokeExact((long) fast, (long) slow, (long) smaPeriod);
+            h = (MemorySegment) NativeMethods.WICKRA_AWESOME_OSCILLATOR_HISTOGRAM_NEW.invokeExact((long) fast, (long) slow, (long) lookback);
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
         }
@@ -95,6 +95,16 @@ public final class AwesomeOscillatorHistogram implements AutoCloseable {
         try {
             byte r = (byte) NativeMethods.WICKRA_AWESOME_OSCILLATOR_HISTOGRAM_IS_READY.invokeExact(handle);
             return r != 0;
+        } catch (Throwable t) {
+            throw WickraNative.rethrow(t);
+        }
+    }
+
+    /** The indicator's canonical name. */
+    public String name() {
+        try {
+            MemorySegment s = (MemorySegment) NativeMethods.WICKRA_AWESOME_OSCILLATOR_HISTOGRAM_NAME.invokeExact(handle);
+            return s.address() == 0 ? "" : s.reinterpret(Long.MAX_VALUE).getString(0);
         } catch (Throwable t) {
             throw WickraNative.rethrow(t);
         }
