@@ -1,0 +1,46 @@
+name: Setup Rust toolchain (with retry)
+description: >
+  Install a Rust toolchain via dtolnay/rust-toolchain, retrying once after a
+  short pause on the transient rustup CDN failure (a corrupt channel manifest /
+  checksum mismatch on `channel-rust-<channel>.toml`) that rustup itself does
+  not retry — the same hardening already applied to setup-node / setup-go.
+
+inputs:
+  toolchain:
+    description: Rust toolchain (channel or version) to install.
+    required: false
+    default: stable
+  components:
+    description: Comma-separated list of rustup components (e.g. "rustfmt, clippy").
+    required: false
+    default: ""
+  targets:
+    description: Comma-separated list of rustup targets (e.g. "wasm32-unknown-unknown").
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - id: first
+      uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable branch, 2026-03-27
+      continue-on-error: true
+      with:
+        toolchain: ${{ inputs.toolchain }}
+        components: ${{ inputs.components }}
+        targets: ${{ inputs.targets }}
+
+    - name: Wait before retrying the toolchain install
+      if: steps.first.outcome == 'failure'
+      shell: bash
+      run: |
+        echo "::warning::rustup toolchain install failed (likely a CDN flake / corrupt channel manifest); retrying in 30s"
+        sleep 30
+
+    - name: Retry the Rust toolchain install
+      if: steps.first.outcome == 'failure'
+      uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable branch, 2026-03-27
+      with:
+        toolchain: ${{ inputs.toolchain }}
+        components: ${{ inputs.components }}
+        targets: ${{ inputs.targets }}
