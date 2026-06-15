@@ -566,6 +566,12 @@ jobs:
           test -f bindings/wasm/pkg/wickra_wasm_bg.wasm
           test -f bindings/wasm/pkg/wickra_wasm.d.ts
 
+      - name: Build WASM package (nodejs target) for the golden suite
+        run: wasm-pack build bindings/wasm --target nodejs --release --out-dir pkg
+
+      - name: Golden parity — all 514 indicators vs the Rust reference
+        run: node --test bindings/wasm/tests/golden.test.js
+
   node:
     name: Node ${{ matrix.node-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}

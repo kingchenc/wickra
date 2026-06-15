@@ -7,7 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Cross-language golden parity for all 514 indicators across all 10 languages.**
+  A new `gen_golden` reference emits a deterministic OHLCV input series plus the
+  Rust output of every one of the 514 indicators to `testdata/golden/`. Each
+  binding now replays that shared input and is checked **bit-for-bit against the
+  Rust reference**, covering every archetype (scalar, multi-output, pairwise,
+  derivatives-tick, cross-section, order-book, trade, profile, alt-chart bars,
+  footprint):
+  - Python, Node.js, Java and R via reflection-driven runners.
+  - Go, C# and C/C++ via generated dispatch (`golden_all_test.go`,
+    `GoldenAllTests.g.cs`, `examples/c/golden_test.c` compiled as both C and C++).
+  - WASM via a `node --test` runner over the nodejs-target build.
+- CI now runs the WASM golden suite; the C/C++ golden tests run as `ctest`
+  targets in the existing C-ABI job, and the Python/Node/Go/C#/Java/R suites pick
+  up their golden runners automatically.
+- **README:** a "verified across 10 languages" badge (linking to the FAQ that
+  explains the cross-language golden parity) and a per-binding throughput table so
+  readers can pick a binding by its streaming FFI cost.
+
+### Fixed
+- **Java binding marshalled C ABI `bool` parameters incorrectly.** The
+  cross-section state flags (`newHigh`, `newLow`, `aboveMa`, `onBuySignal`) were
+  allocated as `JAVA_DOUBLE` arrays and passed to `const bool*` parameters, so the
+  native side read the low byte of each 8-byte double and saw every flag as
+  `false` (affecting e.g. `NewHighsNewLows`, `HighLowIndex`, `BullishPercentIndex`,
+  `PercentAboveMa`). They are now packed into a real `bool` buffer. `MacdExt`'s
+  `MaType` arguments are now passed as `byte` to match the `uint8_t` downcall.
+- **R binding marshalled C ABI `bool` flags incorrectly.** `(bool *)REAL(x)`
+  reinterpreted the 8-byte doubles as 1-byte bools across the 15 cross-section
+  update wrappers, reading every flag as `false`; the flags are now converted into
+  a real C `bool` buffer.
+- C# binding: added the `#nullable enable` directive the generated
+  `Indicators.g.cs` requires, clearing four `CS8669` warnings.
+
 ### Changed
+- Renamed the `live_trading` examples to `live_binance` across the Python, Node.js,
+  WASM and C examples — they poll Binance market data, they do not place trades.
 - **Breaking — de-duplicated four indicators that computed identically to another
   one.** Each is now its own distinct, correctly-defined indicator (the catalogue
   stays at the same count):
