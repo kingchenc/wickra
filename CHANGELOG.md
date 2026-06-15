@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Tick-to-candle aggregation in all 10 languages (data layer).** The
+  `TickAggregator` — roll trade ticks up into fixed-timeframe OHLCV candles, with
+  optional gap filling — is now exposed natively (Node.js / WASM `push(price,
+  size, ts): Candle[]`, Python `push(...) -> list[tuple]`) and over the C ABI as
+  Go `Push() []Candle`, C# `Candle[] Push()`, Java `Candle[] push()`, and the R
+  `push()` generic (an `n×6` matrix); C / C++ call the C ABI directly. The C ABI
+  uses a lossless two-step `wickra_tick_aggregator_push` / `_drain` so a single
+  push that gap-fills across many empty buckets never overflows a fixed buffer. A
+  new cross-language golden (`testdata/golden/data_*.csv`) pins the candle stream
+  identically across every binding. This is the first feature of a data layer that
+  makes the non-Rust bindings dependency-free for tick aggregation.
 - **`name()` on every indicator in all 10 languages.** The canonical
   `Indicator::name()` / `BarBuilder::name()` accessor is now exposed through every
   binding — Node.js `name()`, WASM `name()`, Python `name()`, and the C ABI
