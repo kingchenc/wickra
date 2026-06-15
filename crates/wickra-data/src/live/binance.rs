@@ -92,7 +92,9 @@ pub enum Interval {
     EightHours,
     TwelveHours,
     OneDay,
+    ThreeDays,
     OneWeek,
+    OneMonth,
 }
 
 impl Interval {
@@ -112,7 +114,9 @@ impl Interval {
             Self::EightHours => "8h",
             Self::TwelveHours => "12h",
             Self::OneDay => "1d",
+            Self::ThreeDays => "3d",
             Self::OneWeek => "1w",
+            Self::OneMonth => "1M",
         }
     }
 }
@@ -413,7 +417,9 @@ mod tests {
             (Interval::EightHours, "8h"),
             (Interval::TwelveHours, "12h"),
             (Interval::OneDay, "1d"),
+            (Interval::ThreeDays, "3d"),
             (Interval::OneWeek, "1w"),
+            (Interval::OneMonth, "1M"),
         ];
         for (iv, expected) in pairs {
             assert_eq!(iv.as_str(), *expected);
