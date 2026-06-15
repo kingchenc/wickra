@@ -1210,7 +1210,11 @@ func TestGoldenAll(t *testing.T) {
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			bins, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
-			if ok { got[i] = bins } else { got[i] = nanRow(7) }
+			if ok {
+				got[i] = bins
+			} else {
+				got[i] = nanRow(7)
+			}
 		}
 		compareGolden(t, "DayOfWeekProfile", got)
 	})
@@ -2498,7 +2502,11 @@ func TestGoldenAll(t *testing.T) {
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			bins, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
-			if ok { got[i] = bins } else { got[i] = nanRow(24) }
+			if ok {
+				got[i] = bins
+			} else {
+				got[i] = nanRow(24)
+			}
 		}
 		compareGolden(t, "IntradayVolatilityProfile", got)
 	})
@@ -5120,7 +5128,11 @@ func TestGoldenAll(t *testing.T) {
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			bins, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
-			if ok { got[i] = bins } else { got[i] = nanRow(24) }
+			if ok {
+				got[i] = bins
+			} else {
+				got[i] = nanRow(24)
+			}
 		}
 		compareGolden(t, "TimeOfDayReturnProfile", got)
 	})
@@ -5644,7 +5656,11 @@ func TestGoldenAll(t *testing.T) {
 		got := make([][]float64, len(rows))
 		for i, r := range rows {
 			bins, ok := ind.Update(r[0], r[1], r[2], r[3], r[4], int64(i))
-			if ok { got[i] = bins } else { got[i] = nanRow(24) }
+			if ok {
+				got[i] = bins
+			} else {
+				got[i] = nanRow(24)
+			}
 		}
 		compareGolden(t, "VolumeByTimeProfile", got)
 	})
