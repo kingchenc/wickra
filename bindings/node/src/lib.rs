@@ -21884,6 +21884,138 @@ pub struct CandleValue {
     pub timestamp: f64,
 }
 
+/// One event from the live Binance feed.
+#[napi(object)]
+pub struct KlineEvent {
+    pub symbol: String,
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub volume: f64,
+    pub open_time: f64,
+    pub is_closed: bool,
+}
+
+/// Map a `u8` interval code (`0..=15`, the `Interval` declaration order) to the
+/// feed interval.
+fn binance_interval(code: u8) -> Option<wickra_data::live::binance::Interval> {
+    use wickra_data::live::binance::Interval;
+    Some(match code {
+        0 => Interval::OneSecond,
+        1 => Interval::OneMinute,
+        2 => Interval::ThreeMinutes,
+        3 => Interval::FiveMinutes,
+        4 => Interval::FifteenMinutes,
+        5 => Interval::ThirtyMinutes,
+        6 => Interval::OneHour,
+        7 => Interval::TwoHours,
+        8 => Interval::FourHours,
+        9 => Interval::SixHours,
+        10 => Interval::EightHours,
+        11 => Interval::TwelveHours,
+        12 => Interval::OneDay,
+        13 => Interval::ThreeDays,
+        14 => Interval::OneWeek,
+        15 => Interval::OneMonth,
+        _ => return None,
+    })
+}
+
+/// A live Binance kline feed. `next` is a blocking poll (it waits up to the
+/// timeout on the calling thread) driving the mock-server-tested wickra-data
+/// `BinanceKlineStream` on a single-thread tokio runtime — use a short timeout in
+/// a loop, or run it on a Worker thread, to keep the event loop responsive.
+#[napi(js_name = "BinanceFeed")]
+pub struct BinanceFeedNode {
+    runtime: tokio::runtime::Runtime,
+    inner: wickra_data::live::binance::BinanceKlineStream,
+}
+
+#[napi]
+impl BinanceFeedNode {
+    /// Connect to Binance's live kline stream for the given comma-separated
+    /// `symbols` (case-insensitive) at the given `interval` code (`0..=15`).
+    /// `baseUrl` overrides the endpoint (omit for production; pass a `ws://` URL
+    /// to target a test server).
+    #[napi(constructor)]
+    pub fn new(symbols: String, interval: u8, base_url: Option<String>) -> napi::Result<Self> {
+        let iv = binance_interval(interval).ok_or_else(|| {
+            NapiError::new(
+                Status::InvalidArg,
+                "unknown interval code (expected 0..=15)",
+            )
+        })?;
+        let symbol_list: Vec<String> = symbols
+            .split(',')
+            .map(str::trim)
+            .filter(|s| !s.is_empty())
+            .map(str::to_owned)
+            .collect();
+        if symbol_list.is_empty() {
+            return Err(NapiError::new(
+                Status::InvalidArg,
+                "at least one symbol is required",
+            ));
+        }
+        let mut config = wickra_data::live::binance::BinanceConfig::default();
+        if let Some(url) = base_url {
+            config.base_url = url;
+        }
+        let runtime = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .map_err(|e| NapiError::new(Status::GenericFailure, e.to_string()))?;
+        let inner = runtime
+            .block_on(
+                wickra_data::live::binance::BinanceKlineStream::connect_with_config(
+                    &symbol_list,
+                    iv,
+                    config,
+                ),
+            )
+            .map_err(map_data_err)?;
+        Ok(Self { runtime, inner })
+    }
+
+    /// Poll for the next kline event, waiting up to `timeoutMs` milliseconds.
+    /// Returns the event, or `null` on timeout (call again). Throws once the
+    /// stream is closed.
+    #[napi]
+    pub fn next(&mut self, timeout_ms: f64) -> napi::Result<Option<KlineEvent>> {
+        let dur = std::time::Duration::from_millis(timeout_ms.max(0.0) as u64);
+        let runtime = &self.runtime;
+        let inner = &mut self.inner;
+        let result = runtime.block_on(tokio::time::timeout(dur, inner.next_event()));
+        match result {
+            Ok(Ok(Some(ev))) => Ok(Some(KlineEvent {
+                symbol: ev.symbol,
+                open: ev.candle.open,
+                high: ev.candle.high,
+                low: ev.candle.low,
+                close: ev.candle.close,
+                volume: ev.candle.volume,
+                #[allow(clippy::cast_precision_loss)]
+                open_time: ev.candle.timestamp as f64,
+                is_closed: ev.is_closed,
+            })),
+            Ok(Ok(None) | Err(_)) => Err(NapiError::new(
+                Status::GenericFailure,
+                "binance feed closed",
+            )),
+            Err(_) => Ok(None),
+        }
+    }
+
+    /// Close the stream; subsequent `next` calls throw.
+    #[napi]
+    pub fn close(&mut self) {
+        let runtime = &self.runtime;
+        let inner = &mut self.inner;
+        let _ = runtime.block_on(inner.close());
+    }
+}
+
 /// Roll trade ticks up into fixed-timeframe OHLCV candles.
 #[napi(js_name = "TickAggregator")]
 pub struct TickAggregatorNode {

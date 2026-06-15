@@ -2017,6 +2017,7 @@ dependencies = [
  "napi",
  "napi-build",
  "napi-derive",
+ "tokio",
  "wickra-core",
  "wickra-data",
 ]
@@ -2027,6 +2028,7 @@ version = "0.9.2"
 dependencies = [
  "numpy",
  "pyo3",
+ "tokio",
  "wickra-core",
  "wickra-data",
 ]

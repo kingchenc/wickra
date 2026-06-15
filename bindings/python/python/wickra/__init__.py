@@ -362,6 +362,7 @@ from ._wickra import (
     TickAggregator,
     Resampler,
     CandleReader,
+    BinanceFeed,
     # Market Profile
     CompositeProfile,
     HighLowVolumeNodes,
@@ -910,6 +911,7 @@ __all__ = [
     "TickAggregator",
     "Resampler",
     "CandleReader",
+    "BinanceFeed",
     # Market Profile
     "CompositeProfile",
     "HighLowVolumeNodes",

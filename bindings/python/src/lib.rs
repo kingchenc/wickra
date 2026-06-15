@@ -13,7 +13,7 @@
 #![allow(clippy::many_single_char_names)]
 
 use numpy::{IntoPyArray, PyArray1, PyArray2, PyReadonlyArray1};
-use pyo3::exceptions::{PyTypeError, PyValueError};
+use pyo3::exceptions::{PyRuntimeError, PyTypeError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
 use wickra_core as wc;
@@ -28289,6 +28289,7 @@ fn _wickra(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyTickAggregator>()?;
     m.add_class::<PyResampler>()?;
     m.add_class::<PyCandleReader>()?;
+    m.add_class::<PyBinanceFeed>()?;
     // Candlestick patterns.
     m.add_class::<PyDoji>()?;
     m.add_class::<PyHammer>()?;
@@ -28570,6 +28571,112 @@ type CandleTuple = (f64, f64, f64, f64, f64, i64);
 /// Convert a `wickra-data` error into a Python `ValueError`.
 fn map_data_err(e: wickra_data::Error) -> PyErr {
     PyValueError::new_err(e.to_string())
+}
+
+/// Map a `u8` interval code (`0..=15`, the `Interval` declaration order) to the
+/// feed interval.
+fn binance_interval(code: u8) -> Option<wickra_data::live::binance::Interval> {
+    use wickra_data::live::binance::Interval;
+    Some(match code {
+        0 => Interval::OneSecond,
+        1 => Interval::OneMinute,
+        2 => Interval::ThreeMinutes,
+        3 => Interval::FiveMinutes,
+        4 => Interval::FifteenMinutes,
+        5 => Interval::ThirtyMinutes,
+        6 => Interval::OneHour,
+        7 => Interval::TwoHours,
+        8 => Interval::FourHours,
+        9 => Interval::SixHours,
+        10 => Interval::EightHours,
+        11 => Interval::TwelveHours,
+        12 => Interval::OneDay,
+        13 => Interval::ThreeDays,
+        14 => Interval::OneWeek,
+        15 => Interval::OneMonth,
+        _ => return None,
+    })
+}
+
+/// `(symbol, open, high, low, close, volume, open_time, is_closed)`.
+type KlineTuple = (String, f64, f64, f64, f64, f64, i64, bool);
+
+/// A live Binance kline feed (blocking poll). The connect / read / reconnect
+/// pipeline is the mock-server-tested wickra-data `BinanceKlineStream`, driven on
+/// a single-thread tokio runtime; `next` releases the GIL while it waits.
+#[pyclass(name = "BinanceFeed", module = "wickra._wickra", skip_from_py_object)]
+struct PyBinanceFeed {
+    runtime: tokio::runtime::Runtime,
+    inner: wickra_data::live::binance::BinanceKlineStream,
+}
+
+#[pymethods]
+impl PyBinanceFeed {
+    #[new]
+    #[pyo3(signature = (symbols, interval, base_url = None))]
+    fn new(symbols: &str, interval: u8, base_url: Option<&str>) -> PyResult<Self> {
+        let iv = binance_interval(interval)
+            .ok_or_else(|| PyValueError::new_err("unknown interval code (expected 0..=15)"))?;
+        let symbol_list: Vec<String> = symbols
+            .split(',')
+            .map(str::trim)
+            .filter(|s| !s.is_empty())
+            .map(str::to_owned)
+            .collect();
+        if symbol_list.is_empty() {
+            return Err(PyValueError::new_err("at least one symbol is required"));
+        }
+        let mut config = wickra_data::live::binance::BinanceConfig::default();
+        if let Some(url) = base_url {
+            url.clone_into(&mut config.base_url);
+        }
+        let runtime = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .map_err(|e| PyRuntimeError::new_err(e.to_string()))?;
+        let inner = runtime
+            .block_on(
+                wickra_data::live::binance::BinanceKlineStream::connect_with_config(
+                    &symbol_list,
+                    iv,
+                    config,
+                ),
+            )
+            .map_err(map_data_err)?;
+        Ok(Self { runtime, inner })
+    }
+
+    /// Poll for the next kline event, waiting up to `timeout_ms`. Returns a
+    /// `(symbol, open, high, low, close, volume, open_time, is_closed)` tuple, or
+    /// `None` on timeout (call again). Raises once the stream is closed.
+    #[pyo3(signature = (timeout_ms = 1000.0))]
+    fn next(&mut self, py: Python<'_>, timeout_ms: f64) -> PyResult<Option<KlineTuple>> {
+        let dur = std::time::Duration::from_millis(timeout_ms.max(0.0) as u64);
+        let runtime = &self.runtime;
+        let inner = &mut self.inner;
+        let result = py.detach(|| runtime.block_on(tokio::time::timeout(dur, inner.next_event())));
+        match result {
+            Ok(Ok(Some(ev))) => Ok(Some((
+                ev.symbol,
+                ev.candle.open,
+                ev.candle.high,
+                ev.candle.low,
+                ev.candle.close,
+                ev.candle.volume,
+                ev.candle.timestamp,
+                ev.is_closed,
+            ))),
+            Ok(Ok(None) | Err(_)) => Err(PyRuntimeError::new_err("binance feed closed")),
+            Err(_) => Ok(None),
+        }
+    }
+
+    /// Close the stream; subsequent `next` calls raise.
+    fn close(&mut self) {
+        let runtime = &self.runtime;
+        let inner = &mut self.inner;
+        let _ = runtime.block_on(inner.close());
+    }
 }
 
 /// Roll trade ticks up into fixed-timeframe OHLCV candles.
