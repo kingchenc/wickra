@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Binance kline feed: add the missing `3d` and `1M` intervals.** The
+  `live-binance` `Interval` enum was missing three-day (`3d`) and one-month (`1M`)
+  candles, two of Binance's 16 supported kline intervals. Both are now selectable
+  and map to the correct wire-format strings.
+
 ### Added
 - **CSV candle reading in all 10 languages (data layer).** The `CandleReader`
   parses a `timestamp,open,high,low,close,volume` CSV buffer (a leading UTF-8 BOM
