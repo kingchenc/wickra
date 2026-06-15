@@ -25,14 +25,16 @@ function cell(s) {
 }
 
 function readCsv(name) {
-  const lines = fs.readFileSync(path.join(GOLDEN, name + '.csv'), 'utf8').split('\n');
+  // Split on \r?\n so a CRLF checkout (Windows core.autocrlf) parses identically
+  // to LF — otherwise `cell('inf\r')` falls through to Number() and becomes NaN.
+  const lines = fs.readFileSync(path.join(GOLDEN, name + '.csv'), 'utf8').split(/\r?\n/);
   lines.shift(); // header
   return lines.filter((l) => l.length > 0).map((l) => l.split(',').map(cell));
 }
 
 // Bars keep blank lines (one row per candle, blank == no bar closed).
 function readBarRows(name) {
-  const lines = fs.readFileSync(path.join(GOLDEN, name + '.csv'), 'utf8').split('\n');
+  const lines = fs.readFileSync(path.join(GOLDEN, name + '.csv'), 'utf8').split(/\r?\n/);
   lines.shift();
   // Drop only the single trailing-newline artifact, keeping legitimate blank
   // rows (a candle on which no bar closed) so rows stay aligned to the input.

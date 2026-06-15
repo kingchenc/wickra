@@ -32,3 +32,10 @@ bindings/r/src/Makevars.in text eol=lf
 bindings/r/src/Makevars.win text eol=lf
 bindings/r/src/wickra.c text eol=lf
 
+# Golden fixtures are replayed byte-for-byte by every binding's parity test. Pin
+# them to LF so a Windows `core.autocrlf=true` checkout doesn't rewrite them as
+# CRLF — which silently broke the Node reader (`Number('inf\r')` is NaN, and a
+# blank "no-bar" row gained a stray `\r`), failing only on Windows runners. The
+# tolerant readers (Python `splitlines`/`float`) hid the same hazard.
+testdata/golden/** text eol=lf
+
